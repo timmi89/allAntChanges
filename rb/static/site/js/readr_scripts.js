@@ -1,6 +1,4 @@
-var RDR_offline = !!(
-    document.domain == "local.readrboard.com" //shouldn't need this line anymore
-),
+var RDR_offline = (window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
@@ -8,6 +6,7 @@ RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/sta
 var RB = RB ? RB : {};
 
 RB = {
+    RDR_offline: RDR_offline,
 	group: {},
 	user_auth: {
 		doFBLogin: function(requesting_action) {
@@ -133,24 +132,34 @@ RB = {
             	window.location.hash = newHash;
             }
         },
-		loadScript: function(sScriptSrc,callbackfunction) {
-		var oHead = document.getElementsByTagName('head')[0];
-		if(oHead) {
-		    var oScript = document.createElement('script');
+        
+        //from http://www.aaronpeters.nl/blog/prevent-double-callback-execution-in-IE9#comment-175618750
+        loadScript: function(attributes, callbackfunction) {
+            var oHead = document.getElementsByTagName('head')[0];
+            if(oHead) {
+                var oScript = document.createElement('script');
 
-		    oScript.setAttribute('src',sScriptSrc);
-		    oScript.setAttribute('type','text/javascript');
+                oScript.setAttribute('src', attributes.src);
+                oScript.setAttribute('type','text/javascript');
 
-		    var loadFunction = function() {
-		        if (this.readyState == 'complete' || this.readyState == 'loaded') {
-		            callbackfunction();
-		        }
-		    };
-		    oScript.onload = callbackfunction;
-		    oScript.onreadystatechange = loadFunction;
-		    oHead.appendChild(oScript);
-			}
-		}
+
+
+                if (oScript.readyState) { // IE, incl. IE9
+                    oScript.onreadystatechange = function() {
+                        if (oScript.readyState == "loaded" || oScript.readyState == "complete") {
+                            oScript.onreadystatechange = null;
+                            callbackfunction();
+                        }
+                    };
+                } else {
+                    oScript.onload = function() { // Other browsers
+                        callbackfunction();
+                    };
+                }
+
+                oHead.appendChild(oScript);
+            }
+        }
 	},
 
     fixUrlParams: function (urlOrNull, newQParams, replaceNotMerge) {

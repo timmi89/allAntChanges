@@ -249,11 +249,15 @@ s.parentNode.insertBefore(g,s)}(document,'script'));
 <noscript>Your browser does not support JavaScript!</noscript>
 
 <script type="text/javascript">
+
 var _sf_async_config={uid:26845,domain:"readrboard.com"};
 var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
-RB.util.loadScript( chartbeat_script, function() {
-  // pSUPERFLY.virtualPage(window.location.href, decodeURIComponent(qs_args.group_name) );
-});
+
+if(!RB.RDR_offline){
+    RB.util.loadScript( {src:chartbeat_script}, function() {
+    });
+}
+
 {% if group %}
 if ( !RB.group) {
   RB.group = {
