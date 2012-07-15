@@ -2494,13 +2494,16 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
 
+                // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
+                // Firefox calculates it (returns a pixel value) while Chrome does not (returns the "50%")...
+                // yielding very different results when you parseInt that CSS value.
                 var bodyChanges = {
-                        paddingLeft : parseInt( $('body').css('padding-left') ),
-                        marginLeft : parseInt( $('body').css('margin-left') ),
-                        left : parseInt( $('body').css('left') ),
-                        paddingTop : parseInt( $('body').css('padding-top') ),
-                        marginTop : parseInt( $('body').css('margin-top') ),
-                        top : parseInt( $('body').css('top') )
+                        paddingLeft : ( $('body').css('padding-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-left'))/100) ): parseInt($('body').css('padding-left')),
+                        marginLeft : ( $('body').css('margin-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-left'))/100) ): parseInt($('body').css('margin-left')),
+                        left : ( $('body').css('left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('left'))/100) ): parseInt($('body').css('left')),
+                        paddingLeft : ( $('body').css('padding-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-top'))/100) ): parseInt($('body').css('padding-top')),
+                        marginTop : ( $('body').css('margin-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-top'))/100) ): parseInt($('body').css('margin-top')),
+                        top : ( $('body').css('top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('top'))/100) ): parseInt($('body').css('top'))
                     },
                     bodyLeft = -(bodyChanges.marginLeft + bodyChanges.left + bodyChanges.paddingLeft ),
                     bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
@@ -6269,7 +6272,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv6" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv7" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
