@@ -348,7 +348,7 @@ function writeContentCard( interaction, showBlocked ) {
         .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>')
             .data('interactionId', interaction.id);
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
+         .append('<h1><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
 
     var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";

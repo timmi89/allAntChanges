@@ -1982,7 +1982,7 @@ function readrBoard($R){
                     if (typeof $msg1 != "undefined" ) {
                         $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
 
-                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_brtl rdr_brtr rdr_' + whichAlert + '" />');
+                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_brbl rdr_brbr rdr_' + whichAlert + '" />');
 
                         $alertContent.append(
                             $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
@@ -1996,7 +1996,7 @@ function readrBoard($R){
                         });
 
                         // TODO put this back in
-                        $('div.rdr_alert_box.rdr_'+whichAlert).animate({bottom:0},1000);
+                        $('div.rdr_alert_box.rdr_'+whichAlert).animate({top:-5},1000);
                     }
                 },
                 close: function( whichAlert ) {
