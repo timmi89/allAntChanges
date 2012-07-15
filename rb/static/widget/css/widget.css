@@ -1092,6 +1092,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1, #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h2 {
   margin-bottom:5px !important;
+  text-transform: none !important;
+  background:none !important;
+  border:none !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1 {
   font-size:18px !important;
