@@ -2494,6 +2494,24 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
 
+                var bodyChanges = {
+                        paddingLeft : parseInt( $('body').css('padding-left') ),
+                        marginLeft : parseInt( $('body').css('margin-left') ),
+                        left : parseInt( $('body').css('left') ),
+                        paddingTop : parseInt( $('body').css('padding-top') ),
+                        marginTop : parseInt( $('body').css('margin-top') ),
+                        top : parseInt( $('body').css('top') )
+                    },
+                    bodyLeft = -(bodyChanges.marginLeft + bodyChanges.left + bodyChanges.paddingLeft ),
+                    bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
+
+                RDR.util.cssSuperImportant($rdrSandbox, {
+                        left: bodyLeft,
+                        top: bodyTop
+                    }, true);
+
+                $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+
                 var useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
                     !$('#rdr-page-summary').length &&
