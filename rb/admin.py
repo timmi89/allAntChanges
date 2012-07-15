@@ -160,4 +160,5 @@ admin.site.register(NotificationType)
 admin.site.register(InteractionNotification)
 admin.site.register(Board)
 admin.site.register(BoardAdmin)
+admin.site.register(BoardInteraction)
 

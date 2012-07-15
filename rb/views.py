@@ -258,6 +258,62 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
 
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
+
+def board(request, board_id=None, **kwargs):
+    cookie_user = checkCookieToken(request)
+    timestamp = datetime.now().date()
+    page_num = request.GET.get('page_num', 1)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'board_id': board_id,
+        'kwargs': kwargs,
+        'page_num': page_num,
+        'timestamp': timestamp,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+        
+        context['board_admins'] = Board.objects.filter(admins__in=[cookie_user]).values_list('admins', flat=True)
+        
+        
+    """ For interactions.html """
+    try:
+        board = Board.objects.get(id=board_id)
+    
+    except Board.DoesNotExist:
+        raise Http404
+    
+    interactions = board.interactions.all()
+    
+    interactions_paginator = Paginator(interactions, 50)
+
+    try: page_number = int(page_num)
+    except ValueError: page_number = 1
+
+    try: current_page = interactions_paginator.page(page_number)
+    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
+      
+    context['current_page'] = current_page
+    len(current_page.object_list)
+    parent_ids = []
+    for inter in current_page.object_list:
+        parent_ids.append(inter.id)
+    
+    child_interactions = Interaction.objects.filter(parent__id__in = parent_ids, kind='tag')
+    context['child_interactions'] = {}
+    
+    for child_interaction in child_interactions:
+        if not context['child_interactions'].has_key(child_interaction.parent.id):
+            context['child_interactions'][child_interaction.parent.id] = 0
+
+        context['child_interactions'][child_interaction.parent.id] += 1
+
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
+
+
+
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
@@ -304,6 +360,31 @@ def create_group(request):
         context,
         context_instance=RequestContext(request)
     )
+
+def create_board(request):
+    context = {}
+    cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
+    
+    if request.method == 'POST':
+        form = CreateBoardForm(request.POST)
+        if form.is_valid():
+            board = form.save(cookie_user)
+            context['requested'] = True
+            context['board']  = board
+            
+    else:
+        form = CreateBoardForm()
+        
+    context['form'] = form
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    
+    return render_to_response(
+        "board_create.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 def create_rb_user(request):
     context = {}

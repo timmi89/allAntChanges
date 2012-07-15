@@ -415,7 +415,7 @@ class Board(DateAwareModel):
     visible = models.BooleanField(default=True)
     
     def __unicode__(self):
-        return unicode(str(self.owner.id) + " " + str(self.active) + " " + str(self.visible) + " " + self.title)
+        return unicode(str(self.owner.username) + ":" + str(self.active) + ":" + str(self.visible) + ":" + self.title)
 
     class Meta:
         unique_together = ('owner', 'title')
@@ -427,7 +427,7 @@ class BoardInteraction(models.Model):
     interaction = models.ForeignKey(Interaction)
     
     def __unicode__(self):
-        return unicode(str(self.board) + " " + str(self.interaction.id))
+        return unicode(str(self.board) + ":" + str(self.interaction.id))
 
     class Meta:
         unique_together = ('board','interaction')
@@ -440,7 +440,7 @@ class BoardAdmin(models.Model):
     approved = models.BooleanField(default=True)
     
     def __unicode__(self):
-        return str(self.board) + ":" + self.user.full_name + ":" + str(self.approved)
+        return str(self.board) + ":" + self.user.username + ":" + str(self.approved)
     
     class Meta:
         unique_together = ('board', 'user')

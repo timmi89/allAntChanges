@@ -48,6 +48,10 @@ urlpatterns = patterns('',
   
   url(r'^follows/(?P<user_id>\d+)/$', 'rb.views.follow_interactions'),
   
+  url(r'^board_create/$', 'rb.views.create_board'),
+  url(r'^board/(?P<board_id>\d+)/', 'rb.views.board'),
+  
+  
   # Specific page
   url(r'^page/(?P<page_id>\d+)/$', 'rb.views.main'),
   url(r'^page/(?P<page_id>\d+)/not_approved/$', 'rb.views.main', kwargs={"admin":"not_approved"}),
