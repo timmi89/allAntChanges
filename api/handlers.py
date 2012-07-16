@@ -921,41 +921,29 @@ class PlusOneUserHandler(AnonymousBaseHandler):
         
 
 class BoardAddHandler(AnonymousBaseHandler):
-    allowed_methods = ('POST', 'GET')
+    allowed_methods = ('GET')
 
-    @status_response
-    @json_data_post
-    def create(self, request, data):
-        owner = checkCookieToken(request)
-        if owner is None:
-            return {'message':'not_logged_in'}
-        
-        board_id = int(data['board_interaction'])
-        interaction_id = int(data['interaction_id'])
-        board = Board.objects.get(id = board_id)
-        if owner in board.admins:
-            interaction = Interaction.objects.get(id = interaction_id)
-            
-            board_interaction = BoardInteraction.objects.get_or_create(board = board, interaction = interaction)
-            return model_to_dict(board_interaction)
-        else:
-            return {'message':'not authorized'}
-            
     @status_response
     @json_data
     def read(self, request, data, **kwargs):
         cookie_user = checkCookieToken(request)
         if cookie_user is None:
             raise JSONException('not logged in')
-        
-        if kwargs.get('action') is not None and kwargs.get('action') == 'delete':
-            board_id = int(data['board_interaction'])
-            interaction_id = int(data['interaction_id'])
-            board = Board.objects.get(id = board_id)
-            if cookie_user in board.admins:
-                interaction = Interaction.objects.get(id = interaction_id)
-                board_interaction = BoardInteraction.objects.delete(board = board, interaction = interaction)
+        board_id = int(data['board_id'])
+        interaction_id = int(data['interaction_id'])
+        board = Board.objects.get(id = board_id)
+        interaction = Interaction.objects.get(id = interaction_id)
+        if cookie_user in board.admins:       
+            if kwargs.get('action') is not None and kwargs.get('action') == 'delete':
+                board_interaction = BoardInteraction.objects.get(board = board, interaction = interaction)
+                board_interaction.delete()
+                return {'message':'deleted'}
+            
+            elif kwargs.get('action') is not None and kwargs.get('action') == 'add':
+                board_interaction = BoardInteraction.objects.get_or_create(board = board, interaction = interaction)
+                return model_to_dict(board_interaction)
+    
         else:
-            pass
+            return {'message':'whoareyou?'}
         
         
