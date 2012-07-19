@@ -439,13 +439,11 @@ RB = {
                             content = $card.find('div.content_body iframe').attr('src');
                         }
 
-                        var groupName = ($card.find('div.publisher img').length ) ? $card.find('div.publisher img').attr('alt'):$card.find('div.publisher a').text()
+                        var groupName = $card.data('groupName');
 
                         $.each(socialNetworks, function(idx, val){
                             $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                             $shareLinks.find('li:last').click( function(e) {
-                                e.preventDefault();
-                                debugger;
                                 RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                                 RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
                                 // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
@@ -577,7 +575,7 @@ RB = {
 
                         case "img":
                         case "image":
-                            contentStr = "See picture";
+                            contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                             //for testing offline
                             if(RDR_offline){
@@ -586,14 +584,14 @@ RB = {
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
-                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
                         break;
 
                         case "media":
                         case "med":
                         case "video":
-                            contentStr = "See video";
-                            mainShareText = _wrapTag(interaction_body, false, true) +" "+ contentStr;
+                            contentStr = "[a video on "+groupName+"] Check it out: ";
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
                         break;
                     }
 
@@ -620,20 +618,20 @@ RB = {
                         case "text":
                             content_length = ( 110 - interaction_body.length );
                             contentStr = _shortenContentIfNeeded(content, content_length, true);
-                            mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
                         break;
 
                         case "img":
                         case "image":
                             contentStr = "[a picture on "+groupName+"] Check it out: ";
-                            mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
                         break;
 
                         case "media":
                         case "med":
                         case "video":
                             contentStr = "[a video on "+groupName+"] Check it out: ";
-                            mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            mainShareText = _wrapTag(interaction_body) +" "+ contentStr;
                         break;
                     }
 
@@ -651,8 +649,8 @@ RB = {
                         case "txt":
                         case "text":
                             //tumblr adds quotes for us - don't pass true to quote it.
-                            var footerShareText = _wrapTag(args.reaction, true) +
-                                '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                            var footerShareText = _wrapTag(interaction_body, true) +
+                                '&nbsp;[a <a href="'+short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
                             
                             content_length = 300;
                             contentStr = _shortenContentIfNeeded(content, content_length);
@@ -670,14 +668,14 @@ RB = {
                                 content = content.replace("localhost:8080", "www.readrboard.com");
                             }
 
-                            mainShareText = _wrapTag(args.reaction, true);
+                            mainShareText = _wrapTag(interaction_body, true);
 
-                            var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
+                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
 
                             share_url = 'http://www.tumblr.com/share/photo?'+
                                 'source='+encodeURIComponent(content)+
                                 '&caption='+encodeURIComponent(mainShareText + footerShareText )+
-                                '&click_thru='+encodeURIComponent(args.short_url);
+                                '&click_thru='+encodeURIComponent(short_url);
                         break;
 
                         case "media":
@@ -686,11 +684,11 @@ RB = {
                             //todo: - I haven't gone back to try this yet...
 
                             //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
-                            var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
+                            var iframeString = '<iframe src=" '+interaction_body+' "></iframe>';
 
-                            mainShareText = _wrapTag(args.reaction, true);
+                            mainShareText = _wrapTag(interaction_body, true);
 
-                            var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
+                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">video</a> on '+groupName+' via ReadrBoard]';
 
                             //todo: get the urlencode right and put the link back in
                             var readrLink = mainShareText + footerShareText;
@@ -699,10 +697,10 @@ RB = {
                     }
                 break;
             }
-            debugger;
+            
             if ( share_url !== "" ) {
                 if ( RB.shareWindow ) {
-                    // RB.shareWindow.location = share_url;
+                    RB.shareWindow.location = share_url;
                 }
             }
 

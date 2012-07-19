@@ -346,7 +346,10 @@ function writeContentCard( interaction, showBlocked ) {
     // write the card first, then append the comment
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
         .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>')
-            .data('interactionId', interaction.id);
+            .data({
+                interactionId: interaction.id,
+                groupName: interaction.group.short_name
+            });
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
          .append('<h1><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
 
@@ -519,7 +522,11 @@ function writePageCard( interaction, showBlocked ) {
     
     // write the card first, then append the comment
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
-        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>');
+        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>')
+            .data({
+                interactionId: interaction.id,
+                groupName: interaction.group.short_name
+            });
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
          .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
 
