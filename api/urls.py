@@ -32,7 +32,7 @@ StreamResponse = Resource(handler=StreamResponseHandler)
 StreamComment = Resource(handler=StreamCommentHandler)
 PlusOneUsers = Resource(handler=PlusOneUserHandler)
 BoardAdd = Resource(handler=BoardAddHandler)
-
+UserBoards = Resource(handler=UserBoardsHandler)
 
 
 
@@ -88,7 +88,8 @@ urlpatterns = patterns('',
     url(r'^stream/response/', StreamResponse),
     url(r'^stream/comment/', StreamComment),
     url(r'^plusones', PlusOneUsers),
-    url(r'^boardadd', BoardAdd),
+    url(r'^boardadd', BoardAdd, kwargs={'action':'add'}),
     url(r'^boarddelete', BoardAdd, kwargs={'action':'delete'}),
+    url(r'^user/boards', UserBoards),
     #url(r'^comments/', Comments),
 )

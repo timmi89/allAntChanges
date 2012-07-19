@@ -933,7 +933,7 @@ class BoardAddHandler(AnonymousBaseHandler):
         interaction_id = int(data['interaction_id'])
         board = Board.objects.get(id = board_id)
         interaction = Interaction.objects.get(id = interaction_id)
-        if cookie_user in board.admins:       
+        if cookie_user in board.admins.all():       
             if kwargs.get('action') is not None and kwargs.get('action') == 'delete':
                 board_interaction = BoardInteraction.objects.get(board = board, interaction = interaction)
                 board_interaction.delete()
@@ -941,9 +941,23 @@ class BoardAddHandler(AnonymousBaseHandler):
             
             elif kwargs.get('action') is not None and kwargs.get('action') == 'add':
                 board_interaction = BoardInteraction.objects.get_or_create(board = board, interaction = interaction)
-                return model_to_dict(board_interaction)
+                return model_to_dict(board_interaction[0])
     
         else:
             return {'message':'whoareyou?'}
-        
+
+
+class UserBoardsHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
+
+    @status_response
+    def read(self, request, **kwargs):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            raise JSONException('not logged in')
+        board_admins = BoardAdmin.objects.filter(user = cookie_user)
+        boards = []
+        for b_a in board_admins:
+            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+        return {'boards':boards}
         

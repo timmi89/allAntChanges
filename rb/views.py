@@ -275,13 +275,16 @@ def board(request, board_id=None, **kwargs):
     if cookie_user:
         context['cookie_user'] = cookie_user
         
-        context['board_admins'] = Board.objects.filter(admins__in=[cookie_user]).values_list('admins', flat=True)
+        #context['board_admins'] = Board.objects.filter(admins__in=[cookie_user]).values_list('admins', flat=True)
         
         
     """ For interactions.html """
     try:
         board = Board.objects.get(id=board_id)
-    
+        if cookie_user in board.admins.all():
+            context['board_admin'] = True
+        else:
+            context['board_admin'] = False
     except Board.DoesNotExist:
         raise Http404
     

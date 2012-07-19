@@ -117,6 +117,12 @@ var comments = [],
     interactions = {pages:[],content:[]},
     shares = [];
     
+{% if board_admin %}
+var board_admin = true;
+{% else %}
+var board_admin = false;
+{% endif %}   
+
 if ( window.location.href.indexOf('/user/') != -1 ) {
   $('#cards').addClass('user_profile');
 }
