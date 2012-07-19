@@ -3237,7 +3237,9 @@ function readrBoard($R){
 
                                     //now run the type specific function with the //run the setup func above
                                     var kind = summary.kind;
-                                    _setupFuncs[kind](hash, summary);
+                                    if(kind != "page"){
+                                        _setupFuncs[kind](hash, summary);
+                                    }
 
                                     //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
                                     //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
@@ -3976,6 +3978,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
                                 var $summary_box = $('div.rdr_sbRollover');
                                 var $pageTagResponse = $('<div class="rdr_info" style="padding:4px;"></div>');
+                                
                                 var $shareIcons = _makeShareIcons(args);
 
                                 var existing = args.response.data.existing;
@@ -4107,7 +4110,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                             
                             function _undoPageReaction(args){
-                                
                                 var newArgs = {
                                     hash: args.hash,
                                     kind: 'page',
@@ -5740,6 +5742,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 contentStr = "[a video on "+groupName+"] Check it out: ";
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
+
+                            case "page":
+                                contentStr = "[an article on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            break;
                         }
 
                         share_url = 'http://www.facebook.com/sharer.php?s=100' +
@@ -5759,7 +5766,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var mainShareText = "";
                         var footerShareText = "A ReadrBoard Reaction on " + groupName;
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                    
+
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
@@ -5778,6 +5785,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             case "med":
                             case "video":
                                 contentStr = "[a video on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            break;
+
+                            case "page":
+                                contentStr = "[an article on "+groupName+"] Check it out: ";
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
                         }
@@ -5842,6 +5854,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
                             break;
 
+                            case "page":
+                                var footerShareText = _wrapTag(args.reaction, true) +
+                                    '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
+                                
+                                content_length = 300;
+                                contentStr = _shortenContentIfNeeded(content, content_length);
+                                share_url = 'http://www.tumblr.com/share/link?'+
+                                'url='+encodeURIComponent(args.short_url)+
+                                '&description='+encodeURIComponent(footerShareText);
+
+                            break;
 
                         }
                     break;
@@ -5852,6 +5875,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 if ( share_url !== "" ) {
                     if ( RDR.shareWindow ) {
                         RDR.shareWindow.location = share_url;
+                    }
+                }else{
+                    if ( RDR.shareWindow ) {
+                        RDR.shareWindow.close();
                     }
                 }
 
