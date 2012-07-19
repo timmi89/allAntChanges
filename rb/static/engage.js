@@ -5719,7 +5719,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             case "img":
                             case "image":
-                                contentStr = "See picture";
+                                contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
                                 if(RDR_offline){
@@ -5728,14 +5728,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "med":
                             case "video":
-                                contentStr = "See video";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a video on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
                         }
 
@@ -5760,22 +5760,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
-                                content_length = ( 100 - args.reaction.length );
+                                content_length = ( 110 - args.reaction.length );
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "img":
                             case "image":
-                                contentStr = "See image";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a picture on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "med":
                             case "video":
-                                contentStr = "See video";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a video on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
                         }
 
@@ -5793,10 +5793,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             case "txt":
                             case "text":
                                 //tumblr adds quotes for us - don't pass true to quote it.
-                                var footerShareText = _wrapTag(args.reaction, true, true) +
-                                    "See quote on " +
-                                    '<a href="'+args.short_url+'">'+groupName+'</a>';
-
+                                var footerShareText = _wrapTag(args.reaction, true) +
+                                    '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                                
+                                content_length = 300;
                                 contentStr = _shortenContentIfNeeded(content, content_length);
                                 share_url = 'http://www.tumblr.com/share/quote?'+
                                 'quote='+encodeURIComponent(contentStr)+
@@ -5812,9 +5812,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     content = content.replace("localhost:8080", "www.readrboard.com");
                                 }
 
-                                mainShareText = _wrapTag(args.reaction, true, true);
+                                mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = 'See picture on <a href="'+args.short_url+'">'+ groupName +'</a>';
+                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
 
                                 share_url = 'http://www.tumblr.com/share/photo?'+
                                     'source='+encodeURIComponent(content)+
@@ -5830,9 +5830,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
                                 var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
 
-                                mainShareText = _wrapTag(args.reaction, true, true);
+                                mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = 'See video on <a href="'+args.short_url+'">'+ groupName +'</a>';
+                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
 
                                 //todo: get the urlencode right and put the link back in
                                 var readrLink = mainShareText + footerShareText;
@@ -5855,7 +5855,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 function _getGroupName(){
                     //consider using RDR.group.name
                     //todo: make this smarter - check for www. only in start of domain
-                    return (document.domain).replace('www.', " ")
+                    return RDR.group.name ?
+                        RDR.group.name :
+                        (document.domain).replace('www.', "");
                 }
                 
                 function _wrapTag(tag, doHTMLEscape, isActionNotContent){
@@ -5868,14 +5870,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         :
                             //use >>
                             doHTMLEscape ? 
-                                "&gt;&gt;" :
-                                ">>"
+                                "&raquo;" :
+                                "»"
                         ;
 
 
                     return doHTMLEscape ?
-                        "&#91;&nbsp;"  + tag + "&nbsp;&#93;&nbsp;&nbsp;"+connectorSign+"&nbsp;" : //[ tag ]  >>
-                        "[ "  + tag + " ]  "+connectorSign+" " ;
+                        tag + "&nbsp;"+connectorSign :
+                        tag + " "+connectorSign;
                 }
 
                 function _shortenContentIfNeeded(content, content_length, addQuotes){
