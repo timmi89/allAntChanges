@@ -492,9 +492,13 @@ table.rdr_tags tr.rdr_nextSteps div {
 }*/
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage {
     text-align: left !important;
+    padding: 0 !important;
 }
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage span{
     margin-left: 8px;
+}
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactUndoSuccess span{
+    margin-left: 0 !important;
 }
 table.rdr_tags tr.rdr_nextSteps div.rdr_reactionMessage strong{
     white-space: nowrap !important;
@@ -509,7 +513,8 @@ table.rdr_tags tr.rdr_nextSteps .rdr_label_icon{
     margin: 0 4px 0 0 !important;
 }
 
-table.rdr_tags tr.rdr_nextSteps div.rdr_reactSuccess .rdr_label_icon{
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactSuccess .rdr_label_icon,
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactUndoSuccess .rdr_label_icon{
     background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
 }
 table.rdr_tags tr.rdr_nextSteps div.rdr_commentBox .rdr_label_icon{
@@ -521,8 +526,10 @@ table.rdr_tags tr.rdr_nextSteps div.rdr_share_social .rdr_label_icon{
     top: 1px !important;
 }
 
-.rdr_reactUndoSuccess{
-    padding: 5px;
+table.rdr_tags tr.rdr_nextSteps div.rdr_reactUndoSuccess,
+div.rdr_reactUndoSuccess,
+div.rdr_indicator_details_for_media div.rdr_reactUndoSuccess{
+    padding: 5px !important;
 }
 
 table.rdr_tags tr.rdr_nextSteps div.rdr_nextSteps_container {

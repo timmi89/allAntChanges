@@ -358,10 +358,11 @@ function readrBoard($R){
                         $tr = $td.parent(),
                         $tag_table = $tr.closest('table.rdr_tags');
 
-                    $rindow.find('tr.rdr_nextSteps').remove();
-                    $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
-
                     if ( args.scenario != "tagDeleted" ) {
+
+                        $rindow.find('tr.rdr_nextSteps').remove();
+                        $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
+
                         $td.addClass('rdr_activePill');
                         var $nextTr = $('<tr class="rdr_nextSteps"><td colspan="100"><div class="rdr_nextSteps_container"/></td></tr>'),
                             $nextSteps = $nextTr.find('div.rdr_nextSteps_container').css('max-width', $tag_table.width() + "px");
@@ -388,7 +389,7 @@ function readrBoard($R){
                                         hash: args.hash,
                                         int_id: args.response.data.interaction.id,
                                         tag: args.tag,
-                                        rindow: args.rindow
+                                        rindow: $rindow
                                     };
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
@@ -492,7 +493,7 @@ function readrBoard($R){
                                     hash: args.hash,
                                     int_id: args.response.data.interaction.id,
                                     tag: args.tag,
-                                    rindow: args.rindow
+                                    rindow: $rindow
                                 };
                                 RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
 
@@ -520,7 +521,20 @@ function readrBoard($R){
                             newTagCount = ( existingTagCount==1 ) ? "+":existingTagCount-1;
 
                         $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).removeClass('rdr_tagged');
-                        $rindow.find('tr.rdr_nextSteps').remove().find('td.rdr_activePill').removeClass('rdr_activePill');
+                        
+                        // $rindow.find('tr.rdr_nextSteps').remove().find('td.rdr_activePill').removeClass('rdr_activePill');
+                        $rindow.find('tr.rdr_nextSteps').html(
+                            '<td colspan="100">'+
+                                '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
+                                    '<div class="rdr_label_icon"></div>'+
+                                    '<em>'+
+                                        '<span>Your Reaction: </span>'+
+                                        '<strong> '+args.tag.body+' </strong>'+
+                                        '<span>has been undone.</span>'+
+                                    '</em>'+
+                                '</div>'+
+                            '</td>'
+                        )
                     }
 
                     RDR.rindow.updateSizes( $rindow );
@@ -3996,7 +4010,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_pillContainer');
+                                        args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
                                     });
 
@@ -4020,7 +4034,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_pillContainer');
+                                        args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
                                     });
 
