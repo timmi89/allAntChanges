@@ -109,6 +109,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
   <div id="background-layer">
   </div>
+  {% block header %}
   <header role="banner" class="no-rdr clearfix">
     <a href="/"><h1>ReadrBoard</h1></a>
     <div id="settings">
@@ -182,6 +183,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       </form>
     </div>
   </header>
+  {% endblock header %}
 
   {% include "group_nav.html" %}
   <section role="content" class="clearfix">
@@ -371,24 +373,6 @@ function showVideo() {
 }
 </script>
 {% endblock %}
-
-<script>
-
-
-</script>
-
-<script type="text/javascript">
-    window._idl = {};
-    _idl.variant = "modal";
-    _idl.campaign = "idl_launch";
-    (function() {
-        var idl = document.createElement('script');
-        idl.type = 'text/javascript';
-        idl.async = true;
-        idl.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'members.internetdefenseleague.org/include/?url=' + (_idl.url || '') + '&campaign=' + (_idl.campaign || '') + '&variant=' + (_idl.variant || 'banner');
-        document.getElementsByTagName('body')[0].appendChild(idl);
-    })();
-</script>
 
 </body>
 </html>
