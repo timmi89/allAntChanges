@@ -10,12 +10,15 @@
   width:610px;
   position:relative;
   visibility:hidden;
+  /*to account for top margin of cards*/
+  top: -10px;
+  min-height:400px;
 }
 #content .card {
   float:left;
   width:300px;
   padding:0 0 10px 0;
-  margin:0 0 10px 0;
+  margin:10px 0;
   background:#fff;
   border:1px solid #ccc;
   border-top:none;
@@ -90,12 +93,46 @@
 }
 </style>
 {% if singleton %}
+
 <style>
+
+body{
+    position: absolute;
+    background: #555;
+    height: 100%;
+    width: 100%;
+}
+
+section[role="main"]{
+    margin: 40px 0 20px 0 !important;
+    background: #555;
+}
+
+section[role="content"]{
+    /*extra padding for the fixed footers*/
+    padding-bottom: 46px !important;
+    margin: 30px 0 !important;
+}
+#content {
+    /*clear min-height*/
+  min-height:0 !important;
+}
+
+footer{
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
 #splashAnnounce { display:none !important; }
 #content {
   float: none;
   margin: 0 auto !important;
-  width: 310px !important;
+  width: 300px !important;
+}
+
+.pagination{
+    display: none !important;
 }
 
 .new_reaction_text{
@@ -172,7 +209,7 @@ if ( window.location.href.indexOf('/user/') != -1 ) {
                       "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
                       }{% if not forloop.last %},{% endif %}
                   {% endfor %}
-                  ],
+                  ]
             };
             if ( interaction.user_name == "" ) {
               interaction.user_name = "Unregistered User";
@@ -314,9 +351,10 @@ function writeContentCard( interaction, showBlocked ) {
     
     // write the card first, then append the comment
     var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />')//chain
-        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>');
+        .append('<div class="group"><a href=/group/' + interaction.group.short_name + '><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a></div>')
+            .data('interactionId', interaction.id);
     var $header = $('<header/>').attr('title', interaction.interaction_node_body)
-         .append('<h1><a href="/stream/?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
+         .append('<h1><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1>');
 
     var hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png";
@@ -412,7 +450,7 @@ function writeContentCard( interaction, showBlocked ) {
                 'background-color' : '#eee'
               }
             }
-          },
+          }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
@@ -683,7 +721,7 @@ function getContentDimsStyle(dims){
     var CARDWIDTH = 300;
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
-    minHeight -= 3;
+    minHeight += 3;
     //quick fix for now to make the styles look better
 
     return 'style=" min-height:'+minHeight+'px; "';

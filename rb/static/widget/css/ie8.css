@@ -33,6 +33,15 @@ body.rdr_ie a.rdr_tag {
     border:1px solid #ccc !important;
     display:inline-block !important;
 }
+
+body.rdr_ie div.rdr-sum-reactions a.rdr_tag {
+    border: none !important;
+}
+body.rdr_ie div.rdr_tag_details a.rdr_tag {
+    border:1px solid #ccc !important;
+}
+
+
 body.rdr_ie table.rdr_tags span.rdr_comment_indicator {
 	zoom:1 !important;
 	display:inline-block !important;
