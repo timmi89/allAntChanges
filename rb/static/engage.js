@@ -3719,8 +3719,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 content_id = (content_node&&content_node.id) ? content_node.id:"",
                                 num_interactions = response.data.num_interactions;
 
-                            // $rindow.find('div.rdr_commentBox').html('Thank you for your comment. <br><br><strong>Reload the page to see your comment.</strong>').show();
-
                             RDR.rindow.updateSizes( $rindow );
 
 

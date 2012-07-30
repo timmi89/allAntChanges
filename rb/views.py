@@ -281,6 +281,7 @@ def board(request, board_id=None, **kwargs):
     """ For interactions.html """
     try:
         board = Board.objects.get(id=board_id)
+        context['board'] = board
         if cookie_user in board.admins.all():
             context['board_admin'] = True
         else:
