@@ -377,20 +377,12 @@ console.dir($rindow.data());
                                     $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
                                     $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                    $sayMore = $('<tr><td><strong>Say More:</strong></td><td colspan="3">COMMENT</td><td><button>Add</button></td></tr>').appendTo( $options ),
-                                    $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4">SAVE TO BOARD</td><td><button>Add</button></td></tr>').appendTo( $options ),
-                                    $share = $('<tr><td><strong>Share:</strong></td><td></td><td><button>Add</button></td></tr>').appendTo( $options );
+                                    $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td><button>Add</button></td></tr>').appendTo( $options ),
+                                    $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4">SAVE TO BOARD</td></tr>').appendTo( $options ),
+                                    $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
 
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
 
-                                // $nextSteps.append(
-                                //     '<div class="rdr_reactionMessage rdr_reactSuccess">'+
-                                //         '<div class="rdr_label_icon"></div>'+
-                                //         '<strong>'+tag.body+'</strong>'+
-                                //         '<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                //         '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
-                                //     '</div>' 
-                                // );
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
@@ -407,18 +399,18 @@ console.dir($rindow.data());
                                 // $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             // }
 
-                            // $nextSteps.append(
-                            //     '<div class="rdr_commentBox inlineCommentBox">'+
-                            //         '<div class="rdr_label_icon"></div>'+
-                            //         '<input type="text" class="rdr_add_comment inlineComment" value="Comment or hashtag..."/>'+
-                            //         '<div class="rdr_clear"></div>'+
-                            //     '</div>'
-                            // );
+                            $success.find('td.rdr_comment_input').append(
+                                '<div class="rdr_commentBox inlineCommentBox">'+
+                                    '<div class="rdr_label_icon"></div>'+
+                                    '<input type="text" class="rdr_add_comment inlineComment" value="Comment or hashtag..."/>'+
+                                    '<div class="rdr_clear"></div>'+
+                                '</div>'
+                            );
 
 
-/*
-                            // comment functionality
-                            var $commentInput = $nextSteps.find('input.rdr_add_comment');
+
+                            // // comment functionality
+                            var $commentInput = $success.find('input.rdr_add_comment');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
                                 if( $(this).val() == 'Comment or hashtag...' ){
@@ -467,12 +459,8 @@ console.dir($rindow.data());
                                     commentText = commentText.substr(0, RDR.group.comment_length);
                                     $commentInput.val( commentText );
                                 }
-                                // character counter
-                                // add back in.  animate in?
-                                //$commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                             });
-                            
-                            $nextSteps.append('<hr class="rdr_first"/>' );
+
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
                                     '<div class="rdr_label_icon"></div>'+
@@ -493,7 +481,8 @@ console.dir($rindow.data());
                                 });
                             });
                             $shareSocial.append( $shareLinks );
-                            $nextSteps.append($shareSocial);
+                            $success.find('td.rdr_share_buttons').append($shareSocial);
+/*
 */
                         // } else if ( args.scenario == "bookmarkSuccess" ) {
                         //     $nextSteps.append( '<div>You tagged this note: <strong>'+tag.body+'</strong>. <a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></div>' );
@@ -5946,14 +5935,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         :
                             //use >>
                             doHTMLEscape ? 
-                                "&gt;&gt;" :
-                                ">>"
+                                "&raquo;" :
+                                "»"
                         ;
 
 
                     return doHTMLEscape ?
-                        "&#91;&nbsp;"  + tag + "&nbsp;&#93;&nbsp;&nbsp;"+connectorSign+"&nbsp;" : //[ tag ]  >>
-                        "[ "  + tag + " ]  "+connectorSign+" " ;
+                        tag + "&nbsp;"+connectorSign+"&nbsp;" : //[ tag ]  >>
+                        tag + " "+connectorSign;
                 }
 
                 function _shortenContentIfNeeded(content, content_length, addQuotes){

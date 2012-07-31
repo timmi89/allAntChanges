@@ -366,6 +366,32 @@ div.rdr strong {font-weight:bold !important;}
     margin-bottom:20px !important;
 }
 
+#rdr_sandbox div.rdr div.rdr_view_success {
+  width:293px !important;
+}
+#rdr_sandbox div.rdr div.rdr_view_success h1 {
+  display:inline-block !important;
+}
+#rdr_sandbox div.rdr div.rdr_view_success .rdr_link a {
+  color:#008be4 !important;
+  margin-right:5px !important;
+  font-style:normal !important;
+  font-size:11px !important;
+}
+#rdr_sandbox div.rdr div.rdr_view_success hr {
+  background:#ccc;
+  border:none;
+  height:1px;
+  margin:6px 0;
+}
+#rdr_sandbox div.rdr div.rdr_view_success button {
+  margin-bottom:0 !important;
+  font-size:13px !important;
+}
+#rdr_sandbox div.rdr div.rdr_view_success td.rdr_first_column {
+  width:72px !important;
+}
+
 /* commentSet */
 #rdr_sandbox div.rdr div.rdr_comments                       {}
 #rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px !important; padding-bottom:5px !important; overflow:auto !important; border-bottom:1px solid #ddd !important; text-align:left !important;}
@@ -394,7 +420,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; position: relative !important; top: 4px !important;}
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 /*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }*/
-#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; border-top: 1px solid #d0d0d0 !important; padding-top:5px !important; max-width:92% !important; text-align:left !important;}
+#rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; padding-top:5px !important; max-width:92% !important; text-align:left !important;}
 #rdr_sandbox div.rdr div.rdr_nextSteps_container div.rdr_commentBox                     { border:none !important; text-align:center !important;}
 /*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_nextSteps_container div.rdr_commentBox         { clear:both !important; float:none !important;  }*/
 
@@ -408,7 +434,7 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr ul.shareLinks { display: block !important; top: 0 !important; padding: 0 !important; float:left !important; }
 /*#rdr_sandbox div.rdr tr.rdr_wide ul.shareLinks { margin: 0 0 !important; }*/
 #rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
-#rdr_sandbox div.rdr ul.shareLinks img       {width:18px !important; margin:0 !important;}
+#rdr_sandbox div.rdr ul.shareLinks img       {width:25px !important; margin:0 !important;}
 
 #rdr_sandbox div.rdr table.rdr-one-column div.rdr_share_social strong { float:none !important; margin:0 !important; }
 #rdr_sandbox div.rdr table.rdr-one-column ul.shareLinks { display: inline-block !important; margin: 2px auto 0 !important; float:none !important; }
@@ -421,10 +447,10 @@ div.rdr strong {font-weight:bold !important;}
     max-width: none !important;
 }
 #rdr_sandbox div.rdr input[type="text"].inlineComment{
-    width: 80% !important;
+    width: 160px !important;
     padding: 4px 2px !important;
     float: left !important;
-    margin: -2px 0 4px !important;
+    margin: -2px 7px 3px 0px !important;
 }
 
 #rdr_sandbox div.rdr .rdr_narrow input[type="text"].inlineComment{
