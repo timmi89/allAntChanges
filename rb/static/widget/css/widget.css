@@ -372,6 +372,9 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_view_success h1 {
   display:inline-block !important;
 }
+#rdr_sandbox div.rdr div.rdr_view_success h1 span {
+  font-weight:normal !important;
+}
 #rdr_sandbox div.rdr div.rdr_view_success .rdr_link a {
   color:#008be4 !important;
   margin-right:5px !important;

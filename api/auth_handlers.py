@@ -8,6 +8,7 @@ from utils import *
 from userutils import *
 import json
 from piston.utils import Mimer
+from django.forms.models import model_to_dict
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -79,7 +80,7 @@ class FBHandler(BaseHandler):
         # Make a token for this guy
         readr_token = createToken(django_user.id, social_auth.auth_token)
 
-        return dict(
+        user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
@@ -87,6 +88,16 @@ class FBHandler(BaseHandler):
             readr_token=readr_token,
             user_type="facebook"
         )
+
+        # get the user's readrboards
+        board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        boards = []
+        for b_a in board_admins:
+            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+
+        user['user_boards'] = boards
+
+        return user
         
         
 class RBHandler(BaseHandler):
@@ -146,7 +157,7 @@ class RBHandler(BaseHandler):
         # Make a token for this guy
         readr_token = createToken(django_user.id, social_auth.auth_token)
 
-        return dict(
+        user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
@@ -154,6 +165,16 @@ class RBHandler(BaseHandler):
             readr_token=readr_token,
             user_type="readrboard"
         )
+
+        # get the user's readrboards
+        board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        boards = []
+        for b_a in board_admins:
+            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+
+        user['user_boards'] = boards
+
+        return user
       
 
 class ConfirmUserHandler(BaseHandler):

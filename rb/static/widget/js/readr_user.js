@@ -129,7 +129,8 @@ RDRAuth = {
 					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
-					readr_token : RDRAuth.rdr_user.readr_token
+					readr_token : RDRAuth.rdr_user.readr_token,
+					user_boards : RDRAuth.rdr_user.user_boards
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
@@ -138,6 +139,7 @@ RDRAuth = {
 	getReadrToken: function(fb_response, callback ) {
 		// if ( $.cookie('user_type') == "facebook" ) {
 			if ( fb_response ) {
+				console.log('getreadrtoken FACEBOOK');
 	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 				var sendData = {
 					fb: fb_session,
@@ -158,6 +160,7 @@ RDRAuth = {
 						if ( response.status == "fail" ) {
 							RDRAuth.createTempUser();
 						} else {
+							console.dir(response);
 							RDRAuth.setUser(response);
 							RDRAuth.returnUser();
 							RDRAuth.notifyParent({}, "close login panel");
@@ -201,7 +204,8 @@ RDRAuth = {
 							full_name : RDRAuth.rdr_user.full_name,
 							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
-							readr_token : RDRAuth.rdr_user.readr_token
+							readr_token : RDRAuth.rdr_user.readr_token,
+							user_boards : RDRAuth.rdr_user.user_boards
 						}
 					};
 					RDRAuth.notifyParent(sendData, "got_temp_user");
@@ -214,7 +218,8 @@ RDRAuth = {
 					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
-					readr_token : RDRAuth.rdr_user.readr_token
+					readr_token : RDRAuth.rdr_user.readr_token,
+					user_boards : RDRAuth.rdr_user.user_boards
 				}
 			};
 			RDRAuth.notifyParent(sendData, "got_temp_user");
@@ -243,6 +248,7 @@ RDRAuth = {
 		}
 	},
 	checkFBStatus : function(args) {
+		console.log('checkFBStatus');
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
 				if (top == self) {
@@ -337,6 +343,7 @@ RDRAuth = {
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
 		RDRAuth.rdr_user.user_type = response.data.user_type;
+		RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
 		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
 		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
 		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
@@ -344,6 +351,7 @@ RDRAuth = {
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
+		$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
@@ -357,6 +365,7 @@ RDRAuth = {
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
+		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('boards');
 	},
 	returnUser : function() {
 		RDRAuth.readUserCookie();
@@ -392,7 +401,8 @@ RDRAuth = {
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token,
-					user_type : RDRAuth.rdr_user.user_type
+					user_type : RDRAuth.rdr_user.user_type,
+					user_boards : RDRAuth.rdr_user.user_boards
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
@@ -423,6 +433,7 @@ RDRAuth = {
 					$.cookie('user_id', null, { path: '/' });
 					$.cookie('readr_token', null, { path: '/' });
 					$.cookie('user_type', null, { path: '/' });
+					$.cookie('user_boards', null, { path: '/' });
 					$.cookie('rdr_session', null);
 					RDRAuth.rdr_user = {};
 					if (callback && this.callback_args) {

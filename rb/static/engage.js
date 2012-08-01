@@ -372,7 +372,7 @@ console.dir($rindow.data());
 
                                 // $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
 
-                                var $success = $('<div class="rdr_view_success"><h1>You reacted: ' + tag.body + '</h1></div>'),
+                                var $success = $('<div class="rdr_view_success"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
                                     undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
                                     $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
@@ -5435,15 +5435,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
 
                 RDR.rindow.updateTagMessage( args );
-
-                // var $success = $('<div class="rdr_view_success"><h1>You reacted: ' + tag.body + '</h1><hr/></div>'),
-                //     $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                //     $sayMore = $('<tr><td><strong>Say More:</strong></td><td colspan="3">COMMENT</td><td><button>Add</button></td></tr>').appendTo( $options ),
-                //     $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4">SAVE TO BOARD</td><td><button>Add</button></td></tr>').appendTo( $options ),
-                //     $share = $('<tr><td><strong>Share:</strong></td><td></td><td><button>Add</button></td></tr>').appendTo( $options );
-
-
-                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
 
                 var isMediaContainer = kind=="img" ||
                     kind=="imgage" ||
