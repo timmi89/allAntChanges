@@ -365,7 +365,9 @@ RDRAuth = {
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
-		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('boards');
+		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
+		console.log( $.cookie('user_boards') );
+		console.log(RDRAuth.rdr_user.user_boards);
 	},
 	returnUser : function() {
 		RDRAuth.readUserCookie();

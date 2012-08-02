@@ -391,8 +391,14 @@ div.rdr strong {font-weight:bold !important;}
   margin-bottom:0 !important;
   font-size:13px !important;
 }
+#rdr_sandbox div.rdr div.rdr_view_success td {
+  padding:5px;
+}
 #rdr_sandbox div.rdr div.rdr_view_success td.rdr_first_column {
   width:72px !important;
+}
+#rdr_sandbox div.rdr div.rdr_view_success td.rdr_last_column {
+  padding-left:0 !important;
 }
 
 /* commentSet */
@@ -446,17 +452,23 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr textarea,
 #rdr_sandbox div.rdr input[type="text"]  { -moz-box-shadow:inset 0px 0px 5px #ddd !important;-webkit-box-shadow:inset 0px 0px 5px #ddd !important; box-shadow:inset 0px 0px 5px #ddd !important; border:1px solid #ddd !important; height:auto !important; width:auto !important; font-family: arial !important; color:#666 !important; background:#fff !important;}
 
-#rdr_sandbox div.rdr div.rdr_commentBox.inlineCommentBox {
+#rdr_sandbox div.rdr div.rdr_commentBox.rdr_inlineCommentBox {
     max-width: none !important;
 }
-#rdr_sandbox div.rdr input[type="text"].inlineComment{
-    width: 160px !important;
+#rdr_sandbox div.rdr input[type="text"].rdr_inlineComment{
+    width: 149px !important;
     padding: 4px 2px !important;
     float: left !important;
-    margin: -2px 7px 3px 0px !important;
+    margin: -2px 0px 3px 0px !important;
+    font-style:italic !important;
+    color:#999 !important;
+}
+#rdr_sandbox div.rdr input[type="text"].rdr_inlineComment.rdr_adding_comment {
+    font-style:normal !important;
+    color:#454545 !important; 
 }
 
-#rdr_sandbox div.rdr .rdr_narrow input[type="text"].inlineComment{
+#rdr_sandbox div.rdr .rdr_narrow input[type="text"].rdr_inlineComment{
     width: 75% !important;
 }
 

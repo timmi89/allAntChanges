@@ -377,11 +377,20 @@ console.dir($rindow.data());
                                     $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
                                     $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                    $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td><button>Add</button></td></tr>').appendTo( $options ),
-                                    $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4">SAVE TO BOARD</td></tr>').appendTo( $options ),
+                                    $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button>Add</button></td></tr>').appendTo( $options ),
+                                    $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                     $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
 
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
+
+                                // boards
+                                var $user_boards = $('<select class="rdr_user_boards"/>');
+                                $.each( $.evalJSON( RDR.user.user_boards ), function(idx, board) {
+                                    $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
+                                });
+                                $user_boards.append('<option value="" class="">----------</option>');
+                                $user_boards.append('<option value="" class="rdr_create_board">Create a new ReadrBoard</option>');
+                                $success.find('td.rdr_select_user_board').append($user_boards);
 
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -400,9 +409,9 @@ console.dir($rindow.data());
                             // }
 
                             $success.find('td.rdr_comment_input').append(
-                                '<div class="rdr_commentBox inlineCommentBox">'+
+                                '<div class="rdr_commentBox rdr_inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
-                                    '<input type="text" class="rdr_add_comment inlineComment" value="Comment or hashtag..."/>'+
+                                    '<input type="text" class="rdr_add_comment rdr_inlineComment" value="Add a comment or #hashtag"/>'+
                                     '<div class="rdr_clear"></div>'+
                                 '</div>'
                             );
@@ -413,12 +422,14 @@ console.dir($rindow.data());
                             var $commentInput = $success.find('input.rdr_add_comment');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
-                                if( $(this).val() == 'Comment or hashtag...' ){
+                                $(this).addClass('rdr_adding_comment');
+                                if( $(this).val() == 'Add a comment or #hashtag' ){
                                     $(this).val('');
                                 }
                             }).blur(function(){
                                 if( $(this).val() === '' ){
-                                    $(this).val( 'Comment or hashtag...' );
+                                    $(this).val( 'Add a comment or #hashtag' );
+                                    $(this).removeClass('rdr_adding_comment');
                                 }
                             }).on('keyup', {args:args}, function(event) {
                                 var commentText = $commentInput.val();
@@ -443,7 +454,7 @@ console.dir($rindow.data());
                                         // $commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
                                     }
 
-                                    if ( commentText != "Comment or hashtag..." ) {
+                                    if ( commentText != "Add a comment or #hashtag" ) {
                                         //temp translations..
                                         //quick fix
                                         var summary = RDR.summaries[hash];
@@ -5411,7 +5422,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             },
             viewReactionSuccess: function(args) {
                 //RDR.actions.viewReactionSuccess
-                console.dir(args);
                 var tag = args.tag,
                     $rindow = args.rindow,
                     interaction = args.response.data.interaction,
