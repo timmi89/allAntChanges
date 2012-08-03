@@ -339,6 +339,7 @@ RB.profile_user = {
       });
     </script>
 
+{% block uservoice %}
 <script type="text/javascript">
   var uvOptions = {};
   (function() {
@@ -347,6 +348,7 @@ RB.profile_user = {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
   })();
 </script>
+{% endblock uservoice %}
 
 {% block fixedBar %}
 <div style="text-align:center;box-shadow:0px 0px 3px 1px #555;font-weight:bold;position:fixed;bottom:0;width:100%;background:#7fbadf;z-index:1000;overflow:auto;padding:10px 0;" id="fixedBar">
