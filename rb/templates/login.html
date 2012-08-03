@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "popup_form.html" %}
 
 {% block sidebarContent %}
 <div id="sidebar">
@@ -7,9 +7,16 @@
 
 {% block mainContent %}
   <h1>ReadrBoard Login</h1>
-  <h3>The page you have requested requires you are logged in via facebook!</h3>
-  <div>
-    <fb:login-button>Login to ReadrBoard</fb:login-button>
+  <h3>The page you have requested requires that you log in.</h3>
+  <div id="login-options" style="overflow:auto;">
+    <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
+      <div id="fb-login-button">
+        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in');FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
+      </div>
+    </div>
+    <div style="float:left;padding-left:6px;">
+      <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
+    </div>
   </div>
 
 {% endblock mainContent %}
