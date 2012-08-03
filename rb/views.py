@@ -12,6 +12,7 @@ from api.utils import *
 from api.userutils import *
 from authentication.token import checkCookieToken
 from authentication.decorators import requires_admin
+from authentication.decorators import requires_wordpress_admin
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
@@ -483,23 +484,39 @@ def reset_rb_password(request):
     
     return response
 
-            
-@requires_admin
+#TODO just testing this.  Fix decorator later.
+#@requires_admin
+@requires_wordpress_admin
 def settings(request, **kwargs):
     context = {}
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['cookie_user'] = kwargs['cookie_user']
 
     if request.method == 'POST':
+        
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
+            context['hostplatform'] = request.POST.get('hostplatform', 'null')
+            context['isWordpress'] = context['hostplatform'] == 'wordpress'
+
     else:
         form = GroupForm(instance=group)
+        context['hostplatform'] = request.GET.get('hostplatform', 'null')
+        context['isWordpress'] = context['hostplatform'] == 'wordpress'
 
     context['form'] = form
     context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
+
+    if context.get('isWordpress', False):
+        #route to the wordpress version of group_settings - it just extends group_settings and modifies it a little.
+        return render_to_response(
+            "group_settings_wordpress.html",
+            context,
+            context_instance=RequestContext(request)
+        )
+
     return render_to_response(
         "group_settings.html",
         context,
