@@ -956,8 +956,8 @@ class UserBoardsHandler(AnonymousBaseHandler):
         if cookie_user is None:
             raise JSONException('not logged in')
         board_admins = BoardAdmin.objects.filter(user = cookie_user)
-        boards = []
+        user_boards = []
         for b_a in board_admins:
-            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
-        return {'boards':boards}
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+        return {'user_boards':user_boards}
         

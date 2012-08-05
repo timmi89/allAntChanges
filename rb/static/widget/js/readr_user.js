@@ -139,7 +139,6 @@ RDRAuth = {
 	getReadrToken: function(fb_response, callback ) {
 		// if ( $.cookie('user_type') == "facebook" ) {
 			if ( fb_response ) {
-				console.log('getreadrtoken FACEBOOK');
 	            var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
 				var sendData = {
 					fb: fb_session,
@@ -160,7 +159,6 @@ RDRAuth = {
 						if ( response.status == "fail" ) {
 							RDRAuth.createTempUser();
 						} else {
-							console.dir(response);
 							RDRAuth.setUser(response);
 							RDRAuth.returnUser();
 							RDRAuth.notifyParent({}, "close login panel");
@@ -248,7 +246,6 @@ RDRAuth = {
 		}
 	},
 	checkFBStatus : function(args) {
-		console.log('checkFBStatus');
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
 				if (top == self) {
@@ -262,14 +259,13 @@ RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
-							// console.dir(response);
 							if ( $('#fb-login-button a.logging-in').length ) {
 							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
 								if ( $('#fb-login-button a').hasClass('logging-in') ) {
 									window.location.reload();
 								}
 
-								// shouldn't need this.  the window reload above removes the need for it.
+								// shouldn't need this?  the window reload above removes the need for it.  one would think...
 			      				var $user = $('<a/>'),
 								$avatar = $('<img/>'),
 								$name = $('<strong/>');
@@ -300,13 +296,14 @@ RDRAuth = {
 							}
 		      			});
 					} else {
-						RDRAuth.getReadrToken( response.authResponse, function() { });
+						RDRAuth.getReadrToken( response.authResponse );
 					}
 				} else {
 					// widget
 					$('#logged-in').show().css('visibility','visible');
 					$('#logged-out').hide().css('visibility','hidden');
 					RDRAuth.returnUser();
+					RDRAuth.getReadrBoards();
 				}
 			} else {
 				if (top == self) {
@@ -324,6 +321,8 @@ RDRAuth = {
 					RDRAuth.returnUser();
 					RDRAuth.notifyParent({}, "close login panel");
 					RDRAuth.popups.loginWindow.close();
+
+					RDRAuth.getReadrBoards();
 					clearInterval( RDRAuth.checkingRBLoginWindow );
                     if (top == self) {
 						window.location.reload();
@@ -331,6 +330,19 @@ RDRAuth = {
 				}
 			}, 250 );
 		}
+	},
+	getReadrBoards : function() {
+		$.ajax({
+				url: "/api/user/boards/",
+				type: "get",
+				contentType: "application/json",
+				dataType: "jsonp",
+				success: function(response){
+					RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
+					$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
+					RDRAuth.returnUser();
+				}
+			});
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
@@ -343,7 +355,6 @@ RDRAuth = {
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
 		RDRAuth.rdr_user.user_type = response.data.user_type;
-		RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
 		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
 		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
 		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
@@ -351,7 +362,6 @@ RDRAuth = {
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
-		$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
@@ -366,8 +376,6 @@ RDRAuth = {
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
 		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
-		console.log( $.cookie('user_boards') );
-		console.log(RDRAuth.rdr_user.user_boards);
 	},
 	returnUser : function() {
 		RDRAuth.readUserCookie();
@@ -408,6 +416,10 @@ RDRAuth = {
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
+
+			if ( typeof RDRAuth.rdr_user.user_boards == "undefined" ) {
+				RDRAuth.getReadrBoards();
+			}
 		}
 	},
 	killUser : function(callback, callback_args) {

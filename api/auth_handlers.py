@@ -90,12 +90,12 @@ class FBHandler(BaseHandler):
         )
 
         # get the user's readrboards
-        board_admins = BoardAdmin.objects.filter(user = django_user.id)
-        boards = []
-        for b_a in board_admins:
-            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+        # board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        # boards = []
+        # for b_a in board_admins:
+        #     boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
 
-        user['user_boards'] = boards
+        # user['user_boards'] = boards
 
         return user
         
@@ -167,12 +167,12 @@ class RBHandler(BaseHandler):
         )
 
         # get the user's readrboards
-        board_admins = BoardAdmin.objects.filter(user = django_user.id)
-        boards = []
-        for b_a in board_admins:
-            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+        # board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        # boards = []
+        # for b_a in board_admins:
+        #     boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
 
-        user['user_boards'] = boards
+        # user['user_boards'] = boards
 
         return user
       
