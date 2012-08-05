@@ -333,16 +333,18 @@ RDRAuth = {
 	},
 	getReadrBoards : function() {
 		$.ajax({
-				url: "/api/user/boards/",
-				type: "get",
-				contentType: "application/json",
-				dataType: "jsonp",
-				success: function(response){
+			url: "/api/user/boards/",
+			type: "get",
+			contentType: "application/json",
+			dataType: "jsonp",
+			success: function(response){
+				if ( response && response.status != "fail" ) {
 					RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
 					$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
 					RDRAuth.returnUser();
 				}
-			});
+			}
+		});
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
@@ -416,7 +418,6 @@ RDRAuth = {
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
-
 			if ( typeof RDRAuth.rdr_user.user_boards == "undefined" ) {
 				RDRAuth.getReadrBoards();
 			}
@@ -462,6 +463,7 @@ RDRAuth = {
 			$.cookie('img_url', null, { path: '/' });
 			$.cookie('user_id', null, { path: '/' });
 			$.cookie('readr_token', null, { path: '/' });
+			$.cookie('user_boards', null, { path: '/' });
 			$.cookie('rdr_session', null);
 			$.cookie('temp_user', null);
 			$.cookie('user_type', null);
@@ -525,7 +527,9 @@ RDRAuth = {
 		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" && !$.cookie('rdr_session' ) ) {
 			FB.getLoginStatus( function(response) {
 				if ( response.status && response.status == "connected" ) {
-					RDRAuth.getReadrToken( response.authResponse, function() {});
+					RDRAuth.getReadrToken( response.authResponse, function() {
+						RDRAuth.getReadrBoards();
+					});
 				}
 			});
 		} else {

@@ -353,9 +353,9 @@ function readrBoard($R){
                         summary = RDR.summaries[hash],
                         // $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id).eq(0):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
-console.clear();
-console.dir(args);
-console.dir($rindow.data());
+// console.clear();
+// console.dir(args);
+// console.dir($rindow.data());
                     // var $wrapperDiv = $pill.parent(),
                         // $td = $wrapperDiv.parent(),
                         // $tr = $td.parent(),
@@ -366,6 +366,7 @@ console.dir($rindow.data());
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
+                            // console.log( args.scenario );
                             // if ( args.scenario == "reactionSuccess" ) {
                                 // var existingTagCount = parseInt( $pill.data('tag_count') ),
                                     // newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
