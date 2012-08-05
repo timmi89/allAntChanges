@@ -89,6 +89,14 @@ class FBHandler(BaseHandler):
             user_type="facebook"
         )
 
+        # get the user's readrboards
+        board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        boards = []
+        for b_a in board_admins:
+            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+
+        user['user_boards'] = boards
+
         return user
         
         
@@ -157,6 +165,14 @@ class RBHandler(BaseHandler):
             readr_token=readr_token,
             user_type="readrboard"
         )
+
+        # get the user's readrboards
+        board_admins = BoardAdmin.objects.filter(user = django_user.id)
+        boards = []
+        for b_a in board_admins:
+            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+
+        user['user_boards'] = boards
 
         return user
       

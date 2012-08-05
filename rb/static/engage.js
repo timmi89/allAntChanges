@@ -385,13 +385,15 @@ function readrBoard($R){
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
 
                                 // boards
-                                var $user_boards = $('<select class="rdr_user_boards"/>');
-                                $.each( $.evalJSON( RDR.user.user_boards ), function(idx, board) {
-                                    $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
-                                });
-                                $user_boards.append('<option value="" class="">----------</option>');
-                                $user_boards.append('<option value="" class="rdr_create_board">Create a new ReadrBoard</option>');
-                                $success.find('td.rdr_select_user_board').append($user_boards);
+                                if (typeof RDR.user.user_boards != "undefined" ) {
+                                    var $user_boards = $('<select class="rdr_user_boards"/>');
+                                    $.each( $.evalJSON( RDR.user.user_boards ), function(idx, board) {
+                                        $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
+                                    });
+                                    $user_boards.append('<option value="" class="">----------</option>');
+                                    $user_boards.append('<option value="" class="rdr_create_board">Create a new ReadrBoard</option>');
+                                    $success.find('td.rdr_select_user_board').append($user_boards);
+                                }
 
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
