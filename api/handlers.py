@@ -930,7 +930,7 @@ class BoardAddHandler(AnonymousBaseHandler):
         if cookie_user is None:
             raise JSONException('not logged in')
         board_id = int(data['board_id'])
-        interaction_id = int(data['interaction_id'])
+        interaction_id = int(data['int_id'])
         board = Board.objects.get(id = board_id)
         interaction = Interaction.objects.get(id = interaction_id)
         if cookie_user in board.admins.all():       

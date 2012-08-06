@@ -1235,12 +1235,12 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
     line-height: 1.2em !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_seeit_link,
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_undo_link {
+#rdr_sandbox div.rdr a.rdr_seeit_link,
+#rdr_sandbox div.rdr a.rdr_undo_link {
     font-style: normal !important;
     text-decoration: underline !important;
     color: #008BE4 !important;
-    margin: 0 4px !important;
+    margin: 0 4px 0 0 !important;
     white-space: nowrap !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .pipe{

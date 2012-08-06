@@ -353,9 +353,7 @@ function readrBoard($R){
                         summary = RDR.summaries[hash],
                         // $pill = ( $rindow.find('a.rdr_tag_'+tag.id).length ) ? $rindow.find('a.rdr_tag_'+tag.id).eq(0):$rindow.find('a.rdr_custom_tag.rdr_tagged').eq(-1), // get the second-to-last custom tag, since we added the new, empty custom tag before getting here
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
-// console.clear();
-// console.dir(args);
-// console.dir($rindow.data());
+
                     // var $wrapperDiv = $pill.parent(),
                         // $td = $wrapperDiv.parent(),
                         // $tr = $td.parent(),
@@ -366,7 +364,7 @@ function readrBoard($R){
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
-                            // console.log( args.scenario );
+
                             // if ( args.scenario == "reactionSuccess" ) {
                                 // var existingTagCount = parseInt( $pill.data('tag_count') ),
                                     // newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
@@ -386,14 +384,31 @@ function readrBoard($R){
 
                                 // boards
                                 if (typeof RDR.user.user_boards != "undefined" ) {
-                                    var $user_boards = $('<select class="rdr_user_boards"/>');
-                                    $.each( $.evalJSON( RDR.user.user_boards ), function(idx, board) {
+                                    var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
+                                    $.each( RDR.user.user_boards, function(idx, board) {
                                         $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
                                     });
                                     $user_boards.append('<option value="" class="">----------</option>');
-                                    $user_boards.append('<option value="" class="rdr_create_board">Create a new ReadrBoard</option>');
+                                    $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
                                     $success.find('td.rdr_select_user_board').append($user_boards);
                                 }
+
+                                $user_boards.change( function() {
+                                    var $this = $(this).find(':checked');
+                                    if ( !isNaN( parseInt($this.val()) ) ) {
+                                        var newArgs = {
+                                            hash: args.hash,
+                                            board_id: parseInt($this.val()),
+                                            board_name: $this.text(),
+                                            int_id: args.response.data.interaction.id,
+                                            tag: args.tag,
+                                            rindow: args.rindow
+                                        };
+                                        RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
+                                    } else if ( $this.val() == "create" ) {
+                                        console.log('create a board');
+                                    }
+                                });
 
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
@@ -2185,7 +2200,11 @@ function readrBoard($R){
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
                                 for ( var i in message.data ) {
-                                    RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
+                                    if ( i == "user_boards" ) {
+                                        RDR.user.user_boards = $.evalJSON( message.data[i] );
+                                    } else {
+                                        RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
+                                    }
                                 }
                                 if ( callbackFunction && args ) {
                                     args.user = RDR.user;
@@ -3879,6 +3898,56 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //clear loader
                         var $rindow = args.rindow;
                         if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                    }
+                },
+                // breaks the interaction convention:
+                boardadd: {
+                    preAjax: function(){
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                    },
+                    customSendData: function(){
+                        return {};
+                    },
+                    onSuccess: {
+                        //RDR.actions.interactions.react.onSuccess:
+                        create: function(args){
+                            //clear loader
+                            var $rindow = args.rindow;
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                            var safe_board_name = args.board_name.replace(/\s*/,"_"),
+                                newArgs = { board_id:args.board_id, int_id:args.int_id },
+                                $success = $('<div class="rdr_success">Success!  See <a target="_blank" href="'+RDR_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="rdr_seeit_link">your board.</a> <a href="javascript:void(0);" class="rdr_seeit_link rdr_undo">Undo?</a></div>');
+                            
+                            $rindow.find('td.rdr_select_user_board').append( $success ).find('select').hide();
+
+                            $success.find('a.rdr_undo').click( function() {
+                                RDR.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
+                            });
+                        }
+                    }
+                },
+                // breaks the interaction convention:
+                boarddelete: {
+                    preAjax: function(){
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                    },
+                    customSendData: function(){
+                        return {};
+                    },
+                    onSuccess: {
+                        //RDR.actions.interactions.react.onSuccess:
+                        create: function(args){
+                            //clear loader
+                            var $rindow = args.rindow;
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                            $rindow.find('td.rdr_select_user_board').find('select').show();
+                            $rindow.find('td.rdr_select_user_board').find('div.rdr_success').remove();
+
+                        }
                     }
                 },
                 react: {
