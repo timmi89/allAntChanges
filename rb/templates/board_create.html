@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "popup_form.html" %}
 
 {% block bodyClass %}wide{% endblock %}
 
@@ -16,7 +16,7 @@
 </style>
 
 <section role="main>">
-  <h1>ReadrBoard Board Creation</h1>
+  <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
   {% if requested %}
     <h3>Your new readrboard is live!</h3>
     <a href = "/board/{{ board.id }}/{{ board.title.split|join:"_" }}">{{ board.title }}</a>
@@ -44,6 +44,14 @@
 {% endblock mainContent %}
 
 {% block pageJS %}
+<script>
+$(document).ready(function(){
+  $('body').tooltip({
+    selector: "img",
+    placement:"right"
+  });
+});
+</script>
 {% endblock %}
 
 {% block footer %}

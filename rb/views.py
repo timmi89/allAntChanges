@@ -86,8 +86,9 @@ def login(request):
     context['fb_client_id'] = FACEBOOK_APP_ID
     cookie_user = checkCookieToken(request)
     context['cookie_user'] = cookie_user
-    if cookie_user:
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    if cookie_user and request.META.get('HTTP_REFERER'):
+        # return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return request.META.get('HTTP_REFERER', '')
     return render_to_response(
         "login.html",
         context,

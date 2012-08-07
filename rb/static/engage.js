@@ -406,7 +406,8 @@ function readrBoard($R){
                                         };
                                         RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                                     } else if ( $this.val() == "create" ) {
-                                        console.log('create a board');
+                                        // console.log('create a board');
+                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                                     }
                                 });
 
