@@ -16,10 +16,26 @@
 </style>
 
 <section role="main>">
+  <script>
+  console.log( '{{ user_boards|escapejs }}' );
+  console.log( JSON.stringify('{{ user_boards|safe|escapejs }}') );
+$.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
+  </script>
   <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
   {% if requested %}
-    <h3>Your new readrboard is live!</h3>
-    <a href = "/board/{{ board.id }}/{{ board.title.split|join:"_" }}">{{ board.title }}</a>
+    <h3>Your board, <a href = "/board/{{ board.id }}/{{ board.title.split|join:"_" }}">{{ board.title }}</a>, has been created!</h3>
+    <button onclick="self.close();">Close window</button>
+    <script>
+    console.log('set a cookie now');
+    // now set cookie
+    $.cookie('new_board_id', '{{ board.id }}', { expires: 365, path: '/' } );
+    $.cookie('new_board_name', '{{ board.title }}', { expires: 365, path: '/' } );
+    $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
+    // $.cookie('user_boards', null, { path: '/' });
+
+    // maybe in views.py, similar to boards handler in api_handlers
+    // then figure out wtf to do about getting the board ID into the widget.
+    </script>
   {% else %}
 
     <form class="big-form" action="/board_create/" enctype="multipart/form-data" method="post" class="in-page">

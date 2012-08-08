@@ -17,9 +17,14 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
+from django.forms.models import model_to_dict
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import EmailMessage
+
+from django import template
+from django.utils.safestring import mark_safe
+from django.utils import simplejson
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -386,6 +391,13 @@ def create_board(request):
         
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
+
+    board_admins = BoardAdmin.objects.filter(user = cookie_user)
+    user_boards = []
+    for b_a in board_admins:
+        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+
+    context['user_boards'] = mark_safe(simplejson.dumps(user_boards))
     
     return render_to_response(
         "board_create.html",

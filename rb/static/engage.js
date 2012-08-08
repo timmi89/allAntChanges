@@ -382,16 +382,16 @@ function readrBoard($R){
 
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
 
+                                var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
                                 // boards
                                 if (typeof RDR.user.user_boards != "undefined" ) {
-                                    var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
                                     $.each( RDR.user.user_boards, function(idx, board) {
                                         $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
                                     });
-                                    $user_boards.append('<option value="" class="">----------</option>');
-                                    $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
-                                    $success.find('td.rdr_select_user_board').append($user_boards);
                                 }
+                                $user_boards.append('<option value="" class="">----------</option>');
+                                $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
+                                $success.find('td.rdr_select_user_board').append($user_boards);
 
                                 $user_boards.change( function() {
                                     var $this = $(this).find(':checked');
@@ -406,8 +406,47 @@ function readrBoard($R){
                                         };
                                         RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                                     } else if ( $this.val() == "create" ) {
-                                        // console.log('create a board');
-                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                        console.log('CREATE A BOARD');
+                                        // pop the board create form
+                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+
+                                        var intervalArgs = args;
+                                        RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
+                                            console.log('intervalArgs 1');
+                                            console.dir(intervalArgs);
+
+                                            if ( RDR.boardWindow && RDR.boardWindow.closed ) {
+                                                // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
+                                                RDR.session.receiveMessage({}, function(intervalArgs) {
+                                                    if ( typeof RDR.user.new_board_id != "undefined") {
+                                                        console.log('intervalArgs 2');
+                                                        console.dir(intervalArgs);
+                                                        console.log('RDR.user.new_board_id: '+RDR.user.new_board_id);
+
+                                                        var newArgs = {
+                                                            hash: args.hash,
+                                                            board_id: RDR.user.new_board_id,
+                                                            board_name: RDR.user.new_board_name,
+                                                            int_id: args.response.data.interaction.id,
+                                                            tag: args.tag,
+                                                            rindow: args.rindow
+                                                        };
+                                                        RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
+                                                    }
+                                                });
+
+                                                $.postMessage(
+                                                    "reloadXDMframe",
+                                                    RDR_baseUrl + "/static/xdm.html",
+                                                    window.frames['rdr-xdm-hidden']
+                                                );
+                                                RDR.boardWindow.close();
+                                                console.log('NOT checking window no more');
+                                                clearInterval( RDR.checkingBoardWindow );
+                                            }
+                                            console.log('checking window');
+                                        }, 250 );
+                                        
                                     }
                                 });
 
@@ -2207,6 +2246,7 @@ function readrBoard($R){
                                         RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                     }
                                 }
+
                                 if ( callbackFunction && args ) {
                                     args.user = RDR.user;
                                     callbackFunction(args);

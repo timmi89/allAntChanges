@@ -12,6 +12,8 @@ if ( typeof $.receiveMessage == "function") {
 		function(e){
 		    if( e.data == "getUser" ) {
 	    		RDRAuth.getUser();
+	    	} else if ( e.data == "reloadXDMframe" ) {
+	    		window.location.reload();
 	    	} else if ( e.data == "reauthUser" ) {
 		    	RDRAuth.reauthUser();
 		    } else if ( e.data == "returnUser" ) {
@@ -398,7 +400,9 @@ RDRAuth = {
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token,
 					user_type : RDRAuth.rdr_user.user_type,
-					user_boards : RDRAuth.rdr_user.user_boards
+					user_boards : RDRAuth.rdr_user.user_boards,
+					new_board_id : parseInt($.cookie('new_board_id')),
+					new_board_name : $.cookie('new_board_name')
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");

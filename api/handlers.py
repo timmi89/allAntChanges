@@ -587,6 +587,7 @@ class SettingsHandler(AnonymousBaseHandler):
                 site = Site.objects.get(domain=host)
                 # Get Group
                 group = Group.objects.get(id=site.group.id)
+
             except Site.DoesNotExist:
                 # create a group
                 # group = MAKE A GROUP(host)
