@@ -16,28 +16,21 @@
 </style>
 
 <section role="main>">
-  <script>
-  console.log( '{{ user_boards|escapejs }}' );
-  console.log( JSON.stringify('{{ user_boards|safe|escapejs }}') );
-$.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
-  </script>
-  <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
+  
   {% if requested %}
-    <h3>Your board, <a href = "/board/{{ board.id }}/{{ board.title.split|join:"_" }}">{{ board.title }}</a>, has been created!</h3>
-    <button onclick="self.close();">Close window</button>
+    <h1>Success!</h1>
+    <div style="padding:10px 20px;">
+      <h3>Your board, <strong>{{ board.title }}</strong>, has been created!</h3>
+      <button onclick="self.close();">Close window</button>
+    </div>
     <script>
-    console.log('set a cookie now');
     // now set cookie
     $.cookie('new_board_id', '{{ board.id }}', { expires: 365, path: '/' } );
     $.cookie('new_board_name', '{{ board.title }}', { expires: 365, path: '/' } );
     $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
-    // $.cookie('user_boards', null, { path: '/' });
-
-    // maybe in views.py, similar to boards handler in api_handlers
-    // then figure out wtf to do about getting the board ID into the widget.
     </script>
   {% else %}
-
+    <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
     <form class="big-form" action="/board_create/" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}
@@ -45,11 +38,13 @@ $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' 
             {{ form.non_field_errors }}
             <div class='formBodySection'>
                 <label for="id_title">Board Title </label>
-                {{ form.title }}{{ form.title.errors }}
+                {{ form.title.errors }}
+                {{ form.title }}
             </div>
             <div class='formBodySection'>
-                <label for="id_description"><span class="labelDescription">Description </span></label>
-                {{ form.description }}{{ form.description.errors }}
+                <label for="id_description">Description</label>
+                {{ form.description.errors }}
+                {{ form.description }}
             </div>
         </div>
         <button class="btn" type="submit">Submit</button>

@@ -416,13 +416,13 @@ function readrBoard($R){
                                             console.dir(intervalArgs);
 
                                             if ( RDR.boardWindow && RDR.boardWindow.closed ) {
+                                                //clear loader
+                                                var $rindow = args.rindow;
+                                                if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
                                                 // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
                                                 RDR.session.receiveMessage({}, function(intervalArgs) {
                                                     if ( typeof RDR.user.new_board_id != "undefined") {
-                                                        console.log('intervalArgs 2');
-                                                        console.dir(intervalArgs);
-                                                        console.log('RDR.user.new_board_id: '+RDR.user.new_board_id);
-
                                                         var newArgs = {
                                                             hash: args.hash,
                                                             board_id: RDR.user.new_board_id,
