@@ -20,8 +20,12 @@
   {% if requested %}
     <h1>Success!</h1>
     <div style="padding:10px 20px;">
-      <h3>Your board, <strong>{{ board.title }}</strong>, has been created!</h3>
-      <button onclick="self.close();">Close window</button>
+      <h3 style="margin-bottom:5px;">Your board, <strong>{{ board.title }}</strong>, has been created!</h3>
+      {% if is_popup != None %}
+      <button class="btn" onclick="self.close();">Return to page</button>
+      {% else %}
+      <a href="/board/{{ board.id }}/{{ board.title }}"><button class="btn">Go see your new board</button></a>
+      {% endif %}
     </div>
     <script>
     // now set cookie
@@ -31,13 +35,14 @@
     </script>
   {% else %}
     <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
-    <form class="big-form" action="/board_create/" enctype="multipart/form-data" method="post" class="in-page">
+    <form class="big-form" action="/board_create/{% if is_popup != None %}?popup=true{% endif %}" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}
 
             {{ form.non_field_errors }}
             <div class='formBodySection'>
                 <label for="id_title">Board Title </label>
+                {% if title_error %}<div class="error">{{ title_error }}</div>{% endif %}
                 {{ form.title.errors }}
                 {{ form.title }}
             </div>
@@ -61,6 +66,7 @@ $(document).ready(function(){
     selector: "img",
     placement:"right"
   });
+  $('#id_title').focus();
 });
 </script>
 {% endblock %}

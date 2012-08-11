@@ -408,7 +408,7 @@ class Follow(models.Model):
 class Board(DateAwareModel):
     owner = models.ForeignKey(User, related_name='board_owner')
     admins = models.ManyToManyField(User, through='BoardAdmin')
-    title = models.CharField(max_length = 255, blank=False, null=False)
+    title = models.CharField(max_length = 255, blank=False, null=False, unique=True)
     description = models.TextField()
     interactions = models.ManyToManyField(Interaction, through='BoardInteraction')
     active = models.BooleanField(default=True)

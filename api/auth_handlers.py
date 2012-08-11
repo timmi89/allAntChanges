@@ -91,11 +91,11 @@ class FBHandler(BaseHandler):
 
         # get the user's readrboards
         board_admins = BoardAdmin.objects.filter(user = django_user.id)
-        boards = []
+        user_boards = []
         for b_a in board_admins:
-            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
 
-        user['user_boards'] = boards
+        user['user_boards'] = user_boards
 
         return user
         
@@ -106,7 +106,7 @@ class RBHandler(BaseHandler):
     def create(self, request, admin_req=False):
         
         group_id = None
-        #print 'got data'
+
         try:
             user_id = request.POST['user_id']
         except KeyError:
@@ -168,11 +168,11 @@ class RBHandler(BaseHandler):
 
         # get the user's readrboards
         board_admins = BoardAdmin.objects.filter(user = django_user.id)
-        boards = []
+        user_boards = []
         for b_a in board_admins:
-            boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
 
-        user['user_boards'] = boards
+        user['user_boards'] = user_boards
 
         return user
       

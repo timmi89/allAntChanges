@@ -8,6 +8,7 @@ from settings import FACEBOOK_APP_ID, BASE_URL
 from baseconv import base62_decode
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
+from django.db import IntegrityError
 from api.utils import *
 from api.userutils import *
 from authentication.token import checkCookieToken
@@ -376,15 +377,22 @@ def create_group(request):
 
 def create_board(request):
     context = {}
+    context['is_popup'] = request.GET.get('popup')
+
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
     
     if request.method == 'POST':
         form = CreateBoardForm(request.POST)
         if form.is_valid():
-            board = form.save(cookie_user)
-            context['requested'] = True
-            context['board']  = board
+            try:
+                board = form.save(cookie_user)
+                context['requested'] = True
+                context['board']  = board
+
+            except IntegrityError, e:
+                context['title_error']  = 'You already have a board with this name.  Please choose a new name!'
+
             
     else:
         form = CreateBoardForm()
@@ -395,7 +403,7 @@ def create_board(request):
     board_admins = BoardAdmin.objects.filter(user = cookie_user)
     user_boards = []
     for b_a in board_admins:
-        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
 
     context['user_boards'] = mark_safe(simplejson.dumps(user_boards))
     

@@ -406,14 +406,11 @@ function readrBoard($R){
                                         };
                                         RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                                     } else if ( $this.val() == "create" ) {
-                                        console.log('CREATE A BOARD');
                                         // pop the board create form
-                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=true', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
 
                                         var intervalArgs = args;
                                         RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
-                                            console.log('intervalArgs 1');
-                                            console.dir(intervalArgs);
 
                                             if ( RDR.boardWindow && RDR.boardWindow.closed ) {
                                                 //clear loader
@@ -441,12 +438,9 @@ function readrBoard($R){
                                                     window.frames['rdr-xdm-hidden']
                                                 );
                                                 RDR.boardWindow.close();
-                                                console.log('NOT checking window no more');
                                                 clearInterval( RDR.checkingBoardWindow );
                                             }
-                                            console.log('checking window');
                                         }, 250 );
-                                        
                                     }
                                 });
 
@@ -3957,7 +3951,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var $rindow = args.rindow;
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                            var safe_board_name = args.board_name.replace(/\s*/,"_"),
+                            var safe_board_name = args.board_name.replace(/\s/g,"_"),
                                 newArgs = { board_id:args.board_id, int_id:args.int_id },
                                 $success = $('<div class="rdr_success">Success!  See <a target="_blank" href="'+RDR_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="rdr_seeit_link">your board.</a> <a href="javascript:void(0);" class="rdr_seeit_link rdr_undo">Undo?</a></div>');
                             
