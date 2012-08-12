@@ -141,11 +141,13 @@ footer{
 
 </style>
 {% endif %}
-{% if not singleton and not board %}
+{% if not singleton %}
+{% if not board %}
 <section id="headlines" style="margin-bottom:10px;">
   <h1 class="contentCardsHeader" style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;">Reactions to Content</h1>
   <h2 class="articleCardsHeader" style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;width:250px;margin-left:6px;">Reactions to Articles</h2>
 </section>
+{% endif %}
 <section id="pages"></section>
 {% endif %}
 <section id="content"></section>

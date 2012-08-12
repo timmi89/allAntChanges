@@ -1221,10 +1221,13 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
     background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
 }
 
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper, #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_select_user_board {
     display: block !important;
     clear: both !important;
     margin: 8px 0 !important;
+}
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_select_user_board div.rdr_success {
+  display:inline-block !important;
 }
 
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper strong.rdr_share_it {
