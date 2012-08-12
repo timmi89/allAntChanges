@@ -959,6 +959,6 @@ class UserBoardsHandler(AnonymousBaseHandler):
         board_admins = BoardAdmin.objects.filter(user = cookie_user)
         user_boards = []
         for b_a in board_admins:
-            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins']))
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
         return {'user_boards':user_boards}
         
