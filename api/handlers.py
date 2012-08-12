@@ -986,7 +986,11 @@ class UserBoardsHandler(AnonymousBaseHandler):
     def read(self, request, user_id = None **kwargs):
         if user_id:
             board_user = User.objects.get(id=user_id)
-            visible = True
+            logged_in_user = checkCookieToken(request)
+            if logged_in_user is not None and logged_in_user == board_user:
+                visible = False
+            else:
+                visible = True
         else:    
             board_user = checkCookieToken(request)
             visible = "True" == request.GET.get('visible', "True")
