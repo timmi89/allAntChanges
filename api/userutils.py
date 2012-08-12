@@ -264,4 +264,15 @@ def formatUserAvatarUrl(social_user):
     #logger.info(settings.BASE_URL + settings.MEDIA_URL+ 'users/'+ str(social_user.id) +'/avatars/'+ filename)
     return settings.STATIC_URL + 'users/'+ str(social_user.id) +'/avatars/'+ filename
     #return os.path.join(settings.BASE_URL, "/", settings.MEDIA_URL, 'users/', str(social_user.id) +'/avatars/', filename)
-    
+   
+   
+   
+def getUserBoardsDict(cookie_user):
+    board_admins = BoardAdmin.objects.filter(user = cookie_user)
+    user_boards = []
+    for b_a in board_admins:
+        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
+    return user_boards
+        
+        
+         
