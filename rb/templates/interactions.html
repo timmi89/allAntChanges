@@ -532,28 +532,28 @@ function writeContentCard( interaction, showBlocked ) {
               RB.interactions.add_to_board(interaction.id, parseInt($this.val()), $this.text() );
             } else if ( $this.val() == "create" ) {
                 // pop the board create form
-                RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=true', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
 
                 var intervalArgs = args;
-                RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
+                RB.checkingBoardWindow = setInterval( function(intervalArgs) {
 
-                    if ( RDR.boardWindow && RDR.boardWindow.closed ) {
+                    if ( RB.boardWindow && RB.boardWindow.closed ) {
                         //clear loader
                         var $rindow = args.rindow;
                         if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                         // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
-                        RDR.session.receiveMessage({}, function(intervalArgs) {
-                            if ( typeof RDR.user.new_board_id != "undefined") {
+                        RB.session.receiveMessage({}, function(intervalArgs) {
+                            if ( typeof RB.user.new_board_id != "undefined") {
                                 var newArgs = {
                                     hash: args.hash,
-                                    board_id: RDR.user.new_board_id,
-                                    board_name: RDR.user.new_board_name,
+                                    board_id: RB.user.new_board_id,
+                                    board_name: RB.user.new_board_name,
                                     int_id: args.response.data.interaction.id,
                                     tag: args.tag,
                                     rindow: args.rindow
                                 };
-                                RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
+                                RB.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                             }
                         });
 
@@ -562,8 +562,8 @@ function writeContentCard( interaction, showBlocked ) {
                             RDR_baseUrl + "/static/xdm.html",
                             window.frames['rdr-xdm-hidden']
                         );
-                        RDR.boardWindow.close();
-                        clearInterval( RDR.checkingBoardWindow );
+                        RB.boardWindow.close();
+                        clearInterval( RB.checkingBoardWindow );
                     }
                 }, 250 );
             }

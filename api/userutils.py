@@ -268,7 +268,7 @@ def formatUserAvatarUrl(social_user):
    
    
    
-def getUserBoardsDict(cookie_user, visible):
+def getUserBoardsDict(cookie_user, visible=True):
     board_admins = BoardAdmin.objects.filter(user = cookie_user)
     user_boards = []
     for b_a in board_admins:

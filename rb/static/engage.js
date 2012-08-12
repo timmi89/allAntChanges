@@ -407,7 +407,7 @@ function readrBoard($R){
                                         RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                                     } else if ( $this.val() == "create" ) {
                                         // pop the board create form
-                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=true', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=widget', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
 
                                         var intervalArgs = args;
                                         RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
