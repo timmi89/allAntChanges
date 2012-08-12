@@ -972,6 +972,7 @@ class BoardAddHandler(AnonymousBaseHandler):
             
             elif kwargs.get('action') is not None and kwargs.get('action') == 'add':
                 board_interaction = BoardInteraction.objects.get_or_create(board = board, interaction = interaction)
+                board.save()
                 return model_to_dict(board_interaction[0])
     
         else:
@@ -995,7 +996,7 @@ class BoardSearchHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data, **kwargs):
-        search_term = data.get('search_term','cupcakes')
+        search_term = data.get('search_term','')
         page_num = data.get('page_num', 1)
         return {'found_boards':searchBoards(search_term, page_num)}
     
