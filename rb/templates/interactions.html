@@ -6,7 +6,7 @@
 }
 #content {
   overflow:auto;
-  float:left;
+  /*float:left;*/
   width:610px;
   position:relative;
   visibility:hidden;
@@ -532,40 +532,7 @@ function writeContentCard( interaction, showBlocked ) {
               RB.interactions.add_to_board(interaction.id, parseInt($this.val()), $this.text() );
             } else if ( $this.val() == "create" ) {
                 // pop the board create form
-                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
-
-                var intervalArgs = args;
-                RB.checkingBoardWindow = setInterval( function(intervalArgs) {
-
-                    if ( RB.boardWindow && RB.boardWindow.closed ) {
-                        //clear loader
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                        // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
-                        RB.session.receiveMessage({}, function(intervalArgs) {
-                            if ( typeof RB.user.new_board_id != "undefined") {
-                                var newArgs = {
-                                    hash: args.hash,
-                                    board_id: RB.user.new_board_id,
-                                    board_name: RB.user.new_board_name,
-                                    int_id: args.response.data.interaction.id,
-                                    tag: args.tag,
-                                    rindow: args.rindow
-                                };
-                                RB.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                            }
-                        });
-
-                        $.postMessage(
-                            "reloadXDMframe",
-                            RDR_baseUrl + "/static/xdm.html",
-                            window.frames['rdr-xdm-hidden']
-                        );
-                        RB.boardWindow.close();
-                        clearInterval( RB.checkingBoardWindow );
-                    }
-                }, 250 );
+                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site&int_id='+interaction.id, 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
             }
         });
 
@@ -781,7 +748,9 @@ var $container = $('#content');
 
 function cardReset() {
   $('#cards, #board_header').width( $(window).width() - 20 );
-  var contentWidth = $('#cards').width() - 280;
+  var numSections = ( interactions.pages.length > 0 ) ? 2:1,
+      pageSectionWidth = ( numSections == 2 ) ? 280:0,
+      contentWidth = $('#cards').width() - pageSectionWidth;
   $('#content').width( contentWidth );
   $container.isotope({
       masonry: {
@@ -794,9 +763,16 @@ function cardReset() {
     $('#content, #headlines h1').width( (numColumns*300) + ((numColumns-1)*10) );
     var extraMargin = $(window).width() - ((numColumns*300) + ((numColumns-1)*10)) - 260 - 40;
 
-    var numColumns = ( interactions.pages.length ) ? 2:1;
-    $('#content').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
-    $('#pages').css('visibility','visible').css('margin-right', (extraMargin/numColumns)+'px');
+    if ( numSections == 2 ) {
+      $('#content').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
+      $('#pages').css('visibility','visible').css('margin-right', (extraMargin/numColumns)+'px');
+    } else {
+      $('#pages').hide();
+      $('#content').css('visibility','visible').css('margin-left', 'auto').css('margin-right', 'auto');
+      if ( $('#cards div.card').length == 1 ) {
+        $('#content').width(310);
+      }
+    }
     $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
     $('#headlines h2').css('visibility','visible');
   });

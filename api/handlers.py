@@ -983,7 +983,7 @@ class UserBoardsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET')
 
     @status_response
-    def read(self, request, user_id = None **kwargs):
+    def read(self, request, user_id = None, **kwargs):
         if user_id:
             board_user = User.objects.get(id=user_id)
             logged_in_user = checkCookieToken(request)

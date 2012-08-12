@@ -389,6 +389,7 @@ def create_group(request):
 def create_board(request):
     context = {}
     context['is_popup'] = request.GET.get('popup')
+    context['int_id'] = request.GET.get('int_id')
 
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')

@@ -7,8 +7,8 @@ var RB = RB ? RB : {};
 
 RB = {
     RDR_offline: RDR_offline,
-	group: {},
-	user_auth: {
+    group: {},
+    user_auth: {
 		doFBLogin: function(requesting_action) {
 			FB.login(function(response) {
               if (response.authResponse) {
@@ -21,8 +21,17 @@ RB = {
               }
             }, {scope: 'email'});
 		}
-	},
-	admin: {
+    },
+    querystring: function(key) {
+        var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
+        var qs_args = [];
+        for ( var i in qs ) {
+            var this_arg = qs[i].split('=');
+            qs_args[this_arg[0]] = this_arg[1];
+        }
+        return qs_args[ key ];
+    },
+    admin: {
 		requestAccess: function(fb_response, group_id) {
 			if ( fb_response ) {
 		        var fb_session = (fb_response.session) ? fb_response.session:fb_response
