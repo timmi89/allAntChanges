@@ -3,6 +3,7 @@ from readrboard import settings
 from datetime import datetime, timedelta
 import base64
 import uuid
+from django.forms.models import model_to_dict
 from django.core.mail import send_mail, mail_admins
 from django.utils.hashcompat import sha_constructor
 from django.contrib.auth.models import Permission
