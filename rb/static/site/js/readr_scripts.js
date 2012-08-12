@@ -486,13 +486,35 @@ RB = {
                     json: $.toJSON( sendData )
                 },
                 success: function(response) {
-                    console.dir(response);
 
                     if (response.status == "success" ) {
                         var $outcome = $('#add_to_board_form'),
                             $successMessage = $('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2><div><em>Success! You have added this to your board, <a href="/board/'+board_id+'/'+board_title+'">'+board_title+'</a>.</em></div>');
                         $outcome.html( $successMessage );
                         $outcome.show(333);
+                    }
+                }
+            });
+        },
+        remove_from_board : function(interaction_id, board_id, board_title) {
+            // RB.interactions.add_to_board
+            var sendData = {"board_id":board_id, "int_id":interaction_id};
+            
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/boarddelete/",
+                type: "get",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+                    if (response.status == "success" ) {
+                        $('#card_'+interaction_id).hide(333, function() {
+                            $(this).remove();
+                            // cardReset();
+                        });
                     }
                 }
             });

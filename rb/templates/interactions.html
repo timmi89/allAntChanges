@@ -409,7 +409,11 @@ function writeContentCard( interaction, showBlocked ) {
     }
 
     if ( $.cookie('user_id') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment</button> <button class="add_to_board">Add to board</button></div>').appendTo( $content );
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment</button> <button class="add_to_board">Add to board</button></div>');
+      if ( board_admin ) {
+        $buttons.append('<button class="delete_from_board">Delete from this board</button>');
+      }
+      $buttons.appendTo( $content );
     } else {
       var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, log in with the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
     }
@@ -554,6 +558,11 @@ function writeContentCard( interaction, showBlocked ) {
         $obj.find('#new_comment_button').click(function() {
           RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
         });
+      });
+
+      // REMOVE FROM BOARD (only if board admin)
+      $buttons.find('button.delete_from_board').click( function() {
+        RB.interactions.remove_from_board(interaction.id, "{{ board.id }}" );
       });
 
 
