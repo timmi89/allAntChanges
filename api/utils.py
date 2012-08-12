@@ -1,4 +1,7 @@
 from readrboard.rb.models import *
+from django.db.models import Q
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
 import random
 import json
@@ -291,13 +294,25 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 
 def searchBoards(search_term, page_num):
     board_list = []
-    boards = Board.objects.filter(Q(title__icontains = search_term) | 
-                        Q(description__icontains = search_term)).filter(visible=True)
+    boards = Board.objects.all().filter(visible=True)
+    if search_term is not None and len(search_term) > 0:
+        boards = Board.objects.filter(Q(title__icontains = search_term) | 
+                        Q(description__icontains = search_term))
+    boards.order_by('-modified')
     board_paginator = Paginator(boards, 20)
     try: board_page = board_paginator.page(page_num)
     except (EmptyPage, InvalidPage): board_page = board_paginator.page(board_paginator.num_pages)
+    board_owners = []
+    for board in board_page.object_list:
+        board_owners.append(board.owner)
+    socials = SocialUser.objects.filter(user__in = board_owners)
+    owner_social_map = {}
+    for social in socials:
+        owner_social_map[social.user.id] = model_to_dict(social, exclude=['notification_email_option', 'gender', 'provider', 'bio', 'hometown', 'user',
+                                                                                      'follow_email_option'])
     for board in board_page.object_list:
         board_dict = model_to_dict(board, fields=['id', 'title', 'description'])
+        board_dict['social_user'] = owner_social_map[board.owner.id]
         board_list.append(board_dict)
     return board_list
 

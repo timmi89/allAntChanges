@@ -293,6 +293,12 @@ def board(request, board_id=None, **kwargs):
     try:
         board = Board.objects.get(id=board_id)
         context['board'] = board
+        try:
+            social = SocialUser.objects.get(user=board.owner)
+            context['social_user'] = model_to_dict(social, fields=('id','full_name', 'img_url'))
+        except SocialUser.DoesNotExist:
+            logger.warn("Balls")
+            
         if cookie_user in board.admins.all():
             context['board_admin'] = True
         else:
