@@ -810,7 +810,7 @@ section[role="main"] div.card div.added_by                    { padding:5px 5px 
     /*this isn't the best, but oh well - it looks good.*/
     height: 39px;
 }
-section[role="main"] div.card div.added_by a                  { margin-right:5px; display:block;}
+section[role="main"] div.card div.added_by a                  { margin-right:5px; }
 section[role="main"] div.card div.added_by span.metoos        { display: block; float: right; margin-top: 9px; }
 section[role="main"] div.card div.added_by span.metoos:hover  { text-decoration:underline; cursor:pointer; }
 section[role="main"] div.card.pag.heightAdjusted div.added_by {

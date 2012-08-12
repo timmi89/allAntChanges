@@ -409,7 +409,7 @@ function writeContentCard( interaction, showBlocked ) {
     }
 
     if ( $.cookie('user_id') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment / Tag</button></div>').appendTo( $content );
+      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment</button> <button class="add_to_board">Add to board</button></div>').appendTo( $content );
     } else {
       var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, log in with the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
     }
@@ -431,6 +431,7 @@ function writeContentCard( interaction, showBlocked ) {
         RB.interactions.me_too( interaction.id );
       });
 
+      // add a new reaction
       $buttons.find('button.add_new_reaction').click( function() {
         $('#add_new_reaction_form').remove();
         if ( interaction.kind == "img" ) {
@@ -497,6 +498,97 @@ function writeContentCard( interaction, showBlocked ) {
           RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
         });
       });
+
+      // ADD TO BOARD
+      $buttons.find('button.add_to_board').click( function() {
+        $('#add_to_board_form').remove();
+        if ( interaction.kind == "img" ) {
+          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
+        } else if ( interaction.kind == "med" ) {
+          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
+        } else if ( interaction.kind == "txt" ) {
+          $rateContent = $('<div style="width:290px;padding:5px;background:#ddd;float:left;"><span style="inline-display:block;padding:20px;">'+interaction.content_body+'</span></div>');
+        }
+        // + '<a href="'+interaction.user_profile_link+'" rel="tooltip" title="'+interaction.user_name +'" class="added_by_user">'
+        // + '<img src="'+profilePic+'" class="user_avatar" />'
+
+        var $obj = $('<div style="width:600px;overflow:auto;" id="add_to_board_form" />').append('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2>')//chain
+                  .append( '<div style="width:280px;margin-left:10px;float:right;"><h4>Your Boards</h4><select style="width:95%;font-size:20px;" id="board_list"><option value="">Choose a board...</option></select></div>' )//chain
+                  .append( '<div style="width:280px;padding-bottom:2px;border-bottom:1px dotted #ccc;margin-bottom:2px;"><img src="'+profilePic+'" class="user_avatar" style="width:25px;"/> <h4 style="font-size:16px;display:inline-block;">'+interaction.user_name+':</h4></div>' )//chain
+                  .append( '<h3>'+interaction.interaction_node_body+'</h3>' )//chain
+                  .append( $rateContent );
+        
+        var $user_boards = $obj.find('#board_list');
+
+        $.each( $.evalJSON( $.cookie('user_boards') ), function(idx, board){
+          $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
+        });
+        $user_boards.append('<option value="" class="">----------</option>');
+        $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
+
+        $user_boards.change( function() {
+            var $this = $(this).find(':checked');
+            if ( !isNaN( parseInt($this.val()) ) ) {
+              RB.interactions.add_to_board(interaction.id, parseInt($this.val()), $this.text() );
+            } else if ( $this.val() == "create" ) {
+                // pop the board create form
+                RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=true', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+
+                var intervalArgs = args;
+                RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
+
+                    if ( RDR.boardWindow && RDR.boardWindow.closed ) {
+                        //clear loader
+                        var $rindow = args.rindow;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                        // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
+                        RDR.session.receiveMessage({}, function(intervalArgs) {
+                            if ( typeof RDR.user.new_board_id != "undefined") {
+                                var newArgs = {
+                                    hash: args.hash,
+                                    board_id: RDR.user.new_board_id,
+                                    board_name: RDR.user.new_board_name,
+                                    int_id: args.response.data.interaction.id,
+                                    tag: args.tag,
+                                    rindow: args.rindow
+                                };
+                                RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
+                            }
+                        });
+
+                        $.postMessage(
+                            "reloadXDMframe",
+                            RDR_baseUrl + "/static/xdm.html",
+                            window.frames['rdr-xdm-hidden']
+                        );
+                        RDR.boardWindow.close();
+                        clearInterval( RDR.checkingBoardWindow );
+                    }
+                }, 250 );
+            }
+        });
+
+        $.fancybox($obj ,{
+          // wrapCSS    : 'fancybox-custom',
+          helpers : {
+            overlay : {
+              css : {
+                'background-color' : '#eee'
+              }
+            }
+          },
+        });
+        $obj.find('input').focus().keyup( function(event) {
+          if (event.keyCode == '13') { //en
+            RB.interactions.add_new_comment( interaction.id, $(this).val() );
+          }
+        });
+        $obj.find('#new_comment_button').click(function() {
+          RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
+        });
+      });
+
 
     }
 
