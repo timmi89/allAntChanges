@@ -92,6 +92,7 @@ urlpatterns = patterns('',
     url(r'^boarddelete', BoardAdd, kwargs={'action':'delete'}),
     url(r'^boardsearch', BoardSearch),
     url(r'^user/boards', UserBoards),
+    url(r'^user/boards/(?P<user_id>\d+)', UserBoards),
     url(r'^follows/boards', FollowsBoards),
     #url(r'^comments/', Comments),
 )
