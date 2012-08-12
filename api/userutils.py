@@ -268,11 +268,14 @@ def formatUserAvatarUrl(social_user):
    
    
    
-def getUserBoardsDict(cookie_user):
+def getUserBoardsDict(cookie_user, visible):
     board_admins = BoardAdmin.objects.filter(user = cookie_user)
     user_boards = []
     for b_a in board_admins:
-        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
+        if visible and b_a.board.visible:
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
+        elif not visible:
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
     return user_boards
         
         

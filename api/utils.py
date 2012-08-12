@@ -292,7 +292,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
 def searchBoards(search_term, page_num):
     board_list = []
     boards = Board.objects.filter(Q(title__icontains = search_term) | 
-                        Q(description__icontains = search_term))
+                        Q(description__icontains = search_term)).filter(visible=True)
     board_paginator = Paginator(boards, 20)
     try: board_page = board_paginator.page(page_num)
     except (EmptyPage, InvalidPage): board_page = board_paginator.page(board_paginator.num_pages)
