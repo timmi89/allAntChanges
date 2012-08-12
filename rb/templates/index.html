@@ -15,7 +15,7 @@
 
 {% block mainContent %}
 <!-- <h2 style="text-align:center;border-bottom:1px solid #999;padding-bottom:10px;margin-bottom:10px;">Say stuff</h2> -->
-{% if not profile_user and not group %}
+{% if not profile_user and not group and not board %}
 <style>
 section[role="main"] {margin-top:10px;}
 section[role="complementary"] {display:none;}
@@ -36,11 +36,29 @@ section[role="complementary"] {display:none;}
         <h3 class="no-rdr"><span>ReadrBoard lets you easily express your reaction</span><br>to any phrase, picture, video, or article on the web.</h3>
     </div>
 </div>
-<!-- <em style="marign-bottom:10px;text-align:center;display:block;">Reactions from around the web</em> -->
-  <!-- <div xstyle="position:absolute;right:10px;top:10px;"> -->
-  <!-- </div> -->
 {% endif %}
-
+{% if board %}
+<style>
+#board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
+#board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
+#board_header .board_meta       { padding:10px 20px; background:none repeat scroll 0 0 rgba(0, 0, 0, 0.05); margin:20px auto; overflow:auto; width:900px; }
+#board_header h2    { font-size:18px; font-style:italic; }
+#board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold;}
+#board_header .board_meta button    { float:right; line-height:26px; }
+</style>
+<div id="board_header">
+    <h1>{{ board.title }}</h1>
+    {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
+    <div class="board_meta">
+        <button>Follow this board</button>
+        {% if board.owner.first_name %}
+        <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.first_name }} {{ board.owner.last_name }}</a></h3>
+        {% else %}
+        <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.username }}</a></h3>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
     {% block cards %}
     <div id="cards">
       {% include "interactions.html" %}

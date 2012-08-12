@@ -299,6 +299,10 @@ def board(request, board_id=None, **kwargs):
     except Board.DoesNotExist:
         raise Http404
     
+    # print "-------- BOARD ----------"
+    # print board.owner.id
+    # print board.owner.first_name
+    # print board.owner.last_name
     interactions = board.interactions.all()
     
     interactions_paginator = Paginator(interactions, 50)

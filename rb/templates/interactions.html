@@ -141,7 +141,7 @@ footer{
 
 </style>
 {% endif %}
-{% if not singleton %}
+{% if not singleton and not board %}
 <section id="headlines" style="margin-bottom:10px;">
   <h1 class="contentCardsHeader" style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;">Reactions to Content</h1>
   <h2 class="articleCardsHeader" style="text-align:center;display:inline-block;background:#f7f7f7;color:#bcbcbc;padding:8px 0 5px;font-size:18px;font-weight:bold;font-family:Helvetica,Arial,sans-serif;visibility:hidden;width:250px;margin-left:6px;">Reactions to Articles</h2>
@@ -686,7 +686,7 @@ var $container = $('#content');
   };
 
 function cardReset() {
-  $('#cards').width( $(window).width() - 20 );
+  $('#cards, #board_header').width( $(window).width() - 20 );
   var contentWidth = $('#cards').width() - 280;
   $('#content').width( contentWidth );
   $container.isotope({
@@ -699,9 +699,11 @@ function cardReset() {
     var numColumns = parseInt(contentWidth/310);
     $('#content, #headlines h1').width( (numColumns*300) + ((numColumns-1)*10) );
     var extraMargin = $(window).width() - ((numColumns*300) + ((numColumns-1)*10)) - 260 - 40;
-    $('#content').css('visibility','visible').css('margin-left', (extraMargin/2)+'px');
-    $('#pages').css('visibility','visible').css('margin-right', (extraMargin/2)+'px');
-    $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/2)+'px');
+
+    var numColumns = ( interactions.pages.length ) ? 2:1;
+    $('#content').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
+    $('#pages').css('visibility','visible').css('margin-right', (extraMargin/numColumns)+'px');
+    $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
     $('#headlines h2').css('visibility','visible');
   });
 }

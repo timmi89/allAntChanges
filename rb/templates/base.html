@@ -186,10 +186,12 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   {% include "group_nav.html" %}
   <section role="content" class="clearfix">
 
+    {% if not board %}
     <section role="complementary">
     {% block sidebarContent %}
     {% endblock %}
     </section>
+    {% endif %}
 
     <section role="main">
     {% block mainContent %}
