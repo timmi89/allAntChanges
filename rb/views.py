@@ -400,12 +400,7 @@ def create_board(request):
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
 
-    board_admins = BoardAdmin.objects.filter(user = cookie_user)
-    user_boards = []
-    for b_a in board_admins:
-        user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
-
-    context['user_boards'] = mark_safe(simplejson.dumps(user_boards))
+    context['user_boards'] = mark_safe(simplejson.dumps(getUserBoardsDict(cookie_user)))
     
     return render_to_response(
         "board_create.html",
