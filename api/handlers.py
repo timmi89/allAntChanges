@@ -984,9 +984,10 @@ class UserBoardsHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
         cookie_user = checkCookieToken(request)
+        visible = request.GET.get('visible', "True")
         if cookie_user is None:
             raise JSONException('not logged in')
-        return {'user_boards':getUserBoardsDict(cookie_user)}
+        return {'user_boards':getUserBoardsDict(cookie_user, visible == "True")}
     
 class BoardSearchHandler(AnonymousBaseHandler):
     allowed_methods = ('GET')
@@ -1011,6 +1012,6 @@ class FollowedBoardsHandler(AnonymousBaseHandler):
         for follow in follow_objects:
             board_dict = model_to_dict(follow.board, fields=['id', 'title', 'description'])
             board_list.append(board_dict)
-        return {'board_list':board_list}
+        return {'followed_boards':board_list}
     
         
