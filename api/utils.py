@@ -286,3 +286,20 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         ret['num_interactions']=num_interactions+1
 
     return ret
+
+
+
+def searchBoards(search_term, page_num):
+    board_list = []
+    boards = Board.objects.filter(Q(title__icontains = search_term) | 
+                        Q(description__icontains = search_term))
+    board_paginator = Paginator(boards, 20)
+    try: board_page = board_paginator.page(page_num)
+    except (EmptyPage, InvalidPage): board_page = board_paginator.page(board_paginator.num_pages)
+    for board in board_page.object_list:
+        board_dict = model_to_dict(board, fields=['id', 'title', 'description'])
+        board_list.append(board_dict)
+    return board_list
+
+
+
