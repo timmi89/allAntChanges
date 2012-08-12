@@ -382,29 +382,7 @@ class SocialAuth(models.Model):
     class Meta:
         unique_together = ('auth_token', 'expires')
         
-        
-class Follow(models.Model):
-    FOLLOW_TYPES = (
-        ('pag', 'page'),
-        ('usr', 'user'),
-        ('grp', 'group'),
-    )
-    owner = models.ForeignKey(User, related_name='follow_owner')
-    type = models.CharField(max_length=3, choices=FOLLOW_TYPES)
-    page = models.ForeignKey(Page, blank=True, null=True, related_name='followed_page')
-    user = models.ForeignKey(User, blank=True, null=True, related_name='followed_user')
-    group = models.ForeignKey(Group, blank=True, null=True, related_name='followed_group')
-    follow_id = models.IntegerField(default = 0)
-    
-    def __unicode__(self):
-        return unicode(str(self.owner.id) + " " + self.type + " " + str(self.follow_id))
 
-    class Meta:
-        unique_together = ('owner', 'type', 'follow_id')
-
-
-
-        
 class Board(DateAwareModel):
     owner = models.ForeignKey(User, related_name='board_owner')
     admins = models.ManyToManyField(User, through='BoardAdmin')
@@ -413,6 +391,7 @@ class Board(DateAwareModel):
     interactions = models.ManyToManyField(Interaction, through='BoardInteraction')
     active = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
+    
     
     def __unicode__(self):
         return unicode(str(self.owner.username) + ":" + str(self.active) + ":" + str(self.visible) + ":" + self.title)
@@ -445,4 +424,30 @@ class BoardAdmin(models.Model):
     class Meta:
         unique_together = ('board', 'user')
 
+    
         
+class Follow(models.Model):
+    FOLLOW_TYPES = (
+        ('pag', 'page'),
+        ('usr', 'user'),
+        ('grp', 'group'),
+        ('brd', 'board'),
+    )
+    owner = models.ForeignKey(User, related_name='follow_owner')
+    type = models.CharField(max_length=3, choices=FOLLOW_TYPES)
+    page = models.ForeignKey(Page, blank=True, null=True, related_name='followed_page')
+    user = models.ForeignKey(User, blank=True, null=True, related_name='followed_user')
+    group = models.ForeignKey(Group, blank=True, null=True, related_name='followed_group')
+    board = models.ForeignKey(Board, blank=True, null=True, related_name='followed_board')
+    follow_id = models.IntegerField(default = 0)
+    
+    def __unicode__(self):
+        return unicode(str(self.owner.id) + " " + self.type + " " + str(self.follow_id))
+
+    class Meta:
+        unique_together = ('owner', 'type', 'follow_id')
+
+
+
+        
+    

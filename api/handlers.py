@@ -79,6 +79,27 @@ class PrivacyHandler(AnonymousBaseHandler):
         su.private_profile = not su.private_profile
         su.save()
         
+class BoardVisibilityHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        # Check if current user's token has permission
+        user = checkToken(data)
+        
+        if not user: raise JSONException(u"Token was invalid")
+        
+        board_id = data['board_id']
+        try:
+            board = Board.objects.get(id=board_id)
+            if user in board.admins:
+                board.visible = not board.visible
+        except Board.DoesNotExist:
+            raise JSONException(u"Board does not exist")
+        
+        
+        
+        
+        
 class FollowEmailHandler(AnonymousBaseHandler):
     @status_response
     @json_data
@@ -729,13 +750,13 @@ class FollowHandler(InteractionHandler):
         #if type == 'usr'
             #send followed user notification
         if type == 'usr':
-            follow.user = User.objects.get(id=follow_id)
-            
-            
+            follow.user = User.objects.get(id=follow_id)        
         elif type == 'pag':
             follow.page = Page.objects.get(id=follow_id)
         elif type == 'grp':
             follow.group = Group.objects.get(id=follow_id)
+        elif type =='brd':
+            follow.board = Board.objects.get(id=follow_id)   
         else:
             return {'message':'bad_type'}
         
@@ -789,6 +810,8 @@ class FollowHandler(InteractionHandler):
                 compound_dict['grp'] = model_to_dict(follow.group, exclude=['word_blacklist'])
             elif follow.type == 'pag' and follow.page is not None:
                 compound_dict['pag'] = model_to_dict(follow.page)
+            elif follow.type == 'brd' and follow.board is not None:
+                compound_dict['brd'] = model_to_dict(follow.board)
             follows['paginated_follows'].append(compound_dict)
             
         followed_by = Follow.objects.filter(type = 'usr', follow_id = owner.id)
@@ -797,7 +820,7 @@ class FollowHandler(InteractionHandler):
         except (EmptyPage, InvalidPage): followed_by_page = followed_by_paginator.page(followed_by_paginator.num_pages)
         
         follows['followed_by_count'] = followed_by_paginator.count
-        logger.info(follows)
+        #logger.info(follows)
         return follows
     
 class FollowedEntityHandler(InteractionHandler):
@@ -832,6 +855,13 @@ class FollowedEntityHandler(InteractionHandler):
                     user_is_follower = True
         elif entity_type == 'usr':        
             followed_by = Follow.objects.filter(user = User.objects.get(id = follow_id))                      
+            if cookie_user is not None:
+                logged_followers = Follow.objects.filter(owner=cookie_user, user = User.objects.get(id = follow_id))
+                if len(logged_followers) > 0:
+                    user_is_follower = True
+        
+        elif entity_type == 'brd':        
+            followed_by = Follow.objects.filter(board = Board.objects.get(id = follow_id))                      
             if cookie_user is not None:
                 logged_followers = Follow.objects.filter(owner=cookie_user, user = User.objects.get(id = follow_id))
                 if len(logged_followers) > 0:
@@ -957,4 +987,30 @@ class UserBoardsHandler(AnonymousBaseHandler):
         if cookie_user is None:
             raise JSONException('not logged in')
         return {'user_boards':getUserBoardsDict(cookie_user)}
+    
+class BoardSearchHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
+
+    @status_response
+    @json_data
+    def read(self, request, data, **kwargs):
+        search_term = data.get('search_term','cupcakes')
+        page_num = data.get('page_num', 1)
+        return {'found_boards':searchBoards(search_term, page_num)}
+    
+class FollowedBoardsHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
+    
+    @status_response
+    def read(self, request,**kwargs):
+        cookie_user = checkCookieToken(request)
+        if cookie_user is None:
+            raise JSONException('not logged in')
+        follow_objects = Follow.objects.filter(owner = cookie_user, type = 'brd')
+        board_list = []
+        for follow in follow_objects:
+            board_dict = model_to_dict(follow.board, fields=['id', 'title', 'description'])
+            board_list.append(board_dict)
+        return {'board_list':board_list}
+    
         
