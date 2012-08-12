@@ -983,12 +983,15 @@ class UserBoardsHandler(AnonymousBaseHandler):
     allowed_methods = ('GET')
 
     @status_response
-    def read(self, request, **kwargs):
-        cookie_user = checkCookieToken(request)
-        visible = request.GET.get('visible', "True")
-        if cookie_user is None:
-            raise JSONException('not logged in')
-        return {'user_boards':getUserBoardsDict(cookie_user, visible == "True")}
+    def read(self, request, user_id = None **kwargs):
+        if user_id:
+            board_user = User.objects.get(id=user_id)
+            visible = True
+        else:    
+            board_user = checkCookieToken(request)
+            visible = "True" == request.GET.get('visible', "True")
+        
+        return {'user_boards':getUserBoardsDict(board_user, visible)}
     
 class BoardSearchHandler(AnonymousBaseHandler):
     allowed_methods = ('GET')
