@@ -363,6 +363,7 @@ function readrBoard($R){
                     // $rindow.find('td.rdr_activePill').removeClass('rdr_activePill');
 
                     if ( args.scenario != "tagDeleted" ) {
+
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
 
                             // if ( args.scenario == "reactionSuccess" ) {
@@ -451,7 +452,7 @@ function readrBoard($R){
                                         hash: args.hash,
                                         int_id: args.response.data.interaction.id,
                                         tag: args.tag,
-                                        rindow: args.rindow
+                                        rindow: $rindow
                                     };
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
@@ -544,6 +545,7 @@ function readrBoard($R){
                                 });
                             });
                             $shareSocial.append( $shareLinks );
+
                             $success.find('td.rdr_share_buttons').append($shareSocial);
 /*
 */
@@ -559,6 +561,7 @@ function readrBoard($R){
                         //             rindow: args.rindow
                         //         };
                         //         RDR.actions.interactions.ajax( newArgs, 'bookmark', 'remove' );
+
 
                         //     });
 
@@ -603,6 +606,22 @@ function readrBoard($R){
                         RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
                         });
+
+                        // $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).removeClass('rdr_tagged');
+                        
+                        // // $rindow.find('tr.rdr_nextSteps').remove().find('td.rdr_activePill').removeClass('rdr_activePill');
+                        // $rindow.find('tr.rdr_nextSteps').html(
+                        //     '<td colspan="100">'+
+                        //         '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
+                        //             '<div class="rdr_label_icon"></div>'+
+                        //             '<em>'+
+                        //                 '<span>Your Reaction: </span>'+
+                        //                 '<strong> '+args.tag.body+' </strong>'+
+                        //                 '<span>has been undone.</span>'+
+                        //             '</em>'+
+                        //         '</div>'+
+                        //     '</td>'
+                        // )
 
                     }
 
@@ -3321,7 +3340,9 @@ function readrBoard($R){
 
                                     //now run the type specific function with the //run the setup func above
                                     var kind = summary.kind;
-                                    _setupFuncs[kind](hash, summary);
+                                    if(kind != "page"){
+                                        _setupFuncs[kind](hash, summary);
+                                    }
 
                                     //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
                                     //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
@@ -4126,7 +4147,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_pillContainer');
+                                        args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
                                     });
 
@@ -4151,7 +4172,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_pillContainer');
+                                        args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
                                     });
 
@@ -4241,7 +4262,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                             
                             function _undoPageReaction(args){
-                                
                                 var newArgs = {
                                     hash: args.hash,
                                     kind: 'page',
@@ -5964,7 +5984,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             case "img":
                             case "image":
-                                contentStr = "See picture";
+                                contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
                                 if(RDR_offline){
@@ -5973,14 +5993,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "med":
                             case "video":
-                                contentStr = "See video";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a video on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            break;
+
+                            case "page":
+                                contentStr = "[an article on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
                         }
 
@@ -6001,26 +6026,31 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var mainShareText = "";
                         var footerShareText = "A ReadrBoard Reaction on " + groupName;
                         var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
-                    
+
                         switch ( args.container_kind ) {
                             case "txt":
                             case "text":
-                                content_length = ( 100 - args.reaction.length );
+                                content_length = ( 110 - args.reaction.length );
                                 contentStr = _shortenContentIfNeeded(content, content_length, true);
                                 mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "img":
                             case "image":
-                                contentStr = "See image";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a picture on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
 
                             case "media":
                             case "med":
                             case "video":
-                                contentStr = "See video";
-                                mainShareText = _wrapTag(args.reaction, false, true) +" "+ contentStr;
+                                contentStr = "[a video on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
+                            break;
+
+                            case "page":
+                                contentStr = "[an article on "+groupName+"] Check it out: ";
+                                mainShareText = _wrapTag(args.reaction) +" "+ contentStr;
                             break;
                         }
 
@@ -6038,10 +6068,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             case "txt":
                             case "text":
                                 //tumblr adds quotes for us - don't pass true to quote it.
-                                var footerShareText = _wrapTag(args.reaction, true, true) +
-                                    "See quote on " +
-                                    '<a href="'+args.short_url+'">'+groupName+'</a>';
-
+                                var footerShareText = _wrapTag(args.reaction, true) +
+                                    '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                                
+                                content_length = 300;
                                 contentStr = _shortenContentIfNeeded(content, content_length);
                                 share_url = 'http://www.tumblr.com/share/quote?'+
                                 'quote='+encodeURIComponent(contentStr)+
@@ -6057,9 +6087,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     content = content.replace("localhost:8080", "www.readrboard.com");
                                 }
 
-                                mainShareText = _wrapTag(args.reaction, true, true);
+                                mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = 'See picture on <a href="'+args.short_url+'">'+ groupName +'</a>';
+                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
 
                                 share_url = 'http://www.tumblr.com/share/photo?'+
                                     'source='+encodeURIComponent(content)+
@@ -6075,15 +6105,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
                                 var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
 
-                                mainShareText = _wrapTag(args.reaction, true, true);
+                                mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = 'See video on <a href="'+args.short_url+'">'+ groupName +'</a>';
+                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
 
                                 //todo: get the urlencode right and put the link back in
                                 var readrLink = mainShareText + footerShareText;
                                 share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
                             break;
 
+                            case "page":
+                                var footerShareText = _wrapTag(args.reaction, true) +
+                                    '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
+                                
+                                content_length = 300;
+                                contentStr = _shortenContentIfNeeded(content, content_length);
+                                share_url = 'http://www.tumblr.com/share/link?'+
+                                'url='+encodeURIComponent(args.short_url)+
+                                '&description='+encodeURIComponent(footerShareText);
+
+                            break;
 
                         }
                     break;
@@ -6095,12 +6136,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( RDR.shareWindow ) {
                         RDR.shareWindow.location = share_url;
                     }
+                }else{
+                    if ( RDR.shareWindow ) {
+                        RDR.shareWindow.close();
+                    }
                 }
 
                 function _getGroupName(){
                     //consider using RDR.group.name
                     //todo: make this smarter - check for www. only in start of domain
-                    return (document.domain).replace('www.', " ")
+                    return RDR.group.name ?
+                        RDR.group.name :
+                        (document.domain).replace('www.', "");
                 }
                 
                 function _wrapTag(tag, doHTMLEscape, isActionNotContent){
