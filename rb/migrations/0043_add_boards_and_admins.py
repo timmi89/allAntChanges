@@ -48,13 +48,13 @@ class Migration(SchemaMigration):
         db.create_unique('rb_boardadmin', ['board_id', 'user_id'])
 
         # Adding field 'Interaction.rank'
-        db.add_column('rb_interaction', 'rank', self.gf('django.db.models.fields.BigIntegerField')(default=0), keep_default=False)
+        #db.add_column('rb_interaction', 'rank', self.gf('django.db.models.fields.BigIntegerField')(default=0), keep_default=False)
 
         # Adding field 'Content.height'
-        db.add_column('rb_content', 'height', self.gf('django.db.models.fields.IntegerField')(default=0, null=True), keep_default=False)
+        #db.add_column('rb_content', 'height', self.gf('django.db.models.fields.IntegerField')(default=0, null=True), keep_default=False)
 
         # Adding field 'Content.width'
-        db.add_column('rb_content', 'width', self.gf('django.db.models.fields.IntegerField')(default=0, null=True), keep_default=False)
+        #db.add_column('rb_content', 'width', self.gf('django.db.models.fields.IntegerField')(default=0, null=True), keep_default=False)
 
 
     def backwards(self, orm):
@@ -78,13 +78,13 @@ class Migration(SchemaMigration):
         db.delete_table('rb_boardadmin')
 
         # Deleting field 'Interaction.rank'
-        db.delete_column('rb_interaction', 'rank')
+        #db.delete_column('rb_interaction', 'rank')
 
         # Deleting field 'Content.height'
-        db.delete_column('rb_content', 'height')
+        #db.delete_column('rb_content', 'height')
 
         # Deleting field 'Content.width'
-        db.delete_column('rb_content', 'width')
+        #db.delete_column('rb_content', 'width')
 
 
     models = {

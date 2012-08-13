@@ -513,7 +513,7 @@ RB = {
                                 $li = $('<li />');
                             $li.append('<div style="background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;" class="user_meta"><a style="color:#454545;text-decoration:none !important;" href="/user/'+board.social_user.id+'">'+board.social_user.full_name+'</a></div>');
                             if ( board.social_user.img_url != null ) {
-                                $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; width: 22px;"> ');
+                                $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; height:22px; max-width: 22px;"> ');
                             }
                             $li.append('<a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a>');
                             $boards.find('ul').append( $li );
