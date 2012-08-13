@@ -425,7 +425,46 @@ RB = {
                         var $boards = $('<div id="board_list"><h2>ReadrBoards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
-                            $boards.find('ul').append('<li><a href="/board/'+board.id+'">'+board.title+'</a></li>');
+                            $boards.find('ul').append('<li><a style="font-size:22px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
+                        });
+                        var boards_width = $('#content').width() + $('#pages').width();
+                        $boards.width( boards_width );
+                        if ( boards_width < 570 ) {
+                            $boards.find('ul').width(285);
+                        } else if ( boards_width < 855 ) {
+                            $boards.find('ul').width(570);
+                        }
+                        $('#cards').before( $boards );
+                    }
+                }
+            });
+        },
+        searchBoards : function(search_term) {
+            // RB.interactions.searchBoards
+
+            var sendData = {"search_term":search_term, "page_num":1};
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/boardsearch/",
+                type: "get",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+                    if ( response.data.found_boards.length > 0 ) {
+                        var $boards = $('<div id="board_list"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
+                        $.each( response.data.found_boards, function(idx, board) {
+                            var board_id = board.id,
+                                $li = $('<li />');
+                            $li.append('<div style="background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;" class="user_meta"><a style="color:#454545;text-decoration:none !important;" href="/user/'+board.social_user.id+'">'+board.social_user.full_name+'</a></div>');
+                            if ( board.social_user.img_url != null ) {
+                                $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; width: 22px;"> ');
+                            }
+                            $li.append('<a style="font-size:22px;" href="/board/'+board.id+'">'+board.title+'</a>');
+                            $boards.find('ul').append( $li );
                         });
                         var boards_width = $('#content').width() + $('#pages').width();
                         $boards.width( boards_width );

@@ -20,6 +20,7 @@
 section[role="main"] {margin-top:10px;}
 section[role="complementary"] {display:none;}
 </style>
+{% if not query_string %}
 <div id="splashAnnounce">
 
     <div id="betterLikeButton" >
@@ -40,6 +41,7 @@ section[role="complementary"] {display:none;}
         <div class="clear"></div>
     </div>
 </div>
+{% endif %}
 {% endif %}
 {% if board %}
 <style>

@@ -110,7 +110,6 @@
   padding: 10px;
   text-align: center;
   width: 245px;
-  cursor:pointer;
 }
 .fancybox-inner h3{
     font-weight: bold;
@@ -199,7 +198,6 @@ var board_admin = false;
 
 {% if profile_user %}
 $('#cards').addClass('user_profile');
-RB.interactions.displayUserBoards({{ profile_user.id }});
 {% endif %}
 
 {% regroup current_page.object_list by page as pi %}
@@ -861,5 +859,13 @@ $(document).ready(function(){
 $(window).resize( function() {
   cardReset();
 });
+
+{% if profile_user %}
+  {% if not query_string %} RB.interactions.displayUserBoards({{ profile_user.id }});{% endif %}
+{%endif%}
+
+{% if query_string %}
+RB.interactions.searchBoards('{{query_string}}');
+{% endif %}
 
 </script>
