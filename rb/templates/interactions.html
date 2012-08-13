@@ -870,7 +870,13 @@ $(window).resize( function() {
 });
 
 {% if profile_user %}
-  {% if not query_string %} RB.interactions.displayUserBoards({{ profile_user.id }});{% endif %}
+  {% if not query_string %} 
+  if (window.location.href.indexOf('follows') == -1 ){
+    RB.interactions.displayUserBoards({{ profile_user.id }});
+  } else {
+    RB.follow.following({{ profile_user.id }},1,["brd"]);
+  }
+  {% endif %}
 {%endif%}
 
 {% if query_string %}
