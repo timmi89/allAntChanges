@@ -455,7 +455,11 @@ RB = {
                 },
                 success: function(response) {
                     if ( response.data.found_boards.length > 0 ) {
-                        var $boards = $('<div id="board_list"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
+                        if ( search_term != "" ) {
+                            var $boards = $('<div id="board_list"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
+                        } else {
+                            var $boards = $('<div id="board_list"><h2>Recently updated ReadrBoards</h2><ul></ul></div>');
+                        }
                         $.each( response.data.found_boards, function(idx, board) {
                             var board_id = board.id,
                                 $li = $('<li />');
