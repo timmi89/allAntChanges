@@ -470,7 +470,7 @@ RB = {
                 success: function(response) {
                     if ( response.data.user_boards.length > 0 ) {
                         // abstract this
-                        var $boards = $('<div id="board_list"><h2>My ReadrBoards</h2><ul></ul></div>');
+                        var $boards = $('<div id="board_list"><h2>ReadrBoards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
                             $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
