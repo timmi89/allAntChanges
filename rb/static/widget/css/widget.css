@@ -1052,7 +1052,8 @@ div.rdr.rdr-summary div.rdr-sum-headline {
 
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
-    margin: 4px 0px -4px !important;
+    margin: 7px 0px 0px 9px !important;
+    font-style:italic !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions {
   /*margin-top:5px !important;*/
@@ -1160,6 +1161,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   /*overflow:auto !important;*/
   padding:5px 0 !important;
   cursor:pointer !important;
+  border:0 !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr:hover {
   background:#dae7f5 !important;

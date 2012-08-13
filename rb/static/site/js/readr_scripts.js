@@ -411,6 +411,34 @@ RB = {
         },
     },
     interactions : {
+        displayUserBoards : function(user_id) {
+            // RB.interactions.displayUserBoards
+
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/user/boards/"+user_id,
+                type: "get",
+                success: function(response) {
+                    if ( response.data.user_boards.length > 0 ) {
+                        var $boards = $('<div id="board_list"><h2>ReadrBoards</h2><ul></ul></div>');
+                        $.each( response.data.user_boards, function(idx, board) {
+                            var board_id = board.id;
+                            $boards.find('ul').append('<li><a href="/board/'+board.id+'">'+board.title+'</a></li>');
+                        });
+                        var boards_width = $('#content').width() + $('#pages').width();
+                        $boards.width( boards_width );
+                        if ( boards_width < 570 ) {
+                            $boards.find('ul').width(285);
+                        } else if ( boards_width < 855 ) {
+                            $boards.find('ul').width(570);
+                        }
+                        $('#cards').before( $boards );
+                    }
+                }
+            });
+        },
         me_too : function(parent_id) {
             // RB.interactions.me_too
             var sendData = {"parent_id":parent_id};

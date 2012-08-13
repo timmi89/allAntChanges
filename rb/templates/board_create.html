@@ -27,7 +27,6 @@
       {% if is_popup == "site" %}
       <button class="btn" onclick="self.close();">Return to page</button>
       <script>
-      console.log(RB.querystring('int_id'), '{{ board.id }}', '{{ board.title }}' );
       if (opener && !opener.closed) opener.RB.interactions.add_to_board(RB.querystring('int_id'), '{{ board.id }}', '{{ board.title }}' );
       </script>
       {% endif %}

@@ -77,6 +77,41 @@
 #pages .card:hover .buttons { display:block; }
 #pages .card:hover .buttons { display:block; }
 
+#board_list  {
+  margin:0 auto 20px;
+  overflow:auto;
+}
+#board_list h2 {
+  background: none repeat scroll 0 0 #F7F7F7;
+  color: #BCBCBC;
+  display: inline-block;
+  font-family: Helvetica,Arial,sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top:20px;
+  padding: 8px 0 5px;
+  text-align: center;
+  visibility: visible;
+  width: 100%;
+}
+#board_list ul {
+  width:855px;
+  padding:0;
+  margin:0 auto;
+}
+#board_list li {
+  background: url("/static/site/images/quote_background.png") repeat-y scroll 0 0 #F0F0F0;
+  box-shadow: 0 0 4px #aaa;
+  display: block;
+  float: left;
+  font-weight: bold;
+  list-style-type: none;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  width: 245px;
+  cursor:pointer;
+}
 .fancybox-inner h3{
     font-weight: bold;
     font-style: italic;
@@ -162,9 +197,11 @@ var board_admin = true;
 var board_admin = false;
 {% endif %}   
 
-if ( window.location.href.indexOf('/user/') != -1 ) {
-  $('#cards').addClass('user_profile');
-}
+{% if profile_user %}
+$('#cards').addClass('user_profile');
+RB.interactions.displayUserBoards({{ profile_user.id }});
+{% endif %}
+
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
     {% for interaction in page.list %}
