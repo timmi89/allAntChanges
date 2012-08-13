@@ -824,6 +824,7 @@ function cardReset() {
         $('#content').width(310);
       }
     }
+
     $('#headlines h1').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
     $('#headlines h2').css('visibility','visible');
   });
@@ -848,6 +849,14 @@ function getContentDimsStyle(dims){
     //quick fix for now to make the styles look better
 
     return 'style=" min-height:'+minHeight+'px; "';
+}
+
+// layout failsafe:
+if ( interactions.content.length == 0) {
+  $('h1.contentCardsHeader').hide();
+}
+if ( interactions.pages.length == 0 ) {
+  $('h2.articleCardsHeader').hide();
 }
 
 $(document).ready(function(){
