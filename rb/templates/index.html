@@ -56,7 +56,8 @@ section[role="complementary"] {display:none;}
     <h1>{{ board.title }}</h1>
     {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
     <div class="board_meta">
-        <button>Follow this board</button>
+        <button id="board_follow_button">Follow this board</button>
+        <span id="board_follower_count" style="display:block;float:right;margin:9px 8px 0 0;font-size:12px;"></span>
         {% if board.owner.first_name %}
         <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.first_name }} {{ board.owner.last_name }}</a></h3>
         {% else %}
@@ -73,4 +74,12 @@ section[role="complementary"] {display:none;}
 {% endblock mainContent %}
 
 {% block pageJS %}
+<script>
+    {% if board %}
+    $('#board_follow_button').click( function() {
+        RB.follow.add({{ board.id }},'brd');
+    });
+    RB.follow.followers({{ board.id }},'brd')
+    {% endif %}
+</script>
 {% endblock %}

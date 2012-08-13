@@ -248,12 +248,18 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    var person_or_group = (data.type=="usr") ? "person":"group";
-                    $('#follow_action').text( 'Stop following this '+person_or_group ).unbind().click( function() {
-                        var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
-                        RB.follow.remove( id, type );
-                    });
-                    $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )+1) + "</strong> followers" );
+                    if ( data.type == "brd") {
+                        $('#board_follow_button').unbind().text('Stop following this board').click( function() {
+                            RB.follow.remove(data.follow_id,'brd');
+                        });
+                    } else {
+                        var person_or_group = (data.type=="usr") ? "person":"group";
+                        $('#follow_action').text( 'Stop following this '+person_or_group ).unbind().click( function() {
+                            var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
+                            RB.follow.remove( id, type );
+                        });
+                        $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )+1) + "</strong> followers" );
+                    }
                 }
             });
         },
@@ -275,12 +281,18 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    var person_or_group = (data.type=="usr") ? "person":"group";
-                    $('#follow_action').text( 'Follow this '+person_or_group ).unbind().click( function() {
-                        var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
-                        RB.follow.add( id, type );
-                    });
-                    $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )-1) + "</strong> followers" );
+                    if ( data.type == "brd") {
+                        $('#board_follow_button').unbind().text('Follow this board').click( function() {
+                            RB.follow.add(data.follow_id,'brd');
+                        });
+                    } else {
+                        var person_or_group = (data.type=="usr") ? "person":"group";
+                        $('#follow_action').text( 'Follow this '+person_or_group ).unbind().click( function() {
+                            var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
+                            RB.follow.add( id, type );
+                        });
+                        $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )-1) + "</strong> followers" );
+                    }
                 }
             });
         },
@@ -340,28 +352,37 @@ RB = {
                 dataType: "json",
                 data: { json: $.toJSON(data) },
                 success: function(response) {
-                    if ( typeof response.data.followed_by_count != "undefined" ) {
-                        $('#follower_count').html( "<strong>"+response.data.followed_by_count + "</strong> followers" );
-                    }
-                    
-                    var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
-                        person_or_group = (data.entity_type=="usr") ? "person":"group";
-                    if ( response.data.user_is_follower ) {
-                        $('#follow_action').text( 'Stop following this ' + person_or_group ).unbind().click( function() {
-                            RB.follow.remove( id, type );
-                        });
+                    if ( data.entity_type == "brd" ) {
+                        if ( response.data.user_is_follower == true ) {
+                            $('#board_follower_count').text( response.data.followed_by_count + ' Followers' );
+                            $('#board_follow_button').unbind().text('Stop following this board').click( function() {
+                                RB.follow.remove(data.entity_id,'brd');
+                            });
+                        }
                     } else {
-                        $('#follow_action').text( 'Follow this ' + person_or_group ).unbind().click( function() {
-                            RB.follow.add( id, type );
-                        });
-                    }
+                        if ( typeof response.data.followed_by_count != "undefined" ) {
+                            $('#follower_count').html( "<strong>"+response.data.followed_by_count + "</strong> followers" );
+                        }
+                        
+                        var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
+                            person_or_group = (data.entity_type=="usr") ? "person":"group";
+                        if ( response.data.user_is_follower ) {
+                            $('#follow_action').text( 'Stop following this ' + person_or_group ).unbind().click( function() {
+                                RB.follow.remove( id, type );
+                            });
+                        } else {
+                            $('#follow_action').text( 'Follow this ' + person_or_group ).unbind().click( function() {
+                                RB.follow.add( id, type );
+                            });
+                        }
 
-                    var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
-                        $ul = $('<ul/>');
-                    $.each( response.data.paginated_follows, function(idx, following) {
-                        $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
-                    });
-                    $('#follower_list').html( $follower_html.append($ul) );
+                        var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
+                            $ul = $('<ul/>');
+                        $.each( response.data.paginated_follows, function(idx, following) {
+                            $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        });
+                        $('#follower_list').html( $follower_html.append($ul) );
+                    }
                 }
             });
         },
