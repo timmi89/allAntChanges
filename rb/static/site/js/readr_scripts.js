@@ -425,7 +425,7 @@ RB = {
                         var $boards = $('<div id="board_list"><h2>ReadrBoards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
-                            $boards.find('ul').append('<li><a style="font-size:22px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
+                            $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
                         });
                         var boards_width = $('#content').width() + $('#pages').width();
                         $boards.width( boards_width );
@@ -467,7 +467,7 @@ RB = {
                             if ( board.social_user.img_url != null ) {
                                 $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; width: 22px;"> ');
                             }
-                            $li.append('<a style="font-size:22px;" href="/board/'+board.id+'">'+board.title+'</a>');
+                            $li.append('<a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a>');
                             $boards.find('ul').append( $li );
                         });
                         var boards_width = $('#content').width() + $('#pages').width();
