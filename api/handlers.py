@@ -859,7 +859,6 @@ class FollowedEntityHandler(InteractionHandler):
                 logged_followers = Follow.objects.filter(owner=cookie_user, user = User.objects.get(id = follow_id))
                 if len(logged_followers) > 0:
                     user_is_follower = True
-        
         elif entity_type == 'brd':        
             followed_by = Follow.objects.filter(board = Board.objects.get(id = follow_id))                      
             if cookie_user is not None:

@@ -232,7 +232,7 @@ RB = {
     follow : {
         add : function(id, type) {
             // RB.follow.add
-            // type: usr, grp, pag
+            // type: usr, grp, pag, brd
             var data = {
                 follow_id:parseInt(id),
                 type:type
@@ -259,7 +259,7 @@ RB = {
         },
         remove : function(id, type) {
             // RB.follow.remove
-            // type: usr, grp, pag
+            // type: usr, grp, pag, brd
             var data = {
                 follow_id:parseInt(id),
                 type:type
@@ -290,7 +290,7 @@ RB = {
             var data = {
                 user_id:parseInt(id),
                 page_num:(page_num)?page_num:1,
-                types:["usr","grp","pag"]
+                types:["usr","grp","pag","brd"]
             };
 
             $.ajax({
@@ -323,7 +323,7 @@ RB = {
         followers : function(id, type) {
             // RB.follow.followers
             // who follows this thing
-            // type: usr, grp, pag
+            // type: usr, grp, pag, brd
             var data = {
                 entity_id:parseInt(id),
                 entity_type:type,
