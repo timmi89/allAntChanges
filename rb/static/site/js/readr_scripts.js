@@ -526,6 +526,7 @@ RB = {
                         });
 
                         var boards_width = $('#content').width() + $('#pages').width();
+
                         $boards.width( boards_width );
                         if ( boards_width < 570 ) {
                             $boards.find('ul').width(285);
