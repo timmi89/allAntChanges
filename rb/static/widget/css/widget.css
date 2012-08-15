@@ -385,10 +385,10 @@ div.rdr strong {font-weight:bold !important;}
   font-size:11px !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success hr {
-  background:#ccc;
-  border:none;
-  height:1px;
-  margin:6px 0;
+  background:#ccc !important;
+  border:none !important;
+  height:1px !important;
+  margin:6px 0 !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success button {
   margin-bottom:0 !important;
@@ -396,10 +396,11 @@ div.rdr strong {font-weight:bold !important;}
   text-transform:none !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success td {
-  padding:5px;
+  padding:5px !important;
+  vertical-align:middle !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_thin td {
-  padding:1px 4px;
+  padding:1px 4px !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_wide td.rdr_first_column {
   width:72px !important;
@@ -432,8 +433,8 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_instruct    {color:#666 !important; margin:5px 0 !important;}
 #rdr_sandbox div.rdr div.rdr_info        {font:italic 11px Arial !important;color:#767676 !important; margin:0 !important; cursor:text !important; }
 
-#rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important;}
-#rdr_sandbox div.rdr div.rdr_share_social                   { overflow:auto !important; position: relative !important; top: 4px !important;}
+#rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important; }
+#rdr_sandbox div.rdr div.rdr_share_social                   { overflow:visible !important; position: relative !important; top: 4px !important; min-width:90px !important;}
 #rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 /*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_share_social strong            { margin:3px 5px 0 10px !important; }*/
 #rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; padding-top:5px !important; max-width:92% !important; text-align:left !important;}

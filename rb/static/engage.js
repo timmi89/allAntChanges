@@ -372,10 +372,9 @@ function readrBoard($R){
                                     // newTagCount = ( isNaN(existingTagCount) ) ? 1:existingTagCount+1;
 
                                 // $pill.data('tag_count',newTagCount).find('span.rdr_tag_count').text(newTagCount).unbind('hover');
-
                                 // quick hack for too-thin images
                                 if ( $rindow.width() < 200 && kind != "text" ) {
-                                    var $success = $('<div class="rdr_view_success rdr_thin"><div class="rdr_back">&lt;&lt; Back</div><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
+                                    var $success = $('<div class="rdr_view_success rdr_thin"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
                                         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
                                         $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
@@ -384,6 +383,18 @@ function readrBoard($R){
                                         $save = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td colspan="2" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                         $share = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td colspan="2" class="rdr_share_buttons"></td></tr>').appendTo( $options );
 
+                                } else {
+                                    var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
+                                        undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
+                                        $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                                                   '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
+                                        $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
+                                        $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
+                                        $save = $('<tr><td><strong>Add To:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
+                                        $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
+                                }
+                                if ( kind != "text" ) {
+                                    $success.prepend('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.find('div.rdr_back').click( function() {
                                         var headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions",
                                             //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
@@ -396,15 +407,6 @@ function readrBoard($R){
                                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
                                         });
                                     });
-                                } else {
-                                    var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
-                                        undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
-                                        $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                                                   '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
-                                        $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                        $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td><strong>Add To:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
-                                        $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 }
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
 
