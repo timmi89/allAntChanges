@@ -298,7 +298,7 @@ def searchBoards(search_term, page_num):
     if search_term is not None and len(search_term) > 0:
         boards = Board.objects.filter(Q(title__icontains = search_term) | 
                         Q(description__icontains = search_term))
-    boards.order_by('-modified')
+    boards = boards.order_by('-modified')
     board_paginator = Paginator(boards, 20)
     try: board_page = board_paginator.page(page_num)
     except (EmptyPage, InvalidPage): board_page = board_paginator.page(board_paginator.num_pages)
