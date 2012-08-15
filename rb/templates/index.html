@@ -20,7 +20,7 @@
 section[role="main"] {margin-top: 0;}
 section[role="complementary"] {display:none;}
 </style>
-{% if not query_string %}
+{% if not query_string and not singleton %}
 
 <div id="splashLargeBanner">
     <div id="splashMain">
@@ -93,7 +93,7 @@ section[role="complementary"] {display:none;}
                 </div>
                 <div class="bottomRow">
                     <!-- TODO: UPDATE LINK!! -->
-                    <a class="a3" href="http://netted.net/" target="_blank">
+                    <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
                         <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
                     </a>
 
