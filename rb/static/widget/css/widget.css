@@ -392,7 +392,8 @@ div.rdr strong {font-weight:bold !important;}
 }
 #rdr_sandbox div.rdr div.rdr_view_success button {
   margin-bottom:0 !important;
-  font-size:13px !important;
+  font-size:11px !important;
+  text-transform:none !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success td {
   padding:5px;

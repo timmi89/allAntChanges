@@ -375,7 +375,7 @@ function readrBoard($R){
 
                                 // quick hack for too-thin images
                                 if ( $rindow.width() < 200 && kind != "text" ) {
-                                    var $success = $('<div class="rdr_view_success rdr_thin"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
+                                    var $success = $('<div class="rdr_view_success rdr_thin"><div class="rdr_back">&lt;&lt; Back</div><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
                                         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
                                         $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
@@ -383,6 +383,19 @@ function readrBoard($R){
                                         $sayMore = $('<tr><td class="rdr_first_column" colspan="2"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
                                         $save = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td colspan="2" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                         $share = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td colspan="2" class="rdr_share_buttons"></td></tr>').appendTo( $options );
+
+                                    $success.find('div.rdr_back').click( function() {
+                                        var headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions",
+                                            //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
+                                            headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
+                                                            '<h1>'+headerText+'</h1>';
+
+                                        RDR.rindow.updateHeader( $rindow, headerContent );
+                                        $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
+                                        RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
+                                            $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
+                                        });
+                                    });
                                 } else {
                                     var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
                                         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
@@ -5647,7 +5660,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 if ( args.selState ) {
                     var selState = args.selState;
                 }
-                var headerText = ( args.scenario == "reactionSuccess" ) ? "Success!":"You've already given this reaction",
+                var headerText = ( args.scenario == "reactionSuccess" ) ? "Success!":"You've already done that",
                     headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
                                     '<h1>'+headerText+'</h1>';
 
