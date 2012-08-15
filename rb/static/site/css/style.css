@@ -673,7 +673,7 @@ input[type="color"]
     width: 16px;
 }
 
-#splashAnnounce {
+/*#splashAnnounce {
     border-bottom:1px dashed #ccc;
     bottom:0;
     color:#888;
@@ -689,6 +689,109 @@ input[type="color"]
 #splashAnnounce h3 span{
   color:#26465A;
 }
+*/
+
+#splashAnnounce{
+    /*this is the old one*/
+    display: none;
+}
+#splashLargeBanner{
+    background: #546c86;
+}
+
+#splashLargeBanner .splashLeft{
+    width: 44%;
+    float: left;
+}
+#splashLargeBanner .splashRight{
+    width: 55%;
+    float: right;
+}
+
+
+    #splashMain .mainSplashBlurb img{
+        /*compensate for the aesthetic of the bubble off to the left.  The text should look centered.*/
+        left: -12px;
+        position: relative;
+    }
+    #splashMain .mainSplashBlurbInner{
+        margin: 20px 30px;
+    }
+
+
+    #splashMain .callToActionButtons {
+        text-align: center;
+        width: 100%;
+    }
+        #splashMain .btn {
+            margin: 5px 10px;
+            display: inline-block;
+        }
+
+
+    #splashSlides{
+        min-height: 470px;
+    }
+    #splashSlides img{
+        position: absolute;
+        max-width: 100%;
+    }
+
+#splashSecondary{
+    background: #f5f5f5;
+    padding: 20px 0;
+}
+
+#splashSecondary .featureQuoteWrap{
+}
+
+    .featureQuoteWrapInner{
+        border-right: 1px solid #999;
+        font-weight: bold;
+        padding: 20px;
+    }
+    .featureQuoteWrapInner img{
+        float: left;
+        width: 100px;
+        margin: 5px 15px 20px 0;
+
+    }
+
+    .featureQuoteWrapInner h3 span{
+        color: #2b4756;
+        font-size: 20px;
+    }
+
+#splashSecondary .asSeenOnWrap{
+    text-align: center;
+}
+
+    .asSeenOnWrap h3{
+        font-size: 26px;
+        color: #484848;
+        margin-bottom: 10px; 
+    }
+
+    .asSeenOnWrap a{
+        position: relative;
+        margin: 10px 20px;
+        opacity: .9;
+    }
+
+    a:hover {
+        text-decoration: none;
+        opacity: 1;
+    }
+    .asSeenOnWrap .a1{
+        top: -4px;
+    }
+    .asSeenOnWrap .a3{
+        top: -12px;
+    }
+    
+    .asSeenOnWrap img{
+        padding: 10px;
+    }
 
 .theSpitch {
   margin-bottom:10px;

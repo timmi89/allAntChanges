@@ -17,30 +17,70 @@
 <!-- <h2 style="text-align:center;border-bottom:1px solid #999;padding-bottom:10px;margin-bottom:10px;">Say stuff</h2> -->
 {% if not profile_user and not group and not board %}
 <style>
-section[role="main"] {margin-top:10px;}
+section[role="main"] {margin-top: 0;}
 section[role="complementary"] {display:none;}
 </style>
 {% if not query_string %}
-<div id="splashAnnounce">
 
-    <div id="betterLikeButton" >
-        <img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
-        <div id="sns_buttons">
-            <div style="display:block;"><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
-            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
-            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+<div id="splashLargeBanner">
+    <div id="splashMain">
+        <div class="mainSplashBlurb splashLeft">
+            <div class="mainSplashBlurbInner">
+                <img src="{{ STATIC_URL }}site/images/splashLogo.png" />
+                <div class="callToActionButtons">
+                    <a href="/react/" class="btn"><span class="rdrIcon"></span>Add to your browser</a>
+                    <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" class="btn"><span class="rdrIcon"></span>Add to your website</a>
+                    <div class="clear"></div>
+                </div>
+            </div>
         </div>
-        <!-- <img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/> -->
+        <div id="splashSlides" class="splashRight">
+            <img src="{{ STATIC_URL }}site/images/splash-slides/slide-1.png" />
+            <img src="{{ STATIC_URL }}site/images/splash-slides/slide-2.png" />
+            <img src="{{ STATIC_URL }}site/images/splash-slides/slide-3.png" />
+            <img src="{{ STATIC_URL }}site/images/splash-slides/slide-4.png" />
+        </div>
+        <div class="clear"></div>
     </div>
+    <div id="splashSecondary">
+        <div class="featureQuoteWrap splashLeft">
+            <div class="featureQuoteWrapInner">
+                <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
+                <h3>
+                    <span>"If you're like me, you've been doing varieties<br>of this in haphazard ways for years --<br>ReadrBoard wins the day.</span><em style="display:block;margin-top:15px;font-size:18px;">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a><br>Co-Founder, Reddit</em>
+                </h3>
+            </div>
+        </div>
+        <div class="asSeenOnWrap splashRight">
+            <h3>
+                As seen on&#8230;<!-- … -->
+            </h3>
 
-    <div class="theSpitch">
-        <h3 class="no-rdr"><span>ReadrBoard lets you easily express your reaction</span><br>to any phrase, picture, video, or article on the web.</h3>
-    </div>
-    <div class="callToActionButtons" style="xfloat:left;display:inline-block;margin-bottom:-7px;">
-        <a href="/about" class="btn left"><!-- <span class="rdrIcon"> --></span>Learn More</a>
+            <div class="topRow">
+                <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
+                    <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
+                </a>
+                <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
+                    <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
+                </a>
+            </div>
+            <div class="bottomRow">
+                <a class="a3" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
+                    <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
+                </a>
+
+                <!-- TODO: UPDATE LINK!! -->
+                <a class="a4" href="http://netted.net/" target="_blank">
+                    <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
+                </a>
+            </div>
+
+            <div class="clear"></div>
+        </div>
         <div class="clear"></div>
     </div>
 </div>
+
 {% endif %}
 {% endif %}
 {% if board %}
