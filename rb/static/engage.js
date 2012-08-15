@@ -379,9 +379,9 @@ function readrBoard($R){
                                         $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
                                                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
                                         $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                        $sayMore = $('<tr><td class="rdr_first_column" colspan="2"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td colspan="2" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
-                                        $share = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td colspan="2" class="rdr_share_buttons"></td></tr>').appendTo( $options );
+                                        $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td></tr><tr><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
+                                        $save = $('<tr><td><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td class="rdr_select_user_board"></td></tr>').appendTo( $options ),
+                                        $share = $('<tr><td><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
 
                                 } else {
                                     var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),

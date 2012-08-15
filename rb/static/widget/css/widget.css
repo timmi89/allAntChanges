@@ -9,6 +9,8 @@
 .rdr img {
     width:auto !important;
     border:none !important;
+    vertical-align: inherit !important;
+    display:inline !important;
 }
 .rdr_clear{
     clear: both;
@@ -368,6 +370,7 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr div.rdr_view_success {
   width:293px !important;
+  font-size:11px !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_thin {
   width:180px !important;
@@ -394,6 +397,7 @@ div.rdr strong {font-weight:bold !important;}
   margin-bottom:0 !important;
   font-size:11px !important;
   text-transform:none !important;
+  float:none !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success td {
   padding:5px !important;
@@ -472,7 +476,10 @@ div.rdr strong {font-weight:bold !important;}
     color:#999 !important;
 }
 #rdr_sandbox div.rdr div.rdr_thin input[type="text"].rdr_inlineComment{
-  width:115px !important;
+  width:160px !important;
+}
+#rdr_sandbox div.rdr div.rdr_thin select.rdr_user_boards {
+  max-width:170px !important;
 }
 #rdr_sandbox div.rdr input[type="text"].rdr_inlineComment.rdr_adding_comment {
     font-style:normal !important;
@@ -1060,7 +1067,9 @@ div.rdr.rdr-summary div.rdr-sum-headline {
 /*div.rdr.rdr-summary div.rdr-sum-headline div {
     line-height: 24px !important;
 }*/
-
+div.rdr.rdr-summary div.rdr-sum-headline img {
+  display:inline !important;
+}
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
     margin: 7px 0px 0px 9px !important;
