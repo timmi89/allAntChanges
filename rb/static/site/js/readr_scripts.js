@@ -508,16 +508,23 @@ RB = {
                         } else {
                             var $boards = $('<div id="board_list"><h2>Recently updated ReadrBoards</h2><ul></ul></div>');
                         }
+
+                        var board_count = 0;
                         $.each( response.data.found_boards, function(idx, board) {
                             var board_id = board.id,
                                 $li = $('<li />');
-                            $li.append('<div style="background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;" class="user_meta"><a style="color:#454545;text-decoration:none !important;" href="/user/'+board.social_user.id+'">'+board.social_user.full_name+'</a></div>');
+                            $li.append('<div style="background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;" class="user_meta">'+board.social_user.full_name+'</div>');
                             if ( board.social_user.img_url != null ) {
                                 $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; height:22px; max-width: 22px;"> ');
                             }
                             $li.append('<a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a>');
-                            $boards.find('ul').append( $li );
+                            
+                            board_count++;
+                            if ( board_count < 7 ) {
+                                $boards.find('ul').append( $li );
+                            }
                         });
+
                         var boards_width = $('#content').width() + $('#pages').width();
                         $boards.width( boards_width );
                         if ( boards_width < 570 ) {
@@ -526,6 +533,13 @@ RB = {
                             $boards.find('ul').width(570);
                         }
                         $('#cards').before( $boards );
+                        $boards.find('ul').isotope({
+                          masonry: {
+                            columnWidth: 285,
+                            gutterWidth: 0
+                          },
+                          itemSelector : 'li'
+                        }, function() {});
                     }
                 }
             });
