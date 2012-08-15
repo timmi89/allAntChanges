@@ -454,7 +454,6 @@ page-break-after:avoid; }
         display:none !important; 
     }
 
-
     body.wide section[role="main"]    {
         padding:10px 0 !important;
     }
@@ -696,7 +695,7 @@ input[type="color"]
     display: none;
 }
 #splashLargeBanner{
-    background: #546c86;
+    border-bottom: 3px solid #eee;
 }
 
 #splashLargeBanner .splashLeft{
@@ -705,23 +704,37 @@ input[type="color"]
 }
 #splashLargeBanner .splashRight{
     width: 55%;
-    float: right;
+    float: left;
 }
 
+    #splashMain{
+        background: #546c86;
+    }
 
+    /*this is annoying - should be able to add it to the top instead, but it was getting cut off and z-index/overflow:visible; wasnt doing it.*/
+    #splashMainShadow{
+        -moz-box-shadow: 0 5px 5px #999;
+        -webkit-box-shadow: 0 5px 5px #999;
+        box-shadow: 0 4px 5px #999;
+        position: relative;
+        height: 5px;
+        top: -6px;
+    }
     #splashMain .mainSplashBlurb img{
         /*compensate for the aesthetic of the bubble off to the left.  The text should look centered.*/
         left: -12px;
         position: relative;
     }
     #splashMain .mainSplashBlurbInner{
-        margin: 20px 30px;
+        text-align: center;
+        margin: 60px 30px;
     }
 
 
     #splashMain .callToActionButtons {
         text-align: center;
         width: 100%;
+        margin-top: 40px;
     }
         #splashMain .btn {
             margin: 5px 10px;
@@ -730,25 +743,31 @@ input[type="color"]
 
 
     #splashSlides{
-        min-height: 470px;
     }
+    #splashSlides .splashSlidesInner{
+        margin: 30px 80px;
+        /*bias it for visual*/
+        margin-left: 65px;
+    }
+    
     #splashSlides img{
-        position: absolute;
         max-width: 100%;
     }
 
 #splashSecondary{
-    background: #f5f5f5;
-    padding: 20px 0;
+    /*background: #f5f5f5;*/
+    background:url(../images/tile-background.jpg) repeat;
+}
+#splashSecondaryInner{    
+    padding: 30px 0;
 }
 
 #splashSecondary .featureQuoteWrap{
 }
 
     .featureQuoteWrapInner{
-        border-right: 1px solid #999;
         font-weight: bold;
-        padding: 20px;
+        padding: 30px;
     }
     .featureQuoteWrapInner img{
         float: left;
@@ -764,6 +783,7 @@ input[type="color"]
 
 #splashSecondary .asSeenOnWrap{
     text-align: center;
+    border-left: 1px solid #999;
 }
 
     .asSeenOnWrap h3{
@@ -1340,9 +1360,11 @@ table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
 }
 
+/*killing fixed bar*/
 footer.withFixedBar{
-    margin-bottom: 50px; 
+    /*margin-bottom: 50px; */
 }
+
 /*footer div.footerLinks{
 	width:960px;
 	margin:auto;
