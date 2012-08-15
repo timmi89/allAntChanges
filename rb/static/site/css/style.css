@@ -709,6 +709,7 @@ input[type="color"]
 
     #splashMain{
         background: #546c86;
+        height:510px;
     }
 
     /*this is annoying - should be able to add it to the top instead, but it was getting cut off and z-index/overflow:visible; wasnt doing it.*/

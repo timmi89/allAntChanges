@@ -4,11 +4,12 @@
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    min-height: 500px;
+    /*min-height: 500px;*/
     background: url(loader.gif) no-repeat 50% 50%;
 }
 #splashSlides .slider-wrapper{
-    
+width:555px;
+    height:431px;    
 }
 #splashSlides .theme-default .nivo-directionNav a {
     background:url(arrows-darker.png) no-repeat;
