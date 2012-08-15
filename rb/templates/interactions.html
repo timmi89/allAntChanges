@@ -891,7 +891,7 @@ $(window).resize( function() {
 RB.interactions.searchBoards('{{query_string}}');
 {% endif %}
 
-{% if not query_string and not profile_user and not board %}
+{% if not query_string and not profile_user and not board and not singleton %}
 RB.interactions.searchBoards('');
 {% endif %}
 

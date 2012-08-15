@@ -381,7 +381,7 @@ function readrBoard($R){
                                                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
                                         $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
                                         $sayMore = $('<tr><td class="rdr_first_column" colspan="2"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Save This:</strong></td></tr><tr><td colspan="2" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
+                                        $save = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td colspan="2" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                         $share = $('<tr><td colspan="2"><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td colspan="2" class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 } else {
                                     var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
@@ -390,7 +390,7 @@ function readrBoard($R){
                                                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
                                         $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
                                         $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td><strong>Save This:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
+                                        $save = $('<tr><td><strong>Add To:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                         $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 }
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
