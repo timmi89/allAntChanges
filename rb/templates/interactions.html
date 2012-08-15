@@ -824,7 +824,12 @@ function cardReset() {
 
     if ( numSections == 2 ) {
       $('#content').css('visibility','visible').css('margin-left', (extraMargin/numColumns)+'px');
-      $('#pages').css('visibility','visible').css('margin-right', (extraMargin/numColumns)+'px');
+      $('#pages').css('visibility','visible');
+      if ( $(window).width() > 939) {
+        $('#pages').css('margin-right', (extraMargin/numColumns)+'px');
+      } else {
+        $('#pages').css('margin-right', '0px');
+      }
     } else {
       $('#pages').hide();
       $('#content').css('visibility','visible').css('margin-left', 'auto').css('margin-right', 'auto');
