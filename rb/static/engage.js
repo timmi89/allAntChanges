@@ -491,7 +491,7 @@ function readrBoard($R){
                             $success.find('td.rdr_comment_input').append(
                                 '<div class="rdr_commentBox rdr_inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
-                                    '<input type="text" class="rdr_add_comment rdr_inlineComment" value="Add a comment or #hashtag"/>'+
+                                    '<input type="text" class="rdr_add_comment_field rdr_inlineComment" value="Add a comment or #hashtag"/>'+
                                     '<div class="rdr_clear"></div>'+
                                 '</div>'
                             );
@@ -499,7 +499,7 @@ function readrBoard($R){
 
 
                             // // comment functionality
-                            var $commentInput = $success.find('input.rdr_add_comment');
+                            var $commentInput = $success.find('input.rdr_add_comment_field');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
                                 $(this).addClass('rdr_adding_comment');
@@ -516,41 +516,45 @@ function readrBoard($R){
                                 if (event.keyCode == '27') { //esc
                                     //return false;
                                 } else if (event.keyCode == '13') { //enter
-                                    var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
-                                        content_node = args.sendData.content_node_data,
-                                        hash = args.hash,
-                                        page_id = args.page_id,
-                                        $rindow = args.rindow,
-                                        tag = args.tag,
-                                        commentText = $commentInput.val();
-
-                                    //keyup doesn't guarentee this, so check again (they could paste in for example);
-                                    if ( commentText.length > RDR.group.comment_length ) {
-                                        commentText = commentText.substr(0, RDR.group.comment_length);
-                                        $commentInput.val( commentText );
-
-                                        // character counter
-                                        // add back in.  animate in?
-                                        // $commentInput.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
-                                    }
-
-                                    if ( commentText != "Add a comment or #hashtag" ) {
-                                        //temp translations..
-                                        //quick fix
-                                        var summary = RDR.summaries[hash];
-                                        content_node.kind = summary.kind;
-                                        var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
-                                        //leave parent_id undefined for now - backend will find it.
-                                        RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
-
-                                    } else{
-                                        $commentInput.focus();
-                                    }
+                                    _sendComment(event);
                                 } else if ( commentText.length > RDR.group.comment_length ) {
                                     commentText = commentText.substr(0, RDR.group.comment_length);
                                     $commentInput.val( commentText );
                                 }
                             });
+                            
+                            $success.find('button.rdr_add_comment').on('click', {args:args}, function(event) {
+                                _sendComment(event);
+                            });
+
+                            function _sendComment(event){
+                                var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
+                                    content_node = args.sendData.content_node_data,
+                                    hash = args.hash,
+                                    page_id = args.page_id,
+                                    $rindow = args.rindow,
+                                    tag = args.tag,
+                                    commentText = $commentInput.val();
+
+                                //keyup doesn't guarentee this, so check again (they could paste in for example);
+                                if ( commentText.length > RDR.group.comment_length ) {
+                                    commentText = commentText.substr(0, RDR.group.comment_length);
+                                    $commentInput.val( commentText );
+                                }
+
+                                if ( commentText != "Add a comment or #hashtag" ) {
+                                    //temp translations..
+                                    //quick fix
+                                    var summary = RDR.summaries[hash];
+                                    content_node.kind = summary.kind;
+                                    var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
+                                    //leave parent_id undefined for now - backend will find it.
+                                    RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
+
+                                } else{
+                                    $commentInput.focus();
+                                }
+                            }
 
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
