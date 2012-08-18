@@ -435,40 +435,49 @@ function readrBoard($R){
                                         RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
                                     } else if ( $this.val() == "create" ) {
                                         // pop the board create form
-                                        RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=widget', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                                        // RDR.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=widget', 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+
+                                        var iframeUrl = RDR_baseUrl + "/board_create/?popup=widget",
+                                            parentUrl = window.location.href,
+                                            parentHost = window.location.protocol + "//" + window.location.host,
+                                            bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
+                                            $boardIframe = $('<div class="rdr_window rdr-board-create-div"><iframe id="rdr-board-create" name="rdr-board-create" src="' + iframeUrl + '" width="625" height="436" style="position:fixed;top:100px;left:200px;z-index:1000000000000000;" /></div>');
+                                        $('#rdr_sandbox').append( $boardIframe );
 
                                         var intervalArgs = args;
-                                        RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
 
-                                            if ( RDR.boardWindow && RDR.boardWindow.closed ) {
-                                                //clear loader
-                                                var $rindow = args.rindow;
-                                                if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                                        if ( $('div.rdr-board-create-div').length ) {
+                                            RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
 
-                                                // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
-                                                RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                    if ( typeof RDR.user.new_board_id != "undefined") {
-                                                        var newArgs = {
-                                                            hash: args.hash,
-                                                            board_id: RDR.user.new_board_id,
-                                                            board_name: RDR.user.new_board_name,
-                                                            int_id: args.response.data.interaction.id,
-                                                            tag: args.tag,
-                                                            rindow: args.rindow
-                                                        };
-                                                        RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                                                    }
-                                                });
+                                                if ( !$('div.rdr-board-create-div').length ) {
+                                                    //clear loader
+                                                    var $rindow = args.rindow;
+                                                    if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                                                $.postMessage(
-                                                    "reloadXDMframe",
-                                                    RDR_baseUrl + "/static/xdm.html",
-                                                    window.frames['rdr-xdm-hidden']
-                                                );
-                                                RDR.boardWindow.close();
-                                                clearInterval( RDR.checkingBoardWindow );
-                                            }
-                                        }, 250 );
+                                                    // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
+                                                    RDR.session.receiveMessage({}, function(intervalArgs) {
+                                                        if ( typeof RDR.user.new_board_id != "undefined") {
+                                                            var newArgs = {
+                                                                hash: args.hash,
+                                                                board_id: RDR.user.new_board_id,
+                                                                board_name: RDR.user.new_board_name,
+                                                                int_id: args.response.data.interaction.id,
+                                                                tag: args.tag,
+                                                                rindow: args.rindow
+                                                            };
+                                                            RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
+                                                        }
+                                                    });
+
+                                                    $.postMessage(
+                                                        "reloadXDMframe",
+                                                        RDR_baseUrl + "/static/xdm.html",
+                                                        window.frames['rdr-xdm-hidden']
+                                                    );
+                                                    clearInterval( RDR.checkingBoardWindow );
+                                                }
+                                            }, 250 );
+                                        }
                                     }
                                 });
 
@@ -2279,7 +2288,10 @@ function readrBoard($R){
                 //The only side effect is that it adds a user property to args ( args[user] ).
                 $.receiveMessage(
                     function(e){
+                        console.log('e....');
+                        console.dir(e);
                         var message = $.evalJSON( e.data );
+                        console.log('message: '+message.status);
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -2305,6 +2317,8 @@ function readrBoard($R){
 
                                 RDR.util.userLoginState();
 
+                            } else if ( message.status == "board_created" ) {
+                                $('div.rdr-board-create-div').remove();
                             } else if ( message.status == "getUserLoginState" ) {
                                 RDR.session.getUser();
 

@@ -22,7 +22,7 @@
     <div style="padding:10px 20px;">
       <h3 style="margin-bottom:5px;">Your board, <strong>{{ board.title }}</strong>, has been created!</h3>
       {% if is_popup == "widget" %}
-      <button class="btn" onclick="self.close();">Return to page</button>
+      <button class="btn" onclick="closeBoardRindow();">Return to page</button>
       {% endif %}
       {% if is_popup == "site" %}
       <button class="btn" onclick="self.close();">Return to page</button>
@@ -39,6 +39,14 @@
     $.cookie('new_board_id', '{{ board.id }}', { expires: 365, path: '/' } );
     $.cookie('new_board_name', '{{ board.title }}', { expires: 365, path: '/' } );
     $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
+
+    console.log('success in the widget!!');
+    $.postMessage(
+        JSON.stringify( {"status":"board_created"} ),
+        RDR_baseUrl + "/board_create/",
+        parent
+    );
+
     </script>
   {% else %}
     <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
