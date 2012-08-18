@@ -520,9 +520,6 @@ RDRAuth = {
 	},
 	decodeDjangoCookie : function(value) {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
-	},
-	testMessage : function(){
-		console.log('testMessage!!!!!!!!!!!!!');
 	}
 }
 $(document).ready(function(){

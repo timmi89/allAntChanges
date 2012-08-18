@@ -490,6 +490,9 @@ div.rdr strong {font-weight:bold !important;}
     width: 75% !important;
 }
 
+#rdr_sandbox div.rdr-board-create-div {
+  position:fixed !important;top:100px !important;left:50% !important;margin-left:-323px !important;;z-index:1000000000000000 !important;padding:10px !important;background:#fff !important;
+}
 
 /*#rdr_sandbox div.rdr tr.rdr_wide div.rdr_commentBox input[type="text"]  { width:100% !important; margin-bottom:5px !important; font-size: 12px !important;}*/
 #rdr_sandbox div.rdr button              {font-size:11px !important; }
