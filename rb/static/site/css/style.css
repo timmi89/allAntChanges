@@ -449,11 +449,38 @@ page-break-after:avoid; }
 }/*/mediaquery*/
 
 /*480px __________________________________________________________________________________________________________ */
-@media screen and (max-device-width:600px) {
+/*@media screen and (max-device-width:600px) {*/
+@media screen and (max-width:396px) {
+    #splashLargeBanner .splashLeft{
+        width:320px !important;
+        float: none;
+    }
+    #splashLargeBanner .splashRight{
+        /*width: 55%;*/
+        display: none;
+    }
+    #splashLargeBanner .splashRight.asSeenOnWrap {
+      width:320px !important;
+      display:block;
+      float:none;
+    }
+    .asSeenOnWrap img {
+      max-width:280px;
+    }
+    #splashMain{
+        background: #546c86;
+        height:auto;
+    }
+    #board_listing {
+      width:320px !important;
+    }
+    #board_listing ul {
+      width:320px !important;
+    }
+
     header[role="banner"] #site_search{ 
         display:none !important; 
     }
-
 
     body.wide section[role="main"]    {
         padding:10px 0 !important;
@@ -559,27 +586,31 @@ page-break-after:avoid; }
 /*@media only screen and (min-width:768px) {*/
 
 /* HEADER */
-header[role="banner"]	{height:36px;xmin-width:940px;background:url(../images/header_bg.png) top left repeat-x;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;}
-header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_med.png) top center no-repeat;margin-top:6px; }
+header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;
+  box-shadow:0px 0px 6px #aaa;
+}
+header[role="banner"] a.logo    { display:block; width:165px; }
+header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_dark.png) top center no-repeat;margin-top:4px; width:165px;}
 
-header[role="banner"] #user				{ left:8px; position:absolute; top:2px; }
-header[role="banner"] #user	#logged-in      { visibility:hidden; height:37px;}
+header[role="banner"] #user				{ right:8px; position:absolute; top:2px; }
+header[role="banner"] #user	#logged-in      { visibility:hidden; height:37px; font-size:11px;}
 header[role="banner"] #user	#logged-out 	  { height:37px;}
 header[role="banner"] #user	#logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
 header[role="banner"] #user	strong				  { float:left; margin: 8px 0px 0px 5px; }
-header[role="banner"] #user	a					      { color:#f2f3f7; }
-header[role="banner"] #user #logged-out     { margin-top:9px; text-align:left; }
-header[role="banner"] #user #logged-out #login-options  { display:none; background:#fff; margin-top:7px; overflow:auto; padding:5px; border:1px solid #44494C; }
+header[role="banner"] #user	a					      { color:#999; }
+header[role="banner"] #user #logged-out     { margin-top:9px; text-align:right; }
+header[role="banner"] #user #logged-out #login-options  { display:none; background:#fff; margin-top:7px; overflow:auto; padding:5px; border:1px solid #aaa; }
 header[role="banner"] #user #logged-out:hover #login-options  { display:block; }
 
-header[role="banner"] #user #logged-in #log-out-link    { display:none; background:#fff; top:33px; position:absolute; padding:5px; border:1px solid #44494c; width:150px; text-align:left; }
+header[role="banner"] #user #logged-in #log-out-link    { display:none; background:#fff; top:33px; position:absolute; padding:5px; border:1px solid #aaa; width:150px; text-align:left; right:-8px;}
 header[role="banner"] #user #logged-in #log-out-link a  { color:#454545; display:block; }
+header[role="banner"] #user #logged-in #log-out-link label  { font-size:11px; }
 header[role="banner"] #user #logged-in #log-out-link h5  { color:#999; font-size:10px;text-transform:uppercase;border-top:1px solid #aaa;margin-top:5px;padding-top:5px; }
 header[role="banner"] #user	#logged-in:hover #log-out-link	{ display:block; }
 
-header[role="banner"] #site_search			{ position:absolute; right:8px; top:6px; display:block; }
-header[role="banner"] #site_search input	{ border:1px solid #424242; background:#eee;padding:1px 4px;height:24px;width:180px;}
-header[role="banner"] #site_search button	{ width:26px; height:24px; background:url(../images/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:0;}
+header[role="banner"] #site_search			{ position:absolute; left:190px; top:6px; display:block; }
+header[role="banner"] #site_search input	{ background:#eee;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;}
+header[role="banner"] #site_search button	{ width:25px; height:22px; background:url(../images/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:1px;}
 
 header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; height:39px; border-left:1px solid #393939;display:none; }
 header[role="banner"] #settings:hover nav 	{ display:block; }
@@ -594,7 +625,7 @@ nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border
 section[role="content"]	{
 	margin:36px 0 0 0;
 	padding:0;
-	/*background:#f3f3f3;*/
+	background:#e7e7e7;
 	overflow:auto;
 	position:relative;
 }
@@ -673,7 +704,7 @@ input[type="color"]
     width: 16px;
 }
 
-#splashAnnounce {
+/*#splashAnnounce {
     border-bottom:1px dashed #ccc;
     bottom:0;
     color:#888;
@@ -689,6 +720,138 @@ input[type="color"]
 #splashAnnounce h3 span{
   color:#26465A;
 }
+*/
+
+#splashAnnounce{
+    /*this is the old one*/
+    display: none;
+}
+#splashLargeBanner{
+    border-bottom: 1px solid #aaa;
+    margin-bottom:20px;
+}
+
+#splashLargeBanner .splashLeft{
+    width: 44%;
+    float: left;
+}
+#splashLargeBanner .splashRight{
+    width: 55%;
+    float: left;
+}
+    #board_listing {
+      /*width:auto !important;*/
+      /*max-width:858px;*/
+    }
+    #board_listing ul {
+      width:auto !important;
+    }
+    #splashMain{
+        background: #546c86;
+        height:510px;
+    }
+
+    /*this is annoying - should be able to add it to the top instead, but it was getting cut off and z-index/overflow:visible; wasnt doing it.*/
+    #splashMainShadow{
+        -moz-box-shadow: 0 5px 5px #999;
+        -webkit-box-shadow: 0 5px 5px #999;
+        box-shadow: 0 4px 5px #999;
+        position: relative;
+        height: 5px;
+        top: -6px;
+    }
+    #splashMain .mainSplashBlurb img{
+        /*compensate for the aesthetic of the bubble off to the left.  The text should look centered.*/
+        left: -12px;
+        position: relative;
+    }
+    #splashMain .mainSplashBlurbInner{
+        text-align: center;
+        margin: 60px 30px;
+    }
+
+
+    #splashMain .callToActionButtons {
+        text-align: center;
+        width: 100%;
+        margin-top: 40px;
+    }
+        #splashMain .btn {
+            margin: 5px 10px;
+            display: inline-block;
+        }
+
+
+    #splashSlides{
+    }
+    #splashSlides .splashSlidesInner{
+        margin: 30px 80px;
+        /*bias it for visual*/
+        margin-left: 65px;
+    }
+    
+    #splashSlides img{
+        max-width: 100%;
+    }
+
+#splashSecondary{
+    /*background: #f5f5f5;*/
+    background:url(../images/tile-background.jpg) repeat;
+}
+#splashSecondaryInner{    
+    padding: 30px 0;
+}
+
+#splashSecondary .featureQuoteWrap{
+}
+
+    .featureQuoteWrapInner{
+        font-weight: bold;
+        padding: 10px 30px 30px;
+    }
+    .featureQuoteWrapInner img{
+        float: left;
+        width: 100px;
+        margin: 5px 15px 20px 0;
+
+    }
+
+    .featureQuoteWrapInner h3 span{
+        color: #2b4756;
+        font-size: 20px;
+    }
+
+#splashSecondary .asSeenOnWrap{
+    text-align: center;
+    border-left: 1px solid #999;
+}
+
+    .asSeenOnWrap h3{
+        font-size: 26px;
+        color: #484848;
+        margin-bottom: 10px; 
+    }
+
+    .asSeenOnWrap a{
+        position: relative;
+        margin: 10px 20px;
+        opacity: .9;
+    }
+
+    a:hover {
+        text-decoration: none;
+        opacity: 1;
+    }
+    .asSeenOnWrap .a1{
+        top: -4px;
+    }
+    .asSeenOnWrap .a3{
+        top: -12px;
+    }
+    
+    .asSeenOnWrap img{
+        padding: 10px;
+    }
 
 .theSpitch {
   margin-bottom:10px;
@@ -715,60 +878,34 @@ input[type="color"]
 
 #cards { }
 section[role="main"] div.card { }
+section[role="main"] div.card header      { padding:20px 20px 0; z-index:3; overflow:auto;}
+section[role="main"] div.card a.added_by_user         { display:block; float:left; }
+section[role="main"] div.card div.who_and_what        { float:left; margin:5px 10px; color:#999; }
+section[role="main"] div.card div.who_and_what h1     { font-size:32px; font-weight:bold; max-width:205px; }
+section[role="main"] div.card.wide div.who_and_what h1     { max-width:505px; }
+section[role="main"] div.card div.who_and_what h1 a   { color:#222; text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px;}
+section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
+section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; }
+section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-decoration:underline; }
 
-section[role="main"] div.card {
-    /*opacity: 0.85;
-    -moz-opacity: 0.85;
-    filter:alpha(opacity=85);*/
-}
-
-section[role="main"] div.card:hover,
-section[role="main"] div.card.hover {
-    opacity: 1;
-    -moz-opacity: 1;
-    filter:alpha(opacity=1);
-}
-
-section[role="main"] div.card header      { padding:10px 0 5px 5px; background-color:rgba(255,255,255,0.85); position:relative;z-index:3;}
-section[role="main"] div.card header h1     { font-size:20px; font-weight:bold; margin:0 5px; overflow: hidden;}
-section[role="main"] div.card header h1 a   { color:#222; }
-
-section[role="main"] div.card.pag { width:248px; padding:0; margin-bottom:16px; background:#f7f7f8; border-bottom:1px solid #ccc; position:relative !important; float:left; margin-bottom:0; }
-section[role="main"] div.card.pag > * { padding:0 10px; }
-section[role="main"] div.card.pag div.group { padding-top:10px; }
-section[role="main"] div.card.pag.first { margin-right:16px; }
-section[role="main"] div.card.pag_container { background:transparent; box-shadow:none; }
-section[role="main"] div.card.pag header { background:none; padding:0 10px; }
-section[role="main"] div.card.pag header h1 { margin:0; }
-section[role="main"] div.card.pag div.meta { margin:0; overflow:visible; }
-section[role="main"] div.card.pag div.meta div.title      { width:200px; }
-section[role="main"] div.card.pag div.meta div.title a  { font-weight:normal; font-size:12px; color:#454545;}
-section[role="main"] div.card.pag div.metaRight { float: none; overflow:hidden; width:auto;}
-section[role="main"] div.card.pag div.date        { float:none; position:static; max-width:140px;}
-section[role="main"] div.card.pag div.added_by {margin-top:-20px;position:relative; z-index:100;}
-
-section[role="main"] div.card.pag div.block_content   { top:-32px; left:5px;}
-
-/*section[role="main"] div.card header h1:before {
-    content: attr(title);
-    position:absolute;
-    color:rgba(255,255,255,0.1);
-    top:1px;
-    left:1px;
-}*/
 section[role="main"] div.card div.date {
     font-size: 10px;
-    position: absolute;
-    right: 0;
+    /*position: absolute;*/
+    /*right: 0;*/
     color:#bbb;
+    float:right;
+    margin-bottom:-17px;
 }
 
-section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:-17px;}
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:5px;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.meta 						{ clear:both; font-size:11px; margin:5px; overflow:auto; position: relative;}
+section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative; padding:0 25px 15px;}
+section[role="main"] div.card.pag div.meta 				{ }
 
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { width:200px; }
@@ -782,8 +919,10 @@ section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px
 
 
 section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
-section[role="main"] div.metaRight { float: left; width: 265px; overflow:hidden;}
+section[role="main"] div.metaRight { float: left; width: 200px; overflow:hidden;}
+section[role="main"] div.card.wide div.metaRight { width: 500px; }
 
+section[role="main"] div.metaRight em.from { display:block; color:#787878; padding:0px 4px;}
 section[role="main"] div.metaRight div.publisher { width: 190px;}
 
 section[role="main"] div.card.pag_container div.meta { z-index: 5; overflow: visible; margin: 8px 0;}
@@ -805,40 +944,22 @@ section[role="main"] div.card.pag_container div.meta div.date{
 
 section[role="main"] div.meta div.favicon { position: absolute; bottom: 0; left: 4px;}
 
-
-section[role="main"] div.card div.added_by                    { padding:5px 5px 3px 5px; font-size:11px; text-align:left; float:right; margin-top:-10px; background:#f0f0f0; position: relative; 
-    /*this isn't the best, but oh well - it looks good.*/
-    height: 39px;
-}
-section[role="main"] div.card div.added_by a                  { margin-right: 5px; }
-section[role="main"] div.card div.added_by span.metoos        { display: block; float: right; margin-top: 9px; }
-section[role="main"] div.card div.added_by span.metoos:hover  { text-decoration:underline; cursor:pointer; }
-section[role="main"] div.card.pag.heightAdjusted div.added_by {
+/*section[role="main"] div.card.pag.heightAdjusted header {
     width: 100%; 
     bottom: 0 !important;
     position: absolute !important;
-}
-section[role="main"] div.added_by .arrowLeft{
-    width: 0; 
-    height: 0;
-    border-top: 19px solid transparent;
-    border-bottom: 19px solid transparent;    
-    border-right:10px solid #F0F0F0;
-    position: absolute;
-    top: 0;
-    left: -10px;
-}
+}*/
 
-section[role="main"] div.card div.added_by img.user_avatar  { display: inline-block; margin-bottom:0px; width:27px; max-height: 27px;}
-section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
-section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }
+section[role="main"] div.card header img.user_avatar  { display: inline-block; margin-bottom:0px; width:50px; max-height: 50px;}
+/*section[role="main"] div.card div.meta img.me_too  { width:25px;height:24px;background:url(../images/me_too.png) -25px 0px no-repeat;display:block;float:right;cursor:pointer;margin-top:-2px;}
+section[role="main"] div.card div.meta img.me_too:hover   { background-position: 0px 0px; }*/
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
 section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
     opacity: 0.8;
     -moz-pacity: 0.8;
     filter:alpha(opacity=8);
 }
-section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }
+/*section[role="main"] div.card.pag div.meta div.me_too_outcome div.close { text-align:left; }*/
 
 section[role="main"] div.card div.meta em { display:block; }
 ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
@@ -848,20 +969,15 @@ ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
 /*section[role="main"] div.card.txt div.content div.content_body    { font-size:20px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; font-style:italic; xxbackground:#f0f0f0; padding:10px; background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2; }*/
-section[role="main"] div.card.txt div.content div.content_body    { font-size:16px; font-weight:normal; font-family:Georgia,serif; background:url(../images/quote_background.png) bottom right repeat-y #f0f0f0; padding:35px 20px; border-top:1px solid #ddd; border-bottom:1px solid #ddd;}
+section[role="main"] div.card.txt div.content div.content_body        { font-size:20px; font-weight:400; font-family:Georgia,Cambria,"Times New Roman",Times,serif; color:#999; padding:10px 20px 20px; text-align:center;}
+section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
+section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
 /*section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}*/
 
 section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
 section[role="main"] div.card.img div.content div.content_body img			{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
-
-/*section[role="main"] div.card.page	{ border:1px solid #ccc; border-top:none; width:210px; padding:15px 0 20px; float:left; margin-left:-1px; xmargin-top:-1px; }*/
-section[role="main"] div.card.pag header 			{ margin: 8px 0 0 0;}
-section[role="main"] div.card.pag header h1			{ font-size:16px; }
-section[role="main"] div.card.pag div.content			{ xborder-top: 1px solid #fff; margin:0 20px 0; padding-top:9px;}
-section[role="main"] div.card.pag div.content_type		{ width:25px; height:37px; margin:5px 8px 0 0; background:url(../images/type_page.png) top left no-repeat; }
-section[role="main"] div.card.pag div.content_body		{ margin-top:4px; }
 
 section[role="main"] div.card div.comments    { xxbackground:#eee; xxborder:1px solid #d3d4d4; xxbox-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:15px; display:none; }
 /*section[role="main"] div.card:hover div.comments    { background:#f0f0f0; }*/
@@ -885,7 +1001,7 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
 /* from Bootstrap CSS */
 .tooltip {
   position: absolute;
-  z-index: 1020;
+  z-index: 12020;
   display: block;
   visibility: visible;
   padding: 5px;
@@ -898,7 +1014,7 @@ section[role="main"] div.card div.comment_container .comment .quote.close {    d
   filter: alpha(opacity=80);
 }
 .tooltip.top {
-  margin-top: -15px;
+  /*margin-top: -15px;*/
 }
 .tooltip.right {
   margin-left: 2px;
@@ -965,7 +1081,7 @@ section[role="complementary"] {
     position:fixed;
     left:0px;
     padding:0;
-    background:#fff;
+    background:#eaf3fc;
     box-shadow:0 0 10px #888;
     z-index:500;
 }
@@ -1018,7 +1134,7 @@ section[role="complementary"] #user_data label {
 #sidebar h3   {font-size:16px; font-weight:100; margin:0 10px; font-family:Arial; color:#5f5f5f; text-align:center; display:inline-block;}
 #sidebar #avatar,
 #sidebar #user_data      {text-align:center; margin:8px 10px 0; position:relative;}
-#sidebar #avatar img     {max-height:32px; }
+#sidebar #avatar img     {max-height:32px; margin-bottom:-5px; }
 #sidebar #user_data img      {max-height:32px; margin-bottom:-9px;}
 #sidebar #follow      {margin:5px 10px 10px;}
 #sidebar #follow button   {background:#cde4f3; cursor:pointer; border:1px solid #8bb6d0; border-radius:3px; box-shadow: -1px -9px 11px -5px #559FCB inset;color: #42718E; text-shadow: 1px 1px 1px #CDE4F3; font-size:12px; font-weight:bold;}
@@ -1109,7 +1225,7 @@ ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 /* settings form */
 section.column         { float:left; width:45%; }
 section.column.left    { margin-right:5%; }
-form.big-form button            { clear:both; font-size:24px; display:block; padding: 10px;}
+form.big-form button            { clear:both; font-size:24px; display:inline-block; padding: 10px;}
 form.big-form h3            { color:#668294; border-bottom:1px solid #668294; margin:10px 0;}
 
 form.big-form 				{ padding:10px 20px; }
@@ -1237,9 +1353,11 @@ table[role="popular bookmarks"] td[role="reactions"]	{ padding:0 0 10px 23px; }
 
 }
 
+/*killing fixed bar*/
 footer.withFixedBar{
-    margin-bottom: 50px; 
+    /*margin-bottom: 50px; */
 }
+
 /*footer div.footerLinks{
 	width:960px;
 	margin:auto;
@@ -1294,7 +1412,6 @@ footer div.footerLinks ul{
     left: 50%;
 }
 footer div.footerLinks ul li{
-    padding:10px;
     margin: 0 40px;
     position: relative;
     float: left;

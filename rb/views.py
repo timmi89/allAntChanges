@@ -8,6 +8,7 @@ from settings import FACEBOOK_APP_ID, BASE_URL
 from baseconv import base62_decode
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Count
+from django.db import IntegrityError
 from api.utils import *
 from api.userutils import *
 from authentication.token import checkCookieToken
@@ -18,9 +19,14 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
 from django.db.models import Q
 from forms import *
+from django.forms.models import model_to_dict
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import EmailMessage
+
+from django import template
+from django.utils.safestring import mark_safe
+from django.utils import simplejson
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -87,8 +93,9 @@ def login(request):
     context['fb_client_id'] = FACEBOOK_APP_ID
     cookie_user = checkCookieToken(request)
     context['cookie_user'] = cookie_user
-    if cookie_user:
-        return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    if cookie_user and request.META.get('HTTP_REFERER'):
+        # return HttpResponseRedirect(request.META['HTTP_REFERER'])
+        return request.META.get('HTTP_REFERER', '')
     return render_to_response(
         "login.html",
         context,
@@ -145,6 +152,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
             Q(page__site__name__icontains=query_string) |
             Q(page__title__icontains=query_string)
         )
+        
 
     context['query_string'] = query_string
 
@@ -262,6 +270,76 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     template = "single_interaction.html" if singleton else "index.html"
     return render_to_response(template, context, context_instance=RequestContext(request))
 
+
+def board(request, board_id=None, **kwargs):
+    cookie_user = checkCookieToken(request)
+    timestamp = datetime.now().date()
+    page_num = request.GET.get('page_num', 1)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'board_id': board_id,
+        'kwargs': kwargs,
+        'page_num': page_num,
+        'timestamp': timestamp,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+        
+        #context['board_admins'] = Board.objects.filter(admins__in=[cookie_user]).values_list('admins', flat=True)
+        
+        
+    """ For interactions.html """
+    try:
+        board = Board.objects.get(id=board_id)
+        context['board'] = board
+        try:
+            social = SocialUser.objects.get(user=board.owner)
+            context['social_user'] = model_to_dict(social, fields=('id','full_name', 'img_url'))
+        except SocialUser.DoesNotExist:
+            logger.warn("Balls")
+            
+        if cookie_user in board.admins.all():
+            context['board_admin'] = True
+        else:
+            context['board_admin'] = False
+    except Board.DoesNotExist:
+        raise Http404
+    
+    # print "-------- BOARD ----------"
+    # print board.owner.id
+    # print board.owner.first_name
+    # print board.owner.last_name
+    interactions = board.interactions.all()
+    
+    interactions_paginator = Paginator(interactions, 50)
+
+    try: page_number = int(page_num)
+    except ValueError: page_number = 1
+
+    try: current_page = interactions_paginator.page(page_number)
+    except (EmptyPage, InvalidPage): current_page = interactions_paginator.page(interactions_paginator.num_pages)
+      
+    context['current_page'] = current_page
+    len(current_page.object_list)
+    parent_ids = []
+    for inter in current_page.object_list:
+        parent_ids.append(inter.id)
+    
+    child_interactions = Interaction.objects.filter(parent__id__in = parent_ids, kind='tag')
+    context['child_interactions'] = {}
+    
+    for child_interaction in child_interactions:
+        if not context['child_interactions'].has_key(child_interaction.parent.id):
+            context['child_interactions'][child_interaction.parent.id] = 0
+
+        context['child_interactions'][child_interaction.parent.id] += 1
+
+    return render_to_response("index.html", context, context_instance=RequestContext(request))
+
+
+
 def cards(request, **kwargs):
     # Get interaction set based on filter criteria
     interactions = Interaction.objects.all()
@@ -308,6 +386,41 @@ def create_group(request):
         context,
         context_instance=RequestContext(request)
     )
+
+def create_board(request):
+    context = {}
+    context['is_popup'] = request.GET.get('popup')
+    context['int_id'] = request.GET.get('int_id')
+
+    cookie_user = checkCookieToken(request)
+    if not cookie_user: return HttpResponseRedirect('/')
+    
+    if request.method == 'POST':
+        form = CreateBoardForm(request.POST)
+        if form.is_valid():
+            try:
+                board = form.save(cookie_user)
+                context['requested'] = True
+                context['board']  = board
+
+            except IntegrityError, e:
+                context['title_error']  = 'You already have a board with this name.  Please choose a new name!'
+
+            
+    else:
+        form = CreateBoardForm()
+        
+    context['form'] = form
+    context['fb_client_id'] = FACEBOOK_APP_ID
+
+    context['user_boards'] = mark_safe(simplejson.dumps(getUserBoardsDict(cookie_user)))
+    
+    return render_to_response(
+        "board_create.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 def create_rb_user(request):
     context = {}

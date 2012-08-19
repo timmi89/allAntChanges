@@ -8,6 +8,7 @@ from utils import *
 from userutils import *
 import json
 from piston.utils import Mimer
+from django.forms.models import model_to_dict
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -79,7 +80,7 @@ class FBHandler(BaseHandler):
         # Make a token for this guy
         readr_token = createToken(django_user.id, social_auth.auth_token)
 
-        return dict(
+        user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
@@ -87,6 +88,11 @@ class FBHandler(BaseHandler):
             readr_token=readr_token,
             user_type="facebook"
         )
+
+
+        user['user_boards'] = getUserBoardsDict(django_user)
+
+        return user
         
         
 class RBHandler(BaseHandler):
@@ -95,7 +101,7 @@ class RBHandler(BaseHandler):
     def create(self, request, admin_req=False):
         
         group_id = None
-        #print 'got data'
+
         try:
             user_id = request.POST['user_id']
         except KeyError:
@@ -146,7 +152,7 @@ class RBHandler(BaseHandler):
         # Make a token for this guy
         readr_token = createToken(django_user.id, social_auth.auth_token)
 
-        return dict(
+        user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
@@ -154,6 +160,10 @@ class RBHandler(BaseHandler):
             readr_token=readr_token,
             user_type="readrboard"
         )
+
+        user['user_boards'] = getUserBoardsDict(django_user)
+
+        return user
       
 
 class ConfirmUserHandler(BaseHandler):

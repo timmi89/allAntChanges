@@ -305,7 +305,7 @@ class GroupForm(forms.ModelForm):
             #'logo_med',
             'logo_url_med',
             #'logo_lg',
-            'logo_url_lg',
+            'logo_url_lg',  
             'requires_approval',
             'word_blacklist',
             'custom_css',
@@ -314,3 +314,19 @@ class GroupForm(forms.ModelForm):
             'summary_widget_selector',
             'call_to_action'
         )
+
+
+class CreateBoardForm(forms.Form):
+    title = forms.CharField(label='Board Title')
+    description = forms.CharField(label='Board Description')
+    
+    def clean_title(self):
+        return self.cleaned_data['title']
+    def clean_description(self):
+        return self.cleaned_data['description']
+    def save(self, cookie_user, force_insert=False, force_update=False, commit=True):
+        board = Board.objects.create(owner=cookie_user, title = self.clean_title(), description = self.clean_description())
+        board.save()
+        board_admin = BoardAdmin.objects.create(board = board, user = cookie_user, approved = True)
+        board_admin.save()
+        return board

@@ -1,0 +1,109 @@
+{% extends "popup_form.html" %}
+
+{% block bodyClass %}wide{% endblock %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+</div>
+{% endblock sidebarContent %}
+
+{% block mainContent %}
+
+<style>
+.formBodySection {
+    clear: both;
+}
+</style>
+<section role="main>">
+  
+  {% if requested %}
+    <h1>Success!</h1>
+    <div style="padding:10px 20px;">
+      <h3 style="margin-bottom:5px;">Your board, <strong>{{ board.title }}</strong>, has been created!</h3>
+      {% if is_popup == "widget" %}
+      <button class="btn" onclick="closeBoardRindow();">Return to page</button>
+      {% endif %}
+      {% if is_popup == "site" %}
+      <button class="btn" onclick="self.close();">Return to page</button>
+      <script>
+      if (opener && !opener.closed) opener.RB.interactions.add_to_board(RB.querystring('int_id'), '{{ board.id }}', '{{ board.title }}' );
+      </script>
+      {% endif %}
+      {% if is_popup == None %}
+      <a href="/board/{{ board.id }}/{{ board.title }}"><button class="btn">Go see your new board</button></a>
+      {% endif %}
+    </div>
+    <script>
+
+    // now set cookie
+    $.cookie('new_board_id', '{{ board.id }}', { expires: 365, path: '/' } );
+    $.cookie('new_board_name', '{{ board.title }}', { expires: 365, path: '/' } );
+    $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
+
+    $.postMessage(
+        JSON.stringify( {"status":"board_created"} ),
+        qs_args.parentUrl,
+        parent
+    );
+
+    </script>
+  {% else %}
+    <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 -6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
+    <form class="big-form" action="/board_create/?{% if is_popup != None %}popup={{ is_popup }}{% endif %}{% if int_id != None %}&int_id={{ int_id }}{% endif %}" enctype="multipart/form-data" method="post" class="in-page">
+        <div class="formBody clearfix">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+            <div class='formBodySection'>
+                <label for="id_title">Board Title </label>
+                {% if title_error %}<div class="error">{{ title_error }}</div>{% endif %}
+                {{ form.title.errors }}
+                {{ form.title }}
+            </div>
+            <div class='formBodySection'>
+                <label for="id_description">Description</label>
+                {{ form.description.errors }}
+                {{ form.description }}
+            </div>
+        </div>
+        <button class="btn" type="submit">Create Board</button>
+        <button class="btn cancel" type="button">Cancel</button>
+    </form>
+
+  {% endif %}
+  </section>
+<script>
+    // modify the form action based on passed-in querystring arguments
+    (function(){
+      var form_action = $('form.big-form').attr('action');
+      if ( qs_args.parentUrl ) form_action += '&parentUrl='+qs_args.parentUrl;
+      if ( qs_args.parentHost ) form_action += '&parentHost='+qs_args.parentHost;
+      $('form.big-form').attr('action', form_action);
+    })();
+    
+    $('button.cancel').click( function() {
+      $.postMessage(
+          JSON.stringify( {"status":"board_create_cancel"} ),
+          qs_args.parentUrl,
+          parent
+      );
+    });
+</script>
+
+{% endblock mainContent %}
+
+{% block pageJS %}
+<script>
+$(document).ready(function(){
+  $('body').tooltip({
+    selector: "img",
+    placement:"right"
+  });
+  $('#id_title').focus();
+});
+</script>
+{% endblock %}
+
+{% block footer %}
+    <div class="emptyFooter"></div>
+{% endblock footer %}

@@ -12,14 +12,16 @@ if ( typeof $.receiveMessage == "function") {
 		function(e){
 		    if( e.data == "getUser" ) {
 	    		RDRAuth.getUser();
+	    	} else if ( e.data == "reloadXDMframe" ) {
+	    		window.location.reload();
 	    	} else if ( e.data == "reauthUser" ) {
 		    	RDRAuth.reauthUser();
 		    } else if ( e.data == "returnUser" ) {
 	    		RDRAuth.returnUser();
 		    } else if ( e.data == "killUser" ) {
 	    		RDRAuth.killUser();
-	    	// } else if ( e.data == "close educateUser" ) {
-	    	// 	$.cookie('educatedUser', true);
+		    } else if ( e.data == "TESTIT" ) {
+		    	RDRAuth.testMessage();
 	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
 	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
 	    	}
@@ -129,7 +131,8 @@ RDRAuth = {
 					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
-					readr_token : RDRAuth.rdr_user.readr_token
+					readr_token : RDRAuth.rdr_user.readr_token,
+					user_boards : RDRAuth.rdr_user.user_boards
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
@@ -201,7 +204,8 @@ RDRAuth = {
 							full_name : RDRAuth.rdr_user.full_name,
 							img_url : RDRAuth.rdr_user.img_url,
 							user_id : RDRAuth.rdr_user.user_id,
-							readr_token : RDRAuth.rdr_user.readr_token
+							readr_token : RDRAuth.rdr_user.readr_token,
+							user_boards : RDRAuth.rdr_user.user_boards
 						}
 					};
 					RDRAuth.notifyParent(sendData, "got_temp_user");
@@ -214,7 +218,8 @@ RDRAuth = {
 					full_name : RDRAuth.rdr_user.full_name,
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
-					readr_token : RDRAuth.rdr_user.readr_token
+					readr_token : RDRAuth.rdr_user.readr_token,
+					user_boards : RDRAuth.rdr_user.user_boards
 				}
 			};
 			RDRAuth.notifyParent(sendData, "got_temp_user");
@@ -256,7 +261,6 @@ RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
-							// console.dir(response);
 							if ( $('#fb-login-button a.logging-in').length ) {
 							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
 								if ( $('#fb-login-button a').hasClass('logging-in') ) {
@@ -337,6 +341,7 @@ RDRAuth = {
 		RDRAuth.rdr_user.user_id = response.data.user_id;
 		RDRAuth.rdr_user.readr_token = response.data.readr_token;
 		RDRAuth.rdr_user.user_type = response.data.user_type;
+		RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
 		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
 		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
 		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
@@ -344,6 +349,7 @@ RDRAuth = {
 		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
 		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
 		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
+		$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
@@ -357,6 +363,7 @@ RDRAuth = {
 		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
 		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
+		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
 	},
 	returnUser : function() {
 		RDRAuth.readUserCookie();
@@ -392,7 +399,10 @@ RDRAuth = {
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token,
-					user_type : RDRAuth.rdr_user.user_type
+					user_type : RDRAuth.rdr_user.user_type,
+					user_boards : RDRAuth.rdr_user.user_boards,
+					new_board_id : parseInt($.cookie('new_board_id')),
+					new_board_name : $.cookie('new_board_name')
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
@@ -423,6 +433,7 @@ RDRAuth = {
 					$.cookie('user_id', null, { path: '/' });
 					$.cookie('readr_token', null, { path: '/' });
 					$.cookie('user_type', null, { path: '/' });
+					$.cookie('user_boards', null, { path: '/' });
 					$.cookie('rdr_session', null);
 					RDRAuth.rdr_user = {};
 					if (callback && this.callback_args) {

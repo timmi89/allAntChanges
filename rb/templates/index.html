@@ -15,36 +15,125 @@
 
 {% block mainContent %}
 <!-- <h2 style="text-align:center;border-bottom:1px solid #999;padding-bottom:10px;margin-bottom:10px;">Say stuff</h2> -->
-{% if not profile_user and not group %}
+{% if not profile_user and not group and not board %}
 <style>
-section[role="main"] {margin-top:10px;}
+section[role="main"] {margin-top: 0;}
 section[role="complementary"] {display:none;}
 </style>
-<div id="splashAnnounce">
+{% if not query_string and not singleton %}
 
-    <div id="betterLikeButton" >
-        <img src="{{ STATIC_URL }}site/images/imagine.png" title="Imagine a better Like button" id="imagine" />
-        <div id="sns_buttons">
-            <div style="display:block;"><img src="{{ STATIC_URL }}site/images/like_button.png" alt="Like" id="sns_fb" class="no-rdr" /></div>
-            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/plus_one_button.png" alt="+1" id="sns_google" class="no-rdr"/></div>
-            <div style="display:none;"><img src="{{ STATIC_URL }}site/images/tweet_button.png" alt="Tweet" id="sns_twitter" class="no-rdr"/></div>
+<div id="splashLargeBanner">
+    <div id="splashMain">
+        <div class="mainSplashBlurb splashLeft">
+            <div class="mainSplashBlurbInner">
+                <img src="{{ STATIC_URL }}site/images/splashLogo.png" />
+                <div class="callToActionButtons">
+                    <a href="/react/" class="btn"><span class="rdrIcon"></span>Add to your browser</a>
+                    <a href="http://www.readrboard.com/publishers/" class="btn"><span class="rdrIcon"></span>Add to your website</a>
+                    <!-- <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" class="btn"><span class="rdrIcon"></span>Add to your website</a> -->
+                    <div class="clear"></div>
+                </div>
+            </div>
         </div>
-        <!-- <img src="{{ STATIC_URL }}site/images/summary_bar.png" style="zoom:1;"/> -->
-    </div>
+        <div id="splashSlides" class="splashRight">
+            
+            <!-- todo: move these later -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/themes/default/default.css" type="text/css" media="screen" />
+            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/nivo-slider.css" type="text/css" media="screen" />
+            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/nivo-slider-overrides.css" type="text/css" media="screen" />
+            <script type="text/javascript" src="{{ STATIC_URL }}site/nivo/jquery.nivo.slider.js"></script>
+            <script type="text/javascript">
+                $(window).load(function() {
+                    $('#slider').nivoSlider({
+                        animSpeed: 200,
+                        pauseTime: 3500 // How long each slide will show
+                    });
+                });
+            </script>
 
-    <div class="theSpitch">
-        <h3 class="no-rdr"><span>ReadrBoard lets you easily express your reaction</span><br>to any phrase, picture, video, or article on the web.</h3>
-    </div>
-    <div class="callToActionButtons" style="xfloat:left;display:inline-block;margin-bottom:-7px;">
-        <a href="/about" class="btn left"><!-- <span class="rdrIcon"> --></span>Learn More</a>
+            <div class="slider-wrapper theme-default splashSlidesInner">
+                <div id="slider" class="nivoSlider">
+                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-1.png" data-transition="fade" class="first" />
+                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-2.png" data-transition="fade" />
+                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-3.png" data-transition="fade" />
+                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-4.png" data-transition="fade" />
+                </div>
+            </div>
+            
+        </div>
+
         <div class="clear"></div>
     </div>
-</div>
-<!-- <em style="marign-bottom:10px;text-align:center;display:block;">Reactions from around the web</em> -->
-  <!-- <div xstyle="position:absolute;right:10px;top:10px;"> -->
-  <!-- </div> -->
-{% endif %}
+    
+    <div id="splashSecondary">
+        <div id="splashMainShadow"></div>
+        <div id="splashSecondaryInner">
+            <div class="featureQuoteWrap splashLeft">
+                <div class="featureQuoteWrapInner">
+                    <a href="http://www.readrboard.com/user/1662/" target="_blank">
+                        <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
+                    </a>
+                    <h3>
+                        <span>"If you're like me, you've been doing varieties of this in haphazard ways for years --<br>ReadrBoard wins the day.</span><em style="display:block;margin-top:15px;font-size:18px;">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a><br>Co-Founder, Reddit</em>
+                    </h3>
+                </div>
+            </div>
+            <div class="asSeenOnWrap splashRight">
+                <h3>
+                    As seen on&#8230;<!-- … -->
+                </h3>
 
+                <div class="topRow">
+                    <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
+                        <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
+                    </a>
+                    <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
+                        <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
+                    </a>
+                </div>
+                <div class="bottomRow">
+                    <!-- TODO: UPDATE LINK!! -->
+                    <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
+                        <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
+                    </a>
+
+                    <a class="a4" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
+                        <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
+                    </a>
+                </div>
+
+                <div class="clear"></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endif %}
+{% if board %}
+<style>
+#board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
+#board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
+#board_header .board_meta       { padding:10px 20px; background:none repeat scroll 0 0 rgba(0, 0, 0, 0.05); margin:20px auto; overflow:auto; box-shadow:0px 0px 3px #bbb inset; }
+#board_header h2    { font-size:18px; font-style:italic; }
+#board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold;}
+#board_header .board_meta button    { float:right; line-height:26px; }
+</style>
+<div id="board_header">
+    <h1>{{ board.title }}</h1>
+    {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
+    <div class="board_meta">
+        <button id="board_follow_button">Follow this board</button>
+        <span id="board_follower_count" style="display:block;float:right;margin:9px 8px 0 0;font-size:12px;"></span>
+        {% if board.owner.first_name %}
+        <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.first_name }} {{ board.owner.last_name }}</a></h3>
+        {% else %}
+        <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.username }}</a></h3>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
     {% block cards %}
     <div id="cards">
       {% include "interactions.html" %}
@@ -53,6 +142,12 @@ section[role="complementary"] {display:none;}
 {% endblock mainContent %}
 
 {% block pageJS %}
-<script type="text/javascript" src="{{ STATIC_URL }}site/js/jquery.cycle/jquery.cycle.all.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}site/js/splash.js"></script>
+<script>
+    {% if board %}
+    $('#board_follow_button').click( function() {
+        RB.follow.add({{ board.id }},'brd');
+    });
+    RB.follow.followers({{ board.id }},'brd')
+    {% endif %}
+</script>
 {% endblock %}

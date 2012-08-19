@@ -3,6 +3,7 @@ from readrboard import settings
 from datetime import datetime, timedelta
 import base64
 import uuid
+from django.forms.models import model_to_dict
 from django.core.mail import send_mail, mail_admins
 from django.utils.hashcompat import sha_constructor
 from django.contrib.auth.models import Permission
@@ -264,4 +265,18 @@ def formatUserAvatarUrl(social_user):
     #logger.info(settings.BASE_URL + settings.MEDIA_URL+ 'users/'+ str(social_user.id) +'/avatars/'+ filename)
     return settings.STATIC_URL + 'users/'+ str(social_user.id) +'/avatars/'+ filename
     #return os.path.join(settings.BASE_URL, "/", settings.MEDIA_URL, 'users/', str(social_user.id) +'/avatars/', filename)
-    
+   
+   
+   
+def getUserBoardsDict(cookie_user, visible=True):
+    board_admins = BoardAdmin.objects.filter(user = cookie_user)
+    user_boards = []
+    for b_a in board_admins:
+        if visible and b_a.board.visible:
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
+        elif not visible:
+            user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
+    return user_boards
+        
+        
+         
