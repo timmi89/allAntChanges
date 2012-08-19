@@ -892,9 +892,11 @@ section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-dec
 
 section[role="main"] div.card div.date {
     font-size: 10px;
-    position: absolute;
-    right: 0;
+    /*position: absolute;*/
+    /*right: 0;*/
     color:#bbb;
+    float:right;
+    margin-bottom:-17px;
 }
 
 section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:5px;}
@@ -902,7 +904,7 @@ section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative;}
+section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative; padding:0 25px 15px;}
 section[role="main"] div.card.pag div.meta 				{ margin-top:-10px;}
 
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
@@ -917,8 +919,8 @@ section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px
 
 
 section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
-section[role="main"] div.metaRight { float: left; width: 220px; overflow:hidden;}
-section[role="main"] div.card.wide div.metaRight { width: 535px; }
+section[role="main"] div.metaRight { float: left; width: 200px; overflow:hidden;}
+section[role="main"] div.card.wide div.metaRight { width: 500px; }
 
 section[role="main"] div.metaRight em.from { display:block; color:#787878; padding:0px 4px;}
 section[role="main"] div.metaRight div.publisher { width: 190px;}
