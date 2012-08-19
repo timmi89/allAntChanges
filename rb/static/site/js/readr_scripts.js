@@ -325,7 +325,7 @@ RB = {
                     if ( data.types.length == 1 && $.inArray('brd', data.types) != -1 ) {
                         
                         // abstract this
-                        var $boards = $('<div id="board_list"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
+                        var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
                         $.each( response.data.paginated_follows, function(idx, followed_item) {
                             var board_id = followed_item.brd.id;
                             $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
@@ -470,7 +470,7 @@ RB = {
                 success: function(response) {
                     if ( response.data.user_boards.length > 0 ) {
                         // abstract this
-                        var $boards = $('<div id="board_list"><h2>ReadrBoards</h2><ul></ul></div>');
+                        var $boards = $('<div id="board_listing"><h2>ReadrBoards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
                             $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
@@ -504,16 +504,16 @@ RB = {
                 success: function(response) {
                     if ( response.data.found_boards.length > 0 ) {
                         if ( search_term != "" ) {
-                            var $boards = $('<div id="board_list"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
+                            var $boards = $('<div id="board_listing"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
                         } else {
-                            var $boards = $('<div id="board_list"><h2>Recently updated ReadrBoards</h2><ul></ul></div>');
+                            var $boards = $('<div id="board_listing"><h2>Recently updated ReadrBoards</h2><ul></ul></div>');
                         }
 
                         var board_count = 0;
                         $.each( response.data.found_boards, function(idx, board) {
                             var board_id = board.id,
                                 $li = $('<li />');
-                            $li.append('<div style="background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;" class="user_meta">'+board.social_user.full_name+'</div>');
+                            $li.append('<div class="user_meta">'+board.social_user.full_name+'</div>');
                             if ( board.social_user.img_url != null ) {
                                 $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; height:22px; max-width: 22px;"> ');
                             }

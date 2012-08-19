@@ -28,7 +28,7 @@
   width:612px;
 }
 #content .card:hover {
-  box-shadow:0px 0px 8px #a2bfdd;
+  box-shadow:0px 0px 2px #008be4;
 }
 #content .card .group {
   font-size:13px;
@@ -71,7 +71,7 @@
   width:100%;
 }
 .card .buttons {
-  bottom:-20px;
+  top:-20px;
 }
 .card .buttons button {
   color: #777;
@@ -89,13 +89,14 @@
 }
 .card:hover .buttons { display:block; }
 
-#board_list  {
+#board_listing  {
   margin:0 auto 20px;
   overflow:auto;
+  padding:2px;
 }
 h1.sectionHeader,
-#board_list h2 {
-  background: none repeat scroll 0 0 #F7F7F7;
+#board_listing h2 {
+  background: none repeat scroll 0 0 #f3f3f3;
   color: #BCBCBC;
   display: inline-block;
   font-family: Helvetica,Arial,sans-serif;
@@ -107,13 +108,13 @@ h1.sectionHeader,
   visibility: visible;
   width: 100%;
 }
-#board_list ul {
+#board_listing ul {
   width:855px;
   padding:0;
   margin:0 auto;
 }
-#board_list li {
-  background: url("/static/site/images/quote_background.png") repeat-y scroll 0 0 #F0F0F0;
+#board_listing li {
+  background: url("/static/site/images/tile-background.jpg") repeat scroll 0 0 #F0F0F0;
   box-shadow: 0 0 4px #aaa;
   display: block;
   float: left;
@@ -123,6 +124,10 @@ h1.sectionHeader,
   padding: 10px;
   text-align: center;
   width: 245px;
+}
+#board_listing li .user_meta {
+  background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;
+  border:1px dotted #aaa;
 }
 .fancybox-inner h3{
     font-weight: bold;
@@ -163,6 +168,7 @@ section[role="content"]{
 }
 #content {
     /*clear min-height*/
+  width:322px !important;
   min-height:0 !important;
 }
 
@@ -190,8 +196,9 @@ footer{
 </style>
 {% endif %}
 
-
+{% if not board %}
 <h1 class="sectionHeader">Content</h1>
+{% endif %}
 <section id="content"></section>
 <script>
 var comments = [],
@@ -536,6 +543,8 @@ function writeCard( interaction, showBlocked ) {
             RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
           });
         });
+      } else {
+        $buttons.find('button.add_new_comment').remove();
       }
 
       // ADD TO BOARD
@@ -635,7 +644,7 @@ function writeComment( comment, parent, showBlocked ) {
     }
 
       $comments.show();
-      if ( !$comments.find('h2').length ) $comments.append('<h2>Comments / Tags</h2>');
+      if ( !$comments.find('h2').length ) $comments.append('<h2>Comments &amp; Tags</h2>');
       $comments.find('h2').after( $comment_container );
   }
 }
@@ -702,11 +711,12 @@ var $container = $('#content');
   };
 
 function cardReset() {
-  $('#cards').width( $(window).width() - 40 );
+  {% if not singleton %}
+  $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
   var contentWidth = $('#cards').width(),
       numColumns = parseInt(contentWidth/312);
   $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
-  $('#cards').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
+  $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
 
   $container.isotope({
       masonry: {
@@ -717,6 +727,7 @@ function cardReset() {
   }, function() {
     $('#content').css('visibility','visible')
   });
+  {% endif %}
 }
 
 function getContentDimsStyle(dims){
