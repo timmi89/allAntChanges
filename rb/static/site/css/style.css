@@ -878,7 +878,7 @@ input[type="color"]
 
 #cards { }
 section[role="main"] div.card { }
-section[role="main"] div.card header      { padding:10px; z-index:3; overflow:auto;}
+section[role="main"] div.card header      { padding:20px 20px 0; z-index:3; overflow:auto;}
 section[role="main"] div.card a.added_by_user         { display:block; float:left; }
 section[role="main"] div.card div.who_and_what        { float:left; margin:5px 10px; color:#999; }
 section[role="main"] div.card div.who_and_what h1     { font-size:32px; font-weight:bold; max-width:205px; }
@@ -905,7 +905,7 @@ section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
 section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative; padding:0 25px 15px;}
-section[role="main"] div.card.pag div.meta 				{ margin-top:-10px;}
+section[role="main"] div.card.pag div.meta 				{ }
 
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { width:200px; }
