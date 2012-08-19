@@ -587,7 +587,7 @@ page-break-after:avoid; }
 
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;
-  box-shadow:0px 0px 2px #aaa;
+  box-shadow:0px 0px 6px #aaa;
 }
 header[role="banner"] a.logo    { display:block; width:165px; }
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/logo_dark.png) top center no-repeat;margin-top:4px; width:165px;}
