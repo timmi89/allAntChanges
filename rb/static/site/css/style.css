@@ -807,7 +807,7 @@ input[type="color"]
 
     .featureQuoteWrapInner{
         font-weight: bold;
-        padding: 30px;
+        padding: 10px 30px 30px;
     }
     .featureQuoteWrapInner img{
         float: left;
