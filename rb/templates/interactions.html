@@ -38,6 +38,10 @@
 #content .card .group a {
   color:#789abf;
 }
+#content .card .group span:hover,
+#content .card .group a:hover {
+  text-decoration:underline;
+}
 .card .group img {
   margin-bottom: -4px;
   margin-top: 2px;
@@ -772,7 +776,7 @@ $(window).resize( function() {
 RB.interactions.searchBoards('{{query_string}}');
 {% endif %}
 
-{% if not query_string and not profile_user and not board and not singleton %}
+{% if not query_string and not profile_user and not board and not singleton and not group %}
 RB.interactions.searchBoards('');
 {% endif %}
 

@@ -1005,7 +1005,8 @@ ul.shareLinks img       {width:18px !important; margin:0 !important;}
 
 section[role="main"] div.card.txt div.content           { xxborder-top: 1px solid #fff; margin:0; position:relative;z-index:2;}
 /*section[role="main"] div.card.txt div.content div.content_body    { font-size:20px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; font-style:italic; xxbackground:#f0f0f0; padding:10px; background:url("../images/noise.png") repeat scroll 0 0 #f2f2f2; }*/
-section[role="main"] div.card.txt div.content div.content_body      { font-size:20px; font-weight:400; font-family:Georgia,Cambria,"Times New Roman",Times,serif; color:#999; padding:10px 20px 20px; text-align:center;}
+section[role="main"] div.card.txt div.content div.content_body        { font-size:20px; font-weight:400; font-family:Georgia,Cambria,"Times New Roman",Times,serif; color:#999; padding:10px 20px 20px; text-align:center;}
+section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
 section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
 /*section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}*/
