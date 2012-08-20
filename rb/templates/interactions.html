@@ -162,7 +162,7 @@ body{
 }
 
 section[role="main"]{
-    margin: 40px 0 20px 0 !important;
+    padding: 40px 0 20px 0 !important;
     background: #555;
 }
 
@@ -173,8 +173,9 @@ section[role="content"]{
 }
 #content {
     /*clear min-height*/
-  width:322px !important;
+  /*width:322px !important;*/
   min-height:0 !important;
+  max-width:615px !important;
 }
 
 footer{
@@ -187,9 +188,9 @@ footer{
 #content {
   float: none;
   margin: 0 auto !important;
-  width: 300px !important;
+  /*width: 300px !important;*/
 }
-
+.sectionHeader {display:none !important;}
 .pagination{
     display: none !important;
 }
@@ -716,11 +717,19 @@ var $container = $('#content');
   };
 
 function cardReset() {
-  {% if not singleton %}
   $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
   var contentWidth = $('#cards').width(),
       numColumns = parseInt(contentWidth/312);
+  {% if singleton %}
+  if ( $('div.card.img').length || $('div.card.med').length || !$('div.card.wide').length) {
+    $('#content').width( 305);
+  } else {
+    $('#content').width( 930 );
+  }
+  {% endif %}
+  {% if not singleton %}
   $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
+  {% endif %}
   $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
 
   $container.isotope({
@@ -732,7 +741,6 @@ function cardReset() {
   }, function() {
     $('#content').css('visibility','visible')
   });
-  {% endif %}
 }
 
 function getContentDimsStyle(dims){
