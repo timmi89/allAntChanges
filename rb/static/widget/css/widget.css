@@ -652,7 +652,7 @@ div.rdr a.rdr_tag     {
     /*line-height: 14px !important;*/
     
     margin: 0 -2px 0 -2px !important;
-    padding: 8px 5px 0 !important;
+    padding: 12px 7px 4px !important;
     position: relative !important;
     text-decoration: none !important;
     /*text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) !important;*/
@@ -672,7 +672,7 @@ div.rdr.rdr-summary a.rdr_tag {
 
 div.rdr table.rdr_tags a.rdr_tag:hover,
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag:hover {
-  background:#999 !important;
+  background:#aaa !important;
 }
 div.rdr table.rdr_tags a.rdr_tag.rdr_custom_tag:hover,
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag:hover {
@@ -1252,7 +1252,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   display:inline-block !important;
   /*margin-bottom:7px !important;*/
   white-space:normal !important;
-  /*padding:0px 5px !important;*/
+  padding: 8px 5px 0 !important;
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag input {
   /*padding:4px 0 0 0 !important;*/
