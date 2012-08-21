@@ -375,6 +375,9 @@ div.rdr strong {font-weight:bold !important;}
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_thin {
   width:180px !important;
 }
+#rdr_sandbox div.rdr div.rdr_view_success.rdr_wide {
+  width:auto !important;
+}
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_wide h1 {
   display:inline-block !important;
 }
@@ -657,6 +660,7 @@ div.rdr a.rdr_tag     {
     z-index:10001 !important;
 }
 div.rdr.rdr-summary a.rdr_tag {
+  font-size:11px !important;
   /*background:none repeat scroll 0 0 transparent !important;
   border-radius:0 0 0 0 !important;
   box-shadow:none !important;
@@ -666,19 +670,25 @@ div.rdr.rdr-summary a.rdr_tag {
 }
 
 div.rdr table.rdr_tags a.rdr_tag:hover,
-div.rdr.rdr_sbRollOver a.rdr_tag.rdr_hover {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag:hover {
   background:#999 !important;
 }
-div.rdr table.rdr_tags a.rdr_tag.rdr_custom_tag:hover {
+div.rdr table.rdr_tags a.rdr_tag.rdr_custom_tag:hover,
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag:hover {
   background:none !important;
 }
 
 div.rdr table.rdr_tags a.rdr_tag:hover span,
-div.rdr.rdr_sbRollOver a.rdr_tag.rdr_hover span {
+#rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag:hover span {
+/*div.rdr.rdr_sbRollOver a.rdr_tag.rdr_hover span {*/
   color:#fff !important;
 }
 div.rdr table.rdr_tags a.rdr_tag:hover span.rdr_comment_hover {
-  display:none !important;
+  /*visibility:hidden !important;*/
+  color:#777 !important;
+}
+div.rdr table.rdr_tags a.rdr_tag span.rdr_comment_hover:hover {
+  color:#fff !important;
 }
 
 div#rdr_sandbox div.rdr_tag_details {
@@ -1239,12 +1249,12 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
 
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag{
   display:inline-block !important;
-  margin-bottom:7px !important;
+  /*margin-bottom:7px !important;*/
   white-space:normal !important;
-  padding:0px 5px !important;
+  /*padding:0px 5px !important;*/
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag input {
-  padding:4px 0 0 0 !important;
+  /*padding:4px 0 0 0 !important;*/
 }
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag span.rdr_tag_count {
   /*background: -webkit-gradient(linear, center top, center bottom, from(#f0f0f0), to(#d0d0d0)) !important; 

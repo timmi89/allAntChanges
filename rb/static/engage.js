@@ -765,15 +765,20 @@ function readrBoard($R){
                         RDR.actions.interactions.ajax( args, 'react', 'create');
                     }).hover(function() {
                         var $this = $(this);
-                        if ( !$this.hasClass('rdr_tagged') ) $this.find('span.rdr_tag_count').text('+');
+
+                        if ( !$this.hasClass('rdr_tagged') ) {
+                            var $tagCount = $this.find('span.rdr_tag_count');
+                            $tagCount.width( $tagCount.width() );
+                            $tagCount.text('+');
+                        }
+
                     }, function() {
                         var $this = $(this);
-
                         $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
                     });
 
                     $container.append( $a, " " );
-                    $('a.rdr_tooltip_this').tooltip({  });
+                    // $('a.rdr_tooltip_this').tooltip({  });
 
                     // figure out if we should add a comment indicator + comment hover
                     var comments = {},
