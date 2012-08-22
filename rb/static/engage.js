@@ -1009,14 +1009,14 @@ function readrBoard($R){
                             if ( settings.mode == "writeMode" ) {
                                 // write mode uses just the blessed tags
                                 $.each(RDR.group.blessed_tags, function(idx, tag){
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 220 ),
+                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, false );
                                 });
                             } else {
                                 RDR.actions.summaries.sortInteractions(hash);
                                 $.each( summary.interaction_order, function( idx, interaction ){
                                     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
-                                        $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 220 ),
+                                        $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, interaction.content_node_id );
                                 });
                             }
@@ -1026,7 +1026,7 @@ function readrBoard($R){
                         if ( settings.mode == "writeMode" ) {
                             // the custom_tag is used for simulating the creation of a custom pill, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 220 ),
+                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, actionType );
 
                                 $rindow.removeClass('rdr_rewritable');
@@ -1057,7 +1057,7 @@ function readrBoard($R){
                         // now that we've created the first row, unset the max-width and set the table width.
                         // this lets us have the table flow to full width... without having had to loop through
                         // table cells in getNextCell to recalculate the width throughout
-                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 220;
+                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 200;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
                         // if (actionType=="bookmark") {
