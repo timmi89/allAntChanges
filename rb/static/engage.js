@@ -1,13 +1,13 @@
 ;(function(){
 //dont bother indenting this top level anonymous function
 
-var RDR = window.readrboard = window.READRBOARDCOM || {};
+var RDR = {};
 if(RDR.hasLoaded){
     return;
 }
 
 //READRBOARDCOM and readrboard will now be the only things in the global namespace
-window.READRBOARDCOM = RDR;
+window.READRBOARDCOM = window.readrboard = RDR;
  
 RDR.hasLoaded = true;
 
@@ -1742,6 +1742,20 @@ function readrBoard($R){
                     });
                 });
             },
+            initPublicEvents: function(){
+                // RDR.util.initPublicEvents
+                //setup a space to bind and trigger events
+                //we're using the rdr_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
+                window.readrboard.public_events = $('#rdr_sandbox');
+            },
+            triggerPublicEvent: function(namespace, data){
+                // RDR.util.triggerPublicEvent
+                
+                //also publish a catchall event - especially good for debugging
+                window.readrboard.public_events.trigger('event', data);
+                window.readrboard.public_events.trigger(namespace, data);
+            
+            },
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
                 var summary = {};
@@ -2510,9 +2524,8 @@ function readrBoard($R){
                    //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
-                   // this will check for FB login status, too, and set user data
                    RDR.util.checkForSelectedTextAndLaunchRindow();
-                   //next fired on ajax success
+                   RDR.util.initPublicEvents();
                 });
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
@@ -3756,6 +3769,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
 
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
+
                                 }else{
                                     if ( int_type == "react" ) {
                                         RDR.actions.interactions[int_type].onFail(args);
@@ -4358,6 +4372,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 });
                                 return $shareWrapper;
                             }
+                            
+                            RDR.util.triggerPublicEvent('tag', {
+                                body: args.tag.body,
+                                hash: args.hash,
+                                kind: args.kind
+                            });
                         },
                         remove: function(args){
                             //RDR.actions.interactions.react.onSuccess.remove:
