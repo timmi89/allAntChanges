@@ -3896,6 +3896,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //     },
                             //     rindow:$rindow
                             // };
+                            
+                            RDR.util.triggerPublicEvent('comment');
 
                         },
                         remove: function(args){
