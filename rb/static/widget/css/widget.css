@@ -298,21 +298,14 @@ body.rdr_heightAdjustment .rdr_twtooltip {
 
 /* global tag defs */
 #rdr_sandbox div.rdr h1, 
-#rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#666 !important; margin:0 !important; line-height:1.1em !important;}
+#rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#888 !important; margin:0 !important; font-size:13px !important; line-height:1.1em !important; padding:4px 9px 0 10px !important; }
 #rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px !important; color:#008be4 !important;}
 
 #rdr_sandbox div.rdr li {background:none !important; padding:0 !important;}
 
 div.rdr strong {font-weight:bold !important;}
 
-/* the widget */
-#rdr_sandbox div.rdr h1,
-#rdr_sandbox div.rdr h2  {color:#666 !important; font-size:13px !important; padding:4px 9px 0 10px !important; }
-
 #rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute !important; margin:3px 0 0 5px !important; cursor: move !important; }
-/*#rdr_sandbox div.rdr_header div.rdr_remember_image          { position:absolute !important; right:3px !important; z-index:0 !important;}
-#rdr_sandbox div.rdr_header div.rdr_remember_image a        { display: inline-block !important; padding-top: 3px !important; }
-#rdr_sandbox div.rdr_header div.rdr_remember_image a span   { background:url("../images/actionbar_icons.png") no-repeat -59px -9px transparent !important; display:inline-block !important; height:22px !important; width:22px !important; }*/
 
 #rdr_sandbox div.rdr.rdr_window                             { max-width:600px !important; }
 #rdr_sandbox div.rdr div.rdr_header                         { 
@@ -343,7 +336,7 @@ div.rdr strong {font-weight:bold !important;}
     right:11px !important;
 }
 
-#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; white-space: nowrap !important; text-align:left !important;}
+#rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important;}
 
 /*#rdr_sandbox div#rdr_loginPanel.rdr div.rdr_header h1                   { margin-left:0px !important; }*/
 
