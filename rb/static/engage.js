@@ -258,6 +258,7 @@ function readrBoard($R){
                     });
                 }
                 $rindow.removeClass('engaged');
+                $('#rdr_indicator_' + hash).hide();
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
                 //RDR.rindow.updateSizes:
@@ -2832,23 +2833,20 @@ function readrBoard($R){
                             RDR.actions.indicators.utils.borderHilites.engage(hash);
                         }
                     }
-                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(){
-                    var $this = $(this);
-                    var hash = $this.data('hash');
-                    
-                    $this.removeClass('rdr_live_hover');
-                    $('#rdr_indicator_' + hash).hide();
-                    RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(event){
+                    var $this = $(this),
+                        hash = $this.data('hash');
+
+                    RDR.checkIndicatorHover = setTimeout( function() {
+                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('engaged') ) {
+                            $this.removeClass('rdr_live_hover');
+                            RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                        }
+                        clearTimeout( RDR.checkIndicatorHover );
+                    }, 250);
                 });
 
                 RDR.actions.slideshows.setup();
-
-                // $(RDR.group.img_whitelist+',iframe').each( function() {
-                //     $(this).trigger('mouseenter.rdr');
-                // }); //trigger('mouseenter');
-
-                //hashNodes without any arguments will fetch the default set from the server.
-                // var hashes = this.hashNodes();
 
                 $RDR.dequeue('initAjax');
             },
@@ -5270,6 +5268,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $mediaBorderWrap.removeClass('engaged');
                             $mediaBorderWrap.removeClass('engagedForShareLink');
+                            $('#rdr_indicator_' + hash).hide();
                         },
                         engageAll: function(){
                             //RDR.actions.indicators.utils.borderHilites.engageAll:
@@ -5281,6 +5280,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $mediaBorderWrap = $('.rdr_media_border_wrap');
                             $mediaBorderWrap.removeClass('engaged');
                             $mediaBorderWrap.removeClass('engagedForShareLink');
+                            $('#rdr_indicator_' + hash).hide();
                         }
                     }
 
