@@ -492,7 +492,7 @@ table.rdr_tags {
     margin-right:auto !important;
     margin-bottom:0 !important;
     margin-left:auto !important;
-    float:left !important;
+    /*float:left !important;*/
 }
 
 table.rdr_tags td.rdr_activePill {
@@ -525,7 +525,7 @@ div.rdr a.rdr_tag     {
     position: relative !important;
     text-decoration: none !important;
     text-transform: none !important;
-    white-space: nowrap !important;
+    /*white-space: nowrap !important;*/
     z-index:10001 !important;
 }
 div.rdr.rdr-summary a.rdr_tag {
@@ -537,7 +537,7 @@ div.rdr table.rdr_tags a.rdr_tag:hover,
 }
 div.rdr table.rdr_tags a.rdr_tag.rdr_custom_tag:hover,
 #rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag:hover {
-  background:none !important;
+  /*background:none !important;*/
 }
 
 div.rdr table.rdr_tags a.rdr_tag:hover span,
@@ -606,22 +606,34 @@ div#rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
   width:10px !important;
 }
 
-table.rdr_tags a.rdr_tag     {
+table.rdr_tags a.rdr_tag  {
     display:inline-block !important;
 }
+/* the media tags need their own formatting */
+div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag  {
+  display:block !important;
+  float:left !important;
+  margin-right:10px !important;
+}
+
+div.rdr_sbRolloverTable a.rdr_tag:hover,
+div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag:hover  {
+  background:#bbb !important;
+}
+
 
 table.rdr_tags div.rdr_cell_wrapper {
     width:100% !important;
     white-space:nowrap !important;
 }
 table.rdr_tags div.rdr_cell_wrapper:hover {
-  background:#aaa !important;
+  background:#bbb !important;
 }
 
-table.rdr_tags div.rdr_cell_wrapper span.rdr_comment_hover {
+table.rdr_tags span.rdr_comment_hover {
     height:19px !important;
-    font-size:10px !important;
     margin:0 15px 0 -2px !important;
+    font-size:10px !important;
     color:#999 !important;
     padding:0px 3px !important;
     display:inline-block !important;
@@ -645,9 +657,9 @@ table.rdr_tags span.rdr_comment_hover:hover span.rdr_icon {
 }
 
 table.rdr_tags a.rdr_tag.rdr_custom_tag     {
-    padding: 4px 0px !important;
+    padding: 4px !important;
     margin:4px 0 !important;
-    max-width: 85px !important;
+    /*max-width: 85px !important;*/
 }
 div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_custom_tag     {
   margin:9px 0 0 0 !important;
@@ -706,7 +718,7 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     color: #599fcb !important;
     font-size:13px !important;
     padding: 0px !important;
-    max-width: 85px !important;
+    max-width: 90px !important;
 }
 
 #rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag:hover input, div.rdr a.rdr_tag.rdr_custom_tag:hover input,
@@ -721,7 +733,7 @@ div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
 }
 
 div.rdr a.rdr_tag.rdr_custom_tag:hover,
-div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4 !important; background:#fff !important; }
+div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4 !important; /*background:#fff !important; */}
 
 div.rdr.rdr-summary div.rdr_info            { clear: both !important; margin: 5px !important; padding: 5px !important; border: 1px solid #ccc !important; background:#fff !important; display:none;; }
 div.rdr.rdr-summary div.rdr_info em         { font-style:italic !important; }
@@ -1552,7 +1564,7 @@ div.rdr_indicator span.rdr_count,
     margin:0 -3px -2px 1px;;
 }
 #rdr_sandbox div.rdr_tags_list a.rdr_tag {
-    white-space:nowrap !important;
+    /*white-space:nowrap !important;*/
 }
 
 #rdr_sandbox span.rdr_tags_list_tag {

@@ -1027,7 +1027,8 @@ function readrBoard($R){
                         if ( settings.mode == "writeMode" ) {
                             // the custom_tag is used for simulating the creation of a custom pill, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
+                                // $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
+                                $pill_container = $tag_table.find('td:last-child'),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, actionType );
 
                                 $rindow.removeClass('rdr_rewritable');
@@ -4180,6 +4181,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         custom_tag = {count:0, id:"custom", body:"Add your own"};
 
                                     var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                    // var $pill_container = $tag_table.find('td:last-child'),
                                         $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
                                 }
 
@@ -4956,20 +4958,24 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             tagsListMaxWidth = $indicator_details.outerWidth()-10,
                             $tag_table = RDR.rindow.pillTable.make( $tagsListContainer, tagsListMaxWidth );
 
+                        $tag_table.find('tr').append('<td />');
+
                         if ( (summary.top_interactions && summary.top_interactions.tags) || (actionType=="bookmark") ) {
 
                             if ( actionType == 'react') {
                                 // add existing tag pills for this media item
                                 $.each( summary.top_interactions.tags, function( tag_id, tag ){
                                     tag.id = tag_id;
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
+                                    // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
+                                    var $pill_container = $tag_table.find('td:last-child'),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
                                 });
 
                                 $.each( RDR.group.blessed_tags, function( idx, tag ){
                                     // don't write an empty blessed tag pill
                                     if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
-                                        var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
+                                        // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
+                                        var $pill_container = $tag_table.find('td:last-child'),
                                             $pill = RDR.rindow.pill.make( tag, $pill_container, $indicator, false );
                                     }
                                 });
@@ -4991,7 +4997,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // now that we've created the first row, unset the max-width and set the table width.
                             // this lets us have the table flow to full width... without having had to loop through
                             // table cells in getNextCell to recalculate the width throughout
-                            $tag_table.css('max-width','none').width(tagsListMaxWidth);
+                            // $tag_table.css('max-width','none').width(tagsListMaxWidth);
                         }
 
                     },
@@ -5280,7 +5286,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $mediaBorderWrap = $('.rdr_media_border_wrap');
                             $mediaBorderWrap.removeClass('engaged');
                             $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('#rdr_indicator_' + hash).hide();
+                            $('div.rdr_indicator_for_media').hide();
                         }
                     }
 
