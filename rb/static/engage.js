@@ -1027,8 +1027,8 @@ function readrBoard($R){
                         if ( settings.mode == "writeMode" ) {
                             // the custom_tag is used for simulating the creation of a custom pill, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                // $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
-                                $pill_container = $tag_table.find('td:last-child'),
+                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
+                                // $pill_container = $tag_table.find('td:last-child'),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, actionType );
 
                                 $rindow.removeClass('rdr_rewritable');
@@ -4983,7 +4983,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // add a custom tag pill
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                // $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                $pill_container = $tag_table.find('td:last-child'),
                                 $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $indicator, actionType );
 
                             $tag_table.find('tr').each( function() {
