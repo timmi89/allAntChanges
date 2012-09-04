@@ -4180,7 +4180,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     var tagsListMaxWidth = $rindow.width()+2, // really.
                                         custom_tag = {count:0, id:"custom", body:"Add your own"};
 
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                    var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
                                     // var $pill_container = $tag_table.find('td:last-child'),
                                         $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
                                 }
