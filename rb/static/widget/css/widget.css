@@ -337,8 +337,6 @@ div.rdr strong {font-weight:bold !important;}
 
 #rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important;}
 
-#rdr_sandbox div.rdr textarea,
-#rdr_sandbox div.rdr input[type="text"]   { width:92% !important; } /*reset with js to ensure it matches the padding. (dont know why % doesn't work in the padding for inputs) */
 #rdr_sandbox div.rdr button {
     border:1px solid #aaa !important; 
     -moz-border-radius:3px 3px 3px 3px !important; 
@@ -362,6 +360,7 @@ div.rdr strong {font-weight:bold !important;}
   width:293px !important;
   min-height:120px !important;
   font-size:11px !important;
+  text-align:left !important;
 }
 #rdr_sandbox div.rdr div.rdr_view_success.rdr_thin {
   width:180px !important;
@@ -452,7 +451,7 @@ div.rdr strong {font-weight:bold !important;}
 
 /* forms */
 #rdr_sandbox div.rdr textarea,
-#rdr_sandbox div.rdr input[type="text"]  { -moz-box-shadow:inset 0px 0px 5px #ddd !important;-webkit-box-shadow:inset 0px 0px 5px #ddd !important; box-shadow:inset 0px 0px 5px #ddd !important; border:1px solid #ddd !important; height:auto !important; width:auto !important; font-family: arial !important; color:#666 !important; background:#fff !important;}
+#rdr_sandbox div.rdr input[type="text"]  { -moz-box-shadow:inset 0px 0px 5px #ddd !important;-webkit-box-shadow:inset 0px 0px 5px #ddd !important; box-shadow:inset 0px 0px 5px #ddd !important; border:1px solid #ddd !important; height:auto !important; width:auto !important; font-family: arial !important; color:#666 !important; background:#fff !important; font-size:11px !important; }
 
 #rdr_sandbox div.rdr div.rdr_commentBox.rdr_inlineCommentBox {
     max-width: none !important;
