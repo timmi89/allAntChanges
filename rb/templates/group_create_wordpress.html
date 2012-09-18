@@ -1,0 +1,90 @@
+{% extends "group_create.html" %}
+
+{% block extendedHead %}
+<script>
+    //todo: quick experiment - do this better later.
+    (function($){
+
+        //todo: pull these from utils for real
+        var utils = {
+            getQueryParams: function(optQueryString) {
+                //RDR.util.getQueryParams:
+
+                //thanks: http://stackoverflow.com/a/2880929/1289255
+                //I haven't verfied that this is 100% perfect for every url case, but it's solid.
+                
+                //this function is also in readr_scripts
+                var queryString = optQueryString || window.location.search;
+
+                var urlParams = {};
+                var e,
+                a = /\+/g,  // Regex for replacing addition symbol with a space
+                r = /([^&=]+)=?([^&]*)/g,
+                d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                q = queryString.substring(1);
+
+                while (e = r.exec(q))
+                    urlParams[d(e[1])] = d(e[2]);
+
+                return urlParams;
+            },
+            getQueryStrFromUrl: function(url){
+                var qIndex = url.indexOf('?'),
+                    hrefBase,
+                    hrefQuery,
+                    qParams;
+
+                 //if qIndex == -1, there was no ?
+                if(qIndex == -1 ) {
+                    hrefBase = url;
+                    hrefQuery = "";
+                }else{
+                    hrefBase = url.slice(0, qIndex);
+                    hrefQuery = url.slice(qIndex);
+                }
+                return hrefQuery;
+            }
+        };
+
+        var params = utils.getQueryParams();
+        
+        $(function(){
+            $('input#id_name').val( params.company_name );
+            $('input#id_short_name').val( params.hostdomain );
+            $('input#id_domain').val( params.hostdomain ).attr('readonly', 'readonly');
+        });
+
+    })(jQuery);
+</script>
+
+    <style>
+        html{
+            background: none;
+        }
+        section[role="content"]{
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        section[role="group panel header"]{
+            display: none;
+        }
+
+        #id_domain{
+            color: #999;
+        }
+
+    </style>
+{% endblock %}
+
+{% block header %}
+{% endblock header %}
+
+{% block uservoice %}
+{% endblock uservoice %}
+
+{% block fixedBar %}
+{% endblock fixedBar %}
+
+{% block footer %}
+{% endblock footer %}

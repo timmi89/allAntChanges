@@ -85,6 +85,7 @@ urlpatterns = patterns('',
   url(r'^react/$', 'rb.views.react'),
   url(r'^splash/$', 'rb.views.splash'),
   url(r'^login/$', 'rb.views.login'),
+  url(r'^friendlylogin/$', 'rb.views.friendlylogin'),
   
   # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),
@@ -109,6 +110,9 @@ urlpatterns = patterns('',
   url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
   url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
+
+  # Plugin Settings
+  url(r'^wordpress/$', 'rb.views.wordpress'),
   
   # User creation and registration
   url(r'^user_create/$', 'rb.views.create_rb_user'),

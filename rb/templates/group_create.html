@@ -22,7 +22,7 @@
     <a href = "/">Home</a>
   {% else %}
 
-    <form class="big-form" action="/signup/" enctype="multipart/form-data" method="post" class="in-page">
+    <form class="big-form" action="/signup/{{ qParams }}" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}
 

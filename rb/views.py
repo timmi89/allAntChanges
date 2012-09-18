@@ -14,6 +14,7 @@ from api.userutils import *
 from authentication.token import checkCookieToken
 from authentication.decorators import requires_admin
 from authentication.decorators import requires_wordpress_admin
+from authentication.decorators import wordpress_context
 from cards import Card
 from django.utils.encoding import smart_str, smart_unicode
 from django.template import RequestContext
@@ -96,6 +97,19 @@ def login(request):
     if cookie_user and request.META.get('HTTP_REFERER'):
         # return HttpResponseRedirect(request.META['HTTP_REFERER'])
         return request.META.get('HTTP_REFERER', '')
+    return render_to_response(
+        "login.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+#I was getting an error: 'str' object has no attribute 'status_code' .. so I made this for the wordpress plugin
+def friendlylogin(request):
+    context = {}
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    cookie_user = checkCookieToken(request)
+    context['cookie_user'] = cookie_user
+
     return render_to_response(
         "login.html",
         context,
@@ -364,9 +378,44 @@ def interactions(request):
 
 def sidebar(request, user_id=None, short_name=None):
     pass
+
+@requires_admin
+@wordpress_context
+def wordpress(request, **kwargs):
+    context = kwargs.get('context', {})
     
-def create_group(request):
-    context = {}
+    # urls:
+    isNotAdminUrl = Wordpress.URLS['login']+context['qParams']
+    hasNotRegisteredUrl = '/signup/'+context['qParams']
+    settingsUrl = lambda shortname: '/settings/'+shortname+context['qParams']
+
+    hostdomain = kwargs.get('hostdomain', None)
+    cookie_user = kwargs.get('cookie_user', None)
+    short_name = context.get('short_name', None)
+    company_name = context.get('company_name', None)
+    group = context.get('hostdomaingroup', None)
+    hasRegistered = group != None
+
+    if cookie_user:
+        if hasRegistered:
+            admin_groups = kwargs.get('admin_groups', None)
+            if admin_groups and (group in admin_groups):
+                print 'short_namebbbbb'
+                print short_name
+                return HttpResponseRedirect( settingsUrl(short_name) )
+
+            else:
+                return HttpResponseRedirect(isNotAdminUrl)
+
+        else:
+            return HttpResponseRedirect( hasNotRegisteredUrl )
+
+    else:
+        return HttpResponseRedirect(isNotAdminUrl)
+
+@wordpress_context
+def create_group(request, **kwargs):
+    context = kwargs.get('context', {})
     cookie_user = checkCookieToken(request)
     if not cookie_user: return HttpResponseRedirect('/')
     
@@ -381,11 +430,31 @@ def create_group(request):
     context['form'] = form
     context['fb_client_id'] = FACEBOOK_APP_ID
     
+
+    #wordpress intercept
+
+    #wordpress intercept
+    print "context.get('iswordpress', False)"
+    print context.get('iswordpress', False)
+
+
+    if context.get('iswordpress', False):
+        return create_group_wordpress(request, context);
+
     return render_to_response(
         "group_create.html",
         context,
         context_instance=RequestContext(request)
     )
+
+def create_group_wordpress(request, context):
+    print "--------------xxx"
+    return render_to_response(
+        "group_create_wordpress.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 def create_board(request):
     context = {}
@@ -597,44 +666,57 @@ def reset_rb_password(request):
     
     return response
 
-#TODO just testing this.  Fix decorator later.
-#@requires_admin
-@requires_wordpress_admin
+@requires_admin
+@wordpress_context
 def settings(request, **kwargs):
     context = {}
     group = Group.objects.get(short_name=kwargs['short_name'])
+    print 'group'
+    print group
     context['cookie_user'] = kwargs['cookie_user']
 
+    # todo move wordpress stuff
     if request.method == 'POST':
         
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
-            context['hostplatform'] = request.POST.get('hostplatform', 'null')
-            context['isWordpress'] = context['hostplatform'] == 'wordpress'
+            context['hostdomain'] = request.POST.get('hostdomain', None)
+            context['hostplatform'] = request.POST.get('hostplatform', None)
+            context['iswordpress'] = context['hostplatform'] == 'wordpress'
 
     else:
         form = GroupForm(instance=group)
-        context['hostplatform'] = request.GET.get('hostplatform', 'null')
-        context['isWordpress'] = context['hostplatform'] == 'wordpress'
+        context['hostdomain'] = request.GET.get('hostdomain', None)
+        context['hostplatform'] = request.GET.get('hostplatform', None)
+        context['iswordpress'] = context['hostplatform'] == 'wordpress'
 
     context['form'] = form
     context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
 
-    if context.get('isWordpress', False):
+    #wordpress intecept
+    if context.get('iswordpress', False):
         #route to the wordpress version of group_settings - it just extends group_settings and modifies it a little.
-        return render_to_response(
-            "group_settings_wordpress.html",
-            context,
-            context_instance=RequestContext(request)
-        )
+        kwargs['context'] = context;
+        print context
+        return settings_wordpress(request, **kwargs);
 
     return render_to_response(
         "group_settings.html",
         context,
         context_instance=RequestContext(request)
     )
+
+@requires_admin
+def settings_wordpress(request, **kwargs):
+    context = kwargs['context'];
+    return render_to_response(
+        "group_settings_wordpress.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
     
 @requires_admin
 def admin_approve(request, request_id=None, **kwargs):
