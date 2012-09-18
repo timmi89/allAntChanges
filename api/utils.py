@@ -195,8 +195,18 @@ def createInteractionNode(node_id=None, body=None, group=None):
             body = pf.clean(body)
         
         # No id provided, using body to get_or_create
-        inode = InteractionNode.objects.get_or_create(body=body)[0]
+        check_nodes = InteractionNode.objects.filter(body__exact = body)
+        
+        if check_nodes.count() == 0:
+            inode = InteractionNode.objects.get_or_create(body=body)[0]
 
+        elif check_nodes.count() > 1:
+            inode = check_nodes[0]
+        
+        elif check_nodes.count() == 1:
+            inode = check_nodes[0]
+        
+        
     return inode
 
 def isTemporaryUser(user):
