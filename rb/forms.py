@@ -151,8 +151,19 @@ class ModifySocialUserForm(forms.ModelForm):
         new_default_tags = []
         for tag in tags.split(','):
             tag = tag.strip()
+            check_nodes = InteractionNode.objects.filter(body__exact = tag)
+        
+            if check_nodes.count() == 0:
+                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+
+            elif check_nodes.count() > 1:
+                inode = check_nodes[0]
+        
+            elif check_nodes.count() == 1:
+                inode = check_nodes[0]
+
             new_default_tags.append(
-                InteractionNode.objects.get_or_create(body=tag)[0]
+                inode
             )
         self.new_default_tags = new_default_tags
     
@@ -269,9 +280,22 @@ class GroupForm(forms.ModelForm):
         new_blessed_tags = []
         for tag in tags.split(','):
             tag = tag.strip()
+
+            check_nodes = InteractionNode.objects.filter(body__exact = tag)
+        
+            if check_nodes.count() == 0:
+                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+
+            elif check_nodes.count() > 1:
+                inode = check_nodes[0]
+        
+            elif check_nodes.count() == 1:
+                inode = check_nodes[0]
+
             new_blessed_tags.append(
-                InteractionNode.objects.get_or_create(body=tag)[0]
+                inode
             )
+
         self.new_blessed_tags = new_blessed_tags
     
     # Write the many to many relationships
