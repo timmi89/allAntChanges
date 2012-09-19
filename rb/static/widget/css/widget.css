@@ -795,6 +795,7 @@ div.rdr.rdr-summary.rdr-combo-box table td div.rdr-fb-like,
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-gplus,
 div.rdr.rdr-summary.rdr-combo-box table td div.rdr-twitter { margin: 1px 0 0 4px !important; padding:0 !important; float:left !important;}
 
+div.rdr table,
 div.rdr table td { border:0 !important;padding:0 !important; margin:0 !important; text-align:left !important; vertical-align: top !important; white-space:normal !important}
 
 /*override for our default bookmarklet version of the summary bar.  Leave room for the login on the right */
