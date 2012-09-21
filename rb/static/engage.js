@@ -847,7 +847,7 @@ function readrBoard($R){
                     $a_custom.find('input').focus( function() {
                         RDR.events.track('start_custom_reaction_rindow');
                         var $input = $(this);
-                        $input.removeClass('rdr_default').closest('a.rdr_tag').addClass('rdr_hover');
+                        $input.removeClass('rdr_default');
                         if ( $input.val() == helpText ) {
                             $input.val('');
                         }
@@ -859,7 +859,7 @@ function readrBoard($R){
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                         }
-                        $input.closest('a.rdr_tag').removeClass('rdr_hover');
+                        // $input.closest('a.rdr_tag').removeClass('rdr_hover');
                     }).keyup( function(event) {
                         var $input = $(this),
                             tag = {},
@@ -885,6 +885,7 @@ function readrBoard($R){
                     // if ( $container ) $container.append( $a_custom, " " );
                     // else return $a_custom;
                     $container.append( $a_custom, " " );
+                    $a_custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
                     $a_custom.tooltip();
                 }
             },
