@@ -534,13 +534,6 @@ div.rdr.rdr-summary a.rdr_tag {
   font-size:11px !important;
 }
 
-div.rdr table.rdr_tags a.rdr_tag:hover,
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag:hover {
-}
-div.rdr table.rdr_tags a.rdr_tag.rdr_custom_tag:hover,
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag.rdr_custom_tag:hover {
-  /*background:none !important;*/
-}
 
 div.rdr table.rdr_tags a.rdr_tag:hover span,
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag:hover span {
@@ -619,6 +612,7 @@ div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag  {
 }
 
 div.rdr_sbRolloverTable a.rdr_tag:hover,
+div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_hover,
 div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag:hover  {
   background:#bbb !important;
 }

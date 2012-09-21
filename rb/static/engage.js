@@ -847,7 +847,7 @@ function readrBoard($R){
                     $a_custom.find('input').focus( function() {
                         RDR.events.track('start_custom_reaction_rindow');
                         var $input = $(this);
-                        $input.removeClass('rdr_default');
+                        $input.removeClass('rdr_default').closest('a.rdr_tag').addClass('rdr_hover');
                         if ( $input.val() == helpText ) {
                             $input.val('');
                         }
@@ -859,6 +859,7 @@ function readrBoard($R){
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                         }
+                        $input.closest('a.rdr_tag').removeClass('rdr_hover');
                     }).keyup( function(event) {
                         var $input = $(this),
                             tag = {},
@@ -7290,7 +7291,7 @@ function $RFunctions($R){
                                 hash = $this.closest('.rdr-page-container').data('hash'),
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                 offsets = $this.offset();
-                                
+
                             var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
                                 .append('<h2>Your reaction to this article?</h2><div class="rdr_sbRolloverTable"/>');
 
