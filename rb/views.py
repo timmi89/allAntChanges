@@ -385,7 +385,7 @@ def wordpress(request, **kwargs):
     context = kwargs.get('context', {})
     
     # urls:
-    isNotAdminUrl = Wordpress.URLS['login']+context['qParams']
+    isNotAdminUrl = '/friendlylogin/'+context['qParams']
     hasNotRegisteredUrl = '/signup/'+context['qParams']
     settingsUrl = lambda shortname: '/settings/'+shortname+context['qParams']
 
@@ -397,7 +397,8 @@ def wordpress(request, **kwargs):
     hasRegistered = group != None
 
     if cookie_user:
-        if hasRegistered:
+        if False:
+        # if hasRegistered:
             admin_groups = kwargs.get('admin_groups', None)
             if admin_groups and (group in admin_groups):
                 print 'short_namebbbbb'

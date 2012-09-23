@@ -35,6 +35,24 @@
                 },
                 RDR_baseUrl
             );
+
+            // $ = jQuery
+            RDR_baseUrl = "http://local.readrboard.com:8080";
+            sendData = {s:3}
+            $.ajax({
+                // url: RDR_baseUrl+"/group_create/"
+                url: "/group_create/",
+                type: "POST",
+                data: { json: $.toJSON(sendData) },
+                success: function(response) {
+                    alert('success')
+                },
+                error: function(response) {
+                  alert('erroe');  
+                }
+            });
+
+
         });
     
 

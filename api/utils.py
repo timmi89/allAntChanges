@@ -315,23 +315,3 @@ def searchBoards(search_term, page_num):
         board_dict['social_user'] = owner_social_map[board.owner.id]
         board_list.append(board_dict)
     return board_list
-
-
-class PluginSettings:
-    URLS = dict({
-        'home' : "/",
-        'login' : "/friendlylogin/",
-    })
-
-class Wordpress(PluginSettings):
-    def __init__(self):
-        pass
-
-    _super = PluginSettings
-
-    urls = dict({
-        "group_create": "/group_create_wordpress.html",
-        "settings" : "/settings_wordpress.html",
-    })
-    
-    URLS = dict(_super.URLS, **urls)

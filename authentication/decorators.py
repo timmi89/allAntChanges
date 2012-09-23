@@ -13,9 +13,9 @@ def requires_wordpress_admin(func):
         
         # context = kwargs.get('context', {})
     
-        # hostdomain = context['hostdomain'] = request.GET.get('hostdomain', 'null')
-        # context['short_name'] = request.GET.get('short_name', 'null')
-        # context['hostplatform'] = request.GET.get('hostplatform', 'null')
+        # hostdomain = context['hostdomain'] = request.GET.get('hostdomain', None)
+        # context['short_name'] = request.GET.get('short_name', None)
+        # context['hostplatform'] = request.GET.get('hostplatform', None)
         # context['iswordpress'] = context['hostplatform'] == 'wordpress'
         
         # #todo: figure out the better way to do this
@@ -30,25 +30,29 @@ def requires_wordpress_admin(func):
 
     return wrapper
 
+#this isn't really the right place for this.. Move it later
 def wordpress_context(func):
     def wrapper(*args, **kwargs):
         request = args[0] if len(args) == 1 else args[1]
         context = kwargs.get('context', {})
         
-        context['company_name'] = request.GET.get('company_name', 'null')
-        hostdomain = context['hostdomain'] = request.GET.get('hostdomain', 'null')
-        context['short_name'] = request.GET.get('short_name', 'null')
-        context['hostplatform'] = request.GET.get('hostplatform', 'null')
-        context['iswordpress'] = context['hostplatform'] == 'wordpress'        
-        #todo: figure out the better way to do this
-        context['qParams'] = "?{0}&{1}&{2}&{3}".format(
-            "hostplatform="+context['hostplatform'],
-            "hostdomain="+context['hostdomain'],
-            "short_name="+context['short_name'],
-            "company_name="+context['company_name'],
-        )
+        params = [
+            'hostplatform',
+            'hostdomain',
+            'short_name',
+            'company_name',
+        ];
+        for param in params:
+            context[param] = request.GET.get(param, None)
+        
+        context['iswordpress'] = context['hostplatform'] == 'wordpress'
+        
+        context['qParams'] = "".join([
+            ( ("?" if i==0 else "&") + x + "=" + context[x] )
+            for i,x in enumerate(params)
+        ])
 
-        site = Site.objects.get(domain=hostdomain)
+        site = Site.objects.get(domain=context['hostdomain'])
         if site and site.group:
             context['hostdomaingroup'] = site.group
         
