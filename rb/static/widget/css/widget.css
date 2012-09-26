@@ -833,6 +833,7 @@ div.rdr.rdr-summary div.rdr-sum-headline {
 
 div.rdr.rdr-summary div.rdr-sum-headline img {
   display:inline !important;
+  float:none !important;
 }
 div.rdr.rdr-summary div.rdr-sum-headline div.rdr-call-to-action {
     display: block !important;
