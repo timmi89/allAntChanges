@@ -1657,3 +1657,8 @@ http://drupal.org/node/897638
 .singleReactionHeader .seeIt.hover{
     text-decoration: underline;
 }
+
+.hostPlatformHeader{
+    float: right;
+    margin-right: 30px;
+}

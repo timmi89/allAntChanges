@@ -5,7 +5,10 @@
 
 <script>
     //todo: quick experiment - do this better later.
+    RDR_baseUrl = "http://local.readrboard.com:8080/";
+
     (function($){
+
         function plugin_jquery_postMessage($){
             /*
              * jQuery postMessage - v0.5 - 9/11/2009
@@ -17,48 +20,69 @@
              */
             var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
         }
-    
-       $(function(){
+
+        //todo: pull these from utils for real
+        var utils = {
+            getQueryParams: function(optQueryString) {
+                //RDR.util.getQueryParams:
+
+                //thanks: http://stackoverflow.com/a/2880929/1289255
+                //I haven't verfied that this is 100% perfect for every url case, but it's solid.
+                
+                //this function is also in readr_scripts
+                var queryString = optQueryString || window.location.search;
+
+                var urlParams = {};
+                var e,
+                a = /\+/g,  // Regex for replacing addition symbol with a space
+                r = /([^&=]+)=?([^&]*)/g,
+                d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                q = queryString.substring(1);
+
+                while (e = r.exec(q))
+                    urlParams[d(e[1])] = d(e[2]);
+
+                return urlParams;
+            },
+            getQueryStrFromUrl: function(url){
+                var qIndex = url.indexOf('?'),
+                    hrefBase,
+                    hrefQuery,
+                    qParams;
+
+                 //if qIndex == -1, there was no ?
+                if(qIndex == -1 ) {
+                    hrefBase = url;
+                    hrefQuery = "";
+                }else{
+                    hrefBase = url.slice(0, qIndex);
+                    hrefQuery = url.slice(qIndex);
+                }
+                return hrefQuery;
+            }
+        };
+
+        var params = utils.getQueryParams();
+        
+        $(function(){
+
             plugin_jquery_postMessage($);
 
-            //todo: testing
-            //todo: don't hard code 
+            var data = $.toJSON({
+                company_name: params.company_name,
+                hostdomain: params.hostdomain
+            });
+            var urlPrefix = "http://";
+            var hostPath = urlPrefix+params.hostdomain;
             $.postMessage(
-                "test test test",
-                "http://aptsurdist.com/wp-admin/plugins.php?page=readrboard-key-config",
+                data,
+                hostPath,
                 parent
             );
-            $.receiveMessage(
-                function(e){ 
-                    console.log(e)
-                    console.log(e.data)
-                },
-                RDR_baseUrl
-            );
-
-            // $ = jQuery
-            RDR_baseUrl = "http://local.readrboard.com:8080";
-            sendData = {s:3}
-            $.ajax({
-                // url: RDR_baseUrl+"/group_create/"
-                url: "/group_create/",
-                type: "POST",
-                data: { json: $.toJSON(sendData) },
-                success: function(response) {
-                    alert('success')
-                },
-                error: function(response) {
-                  alert('erroe');  
-                }
-            });
-
 
         });
-    
-
     })(jQuery);
 </script>
-
     <style>
         html{
             background: none;
@@ -76,6 +100,10 @@
 
 {% block header %}
 {% endblock header %}
+
+    {% block settingsHeader %}    
+      <h1>ReadrBoard Settings for {{group.name}}</h1>
+    {% endblock settingsHeader %}    
 
 {% block uservoice %}
 {% endblock uservoice %}

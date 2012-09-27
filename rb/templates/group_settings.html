@@ -7,7 +7,10 @@
 {% block mainContent %}
 {% with group=form.instance %}
 
-  <h1>{{group.name}} Settings</h1>
+    {% block settingsHeader %}    
+      <h1>{{group.name}} Settings</h1>
+    {% endblock settingsHeader %}    
+  
   <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 

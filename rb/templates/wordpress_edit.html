@@ -1,4 +1,4 @@
-{% extends "group_create.html" %}
+{% extends "base.html" %}
 
 {% block extendedHead %}
 <script>
@@ -63,24 +63,37 @@
         var params = utils.getQueryParams();
         
         $(function(){
+            // console.log('params');
+            // console.log(params);
 
             plugin_jquery_postMessage($);
 
-            $('input#id_name').val( params.company_name );
-            $('input#id_short_name').val( params.hostdomain );
-            $('input#id_domain').val( params.hostdomain ).attr('readonly', 'readonly');
+            // $('input#id_name').val( params.company_name );
+            // $('input#id_short_name').val( params.hostdomain );
+            // $('input#id_domain').val( params.hostdomain ).attr('readonly', 'readonly');
 
-            // var data = $.toJSON({
-            //     company_name: params.company_name,
-            //     hostdomain: params.hostdomain
-            // });
-            // var urlPrefix = "http://";
-            // var hostPath = urlPrefix+params.hostdomain;
-            // $.postMessage(
-            //     $.toJSON(data),
-            //     hostPath,
-            //     parent
-            // );
+            var data;
+            if( params.true_short_name ){
+                data = $.toJSON({
+                    new_short_name: params.true_short_name
+                });
+
+            }else if(params.refresh){
+                data = $.toJSON({
+                    refresh: true
+                });
+            }
+
+            if(data){
+                var urlPrefix = "http://";
+                var hostPath = urlPrefix+params.hostdomain;
+                $.postMessage(
+                    data,
+                    hostPath,
+                    parent
+                );
+            }
+
         });
     })(jQuery);
 </script>
@@ -89,11 +102,20 @@
         html{
             background: none;
         }
+        
+        section[role="main"]{
+            margin: 20px;
+        }
+
         section[role="content"]{
             margin: 0 !important;
             padding: 0 !important;
         }
 
+        section[role="complementary"]{
+            display: none;
+        }
+        
         section[role="group panel header"]{
             display: none;
         }
@@ -105,47 +127,12 @@
     </style>
 {% endblock %}
 
+{% block mainContent %}
+<h2>Updating Wordpress Settings...</h2>
+{% endblock mainContent %}
+
 {% block header %}
 {% endblock header %}
-
-{% block hostPlatformHeader %}
-    <div class="hostPlatformHeader">
-        Step 2: Register
-    </div>
-{% endblock hostPlatformHeader %}
-
-{% block headerText %}
-    <h1 class="headerText">Register this site</h1>
-{% endblock headerText %}
-
-{% block alreadyRequested %}
-    <style>
-        .headerText{
-            display: none;
-        }
-        .quickWrap{
-            margin: 0 20px;
-        }
-    </style>
-    <div class="quickWrap">
-        <h3>Thanks, your site is registered!</h3>
-        <div style="clear:both; margin-top: 50px;">
-          <span>You may need to <a href="#" onclick="reloadPageAfterLogin();">click here</a> to proceed to the next step.</span>
-        </div>
-    </div>
-
-    <script>
-        var wordpressEditUrl = '/wordpress_edit/';
-        var query = window.location.search || "?";
-        query += "&refresh=true";
-        var wordpressRefreshUrl = wordpressEditUrl + query;
-
-        function reloadPageAfterLogin(){
-            window.location = wordpressRefreshUrl;
-            return false;
-        }
-    </script>
-{% endblock alreadyRequested %}
 
 {% block uservoice %}
 {% endblock uservoice %}

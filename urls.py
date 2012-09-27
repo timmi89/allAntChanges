@@ -86,6 +86,7 @@ urlpatterns = patterns('',
   url(r'^splash/$', 'rb.views.splash'),
   url(r'^login/$', 'rb.views.login'),
   url(r'^friendlylogin/$', 'rb.views.friendlylogin'),
+  url(r'^friendlylogin_wordpress/$', 'rb.views.friendlylogin_wordpress'),
   
   # Sidebar
   url(r'^sidebar/$', 'rb.views.sidebar'),
@@ -113,6 +114,7 @@ urlpatterns = patterns('',
 
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
+  url(r'^wordpress_edit/$', 'rb.views.wordpress_edit'),
   
   # User creation and registration
   url(r'^user_create/$', 'rb.views.create_rb_user'),
