@@ -553,7 +553,7 @@ div.rdr table.rdr_tags a.rdr_tag span.rdr_comment_hover:hover {
   color:#fff !important;
 }
 
-divdiv.rdr_sandbox div.rdr_tag_details {
+div.rdr_sandbox div.rdr_tag_details {
   position:absolute !important;
   background:#fff !important;
   z-index:100000 !important;
@@ -565,28 +565,28 @@ divdiv.rdr_sandbox div.rdr_tag_details {
   padding:4px !important;
   display:none;;
 }
-divdiv.rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
+div.rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
   position:fixed !important;
   bottom:42px !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details a.rdr_tag {
+div.rdr_sandbox div.rdr_tag_details a.rdr_tag {
   margin-left:5px !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts {
   display:inline-block !important;
   float:left !important;
   margin-right:10px !important;
   margin-left:5px !important;
   padding:3px !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts:hover {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts:hover {
   background:#eee !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr-last-child {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr-last-child {
   margin-right:0px !important;
   margin-left:5px !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts_other {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts_other {
   clear:both !important;
   overflow:auto !important;
   width:100% !important;
@@ -594,17 +594,17 @@ divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts_other {
   border-top:1px solid #ddd !important;
 }
 
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts img {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts img {
   width:12px !important;
   float:left !important;
   margin-right:5px !important;
 }
 
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_page img {
   margin-left:0 !important;
   margin-bottom:-13px !important;
 }
-divdiv.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
+div.rdr_sandbox div.rdr_tag_details div.rdr_counts.rdr_text img {
   width:10px !important;
 }
 
