@@ -859,6 +859,7 @@ function readrBoard($R){
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                         }
+                        // $input.closest('a.rdr_tag').removeClass('rdr_hover');
                     }).keyup( function(event) {
                         var $input = $(this),
                             tag = {},
@@ -884,6 +885,7 @@ function readrBoard($R){
                     // if ( $container ) $container.append( $a_custom, " " );
                     // else return $a_custom;
                     $container.append( $a_custom, " " );
+                    $a_custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
                     $a_custom.tooltip();
                 }
             },
@@ -6555,7 +6557,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv9" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv10" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -7290,7 +7292,7 @@ function $RFunctions($R){
                                 hash = $this.closest('.rdr-page-container').data('hash'),
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                 offsets = $this.offset();
-                                
+
                             var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
                                 .append('<h2>Your reaction to this article?</h2><div class="rdr_sbRolloverTable"/>');
 
