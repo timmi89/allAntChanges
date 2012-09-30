@@ -325,6 +325,3 @@ def searchBoards(search_term, page_num):
         board_dict['social_user'] = owner_social_map[board.owner.id]
         board_list.append(board_dict)
     return board_list
-
-
-

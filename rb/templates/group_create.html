@@ -16,13 +16,22 @@
 </style>
 
 <section role="main>">
-  <h1>ReadrBoard Beta Signup</h1>
+
+{% block hostPlatformHeader %}
+{% endblock hostPlatformHeader %}
+
+    {% block headerText %}
+        <h1>ReadrBoard Beta Signup</h1>
+    {% endblock headerText %}
+  
   {% if requested %}
+    {% block alreadyRequested %}
     <h3>Thanks!</h3>
     <a href = "/">Home</a>
+    {% endblock alreadyRequested %}
   {% else %}
 
-    <form class="big-form" action="/signup/" enctype="multipart/form-data" method="post" class="in-page">
+    <form class="big-form" action="/signup/{{ qParams }}" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}
 

@@ -222,6 +222,9 @@ def generateApprovalEmail(group):
     approval_email = getEmailTemplate('group_approval_email.html') % (settings.BASE_URL, group.id, group.short_name)
     return (approval_email)
 
+def generateAdminApprovalEmail(groupadmin):
+    approval_email = getEmailTemplate('groupadmin_approval_email.html') % (settings.BASE_URL, groupadmin.id, groupadmin.social_user.username)
+    return (approval_email)
 
 
 

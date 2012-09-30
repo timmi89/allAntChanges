@@ -109,6 +109,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
   <div id="background-layer">
   </div>
+  {% block header %}
   <header role="banner" class="no-rdr clearfix">
     <a href="/" class="logo"><h1>ReadrBoard</h1></a>
     <div id="settings">
@@ -182,6 +183,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       </form>
     </div>
   </header>
+  {% endblock header %}
 
   {% include "group_nav.html" %}
   <section role="content" class="clearfix">
@@ -339,6 +341,7 @@ RB.profile_user = {
       });
     </script>
 
+{% block uservoice %}
 <script type="text/javascript">
   var uvOptions = {};
   (function() {
@@ -347,6 +350,7 @@ RB.profile_user = {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
   })();
 </script>
+{% endblock uservoice %}
 
 <!-- killed fixed bar here --> 
 

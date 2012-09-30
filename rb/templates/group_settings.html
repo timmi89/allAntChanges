@@ -7,8 +7,11 @@
 {% block mainContent %}
 {% with group=form.instance %}
 
-  <h1>{{group.name}} Settings</h1>
-  <form action="/settings/{{ short_name }}/" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
+    {% block settingsHeader %}    
+      <h1>{{group.name}} Settings</h1>
+    {% endblock settingsHeader %}    
+  
+  <form action="{% block settingsUrl %}/settings/{{ short_name }}/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<section class="left column">
@@ -96,14 +99,19 @@
 			<label for="id_summary_widget_selector"><span class="labelTitle">Summary Widget Selector </span><span></span></label>
 			{{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
 		</div>
+
+        {% if hostplatform %}
+            <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />
+        {% endif %}
+
 	</section>
 
 {% comment %}
   {{ form.as_p }}
 {% endcomment %}
 
-
-  <button class="btn" type="submit">Submit</button>
+    <div style="clear:both;"></div>
+  <button class="btn" type="submit" style="margin-top:20px;">Submit</button>
   </form>
 {% endwith %}
 {% endblock mainContent %}

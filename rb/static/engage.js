@@ -6840,6 +6840,7 @@ function $RFunctions($R){
             * @example $.cookie('the_cookie', null);
             *
             */
+            
             $.cookie = function (key, value, options) {
                 
                 // key and at least value given, set cookie...

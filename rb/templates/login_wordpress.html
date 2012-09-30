@@ -1,0 +1,64 @@
+{% extends "login.html" %}
+
+
+{% block hostPlatformHeader %}
+    
+    <div class="hostPlatformHeader">
+        Step 1: Log in
+    </div>
+{% endblock hostPlatformHeader %}
+
+{% block msgHeader %}
+  <!-- <h1>ReadrBoard Login</h1> -->
+  <h3>Please log in ReadrBoard to edit your settings.</h3>
+{% endblock msgHeader %}
+
+{% block signupButton %}
+    <div style="float:left;padding:6px;">
+        <a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">&laquo; Or create a new account</a>
+    </div>
+    
+    <div style="clear:both; margin-top: 50px;">
+      <span>You may need to <a href="#" onclick="reloadPageAfterLogin();">click here</a> after login to proceed to the next step.</span>
+    </div>
+
+{% endblock signupButton %}
+
+
+{% block pageJS %}
+
+    <script>
+        var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
+        RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
+        RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
+        var wordpressEditUrl = '/wordpress_edit/';
+        var query = window.location.search || "?";
+        query += "&refresh=true";
+        var wordpressRefreshUrl = wordpressEditUrl + query;
+        
+        function createNewAccount(){
+            var w = 535;
+            /*made higher to account for 'required fields' message*/
+            var h = 350;
+            var l = (window.screen.width/2)-(w/2);
+            var t = (window.screen.height/2)-(h/2);
+
+            var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
+
+            window.open(
+                RDR_baseUrl+'/user_create/',
+                'readr_create_user',
+                properties
+            );
+            window.close();
+            return false;
+        }
+
+        function reloadPageAfterLogin(){
+            window.location = wordpressRefreshUrl;
+            return false;
+        }
+        
+    </script>
+
+{% endblock %}
