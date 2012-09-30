@@ -897,7 +897,6 @@ function readrBoard($R){
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
-
                         var hash = settings.hash;
                         var summary = RDR.summaries[hash],
                             $container = summary.$container,
@@ -907,9 +906,9 @@ function readrBoard($R){
 
                         var actionType = (settings.actionType) ? settings.actionType:"react";
 
-
                         /* START create rindow based on write vs. read mode */
                         if ( settings.mode == "writeMode" ) {
+
                             // writeMode
                             RDR.events.track('start_react_text');
                             var newSel;
@@ -917,14 +916,11 @@ function readrBoard($R){
                                 //Trigger the smart text selection and highlight
                                 newSel = $container.selog('helpers', 'smartHilite');
                                 if(!newSel) return false;
-
                                 //temp fix to set the content (the text) of the selection to the new selection
                                 //todo: make selog more integrated with the rest of the code
                                 settings.content = newSel.text;
-
                                 coords.left = coords.left + 40;
                                 coords.top = coords.top + 35;
-
                                 //if sel exists, reset the offset coords
                                 if(newSel){
                                     //todo - combine with copy of this
@@ -1155,7 +1151,6 @@ function readrBoard($R){
                 var defaultOptions = RDR.rindow.defaults,
                     customOptions = RDR.rindow._rindowTypes.customOptions,
                     settings = $.extend( {}, defaultOptions, customOptions, options, {mode:rindowType} );
-
                 //call make function for appropriate type
                 var $rindow = RDR.rindow._rindowTypes.tagMode.make(settings);
                 
@@ -1247,7 +1242,6 @@ function readrBoard($R){
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
-
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
@@ -1583,22 +1577,16 @@ function readrBoard($R){
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                    $indicatorAnchor = $('<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">' +val.item+ '</a>');
+                    $indicatorAnchor = $('<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'"><span class="rdr rdr_react_icon">' +val.item+ '</span> <span class="rdr rdr_react_label">React to this</span></a>');
                     $indicatorAnchor.click(function(){
-                        $(this).tooltip('hide');
                         val.onclick();
                         return false;
                     });
-                    $item.append($indicatorAnchor).appendTo($new_actionbar.children('ul'));
-                    if(idx===0){
-                        $item.addClass('rdr_actionbar_first');
-                    }else if(idx === items.length - 1){
-                        $item.addClass('rdr_actionbar_last');
-                    }
+                    $item.addClass('rdr_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
                 });
 
                 $('#rdr_sandbox').append( $new_actionbar );
-                $('a.rdr_tooltip_this').tooltip({});
+                // $('a.rdr_tooltip_this').tooltip({});
 
                 if(kind == "img" || kind == "media" || kind == "med" ){
                     $new_actionbar.addClass('rdr_actionbar_for_media');
@@ -2758,7 +2746,6 @@ function readrBoard($R){
                         //         RDR.util.userLoginState();
                         //     });
                         // }
-
                         RDR.actions.UIClearState();
 
                         $('div.rdr_indicator_details_for_media').each( function() {
@@ -4799,6 +4786,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         summary.$indicator = "infinte loop failsafe.  This will get overritten immediately by the indicators.init function.";
                         RDR.actions.indicators.init(hash);
                     }
+
                     var $container = summary.$container,
                         $indicator = summary.$indicator,
                         $indicator_body = summary.$indicator_body,
@@ -4808,8 +4796,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $count = $indicator_body.find('.rdr_count'),
                         $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false;
                     if ( summary.counts.tags > 0 ) {
-                        $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                        if (summary.kind != "text") {
+                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+                        } else {
+                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                        }
                         if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+                    } else {
+                        $count.html( '<span class="rdr_react_label">React to this</span>' );
                     }
 
                     if(summary.kind !== 'text'){
@@ -4852,12 +4846,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
-
                                 // NEWVIDEO TEST
                                 if ( summary.kind == "media" && $('div.rdr_video_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                     .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar rdr_has_border')//chain
                                     .appendTo('div.rdr_video_details');
+                                    $container_tracker.addClass('rdr_inline_video');
                                     $('div.rdr_video_details').addClass('rdr_loaded rdr_sandbox');
                                 } else {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
@@ -5105,11 +5099,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = $container.height()+modIEHeight-10;
+                            var cssTop = $container.height()+modIEHeight+38;
                             $indicator.data('top', cssTop);
 
                             RDR.util.cssSuperImportant( $indicator, {
-                                left: 0,
+                                left: 12,
                                 top: cssTop
                             }, true);
 
@@ -5136,32 +5130,34 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
                             
-                            if( !$mediaBorderWrap.length ){
-                                $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                            }
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
+                            if( !$container_tracker.hasClass('rdr_inline_video') ){
+                                if( !$mediaBorderWrap.length ){
+                                    $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
                                 }
-                            };
+                                $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                            $mediaBorderWrap.data('borders',borders);
-                            RDR.actions.indicators.utils.borderHilites.update(hash);
+                                var borders = {
+                                    'top': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'right': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'bottom': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'left': {
+                                        $side: null,
+                                        css: {}
+                                    }
+                                };
+
+                                $mediaBorderWrap.data('borders',borders);
+                                RDR.actions.indicators.utils.borderHilites.update(hash);
+                            }
 
                         },
                         update: function(hash){

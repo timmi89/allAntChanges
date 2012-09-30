@@ -4,6 +4,7 @@
     padding:0;;
     color:#666 !important;
     font-variant:normal !important;
+    font-style:normal !important;
 }
 .rdr_blue {color:#008be4 !important;}
 .rdr img {
@@ -67,20 +68,28 @@ div.rdr_sandbox div.rdr_actionbar li {
     padding: 0 !important;
 }
 
-div.rdr_sandbox div.rdr_actionbar li a {
-    background:url("../images/readr_icons.png") no-repeat 0 0 transparent !important;
+div.rdr_sandbox div.rdr_actionbar li a span.rdr_react_icon {
+    background:url("../images/readr_icons.png") no-repeat 3px 3px transparent !important;
     display:block !important;
     height:22px !important;
     width:23px !important;
     text-indent:-9999px !important;
     float:left !important;
 }
+div.rdr_sandbox span.rdr_react_label {
+  font-size:11px !important;
+  display: inline-block !important;
+  cursor:pointer !important;
+}
+div.rdr_sandbox div.rdr_actionbar li span.rdr_react_label {
+  margin: 5px 7px 0px -3px !important;
+}
 
 div.rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark         { display: none !important;}
 
-div.rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:3px 3px !important; }
+/*div.rdr_sandbox div.rdr_actionbar li.rdr_icon_reaction a        { background-position:3px 3px !important; }
 div.rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-position:-61px -4px !important; display:none;;}
-
+*/
 
 div.rdr_sandbox div.rdr_actionbar li:hover                     { 
     background: #CCE6FF !important;
@@ -606,7 +615,6 @@ div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_custom_tag  {
 div.rdr_sbRolloverTable a.rdr_tag:hover,
 div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_hover,
 div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag:hover  {
-  /*background:#bbb !important;*/
   background:url("../images/tag_bg_hover.png") top left repeat !important;
 }
 
@@ -621,11 +629,8 @@ table.rdr_tags div.rdr_cell_wrapper.rdr_custom_tag_container:hover,
 table.rdr_tags div.rdr_cell_wrapper.rdr_custom_tag_container { background:none !important; }
 
 table.rdr_tags div.rdr_cell_wrapper:hover {
-  /*background:#bbb !important;*/
     background:url("../images/tag_bg_hover.png") top left repeat !important;
 }
-/*table.rdr_tags td:nth-child(even) div.rdr_cell_wrapper {border-left:1px solid #f0f0f0 !important;}*/
-/*table.rdr_tags td:nth-child(odd) div.rdr_cell_wrapper  {margin-right:-1px !important;}*/
 
 table.rdr_tags span.rdr_comment_hover {
     height:19px !important;
@@ -1296,6 +1301,10 @@ div.rdr_indicator.rdr_indicator_for_media {
     cursor:pointer !important;
 }
 
+div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
+    display:none !important;
+}
+
 /*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
 /*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
 /*todo: should all these things really be in the * part (the all children part) ?  */
@@ -1368,7 +1377,6 @@ div.rdr_sandbox div.rdr_indicator_details div.rdr_body_wrap{
 }
 div.rdr_sandbox div.rdr_body_wrap{
     padding:0px !important;
-
 }
 
 div.rdr_sandbox div.rdr_indicator_details .rdr_see_more {
@@ -1556,7 +1564,7 @@ div.rdr_sandbox div.rdr_indicator_details span.rdr_count,
 div.rdr_sandbox div.rdr_sentimentBox span.rdr_count { 
     position:relative !important;
     margin-left:16px !important;
-    font-size: 12px !important;
+    font-size:11px !important;
 }
 div.rdr_sandbox div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
     margin-left:13px !important;
