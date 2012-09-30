@@ -45,7 +45,6 @@ div.rdr_sandbox div.rdr.rdr_window {
 
 /* the action bar */
 div.rdr_sandbox div.rdr_actionbar {
-    border:1px solid #c9c9c9 !important; 
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) ) !important;
     background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%) !important;
     padding:0 !important;
@@ -86,22 +85,13 @@ div.rdr_sandbox div.rdr_actionbar li.rdr_icon_bookmark a        { background-pos
 div.rdr_sandbox div.rdr_actionbar li:hover                     { 
     background: #CCE6FF !important;
 }
-div.rdr_sandbox div.rdr_actionbar li.rdr_actionbar_first     { 
-    -moz-border-radius:5px 0 0 5px !important;
-    -webkit-border-radius:5px 0 0 5px !important;
-    border-radius:5px 0 0 5px !important;
-}
-div.rdr_sandbox div.rdr_actionbar li.rdr_actionbar_last    { 
-    -moz-border-radius:0 5px 5px 0 !important;
-    -webkit-border-radius:0 5px 5px 0 !important;
-    border-radius:0 5px 5px 0 !important;
-}
 
 /*override the above if it's an actionbar for images*/
 div.rdr_sandbox div.rdr_actionbar_for_media { 
-    -moz-border-radius:0 5px 5px 0 !important;
+/*    -moz-border-radius:0 5px 5px 0 !important;
     -webkit-border-radius:0 5px 5px 0 !important;
     border-radius:0 5px 5px 0 !important;
+*/    
     -moz-box-shadow:0 0 10px 1px #008be4 !important;
     -webkit-box-shadow:0 0 10px 1px #008be4 !important;
     box-shadow:0 0 10px 1px #008be4 !important;
@@ -112,16 +102,6 @@ div.rdr_sandbox div.rdr_actionbar_for_media li {
     display:block !important;
     float:left !important;
     clear:both !important;
-}
-div.rdr_sandbox div.rdr_actionbar_for_media li.rdr_actionbar_first     { 
-    -moz-border-radius:0 5px 0 0 !important;
-    -webkit-border-radius:0 5px 0 0 !important;
-    border-radius:0 5px 0 0 !important;
-}
-div.rdr_sandbox div.rdr_actionbar_for_media li.rdr_actionbar_last    { 
-    -moz-border-radius:0 0 5px 0 !important;
-    -webkit-border-radius:0 0 5px 0 !important;
-    border-radius:0 0 5px 0 !important;
 }
 
 
@@ -1099,19 +1079,15 @@ div#rdr-page-summary.defaultSummaryBar .rdr-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 div.rdr_sandbox .rdr_widget{
-    -moz-box-shadow:0 0 10px 1px #aaa !important;
-    -webkit-box-shadow:0 0 10px 1px #aaa !important;
-    box-shadow:0 0 10px 1px #aaa !important;
-
-    -webkit-border-radius:6px !important;
-    -moz-border-radius:6px !important;
-    border-radius:6px !important;
+    -moz-box-shadow:0 0 4px 1px #ccc !important;
+    -webkit-box-shadow:0 0 4px 1px #ccc !important;
+    box-shadow:0 0 4px 1px #ccc !important;
 }
 /*rdr_widget_bar overrides rdr_widget*/
 div.rdr_sandbox .rdr_widget_bar{
-    -webkit-border-radius:5px !important;
+    /*-webkit-border-radius:5px !important;
     -moz-border-radius:5px !important;
-    border-radius:5px !important;
+    border-radius:5px !important;*/
 }
 
 
@@ -1233,7 +1209,7 @@ div.rdr_reactions {
 }
 
 /* round those corners */
-.rdr.rdr_brtl,
+/*.rdr.rdr_brtl,
 .rdr .rdr_brtl   { -moz-border-radius-topleft:6px !important; -webkit-border-top-left-radius:6px !important; border-top-left-radius:6px !important; }
 
 .rdr.rdr_brtr,
@@ -1243,7 +1219,7 @@ div.rdr_reactions {
 .rdr .rdr_brbr   { -moz-border-radius-bottomright:6px !important; -webkit-border-bottom-right-radius:6px !important; border-bottom-right-radius:6px!important; }
 
 .rdr.rdr_brbl,
-.rdr .rdr_brbl   { -moz-border-radius-bottomleft:6px !important; -webkit-border-bottom-left-radius:6px !important; border-bottom-left-radius:6px !important; }
+.rdr .rdr_brbl   { -moz-border-radius-bottomleft:6px !important; -webkit-border-bottom-left-radius:6px !important; border-bottom-left-radius:6px !important; }*/
 
 
 /* user education bar */
@@ -1456,7 +1432,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     font: 12px Arial,sans-serif !important;
     padding: 5px 5px 2px 4px !important;
 
-    border-radius: 4px 4px 4px 4px !important;
+    /*border-radius: 4px 4px 4px 4px !important;*/
 
     -moz-box-shadow:0 0 10px 1px #aaa  !important;
     -webkit-box-shadow:0 0 10px 1px #aaa  !important;
@@ -1495,26 +1471,17 @@ div.rdr_sandbox div.rdr_indicator_details_for_media {
     height:0;;
     display:block !important;
     margin:0 !important;
-    -moz-border-radius:0px 0px 6px 6px !important;
-    -webkit-border-radius:0px 0px 6px 6px !important;
-    border-radius:0px 0px 6px 6px !important;
-    box-shadow:  0px 4px 6px -2px #ccc !important;
-    -moz-box-shadow:  0px 4px 6px -2px #ccc !important;
-    -webkit-box-shadow:  0px 4px 6px -2px #ccc !important;
+    box-shadow: 0 0px 4px #ccc !important;
+    -moz-box-shadow: 0 0px 4px #ccc !important;
+    -webkit-box-shadow: 0 0px 4px #ccc !important;
     background:url("../images/tag_bg.png") 0px -14px repeat !important;
     border-width:0 !important;
 }
 div.rdr_sandbox.rdr_video_details div.rdr_indicator_details_for_media {
   height:auto;
-  -moz-border-radius:0px 0px 0px 0px !important;
-  -webkit-border-radius:0px 0px 0px 0px !important;
-  border-radius:0px 0px 0px 0px !important;
   box-shadow: 0 !important;
   -moz-box-shadow:  0 !important;
   -webkit-box-shadow:  0 !important;
-}
-div.rdr_sandbox div.rdr_indicator_details_for_media.rdr_has_border {
-    border-width:1px !important;
 }
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
