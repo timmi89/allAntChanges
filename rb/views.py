@@ -399,7 +399,7 @@ def wordpress(request, **kwargs):
     isNotAdminUrl = '/friendlylogin_wordpress/'+context['qParams']
     hasNotRegisteredUrl = '/signup/'+context['qParams']
     wordpressEdit = '/wordpress_edit/'+context['qParams']
-    settingsUrl = lambda shortname: '/settings/'+shortname+context['qParams']
+    settingsUrl = lambda shortname: '/settings_wordpress/'+shortname+context['qParams']
 
     hostdomain = kwargs.get('hostdomain', None)
     cookie_user = kwargs.get('cookie_user', None)
@@ -688,10 +688,35 @@ def settings(request, **kwargs):
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
-            context['hostdomain'] = request.POST.get('hostdomain', None)
-            context['hostplatform'] = request.POST.get('hostplatform', None)
-            context['iswordpress'] = context['hostplatform'] == 'wordpress'
-            
+            form.save()
+
+        else:
+            # print form.errors
+            pass
+
+    else:
+        form = GroupForm(instance=group)
+
+    context['form'] = form
+    context['short_name'] = group.short_name
+    context['fb_client_id'] = FACEBOOK_APP_ID
+
+    return render_to_response(
+        "group_settings.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+@requires_admin_wordpress
+def settings_wordpress(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    # context['cookie_user'] = kwargs['cookie_user']
+
+    # todo move wordpress stuff
+    if request.method == 'POST':
+        form = GroupForm(request.POST, request.FILES, instance=group)
+        if form.is_valid():
             form.save()
 
         else:
@@ -701,29 +726,12 @@ def settings(request, **kwargs):
 
     else:
         form = GroupForm(instance=group)
-        context['hostdomain'] = request.GET.get('hostdomain', None)
-        context['hostplatform'] = request.GET.get('hostplatform', None)
-        context['iswordpress'] = context['hostplatform'] == 'wordpress'
 
     context['form'] = form
-    context['short_name'] = group.short_name
-    context['fb_client_id'] = FACEBOOK_APP_ID
+    #these come from settings_wordpress now...
+    # context['short_name'] = group.short_name
+    # context['fb_client_id'] = FACEBOOK_APP_ID
 
-    #wordpress intecept
-    if context.get('iswordpress', False):
-        #route to the wordpress version of group_settings - it just extends group_settings and modifies it a little.
-        kwargs['context'] = context;
-        return settings_wordpress(request, **kwargs);
-
-    return render_to_response(
-        "group_settings.html",
-        context,
-        context_instance=RequestContext(request)
-    )
-
-@requires_admin
-def settings_wordpress(request, **kwargs):
-    context = kwargs['context'];
     return render_to_response(
         "group_settings_wordpress.html",
         context,
