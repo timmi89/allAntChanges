@@ -149,7 +149,7 @@ class ModifySocialUserForm(forms.ModelForm):
     def clean_default_tags(self):
         tags = self.cleaned_data['default_tags']
         new_default_tags = []
-        for tag in tags.split(','):
+        for tag in tags.split(';'):
             tag = tag.strip()
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
         
@@ -278,7 +278,7 @@ class GroupForm(forms.ModelForm):
     def clean_blessed_tags(self):
         tags = self.cleaned_data['blessed_tags']
         new_blessed_tags = []
-        for tag in tags.split(','):
+        for tag in tags.split(';'):
             tag = tag.strip()
 
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
