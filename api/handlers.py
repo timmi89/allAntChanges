@@ -674,8 +674,6 @@ class SettingsHandler(AnonymousBaseHandler):
                 for admin in readr_admins:
                     GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
 
-                
-        
         else:
             group = Group.objects.get(id=group_id)
             

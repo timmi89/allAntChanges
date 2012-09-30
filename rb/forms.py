@@ -127,7 +127,7 @@ class ModifySocialUserForm(forms.ModelForm):
         tags = []
         for tag in GroupBlessedTag.objects.filter(group=self.instance):
             tags.append(tag.node.body)
-        self.fields['default_tags'].initial = ','.join(tags)
+        self.fields['default_tags'].initial = ';'.join(tags)
   
     class Meta:
         model = SocialUser
@@ -236,30 +236,54 @@ class CreateGroupForm(forms.Form):
             return requested_sn
     
     def save(self, cookie_user, force_insert=False, force_update=False, commit=True):
-        group = Group.objects.create(
-            name=self.cleaned_data['name'],
-            short_name=self.cleaned_data['short_name']
-        )
-        Site.objects.create(
-            name=self.cleaned_data['domain'],
-            domain=self.cleaned_data['domain'],
-            group=group
-        )
-        social_user = SocialUser.objects.get(user=cookie_user)
-        GroupAdmin.objects.create(group=group,social_user=social_user,approved=True)
-
-        # Add us to admins
-        readr_admins = SocialUser.objects.filter(
-            user__email__in=(
-                'porterbayne@gmail.com',
-                'erchaves@gmail.com',
-                'michael@readrboard.com'
+        
+        try:
+            group = Group.objects.create(
+                name=self.cleaned_data['name'],
+                short_name=self.cleaned_data['short_name']
             )
-        ).exclude(id=social_user.id)
-
-        for admin in readr_admins:
-            GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
+            Site.objects.create(
+                name=self.cleaned_data['domain'],
+                domain=self.cleaned_data['domain'],
+                group=group
+            )
+            # Add us to admins
+            readr_admins = SocialUser.objects.filter(
+                user__email__in=(
+                    'porterbayne@gmail.com',
+                    'erchaves@gmail.com',
+                    'michael@readrboard.com'
+                )
+            ).exclude(id=social_user.id)
+        
+            for admin in readr_admins:
+                GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
+              
+        except Exception, e:
+            groups = Group.objects.filter(
+                name=self.cleaned_data['name'],
+                short_name=self.cleaned_data['short_name']
+                )
+            if len(groups) == 1:
+                group = groups[0]
+            else:
+                raise Exception("More or less than one group with shortname found: " + self.cleaned_data['short_name'])
             
+        
+        social_user = SocialUser.objects.get(user=cookie_user)
+        group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=False)
+        
+        ga_approval_mail = generateAdminApprovalEmail(group_admin)
+        msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", 
+                                   [
+                                   'porterbayne@gmail.com',
+                                   'erchaves@gmail.com',
+                                   'michael@readrboard.com'
+                                   ]
+                            )
+        msg.content_subtype='html'
+        msg.send(False)
+          
         return group
         
 
@@ -272,7 +296,7 @@ class GroupForm(forms.ModelForm):
         tags = []
         for tag in GroupBlessedTag.objects.filter(group=self.instance):
             tags.append(tag.node.body)
-        self.fields['blessed_tags'].initial = ','.join(tags)
+        self.fields['blessed_tags'].initial = ';'.join(tags)
     
     # Get or create blessed tag interaction nodes to prepare for save
     def clean_blessed_tags(self):
