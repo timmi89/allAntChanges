@@ -238,7 +238,7 @@ function readrBoard($R){
 
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
-                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') ) {
+                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_video_details').length ) {
                     var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
                     $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
@@ -251,7 +251,7 @@ function readrBoard($R){
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
-                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') ) {
+                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_video_details').length ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         $rindow.removeClass('rdr_has_border');
                         if (callback) callback();
@@ -859,6 +859,7 @@ function readrBoard($R){
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                         }
+                        // $input.closest('a.rdr_tag').removeClass('rdr_hover');
                     }).keyup( function(event) {
                         var $input = $(this),
                             tag = {},
@@ -884,6 +885,7 @@ function readrBoard($R){
                     // if ( $container ) $container.append( $a_custom, " " );
                     // else return $a_custom;
                     $container.append( $a_custom, " " );
+                    $a_custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
                     $a_custom.tooltip();
                 }
             },
@@ -2572,7 +2574,7 @@ function readrBoard($R){
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
                 
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr"/>').appendTo('body');
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
 
                 // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
                 // Firefox calculates it (returns a pixel value) while Chrome does not (returns the "50%")...
@@ -4850,9 +4852,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
-                                var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                                .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
-                                .appendTo('#rdr_indicator_details_wrapper');
+
+                                // NEWVIDEO TEST
+                                if ( summary.kind == "media" && $('div.rdr_video_details').not('rdr_loaded').length ) {
+                                    var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar rdr_has_border')//chain
+                                    .appendTo('div.rdr_video_details');
+                                    $('div.rdr_video_details').addClass('rdr_loaded rdr_sandbox');
+                                } else {
+                                    var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
+                                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
+                                    .appendTo('#rdr_indicator_details_wrapper');
+                                }
 
                                 $indicator_details.data('container',hash);
                                 $indicator_details.data('summary',summary);
@@ -6546,7 +6557,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv9" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv10" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -7282,7 +7293,7 @@ function $RFunctions($R){
                                 hash = $this.closest('.rdr-page-container').data('hash'),
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                 offsets = $this.offset();
-                                
+
                             var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
                                 .append('<h2>Your reaction to this article?</h2><div class="rdr_sbRolloverTable"/>');
 
