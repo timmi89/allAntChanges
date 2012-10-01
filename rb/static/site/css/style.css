@@ -527,7 +527,8 @@ page-break-after:avoid; }
         display: none !important;
     }
 
-    #uvTab, #betterLikeButton{
+    #uvTab,
+    #betterLikeButton{
         display: none !important;   
     }
 
@@ -545,7 +546,7 @@ page-break-after:avoid; }
     }
     
     #login-options{
-        min-width: 170px; 
+        min-width: 170px;
     }
 
     header[role="banner"] {
@@ -1619,6 +1620,12 @@ http://drupal.org/node/897638
     clear:both;
     display: block;
 }
+.createAccountLink{
+    float:left;
+    padding:6px;
+}
+
+
 .userFeedbackMsg{
     padding: 20px 40px 20px 20px !important;
 }

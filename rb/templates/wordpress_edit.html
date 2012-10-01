@@ -2,8 +2,8 @@
 
 {% block extendedHead %}
 <script>
-    //todo: quick experiment - do this better later.
-    RDR_baseUrl = "http://local.readrboard.com:8080/";
+    RDR_offline = document.domain == "local.readrboard.com";
+    RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
 
     (function($){
 

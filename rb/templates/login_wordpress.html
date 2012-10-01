@@ -1,34 +1,101 @@
-{% extends "login.html" %}
+{% extends "popup_form.html" %}
 
 
-{% block hostPlatformHeader %}
+
+{% block sidebarContent %}
+<div id="sidebar">
+</div>
+{% endblock sidebarContent %}
+
+{% block header %}
+{% endblock header %}
     
+{% block extendedHead %}
+    <style>
+        /*quick fix*/
+        #fixedBar{
+            display: none;
+        }
+        #searchform {
+            display: none;
+        }
+        
+        body.wide section[role="main"]{
+            padding: 20px;
+        }
+        body.wide section[role="content"] {
+            margin: 0;
+        }
+        section[role="main"] #login-options{
+            margin: 10px 0;
+        }
+
+        body.wide section[role="main"] h1 {
+            font-size: 28px;
+            margin: 10px 0;
+        }
+
+        /*undo the css from nofooter*/
+        .noFooter #uvTab{
+            display: block !important;
+            top: 130px !important;
+        }
+
+    </style>
+    <script>
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+    </script>
+{% endblock %}
+
+{% block mainContent %}
+ 
+  {% block hostPlatformHeader %}    
     <div class="hostPlatformHeader">
         Step 1: Log in
     </div>
 {% endblock hostPlatformHeader %}
 
-{% block msgHeader %}
-  <!-- <h1>ReadrBoard Login</h1> -->
+  {% block msgHeader %}
   <h3>Please log in ReadrBoard to edit your settings.</h3>
 {% endblock msgHeader %}
-
-{% block signupButton %}
-    <div style="float:left;padding:6px;">
-        <a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">&laquo; Or create a new account</a>
+ 
+  <div id="login-options" style="overflow:auto;">
+    <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
+      <div id="fb-login-button">
+        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in');FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
+      </div>
+    </div>
+    <div style="float:left;padding-left:6px;">
+      <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
     </div>
     
-    <div style="clear:both; margin-top: 50px;">
-      <span>You may need to <a href="#" onclick="reloadPageAfterLogin();">click here</a> after login to proceed to the next step.</span>
+    {% block signupButton %}
+    <style>
+    section[role="main"] #login-options{
+        margin: 30px 0;
+    }
+    </style>
+    
+    <div style="float:left;padding:6px;">
+        <a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;
+    font-style:italic;">Or create a new account</a>
+    </div>
+    
+    <div class="" style="clear:both; padding-top: 30px;">
+      <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after you log in.  New accounts will need to verify an email address before logging in.</span>
     </div>
 
 {% endblock signupButton %}
 
 
+  </div>
+
+{% endblock mainContent %}
+
 {% block pageJS %}
 
     <script>
-        var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
+        RDR_offline = document.domain == "local.readrboard.com";
         RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
         RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
         var wordpressEditUrl = '/wordpress_edit/';
@@ -62,3 +129,9 @@
     </script>
 
 {% endblock %}
+
+{% block fixedBar %}
+{% endblock fixedBar %}
+
+{% block footer %}
+{% endblock footer %}

@@ -2,8 +2,6 @@
 
 {% block extendedHead %}
 <script>
-    //todo: quick experiment - do this better later.
-    RDR_baseUrl = "http://local.readrboard.com:8080/";
 
     (function($){
 
@@ -130,7 +128,7 @@
     <div class="quickWrap">
         <h3>Thanks, your site is registered!</h3>
         <div style="clear:both; margin-top: 50px;">
-          <span>You may need to <a href="#" onclick="reloadPageAfterLogin();">click here</a> to proceed to the next step.</span>
+          <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after registering.</span>
         </div>
     </div>
 
@@ -147,11 +145,16 @@
     </script>
 {% endblock alreadyRequested %}
 
-{% block uservoice %}
-{% endblock uservoice %}
-
 {% block fixedBar %}
 {% endblock fixedBar %}
 
 {% block footer %}
+<style>
+    /*undo the css from nofooter*/
+    #uvTab{
+        display: block !important;
+        top: 130px !important;
+    }
+</style>
+
 {% endblock footer %}
