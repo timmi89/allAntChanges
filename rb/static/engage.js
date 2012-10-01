@@ -310,7 +310,8 @@ function readrBoard($R){
 
                     if ( visiblePane.which == "hasJspPane" ) {
                         visiblePane.$elm.find('div.jspContainer').width(setWidth);
-                        visiblePane.$elm.find('div.jspPane').width(setWidth-8);
+                        // visiblePane.$elm.find('div.jspPane').width(setWidth-8);
+                        visiblePane.$elm.find('div.jspPane').width(setWidth);
                     }
                 }
                 RDR.rindow.jspUpdate( $rindow, setWidth, kind );
@@ -1045,12 +1046,10 @@ function readrBoard($R){
                                     $rindow = $this.closest('div.rdr_window');
 
                                 thisWidth = $rindow.data('initialWidth');
-                                RDR.rindow.updateSizes($rindow, thisWidth+26);
                             }).on('mouseleave', function() {
                                 var $this = $(this),
                                     $rindow = $this.closest('div.rdr_window');
                                 thisWidth = $rindow.width();
-                                RDR.rindow.updateSizes($rindow, thisWidth-26);
                             });
                         }
 
@@ -1245,28 +1244,6 @@ function readrBoard($R){
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
-                // $new_rindow.resizable({
-                //     alsoResize: '.jspTrack,.jspContainer',
-                //     grid: [100000, null], /*this is my own hack for locking the movement to the y axis, but I think it works well*/
-                //     handles:'s',
-                //     minHeight:minHeight,
-                //     maxHeight:maxHeight,
-                //     minWidth:minWidth,
-                //     maxWidth:maxWidth
-                // });
-
-                // var $dragHandle = $new_rindow.find('.ui-resizable-s');
-                // $dragHandle.addClass('rdr_window_dragHandle');
-                // $dragHandle.hover(
-                //     function(){
-                //         $(this).addClass('rdr_hover');
-                //     },
-                //     function(){
-                //         $(this).removeClass('rdr_hover');
-                //     }
-                // );
-
-                // $new_rindow.append( $dragHandle );
 
                 $new_rindow.on( "resizestop", function(event, ui) {
                     var $this = $(this);
@@ -3236,14 +3213,6 @@ function readrBoard($R){
 
                             RDR.content_nodes[hash] = content_node_data;
 
-                            // $container.hover(
-                            //     function(){
-                            //         RDR.actions.containers.media.onEngage(hash);
-                            //     },
-                            //     function(){
-                            //         RDR.actions.containers.media.onDisengage(hash);
-                            //     }
-                            // );
                         },
                         media: function(hash, summary){
                             //for now, just pass through to img.
@@ -6553,7 +6522,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv10" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv11" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 

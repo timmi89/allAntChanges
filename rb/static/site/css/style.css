@@ -495,7 +495,7 @@ page-break-after:avoid; }
         margin: 0 !important;
     }
     header[role="banner"] a{
-        float: right;
+        float: left;
         width: 150px;
     }
 
