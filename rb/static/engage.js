@@ -298,7 +298,7 @@ function readrBoard($R){
                         var rdr_contentSpace_width = $rindow.find('div.rdr_contentSpace').width(),
                             rdr_body_jspScrollable_width = $rindow.find('table.rdr_tags').width(),  // tag tables tend to be wider than what their containers claim they are, for some reason
                             visible_content_pane_width = ( rdr_body_jspScrollable_width>rdr_contentSpace_width ) ? rdr_body_jspScrollable_width:rdr_contentSpace_width;
-                        var setWidth = ( visible_content_pane_width <= rindow_width ) ? rindow_width:visible_content_pane_width+8;
+                        var setWidth = ( visible_content_pane_width <= rindow_width ) ? rindow_width:visible_content_pane_width;
                     } else {
                         visiblePane.$elm.css('width', setWidth+'px' );
                     }
@@ -619,7 +619,7 @@ function readrBoard($R){
                 // so, check and see if commenting these two lines out negatively impacts the width of the rindow
                 // in readmode, for text, after viewing comments then returning to the reaction list.
                 var $firstPane = $rindow.find('div.rdr_body').eq(0);
-                if ( !$firstPane.hasClass('rdr-visible') ) $firstPane.find('div.jspPane').width($firstPane.width()-8);
+                // if ( !$firstPane.hasClass('rdr-visible') ) $firstPane.find('div.jspPane').width($firstPane.width()-8);
 
             },
             getHeight: function( $rindow, options ) {
@@ -742,7 +742,7 @@ function readrBoard($R){
                         var message = 'Click to add this reaction here';
                     } else {
                         var peoples = ( tagCount == 1 ) ? "person":"people",
-                            message = tagCount+' '+peoples+' had this reaction.<br/>Click to agree.',
+                            message = tagCount+' '+peoples+' had this reaction. Click to agree.',
                             tagCount = '(' + tagCount + ')';
                     }
                     // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id);
@@ -820,6 +820,7 @@ function readrBoard($R){
                                 content_node:content_node,
                                 selState:content_node.selState
                             });
+                            return false;
                         });
 
                         // $a.append('<span class="rdr_comment_indicator"></span>');
@@ -1056,7 +1057,7 @@ function readrBoard($R){
                         // now that we've created the first row, unset the max-width and set the table width.
                         // this lets us have the table flow to full width... without having had to loop through
                         // table cells in getNextCell to recalculate the width throughout
-                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width()-10 ) : 200;
+                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width() ) : 200;
                         $tag_table.css('max-width','none').width(tableTableWidth);
 
                         // if (actionType=="bookmark") {
@@ -1375,12 +1376,10 @@ function readrBoard($R){
                                 $rindow = $this.closest('div.rdr_window');
 
                             thisWidth = $rindow.data('initialWidth');
-                            RDR.rindow.updateSizes($rindow, thisWidth+26);
                         }).on('mouseleave', function() {
                             var $this = $(this),
                                 $rindow = $this.closest('div.rdr_window');
                             thisWidth = $rindow.width();
-                            RDR.rindow.updateSizes($rindow, thisWidth-26);
                         });
                     }
                 }
@@ -6522,7 +6521,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv11" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv12" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
