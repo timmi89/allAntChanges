@@ -1,7 +1,3 @@
-#rdr_sandbox div.rdr_actionbar { 
+div.rdr_sandbox div.rdr_actionbar { 
 	background:url(../images/actionbar_bg.png) no-repeat left bottom #fff !important;
-}
-
-#rdr_sandbox div.rdr.rdr_tag_details.rdr_pillContainer{
-	border: 1px solid #eee !important;
 }
