@@ -1246,7 +1246,7 @@ form.big-form label span    { display:block; font-style:italic; font-size:12px; 
 form.big-form label span.labelTitle	{font-style:normal; font-weight: bold; margin-top: 1px;}
 form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
 form.big-form input[type="checkbox"]	{ display:block; float:left; margin: 0 5px 0 2px; }
-form.big-form input[type="text"]		{ width:400px; }
+form.big-form input[type="text"]		{ width: 100%; }
 form.big-form input#id_call_to_action	{ width:800px; }
 
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
@@ -1625,6 +1625,10 @@ http://drupal.org/node/897638
     padding:6px;
 }
 
+form .errorMsg{
+    color: red;
+    padding: 5px;
+}
 
 .userFeedbackMsg{
     padding: 20px 40px 20px 20px !important;

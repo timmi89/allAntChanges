@@ -75,25 +75,46 @@
             $.postMessage(
                 data,
                 hostPath,
-                parent
+                parent        
             );
+            
+            $('#groupSettings input').bind('keypress', function(){
+                $(this).closest('.formRow').removeClass('error');
+                $(this).closest('form').find('.errorMsg').hide();
+            });
+
+            $('#groupSettings').submit(function(){
+                var $this = $(this);
+                var $blessedTagsInput = $('#id_blessed_tags');
+                if ( ! $blessedTagsInput.val() ){
+                    $blessedTagsInput.closest('.formRow').addClass('error');
+                    $this.find('.errorMsg').show();
+                    return false;
+                }
+                
+                $(this).submit();
+                    
+            })
 
         });
+
+
     })(jQuery);
 </script>
-    <style>
-        html{
-            background: none;
-        }
-        section[role="content"]{
-            margin: 0 !important;
-            padding: 0 !important;
-        }
 
-        section[role="group panel header"]{
-            display: none;
-        }
-    </style>
+<style>
+    html{
+        background: none;
+    }
+    section[role="content"]{
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    section[role="group panel header"]{
+        display: none;
+    }
+</style>
 {% endblock %}
 
 {% block header %}

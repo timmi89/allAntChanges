@@ -11,59 +11,59 @@
       <h1>{{group.name}} Settings</h1>
     {% endblock settingsHeader %}    
   
-  <form action="{% block settingsUrl %}/settings/{{ short_name }}/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
+  <form id="groupSettings" action="{% block settingsUrl %}/settings/{{ short_name }}/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<section class="left column">
 		<h3>Group Information</h3>
-		<div>
+		<div class="formRow">
 			<label for="id_name">Name </label>
 			{{ form.name }}
 			{{ form.name.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_short_name"><span class="labelTitle">Short Name </span><span>Used in URLs on readrboard.com</span></label>
 			{{ form.short_name }}
 			{{ form.short_name.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_blessed_tags"><span class="labelTitle">Default Reactions </span><span>Default tags for people to react with.  Separate tags with a ";"</span></label>
 			{{ form.blessed_tags }}
 		</div>
-		<!-- <div>
+		<!-- <div class="formRow">
 		<label for="id_language"><span class="labelTitle">Language </span><span>For now, only "en" supported</span></label>
 		{{ form.language }}{{ form.language.errors }}
 		</div> -->
-		<div>
+		<div class="formRow">
 			<label for="id_temp_interact"><span class="labelTitle">Temporary Interactions </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
 			{{ form.temp_interact }}{{ form.temp_interact.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
 			{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_logo_url_med"><span class="labelTitle">Medium Logo </span><span>URL to a medium logo file (max 100x50)</span></label>
 			{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
 			{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
 		</div>
 		<h3>Moderation</h3>
-		<div style="margin: 10px 0;">
+		<div class="formRow" style="margin: 10px 0;">
 			{{ form.requires_approval }}{{ form.requires_approval.errors }}
 			<label for="id_requires_approval"><span class="labelTitle">Requires Approval? </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_word_blacklist"><span class="labelTitle">Word Blacklist </span><span>Words that are automatically censored.</span></label>
 			{{ form.word_blacklist }}{{ form.word_blacklist.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
 			{{ form.custom_css }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
 			{{ form.call_to_action }}
 		</div>
@@ -71,31 +71,31 @@
 
 	<section class="right column">
 		<h3>Configuring Your Site</h3>
-		<div>
+		<div class="formRow">
 			<label for="id_anno_whitelist"><span class="labelTitle">Active Text </span><span>CSS Selectors for text ReadrBoard interacts with by default.</span></label>
 			{{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_no_readr"><span class="labelTitle">Inactive Text </span><span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 			{{ form.no_readr }}{{ form.no_rdr.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_img_whitelist"><span class="labelTitle">Active Images </span><span>CSS Selectors for images ReadrBoard interacts with by default.</span></label>
 			{{ form.img_whitelist }}{{ form.img_whitelist.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_img_blacklist"><span class="labelTitle">Inactive Images </span><span>CSS Selectors for text ReadrBoard should always ignore.</span></label>
 			{{ form.img_blacklist }}{{ form.img_blacklist.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_post_selector"><span class="labelTitle">Post Selector </span><span></span></label>
 			{{ form.post_selector }}{{ form.post_selector.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_post_href_selector"><span class="labelTitle">Post HREF Selector </span><span></span></label>
 			{{ form.post_href_selector }}{{ form.post_href_selector.errors }}
 		</div>
-		<div>
+		<div class="formRow">
 			<label for="id_summary_widget_selector"><span class="labelTitle">Summary Widget Selector </span><span></span></label>
 			{{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
 		</div>
@@ -111,7 +111,8 @@
 {% endcomment %}
 
     <div style="clear:both;"></div>
-  <button class="btn" type="submit" style="margin-top:20px;">Submit</button>
+    <button class="btn submit" type="submit" style="margin-top:20px;">Submit</button>
+    <p style="display: none;" class="errorMsg">Oops, there were some errors with the form, please see the sections highlighted red above.<p>
   </form>
 {% endwith %}
 {% endblock mainContent %}
