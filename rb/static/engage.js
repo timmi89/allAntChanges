@@ -77,8 +77,8 @@ function readrBoard($R){
                 custom_css: "",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
-                slideshow_trigger: '#module-flipbook-wrap',
-                slideshow_img_selector: '#module-flipbook div.slideImg img',
+                slideshow_trigger: '#flipbook',
+                slideshow_img_selector: '#flipbook div.image img',
 
                 //SocialPageShareBox Stuff//
                 //todo set to false
@@ -238,7 +238,7 @@ function readrBoard($R){
 
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
-                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_video_details').length ) {
+                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
                     var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
                     $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
                         if (callback) callback();
@@ -251,7 +251,7 @@ function readrBoard($R){
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
-                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_video_details').length ) {
+                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
                         $rindow.removeClass('rdr_has_border');
                         if (callback) callback();
@@ -2497,6 +2497,9 @@ function readrBoard($R){
                 });
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
+
+                //dailycandy demo only:
+                $('#flipbook').after('<div class="rdr_media_details"></div>');
             },
             initGroupData: function(groupShortName){
                 // request the RBGroup Data
@@ -3079,20 +3082,20 @@ function readrBoard($R){
                             RDR.actions.indicators.init(hash);
                         });
 
-                        var $slideshows = $(RDR.group.slideshow_trigger);
-                        $.each( $slideshows, function( idx, slideshow ) {
-                            var $slideshow = $(slideshow);
-                            $slideshow.hover(
-                                function(){
-                                    var hash = RDR.actions.slideshows.findActiveHash();
-                                    RDR.actions.indicators.init(hash);
-                                    RDR.actions.containers.media.onEngage( hash );
-                                },
-                                function(){
-                                    RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
-                                }
-                            );
-                        });
+                        // var $slideshows = $(RDR.group.slideshow_trigger);
+                        // $.each( $slideshows, function( idx, slideshow ) {
+                        //     var $slideshow = $(slideshow);
+                        //     $slideshow.hover(
+                        //         function(){
+                        //             // var hash = RDR.actions.slideshows.findActiveHash();
+                        //             // RDR.actions.indicators.init(hash);
+                        //             // RDR.actions.containers.media.onEngage( hash );
+                        //         },
+                        //         function(){
+                        //             // RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
+                        //         }
+                        //     );
+                        // });
                     }
                 },
                 findActiveHash: function() {
@@ -4747,7 +4750,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var scope = this;
 
                     var summary = RDR.summaries[hash];
-
                     //check if $indicator does not exist and run scope.init if needed.
                     if( !summary.hasOwnProperty('$indicator') ){
                         //init will add an $indicator object to summary and then re-call update.  This failsafe isn't really needed..
@@ -4815,12 +4817,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
-                                if ( summary.kind == "media" && $('div.rdr_video_details').not('rdr_loaded').length ) {
+                                if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
+                                // if ( summary.kind == "media" && $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar rdr_has_border')//chain
-                                    .appendTo('div.rdr_video_details');
+                                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar rdr_has_border');
+                                    // .appendTo('div.rdr_media_details');
+                                    $('div.rdr_media_details').html( $indicator_details );
                                     $container_tracker.addClass('rdr_inline_video');
-                                    $('div.rdr_video_details').addClass('rdr_loaded rdr_sandbox');
+                                    $('div.rdr_media_details').addClass('rdr_sandbox');
                                 } else {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                     .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
@@ -4896,7 +4900,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator_details_innerWrap.append( $tagsListContainer );
 
                             //builds out the $tagsList contents
-                            if (summary.kind!=="text"){
+                            if (summary.kind!=="text" && !$indicator_details.find('div.rdr_view_success').length ){
                                 $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
                                 scope.makeTagsListForMedia( hash );
                             }

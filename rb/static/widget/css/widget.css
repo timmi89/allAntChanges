@@ -1379,7 +1379,7 @@ div.rdr_sandbox div.rdr_indicator_details {
     -o-box-sizing : border-box !important;
     box-sizing : border-box !important; 
 }
-div.rdr_sandbox.rdr_video_details, div.rdr_sandbox.rdr_video_details div.rdr_indicator_details {
+div.rdr_sandbox.rdr_media_details, div.rdr_sandbox.rdr_media_details div.rdr_indicator_details {
   position:static !important;
   display:block !important;
 }
@@ -1497,7 +1497,7 @@ div.rdr_sandbox div.rdr_indicator_details_for_media {
     background:url("../images/tag_bg.png") 0px -14px repeat !important;
     border-width:0 !important;
 }
-div.rdr_sandbox.rdr_video_details div.rdr_indicator_details_for_media {
+div.rdr_sandbox.rdr_media_details div.rdr_indicator_details_for_media {
   height:auto;
   box-shadow: 0 !important;
   -moz-box-shadow:  0 !important;
