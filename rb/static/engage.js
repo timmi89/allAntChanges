@@ -69,7 +69,7 @@ function readrBoard($R){
                 img_selector: "img",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
-                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com"],
+                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
                 initial_pin_limit: 30,
                 no_readr: "",
@@ -2500,6 +2500,9 @@ function readrBoard($R){
 
                 //dailycandy demo only:
                 $('#flipbook').after('<div class="rdr_media_details"></div>');
+
+                //trutv demo only:
+                // $('#vpstags').after('<div class="rdr_media_details"></div>');
             },
             initGroupData: function(groupShortName){
                 // request the RBGroup Data
