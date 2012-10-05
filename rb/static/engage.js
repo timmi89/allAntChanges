@@ -6375,9 +6375,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( page.containers.length > 0 ) {
                         var hashes = [];
                         hashes[ page.id ] = [];
-                        for ( var i in page.containers ) {
-                            hashes[ page.id ].push( page.containers[i].hash );
-                        }
+                        // for ( var i in page.containers ) {
+                        $.each( page.containers, function(idx, container) {
+                            if ( typeof container.hash != "undefined") hashes[ page.id ].push( container.hash );
+                        });
                         RDR.actions.sendHashes( hashes );
                     }
 
@@ -6994,9 +6995,10 @@ function $RFunctions($R){
 
                     var total_interactions = 0;
                     
-                    for ( var i in page.summary ) {
-                        if ( page.summary[i].kind == "tag" ) total_interactions = page.summary[i].count;
-                    }
+                    //for ( var i in page.summary ) {
+                    $.each( page.summary, function(idx, summary) {
+                        if ( typeof summary.kind != "undefined" && summary.kind == "tag" ) total_interactions = summary.count;
+                    });
 
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     //having this go to our home page for now because we have no messaging for the page level reactions.
@@ -7047,13 +7049,13 @@ function $RFunctions($R){
                         // var $toptags = $('<div class="rdr-top-tags" />');
                         // $summary_widget.append( $toptags );
 
-                        for ( var i = 0, j=page.toptags.length; i < j; i++ ) {
-                            var this_tag = page.toptags[i];
-
+                        //for ( var i = 0, j=page.toptags.length; i < j; i++ ) {
+                        $.each( page.toptags, function(idx, this_tag) {
+                            // var this_tag = page.toptags[i];
                             if ( this_tag && this_tag.tag_count > 0 ) {
                                 writeTag( this_tag, page );
                             }
-                        }
+                        });
                         $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
                         
                         // add "react to this page" section
