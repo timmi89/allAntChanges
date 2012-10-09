@@ -82,7 +82,29 @@
                 hostPath,
                 parent        
             );
-            
+
+            //quick fill in defaults for wordpress
+            var wordpressDefaultInputs = [
+                {
+                    selector: '#groupSettings #id_post_selector',
+                    val: 'article.entry, article.post'
+                },
+                {
+                    selector: '#groupSettings #id_post_href_selector',
+                    val: '.entry-title a'
+                },
+                {
+                    selector: '#groupSettings #id_summary_widget_selector',
+                    val: 'article header'
+                },
+            ];
+
+            $.each(wordpressDefaultInputs, function(){
+                var $this = $(this.selector);
+                var val = $this.val() || this.val;
+                $this.val( val );
+            });
+
             $('#groupSettings input').bind('keypress', function(){
                 $(this).closest('.formRow').removeClass('error');
                 $(this).closest('form').find('.errorMsg').hide();
