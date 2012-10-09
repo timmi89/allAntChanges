@@ -109,6 +109,7 @@ urlpatterns = patterns('',
   
   # Group Supporting Pages
   url(r'^signup/$', 'rb.views.create_group'),
+  url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),

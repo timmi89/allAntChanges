@@ -29,6 +29,7 @@
 		<div class="formRow">
 			<label for="id_blessed_tags"><span class="labelTitle">Default Reactions </span><span>Default tags for people to react with.  Separate tags with a ";"</span></label>
 			{{ form.blessed_tags }}
+            {{ form.blessed_tags.errors }}
 		</div>
 		<!-- <div class="formRow">
 		<label for="id_language"><span class="labelTitle">Language </span><span>For now, only "en" supported</span></label>

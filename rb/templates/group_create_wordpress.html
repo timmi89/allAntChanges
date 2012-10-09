@@ -2,7 +2,7 @@
 
 {% block extendedHead %}
 <script>
-
+    
     (function($){
 
         function plugin_jquery_postMessage($){
@@ -59,7 +59,7 @@
         };
 
         var params = utils.getQueryParams();
-        
+                
         $(function(){
 
             plugin_jquery_postMessage($);
@@ -133,6 +133,7 @@
     </div>
 
     <script>
+    
         var wordpressEditUrl = '/wordpress_edit/';
         var query = window.location.search || "?";
         query += "&refresh=true";
@@ -144,6 +145,10 @@
         }
     </script>
 {% endblock alreadyRequested %}
+
+{% block formAction %}
+    /signup_wordpress/{{ qParams }}
+{% endblock %}
 
 {% block fixedBar %}
 {% endblock fixedBar %}

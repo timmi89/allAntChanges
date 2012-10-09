@@ -5,6 +5,8 @@ from api import userutils
 
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
+from django.core.mail import EmailMessage
+
 from PIL import Image
 
 import StringIO
@@ -235,8 +237,8 @@ class CreateGroupForm(forms.Form):
         else:
             return requested_sn
     
-    def save(self, cookie_user, force_insert=False, force_update=False, commit=True):
-        
+    def save(self, cookie_user, force_insert=False, force_update=False, commit=True, isAutoApproved=False):
+
         try:
             group = Group.objects.create(
                 name=self.cleaned_data['name'],
@@ -271,14 +273,17 @@ class CreateGroupForm(forms.Form):
             
         
         social_user = SocialUser.objects.get(user=cookie_user)
-        group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=False)
         
-        ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin)
+        group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=isAutoApproved)
+        print isAutoApproved
+
+        ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
+
         msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", 
                                    [
                                    'porterbayne@gmail.com',
                                    'erchaves@gmail.com',
-                                   'michael@readrboard.com'
+                                   'michael@readrboard.com',
                                    ]
                             )
         msg.content_subtype='html'
@@ -321,7 +326,7 @@ class GroupForm(forms.ModelForm):
             )
 
         self.new_blessed_tags = new_blessed_tags
-    
+
     # Write the many to many relationships
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(GroupForm, self).save(commit=False)

@@ -31,7 +31,7 @@
     {% endblock alreadyRequested %}
   {% else %}
 
-    <form class="big-form" action="/signup/{{ qParams }}" enctype="multipart/form-data" method="post" class="in-page">
+    <form class="big-form" action="{% block formAction %} /signup/{{ qParams }} {% endblock %}" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}
 
@@ -48,6 +48,7 @@
                 <label for="id_site"><span class="labelTitle">Domain </span><span>Your website's domain (example: readrboard.com)</span></label>
                 {{ form.domain }}{{ form.domain.errors }}
             </div>
+            
         </div>
         <button class="btn" type="submit">Submit</button>
     </form>

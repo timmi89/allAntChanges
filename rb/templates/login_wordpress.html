@@ -59,7 +59,14 @@
   <h3>Please log in ReadrBoard to edit your settings.</h3>
 {% endblock msgHeader %}
  
+    
+    <style>
+        section[role="main"] #login-options{
+            margin: 30px 0;
+        }
+    </style>
   <div id="login-options" style="overflow:auto;">
+    
     <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
       <div id="fb-login-button">
         <a href="javascript:void(0);" onclick="$(this).addClass('logging-in');FB.login(function(response) {if (response.authResponse) {RDRAuth.getReadrToken( FB.getAuthResponse(), function() {RDRAuth.checkFBStatus();});} else {}}, {scope: 'email'});"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
@@ -70,25 +77,66 @@
     </div>
     
     {% block signupButton %}
-    <style>
-    section[role="main"] #login-options{
-        margin: 30px 0;
-    }
-    </style>
-    
     <div style="float:left;padding:6px;">
         <a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;
     font-style:italic;">Or create a new account</a>
     </div>
-    
-    <div class="" style="clear:both; padding-top: 30px;">
-      <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after you log in.  New accounts will need to verify an email address before logging in.</span>
+    {% endblock signupButton %}
+  </div>
+
+    <style>
+        .loginMsgs{
+            clear: both;
+            display: block;
+            color: #AC5151;
+            margin: 12px 0;
+            width: 500px;
+        }
+        .loginMsg{
+            margin: 8px 0;
+        }
+        .continueWrap{
+            clear:both;
+            padding-top: 30px;
+        }
+        .checkEmailReminder{
+            color: #888;
+            clear:both;
+            font-size: 12px;
+            margin: 8px;
+        }
+    </style>
+    <div class="loginMsgs">
+        
+        {% if group_not_approved %}
+        <!-- no need to show this we'll approve the group when we approve the user's group_admin -->
+        <!--
+            <div class="loginMsg">
+                <b>Notice:</b> ReadrBoard needs to approve this website.  It should be approved shortly.
+            </div>
+        -->
+        {% endif  %}
+        {% if user_not_admin %}
+            <div class="loginMsg">
+                <b>Notice:</b> It seems that you are logged in, but you are not an administrator for this website.  Please log in as an administrator.  If you believe this account should be an administrator, please contact us at team@readrboard.com. 
+            </div>
+
+        {% endif %}
+        {% if user_unapproved_admin %}
+            <div class="loginMsg">
+                <b>Notice:</b> ReadrBoard needs to approve you as an administrator for this website.  You will receive a confirmation email shortly.  Please reload this page upon appoval.  Thanks!
+            </div>
+        {% endif %}
+
     </div>
 
-{% endblock signupButton %}
+    <div class="continueWrap">
+      <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after you log in.</span>
+    </div>
+    <div class="checkEmailReminder">
+      <span>Setting up a new account?  Don't forget to check your email for confirmations and approvals.</span>
+    </div>
 
-
-  </div>
 
 {% endblock mainContent %}
 

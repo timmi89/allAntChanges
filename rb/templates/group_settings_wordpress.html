@@ -64,6 +64,11 @@
         
         $(function(){
 
+            var hasErrors = $('.errorlist').length;
+            if(hasErrors){
+                $('.errorMsg').show();
+            }
+
             plugin_jquery_postMessage($);
 
             var data = $.toJSON({
@@ -82,19 +87,6 @@
                 $(this).closest('.formRow').removeClass('error');
                 $(this).closest('form').find('.errorMsg').hide();
             });
-
-            $('#groupSettings').submit(function(){
-                var $this = $(this);
-                var $blessedTagsInput = $('#id_blessed_tags');
-                if ( ! $blessedTagsInput.val() ){
-                    $blessedTagsInput.closest('.formRow').addClass('error');
-                    $this.find('.errorMsg').show();
-                    return false;
-                }
-                
-                $(this).submit();
-                    
-            })
 
         });
 

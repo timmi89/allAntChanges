@@ -98,7 +98,7 @@ http://local.readrboard.com:8080/api/summary/container/content/?
 - RDR.errors?
 - RDR.groupPermData - dupplicate of stuff in RDR.group?
 - RDR.text_container_popularity - this is probably right - but maybe it doesn't need to be a separate object on the root...
-- verify that we never recieve unknown containers
+- verify that we never receive unknown containers
 - are we using this anymore? /api/containers/create/  (gets called via RDR.actions.containers.send, which it doesn't look like we're using)
 
 - content_nodes for text are being passed back with /api/summary/container/content/, they aren't being save in RDR.content_nodes though along with images.

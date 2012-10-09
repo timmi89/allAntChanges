@@ -222,8 +222,18 @@ def generateApprovalEmail(group):
     approval_email = getEmailTemplate('group_approval_email.html') % (settings.BASE_URL, group.id, group.short_name)
     return (approval_email)
 
-def generateAdminApprovalEmail(groupadmin):
-    approval_email = getEmailTemplate('groupadmin_approval_email.html') % (settings.BASE_URL, groupadmin.id, groupadmin.social_user.username)
+def generateAdminApprovalEmail(groupadmin, isAutoApproved=False):
+    if isAutoApproved:
+
+        # hardcode this for now.  Wordpress is the only preapprover
+        isWordpress = True
+        emailTemplate = "groupadmin_preapproved_email.html"
+        preApprovedBecause = " Preapproval reason: completed through wordpress." if isWordpress else ""
+        approval_email = getEmailTemplate(emailTemplate) % (settings.BASE_URL, groupadmin.id, groupadmin.social_user.username, preApprovedBecause)
+    else:
+        emailTemplate = "groupadmin_approval_email.html"
+        approval_email = getEmailTemplate(emailTemplate) % (settings.BASE_URL, groupadmin.id, groupadmin.social_user.username)
+    
     return (approval_email)
 
 

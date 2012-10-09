@@ -112,6 +112,10 @@ class SocialUser(models.Model):
     
     default_tags = models.ManyToManyField(InteractionNode, through='UserDefaultTag')
 
+    def admin_groups_unapproved(self):
+        ga = GroupAdmin.objects.filter(social_user=self, approved=False)
+        return Group.objects.filter(id__in=ga.values('group'))
+    
     def admin_groups(self):
         ga = GroupAdmin.objects.filter(social_user=self, approved=True)
         return Group.objects.filter(id__in=ga.values('group'))
