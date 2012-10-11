@@ -275,16 +275,14 @@ class CreateGroupForm(forms.Form):
         social_user = SocialUser.objects.get(user=cookie_user)
         
         group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=isAutoApproved)
-        print isAutoApproved
 
         ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
 
         msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", 
                                    [
-                                   #temporarily keeping these commented out
-                                   # 'porterbayne@gmail.com',
+                                   'porterbayne@gmail.com',
                                    'erchaves@gmail.com',
-                                   # 'michael@readrboard.com',
+                                   'michael@readrboard.com',
                                    ]
                             )
         msg.content_subtype='html'
