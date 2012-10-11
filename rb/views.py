@@ -488,6 +488,7 @@ def create_group_wordpress(request, **kwargs):
 
 def wordpress_edit(request):
     context = {}
+    context['fb_client_id'] = FACEBOOK_APP_ID
     return render_to_response(
         "wordpress_edit.html",
         context,
