@@ -44,7 +44,7 @@ var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
     popups: {},
-    openRbLoginWindow: function(options){
+    openRbLoginWindow: function(options){   
         var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
         RDRAuth.popups.loginWindow = window.open(
@@ -250,6 +250,11 @@ RDRAuth = {
 	checkFBStatus : function(args) {
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
+
+                if( RDRAuth.checkIfWordpressRefresh() ){
+                    return;
+                }
+
 				if (top == self) {
 					// QUICK KLUDGE
 					// TODO what we really need is a /api/getUserInfo call to get first/last name from our server, and store it in a session, not a cookie
@@ -314,15 +319,45 @@ RDRAuth = {
 			}
 		});
 	},
+    
+    checkIfWordpressRefresh : function() {
+        //temp hack to check if this is a wordpress iframe
+        //todo: do this better
+        var isWordpress = (function(){
+            var searchStr = window.location.search;
+            return searchStr.search(/hostplatform=wordpress/i) > 0;
+        })();
+
+        if(isWordpress){
+            var wordpressEditUrl = '/wordpress_edit/';
+            var query = window.location.search || "?";
+            query += "&refresh=true";
+            var wordpressRefreshUrl = wordpressEditUrl + query;
+
+            window.location = wordpressRefreshUrl;
+            //the page will refresh anyway, so this isn't needed, but it makes it more clear I think.
+            return true;
+        }
+        return false;
+    },
+
 	checkRBLoginWindow : function() {
         if (!RDRAuth.checkingRBLoginWindow) {
 			RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
 				if ( RDRAuth.popups.loginWindow && RDRAuth.popups.loginWindow.closed ) {
 					RDRAuth.readUserCookie();
 					RDRAuth.returnUser();
-					RDRAuth.notifyParent({}, "close login panel");
-					RDRAuth.popups.loginWindow.close();
-					clearInterval( RDRAuth.checkingRBLoginWindow );
+                    RDRAuth.notifyParent({}, "close login panel");
+                    RDRAuth.popups.loginWindow.close();
+                    clearInterval( RDRAuth.checkingRBLoginWindow );
+                    
+                    // we should delete this here yeah?  I don't think clearInterval will make the if statement above false..  doesn't seem to be breaking shit now though.
+                    // delete RDRAuth.checkingRBLoginWindow;
+
+                    if( RDRAuth.checkIfWordpressRefresh() ){
+                        return;
+                    }
+
                     if (top == self) {
 						window.location.reload();
 					}

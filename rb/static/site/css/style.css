@@ -1679,7 +1679,95 @@ form .errorMsg{
     text-decoration: underline;
 }
 
-.hostPlatformHeader{
-    float: right;
-    margin-right: 30px;
+
+/*embeddedVersion pages like for the wordpress plugin*/
+.embeddedVersion {
+
 }
+
+    .embeddedVersion html{
+        background: none;
+    }
+    
+     .embeddedVersion section[role="main"]{
+        clear: both;
+        margin: 40px auto 0 !important;
+        padding: 36px 36px 25px 36px;
+    }
+    
+    .embeddedVersion section[role="main"] #login-options{
+        margin: 30px 0;
+    }
+
+    .embeddedVersion section[role="main"] h1 {
+        font-size: 28px;
+        margin: 10px 0;
+    }
+    
+    .embeddedVersion section[role="group panel header"]{
+        display: none;
+    }
+
+    .embeddedVersion section[role="content"] {
+        margin: 0 !important;
+    }
+
+    .embeddedVersion section[role="complementary"]{
+        display: none;
+    }
+
+
+    .embeddedVersion #fixedBar{
+        display: none;
+    }
+    .embeddedVersion #searchform {
+        display: none;
+    }
+
+    .embeddedVersion #site_search{
+        display: none;
+    }
+
+    .embeddedVersion #id_domain{
+        color: #999;
+    }
+    .embeddedVersion .rbSubtitle{
+        position: absolute;
+        left: 180px;
+        top: 13px;
+        color: #BBB;
+    }
+    .embeddedVersion .rbSubtitle span{
+        padding: 0 5px;
+    }
+
+    .embeddedVersion #uvTab{
+        display: block !important;
+        top: 130px !important;
+    }
+    .embeddedVersion .loginMsgs{
+        clear: both;
+        display: block;
+        color: #AC5151;
+        margin: 12px 0;
+        width: 500px;
+    }
+    .embeddedVersion .loginMsg{
+        margin: 8px 0;
+    }
+    .embeddedVersion .continueWrap{
+        clear:both;
+        padding-top: 30px;
+    }
+    .embeddedVersion .checkEmailReminder{
+        color: #888;
+        clear:both;
+        font-size: 12px;
+        margin: 8px;
+    }
+    
+    .embeddedVersion form.big-form {
+        padding: 20px 0 0 0;
+    }
+
+</style>

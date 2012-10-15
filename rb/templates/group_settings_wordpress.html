@@ -1,23 +1,56 @@
 {% extends "group_settings.html" %}
 
+{% block bodyClass %}embeddedVersion{% endblock bodyClass %}
+
+{% block headerDisplay %}
+<style>
+    .rbSubtitle .step3{
+        color: #51ABE2;
+    }
+    .rbSubtitle .tip{
+        padding: 0 2px;
+    }
+
+
+    /*for now, don't let the user change this*/
+    #short_name_row{
+        display: none;
+    }
+
+</style>
+<div class="rbSubtitle">
+    <span>Setup:</span>&nbsp;&nbsp;
+    <span class="step3">You're done!</span>
+    <span class="tip">ReadrBoard is working and can be customized with these settings.</span>
+</div>
+{% endblock headerDisplay %}
+
+
 {% block extendedHead %}
-
-
 <script>
+
+    RDR_offline = document.domain == "local.readrboard.com";
+    RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
+    RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
+    document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 
     (function($){
 
-        function plugin_jquery_postMessage($){
-            /*
-             * jQuery postMessage - v0.5 - 9/11/2009
-             * http://benalman.com/projects/jquery-postmessage-plugin/
-             *
-             * Copyright (c) 2009 "Cowboy" Ben Alman
-             * Dual licensed under the MIT and GPL licenses.
-             * http://benalman.com/about/license/
-             */
-            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-        }
+
+        $(function(){
+            //quick hack to get the user info showing up.  I believe we need to undo the kludge in readr_user.js to undo this.
+            RDRAuth.returnUser();
+            if (RDRAuth.rdr_user && RDRAuth.rdr_user.user_id){
+                $('#logged-in').show().css('visibility','visible');
+                $('#logged-out').hide().css('visibility','hidden');
+            }else{
+                $('#logged-in').hide().css('visibility','hidden');
+                $('#logged-out').show().css('visibility','visible');
+            }            
+
+        });
+
+
 
         //todo: pull these from utils for real
         var utils = {
@@ -58,7 +91,7 @@
                 }
                 return hrefQuery;
             }
-        };
+        }; 
 
         var params = utils.getQueryParams();
         
@@ -68,8 +101,6 @@
             if(hasErrors){
                 $('.errorMsg').show();
             }
-
-            plugin_jquery_postMessage($);
 
             var data = $.toJSON({
                 company_name: params.company_name,
@@ -97,6 +128,11 @@
                     selector: '#groupSettings #id_summary_widget_selector',
                     val: 'article header'
                 },
+                //add this for now, because the default group tags weren't working for me.
+                {
+                    selector: '#groupSettings #id_blessed_tags',
+                    val: 'Love It;Uh, no.;hilarious;You sure?;amazing'
+                }
             ];
 
             $.each(wordpressDefaultInputs, function(){
@@ -111,7 +147,6 @@
             });
 
         });
-
 
     })(jQuery);
 </script>
@@ -131,14 +166,11 @@
 </style>
 {% endblock %}
 
-{% block header %}
-{% endblock header %}
-
     {% block settingsHeader %}    
       <h1>ReadrBoard Settings for {{group.name}}</h1>
     {% endblock settingsHeader %}    
 
-    {% block settingsUrl %}/settings_wordpress/{{ short_name }}/{% endblock settingsUrl %}
+    {% block settingsUrl %}/settings_wordpress/{{ short_name }}/{{ qParams }}{% endblock settingsUrl %}
 
 
 {% block fixedBar %}

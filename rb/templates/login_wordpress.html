@@ -1,70 +1,38 @@
-{% extends "popup_form.html" %}
+{% extends "base.html" %}
 
+{% block bodyClass %}embeddedVersion{% endblock bodyClass %}
 
+{% block headerDisplay %}
 
-{% block sidebarContent %}
-<div id="sidebar">
+<style>
+    .rbSubtitle .step1{
+        color: #51ABE2;
+    }
+</style>
+<div class="rbSubtitle">
+    <span>Setup:</span>&nbsp;&nbsp;
+    <span class="step1">(1) &nbsp;Log in to ReadrBoard</span>
+    <span class="step2">(2) &nbsp;Register this site</span>
+    <span class="step3">(3) &nbsp;You're done!</span>
 </div>
-{% endblock sidebarContent %}
 
-{% block header %}
-{% endblock header %}
-    
-{% block extendedHead %}
-    <style>
-        /*quick fix*/
-        #fixedBar{
-            display: none;
-        }
-        #searchform {
-            display: none;
-        }
-        
-        body.wide section[role="main"]{
-            padding: 20px;
-        }
-        body.wide section[role="content"] {
-            margin: 0;
-        }
-        section[role="main"] #login-options{
-            margin: 10px 0;
-        }
 
-        body.wide section[role="main"] h1 {
-            font-size: 28px;
-            margin: 10px 0;
-        }
+{% endblock headerDisplay %}
 
-        /*undo the css from nofooter*/
-        .noFooter #uvTab{
-            display: block !important;
-            top: 130px !important;
-        }
-
-    </style>
-    <script>
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-    </script>
+{% block extendedHead %}  
 {% endblock %}
 
 {% block mainContent %}
  
-  {% block hostPlatformHeader %}    
-    <div class="hostPlatformHeader">
-        Step 1: Log in
-    </div>
-{% endblock hostPlatformHeader %}
+{% block siteSearch %}
+{% endblock siteSearch %}
+
 
   {% block msgHeader %}
   <h3>Please log in ReadrBoard to edit your settings.</h3>
 {% endblock msgHeader %}
  
     
-    <style>
-        section[role="main"] #login-options{
-            margin: 30px 0;
-        }
-    </style>
   <div id="login-options" style="overflow:auto;">
     
     <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
@@ -84,28 +52,6 @@
     {% endblock signupButton %}
   </div>
 
-    <style>
-        .loginMsgs{
-            clear: both;
-            display: block;
-            color: #AC5151;
-            margin: 12px 0;
-            width: 500px;
-        }
-        .loginMsg{
-            margin: 8px 0;
-        }
-        .continueWrap{
-            clear:both;
-            padding-top: 30px;
-        }
-        .checkEmailReminder{
-            color: #888;
-            clear:both;
-            font-size: 12px;
-            margin: 8px;
-        }
-    </style>
     <div class="loginMsgs">
         
         {% if group_not_approved %}
@@ -129,14 +75,14 @@
         {% endif %}
 
     </div>
-
+    <!--
     <div class="continueWrap">
       <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after you log in.</span>
     </div>
     <div class="checkEmailReminder">
       <span>Setting up a new account?  Don't forget to check your email for confirmations and approvals.</span>
     </div>
-
+    -->
 
 {% endblock mainContent %}
 
@@ -145,7 +91,9 @@
     <script>
         RDR_offline = document.domain == "local.readrboard.com";
         RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
-        RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
+        RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";        
+        
+
         var wordpressEditUrl = '/wordpress_edit/';
         var query = window.location.search || "?";
         query += "&refresh=true";
@@ -173,6 +121,20 @@
             window.location = wordpressRefreshUrl;
             return false;
         }
+
+        $(function(){
+
+            //quick hack to get the user info showing up.  I believe we need to undo the kludge in readr_user.js to undo this.
+            RDRAuth.returnUser();
+            if (RDRAuth.rdr_user && RDRAuth.rdr_user.user_id){
+                $('#logged-in').show().css('visibility','visible');
+                $('#logged-out').hide().css('visibility','hidden');
+            }else{
+                $('#logged-in').hide().css('visibility','hidden');
+                $('#logged-out').show().css('visibility','visible');
+            }            
+
+        });
         
     </script>
 

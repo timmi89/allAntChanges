@@ -280,9 +280,9 @@ class CreateGroupForm(forms.Form):
 
         msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", 
                                    [
-                                   'porterbayne@gmail.com',
+                                   # 'porterbayne@gmail.com',
                                    'erchaves@gmail.com',
-                                   'michael@readrboard.com',
+                                   # 'michael@readrboard.com',
                                    ]
                             )
         msg.content_subtype='html'
