@@ -1,21 +1,26 @@
 {% extends "group_create.html" %}
 
+{% block bodyClass %}embeddedVersion{% endblock bodyClass %}
+
 {% block extendedHead %}
 <script>
+    RDR_offline = document.domain == "local.readrboard.com";
+    RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";
+    RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8080/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
+    document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+</script>
+
+<style>
+    /*for now, don't let the user change this*/
+    #formBodySection_short_name{
+        display: none;
+    }
+</style>
+
+<script>
+
     
     (function($){
-
-        function plugin_jquery_postMessage($){
-            /*
-             * jQuery postMessage - v0.5 - 9/11/2009
-             * http://benalman.com/projects/jquery-postmessage-plugin/
-             *
-             * Copyright (c) 2009 "Cowboy" Ben Alman
-             * Dual licensed under the MIT and GPL licenses.
-             * http://benalman.com/about/license/
-             */
-            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
-        }
 
         //todo: pull these from utils for real
         var utils = {
@@ -62,73 +67,71 @@
                 
         $(function(){
 
-            plugin_jquery_postMessage($);
+
+            //quick hack to get the user info showing up.  I believe we need to undo the kludge in readr_user.js to undo this.
+            RDRAuth.returnUser();
+            if (RDRAuth.rdr_user && RDRAuth.rdr_user.user_id){
+                $('#logged-in').show().css('visibility','visible');
+                $('#logged-out').hide().css('visibility','hidden');
+            }else{
+                $('#logged-in').hide().css('visibility','hidden');
+                $('#logged-out').show().css('visibility','visible');
+            }            
 
             $('input#id_name').val( params.company_name );
             $('input#id_short_name').val( params.hostdomain );
             $('input#id_domain').val( params.hostdomain ).attr('readonly', 'readonly');
 
-            // var data = $.toJSON({
-            //     company_name: params.company_name,
-            //     hostdomain: params.hostdomain
-            // });
-            // var urlPrefix = "http://";
-            // var hostPath = urlPrefix+params.hostdomain;
-            // $.postMessage(
-            //     $.toJSON(data),
-            //     hostPath,
-            //     parent
-            // );
         });
     })(jQuery);
 </script>
 
-    <style>
-        html{
-            background: none;
-        }
-        section[role="content"]{
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        section[role="group panel header"]{
-            display: none;
-        }
-
-        #id_domain{
-            color: #999;
-        }
-
-    </style>
 {% endblock %}
 
-{% block header %}
-{% endblock header %}
+ 
+{% block siteSearch %}
+{% endblock siteSearch %}
 
-{% block hostPlatformHeader %}
-    <div class="hostPlatformHeader">
-        Step 2: Register
-    </div>
-{% endblock hostPlatformHeader %}
+{% block headerDisplay %}
+
+<style>
+    .rbSubtitle .step1,
+    .rbSubtitle .step2{
+        color: #51ABE2;
+    }
+
+    .altHeader{
+        display: none;
+    }
+</style>
+<div class="rbSubtitle">
+    <span>Setup:</span>&nbsp;&nbsp;
+    <span class="step1">(1) &nbsp;Log in to ReadrBoard</span>
+    <span class="step2">(2) &nbsp;Register this site</span>
+    <span class="step3">(3) &nbsp;You're done!</span>
+</div>
+
+{% endblock headerDisplay %}
+
 
 {% block headerText %}
-    <h1 class="headerText">Register this site</h1>
+<h3 class="defaultHeader">Register this site</h3>
+<h3 class="altHeader">Thanks, your site is registered with ReadrBoard!</h3>
 {% endblock headerText %}
 
 {% block alreadyRequested %}
     <style>
-        .headerText{
+        .defaultHeader{
             display: none;
         }
-        .quickWrap{
-            margin: 0 20px;
+        .altHeader{
+            display: block;
         }
+
     </style>
     <div class="quickWrap">
-        <h3>Thanks, your site is registered!</h3>
         <div style="clear:both; margin-top: 50px;">
-          <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> after registering.</span>
+          <span><a class="btn" href="#" onclick="reloadPageAfterLogin();">click here to continue</a> &nbsp;&nbsp;after registering.</span>
         </div>
     </div>
 
@@ -154,12 +157,4 @@
 {% endblock fixedBar %}
 
 {% block footer %}
-<style>
-    /*undo the css from nofooter*/
-    #uvTab{
-        display: block !important;
-        top: 130px !important;
-    }
-</style>
-
 {% endblock footer %}

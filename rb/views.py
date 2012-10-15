@@ -411,7 +411,7 @@ def wordpress(request, **kwargs):
     isNotAdminUrl = '/friendlylogin_wordpress/'+context['qParams']
     hasNotRegisteredUrl = '/signup_wordpress/'+context['qParams']
     wordpressEdit = '/wordpress_edit/'+context['qParams']
-    settingsUrl = lambda shortname: '/settings_wordpress/'+shortname+context['qParams']
+    settingsUrl = lambda shortname: '/settings_wordpress/'+shortname+"/"+context['qParams']
 
     hostdomain = kwargs.get('hostdomain', None)
     cookie_user = kwargs.get('cookie_user', None)
@@ -428,8 +428,6 @@ def wordpress(request, **kwargs):
                 if not true_short_name == short_name:
                     return HttpResponseRedirect( wordpressEdit )
 
-                temp = settingsUrl(short_name);
-                
                 return HttpResponseRedirect( settingsUrl(short_name) )
 
             else:
@@ -743,7 +741,7 @@ def settings_wordpress(request, **kwargs):
     context['cookie_user'] = kwargs['cookie_user']
     context['short_name'] = group.short_name
     context['fb_client_id'] = FACEBOOK_APP_ID
-
+    
     # todo move wordpress stuff
     if request.method == 'POST':
         form = GroupForm(request.POST, request.FILES, instance=group)

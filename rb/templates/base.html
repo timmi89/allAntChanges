@@ -111,6 +111,10 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   </div>
   {% block header %}
   <header role="banner" class="no-rdr clearfix">
+
+    {% block headerDisplay %}
+    {% endblock headerDisplay %}
+
     <a href="/" class="logo"><h1>ReadrBoard</h1></a>
     <div id="settings">
       <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
@@ -174,6 +178,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         {% endblock %}
 
       </div>
+    
+    {% block siteSearch %}
     <div id="site_search">
       <form method="get" id="searchform" action="">
         <fieldset>
@@ -182,6 +188,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </fieldset>
       </form>
     </div>
+    {% endblock siteSearch %}
+    
   </header>
   {% endblock header %}
 

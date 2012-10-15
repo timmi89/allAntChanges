@@ -9,16 +9,11 @@
 
 {% block mainContent %}
 
-<style>
-.formBodySection {
-    clear: both;
-}
-</style>
-
-<section role="main>">
-
-{% block hostPlatformHeader %}
-{% endblock hostPlatformHeader %}
+    <style>
+    .formBodySection {
+        clear: both;
+    }
+    </style>
 
     {% block headerText %}
         <h1>ReadrBoard Beta Signup</h1>
@@ -40,7 +35,7 @@
                 <label for="id_name">Company Name </label>
                 {{ form.name }}{{ form.name.errors }}
             </div>
-            <div class='formBodySection'>
+            <div id="formBodySection_short_name" class='formBodySection'>
                 <label for="id_short_name"><span class="labelTitle">Short Name </span><span>Used in URLs on readrboard.com</span></label>
                 {{ form.short_name }}{{ form.short_name.errors }}
             </div>
@@ -54,7 +49,7 @@
     </form>
 
   {% endif %}
-  </section>
+
 {% endblock mainContent %}
 
 {% block pageJS %}
