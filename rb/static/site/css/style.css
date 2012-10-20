@@ -1235,19 +1235,26 @@ ul.link-list li a			{ color:#fff; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* settings form */
-section.column         { float:left; width:45%; }
-section.column.left    { margin-right:5%; }
+div.column              { float:left; width:45%; }
+div.leftColumn          { margin-right:5%; }
+div.column section      {margin-bottom: 10px;}
 form.big-form button            { clear:both; font-size:24px; display:inline-block; padding: 10px;}
 form.big-form h3            { color:#668294; border-bottom:1px solid #668294; margin:10px 0;}
 
 form.big-form 				{ padding:10px 20px; }
 form.big-form label			{ display:block; margin: 5px 0;}
 form.big-form label span    { display:block; font-style:italic; font-size:12px; }
-form.big-form label span.labelTitle	{font-style:normal; font-weight: bold; margin-top: 1px;}
+form.big-form label span.labelTitle {font-style:normal; font-weight: bold; margin-top: 1px;}
+form.big-form label span.formInputExample	{color: #999;}
+form.big-form .configuarationSection h4     {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
 form.big-form input			{ font-size:18px; margin-bottom:10px; font-family:Arial; }
 form.big-form input[type="checkbox"]	{ display:block; float:left; margin: 0 5px 0 2px; }
 form.big-form input[type="text"]		{ width: 100%; }
-form.big-form input#id_call_to_action	{ width:800px; }
+form.big-form input#id_call_to_action	{ width:100%; }
 
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
