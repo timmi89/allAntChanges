@@ -38,6 +38,12 @@ ADMINS = (
     ('Michael Shaw', 'michael@readrboard.com')
 )
 
+RB_SOCIAL_ADMINS = [
+    'porterbayne@gmail.com',
+    'erchaves@gmail.com',
+    'michael@readrboard.com',
+]
+
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
