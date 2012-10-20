@@ -2797,6 +2797,7 @@ function readrBoard($R){
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $('#rdr_indicator_'+hash).show();
                                     }
+                                RDR.actions.indicators.utils.borderHilites.engage(hash);
                                 });
                             }
                         } else {
