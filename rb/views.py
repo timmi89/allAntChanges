@@ -470,7 +470,11 @@ def create_group_wordpress(request, **kwargs):
     if request.method == 'POST':
         form = CreateGroupForm(request.POST)
         if form.is_valid():
-            form.save(cookie_user, isAutoApproved=True)
+            form.save(
+                cookie_user,
+                isAutoApproved=True,
+                querystring_content=True,
+            )
             context['requested'] = True
     else:
         form = CreateGroupForm()
@@ -714,7 +718,7 @@ def settings(request, **kwargs):
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
-
+            context['saved'] = True
         else:
             # print form.errors
             pass
@@ -737,9 +741,12 @@ def settings_wordpress(request, **kwargs):
     context = kwargs.get('context', {})
 
     group = Group.objects.get(short_name=kwargs['short_name'])
+    site = Site.objects.get(group=group.id)
+
     #not sure why these got lost from @requires_admin_wordpress - figure out later.
     context['cookie_user'] = kwargs['cookie_user']
     context['short_name'] = group.short_name
+    context['hostdomain'] = site.domain
     context['fb_client_id'] = FACEBOOK_APP_ID
     
     # todo move wordpress stuff
@@ -747,6 +754,7 @@ def settings_wordpress(request, **kwargs):
         form = GroupForm(request.POST, request.FILES, instance=group)
         if form.is_valid():
             form.save()
+            context['saved'] = True
 
         else:
             #handle errors

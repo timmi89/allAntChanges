@@ -7,7 +7,7 @@ from exceptions import JSONException
 from utils import *
 from userutils import *
 from authentication.token import *
-from settings import BASE_URL, STATIC_URL
+from settings import BASE_URL, STATIC_URL, RB_SOCIAL_ADMINS
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
 from django.db.models import Q
@@ -662,12 +662,8 @@ class SettingsHandler(AnonymousBaseHandler):
                         'michael@readrboard.com'
                     )
                 )
-                msg = EmailMessage("ReadrBoard group approval", generateApprovalEmail(group), "groups@readrboard.com", 
-                                   [
-                                   'porterbayne@gmail.com',
-                                   'erchaves@gmail.com',
-                                   'michael@readrboard.com']
-                                   )
+                msg = EmailMessage("ReadrBoard group approval", generateApprovalEmail(group), "groups@readrboard.com", RB_SOCIAL_ADMINS )
+                                   
                 msg.content_subtype='html'
                 msg.send(False)
                 
