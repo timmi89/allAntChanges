@@ -1340,7 +1340,12 @@ div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
 div.rdr_indicator_for_text{
     vertical-align: text-top !important;
 }
-
+div.rdr_indicator_for_text.rdr_helper {
+    opacity:1 !important;
+    -moz-opacity:1 !important;
+    -khtml-opacity:1 !important;
+    display:none !important;
+}
 div.rdr_sandbox #rdr_indicator_details_wrapper{
     z-index:11001 !important; /*should be larger than the indicator z-index*/
     position:absolute !important;
