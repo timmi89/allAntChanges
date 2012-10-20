@@ -1853,7 +1853,7 @@ function readrBoard($R){
 
             },
             insertParagraphHelpers: function() {
-                // return;
+                return;
                 // console.log('insertParagraphHelpers');
                 $('.rdr-node').not('.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
