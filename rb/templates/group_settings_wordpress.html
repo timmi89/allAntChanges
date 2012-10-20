@@ -113,13 +113,15 @@
             var wordpressDefaultInputs = [
                 {
                     selector: '#groupSettings #id_post_selector',
-                    val: '.readrboard_page'
+                    val: '.readrboard_page',
                     // val: 'article.entry, article.post'
+                    force: true
                 },
                 {
                     selector: '#groupSettings #id_post_href_selector',
-                    val: '.readrboard_page_permalink'
+                    val: '.readrboard_page_permalink',
                     // val: '.entry-title a'
+                    force: true
                 },
                 {
                     selector: '#groupSettings #id_summary_widget_selector',
@@ -133,15 +135,27 @@
                 }
             ];
 
+            //quick hack to submit these defaults the first time.  Do this better later.
+            var initialLoad = $('#groupSettings #id_post_selector').val() !== ".readrboard_page";
+
             $.each(wordpressDefaultInputs, function(){
+
                 var $this = $(this.selector);
-                var val = $this.val() || this.val;
+                var val = $this.val();
+                if (this.force || val == "" ){
+                    val = this.val
+                }
                 $this.val( val );
             });
 
             $('.wordpressKeepDefaults').each(function(){
                 $(this).hide();
             });
+
+            //quick hack to submit these defaults the first time.  Do this better later.
+            if(initialLoad){
+                $('#groupSettings').submit();
+            }
 
         });
 
