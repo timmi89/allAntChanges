@@ -6,6 +6,7 @@ from api import userutils
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
+from settings import RB_SOCIAL_ADMINS
 
 from PIL import Image
 
@@ -237,7 +238,7 @@ class CreateGroupForm(forms.Form):
         else:
             return requested_sn
     
-    def save(self, cookie_user, force_insert=False, force_update=False, commit=True, isAutoApproved=False):
+    def save(self, cookie_user, force_insert=False, force_update=False, commit=True, isAutoApproved=False, querystring_content=False):
 
         try:
             group = Group.objects.create(
@@ -247,14 +248,15 @@ class CreateGroupForm(forms.Form):
             Site.objects.create(
                 name=self.cleaned_data['domain'],
                 domain=self.cleaned_data['domain'],
-                group=group
+                group=group,
+                querystring_content=querystring_content,
             )
             # Add us to admins
             readr_admins = SocialUser.objects.filter(
                 user__email__in=(
                     'porterbayne@gmail.com',
                     'erchaves@gmail.com',
-                    'michael@readrboard.com'
+                    'michael@readrboard.com',
                 )
             ).exclude(id=social_user.id)
         
@@ -278,13 +280,7 @@ class CreateGroupForm(forms.Form):
 
         ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
 
-        msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", 
-                                   [
-                                   # 'porterbayne@gmail.com',
-                                   'erchaves@gmail.com',
-                                   # 'michael@readrboard.com',
-                                   ]
-                            )
+        msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", RB_SOCIAL_ADMINS )
         msg.content_subtype='html'
         msg.send(False)
           

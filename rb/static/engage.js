@@ -2540,6 +2540,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
                 
@@ -2608,6 +2609,7 @@ function readrBoard($R){
                             var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
+
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector);
 
                             if ( $post_href.attr('href') ) {

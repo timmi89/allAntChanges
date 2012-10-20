@@ -1625,9 +1625,16 @@ http://drupal.org/node/897638
     padding:6px;
 }
 
+
+form .formFeedback{
+    position: absolute;
+    padding: 8px;
+}
+form .successMsg{
+    color: #7BCA7D;
+}
 form .errorMsg{
     color: red;
-    padding: 5px;
 }
 
 .userFeedbackMsg{

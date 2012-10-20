@@ -97,11 +97,6 @@
         
         $(function(){
 
-            var hasErrors = $('.errorlist').length;
-            if(hasErrors){
-                $('.errorMsg').show();
-            }
-
             var data = $.toJSON({
                 company_name: params.company_name,
                 hostdomain: params.hostdomain
@@ -118,15 +113,18 @@
             var wordpressDefaultInputs = [
                 {
                     selector: '#groupSettings #id_post_selector',
-                    val: 'article.entry, article.post'
+                    val: '.readrboard_page'
+                    // val: 'article.entry, article.post'
                 },
                 {
                     selector: '#groupSettings #id_post_href_selector',
-                    val: '.entry-title a'
+                    val: '.readrboard_page_permalink'
+                    // val: '.entry-title a'
                 },
                 {
                     selector: '#groupSettings #id_summary_widget_selector',
-                    val: 'article header'
+                    val: '.readrboard_summary_widget_hook',
+                    // val: 'article header'
                 },
                 //add this for now, because the default group tags weren't working for me.
                 {
@@ -139,11 +137,6 @@
                 var $this = $(this.selector);
                 var val = $this.val() || this.val;
                 $this.val( val );
-            });
-
-            $('#groupSettings input').bind('keypress', function(){
-                $(this).closest('.formRow').removeClass('error');
-                $(this).closest('form').find('.errorMsg').hide();
             });
 
         });
@@ -167,7 +160,7 @@
 {% endblock %}
 
     {% block settingsHeader %}    
-      <h1>ReadrBoard Settings for {{group.name}}</h1>
+      <h1>ReadrBoard Settings for <a href="http://{{hostdomain}}" target="_blank">{{group.name}}</a></h1>
     {% endblock settingsHeader %}    
 
     {% block settingsUrl %}/settings_wordpress/{{ short_name }}/{{ qParams }}{% endblock settingsUrl %}
