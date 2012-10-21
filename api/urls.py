@@ -35,6 +35,8 @@ BoardAdd = Resource(handler=BoardAddHandler)
 UserBoards = Resource(handler=UserBoardsHandler)
 BoardSearch = Resource(handler=BoardSearchHandler)
 FollowsBoards = Resource(handler=FollowedBoardsHandler)
+GlobalActivity = Resource(handler=GlobalActivityHandler)
+
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -94,5 +96,6 @@ urlpatterns = patterns('',
     url(r'^user/boards/$', UserBoards),
     url(r'^user/boards/(?P<user_id>\d+)', UserBoards),
     url(r'^follows/boards', FollowsBoards),
+    url(r'^global/activity', GlobalActivity),
     #url(r'^comments/', Comments),
 )

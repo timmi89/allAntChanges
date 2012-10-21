@@ -14,6 +14,8 @@ from django.db.models import Q
 from chronos.jobs import *
 from threading import Thread
 from itertools import chain
+from datetime import datetime, timedelta
+
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -1015,4 +1017,55 @@ class FollowedBoardsHandler(AnonymousBaseHandler):
             board_list.append(board_dict)
         return {'followed_boards':board_list}
     
-        
+
+
+class GlobalActivityHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET')
+
+    @status_response
+    def read(self, request, **kwargs):
+        today = datetime.now()
+        tdelta = timedelta(days = -3)
+        the_past = today + tdelta
+        interactions = Interaction.objects.all()
+        interactions = interactions.filter(created__gt = the_past, kind = 'tag', 
+                                           approved=True, page__site__group__approved=True).order_by('-created')
+        users = {}
+        pages = {}
+        groups = {}
+        nodes ={}
+        for inter in interactions:
+            if not groups.has_key(inter.page.site.group.name):
+                groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
+                                                                                        fields=['id', 'short_name'])}
+            else:
+                groups[inter.page.site.group.name]['count'] +=1
+                
+            if not pages.has_key(inter.page.url):
+                pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
+            else:
+                pages[inter.page.url]['count'] +=1
+            
+            if not inter.user.email.startswith('tempuser'):    
+                if not users.has_key(inter.user.id):
+                    user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
+                                                                   'last_login', 'date_joined', 'email',
+                                                                    'is_superuser', 'is_staff', 'password', 'groups'])
+                    user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
+                                                                                              'gender', 'provider', 
+                                                                                              'bio', 'hometown', 'user',
+                                                                                              'follow_email_option'])
+                    users[inter.user.id] = {'count': 1, "user":user_dict}
+                else:
+                    users[inter.user.id]['count'] +=1
+                
+            if not nodes.has_key(inter.interaction_node.body):
+                nodes[inter.interaction_node.body] = {'count': 1}
+            else:
+                nodes[inter.interaction_node.body]['count'] +=1
+            
+                
+        return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
+    
+
+       

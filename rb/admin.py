@@ -51,7 +51,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('inline_selector', 'inline_func')
         }),
         ('Customization', {
-            'fields': ('call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
+            'fields': ('paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
                        'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook', 
                        'sharebox_twitter', 'sharebox_stumble', 'sharebox_digg', 'sharebox_reddit', 'sharebox_google')
             
