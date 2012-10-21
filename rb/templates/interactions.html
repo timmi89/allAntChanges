@@ -7,7 +7,7 @@
 #content {
   /*overflow:auto;*/
   /*float:left;*/
-  width:610px;
+  /*width:610px;*/
   position:relative;
   visibility:hidden;
   /*to account for top margin of cards*/
@@ -24,8 +24,9 @@
   border-top:none;
   box-shadow:0 0 2px #bbb;
 }
-#content .card.wide {
-  width:612px;
+#content .card.long {
+  /*width:612px;*/
+  text-align:left;
 }
 #content .card:hover {
   box-shadow:0px 0px 2px #008be4;
@@ -443,7 +444,7 @@ function writeCard( interaction, showBlocked ) {
     } else if ( interaction.kind == "txt" ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
       if ( interaction.content_body.length > 30 ) {
-        $card.addClass('wide');
+        $card.addClass('long');
       }
     }
 
@@ -717,20 +718,22 @@ var $container = $('#content');
   };
 
 function cardReset() {
+  {% if profile_user or group or board %}
   $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
   var contentWidth = $('#cards').width(),
       numColumns = parseInt(contentWidth/312);
+  
   {% if singleton %}
-  if ( $('div.card.img').length || $('div.card.med').length || !$('div.card.wide').length) {
+  if ( $('div.card.img').length || $('div.card.med').length ) {
     $('#content').width( 305);
-  } else {
-    $('#content').width( 930 );
   }
   {% endif %}
+  
   {% if not singleton %}
   $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
   {% endif %}
   $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
+  {% endif %}
 
   $container.isotope({
       masonry: {
@@ -786,7 +789,7 @@ RB.interactions.searchBoards('{{query_string}}');
 {% endif %}
 
 {% if not query_string and not profile_user and not board and not singleton and not group %}
-RB.interactions.searchBoards('');
+// RB.interactions.searchBoards('');
 {% endif %}
 
 </script>

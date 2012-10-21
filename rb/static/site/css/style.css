@@ -451,12 +451,12 @@ page-break-after:avoid; }
 /*480px __________________________________________________________________________________________________________ */
 /*@media screen and (max-device-width:600px) {*/
 @media screen and (max-width:396px) {
+    /*
     #splashLargeBanner .splashLeft{
         width:320px !important;
         float: none;
     }
     #splashLargeBanner .splashRight{
-        /*width: 55%;*/
         display: none;
     }
     #splashLargeBanner .splashRight.asSeenOnWrap {
@@ -477,6 +477,7 @@ page-break-after:avoid; }
     #board_listing ul {
       width:320px !important;
     }
+    */
 
     header[role="banner"] #site_search{ 
         display:none !important; 
@@ -499,9 +500,6 @@ page-break-after:avoid; }
         width: 150px;
     }
 
-    #splashAnnounce{
-        width: 320px !important;
-    }
     section#content{
         min-width: 300px !important;
         margin-left: 0 !important;
@@ -705,52 +703,6 @@ input[type="color"]
     width: 16px;
 }
 
-/*#splashAnnounce {
-    border-bottom:1px dashed #ccc;
-    bottom:0;
-    color:#888;
-    margin:0 0 15px 0;
-    padding:25px 0 15px 0;
-    text-align:center;
-}
-#splashAnnounce h3{
-  font-family:Arial;
-  font-size:20px;
-  font-weight:bold;
-}
-#splashAnnounce h3 span{
-  color:#26465A;
-}
-*/
-
-#splashAnnounce{
-    /*this is the old one*/
-    display: none;
-}
-#splashLargeBanner{
-    border-bottom: 1px solid #aaa;
-    margin-bottom:20px;
-}
-
-#splashLargeBanner .splashLeft{
-    width: 44%;
-    float: left;
-}
-#splashLargeBanner .splashRight{
-    width: 55%;
-    float: left;
-}
-    #board_listing {
-      /*width:auto !important;*/
-      /*max-width:858px;*/
-    }
-    #board_listing ul {
-      width:auto !important;
-    }
-    #splashMain{
-        background: #546c86;
-        height:510px;
-    }
 
     /*this is annoying - should be able to add it to the top instead, but it was getting cut off and z-index/overflow:visible; wasnt doing it.*/
     #splashMainShadow{
@@ -803,40 +755,54 @@ input[type="color"]
     padding: 30px 0;
 }
 
-#splashSecondary .featureQuoteWrap{
+.whatIsThis {
+  float:left;
+  width:475px;
+}
+
+.featureQuoteWrap{
+  float:right;
+  width:445px;
 }
 
     .featureQuoteWrapInner{
-        font-weight: bold;
-        padding: 10px 30px 30px;
+        font-weight:bold;
+        padding:20px 30px 0px;
     }
     .featureQuoteWrapInner img{
-        float: left;
-        width: 100px;
-        margin: 5px 15px 20px 0;
+        float:left;
+        width:65px;
+        margin:0px 15px 0 0;
 
     }
 
-    .featureQuoteWrapInner h3 span{
-        color: #2b4756;
-        font-size: 20px;
+    .featureQuoteWrapInner h3 {
+        line-height:16px;
+        font-size:14px;
+        color:#6b6b6b;
     }
 
-#splashSecondary .asSeenOnWrap{
+    .featureQuoteWrapInner h3 span.alexis {
+      display:block;
+      margin-top:15px;
+      /*font-size:18px;*/
+    }
+    .featureQuoteWrapInner h3 span.cofounder {
+      font-size:12px;
+      font-weight:normal;
+    }
+
+.asSeenOnWrap{
     text-align: center;
-    border-left: 1px solid #999;
+    display:block;
+    clear:both; 
 }
-
-    .asSeenOnWrap h3{
-        font-size: 26px;
-        color: #484848;
-        margin-bottom: 10px; 
-    }
 
     .asSeenOnWrap a{
         position: relative;
         margin: 10px 20px;
-        opacity: .9;
+        opacity: .7;
+        display:inline-block;
     }
 
     a:hover {
@@ -844,7 +810,7 @@ input[type="color"]
         opacity: 1;
     }
     .asSeenOnWrap .a1{
-        top: -4px;
+        top: -6px;
     }
     .asSeenOnWrap .a3{
         top: -12px;
@@ -853,6 +819,11 @@ input[type="color"]
     .asSeenOnWrap img{
         padding: 10px;
     }
+
+    .asSeenOnWrap .a1 img { width:210px; }
+    .asSeenOnWrap .a2 img { width:170px; }
+    .asSeenOnWrap .a3 img { width:100px; margin-bottom:-10px; }
+    .asSeenOnWrap .a4 img { width:110px; }
 
 .theSpitch {
   margin-bottom:10px;

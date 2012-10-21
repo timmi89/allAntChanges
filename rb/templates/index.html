@@ -2,7 +2,6 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css?v={{ timestamp|date:"U" }}">
 <link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
@@ -14,101 +13,70 @@
 {% endblock sidebarContent %}
 
 {% block mainContent %}
-<!-- <h2 style="text-align:center;border-bottom:1px solid #999;padding-bottom:10px;margin-bottom:10px;">Say stuff</h2> -->
+
 {% if not profile_user and not group and not board %}
 <style>
 section[role="main"] {margin-top: 0;}
 section[role="complementary"] {display:none;}
+header[role="banner"] { box-shadow:none !important; border-bottom:1px solid #d9d9d9; }
+#how_the_web_feels, #more_content {
+    background:#fff;
+    width:100%;
+    box-shadow:0 0 6px #bbb;
+    text-align:center;
+}
+#how_the_web_feels h1 { font-weight:bold; color:#8e8e8e; font-size:64px;padding:20px;}
+#more_info {
+    min-height:100px;
+}
+div.section_content {
+    margin:0 auto;
+    width:920px;
+}
+div.section_content #cards {
+    margin:0;
+    padding:0;
+    width:616px;
+}
 </style>
 {% if not query_string and not singleton %}
-
-<div id="splashLargeBanner">
-    <div id="splashMain">
-        <div class="mainSplashBlurb splashLeft">
-            <div class="mainSplashBlurbInner">
-                <img src="{{ STATIC_URL }}site/images/splashLogo.png" />
-                <div class="callToActionButtons">
-                    <a href="/react/" class="btn"><span class="rdrIcon"></span>Add to your browser</a>
-                    <a href="http://www.readrboard.com/publishers/" class="btn"><span class="rdrIcon"></span>Add to your website</a>
-                    <!-- <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" class="btn"><span class="rdrIcon"></span>Add to your website</a> -->
-                    <div class="clear"></div>
-                </div>
-            </div>
-        </div>
-        <div id="splashSlides" class="splashRight">
-            
-            <!-- todo: move these later -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/themes/default/default.css" type="text/css" media="screen" />
-            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/nivo-slider.css" type="text/css" media="screen" />
-            <link rel="stylesheet" href="{{ STATIC_URL }}site/nivo/nivo-slider-overrides.css" type="text/css" media="screen" />
-            <script type="text/javascript" src="{{ STATIC_URL }}site/nivo/jquery.nivo.slider.js"></script>
-            <script type="text/javascript">
-                $(window).load(function() {
-                    $('#slider').nivoSlider({
-                        animSpeed: 200,
-                        pauseTime: 3500 // How long each slide will show
-                    });
-                });
-            </script>
-
-            <div class="slider-wrapper theme-default splashSlidesInner">
-                <div id="slider" class="nivoSlider">
-                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-1.png" data-transition="fade" class="first" />
-                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-2.png" data-transition="fade" />
-                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-3.png" data-transition="fade" />
-                    <img src="{{ STATIC_URL }}site/images/splash-slides/slide-4.png" data-transition="fade" />
-                </div>
-            </div>
-            
-        </div>
-
-        <div class="clear"></div>
+<div id="how_the_web_feels">
+    <div class="section_content">
+        <h1>How the web feels today.</h1>
     </div>
-    
-    <div id="splashSecondary">
-        <div id="splashMainShadow"></div>
-        <div id="splashSecondaryInner">
-            <div class="featureQuoteWrap splashLeft">
-                <div class="featureQuoteWrapInner">
-                    <a href="http://www.readrboard.com/user/1662/" target="_blank">
-                        <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
-                    </a>
-                    <h3>
-                        <span>"If you're like me, you've been doing varieties of this in haphazard ways for years --<br>ReadrBoard wins the day.</span><em style="display:block;margin-top:15px;font-size:18px;">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a><br>Co-Founder, Reddit</em>
-                    </h3>
-                </div>
-            </div>
-            <div class="asSeenOnWrap splashRight">
+</div>
+<div id="more_info">
+    <div class="section_content">
+        <div class="featureQuoteWrap">
+            <div class="featureQuoteWrapInner">
+                <a href="http://www.readrboard.com/user/1662/" target="_blank">
+                    <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
+                </a>
                 <h3>
-                    As seen on&#8230;<!-- … -->
+                    <em>"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</em>
+                    <span class="alexis">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a></span>
+                    <span class="cofounder">Co-Founder, Reddit</span>
                 </h3>
-
-                <div class="topRow">
-                    <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
-                        <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
-                    </a>
-                    <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
-                        <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
-                    </a>
-                </div>
-                <div class="bottomRow">
-                    <!-- TODO: UPDATE LINK!! -->
-                    <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
-                        <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
-                    </a>
-
-                    <a class="a4" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
-                        <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
-                    </a>
-                </div>
-
-                <div class="clear"></div>
             </div>
-            <div class="clear"></div>
+        </div>
+        <div class="asSeenOnWrap">
+            <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
+                <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
+            </a>
+            <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
+                <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
+            </a>
+
+            <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
+                <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
+            </a>
+
+            <a class="a4" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
+                <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
+            </a>
         </div>
     </div>
 </div>
-
 {% endif %}
 {% endif %}
 
@@ -134,12 +102,25 @@ section[role="complementary"] {display:none;}
         {% endif %}
     </div>
 </div>
+
 {% endif %}
+
+{% if not profile_user and not group and not board %}
+<div id="more_content">
+    <div class="section_content">
+{% endif %}
+
     {% block cards %}
     <div id="cards">
       {% include "interactions.html" %}
     </div>
     {% endblock cards %}    
+
+{% if not profile_user and not group and not board %}
+    </div>
+</div>
+{% endif %}
+
 {% endblock mainContent %}
 
 {% block pageJS %}
