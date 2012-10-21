@@ -21,6 +21,12 @@
 .rdr_clear{
     clear: both;
 }
+.rdr-border-box{
+    box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    -o-box-sizing: content-box !important;
+    -webkit-box-sizing: border-box !important;
+}
 div.rdr_sandbox{
     /*temp reset*/
     position:absolute !important;
@@ -1109,24 +1115,27 @@ div.rdr_sandbox .rdr_widget_bar{
 
 
 /*socialPageShareBox*/
-div.rdr_socialPageShareBoxHook{
+div.rdr_socialShareWrap{
     position: absolute !important;
+    left: -100px !important;
+    display: block !important;
     overflow: visible !important;
     height: 0 !important;
     width: 0 !important;
-    display: block !important;
     margin: 0 !important;
     padding: 0 !important;
     z-index: 90000 !important;
 }
 div.rdr_socialPageShareBox{
+    background-color: #eee !important;
+    box-shadow:1px 1px 4px #CCCCCC !important;
+    text-align: center !important;
+    width: 80px !important;
     display: block !important;
     padding: 2px 0 !important;
-    background-color: #eee !important;
-    position: absolute !important;
-    left: -100px !important;
-    box-shadow:1px 1px 4px #CCCCCC !important;
+    position: relative;
 }
+
 div.rdr_socialPageShareBox.rdr_socialPageShareBox_default{
     top:100px !important;
     left: 0 !important;
@@ -1134,9 +1143,32 @@ div.rdr_socialPageShareBox.rdr_socialPageShareBox_default{
     padding: 2px 0 !important;
     background-color: #eee !important;
 }
-div.rdr_socialPageShareBox .rdr_innerWrap{
-    text-align: center !important;
+div.rdr_socialPageShareBox .rdr_summaryBarHook{
+    position: absolute !important;
+    top: 0 !important;
+    right: -1px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: visible !important;
 }
+div.rdr_socialPageShareBox .rdr_summaryBarWrap{
+    position: relative !important;
+    width: 300px !important;
+    overflow: hidden !important;
+}
+
+div.rdr_socialPageShareBox div.rdr-summary{
+    position: relative !important;
+    width: 100% !important;
+    border-left: 1px solid #ddd !important;
+}
+div.rdr_socialPageShareBox div.rdr.rdr-summary div.rdr-sum-headline {
+    max-height:none !important;
+}
+
+div.rdr_socialPageShareBox .rdr_innerWrap{
+}
+
 div.rdr_socialPageShareBox .rdr_innerWrap ul{
     display: block !important;
     margin: 0 !important;
@@ -1150,6 +1182,10 @@ div.rdr_socialPageShareBox .rdr_innerWrap ul li{
     background: none !important;
     box-sizing: border-box !important;
 }
+.readrBoardSocialWidgetButton{
+    cursor: pointer;
+}
+
 div#readrBoardSocialWidgetButton{
     display: block !important;
     visibility: visible !important;

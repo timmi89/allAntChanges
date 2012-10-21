@@ -84,17 +84,18 @@ function readrBoard($R){
                 //todo set to false
                 socialPageShareBox_doShow: false,
                 socialPageShareBox_fadeIn: true,
-                // socialPageShareBox_selector: null,
-                socialPageShareBox_selector: '.rdr_socialPageShareBoxHook',
+                socialPageShareBox_shouldOwnSummaryBar: true,
+                // socialPageShareBox_selector: '.rdr_socialShareBoxHook',
+                socialPageShareBox_selector: '',
                 //these default to be true
                 socialPageShareBox_socialBrands: {
                     readrboard: true,
                     facebook: true,
                     twitter: true,
                     google: true,
-                    reddit: true,
+                    reddit: false,
                     stumbleUpon: true,
-                    digg: true
+                    digg: false
                 } 
             }
         },
@@ -6423,14 +6424,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                     }
 
+                    var widgetKeyEl = RDR.group.socialPageShareBox_selector ? 
+                        RDR.group.socialPageShareBox_selector : 
+                        RDR.group.summary_widget_selector;
+
                     //setup socialPageShareBox
                     var settings = {
                         doShow: RDR.group.socialPageShareBox_doShow,
-                        domHookSelector: RDR.group.socialPageShareBox_selector,
+                        shouldOwnSummaryBar: RDR.group.socialPageShareBox_shouldOwnSummaryBar,
                         shareToolBrandOpts: RDR.group.socialPageShareBox_socialBrands,
                         fadeInOnLoad: RDR.group.socialPageShareBox_fadeIn,
-                        //use this as a default for now.  It will make it absolute-postion offset left of it. - in the page margin.
-                        widgetKeyEl: RDR.group.summary_widget_selector
+                        //use the summary_widget_selector as a default.
+                        widgetKeyEl: widgetKeyEl
                     }
 
                     $container.socialPageShareBox( settings );
@@ -6976,7 +6981,7 @@ function $RFunctions($R){
                     $('.'+widgetClass).remove();
 
                     var $summary_widget_parent = $(page.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+'"><table cellpadding="0" cellspacing="0" border="0"><tr/></table></div>').addClass(widgetClass),
+                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"><table cellpadding="0" cellspacing="0" border="0"><tr/></table></div>').addClass(widgetClass),
                         $summary_row = $summary_widget.find('tr');
 
                     if ( RDR.engageScriptParams.bookmarklet == "true" ) {
@@ -7027,7 +7032,11 @@ function $RFunctions($R){
 
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $sbRollover.height() > 64 && !$visibleReactions.is(':animated') ) {
-                            if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
+                            if (
+                                $this.hasClass('rdr-too-many-reactions') &&
+                                !$this.hasClass('rdr_stayExpanded') &&
+                                !$visibleReactions.is(':animated')
+                            ){
                                 $visibleReactions.height(64).css('max-height','none').animate({ height:$sbRollover.height() });
                             }
                         },
@@ -7037,7 +7046,11 @@ function $RFunctions($R){
                                 $sbRollover = $visibleReactions.find('div');
 
                             // if ( $visibleReactions.height() > 64 && !$visibleReactions.is(':animated') ) {
-                            if ( $this.hasClass('rdr-too-many-reactions') && !$visibleReactions.is(':animated') ) {
+                            if (
+                                $this.hasClass('rdr-too-many-reactions') &&
+                                !$this.hasClass('rdr_stayExpanded') &&
+                                !$visibleReactions.is(':animated') 
+                            ){
                                 $visibleReactions.animate({ height:64 });
                             }
                         }
@@ -7526,6 +7539,7 @@ function $RFunctions($R){
                 fadeInOnLoad: true
             };
             var $widgets = $();
+            var tempGlobalSettings;
 
             var methods = {
                 init: function( options ) {
@@ -7534,47 +7548,54 @@ function $RFunctions($R){
                         // merge default and user parameters
                         var settings = options ? $.extend({}, defaults, options) : defaults;
                         settings.pluginRootEl = this;
+                        tempGlobalSettings = settings;
 
                         var $newWidget = _makeWidget.call(this, settings);
                         $widgets = $widgets.add( $newWidget );
+                        methods.update.call(this, settings);
                     });
                 },
-                update: function(){
-                    var $this = this;
+                update: function(settings){
+                    var $this = $(this);
 
-                    methods.renderReadrBoardButton.call($this);
+                    methods.renderReadrBoardButton.call($this, settings);
                     
+                    //check for shouldOwnSummaryBar
+                    _updateIfOwnsSummaryBar($this);
+
                     return $this.each(function(){
                     });
                 },
                 renderReadrBoardButton: function(){
                     //this will mostly likely just be called via update().  Prob No need to call it by itself.
 
-                    var $this = this;
-                    return $this.each(function(){
-                        var $this = $(this);
-                        var $widget = $this.find('.'+P.widgetClass);
+                    var $this = $(this);
+                    var settings = tempGlobalSettings;
+                    var pluginRoot = settings.pluginRootEl,
+                        $pluginRoot = $(pluginRoot);
+                    
+                    var $widget = $pluginRoot.find('.'+P.widgetClass);
 
-                        //first make sure our page count is up to date.
-                        _updateWidgetInteractionCount($this);
+                    //first make sure our page count is up to date.
+                    _updateWidgetInteractionCount($pluginRoot);
 
-                        var $RBSocialPageBox = $widget.find('#readrBoardSocialWidgetButton');
-                        //empty it/
-                        //todo: check on this.
-                        $RBSocialPageBox.children().remove();
+                    var $RBSocialPageBox = $widget.find('#readrBoardSocialWidgetButton');
+                    //empty it/
+                    //todo: check on this.
+                    $RBSocialPageBox.children().remove();
 
-                        var $bubble = $('<div class="rdr_shareBubble"/>').appendTo($RBSocialPageBox),
-                            $bubbleTriangle = $('<div class="rdr_bubbleTriangleWrap"/>').appendTo($bubble),
-                            $bubbleCount = $('<div class="rdr_bubbleCount"/>').appendTo($bubble),
-                            $button = $('<div class="rdr_bubbleButton"/>').appendTo($RBSocialPageBox);
+                    var $bubble = $('<div class="rdr_shareBubble"/>').appendTo($RBSocialPageBox),
+                        $bubbleTriangle = $('<div class="rdr_bubbleTriangleWrap"/>').appendTo($bubble),
+                        $bubbleCount = $('<div class="rdr_bubbleCount"/>').appendTo($bubble),
+                        $button = $('<div class="rdr_bubbleButton"/>').appendTo($RBSocialPageBox);
 
-                        $bubbleTriangle.append('<div class="rdr_innerTriangle"/>');
-                        $bubbleTriangle.append('<div class="rdr_outerTriangle"/>');
+                    $bubbleTriangle.append('<div class="rdr_innerTriangle"/>');
+                    $bubbleTriangle.append('<div class="rdr_outerTriangle"/>');
 
-                        //dummy count
-                        var count = $this.data('pageTagCount');
-                        $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
-                    });
+                    //dummy count
+                    var count = $this.data('pageTagCount');
+                    $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
+                    return $this;
                 }
             };
             //end methods
@@ -7584,15 +7605,17 @@ function $RFunctions($R){
                 widgetClass: 'rdr_socialPageShareBox',
                 loadingTrackerDict: {},
                 isLoadedCallback: function(){
+
                     $widgets.each(function(){
                         var $this = $(this);
                         var settings = $this.data('settings');
+                        settings = tempGlobalSettings;
 
                         var pluginRoot = settings.pluginRootEl,
                             $pluginRoot = $(pluginRoot);
                         
                         if( settings.shareToolBrandOpts.readrboard ){
-                            methods.renderReadrBoardButton.call($pluginRoot);
+                            methods.renderReadrBoardButton.call($pluginRoot, settings);
                         }
 
                         if( settings.fadeInOnLoad ){
@@ -7605,6 +7628,7 @@ function $RFunctions($R){
                 },
                 //this is added to the global scope below
                 socialPageShareBoxBrandOnLoad: function(brand){
+                    
                     delete P.loadingTrackerDict[brand];
                     var isLoaded = $.isEmptyObject(P.loadingTrackerDict);
                     if(isLoaded){
@@ -7620,8 +7644,7 @@ function $RFunctions($R){
                         );
                         //our script is already included
                         delete P.loadingTrackerDict[brand];
-
-                        //we'll just activate our button manually because their is no script to call
+                        //we'll just activate our button manually because there is no script to call
                         return ret.join('');
                     },
                     facebook: function(brand){
@@ -7671,24 +7694,6 @@ function $RFunctions($R){
                     },
                     reddit: function(brand){
                         var ret = [];
-                        //reddit doesn't offer an async solution, so let's tempoarily hijack the document.write method.
-                        window.realDocumentWrite = document.write;
-                        var hijackedDocumentWrite = function(text){
-                            var shouldHijack = text.indexOf("reddit.com") !== -1;
-                            if(shouldHijack){
-                                //this should always be there because we add it below.
-                                var hook = document.getElementById("redditShareButton");
-                                if (hook){
-                                    hook.innerHTML = text;
-                                }
-                            }else{
-                                window.realDocumentWrite.call(document, text);
-                            }
-                        };
-                        
-                        //will get set back in the callback of our loader
-                        document.write = hijackedDocumentWrite;
-                        
                         ret.push(
                             '<div id="redditShareButton"></div>'
                         );
@@ -7763,6 +7768,8 @@ function $RFunctions($R){
 
                 //make it
                 var $widget = $('<div />').addClass(P.widgetClass),
+                    $summaryBarHook = $('<div class="rdr_summaryBarHook"></div>').appendTo($widget),
+                    $summaryBarWrap = $('<div class="rdr_summaryBarWrap"  style="display:none;"></div>').appendTo($summaryBarHook),
                     $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
                     $contentList = _renderSocialBrands( $('<ul />'), settings.shareToolBrandOpts)
                         .appendTo($contents);
@@ -7770,25 +7777,24 @@ function $RFunctions($R){
                 //note that there are callbacks which will get triggered from the DOM above when it renders.
                 //it embeds scripts which will eventually call P.isLoadedCallback which will call methods.renderReadrBoardButton
 
-                var selectorParam = settings.domHookSelector,
-                    widgetKeyEl = settings.widgetKeyEl;
-
-                    var hasSelector = ( selectorParam && widgetKeyEl );
+                var hasSelector = ( settings.widgetKeyEl );
                 
-                var $hook = $('<div class="rdr_socialPageShareBoxHook" />');
+                var $wrap = $('<div class="rdr_socialShareWrap" />');
                 if( hasSelector ){
-                    $this.find(settings.widgetKeyEl).prepend($hook);
-                    $hook.append($widget);
+                    $this.find(settings.widgetKeyEl).prepend($wrap);
+                    $wrap.append($widget);
                 }else{
-                    $hook.appendTo('#rdr_sandbox');
-                    $hook.append($widget);
+                    $wrap.appendTo('#rdr_sandbox');
+                    $wrap.append($widget);
                     $widget.addClass('rdr_socialPageShareBox_default');
                 }
-
+            
+                methods.update.apply($this, settings);
                 $widget.data('settings', settings);
                 if( settings.fadeInOnLoad ){
                     $widget.css({opacity:0});
                 }
+                
                 return $widget;
             }
 
@@ -7798,7 +7804,6 @@ function $RFunctions($R){
                 var pageId = $this.data('page_id');
 
                 var summary = RDR.pages[pageId].summary;
-
                 //get the count.  This sucks - fix our summary later.
                 var tagCount = 0;
                 $.each( summary, function(idx, val){
@@ -7808,6 +7813,55 @@ function $RFunctions($R){
                 });
                 
                 $this.data('pageTagCount', tagCount);
+            }
+
+            function _updateIfOwnsSummaryBar($pluginRoot){
+                
+                var settings = tempGlobalSettings;
+
+                if( !settings.shouldOwnSummaryBar ){
+                    return;
+                }
+                var $this = $pluginRoot;
+
+                var $summaryBarWrap = $this.find('.rdr_summaryBarWrap');
+                var $summaryBar = $('.rdr-summary');
+                $summaryBar.appendTo($summaryBarWrap).addClass('rdr_stayExpanded');
+                RDR.group.summary_widget_selector = ".rdr_summaryBarWrap";
+
+
+                $('#readrBoardSocialWidgetButton').unbind('.rbSocialWidgetButton');
+                $('#readrBoardSocialWidgetButton').bind( 'click.rbSocialWidgetButton', function(){
+                    var $summaryWrap = $(this).closest('.rdr_socialPageShareBox').find('.rdr_summaryBarWrap');
+                    var $summaryBar = $summaryWrap.find('.rdr-summary');
+                    var width = $summaryWrap.width();
+                    
+                    if( $summaryWrap.hasClass('visible') ){
+                        $summaryBar.animate({
+                            left: -width
+                        }, function(){
+                            $summaryWrap.removeClass('visible').hide();
+                        });
+                    }else{
+                        $summaryWrap.addClass('visible').show();
+                        $summaryBar.css({
+                            left: -width,
+                        }).animate({
+                            left: 0
+                        }, function(){
+                            
+                        });
+                    }
+                });
+
+                $('#readrBoardSocialWidgetButton').hover(
+                    function(){
+                        $(this).find('.rdr_bubbleButton').addClass('hover');
+                    },
+                    function(){
+                        $(this).find('.rdr_bubbleButton').removeClass('hover');
+                    }
+                );
             }
         }
         //end function plugin_jquery_socialPageShareBox
