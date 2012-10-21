@@ -914,6 +914,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a {
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
   border-right:1px solid #ccc !important;
 }
+div.rdr_socialShareWrap div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
+  border-right:0 !important;
+}
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
   text-decoration:none !important;
   background:#d8e6f6 !important;
@@ -1182,17 +1185,17 @@ div.rdr_socialPageShareBox .rdr_innerWrap ul li{
     background: none !important;
     box-sizing: border-box !important;
 }
-.readrBoardSocialWidgetButton{
+#readrBoardSocialWidgetButton{
     cursor: pointer;
 }
 
-div#readrBoardSocialWidgetButton{
+#readrBoardSocialWidgetButton{
     display: block !important;
     visibility: visible !important;
     position: relative !important;
     vertical-align:top !important;
 }
-div#readrBoardSocialWidgetButton .rdr_shareBubble{
+#readrBoardSocialWidgetButton .rdr_shareBubble{
     position: relative !important;
     background: none repeat scroll 0 0 #FFFFFF !important;
     border: 1px solid #BBBBBB !important;
@@ -1201,7 +1204,7 @@ div#readrBoardSocialWidgetButton .rdr_shareBubble{
     min-width: 15px !important;
 }
 
-div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap{
+#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap{
     background: none repeat scroll 0 0 #FFFFFF !important;
     position: absolute !important;
     overflow: visible !important;
@@ -1211,7 +1214,7 @@ div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap{
     right: auto !important;
     top: auto !important;
 }
-div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_innerTriangle{
+#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_innerTriangle{
     position: absolute !important;
     left: -3px !important;
     top:0 !important;
@@ -1222,7 +1225,7 @@ div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_innerTriangle{
     position: absolute !important;
     z-index: 101 !important;
 }
-div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_outerTriangle{
+#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_outerTriangle{
     position: absolute !important;
     left:-4px !important;
     top:0 !important;
@@ -1232,7 +1235,7 @@ div#readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap .rdr_outerTriangle{
     border-bottom: 4px solid transparent !important;
     z-index: 100 !important;
 }
-div#readrBoardSocialWidgetButton .rdr_bubbleButton{
+#readrBoardSocialWidgetButton .rdr_bubbleButton{
     background: url("../images/socialPageShareButton.png") no-repeat scroll 0 0 transparent !important;
     height: 22px !important;
     left: 0 !important;
@@ -1241,11 +1244,11 @@ div#readrBoardSocialWidgetButton .rdr_bubbleButton{
     width: 102% !important;
     z-index: 102 !important;
 }
-div#readrBoardSocialWidgetButton .rdr_bubbleButton.hover,
-div#readrBoardSocialWidgetButton .rdr_bubbleButton:hover{
+#readrBoardSocialWidgetButton .rdr_bubbleButton.hover,
+#readrBoardSocialWidgetButton .rdr_bubbleButton:hover{
     background: url("../images/socialPageShareButton-hover.png") no-repeat scroll 0 0 transparent !important;
 }
-div#readrBoardSocialWidgetButton .rdr_bubbleCount{
+#readrBoardSocialWidgetButton .rdr_bubbleCount{
     text-align: center !important;
     white-space: nowrap !important;
     font-size: 16px !important;
@@ -1385,6 +1388,13 @@ div.rdr_indicator_for_text.rdr_helper {
 }
 div.rdr_indicator_for_text.rdr_helper div.rdr_indicator_body {
   width:16px !important;
+}
+div.rdr_helper_text {
+  text-align: center !important;
+  height: 24px !important;
+  margin: 0 6px 8px 0 !important;
+  padding: 4px 7px 0px !important;
+  width: 160px !important;
 }
 div.rdr_sandbox #rdr_indicator_details_wrapper{
     z-index:11001 !important; /*should be larger than the indicator z-index*/

@@ -82,7 +82,7 @@ function readrBoard($R){
 
                 //SocialPageShareBox Stuff//
                 //todo set to false
-                socialPageShareBox_doShow: false,
+                socialPageShareBox_doShow: true,
                 socialPageShareBox_fadeIn: true,
                 socialPageShareBox_shouldOwnSummaryBar: true,
                 // socialPageShareBox_selector: '.rdr_socialShareBoxHook',
@@ -92,9 +92,9 @@ function readrBoard($R){
                     readrboard: true,
                     facebook: true,
                     twitter: true,
-                    google: true,
-                    reddit: false,
-                    stumbleUpon: true,
+                    google: false,
+                    reddit: true,
+                    stumbleUpon: false,
                     digg: false
                 } 
             }
@@ -1824,7 +1824,7 @@ function readrBoard($R){
                     $domNode.attr('style') || "";
 
                 $.each(cssDict,function(key,val){
-                    inlineStyleStr += (key+ ':' +val+ 'px !important; ');
+                    inlineStyleStr += (key+ ':' +val+ ' !important; ');
                 });
                 $domNode.attr('style', inlineStyleStr);
                 return $domNode; //return the node for the hell of it.
@@ -1848,17 +1848,14 @@ function readrBoard($R){
                 //else
 
                 RDR.util.cssSuperImportant($sandbox, {
-                    top: borderTop,
-                    left: borderLeft
+                    top: borderTop+'px',
+                    left: borderLeft+'px'
                 });
 
             },
             insertParagraphHelpers: function() {
-                return;
-                // console.log('insertParagraphHelpers');
                 $('.rdr-node').not('.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
-                    // console.log(hash);
                     RDR.actions.indicators.init(hash, true);
                 });
                 $RDR.dequeue('initAjax');
@@ -2578,8 +2575,8 @@ function readrBoard($R){
                     bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
 
                 RDR.util.cssSuperImportant($rdrSandbox, {
-                        left: bodyLeft,
-                        top: bodyTop
+                        left: bodyLeft+'px',
+                        top: bodyTop+'px'
                     }, true);
 
                 $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
@@ -2986,7 +2983,20 @@ function readrBoard($R){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
+                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node').hover(
+                        function() {
+                            var $indicator = $('#rdr_indicator_'+hash);
+                            if ( $indicator.hasClass('rdr_helper') ) {
+                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                            }
+                        },
+                        function() {
+                            var $indicator = $('#rdr_indicator_'+hash);
+                            if ( $indicator.hasClass('rdr_helper') ) {
+                                RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                            }
+                        }
+                    );
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
@@ -4704,7 +4714,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
                     if (isHelper) {
-                        $indicator.addClass('rdr_helper');
+                        $indicator.addClass('rdr_helper').hover(
+                            function() {
+                                var selector = ".rdr-" + hash;
+
+                                var $indicator = $('#rdr_indicator_'+hash),
+                                $indicator_body = $('#rdr_indicator_body_'+ hash),
+                                $container = $('.rdr-'+hash);
+
+                                coords = {
+                                    top: $indicator_body.offset().top -8,
+                                    left: $indicator_body.offset().left -5
+                                };
+
+                                var $rindow = RDR.rindow.draw({
+                                    coords: coords,
+                                    container: hash,
+                                    mode:"read"
+                                });
+                                var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="http://local.readrboard.com:8080/static/widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
+                                            
+                                RDR.rindow.updateHeader( $rindow, headerContent );
+                                RDR.events.track('paragraph_helper_view');
+
+                                $contentSpace = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') );
+                                $contentSpace.html('<div class="rdr_helper_text">Select some text and click<br/><strong>React to this</strong></div>');
+                                $rindow.attr('id','rdr_helper').on('mouseleave', function() {$('#rdr_helper').remove();});
+                            },
+                            function() {}
+                        );
                     }
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
@@ -5030,8 +5068,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         //compensate for padding - which we want to ignore
                         RDR.util.cssSuperImportant($container_tracker, {
-                            top: $container.offset().top + paddingOffset.top,
-                            left: $container.offset().left + paddingOffset.left
+                            top: $container.offset().top + paddingOffset.top+'px',
+                            left: $container.offset().left + paddingOffset.left+'px'
                         }, true);
 
                         this.updateMediaTracker(hash);
@@ -5090,8 +5128,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator.data('top', cssTop);
 
                             RDR.util.cssSuperImportant( $indicator, {
-                                left: 12,
-                                top: cssTop
+                                left: 12+'px',
+                                top: cssTop+'px'
                             }, true);
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
@@ -5222,28 +5260,28 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             //use dims to make the css rules for each border side
                             borders.top.css = {
-                                width: containerWidth,
-                                height: 0,
-                                top: -hiliteThickness,
-                                left: -hiliteThickness
+                                width: containerWidth+'px',
+                                height: 0+'px',
+                                top: -hiliteThickness+'px',
+                                left: -hiliteThickness+'px'
                             };
                             borders.right.css = {
-                                width:0,
-                                height: containerHeight,
-                                top: 0,
-                                left: containerWidth
+                                width:0+'px',
+                                height: containerHeight+'px',
+                                top: 0+'px',
+                                left: containerWidth+'px'
                             };
                             borders.bottom.css = {
-                                width: containerWidth,
-                                height: 0,
-                                top: containerHeight,
-                                left: -hiliteThickness
+                                width: containerWidth+'px',
+                                height: 0+'px',
+                                top: containerHeight+'px',
+                                left: -hiliteThickness+'px'
                             };
                             borders.left.css = {
-                                width: 0,
-                                height: containerHeight,
-                                top: 0,
-                                left: -hiliteThickness
+                                width: 0+'px',
+                                height: containerHeight+'px',
+                                top: 0+'px',
+                                left: -hiliteThickness+'px'
                             };
 
                             $.each( borders, function( side, data ){
@@ -7837,39 +7875,42 @@ function $RFunctions($R){
                 $summaryBar.appendTo($summaryBarWrap).addClass('rdr_stayExpanded');
                 RDR.group.summary_widget_selector = ".rdr_summaryBarWrap";
 
-
                 $('#readrBoardSocialWidgetButton').unbind('.rbSocialWidgetButton');
-                $('#readrBoardSocialWidgetButton').bind( 'click.rbSocialWidgetButton', function(){
-                    var $summaryWrap = $(this).closest('.rdr_socialPageShareBox').find('.rdr_summaryBarWrap');
+                $('#readrBoardSocialWidgetButton').on( 'mouseenter.rbSocialWidgetButton', 
+                    function(){
+                        var $summaryWrap = $(this).closest('.rdr_socialPageShareBox').find('.rdr_summaryBarWrap');
+                        var $summaryBar = $summaryWrap.find('.rdr-summary');
+                        var width = $summaryWrap.width();
+                        
+                        if( !$summaryWrap.hasClass('visible') && !$summaryBar.is(':animated') ){
+                            $summaryWrap.addClass('visible').show();
+                                $summaryBar.css({
+                                    left: -width,
+                                }).animate({
+                                    left: 0
+                                }, function(){
+                                    
+                                });
+                        }
+                        $(this).find('.rdr_bubbleButton').addClass('hover');
+                }).on( 'mouseleave.rbSocialWidgetButton', function(event) {
+                    $(this).find('.rdr_bubbleButton').removeClass('hover');
+                });
+                
+                $('#rdr-summary-wrap').on('mouseleave', function(event) {
+                    var $mouse_target = $(event.relatedTarget);
+                    var $summaryWrap = $(this).find('.rdr_summaryBarWrap');
                     var $summaryBar = $summaryWrap.find('.rdr-summary');
                     var width = $summaryWrap.width();
-                    
-                    if( $summaryWrap.hasClass('visible') ){
+
+                    if ( !$mouse_target.parents().hasClass('rdr') && !$summaryBar.is(':animated') ) {
                         $summaryBar.animate({
-                            left: -width
-                        }, function(){
-                            $summaryWrap.removeClass('visible').hide();
-                        });
-                    }else{
-                        $summaryWrap.addClass('visible').show();
-                        $summaryBar.css({
-                            left: -width,
-                        }).animate({
-                            left: 0
-                        }, function(){
-                            
-                        });
+                                left: -width
+                            }, function(){
+                                $summaryWrap.removeClass('visible').hide();
+                            });
                     }
                 });
-
-                $('#readrBoardSocialWidgetButton').hover(
-                    function(){
-                        $(this).find('.rdr_bubbleButton').addClass('hover');
-                    },
-                    function(){
-                        $(this).find('.rdr_bubbleButton').removeClass('hover');
-                    }
-                );
             }
         }
         //end function plugin_jquery_socialPageShareBox
