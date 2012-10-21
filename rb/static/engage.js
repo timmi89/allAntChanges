@@ -1716,6 +1716,7 @@ function readrBoard($R){
                 //setup a space to bind and trigger events
                 //we're using the rdr_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
                 window.readrboard.public_events = $('#rdr_sandbox');
+                $RDR.dequeue('initAjax');
             },
             triggerPublicEvent: function(namespace, data){
                 // RDR.util.triggerPublicEvent
@@ -1852,7 +1853,16 @@ function readrBoard($R){
                 });
 
             },
-
+            insertParagraphHelpers: function() {
+                return;
+                // console.log('insertParagraphHelpers');
+                $('.rdr-node').not('.rdr-hashed').each( function() {
+                    var hash = $(this).data('hash');
+                    // console.log(hash);
+                    RDR.actions.indicators.init(hash, true);
+                });
+                $RDR.dequeue('initAjax');
+            },
             //_.throttle returns a function
             throttledUpdateContainerTrackers: function(){
                 return RDR.util._.throttle(
@@ -2496,6 +2506,11 @@ function readrBoard($R){
                    RDR.util.checkForSelectedTextAndLaunchRindow();
                    RDR.util.initPublicEvents();
                 });
+
+                $RDR.queue('initAjax', function(next){
+                   RDR.util.insertParagraphHelpers();
+                });
+
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
 
@@ -2983,7 +2998,6 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
-
                 RDR.actions.containers.setup(hashList);
                 return hashList;
             },
@@ -3254,10 +3268,6 @@ function readrBoard($R){
                                 if ( containerInfo) {
                                     var $container = containerInfo.$this;
 
-                                    // neeed this?
-                                    // $container.addClass( 'rdr-' + hash ).addClass('rdr-hashed');
-                                    // $container.addClass('rdr-hashed');
-
                                     //temp type conversion for top_interactions.coms;
                                     var newComs = {},
                                         coms = summary.top_interactions.coms;
@@ -3277,6 +3287,7 @@ function readrBoard($R){
 
                                     summary.top_interactions.coms = newComs;
                                     RDR.actions.summaries.save(summary);
+
                                     RDR.actions.indicators.init( hash );
 
                                     //now run the type specific function with the //run the setup func above
@@ -4669,7 +4680,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     return $indicators;
                 },
-                init: function(hash){
+                init: function(hash, isHelper){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
                     var scope = this;
@@ -4692,6 +4703,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     });
 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
+                    if (isHelper) {
+                        $indicator.addClass('rdr_helper');
+                    }
                     //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                     $indicator.css('visibility','hidden');
 
@@ -4708,15 +4722,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     function _setupIndicators(){
 
-                        var cornerClasses = "rdr_brtr rdr_brbr";
-                        if( summary.kind == 'text' || summary.kind == 'txt' ){
-                            cornerClasses += " rdr_brbl rdr_brtl";
-                        }
-
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body " />')
                             .attr('id',indicatorBodyId)
-                            .addClass(cornerClasses)
                             .appendTo($indicator)
                             .append(
                                 '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
