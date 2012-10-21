@@ -174,6 +174,18 @@ class Group(models.Model):
     # social shiz
     twitter = models.CharField(max_length=64, blank=True)
 
+    sharebox_show  = models.BooleanField(default=False)
+    sharebox_fade  = models.BooleanField(default=False)
+    sharebox_should_own  = models.BooleanField(default=False)   
+    sharebox_selector  = models.CharField(max_length=100, default='', blank=True) 
+    sharebox_facebook  = models.BooleanField(default=False)
+    sharebox_twitter  = models.BooleanField(default=False)
+    sharebox_stumble  = models.BooleanField(default=False)
+    sharebox_digg  = models.BooleanField(default=False)
+    sharebox_reddit  = models.BooleanField(default=False)
+    sharebox_google  = models.BooleanField(default=False) 
+    
+    
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
 
