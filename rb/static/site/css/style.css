@@ -624,7 +624,7 @@ nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border
 section[role="content"]	{
 	margin:36px 0 0 0;
 	padding:0;
-	background:#e7e7e7;
+	background:#f3f3f3;
 	overflow:auto;
 	position:relative;
 }
@@ -755,9 +755,24 @@ input[type="color"]
     padding: 30px 0;
 }
 
-.whatIsThis {
+.whatIsReadrBoard {
   float:left;
   width:475px;
+  font-size:14px;
+  line-height:18px;
+}
+.whatIsReadrBoardWrap {
+  padding:20px 30px 0px;
+}
+.whatIsReadrBoardWrap h2 {
+  font-size:16px;
+  margin:0;
+  padding:0;
+  font-weight:bold;
+}
+.whatIsReadrBoardWrap a {
+  display:block;
+  font-size:12px;
 }
 
 .featureQuoteWrap{
@@ -766,7 +781,6 @@ input[type="color"]
 }
 
     .featureQuoteWrapInner{
-        font-weight:bold;
         padding:20px 30px 0px;
     }
     .featureQuoteWrapInner img{
@@ -784,7 +798,8 @@ input[type="color"]
 
     .featureQuoteWrapInner h3 span.alexis {
       display:block;
-      margin-top:15px;
+      margin-top:20px;
+      line-height:10px;
       /*font-size:18px;*/
     }
     .featureQuoteWrapInner h3 span.cofounder {
