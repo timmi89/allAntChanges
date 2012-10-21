@@ -1854,7 +1854,7 @@ function readrBoard($R){
 
             },
             insertParagraphHelpers: function() {
-                $('.rdr-node').not('.rdr-hashed').each( function() {
+                $('.rdr-node').not('img,iframe,.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
                     RDR.actions.indicators.init(hash, true);
                 });
