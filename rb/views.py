@@ -847,7 +847,9 @@ def expander(request, short):
     # Retrieve related objects
     interaction = Interaction.objects.get(id=link.interaction.id)
 
-    if interaction.parent:
+    if interaction.content.kind == 'pag':
+        url = interaction.page.url
+    elif interaction.parent:
         url = BASE_URL + '/interaction/' + str(interaction.parent.id)
     else:
         page = Page.objects.get(id=interaction.page.id)
