@@ -7773,12 +7773,12 @@ function $RFunctions($R){
                         var ret = [];
                         ret.push(
                             // '<div id="redditShareButton"></div>'
-                            '<iframe src="http://www.reddit.com/static/button/button2.html?width=51" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
+                            '<iframe class="shareWidgetIframe shareWidgetIframe_reddit" src="http://www.reddit.com/static/button/button2.html?width=51" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
                         );
                         ret.push(
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
                                 ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
-                                ' document.write = window.realDocumentWrite; window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
+                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
                         return ret.join('');

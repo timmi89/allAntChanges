@@ -1139,6 +1139,11 @@ div.rdr_shareWidget{
     position: relative;
 }
 
+iframe.shareWidgetIframe_reddit{
+    /* weird that the '.rdr *' css is overriding the iframe width attribute. */
+    width: 51px !important;
+}
+
 div.rdr_shareWidget.rdr_shareWidget_default{
     top:100px !important;
     left: 0 !important;
