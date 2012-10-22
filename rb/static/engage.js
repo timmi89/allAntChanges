@@ -2811,8 +2811,9 @@ function readrBoard($R){
                                     if( $this.hasClass('rdr_live_hover') ){
                                         $('#rdr_indicator_'+hash).show();
                                     }
-                                RDR.actions.indicators.utils.borderHilites.engage(hash);
                                 });
+RDR.actions.indicators.utils.borderHilites.make(hash);
+                                RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
                         } else {
                             var hash = $this.data('hash');
@@ -5155,8 +5156,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $container = $('.rdr-'+hash),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
-                            
+                                                        
                             if( !$container_tracker.hasClass('rdr_inline_video') ){
+                                
                                 if( !$mediaBorderWrap.length ){
                                     $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
                                 }
@@ -5237,7 +5239,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $.each( borders, function(side, data){
                                 //set the value in the object using the key's string as a helper
                                 var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
-                                
+                      
                                 data.$side = $mediaBorderWrap.find('.'+hiliteClass);
                                 if( !data.$side.length ){
                                     data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
@@ -7065,9 +7067,6 @@ function $RFunctions($R){
 
 
                     var $react = $('<div class="rdr-sum-headline" />');
-                    // if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
-                    //     $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
-                    // }
 
                     $react.append('<div class="rdr-sum-reactions"/>');
 
@@ -7131,6 +7130,9 @@ function $RFunctions($R){
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                         writePageReactionPills( $reactToArticle, page );
                     } else {
+                        if ( RDR.group.call_to_action == "" ) {
+                            RDR.group.call_to_action = "What's your reaction?";
+                        }
                         // add "react to this page" section
                         var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle rdr_noReactions"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> '+RDR.group.call_to_action+' <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );

@@ -23,6 +23,7 @@
   border:1px solid #ccc;
   border-top:none;
   box-shadow:0 0 2px #bbb;
+  text-align:left;
 }
 #content .card.long {
   /*width:612px;*/
@@ -728,7 +729,7 @@ function cardReset() {
     $('#content').width( 305);
   }
   {% endif %}
-  
+
   {% if not singleton %}
   $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
   {% endif %}
