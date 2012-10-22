@@ -1117,7 +1117,7 @@ div.rdr_sandbox .rdr_widget_bar{
 }
 
 
-/*socialPageShareBox*/
+/*shareWidget*/
 div.rdr_socialShareWrap{
     position: absolute !important;
     left: -100px !important;
@@ -1129,7 +1129,7 @@ div.rdr_socialShareWrap{
     padding: 0 !important;
     z-index: 90000 !important;
 }
-div.rdr_socialPageShareBox{
+div.rdr_shareWidget{
     background-color: #eee !important;
     box-shadow:1px 1px 4px #CCCCCC !important;
     text-align: center !important;
@@ -1139,14 +1139,14 @@ div.rdr_socialPageShareBox{
     position: relative;
 }
 
-div.rdr_socialPageShareBox.rdr_socialPageShareBox_default{
+div.rdr_shareWidget.rdr_shareWidget_default{
     top:100px !important;
     left: 0 !important;
     display: block !important;
     padding: 2px 0 !important;
     background-color: #eee !important;
 }
-div.rdr_socialPageShareBox .rdr_summaryBarHook{
+div.rdr_shareWidget .rdr_summaryBarHook{
     position: absolute !important;
     top: 0 !important;
     right: -1px !important;
@@ -1154,30 +1154,30 @@ div.rdr_socialPageShareBox .rdr_summaryBarHook{
     height: 0 !important;
     overflow: visible !important;
 }
-div.rdr_socialPageShareBox .rdr_summaryBarWrap{
+div.rdr_shareWidget .rdr_summaryBarWrap{
     position: relative !important;
     width: 300px !important;
     overflow: hidden !important;
 }
 
-div.rdr_socialPageShareBox div.rdr-summary{
+div.rdr_shareWidget div.rdr-summary{
     position: relative !important;
     width: 100% !important;
     border-left: 1px solid #ddd !important;
 }
-div.rdr_socialPageShareBox div.rdr.rdr-summary div.rdr-sum-headline {
+div.rdr_shareWidget div.rdr.rdr-summary div.rdr-sum-headline {
     max-height:none !important;
 }
 
-div.rdr_socialPageShareBox .rdr_innerWrap{
+div.rdr_shareWidget .rdr_innerWrap{
 }
 
-div.rdr_socialPageShareBox .rdr_innerWrap ul{
+div.rdr_shareWidget .rdr_innerWrap ul{
     display: block !important;
     margin: 0 !important;
     padding: 0 !important;
 }
-div.rdr_socialPageShareBox .rdr_innerWrap ul li{
+div.rdr_shareWidget .rdr_innerWrap ul li{
     display: block !important;
     list-style: none outside none !important;
     margin: 10px !important;

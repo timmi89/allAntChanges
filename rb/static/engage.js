@@ -80,24 +80,22 @@ function readrBoard($R){
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#flipbook',
                 slideshow_img_selector: '#flipbook div.image img',
-
-                //SocialPageShareBox Stuff//
-                //todo set to false
-                socialPageShareBox_doShow: false,
-                socialPageShareBox_fadeIn: true,
-                socialPageShareBox_shouldOwnSummaryBar: true,
-                // socialPageShareBox_selector: '.rdr_socialShareBoxHook',
-                socialPageShareBox_selector: '',
-                //these default to be true
-                socialPageShareBox_socialBrands: {
-                    readrboard: true,
-                    facebook: true,
-                    twitter: true,
-                    google: true,
-                    reddit: true,
-                    stumbleUpon: true,
-                    digg: false
-                } 
+                
+                //shareWidget Stuff//
+                //should be false by default!
+                sharebox_show: false,
+                sharebox_fade: true,
+                sharebox_should_own: true,
+                // sharebox_selector: '.rdr_socialShareBoxHook',
+                sharebox_selector: '',
+                //social brands
+                sharebox_readrboard: true,
+                sharebox_twitter: false,
+                sharebox_reddit: false,
+                sharebox_facebook: false,
+                sharebox_google: false,
+                sharebox_digg: false,
+                sharebox_stumble: false
             }
         },
         user: {
@@ -5570,10 +5568,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $summaryWidgetAnchorNode = $('.rdr-page-widget-key-'+page.key);
                         $summaryWidgetAnchorNode.rdrWidgetSummary('update');
                         
-                        //update socialPageShareBox...
+                        //update shareWidget...
                         //this shoudl do for now to find the page...
                         var $page = $summaryWidgetAnchorNode.closest('.rdr-page-container');
-                        $page.socialPageShareBox('update');
+                        $page.shareWidget('update');
                     
                 },
                 sortInteractions: function(hash) {
@@ -6473,21 +6471,31 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                     }
 
-                    var widgetKeyEl = RDR.group.socialPageShareBox_selector ? 
-                        RDR.group.socialPageShareBox_selector : 
+                    var widgetKeyEl = RDR.group.sharebox_selector ? 
+                        RDR.group.sharebox_selector : 
                         RDR.group.summary_widget_selector;
 
-                    //setup socialPageShareBox
+                    var socialBrands = {
+                        readrboard: RDR.group.sharebox_readrboard,
+                        twitter: RDR.group.sharebox_twitter,
+                        reddit: RDR.group.sharebox_reddit,
+                        facebook: RDR.group.sharebox_facebook,
+                        google: RDR.group.sharebox_google,
+                        digg: RDR.group.sharebox_digg,
+                        stumble: RDR.group.sharebox_stumble
+                    }
+
+                    //setup shareWidget
                     var settings = {
-                        doShow: RDR.group.socialPageShareBox_doShow,
-                        shouldOwnSummaryBar: RDR.group.socialPageShareBox_shouldOwnSummaryBar,
-                        shareToolBrandOpts: RDR.group.socialPageShareBox_socialBrands,
-                        fadeInOnLoad: RDR.group.socialPageShareBox_fadeIn,
+                        show: RDR.group.sharebox_show,
+                        shouldOwnSummaryBar: RDR.group.sharebox_should_own,
+                        fadeInOnLoad: RDR.group.sharebox_fade,
+                        socialBrands: socialBrands,
                         //use the summary_widget_selector as a default.
                         widgetKeyEl: widgetKeyEl
                     }
 
-                    $container.socialPageShareBox( settings );
+                    $container.shareWidget( settings );
 
                 }
             },
@@ -6658,7 +6666,7 @@ function $RFunctions($R){
         plugin_jquery_hoverIntent($R);
         plugin_jquery_twitterTip($R);
         plugin_jquery_rdrWidgetSummary($R);
-        plugin_jquery_socialPageShareBox($R);
+        plugin_jquery_shareWidget($R);
         plugin_jquery_selectionographer($R, rangy);
 
         /* are we using this */
@@ -7573,7 +7581,7 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_rdrWidgetSummary
 
-        function plugin_jquery_socialPageShareBox($){
+        function plugin_jquery_shareWidget($){
 
             /*
              * jQuery Plugin by readrboard.com
@@ -7581,7 +7589,7 @@ function $RFunctions($R){
              * accepts settings to customize the format
              */
 
-            $.fn.socialPageShareBox = function( params ) {
+            $.fn.shareWidget = function( params ) {
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
                 if ( methods[params] ) {
                     return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -7659,7 +7667,7 @@ function $RFunctions($R){
 
             //private objects:
             var P = {
-                widgetClass: 'rdr_socialPageShareBox',
+                widgetClass: 'rdr_shareWidget',
                 loadingTrackerDict: {},
                 isLoadedCallback: function(){
 
@@ -7671,7 +7679,7 @@ function $RFunctions($R){
                         var pluginRoot = settings.pluginRootEl,
                             $pluginRoot = $(pluginRoot);
                         
-                        if( settings.shareToolBrandOpts.readrboard ){
+                        if( settings.socialBrands.readrboard ){
                             methods.renderReadrBoardButton.call($pluginRoot, settings);
                         }
 
@@ -7684,7 +7692,7 @@ function $RFunctions($R){
                     });
                 },
                 //this is added to the global scope below
-                socialPageShareBoxBrandOnLoad: function(brand){
+                shareWidgetBrandOnLoad: function(brand){
                     
                     delete P.loadingTrackerDict[brand];
                     var isLoaded = $.isEmptyObject(P.loadingTrackerDict);
@@ -7713,7 +7721,7 @@ function $RFunctions($R){
                             // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
                                 ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
-                                ' window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
                         ret.push(
@@ -7744,7 +7752,7 @@ function $RFunctions($R){
                             // '<!-- Place this render call where appropriate -->'+
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
                                 ' {src:"//apis.google.com/js/plusone.js"}, function(){'+
-                                ' gapi.plusone.go();  window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                                ' gapi.plusone.go();  window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
                         return ret.join('');
@@ -7757,12 +7765,12 @@ function $RFunctions($R){
                         ret.push(
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
                                 ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
-                                ' document.write = window.realDocumentWrite; window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                                ' document.write = window.realDocumentWrite; window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
                         return ret.join('');
                     },
-                    stumbleUpon: function(brand){
+                    stumble: function(brand){
                         var ret = [];
                         ret.push(
                             // '<!-- Place this tag where you want the su badge to render -->'
@@ -7781,7 +7789,7 @@ function $RFunctions($R){
                         ret.push(
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
                                 ' {src:"http://widgets.digg.com/buttons.js"}, function(){'+
-                                ' window.READRBOARDCOM.socialPageShareBoxBrandOnLoad("'+brand+'"); '+
+                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
                         ret.push(
@@ -7796,10 +7804,11 @@ function $RFunctions($R){
             };
 
             //we need this in the global scope.
-            window.READRBOARDCOM.socialPageShareBoxBrandOnLoad = P.socialPageShareBoxBrandOnLoad;
+            window.READRBOARDCOM.shareWidgetBrandOnLoad = P.shareWidgetBrandOnLoad;
 
             //private functions:
             function _renderSocialBrands($contentList, selectedBrands){
+                //todo - ensure that readrboard is always first.  Though is always first now, but in theory isn't promised to be first (iterating over dict)
                 $.each( selectedBrands, function(key, isTrue){
                     if (!isTrue) return;
                     //else
@@ -7808,7 +7817,7 @@ function $RFunctions($R){
                     P.loadingTrackerDict[key] = true;
 
                     var brandDomHtml = P.shareToolBrandCode[key](key);
-
+                    
                     var $listItem = $('<li />').html( brandDomHtml );
                     $contentList.append( $listItem );
                 });
@@ -7818,7 +7827,7 @@ function $RFunctions($R){
             function _makeWidget(settings){
                 var $this = $(this);
 
-                if ( !settings.doShow ) {
+                if ( !settings.show ) {
                     return;
                 }
                 //else
@@ -7828,7 +7837,7 @@ function $RFunctions($R){
                     $summaryBarHook = $('<div class="rdr_summaryBarHook"></div>').appendTo($widget),
                     $summaryBarWrap = $('<div class="rdr_summaryBarWrap"  style="display:none;"></div>').appendTo($summaryBarHook),
                     $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
-                    $contentList = _renderSocialBrands( $('<ul />'), settings.shareToolBrandOpts)
+                    $contentList = _renderSocialBrands( $('<ul />'), settings.socialBrands)
                         .appendTo($contents);
 
                 //note that there are callbacks which will get triggered from the DOM above when it renders.
@@ -7843,7 +7852,7 @@ function $RFunctions($R){
                 }else{
                     $wrap.appendTo('#rdr_sandbox');
                     $wrap.append($widget);
-                    $widget.addClass('rdr_socialPageShareBox_default');
+                    $widget.addClass('rdr_shareWidget_default');
                 }
             
                 methods.update.apply($this, settings);
@@ -7889,7 +7898,7 @@ function $RFunctions($R){
                 $('#readrBoardSocialWidgetButton').unbind('.rbSocialWidgetButton');
                 $('#readrBoardSocialWidgetButton').on( 'mouseenter.rbSocialWidgetButton', 
                     function(){
-                        var $summaryWrap = $(this).closest('.rdr_socialPageShareBox').find('.rdr_summaryBarWrap');
+                        var $summaryWrap = $(this).closest('.rdr_shareWidget').find('.rdr_summaryBarWrap');
                         var $summaryBar = $summaryWrap.find('.rdr-summary');
                         var width = $summaryWrap.width();
                         
@@ -7924,7 +7933,7 @@ function $RFunctions($R){
                 });
             }
         }
-        //end function plugin_jquery_socialPageShareBox
+        //end function plugin_jquery_shareWidget
 
         function plugin_jquery_selectionographer($, rangy){
             /*
