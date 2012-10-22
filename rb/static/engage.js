@@ -7721,7 +7721,7 @@ function $RFunctions($R){
                         ret.push(
                             '<div id="fb-root"></div>'+
                             // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
-                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
                                 ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
                                 ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
@@ -7762,7 +7762,7 @@ function $RFunctions($R){
                             // </script>
 
                             // '<!-- Place this render call where appropriate -->'+
-                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
                                 ' {src:"https://apis.google.com/js/plusone.js"}, function(){'+
                                 ' gapi.plusone.go();  window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
@@ -7776,7 +7776,7 @@ function $RFunctions($R){
                             '<iframe class="shareWidgetIframe shareWidgetIframe_reddit" src="http://www.reddit.com/static/button/button2.html?width=51" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
                         );
                         ret.push(
-                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
                                 ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
                                 ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
@@ -7800,7 +7800,7 @@ function $RFunctions($R){
                     digg: function(brand){
                         var ret = [];
                         ret.push(
-                            '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
+                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
                                 ' {src:"http://widgets.digg.com/buttons.js"}, function(){'+
                                 ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
