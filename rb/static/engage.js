@@ -6477,11 +6477,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     var socialBrands = {
                         readrboard: RDR.group.sharebox_readrboard,
-                        twitter: RDR.group.sharebox_twitter,
-                        reddit: RDR.group.sharebox_reddit,
                         facebook: RDR.group.sharebox_facebook,
+                        twitter: RDR.group.sharebox_twitter,
+                        // reddit: RDR.group.sharebox_reddit,
+                        reddit: false,
                         google: RDR.group.sharebox_google,
-                        digg: RDR.group.sharebox_digg,
+                        // digg: RDR.group.sharebox_digg,
+                        digg: false,
                         stumble: RDR.group.sharebox_stumble
                     }
 
@@ -7745,13 +7747,23 @@ function $RFunctions($R){
                         var ret = [];
 
                         ret.push(
-                            // '<!-- Place this tag where you want the +1 button to render -->'+
+                            // '<div class="g-plusone" data-size="tall"></div>'
+                            //<!-- Place this tag where you want the +1 button to render. -->
                             '<div class="g-plusone" data-size="tall"></div>'
                         );
                         ret.push(
+                            // <!-- Place this tag after the last +1 button tag. -->
+                            // <script type="text/javascript">
+                            //   (function() {
+                            //     var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                            //     po.src = 'https://apis.google.com/js/plusone.js';
+                            //     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                            //   })();
+                            // </script>
+
                             // '<!-- Place this render call where appropriate -->'+
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
-                                ' {src:"//apis.google.com/js/plusone.js"}, function(){'+
+                                ' {src:"https://apis.google.com/js/plusone.js"}, function(){'+
                                 ' gapi.plusone.go();  window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
                         );
@@ -7760,7 +7772,8 @@ function $RFunctions($R){
                     reddit: function(brand){
                         var ret = [];
                         ret.push(
-                            '<div id="redditShareButton"></div>'
+                            // '<div id="redditShareButton"></div>'
+                            '<iframe src="http://www.reddit.com/static/button/button2.html?width=51" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
                         );
                         ret.push(
                             '<script type="text/javascript">(function(){ RDR.rdr_loadScript( '+
