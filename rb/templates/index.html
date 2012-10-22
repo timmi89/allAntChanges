@@ -80,7 +80,7 @@ div.section_content h1.sectionHeader {
                 #pie_chart_container    { float:left; width:289px; position:relative;z-index:1; }
                 #pie_chart              { position:relative; width:400px; height:400px; top:-40px; left:-60px;}
                 #pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2;}
-                #pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:22px;}
+                #pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:20px;}
                 #pie_chart_labels li a span         { font-size:12px; color:#999; }
                 #pie_chart_labels li a              { text-decoration:none; display:block; padding:5px;}
                 #pie_chart_labels li:nth-child(1) a { color:#17416f;}
@@ -245,17 +245,29 @@ div.section_content h1.sectionHeader {
             type: "get",
             success: function(response) {
 
+                function SortByTagCount(a,b) { return b.count - a.count; }
+                var interaction_order = [];
+
+                $.each( response.data.nodes, function(reaction_body, reaction_data) {
+                    interaction_order.push( { body:reaction_body, count:reaction_data.count } );
+                    // $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
+                    // });
+                });
+
+                interaction_order.sort( SortByTagCount );
+
                 // reactions
                 var chart_data = [],
                     index = 0;
-                $.each( response.data.nodes, function(reaction_body, reaction_data) {
+
+                $.each( interaction_order, function(idx, reaction) {
                     var $pie_chart_labels = $('#pie_chart_labels ol'),
                         $other_reactions = $('section[role="most popular tags"] ol');
                     if (index<8) {
-                        $pie_chart_labels.append('<li><a href="/?s='+reaction_body+'">'+reaction_body+' <span>('+reaction_data.count+')</span></a></li>');
-                        chart_data.push( [reaction_body, reaction_data.count] );
+                        $pie_chart_labels.append('<li><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
+                        chart_data.push( [reaction.body, reaction.count] );
                     } else {
-                        $other_reactions.append('<li class="large"><a href="/?s='+reaction_body+'">'+reaction_body+' <span>('+reaction_data.count+')</span></a></li>');
+                        $other_reactions.append('<li class="large"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
                     }
                     index++;
                 });
@@ -331,16 +343,6 @@ div.section_content h1.sectionHeader {
                     series: [{
                         type: 'pie',
                         name: 'Reactions',
-                        // data: [
-                        //     ['Love It',   34],
-                        //     ['Craisins',       26],
-                        //     ['Whatever',    8],
-                        //     ['Hate It',     6],
-                        //     ['Hate It',     6],
-                        //     ['Hate It',     6],
-                        //     ['Hate It',     6],
-                        //     ['Meh',   7]
-                        // ]
                         data: chart_data
                     }]
                 });
