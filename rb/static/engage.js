@@ -75,6 +75,7 @@ function readrBoard($R){
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
+                call_to_action: "What's your reaction?",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#flipbook',
@@ -7064,9 +7065,9 @@ function $RFunctions($R){
 
 
                     var $react = $('<div class="rdr-sum-headline" />');
-                    if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
-                        $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
-                    }
+                    // if ( RDR.group && RDR.group.call_to_action && RDR.group.call_to_action != "" ) {
+                    //     $react.append('<div class="rdr-call-to-action">'+RDR.group.call_to_action+'</div>');
+                    // }
 
                     $react.append('<div class="rdr-sum-reactions"/>');
 
@@ -7121,12 +7122,17 @@ function $RFunctions($R){
                         $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
                         
                         // add "react to this page" section
-                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> React to this article <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
+
+                        // fix for bad group defaults:
+                        if ( RDR.group.call_to_action == "" ) {
+                            RDR.group.call_to_action = "What's your reaction?";
+                        }
+                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> '+RDR.group.call_to_action+' <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                         writePageReactionPills( $reactToArticle, page );
                     } else {
                         // add "react to this page" section
-                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle rdr_noReactions"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> React to this article <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
+                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle rdr_noReactions"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> '+RDR.group.call_to_action+' <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                         writePageReactionPills( $reactToArticle, page );
                     }
@@ -7329,8 +7335,11 @@ function $RFunctions($R){
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                 offsets = $this.offset();
 
+                            if ( RDR.group.call_to_action == "" ) {
+                                RDR.group.call_to_action = "What's your reaction?";
+                            }
                             var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
-                                .append('<h2>Your reaction to this article?</h2><div class="rdr_sbRolloverTable"/>');
+                                .append('<h2>'+RDR.group.call_to_action+'</h2><div class="rdr_sbRolloverTable"/>');
 
                             $('#rdr_summary_tag_details').append( $sbRollover );
 
