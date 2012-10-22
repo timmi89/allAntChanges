@@ -798,7 +798,7 @@ function readrBoard($R){
                     }
 
                     //New Check 
-                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && 
+                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
                         (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
                         !$.isEmptyObject(summary.top_interactions) &&
                         !$.isEmptyObject(summary.top_interactions.coms)
@@ -1855,7 +1855,6 @@ function readrBoard($R){
 
             },
             insertParagraphHelpers: function() {
-
                 $('.rdr-node').not('img,iframe,.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
                     RDR.actions.indicators.init(hash, true);
