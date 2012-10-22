@@ -63,17 +63,15 @@ div.section_content h1.sectionHeader {
     <div class="section_content">
         <style>
         .reactions { overflow:auto; margin:20px 0 0; clear:both;}
-        .most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden;}
-        .other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; border-left:1px solid #e0e0e0;}
+        .most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden; border-right:1px solid #e0e0e0;}
+        .other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; }
         section[role="most popular tags"] ol li.large { font-size:20px; }
         </style>
         <div class="reactions">
             <div class="other_reactions">
                 <section role="most popular tags">
                     <h1 class="sectionHeader">Other Reactions</h1>
-                    <ol>
-                        <li class="large"><a href="/group/racialicious/?s=THIS!" target="_blank">(126) THIS!</a></li><li class="large"><a href="/group/racialicious/?s=Problematic" target="_blank">(126) Problematic</a></li><li class="large"><a href="/group/racialicious/?s=Cosign" target="_blank">(80) Cosign</a></li><li class="large"><a href="/group/racialicious/?s=Over reacting" target="_blank">(75) Over reacting</a></li><li class="large"><a href="/group/racialicious/?s=Provocative" target="_blank">(50) Provocative</a></li><li class="large"><a href="/group/racialicious/?s=Isn't that... good?" target="_blank">(14) Isn't that... good?</a></li><li class="large"><a href="/group/racialicious/?s=Get a life" target="_blank">(9) Get a life</a></li><li class="large"><a href="/group/racialicious/?s=Invasive Javascript" target="_blank">(8) Invasive Javascript</a></li><li class="large"><a href="/group/racialicious/?s=MHMMM" target="_blank">(8) MHMMM</a></li><li class="small"><a href="/group/racialicious/?s=YES" target="_blank">(4) YES</a></li><li class="small"><a href="/group/racialicious/?s=fetishize != abuse." target="_blank">(4) fetishize != abuse.</a></li><li class="small"><a href="/group/racialicious/?s=Love It" target="_blank">(3) Love It</a></li><li class="small"><a href="/group/racialicious/?s=Over-reaction" target="_blank">(3) Over-reaction</a></li><li class="small"><a href="/group/racialicious/?s=Whats The Problem" target="_blank">(3) Whats The Problem</a></li><li class="small"><a href="/group/racialicious/?s=Crazy" target="_blank">(2) Crazy</a></li><li class="small"><a href="/group/racialicious/?s=Beautifully said. " target="_blank">(2) Beautifully said. </a></li><li class="small"><a href="/group/racialicious/?s=MOVE ON!" target="_blank">(2) MOVE ON!</a></li><li class="small"><a href="/group/racialicious/?s=Look up " fantasy.""="" target="_blank">(2) Look up "fantasy."</a></li><li class="small"><a href="/group/racialicious/?s=LOVE glen check!" target="_blank">(2) LOVE glen check!</a></li><li class="small"><a href="/group/racialicious/?s=Reaching" target="_blank">(2) Reaching</a></li>
-                    </ol>
+                    <ol></ol>
                 </section>
             </div>
             <div class="most_popular">
@@ -106,92 +104,11 @@ div.section_content h1.sectionHeader {
                 #pie_chart_labels li.active a span         { color:#fff;}
                 </style>
                 <div id="pie_chart_labels">
-                    <ol>
-                        <li><a href="#">Love It <span>(11)</span></a></li>
-                        <li><a href="#">Meh <span>(11)</span></a></li>
-                        <li><a href="#">Craisins <span>(11)</span></a></li>
-                        <li><a href="#">Wow <span>(11)</span></a></li>
-                        <li><a href="#">Love It <span>(11)</span></a></li>
-                        <li><a href="#">Meh <span>(11)</span></a></li>
-                        <li><a href="#">Craisins <span>(11)</span></a></li>
-                        <li><a href="#">Wow <span>(11)</span></a></li>
-                    </ol>
+                    <ol></ol>
                 </div>
                 <div id="pie_chart_container">
                     <div id="pie_chart"></div>
                 </div>
-                <script>
-                $(function () {
-                    var chart;
-                    $(document).ready(function() {
-                        
-                        // Radialize the colors
-                        Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-                            return {
-                                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-                                stops: [
-                                    [0, color],
-                                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-                                ]
-                            };
-                        });
-                        
-                        // Build the chart
-                        chart = new Highcharts.Chart({
-                            chart: {
-                                renderTo: 'pie_chart',
-                                plotBackgroundColor: null,
-                                plotBorderWidth: null,
-                                plotShadow: false
-                            },
-                            title: {
-                                text: ''
-                            },
-                            tooltip: {
-                                // pointFormat: '{series.name}',
-                                enabled:false
-                            },
-                            plotOptions: {
-                                series: {
-                                    point: {
-                                events: {
-                                    mouseOver: function() {
-                                        var nthChild = this.x+1;
-                                        $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
-                                    },
-                                    mouseOut: function() {
-                                        var nthChild = this.x+1;
-                                        $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
-                                    }
-                                }
-                            },
-                                },
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    dataLabels: {
-                                        enabled: false
-                                    }
-                                }
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: 'Reactions',
-                                data: [
-                                    ['Love It',   34],
-                                    ['Craisins',       26],
-                                    ['Whatever',    8],
-                                    ['Hate It',     6],
-                                    ['Hate It',     6],
-                                    ['Hate It',     6],
-                                    ['Hate It',     6],
-                                    ['Meh',   7]
-                                ]
-                            }]
-                        });
-                    }); 
-                });
-                </script>
             </div>
         </div>
     </div>
@@ -203,7 +120,7 @@ div.section_content h1.sectionHeader {
                 <h2>What is ReadrBoard?</h2>
                 ReadrBoard makes it easy to react to any phrase, 
                 image, video, or article on the web -- with the click of a button.
-                <a href="#">Learn More.</a>
+                <div><a href="/publishers/">Add to your website</a> &nbsp;|&nbsp;<a href="/react/">Add to your browser</a></div>
             </div>
         </div>
         <div class="featureQuoteWrap">
@@ -282,24 +199,15 @@ div.section_content h1.sectionHeader {
         <div class="otherContent">
             <div class="component active_sites">
                 <h1 class="sectionHeader">Active Sites</h1>
-                <ul>
-                    <li><a href="#">hypervocal.com</a></li>
-                    <li><a href="#">racialicious.com</a></li>
-                </ul>
+                <ul></ul>
             </div>
             <div class="component people">
                 <h1 class="sectionHeader">Active People</h1>
-                <ul>
-                    <li><a href="#"><img src="http://graph.facebook.com/613765056/picture" border="0" />Porter Bayne</a></li>
-                    <li><a href="#"><img src="http://graph.facebook.com/613765056/picture" border="0" />Eric Chaves</a></li>
-                </ul>
+                <ul></ul>
             </div>
             <div class="component active_pages">
                 <h1 class="sectionHeader">Active Pages</h1>
-                <ul>
-                    <li><a href="#">This is the name of some article that is really, really long, so that it might take three lines</a></li>
-                    <li><a href="#">This is the name of some article</a></li>
-                </ul>
+                <ul></ul>
             </div>
         </div>
 {% endif %}
@@ -325,5 +233,121 @@ div.section_content h1.sectionHeader {
     });
     RB.follow.followers({{ board.id }},'brd')
     {% endif %}
+
+    {% if not profile_user and not group and not board and not query_string %}
+    var chart;
+    $(function () {
+        $.ajax({
+            beforeSend: function( xhr ) {
+                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+            },
+            url: "/api/global/activity/",
+            type: "get",
+            success: function(response) {
+
+                // reactions
+                var chart_data = [],
+                    index = 0;
+                $.each( response.data.nodes, function(reaction_body, reaction_data) {
+                    var $pie_chart_labels = $('#pie_chart_labels ol'),
+                        $other_reactions = $('section[role="most popular tags"] ol');
+                    if (index<8) {
+                        $pie_chart_labels.append('<li><a href="/?s='+reaction_body+'">'+reaction_body+' <span>('+reaction_data.count+')</span></a></li>');
+                        chart_data.push( [reaction_body, reaction_data.count] );
+                    } else {
+                        $other_reactions.append('<li class="large"><a href="/?s='+reaction_body+'">'+reaction_body+' <span>('+reaction_data.count+')</span></a></li>');
+                    }
+                    index++;
+                });
+
+                // people
+                $.each( response.data.users, function(user_id, user_data) {
+                    var $active_people = $('div.people ul');
+                        $active_people.append('<li><a href="/user/'+user_id+'"><img src="'+user_data.user.social_user.img_url+'" border="0" />'+user_data.user.social_user.full_name+'</a></li>');
+                });
+
+                // groups
+                $.each( response.data.groups, function(group_name, group_data) {
+                    var $active_people = $('div.active_sites ul');
+                        $active_people.append('<li><a href="/group/'+group_data.group.short_name+'">'+group_name+'</a></li>');
+                });
+
+                // pages
+                $.each( response.data.pages, function(page_url, page_data) {
+                    var $active_people = $('div.active_pages ul');
+                        $active_people.append('<li><a href="'+page_url+'" target="_blank">'+page_data.page.title+'</a></li>');
+                });
+                
+                
+                // Radialize the colors
+                Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+                    return {
+                        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                        stops: [
+                            [0, color],
+                            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                        ]
+                    };
+                });
+                
+                // Build the chart
+                chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'pie_chart',
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {
+                        // pointFormat: '{series.name}',
+                        enabled:false
+                    },
+                    plotOptions: {
+                        series: {
+                            point: {
+                        events: {
+                            mouseOver: function() {
+                                var nthChild = this.x+1;
+                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
+                            },
+                            mouseOut: function() {
+                                var nthChild = this.x+1;
+                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
+                            }
+                        }
+                    },
+                        },
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Reactions',
+                        // data: [
+                        //     ['Love It',   34],
+                        //     ['Craisins',       26],
+                        //     ['Whatever',    8],
+                        //     ['Hate It',     6],
+                        //     ['Hate It',     6],
+                        //     ['Hate It',     6],
+                        //     ['Hate It',     6],
+                        //     ['Meh',   7]
+                        // ]
+                        data: chart_data
+                    }]
+                });
+            }
+        });
+    });
+    {% endif %}
+
 </script>
 {% endblock %}
