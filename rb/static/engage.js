@@ -83,7 +83,7 @@ function readrBoard($R){
 
                 //SocialPageShareBox Stuff//
                 //todo set to false
-                socialPageShareBox_doShow: false,
+                socialPageShareBox_doShow: true,
                 socialPageShareBox_fadeIn: true,
                 socialPageShareBox_shouldOwnSummaryBar: true,
                 // socialPageShareBox_selector: '.rdr_socialShareBoxHook',
@@ -93,9 +93,9 @@ function readrBoard($R){
                     readrboard: true,
                     facebook: true,
                     twitter: true,
-                    google: false,
+                    google: true,
                     reddit: true,
-                    stumbleUpon: false,
+                    stumbleUpon: true,
                     digg: false
                 } 
             }
@@ -1855,6 +1855,7 @@ function readrBoard($R){
 
             },
             insertParagraphHelpers: function() {
+                
                 $('.rdr-node').not('img,iframe,.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
                     RDR.actions.indicators.init(hash, true);
@@ -2812,7 +2813,7 @@ function readrBoard($R){
                                         $('#rdr_indicator_'+hash).show();
                                     }
                                 });
-RDR.actions.indicators.utils.borderHilites.make(hash);
+// RDR.actions.indicators.utils.borderHilites.make(hash);
                                 RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
                         } else {
