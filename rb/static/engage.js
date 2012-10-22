@@ -7885,7 +7885,7 @@ function $RFunctions($R){
                         if( !$summaryWrap.hasClass('visible') && !$summaryBar.is(':animated') ){
                             $summaryWrap.addClass('visible').show();
                                 $summaryBar.css({
-                                    left: -width,
+                                    left: -width-2,
                                 }).animate({
                                     left: 0
                                 }, function(){
@@ -7905,7 +7905,7 @@ function $RFunctions($R){
 
                     if ( !$mouse_target.parents().hasClass('rdr') && !$summaryBar.is(':animated') ) {
                         $summaryBar.animate({
-                                left: -width
+                                left: -width-2
                             }, function(){
                                 $summaryWrap.removeClass('visible').hide();
                             });

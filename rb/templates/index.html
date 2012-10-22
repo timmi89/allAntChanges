@@ -25,6 +25,8 @@ header[role="banner"] { box-shadow:none !important; border-bottom:1px solid #d9d
     box-shadow:0 0 6px #bbb;
     text-align:center;
 }
+#how_the_web_feels { min-height:400px; }
+#more_content { padding-top:15px; }
 #how_the_web_feels h1 { font-weight:bold; color:#8e8e8e; font-size:64px;padding:20px;}
 #more_info {
     padding:15px 0 5px;
@@ -38,11 +40,160 @@ div.section_content #cards {
     padding:0;
     width:616px;
 }
+#how_the_web_feels div.section_content h1.sectionHeader,
+div.section_content h1.sectionHeader {
+    text-align:left;
+    background:none;
+    font-size:18px;
+    color:#000;
+    padding:0 0 0 5px;
+    margin-bottom:10px;
+}
+#how_the_web_feels div.section_content h1.sectionHeader {
+    margin-top:0px;
+    position:relative;
+    z-index:2;
+}
+#how_the_web_feels section[role="most popular tags"] ol { margin-left:5px; }
 </style>
 {% if not query_string and not singleton %}
+<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <div id="how_the_web_feels">
+    <h1>How the web feels today.</h1>
     <div class="section_content">
-        <h1>How the web feels today.</h1>
+        <style>
+        .reactions { overflow:auto; margin:20px 0 0; clear:both;}
+        .most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden;}
+        .other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; border-left:1px solid #e0e0e0;}
+        section[role="most popular tags"] ol li.large { font-size:20px; }
+        </style>
+        <div class="reactions">
+            <div class="other_reactions">
+                <section role="most popular tags">
+                    <h1 class="sectionHeader">Other Reactions</h1>
+                    <ol>
+                        <li class="large"><a href="/group/racialicious/?s=THIS!" target="_blank">(126) THIS!</a></li><li class="large"><a href="/group/racialicious/?s=Problematic" target="_blank">(126) Problematic</a></li><li class="large"><a href="/group/racialicious/?s=Cosign" target="_blank">(80) Cosign</a></li><li class="large"><a href="/group/racialicious/?s=Over reacting" target="_blank">(75) Over reacting</a></li><li class="large"><a href="/group/racialicious/?s=Provocative" target="_blank">(50) Provocative</a></li><li class="large"><a href="/group/racialicious/?s=Isn't that... good?" target="_blank">(14) Isn't that... good?</a></li><li class="large"><a href="/group/racialicious/?s=Get a life" target="_blank">(9) Get a life</a></li><li class="large"><a href="/group/racialicious/?s=Invasive Javascript" target="_blank">(8) Invasive Javascript</a></li><li class="large"><a href="/group/racialicious/?s=MHMMM" target="_blank">(8) MHMMM</a></li><li class="small"><a href="/group/racialicious/?s=YES" target="_blank">(4) YES</a></li><li class="small"><a href="/group/racialicious/?s=fetishize != abuse." target="_blank">(4) fetishize != abuse.</a></li><li class="small"><a href="/group/racialicious/?s=Love It" target="_blank">(3) Love It</a></li><li class="small"><a href="/group/racialicious/?s=Over-reaction" target="_blank">(3) Over-reaction</a></li><li class="small"><a href="/group/racialicious/?s=Whats The Problem" target="_blank">(3) Whats The Problem</a></li><li class="small"><a href="/group/racialicious/?s=Crazy" target="_blank">(2) Crazy</a></li><li class="small"><a href="/group/racialicious/?s=Beautifully said. " target="_blank">(2) Beautifully said. </a></li><li class="small"><a href="/group/racialicious/?s=MOVE ON!" target="_blank">(2) MOVE ON!</a></li><li class="small"><a href="/group/racialicious/?s=Look up " fantasy.""="" target="_blank">(2) Look up "fantasy."</a></li><li class="small"><a href="/group/racialicious/?s=LOVE glen check!" target="_blank">(2) LOVE glen check!</a></li><li class="small"><a href="/group/racialicious/?s=Reaching" target="_blank">(2) Reaching</a></li>
+                    </ol>
+                </section>
+            </div>
+            <div class="most_popular">
+                <h1 class="sectionHeader">Most Popular Reactions</h1>
+                <style>
+                #pie_chart_container    { float:left; width:289px; position:relative;z-index:1; }
+                #pie_chart              { position:relative; width:400px; height:400px; top:-40px; left:-60px;}
+                #pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2;}
+                #pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:22px;}
+                #pie_chart_labels li a span         { font-size:12px; color:#999; }
+                #pie_chart_labels li a              { text-decoration:none; display:block; padding:5px;}
+                #pie_chart_labels li:nth-child(1) a { color:#17416f;}
+                #pie_chart_labels li:nth-child(2) a { color:#5b1408;}
+                #pie_chart_labels li:nth-child(3) a { color:#4a5c1a;}
+                #pie_chart_labels li:nth-child(4) a { color:#40335c;}
+                #pie_chart_labels li:nth-child(5) a { color:#236076;}
+                #pie_chart_labels li:nth-child(6) a { color:#a85d28;}
+                #pie_chart_labels li:nth-child(7) a { color:#6d83a4;}
+                #pie_chart_labels li:nth-child(8) a { color:#82615f;}
+
+                #pie_chart_labels li.active:nth-child(1) a { background:#17416f;color:#fff;}
+                #pie_chart_labels li.active:nth-child(2) a { background:#5b1408;color:#fff;}
+                #pie_chart_labels li.active:nth-child(3) a { background:#4a5c1a;color:#fff;}
+                #pie_chart_labels li.active:nth-child(4) a { background:#40335c;color:#fff;}
+                #pie_chart_labels li.active:nth-child(5) a { background:#236076;color:#fff;}
+                #pie_chart_labels li.active:nth-child(6) a { background:#a85d28;color:#fff;}
+                #pie_chart_labels li.active:nth-child(7) a { background:#6d83a4;color:#fff;}
+                #pie_chart_labels li.active:nth-child(8) a { background:#82615f;color:#fff;}
+
+                #pie_chart_labels li.active a span         { color:#fff;}
+                </style>
+                <div id="pie_chart_labels">
+                    <ol>
+                        <li><a href="#">Love It <span>(11)</span></a></li>
+                        <li><a href="#">Meh <span>(11)</span></a></li>
+                        <li><a href="#">Craisins <span>(11)</span></a></li>
+                        <li><a href="#">Wow <span>(11)</span></a></li>
+                        <li><a href="#">Love It <span>(11)</span></a></li>
+                        <li><a href="#">Meh <span>(11)</span></a></li>
+                        <li><a href="#">Craisins <span>(11)</span></a></li>
+                        <li><a href="#">Wow <span>(11)</span></a></li>
+                    </ol>
+                </div>
+                <div id="pie_chart_container">
+                    <div id="pie_chart"></div>
+                </div>
+                <script>
+                $(function () {
+                    var chart;
+                    $(document).ready(function() {
+                        
+                        // Radialize the colors
+                        Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+                            return {
+                                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                                stops: [
+                                    [0, color],
+                                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                                ]
+                            };
+                        });
+                        
+                        // Build the chart
+                        chart = new Highcharts.Chart({
+                            chart: {
+                                renderTo: 'pie_chart',
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false
+                            },
+                            title: {
+                                text: ''
+                            },
+                            tooltip: {
+                                // pointFormat: '{series.name}',
+                                enabled:false
+                            },
+                            plotOptions: {
+                                series: {
+                                    point: {
+                                events: {
+                                    mouseOver: function() {
+                                        var nthChild = this.x+1;
+                                        $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
+                                    },
+                                    mouseOut: function() {
+                                        var nthChild = this.x+1;
+                                        $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
+                                    }
+                                }
+                            },
+                                },
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    }
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: 'Reactions',
+                                data: [
+                                    ['Love It',   34],
+                                    ['Craisins',       26],
+                                    ['Whatever',    8],
+                                    ['Hate It',     6],
+                                    ['Hate It',     6],
+                                    ['Hate It',     6],
+                                    ['Hate It',     6],
+                                    ['Meh',   7]
+                                ]
+                            }]
+                        });
+                    }); 
+                });
+                </script>
+            </div>
+        </div>
     </div>
 </div>
 <div id="more_info">
@@ -113,9 +264,44 @@ div.section_content #cards {
 
 {% endif %}
 
-{% if not profile_user and not group and not board %}
+{% if not profile_user and not group and not board and not query_string %}
 <div id="more_content">
     <div class="section_content">
+        <style>
+        div.otherContent {
+            width:280px;
+            float:right;
+        }
+        div.component { margin-bottom:20px; }
+        div.component ul { list-style-type:none; padding:0;margin:0 0 0 5px;text-align:left;}
+        div.component ul li { margin-bottom:5px;}
+        div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
+        div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
+        div.component ul li a img { width:30px; display:inline-block; margin:0 5px -7px 0;}
+        </style>
+        <div class="otherContent">
+            <div class="component active_sites">
+                <h1 class="sectionHeader">Active Sites</h1>
+                <ul>
+                    <li><a href="#">hypervocal.com</a></li>
+                    <li><a href="#">racialicious.com</a></li>
+                </ul>
+            </div>
+            <div class="component people">
+                <h1 class="sectionHeader">Active People</h1>
+                <ul>
+                    <li><a href="#"><img src="http://graph.facebook.com/613765056/picture" border="0" />Porter Bayne</a></li>
+                    <li><a href="#"><img src="http://graph.facebook.com/613765056/picture" border="0" />Eric Chaves</a></li>
+                </ul>
+            </div>
+            <div class="component active_pages">
+                <h1 class="sectionHeader">Active Pages</h1>
+                <ul>
+                    <li><a href="#">This is the name of some article that is really, really long, so that it might take three lines</a></li>
+                    <li><a href="#">This is the name of some article</a></li>
+                </ul>
+            </div>
+        </div>
 {% endif %}
 
     {% block cards %}
@@ -124,7 +310,7 @@ div.section_content #cards {
     </div>
     {% endblock cards %}    
 
-{% if not profile_user and not group and not board %}
+{% if not profile_user and not group and not board and not query_string %}
     </div>
 </div>
 {% endif %}
