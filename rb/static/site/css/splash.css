@@ -206,13 +206,13 @@ div.splashQuote {
     margin-bottom: 20px;
 
     /*works together with the next declaration*/
-    top: -20px;
+    /*top: -20px;*/
 
 }
 #splashBlurbs .blurb:before { 
   display: block; 
   content: " "; 
-  margin-top: -20px; 
+  margin-top: -10px; 
   height: 20px; 
   visibility: hidden; 
 }
