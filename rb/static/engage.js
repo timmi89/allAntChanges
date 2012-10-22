@@ -83,7 +83,7 @@ function readrBoard($R){
 
                 //SocialPageShareBox Stuff//
                 //todo set to false
-                socialPageShareBox_doShow: true,
+                socialPageShareBox_doShow: false,
                 socialPageShareBox_fadeIn: true,
                 socialPageShareBox_shouldOwnSummaryBar: true,
                 // socialPageShareBox_selector: '.rdr_socialShareBoxHook',
