@@ -2610,6 +2610,9 @@ function readrBoard($R){
                     canonical_url,
                     title;
 
+                // temp used as a helper to get the pageurl.
+                var pageDict = {};
+
                 // if multiple posts, add additional "pages"
                 if (   
                         RDR.group.post_selector !== "" &&
@@ -2635,6 +2638,7 @@ function readrBoard($R){
                                     title: $post_href.text()
                                 };
                                 pagesArr.push(thisPage);
+                                pageDict[key] = thisPage;
 
                                 if ( !$post.hasClass('rdr-page-container') ) {
                                     $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
@@ -2663,6 +2667,7 @@ function readrBoard($R){
 
                     pagesArr.push(thisPage);
                     key = pagesArr.length-1;
+                    pageDict[key] = thisPage;
 
                     if ( !$( 'body' ).hasClass('rdr-page-container') ) {
                         $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
@@ -2697,6 +2702,7 @@ function readrBoard($R){
                         $.each( response.data, function(key,page){
                             //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
+                            page.url = pageDict[key].url;
                             RDR.actions.pages.save(page.id, page);
                             RDR.actions.pages.initPageContainer(page.id);
                         });
@@ -6443,6 +6449,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
+                        
                     } else {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
                         widgetSummarySettings.jqFunc = "append";
@@ -6462,7 +6469,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         }
                     }
-
+                    
                     //div to hold summary tag detail "menus"
                     $('#rdr_sandbox').append('<div id="rdr_summary_tag_details" />');
                     
@@ -6479,11 +6486,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         readrboard: RDR.group.sharebox_readrboard,
                         facebook: RDR.group.sharebox_facebook,
                         twitter: RDR.group.sharebox_twitter,
-                        // reddit: RDR.group.sharebox_reddit,
-                        reddit: false,
+                        reddit: RDR.group.sharebox_reddit,
                         google: RDR.group.sharebox_google,
-                        // digg: RDR.group.sharebox_digg,
-                        digg: false,
+                        digg: RDR.group.sharebox_digg,
                         stumble: RDR.group.sharebox_stumble
                     }
 
@@ -7004,10 +7009,7 @@ function $RFunctions($R){
                         _makeSummaryWidget(settings);
                     });
                 },
-                update: function(param){
-                    //todo check this
-                    var options = (typeof params != 'undefined') ? params : {};
-
+                update: function(){
                     var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
                     return $this.each(function(index){
                         
@@ -7584,7 +7586,6 @@ function $RFunctions($R){
         //end function plugin_jquery_rdrWidgetSummary
 
         function plugin_jquery_shareWidget($){
-
             /*
              * jQuery Plugin by readrboard.com
              * builds the readrboard widget's summary widget.
@@ -7605,51 +7606,61 @@ function $RFunctions($R){
             var defaults = {
                 fadeInOnLoad: true
             };
-            var $widgets = $();
-            var tempGlobalSettings;
+            
+            //this will be the original jQuery set that called the plugin init.  Remember it will be a set, so use $.each
+            var $pluginBaseSet;
 
             var methods = {
                 init: function( options ) {
                     var $this = this;
-                    return $this.each(function(){
+                    $pluginBaseSet = $this;
+                        
+                    $this.each(function(){
                         // merge default and user parameters
+                        var $this = $(this);
+                        if(  _checkIfBadParentPage($this) ){
+                            //cut out early.
+                            return $this;
+                        }
+                        
                         var settings = options ? $.extend({}, defaults, options) : defaults;
-                        settings.pluginRootEl = this;
-                        tempGlobalSettings = settings;
 
-                        var $newWidget = _makeWidget.call(this, settings);
-                        $widgets = $widgets.add( $newWidget );
-                        methods.update.call(this, settings);
+                        $this.data('shareWidgetSettings', settings);
+                        var $widget = _makeWidget.call(this, settings);
+                        P.showIfReady();
                     });
+
+                    //after some time, kill any remaining slowpokes and load it.
+                    var loadTimeCutoff = 6000;
+                    setTimeout(function(){
+                        P.forceShow();
+                    }, loadTimeCutoff);
+                    return $pluginBaseSet;
                 },
-                update: function(settings){
+                update: function(){
                     var $this = $(this);
-
-                    methods.renderReadrBoardButton.call($this, settings);
-                    
+                    if(  _checkIfBadParentPage($this) ){
+                        //cut out early.
+                        return $this;
+                    }
+                    var settings = $this.data('shareWidgetSettings');
+                    methods.renderReadrBoardButton.call(this, settings);
                     //check for shouldOwnSummaryBar
-                    _updateIfOwnsSummaryBar($this);
-
-                    return $this.each(function(){
-                    });
+                    _updateIfOwnsSummaryBar.call(this, settings);
                 },
                 renderReadrBoardButton: function(){
                     //this will mostly likely just be called via update().  Prob No need to call it by itself.
-
                     var $this = $(this);
-                    var settings = tempGlobalSettings;
-                    var pluginRoot = settings.pluginRootEl,
-                        $pluginRoot = $(pluginRoot);
-                    
-                    var $widget = $pluginRoot.find('.'+P.widgetClass);
+                    // var settings = tempGlobalSettings;
+                    var settings = $this.data('shareWidgetSettings');
+
+                    var $widget = $this.find('.'+P.widgetClass);
 
                     //first make sure our page count is up to date.
-                    _updateWidgetInteractionCount($pluginRoot);
+                    _updateWidgetInteractionCount.call(this);
 
-                    var $RBSocialPageBox = $widget.find('#readrBoardSocialWidgetButton');
-                    //empty it/
-                    //todo: check on this.
-                    $RBSocialPageBox.children().remove();
+                    var $RBSocialPageBox = $widget.find('.readrBoardSocialWidgetButton');
+                    $RBSocialPageBox.empty();
 
                     var $bubble = $('<div class="rdr_shareBubble"/>').appendTo($RBSocialPageBox),
                         $bubbleTriangle = $('<div class="rdr_bubbleTriangleWrap"/>').appendTo($bubble),
@@ -7661,6 +7672,8 @@ function $RFunctions($R){
 
                     //dummy count
                     var count = $this.data('pageTagCount');
+                    console.log('count')
+                    console.log(count)
                     $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
                     return $this;
                 }
@@ -7668,35 +7681,39 @@ function $RFunctions($R){
             //end methods
 
             //private objects:
-            var P = {
+            var P = window.P = {
                 widgetClass: 'rdr_shareWidget',
                 loadingTrackerDict: {},
                 isLoadedCallback: function(){
-
-                    $widgets.each(function(){
+                    $pluginBaseSet.each(function(){
                         var $this = $(this);
-                        var settings = $this.data('settings');
-                        settings = tempGlobalSettings;
-
-                        var pluginRoot = settings.pluginRootEl,
-                            $pluginRoot = $(pluginRoot);
-                        
-                        if( settings.socialBrands.readrboard ){
-                            methods.renderReadrBoardButton.call($pluginRoot, settings);
-                        }
+                        var settings = $this.data('shareWidgetSettings');
+                        var $widget = $this.find('.'+P.widgetClass);
 
                         if( settings.fadeInOnLoad ){
-                            //give it another second after the scripts are loaded
+                            //give it another second after the scripts are loaded just so the loading looks a little nicer.
                             setTimeout(function(){
-                                $this.animate({opacity:1}, 500);
+                                $widget.animate({opacity:1}, 500);
                             }, 1000);
                         }
                     });
                 },
                 //this is added to the global scope below
                 shareWidgetBrandOnLoad: function(brand){
-                    
-                    delete P.loadingTrackerDict[brand];
+                    if(brand){
+                        delete P.loadingTrackerDict[brand];
+                    }
+                    P.showIfReady();
+                },
+                forceShow: function(){
+                    $.each( P.loadingTrackerDict, function(brand, b){
+                        delete P.loadingTrackerDict[brand];
+                        $('.rdr_social_brand_'+brand).remove();
+                    });
+                    //it will always be ready now.
+                    P.showIfReady();
+                },
+                showIfReady: function(){
                     var isLoaded = $.isEmptyObject(P.loadingTrackerDict);
                     if(isLoaded){
                         P.isLoadedCallback();
@@ -7707,7 +7724,7 @@ function $RFunctions($R){
                         var ret = [];
                         //script needed
                         ret.push(
-                            '<div id="readrBoardSocialWidgetButton"></div>'
+                            '<div class="readrBoardSocialWidgetButton"></div>'
                         );
                         //our script is already included
                         delete P.loadingTrackerDict[brand];
@@ -7769,17 +7786,17 @@ function $RFunctions($R){
                         );
                         return ret.join('');
                     },
-                    reddit: function(brand){
+                    reddit: function(brand, pageUrl){
                         var ret = [];
+                        var loadFuncString = 'window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'")';
                         ret.push(
-                            // '<div id="redditShareButton"></div>'
-                            '<iframe class="shareWidgetIframe shareWidgetIframe_reddit" src="http://www.reddit.com/static/button/button2.html?width=51" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
+                            '<iframe class="shareWidgetIframe shareWidgetIframe_reddit" onload=\''+loadFuncString+'\' src="http://www.reddit.com/static/button/button2.html?width=51&url='+pageUrl+'" height="69" width="51" scrolling="no" frameborder="0"></iframe>'
                         );
                         ret.push(
-                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
-                                ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
-                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
-                            '}) })();</script>'
+                            // '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
+                            //     ' {src:"http://www.reddit.com/static/button/button2.js"}, function(){'+
+                            //     ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
+                            // '}) })();</script>'
                         );
                         return ret.join('');
                     },
@@ -7800,13 +7817,13 @@ function $RFunctions($R){
                     digg: function(brand){
                         var ret = [];
                         ret.push(
+                            '<div><a class="DiggThisButton DiggMedium"></a></div>'
+                        );
+                        ret.push(
                             '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
                                 ' {src:"http://widgets.digg.com/buttons.js"}, function(){'+
                                 ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
                             '}) })();</script>'
-                        );
-                        ret.push(
-                            '<div><a class="DiggThisButton DiggMedium"></a></div>'
                         );
                         return ret.join('');
                     },
@@ -7820,18 +7837,18 @@ function $RFunctions($R){
             window.READRBOARDCOM.shareWidgetBrandOnLoad = P.shareWidgetBrandOnLoad;
 
             //private functions:
-            function _renderSocialBrands($contentList, selectedBrands){
+            function _renderSocialBrands($contentList, selectedBrands, pageUrl){
                 //todo - ensure that readrboard is always first.  Though is always first now, but in theory isn't promised to be first (iterating over dict)
-                $.each( selectedBrands, function(key, isTrue){
+                $.each( selectedBrands, function(brand, isTrue){
                     if (!isTrue) return;
                     //else
 
                     //just placeholder strings to pop off when they're loaded.
-                    P.loadingTrackerDict[key] = true;
+                    P.loadingTrackerDict[brand] = true;
 
-                    var brandDomHtml = P.shareToolBrandCode[key](key);
+                    var brandDomHtml = P.shareToolBrandCode[brand](brand, pageUrl);
                     
-                    var $listItem = $('<li />').html( brandDomHtml );
+                    var $listItem = $('<li />').addClass( 'rdr_social_brand rdr_social_brand_'+brand ).html( brandDomHtml );
                     $contentList.append( $listItem );
                 });
                 return $contentList;
@@ -7845,12 +7862,14 @@ function $RFunctions($R){
                 }
                 //else
 
+                var pageId = $this.data('page_id');
+                var pageUrl = RDR.pages[pageId].url;
                 //make it
                 var $widget = $('<div />').addClass(P.widgetClass),
                     $summaryBarHook = $('<div class="rdr_summaryBarHook"></div>').appendTo($widget),
                     $summaryBarWrap = $('<div class="rdr_summaryBarWrap"  style="display:none;"></div>').appendTo($summaryBarHook),
                     $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
-                    $contentList = _renderSocialBrands( $('<ul />'), settings.socialBrands)
+                    $contentList = _renderSocialBrands( $('<ul />'), settings.socialBrands, pageUrl)
                         .appendTo($contents);
 
                 //note that there are callbacks which will get triggered from the DOM above when it renders.
@@ -7868,8 +7887,8 @@ function $RFunctions($R){
                     $widget.addClass('rdr_shareWidget_default');
                 }
             
-                methods.update.apply($this, settings);
-                $widget.data('settings', settings);
+                methods.update.call(this);
+                
                 if( settings.fadeInOnLoad ){
                     $widget.css({opacity:0});
                 }
@@ -7877,9 +7896,9 @@ function $RFunctions($R){
                 return $widget;
             }
 
-            function _updateWidgetInteractionCount($pluginRoot){
+            function _updateWidgetInteractionCount(){
                 //this updates the counts in the widgets' data.
-                var $this = $pluginRoot;
+                var $this = $(this);
                 var pageId = $this.data('page_id');
 
                 var summary = RDR.pages[pageId].summary;
@@ -7894,22 +7913,21 @@ function $RFunctions($R){
                 $this.data('pageTagCount', tagCount);
             }
 
-            function _updateIfOwnsSummaryBar($pluginRoot){
-                
-                var settings = tempGlobalSettings;
+            function _updateIfOwnsSummaryBar(settings){
+                var $this = $(this);
 
                 if( !settings.shouldOwnSummaryBar ){
                     return;
                 }
-                var $this = $pluginRoot;
 
                 var $summaryBarWrap = $this.find('.rdr_summaryBarWrap');
                 var $summaryBar = $('.rdr-summary');
                 $summaryBar.appendTo($summaryBarWrap).addClass('rdr_stayExpanded');
                 RDR.group.summary_widget_selector = ".rdr_summaryBarWrap";
 
-                $('#readrBoardSocialWidgetButton').unbind('.rbSocialWidgetButton');
-                $('#readrBoardSocialWidgetButton').on( 'mouseenter.rbSocialWidgetButton', 
+                var $rbButton = $this.find('.readrBoardSocialWidgetButton');
+                $rbButton.unbind('.rbSocialWidgetButton');
+                $rbButton.on( 'mouseenter.rbSocialWidgetButton', 
                     function(){
                         var $summaryWrap = $(this).closest('.rdr_shareWidget').find('.rdr_summaryBarWrap');
                         var $summaryBar = $summaryWrap.find('.rdr-summary');
@@ -7930,7 +7948,7 @@ function $RFunctions($R){
                     $(this).find('.rdr_bubbleButton').removeClass('hover');
                 });
                 
-                $('#rdr-summary-wrap').on('mouseleave', function(event) {
+                $this.closest('.rdr-page-container').find('#rdr-summary-wrap').on('mouseleave', function(event) {
                     var $mouse_target = $(event.relatedTarget);
                     var $summaryWrap = $(this).find('.rdr_summaryBarWrap');
                     var $summaryBar = $summaryWrap.find('.rdr-summary');
@@ -7945,6 +7963,16 @@ function $RFunctions($R){
                     }
                 });
             }
+
+            function _checkIfBadParentPage($this){
+                //hack to not include the outer page if it has child pages.  We need to fix that bug of having an outer page.
+                var $page = $this.closest('.rdr-page-container');
+                var hasChildPages = $page.find('.rdr-page-container').length > 0;
+                if(hasChildPages){
+                    return true;
+                }
+            }
+
         }
         //end function plugin_jquery_shareWidget
 
