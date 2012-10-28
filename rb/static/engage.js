@@ -84,7 +84,8 @@ function readrBoard($R){
                 //shareWidget Stuff//
                 //should be false by default!
                 sharebox_show: false,
-                sharebox_show_multipage: true,
+                //should be false by default!
+                sharebox_show_multipage: false,
                 sharebox_fade: true,
                 sharebox_should_own: true,
                 // sharebox_selector: '.rdr_socialShareBoxHook',
@@ -5554,7 +5555,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 pageLevelUpdate: function(hash, diffNode){
                     //RDR.actions.summaries.pageLevelUpdate:
-
+                    
                         //also update page
                         var tagId = diffNode.id;
                         var pageId = RDR.util.getPageProperty('id', hash);
@@ -5592,15 +5593,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         });
 
-                        
+
+                        var $page = $('.rdr-page-container-'+pageId);                        
                         //update plugin widgets
                         //update rdrWidgetSummary...
-                        var $summaryWidgetAnchorNode = $('.rdr-page-widget-key-'+page.key);
+                        var $summaryWidgetAnchorNode = $page.find('.rdr-page-widget-key');
                         $summaryWidgetAnchorNode.rdrWidgetSummary('update');
                         
                         //update shareWidget...
-                        //this shoudl do for now to find the page...
-                        var $page = $summaryWidgetAnchorNode.closest('.rdr-page-container');
                         $page.shareWidget('update');
                     
                 },
@@ -7711,8 +7711,7 @@ function $RFunctions($R){
 
                     //dummy count
                     var count = $this.data('pageTagCount');
-                    console.log('count')
-                    console.log(count)
+                    
                     $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
                     return $this;
                 }
@@ -7971,8 +7970,7 @@ function $RFunctions($R){
 
                 var $rbButton = $this.find('.readrBoardSocialWidgetButton');
                 $rbButton.unbind('.rbSocialWidgetButton');
-                $rbButton.on( 'mouseenter.rbSocialWidgetButton', 
-                    function(){
+                $rbButton.on( 'mouseenter.rbSocialWidgetButton', function(){
                         var $summaryWrap = $(this).closest('.rdr_shareWidget').find('.rdr_summaryBarWrap');
                         var $summaryBar = $summaryWrap.find('.rdr-summary');
                         var width = $summaryWrap.width();
@@ -7988,11 +7986,14 @@ function $RFunctions($R){
                                 });
                         }
                         $(this).find('.rdr_bubbleButton').addClass('hover');
+
                 }).on( 'mouseleave.rbSocialWidgetButton', function(event) {
                     $(this).find('.rdr_bubbleButton').removeClass('hover');
                 });
                 
-                $page.find('#rdr-summary-wrap').on('mouseleave', function(event) {
+                var $shareWidget = $page.find('.rdr_shareWidget');
+                $shareWidget.unbind('.rbSocialWidgetButton');
+                $shareWidget.on('mouseleave.rbSocialWidgetButton', function(event) {
                     var $mouse_target = $(event.relatedTarget);
                     var $summaryWrap = $(this).find('.rdr_summaryBarWrap');
                     var $summaryBar = $summaryWrap.find('.rdr-summary');
