@@ -84,6 +84,7 @@ function readrBoard($R){
                 //shareWidget Stuff//
                 //should be false by default!
                 sharebox_show: false,
+                sharebox_show_multipage: true,
                 sharebox_fade: true,
                 sharebox_should_own: true,
                 // sharebox_selector: '.rdr_socialShareBoxHook',
@@ -1881,6 +1882,18 @@ function readrBoard($R){
                 }
             },
 
+            objLength: function(obj) {
+                // RDR.util.objLength:
+                // returns the length of an object
+                var size = 0, key;
+                for (key in obj) {
+                    if (obj.hasOwnProperty(key)){
+                        size++;
+                    }
+                }
+                return size;
+            },
+
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
             _: {
                 //RDR.util._:
@@ -2706,6 +2719,17 @@ function readrBoard($R){
                             RDR.actions.pages.save(page.id, page);
                             RDR.actions.pages.initPageContainer(page.id);
                         });
+
+                        //quick trick for use in initShareBox
+                        RDR.group._summary_widget_selector = RDR.group.summary_widget_selector;
+
+                        //for now this has to be outside the loop above because we have to know if there are multiple pages.
+                        //todo: clean up the page stuff to make sure we can combine these.
+
+                        $.each( response.data, function(key,page){
+                            RDR.actions.pages.initShareBox(page.id);
+                        });
+
 
                         $RDR.dequeue('initAjax');
                     },
@@ -6411,6 +6435,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //else
 
                     $container.removeClass( 'rdr-page-key-' + key );
+                    $container.addClass( 'rdr-page-container-' + pageId );
 
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
@@ -6478,11 +6503,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
                     }
 
+                },
+                initShareBox: function(pageId){
+                    
                     var widgetKeyEl = RDR.group.sharebox_selector ? 
                         RDR.group.sharebox_selector : 
-                        RDR.group.summary_widget_selector;
+                        RDR.group._summary_widget_selector;
 
-                    var socialBrands = {
+
+                    //For now, on multipages we can only show the readrboard share widget.
+                    //shouldn't be too hard to update later though - at least for those widgets that let you specify a url
+                    //instead of it grabbing the canonical from the page
+                    var isMultiPage = RDR.util.objLength(RDR.pages) > 1;
+                    
+                    var socialBrands = isMultiPage ? {
+                        readrboard: RDR.group.sharebox_readrboard
+                    } : {
                         readrboard: RDR.group.sharebox_readrboard,
                         facebook: RDR.group.sharebox_facebook,
                         twitter: RDR.group.sharebox_twitter,
@@ -6492,18 +6528,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         stumble: RDR.group.sharebox_stumble
                     }
 
+                    var shouldShow = isMultiPage ? 
+                        ( RDR.group.sharebox_show && RDR.group.sharebox_show_multipage ) :
+                        RDR.group.sharebox_show;
+
                     //setup shareWidget
                     var settings = {
-                        show: RDR.group.sharebox_show,
+                        show: shouldShow,
                         shouldOwnSummaryBar: RDR.group.sharebox_should_own,
                         fadeInOnLoad: RDR.group.sharebox_fade,
                         socialBrands: socialBrands,
                         //use the summary_widget_selector as a default.
                         widgetKeyEl: widgetKeyEl
                     }
-
-                    $container.shareWidget( settings );
-
+                    
+                    var $container = $('.rdr-page-container-'+pageId);    
+                    $container.shareWidget( settings );    
                 }
             },
             users: {
@@ -7607,22 +7647,21 @@ function $RFunctions($R){
                 fadeInOnLoad: true
             };
             
-            //this will be the original jQuery set that called the plugin init.  Remember it will be a set, so use $.each
-            var $pluginBaseSet;
-
+            var $waitingForCallback = $();
+            
             var methods = {
                 init: function( options ) {
                     var $this = this;
-                    $pluginBaseSet = $this;
-                        
+                    
                     $this.each(function(){
-                        // merge default and user parameters
                         var $this = $(this);
                         if(  _checkIfBadParentPage($this) ){
                             //cut out early.
                             return $this;
                         }
-                        
+                        $waitingForCallback = $waitingForCallback.add($this);
+
+                        // merge default and user parameters
                         var settings = options ? $.extend({}, defaults, options) : defaults;
 
                         $this.data('shareWidgetSettings', settings);
@@ -7635,7 +7674,7 @@ function $RFunctions($R){
                     setTimeout(function(){
                         P.forceShow();
                     }, loadTimeCutoff);
-                    return $pluginBaseSet;
+                    return $this;
                 },
                 update: function(){
                     var $this = $(this);
@@ -7685,8 +7724,10 @@ function $RFunctions($R){
                 widgetClass: 'rdr_shareWidget',
                 loadingTrackerDict: {},
                 isLoadedCallback: function(){
-                    $pluginBaseSet.each(function(){
+                    $waitingForCallback.each(function(){
                         var $this = $(this);
+                        $waitingForCallback = $waitingForCallback.not($this);
+
                         var settings = $this.data('shareWidgetSettings');
                         var $widget = $this.find('.'+P.widgetClass);
 
@@ -7714,8 +7755,8 @@ function $RFunctions($R){
                     P.showIfReady();
                 },
                 showIfReady: function(){
-                    var isLoaded = $.isEmptyObject(P.loadingTrackerDict);
-                    if(isLoaded){
+                    var areAllLoaded = $.isEmptyObject(P.loadingTrackerDict);
+                    if(areAllLoaded){
                         P.isLoadedCallback();
                     }
                 },
@@ -7861,7 +7902,7 @@ function $RFunctions($R){
                     return;
                 }
                 //else
-
+                
                 var pageId = $this.data('page_id');
                 var pageUrl = RDR.pages[pageId].url;
                 //make it
@@ -7869,8 +7910,9 @@ function $RFunctions($R){
                     $summaryBarHook = $('<div class="rdr_summaryBarHook"></div>').appendTo($widget),
                     $summaryBarWrap = $('<div class="rdr_summaryBarWrap"  style="display:none;"></div>').appendTo($summaryBarHook),
                     $contents = $('<div class="rdr_innerWrap"></div>').appendTo($widget),
-                    $contentList = _renderSocialBrands( $('<ul />'), settings.socialBrands, pageUrl)
-                        .appendTo($contents);
+                    $contentList = _renderSocialBrands( $('<ul />'), settings.socialBrands, pageUrl);
+
+                $contents.append($contentList);
 
                 //note that there are callbacks which will get triggered from the DOM above when it renders.
                 //it embeds scripts which will eventually call P.isLoadedCallback which will call methods.renderReadrBoardButton
@@ -7880,13 +7922,11 @@ function $RFunctions($R){
                 var $wrap = $('<div class="rdr_socialShareWrap" />');
                 if( hasSelector ){
                     $this.find(settings.widgetKeyEl).prepend($wrap);
-                    $wrap.append($widget);
                 }else{
                     $wrap.appendTo('#rdr_sandbox');
-                    $wrap.append($widget);
                     $widget.addClass('rdr_shareWidget_default');
                 }
-            
+                $wrap.append($widget);
                 methods.update.call(this);
                 
                 if( settings.fadeInOnLoad ){
@@ -7915,14 +7955,18 @@ function $RFunctions($R){
 
             function _updateIfOwnsSummaryBar(settings){
                 var $this = $(this);
-
                 if( !settings.shouldOwnSummaryBar ){
                     return;
                 }
 
                 var $summaryBarWrap = $this.find('.rdr_summaryBarWrap');
-                var $summaryBar = $('.rdr-summary');
+                var $page = $this.closest('.rdr-page-container');
+
+                var $summaryBar = $page.find('.rdr-summary');
                 $summaryBar.appendTo($summaryBarWrap).addClass('rdr_stayExpanded');
+                
+                //todo: check on this
+                //because we're hijaking the summary bar, override the group setting for now.  Do this better later
                 RDR.group.summary_widget_selector = ".rdr_summaryBarWrap";
 
                 var $rbButton = $this.find('.readrBoardSocialWidgetButton');
@@ -7948,7 +7992,7 @@ function $RFunctions($R){
                     $(this).find('.rdr_bubbleButton').removeClass('hover');
                 });
                 
-                $this.closest('.rdr-page-container').find('#rdr-summary-wrap').on('mouseleave', function(event) {
+                $page.find('#rdr-summary-wrap').on('mouseleave', function(event) {
                     var $mouse_target = $(event.relatedTarget);
                     var $summaryWrap = $(this).find('.rdr_summaryBarWrap');
                     var $summaryBar = $summaryWrap.find('.rdr-summary');
