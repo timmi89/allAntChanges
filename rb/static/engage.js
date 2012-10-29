@@ -2,7 +2,7 @@
 //dont bother indenting this top level anonymous function
 
 var RDR = {};
-if(RDR.hasLoaded){
+if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
     return;
 }
 
