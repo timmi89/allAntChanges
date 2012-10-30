@@ -4136,7 +4136,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if (args.kind && args.kind == "page") {
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
                                 var $summary_box = $('div.rdr_sbRollover');
-                                var $pageTagResponse = $('<div class="rdr_info" style="padding:4px;"></div>');
+                                var $pageTagResponse = $('<div class="rdr_info"></div>');
                                 var $saveToBoard = _makeBoardList(args);
                                 var $shareIcons = _makeShareIcons(args);
 
@@ -4163,7 +4163,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $pageTagResponse.append($saveToBoard);
                                     $pageTagResponse.append($shareIcons);
                                     
-                                    $pageTagResponse.append('<div class="tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
+                                    $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                     
                                     _doPageUpdates(args);
@@ -4308,7 +4308,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _makeBoardList(args){
                                 if ( RDR.user.user_type ) {
-                                    var $user_boards = $('<div class="rdr_select_user_board"><strong class="rdr_share_it">Save It:</strong> <select class="rdr_user_boards"><option value="">Choose a board...</option></select></div>');
+                                    var $user_boards = $('<div class="rdr_select_user_board"><strong class="rdr_save_it">Save It:</strong> <select class="rdr_user_boards"><option value="">Choose a board...</option></select></div>');
                                     // boards
                                     if (typeof RDR.user.user_boards != "undefined" ) {
                                         $.each( RDR.user.user_boards, function(idx, board) {
@@ -7195,10 +7195,13 @@ function $RFunctions($R){
                             RDR.group.call_to_action = "What's your reaction?";
                         }
                         var $reactToArticle = $(
-                            '<a class="rdr_tag rdr_reactToArticle"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                '<span>'+RDR.group.call_to_action+
-                                    '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                '</span>'+
+                            '<a class="rdr_tag rdr_reactToArticle">'+
+                                '<div class="rdr_reactToArticle_inner">'+
+                                    '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                    '<span>'+RDR.group.call_to_action+
+                                        '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                    '</span>'+
+                                '</div>'+
                             '</a>'
                         );
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
@@ -7208,7 +7211,16 @@ function $RFunctions($R){
                             RDR.group.call_to_action = "What's your reaction?";
                         }
                         // add "react to this page" section
-                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle rdr_noReactions"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> '+RDR.group.call_to_action+' <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
+                        var $reactToArticle = $(
+                            '<a class="rdr_tag rdr_reactToArticle rdr_noReactions">'+
+                                '<div class="rdr_reactToArticle_inner">'+
+                                    '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                    '<span>'+RDR.group.call_to_action+
+                                        '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                    '</span>'+
+                                '</div>'+
+                            '</a>'
+                        );
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                         writePageReactionPills( $reactToArticle, page );
                     }
@@ -7345,16 +7357,22 @@ function $RFunctions($R){
                         tag_count = $this.data('tag_count'),
                         $sbRollover = $('#rdr_tag_'+tag_id+'_details');
 
+                    var $pageReactions = $('<tr class="rdr_page_reactions"></tr>');
+
                     if ( !$sbRollover.find('table').length ) {
                         $sbRollover.html('<h1>'+tag_body+' ('+tag_count+')</h1><table cellpadding="0" cellspacing="0" border="0" />');
                         if ( counts && counts.page ) {
                             var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
-                            $sbRollover.find('table').append('<tr class="rdr_page_reactions"><td colspan="2"><strong>('+counts.page+') '+tag_body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td></tr>');
+                            $sbRollover.find('table').append($pageReactions);
+                            $pageReactions.append('<td colspan="2"><strong>('+counts.page+') '+tag_body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td>');
                         }
                     }
                     
                     if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
                         // iterate through and create an array of counts + $tr.  this is then sortable.
+                        
+                        $pageReactions.addClass('has_other_reactions');
+
                         $.each( RDR.interaction_data[ tag_id ], function(int_id, data) {
                             if ( !$sbRollover.find('tr.rdr_int_summary_'+int_id).length ) {
                                 var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
@@ -7450,7 +7468,6 @@ function $RFunctions($R){
                                     tag.body = $input.val();
 
                                     args = { tag:tag, hash:hash, kind:"page" };
-                                    debugger;
                                     RDR.actions.interactions.ajax( args, 'react', 'create' );
                                     $input.blur();
                                 }

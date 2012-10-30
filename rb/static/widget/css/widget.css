@@ -5,12 +5,21 @@
     color:#666 !important;
     font-variant:normal !important;
     font-style:normal !important;
-    border:0;;
     line-height:1em;;
     letter-spacing:normal;;
     width:auto;;
     text-indent:0;;
 }
+
+/* the above * is too aggresive for some stuff */
+.rdr div,
+.rdr span,
+.rdr p
+{
+    /*this was clobbering the select element border when user above */
+    border: none;;
+}
+
 /*temp hack exceptions to some of these.  Do this better later*/
     /*to match the digg css.*/
     .rdr .db-anchor{
@@ -304,7 +313,7 @@ div.rdr_sandbox .rdr_tooltip_about                                  { margin:0 0
 
 /* global tag defs */
 div.rdr_sandbox div.rdr h1, 
-div.rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#888 !important; margin:0 !important; font-size:13px !important; line-height:1.1em !important; padding:4px 9px 0 10px !important; border:none !important; }
+div.rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#888 !important; margin:0 !important; font-size:13px !important; padding:4px 9px 0 10px !important; border:none !important; }
 div.rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px !important; color:#008be4 !important;}
 
 div.rdr_sandbox div.rdr li {background:none !important; padding:0 !important;}
@@ -425,8 +434,6 @@ div.rdr_sandbox div.rdr div.rdr_view_success td.rdr_last_column {
 /* commentSet */
 div.rdr_sandbox div.rdr div.rdr_comments                       {}
 div.rdr_sandbox div.rdr div.rdr_commentSet                     {margin:5px 10px !important; padding-bottom:5px !important; overflow:auto !important; border-bottom:1px solid #ddd !important; text-align:left !important;}
-div.rdr_sandbox div.rdr div.rdr_commentSet:last-child,
-div.rdr_sandbox div.rdr div.rdr_commentSet.rdr_lastchild       {border:none !important;} /*not the end of the world if this fails in IE, but compensate later*/
 
 div.rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy          {font: bold 11px Arial !important; color:#666 !important; overflow:auto !important; padding-top:8px !important;}
 div.rdr_sandbox div.rdr div.rdr_commentSet div.rdr_commentBy a        {font-style:italic !important; }
@@ -593,7 +600,7 @@ div.rdr_sandbox div.rdr_tag_details.rdr_boomarklet {
   bottom:42px !important;
 }
 div.rdr_sandbox div.rdr_tag_details a.rdr_tag {
-  margin-left:5px !important;
+  /*margin-left:5px !important;*/
 }
 div.rdr_sandbox div.rdr_tag_details div.rdr_counts {
   display:inline-block !important;
@@ -636,13 +643,9 @@ table.rdr_tags a.rdr_tag  {
 }
 /* the media tags need their own formatting */
 div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag  {
-  display:block !important;
+  /*display:block !important;
   float:left !important;
-  background:url("../images/tag_bg.png") 0px 0px repeat !important;
-}
-div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_custom_tag:hover,
-div.rdr_indicator_details_for_media table.rdr_tags a.rdr_tag.rdr_custom_tag  {
-  background:none !important;
+  background:url("../images/tag_bg.png") 0px 0px repeat !important;*/
 }
 
 div.rdr_sbRolloverTable a.rdr_tag:hover,
@@ -658,8 +661,6 @@ table.rdr_tags div.rdr_cell_wrapper {
     text-align:center !important;
     background:url("../images/tag_bg.png") top left repeat !important;
 }
-table.rdr_tags div.rdr_cell_wrapper.rdr_custom_tag_container:hover,
-table.rdr_tags div.rdr_cell_wrapper.rdr_custom_tag_container { background:none !important; }
 
 table.rdr_tags div.rdr_cell_wrapper:hover {
     background:url("../images/tag_bg_hover.png") top left repeat !important;
@@ -707,8 +708,7 @@ table.rdr_tags span.rdr_comment_indicator {
 div.rdr a.rdr_tag span.rdr_tag_count    { 
     cursor: pointer !important;
     display: inline-block !important;
-    font-size: 11px !important;
-    padding: 4px 5px !important;
+    padding: 0 5px !important;
     text-align: center !important;
     position:relative !important;
     z-index:2 !important;
@@ -735,50 +735,49 @@ div.rdr a.rdr_tag span.rdr_tag_count    {
     margin-left: 0px !important;
 }
 
-table.rdr_tags a.rdr_tag.rdr_custom_tag     {
-    padding: 0px !important;
+
+/*need to rack up some more css points :( */
+div.rdr_sandbox div.rdr table.rdr_tags a.rdr_custom_tag,
+div.rdr div.rdr_tag_details a.rdr_custom_tag {
+    padding: 4px !important;
     /*match padding of div.rdr a.rdr_tag -- use margin instead so it's not clickable*/
-    margin: 8px !important;
+    /*compensate for input padding below also, they should add up. --- */
     height: auto !important;
 }
 
-div.rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag input,
-div.rdr a.rdr_tag.rdr_custom_tag input{
+
+div.rdr_sandbox div.rdr table.rdr_tags a.rdr_custom_tag input,
+div.rdr div.rdr_tag_details a.rdr_custom_tag input{
     background: transparent !important;
-    border: 0 !important;
-    -webkit-box-shadow:none !important;
-    -moz-box-shadow:none !important;
-    box-shadow:none !important;
-    color: #599fcb !important;
-    font-size:13px !important;
-    padding: 0px !important;
+    border: none !important;
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+    font-weight: bold !important; 
+    padding: 4px !important;
     max-width: 90px !important;
     cursor: pointer !important;
-    margin-top: 3px !important;
+    color: #999 !important;
 }
-
-div.rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag:hover input,
-div.rdr a.rdr_tag.rdr_custom_tag:hover input,
-div.rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag input:focus,
-div.rdr a.rdr_tag.rdr_custom_tag input:focus {
-    color:#454545 !important;
-}
-
-div.rdr_sandbox div.rdr a.rdr_tag.rdr_custom_tag input:focus,
-div.rdr a.rdr_tag.rdr_custom_tag input:focus {
-    cursor: default !important;
-}
-
-
-div.rdr a.rdr_tag.rdr_custom_tag input.rdr_default {
+div.rdr div.rdr_tag_details a.rdr_custom_tag input.rdr_default {
     font-style: italic !important;
-    font-size:11px !important;
 }
 
-div.rdr a.rdr_tag.rdr_custom_tag:hover,
-div.rdr a.rdr_tag.rdr_custom_tag.rdr_hover { color:#008be4 !important; /*background:#fff !important; */}
+div.rdr_sandbox div.rdr table.rdr_tags a.rdr_custom_tag:hover input,
+div.rdr div.rdr_tag_details a.rdr_custom_tag:hover input,
+div.rdr_sandbox div.rdr table.rdr_tags a.rdr_custom_tag input:focus,
+div.rdr div.rdr_tag_details a.rdr_custom_tag input:focus {
+    color: #599fcb !important;
+}
 
-div.rdr.rdr-summary div.rdr_info            { clear: both !important; margin: 5px !important; padding: 5px !important; border: 1px solid #ccc !important; background:#fff !important; display:none;; }
+div.rdr_sandbox div.rdr table.rdr_tags a.rdr_custom_tag input:focus,
+div.rdr div.rdr_tag_details a.rdr_custom_tag input:focus {
+    cursor: default !important;
+    color:#666 !important;
+}
+
+div.rdr.rdr-summary div.rdr_info            { clear: both !important; margin: 5px !important; padding: 10px !important; border: 1px solid #ccc !important; background:#fff !important; display:none;; }
 div.rdr.rdr-summary div.rdr_info em         { font-style:italic !important; }
 div.rdr.rdr-summary div.rdr_info ins        { text-decoration:none !important; }
 div.rdr.rdr-summary div.rdr_info ins img    { margin:0 !important; padding:0 !important; border:0 !important;}
@@ -787,6 +786,9 @@ div.rdr.rdr-summary div.rdr_info a.rdr_share_link img    { max-width:20px !impor
 
 div.rdr.rdr-summary img.rdr_summary_help  { border:0 !important;position:absolute !important;right:3px !important;top:3px !important;background:url(../images/readr_icons.png) -96px -1px no-repeat !important;cursor:pointer !important;width:13px !important;height:13px !important; }
 div.rdr.rdr-summary img.rdr_summary_help:hover  { background-position: -79px -1px !important; }
+
+/*consolotate with above.*/
+div.rdr_sandbox div.rdr_info {padding: 10px 10px 2px 10px !important;}
 
 /* summary widget */
 #rdr-page-summary {position:relative !important;}
@@ -929,28 +931,33 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   color:#666 !important;
   font-size:11px !important;
   padding-left:5px !important;
+  /*this border will fade into the side if it wraps to be the first on the left*/
+  border-left: 1px solid #ccc !important;
+  left: -1px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle:hover {
   background: none !important;
 }
+
+div.rdr.rdr-summary div.rdr-sum-reactions div.rdr_reactToArticle_inner{
+    margin-top: 7px !important;
+}
+
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle span{
-    top: 4px !important;
     position: relative !important;
+    top: 0px !important;
+    left: 4px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a {
   display:inline-block !important;
   border-top:0 none !important;
-  padding: 6px 10px 4px 10px !important;
+  padding: 0 10px !important;
 }
-div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
-  border-right:1px solid #ccc !important;
-}
-
-/*do we need this?*/
-div.rdr_socialShareWrap.locateWithSummaryWidget div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
-  border-right:0 !important;
+div.rdr.rdr-summary div.rdr-sum-reactions span{
+  top: 10px !important;
+  position: relative !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
@@ -1002,7 +1009,7 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1 {
   font-size:18px !important;
   border-bottom:1px solid #999 !important;
   padding-bottom:5px !important;
-  margin-bottom:8px !important;
+  margin-bottom:0px !important;
 }
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover table {
   min-width:150px !important;
@@ -1017,10 +1024,13 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr:hover {
 }
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions td {
   text-align:center !important;
-  padding-bottom:10px !important;
-  border-bottom:1px solid #ddd !important;
+  padding:10px !important;
   cursor:auto !important;
 }
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions.has_other_reactions td {
+    border-bottom:1px solid #ddd !important;
+}
+
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count {
   text-align:center !important;
   width:60px !important;
@@ -1047,7 +1057,6 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_content {
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag{
   display:inline-block !important;
   white-space:normal !important;
-  padding: 8px 5px 0 !important;
 }
 
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover ins    { text-decoration:none !important; }
@@ -1056,6 +1065,7 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover a.rdr_share_link img    {
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .feedbackMsg {
     display: block !important;
     clear: both !important;
+    font-size: 12px !important;
 }
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .feedbackMsg .rdr_label_icon{
     height: 18px !important;
@@ -1067,20 +1077,22 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .feedbackMsg .rdr_label_i
     background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent !important;
 }
 
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper, div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_select_user_board {
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper,
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_select_user_board,
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_tipReactToOtherStuff {
     display: block !important;
     clear: both !important;
-    margin: 8px 0 !important;
+    margin: 14px 0 !important;
 }
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_select_user_board div.rdr_success {
   display:inline-block !important;
 }
 
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .shareWrapper strong.rdr_share_it {
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover strong.rdr_save_it,
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover strong.rdr_share_it {
     margin-right: 6px !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .tipReactToOtherStuff {
-    clear: both !important;
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover .rdr_tipReactToOtherStuff {
     line-height: 1.2em !important;
 }
 
