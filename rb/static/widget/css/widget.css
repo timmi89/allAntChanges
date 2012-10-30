@@ -341,7 +341,12 @@ div.rdr_sandbox div.rdr div.rdr_header                         {
 div.rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:5px 0 !important; }
 div.rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !important; }
 div.rdr_sandbox div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none;;}
-div.rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace                { background:url("../images/tag_bg.png") top left repeat !important; position:relative !important; overflow:hidden !important; min-width: 150px !important; }
+div.rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace        { 
+    background: #fbfbfb !important;
+    position:relative !important;
+    overflow:hidden !important;
+    min-width: 150px !important;
+}
 div.rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; float:left !important; display:block !important;}
 div.rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 div.rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
@@ -355,7 +360,7 @@ div.rdr_sandbox div.rdr_indicator_details_for_media div.rdr_body div.jspVertical
     right:11px !important;
 }
 
-div.rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:14px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;}
+div.rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;}
 
 div.rdr_sandbox div.rdr button {
     border:1px solid #aaa !important; 
@@ -552,8 +557,12 @@ div.rdr a.rdr_tag     {
     font-size: 13px !important;
     font-style: normal !important;
     font-weight: bold !important;
-    height: 34px !important;
-    padding: 8px !important;
+    height: 30px !important;
+    
+    /*padding: 8px !important;*/
+    /*bias it a little low so it looks even*/
+    padding: 9px 8px 7px 8px !important;
+
     position: relative !important;
     text-decoration: none !important;
     text-transform: none !important;
@@ -659,7 +668,6 @@ table.rdr_tags div.rdr_cell_wrapper {
     width:100% !important;
     white-space:nowrap !important;
     text-align:center !important;
-    background:url("../images/tag_bg.png") top left repeat !important;
 }
 
 table.rdr_tags div.rdr_cell_wrapper:hover {
@@ -865,7 +873,7 @@ div.rdr.rdr-summary td.rdr_rb_logo {
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:7px 1px 0 5px !important;
+    padding:6px 1px 0 5px !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard img {
     margin:0 !important;
@@ -905,7 +913,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label {
   color:#888 !important;
   font-size:11px !important;
   font-family:'Helvetica',Arial,sans-serif;
-  padding: 5px 10px !important;
+  padding: 0 10px !important;
+  position: relative !important;
+  top: 1px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover {
   text-decoration:none !important;
@@ -932,7 +942,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   font-size:11px !important;
   padding-left:5px !important;
   /*this border will fade into the side if it wraps to be the first on the left*/
-  border-left: 1px solid #ccc !important;
+  border-left: 1px dotted #ccc !important;
   left: -1px !important;
 }
 
@@ -941,7 +951,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle:hover {
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr_reactToArticle_inner{
-    margin-top: 7px !important;
+    margin-top: -4px !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle span{
@@ -953,10 +963,8 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle span{
 div.rdr.rdr-summary div.rdr-sum-reactions a {
   display:inline-block !important;
   border-top:0 none !important;
-  padding: 0 10px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions span{
-  top: 10px !important;
   position: relative !important;
 }
 
@@ -966,7 +974,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
   border-left:0 none !important;
-  margin-left:-15px !important;
+  margin-left:-13px !important;
   padding-left:0 !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
@@ -982,15 +990,20 @@ div.rdr.rdr-summary.rdr_bookmarklet {
   border-left: none !important;
 }
 div.rdr.rdr-summary.rdr_bookmarklet div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
-  background:url("../images/summary_box_arrow.png") no-repeat scroll -1px 0 transparent !important;
-  height:8px;
-  width:10px;
+    background:url("../images/summary_box_arrow.png") no-repeat scroll -1px 0 transparent !important;
+    height:8px !important;
+    width:10px !important;
+    position: relative !important;
+    margin: 0px !important;
+    left: 2px !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
-  background:url("../images/summary_box_arrow.png") no-repeat scroll -1px -8px transparent !important;
-  height:8px;
-  width:10px;
-  margin:0 !important;
+    background:url("../images/summary_box_arrow.png") no-repeat scroll -1px -8px transparent !important;
+    height:8px !important;
+    width:10px !important;
+    position: relative !important;
+    margin: 0px !important;
+    left: 2px !important;
 }
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover {
   max-width:320px !important;
@@ -1459,6 +1472,7 @@ div.rdr_helper_text {
   margin: 0 6px 8px 0 !important;
   padding: 4px 7px 0px !important;
   width: 160px !important;
+  line-height: 1.2em;
 }
 div.rdr_sandbox #rdr_indicator_details_wrapper{
     z-index:11001 !important; /*should be larger than the indicator z-index*/
@@ -1613,8 +1627,7 @@ div.rdr_sandbox div.rdr_indicator_details_for_media {
     box-shadow: 0 0px 4px #ccc !important;
     -moz-box-shadow: 0 0px 4px #ccc !important;
     -webkit-box-shadow: 0 0px 4px #ccc !important;
-    background:url("../images/tag_bg.png") 0px -14px repeat !important;
-    border-width:0 !important;
+    background: #fbfbfb !important;
 }
 div.rdr_sandbox.rdr_media_details div.rdr_indicator_details_for_media {
   height:auto;
