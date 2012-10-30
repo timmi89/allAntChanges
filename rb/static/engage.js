@@ -11,6 +11,9 @@ window.READRBOARDCOM = window.readrboard = RDR;
  
 RDR.hasLoaded = true;
 
+/*tied to div.rdr a.rdr_tag height*/
+RDR.summaryWidgetMaxHeight = 68;
+
 RDR.engageScript = document.getElementById("readrboardscript") || findEngageScript();
 RDR.engageScriptSrc = RDR.engageScript.src;
 
@@ -1115,6 +1118,10 @@ function readrBoard($R){
                         }, 333, 'swing' );
 
                         $rindow.data( 'initialWidth', rindowWidth );
+
+
+                        //todo
+                        $rindow.find('div.rdr_cell_wrapper a.rdr_tag').css({'width':'100%'});
 
                         // return $rindow to RDR.rindow.make
                         return $rindow;
@@ -7138,13 +7145,13 @@ function $RFunctions($R){
                                 $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
-                            // if ( $sbRollover.height() > 64 && !$visibleReactions.is(':animated') ) {
+                            // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             if (
                                 $this.hasClass('rdr-too-many-reactions') &&
                                 !$this.hasClass('rdr_stayExpanded') &&
                                 !$visibleReactions.is(':animated')
                             ){
-                                $visibleReactions.height(64).css('max-height','none').animate({ height:$sbRollover.height() });
+                                $visibleReactions.height( RDR.summaryWidgetMaxHeight ).css('max-height','none').animate({ height:$sbRollover.height() });
                             }
                         },
                         function() {
@@ -7152,13 +7159,13 @@ function $RFunctions($R){
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
                                 $sbRollover = $visibleReactions.find('div');
 
-                            // if ( $visibleReactions.height() > 64 && !$visibleReactions.is(':animated') ) {
+                            // if ( $visibleReactions.height() > 68 && !$visibleReactions.is(':animated') ) {
                             if (
                                 $this.hasClass('rdr-too-many-reactions') &&
                                 !$this.hasClass('rdr_stayExpanded') &&
                                 !$visibleReactions.is(':animated') 
                             ){
-                                $visibleReactions.animate({ height:64 });
+                                $visibleReactions.animate({ height: RDR.summaryWidgetMaxHeight });
                             }
                         }
                     );
@@ -7187,7 +7194,13 @@ function $RFunctions($R){
                         if ( RDR.group.call_to_action == "" ) {
                             RDR.group.call_to_action = "What's your reaction?";
                         }
-                        var $reactToArticle = $('<a class="rdr_tag rdr_reactToArticle"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" /> '+RDR.group.call_to_action+' <img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></a>');
+                        var $reactToArticle = $(
+                            '<a class="rdr_tag rdr_reactToArticle"><img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                '<span>'+RDR.group.call_to_action+
+                                    '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                '</span>'+
+                            '</a>'
+                        );
                         $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                         writePageReactionPills( $reactToArticle, page );
                     } else {
@@ -7218,7 +7231,7 @@ function $RFunctions($R){
 
                     // }
 
-                    if ( $react.find('div').height() > 64 ) {
+                    if ( $react.find('div').height() > RDR.summaryWidgetMaxHeight ) {
                         $summary_widget.addClass('rdr-too-many-reactions');
                     }
 
