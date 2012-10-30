@@ -2,7 +2,7 @@
 //dont bother indenting this top level anonymous function
 
 var RDR = {};
-if(RDR.hasLoaded){
+if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
     return;
 }
 
@@ -88,7 +88,7 @@ function readrBoard($R){
                 sharebox_show_multipage: false,
                 sharebox_fade: true,
                 sharebox_should_own: true,
-                // sharebox_selector: '.rdr_socialShareBoxHook',
+                // sharebox_selector: '.readrboardShareWidget',
                 sharebox_selector: '',
                 //social brands
                 sharebox_readrboard: true,
@@ -1857,6 +1857,11 @@ function readrBoard($R){
             insertParagraphHelpers: function() {
                 $('.rdr-node').not('img,iframe,.rdr-hashed').each( function() {
                     var hash = $(this).data('hash');
+                    
+                    //todo: this hash was undefined sometimes for some reason and was causing an error - find out why
+                    if(!hash){
+                        return;
+                    }
                     RDR.actions.indicators.init(hash, true);
                 });
                 $RDR.dequeue('initAjax');
@@ -4724,6 +4729,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 init: function(hash, isHelper){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
+                    
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
@@ -6505,12 +6511,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 },
                 initShareBox: function(pageId){
+                    var widgetKeyEl = RDR.group.sharebox_selector;
+                    var locateWithSummaryWidget;
                     
-                    var widgetKeyEl = RDR.group.sharebox_selector ? 
-                        RDR.group.sharebox_selector : 
-                        RDR.group._summary_widget_selector;
-
-
+                    //If no sharebox_selector is specified, use the summary widget selector as a locator
+                    if( widgetKeyEl === "" ){
+                        widgetKeyEl = RDR.group._summary_widget_selector;
+                        locateWithSummaryWidget = true;
+                    }
+                        
                     //For now, on multipages we can only show the readrboard share widget.
                     //shouldn't be too hard to update later though - at least for those widgets that let you specify a url
                     //instead of it grabbing the canonical from the page
@@ -6538,8 +6547,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         shouldOwnSummaryBar: RDR.group.sharebox_should_own,
                         fadeInOnLoad: RDR.group.sharebox_fade,
                         socialBrands: socialBrands,
-                        //use the summary_widget_selector as a default.
-                        widgetKeyEl: widgetKeyEl
+                        widgetKeyEl: widgetKeyEl,
+                        locateWithSummaryWidget: locateWithSummaryWidget
                     }
                     
                     var $container = $('.rdr-page-container-'+pageId);    
@@ -7383,7 +7392,6 @@ function $RFunctions($R){
                 function writePageReactionPills($a, page) {
                     $a.hoverIntent(
                         function() {
-                            
                             var $this = $(this),
                                 hash = $this.closest('.rdr-page-container').data('hash'),
                                 page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
@@ -7429,6 +7437,7 @@ function $RFunctions($R){
                                     tag.body = $input.val();
 
                                     args = { tag:tag, hash:hash, kind:"page" };
+                                    debugger;
                                     RDR.actions.interactions.ajax( args, 'react', 'create' );
                                     $input.blur();
                                 }
@@ -7916,15 +7925,19 @@ function $RFunctions($R){
                 //note that there are callbacks which will get triggered from the DOM above when it renders.
                 //it embeds scripts which will eventually call P.isLoadedCallback which will call methods.renderReadrBoardButton
 
-                var hasSelector = ( settings.widgetKeyEl );
-                
+                var hasSelector = !!settings.widgetKeyEl;
                 var $wrap = $('<div class="rdr_socialShareWrap" />');
                 if( hasSelector ){
                     $this.find(settings.widgetKeyEl).prepend($wrap);
                 }else{
+                    //this isn't used for now - test again if we want to use it again.
                     $wrap.appendTo('#rdr_sandbox');
                     $widget.addClass('rdr_shareWidget_default');
                 }
+                if(settings.locateWithSummaryWidget){
+                    $wrap.addClass('locateWithSummaryWidget');
+                }
+
                 $wrap.append($widget);
                 methods.update.call(this);
                 
@@ -8013,9 +8026,11 @@ function $RFunctions($R){
                 //hack to not include the outer page if it has child pages.  We need to fix that bug of having an outer page.
                 var $page = $this.closest('.rdr-page-container');
                 var hasChildPages = $page.find('.rdr-page-container').length > 0;
-                if(hasChildPages){
+                var pageId = $page.data('page_id');
+                if(hasChildPages && pageId){
                     return true;
                 }
+                return false;
             }
 
         }

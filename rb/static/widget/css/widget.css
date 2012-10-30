@@ -785,6 +785,7 @@ div.rdr.rdr-summary {
     clear:both !important;
     text-indent:0 !important;
     position:relative !important;
+    z-index: 12000 !important;
 }
 
 /*blunt attack for now*/
@@ -921,9 +922,12 @@ div.rdr.rdr-summary div.rdr-sum-reactions a {
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
   border-right:1px solid #ccc !important;
 }
-div.rdr_socialShareWrap div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
+
+/*do we need this?*/
+div.rdr_socialShareWrap.locateWithSummaryWidget div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_lastchild {
   border-right:0 !important;
 }
+
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
   text-decoration:none !important;
   background:#d8e6f6 !important;
@@ -1125,7 +1129,7 @@ div.rdr_sandbox .rdr_widget_bar{
 
 
 /*shareWidget*/
-div.rdr_socialShareWrap{
+div.rdr_socialShareWrap.locateWithSummaryWidget{
     position: absolute !important;
     left: -100px !important;
     display: block !important;
@@ -1136,7 +1140,7 @@ div.rdr_socialShareWrap{
     padding: 0 !important;
     z-index: 90000 !important;
 }
-div.rdr_shareWidget{
+div.rdr_socialShareWrap.locateWithSummaryWidget div.rdr_shareWidget{
     background-color: #eee !important;
     box-shadow:1px 1px 4px #CCCCCC !important;
     text-align: center !important;
@@ -1146,11 +1150,12 @@ div.rdr_shareWidget{
     position: relative;
 }
 
-li.rdr_social_brand iframe{
+div.rdr_socialShareWrap.locateWithSummaryWidget li.rdr_social_brand iframe{
     /* weird that the '.rdr *' css is overriding the iframe width attribute. */
     max-width: 58px !important;
 }
 
+/*this isn't used right now...*/
 div.rdr_shareWidget.rdr_shareWidget_default{
     top:100px !important;
     left: 0 !important;
@@ -1158,6 +1163,7 @@ div.rdr_shareWidget.rdr_shareWidget_default{
     padding: 2px 0 !important;
     background-color: #eee !important;
 }
+
 div.rdr_shareWidget .rdr_summaryBarHook{
     position: absolute !important;
     top: 0 !important;
@@ -1192,11 +1198,15 @@ div.rdr_shareWidget .rdr_innerWrap ul{
 div.rdr_shareWidget .rdr_innerWrap ul li{
     display: block !important;
     list-style: none outside none !important;
-    margin: 10px !important;
     padding: 0 !important;
+    margin: 0 !important;
     background: none !important;
     box-sizing: border-box !important;
 }
+div.rdr_socialShareWrap.locateWithSummaryWidget div.rdr_shareWidget .rdr_innerWrap ul li{
+    margin: 10px !important;
+}
+
 .readrBoardSocialWidgetButton{
     cursor: pointer;
 }
@@ -1206,6 +1216,8 @@ div.rdr_shareWidget .rdr_innerWrap ul li{
     visibility: visible !important;
     position: relative !important;
     vertical-align:top !important;
+    width: 55px !important;
+    margin: 3px auto !important;
 }
 .readrBoardSocialWidgetButton .rdr_shareBubble{
     position: relative !important;
@@ -1213,7 +1225,6 @@ div.rdr_shareWidget .rdr_innerWrap ul li{
     border: 1px solid #BBBBBB !important;
     border-radius: 3px 3px 3px 3px !important;
     min-height: 18px !important;
-    min-width: 15px !important;
 }
 
 .readrBoardSocialWidgetButton .rdr_bubbleTriangleWrap{
