@@ -270,7 +270,7 @@ function readrBoard($R){
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
                 
-                RDR.rindow.jspUpdate( $rindow, setWidth, kind );
+                RDR.rindow.jspUpdate($rindow);
 
                 //good god no!!!!!  :)
                 return;
@@ -329,7 +329,7 @@ function readrBoard($R){
                         visiblePane.$elm.find('div.jspPane').width(setWidth);
                     }
                 }
-                RDR.rindow.jspUpdate( $rindow, setWidth, kind );
+                RDR.rindow.jspUpdate($rindow);
             },
             updatePageTagMessage: function(args, action) {
 
@@ -405,7 +405,7 @@ function readrBoard($R){
                                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
                                         });
                                         RDR.actions.indicators.update(hash);
-                                        
+
                                     });
                                 }
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
@@ -611,7 +611,7 @@ function readrBoard($R){
                     RDR.rindow.updateSizes( $rindow );
                 }
             },
-            jspUpdate: function( $rindow, setWidth, kind ) {
+            jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
 
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
@@ -621,7 +621,6 @@ function readrBoard($R){
                     if( !$this.hasClass('jspScrollable') ){
                         // IE.  for some reason, THIS fires the scrollstop event.  WTF:
                         $(this).jScrollPane({ showArrows:true });
-                        // $(this).jScrollPane({ contentWidth:setWidth, showArrows:true });
                     }else{
                         var API = $(this).data('jsp');
                         API.reinitialise();
