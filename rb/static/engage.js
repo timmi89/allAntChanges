@@ -183,14 +183,17 @@ function readrBoard($R){
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0);
 
-                if ( !$rdr_body_wrap.find('div.'+className).length ) {
-                    var $newPanel = $('<div class="rdr_body '+className+'"/>'),
+                //not sure if this will ever happen - could just be legacy stuff
+                var $existingPanel = $rdr_body_wrap.find('div.'+className);
+                $existingPanel.remove();
+
+                var $newPanel = $('<div class="rdr_body '+className+'"/>'),
                         column_count = ( $rdr_body_wrap.find('div.rdr_body').length ) + 1;
-                    $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
-                }
+        
+                return $newPanel;
             },
             panelUpdate : function( $rindow, className, $content, replaceOrAppend, bindings ) {
-                //RDR.rindow.panelUpdate
+                //RDR.rindow.panelUpdate:
                 if ( !$rindow ) return;
 
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
@@ -266,6 +269,13 @@ function readrBoard($R){
                 $('#rdr_indicator_' + hash).hide();
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
+                
+                RDR.rindow.jspUpdate( $rindow, setWidth, kind );
+
+                //good god no!!!!!  :)
+                return;
+
+
                 //RDR.rindow.updateSizes:
                 // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
                 // RDR.rindow.jspUpdate( $rindow );
@@ -386,18 +396,16 @@ function readrBoard($R){
                                         $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 }
                                 if ( kind != "text" ) {
-                                    $success.prepend('<div class="rdr_back">&lt;&lt; Back</div>');
-                                    $success.find('div.rdr_back').click( function() {
-                                        var headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions",
-                                            //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
-                                            headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
-                                                            '<h1>'+headerText+'</h1>';
-
-                                        RDR.rindow.updateHeader( $rindow, headerContent );
+                                    var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                                    $success.prepend($backButton);
+                                    $backButton.click( function() {
+                                                        
                                         $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
                                         RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
                                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
                                         });
+                                        RDR.actions.indicators.update(hash);
+                                        
                                     });
                                 }
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
@@ -1138,7 +1146,6 @@ function readrBoard($R){
             },
             make: function(rindowType, options){
                 //RDR.rindow.make:
-
                 //temp tie-over
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
@@ -1324,7 +1331,6 @@ function readrBoard($R){
             },
             update: function(hash, diffNode){
                 //RDR.rindow.update:
-
                 var summary = RDR.summaries[hash],
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
@@ -1562,7 +1568,14 @@ function readrBoard($R){
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
-                    $indicatorAnchor = $('<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'"><span class="rdr rdr_react_icon">' +val.item+ '</span> <span class="rdr rdr_react_label">React to this</span></a>');
+                    $indicatorAnchor = $(
+                        '<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">'+
+                            '<span class="rdr rdr_react_icon">'+val.item+'</span>'+
+                            '<span class="rdr rdr_react_label">React to this</span>'+
+                            '<div class="rdr_clear"></div>'+
+                        '</a>'
+                    );
+                    
                     $indicatorAnchor.click(function(){
                         val.onclick();
                         return false;
@@ -4794,7 +4807,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     _setupIndicators();
 
                     //run setup specific to this type
-                    scope.utils.kindSpecificSetup[kind]( hash );
+                    RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
                     RDR.actions.indicators.update(hash);
 
                     //todo: combine this with the kindSpecificSetup above right?
@@ -4844,10 +4857,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 update: function(hash){
                     //RDR.actions.indicators.update:
-                    var scope = this;
-
                     var summary = RDR.summaries[hash];
-                    //check if $indicator does not exist and run scope.init if needed.
+                    //check if $indicator does not exist and run RDR.actions.indicators.init if needed.
                     if( !summary.hasOwnProperty('$indicator') ){
                         //init will add an $indicator object to summary and then re-call update.  This failsafe isn't really needed..
                         summary.$indicator = "infinte loop failsafe.  This will get overritten immediately by the indicators.init function.";
@@ -4876,7 +4887,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if(summary.kind !== 'text'){
                         //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                         $indicator_details.css({ 'visibility':'hidden' }).show();
-                        scope.utils.makeDetailsContent( hash );
+                        RDR.actions.indicators.utils.makeDetailsContent( hash );
                         $indicator_details.css({ 'visibility':'visible' }); //.hide();
 
                     }
@@ -4967,6 +4978,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     },
                     makeDetailsContent: function( hash ){
+                        debugger;
                         //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
@@ -4976,52 +4988,34 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        if ( !$indicator_details.find('div.rdr_body_wrap').length ) {
-                            var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
-                                $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
-                                modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0,
-                                headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=(175+modForIE)) ? "Your reaction to this?":"React:",
-                                // remember image: <div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
-                                $headerContent = $('<div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
-                                                '<h1>'+headerText+'</h1>'),
-                                $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
+                        var $existing = $indicator_details.find('div.rdr_body_wrap');
+                        $existing.remove();
 
-                            $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
-                                RDR.events.track('click_rb_icon_rindow');
-                            });
+                    
+                        var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
+                            $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
+                            modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0,
+                            headerText = (summary.counts.tags>0) ? "Reactions": ($indicator_details.width()>=(175+modForIE)) ? "Your reaction to this?":"React:",
+                            // remember image: <div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
+                            $headerContent = $('<div class="rdr_indicator_stats"><a href="'+RDR_baseUrl+'/" target="_blank"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></a><span class="rdr_count"></span></div>' +
+                                            '<h1>'+headerText+'</h1>'),
+                            $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
-                            $detailsHeader.find('div.rdr_loader').after( $headerContent );
-                            if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
-                            //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
-                            $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
-                            $indicator_details_innerWrap.append( $tagsListContainer );
+                        $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
+                            RDR.events.track('click_rb_icon_rindow');
+                        });
 
-                            //builds out the $tagsList contents
-                            if (summary.kind!=="text" && !$indicator_details.find('div.rdr_view_success').length ){
-                                $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
-                                scope.makeTagsListForMedia( hash );
-                            }
+                        $detailsHeader.find('div.rdr_loader').after( $headerContent );
+                        if ( summary.counts && summary.counts.tags ) $detailsHeader.find('h1').text( summary.counts.tags + " Reactions" );
+                        //use an innerWrap so that we can move padding to that and measuring the width of the indicator_details will be consistent
+                        $indicator_details.empty().append( $detailsHeader, $indicator_details_innerWrap );
+                        $indicator_details_innerWrap.append( $tagsListContainer );
 
-                            // $indicator_details.delegate('div.rdr_remember_image a', 'click', function() {
-                            //     RDR.rindow.updateHeader( $indicator_details, '<div class="rdr_indicator_stats"><img src="'+RDR_staticUrl+'/widget/images/blank.png" class="no-rdr rdr_pin"><span class="rdr_count"></span></div><h1>Save This</h1>' );
-                            //     RDR.rindow.panelCreate( $indicator_details, 'rdr_bookmark_media' );
-
-                            //     var $noteBox = $indicator_details.find('div.rdr_bookmark_media').addClass('rdr_tags_list');
-
-                            //     // ok, get the content associated with this tag!
-                            //     var $backToReactions = $('<div class="rdr_back">&lt;&lt; Back</div>');
-
-                            //     $backToReactions.click( function() {
-                            //         RDR.rindow.updateHeader( $indicator_details, $headerContent );
-                            //         RDR.rindow.panelHide( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
-                            //     });
-                            //     $noteBox.append( $backToReactions );
-
-                            //     scope.makeTagsListForMedia( hash, 'bookmark' );
-                            //     RDR.rindow.panelShow( $indicator_details, 'rdr_bookmark_media', $indicator_details.data('initialWidth') );
-                            // });
+                        //builds out the $tagsList contents
+                        if (summary.kind!=="text" && !$indicator_details.find('div.rdr_view_success').length ){
+                            $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
+                            RDR.actions.indicators.utils.makeTagsListForMedia( hash );
                         }
-
                     },
                     makeTagsListForMedia: function( hash, actionType ){
                         var summary = RDR.summaries[hash],
@@ -5700,7 +5694,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 // do stuff, populate the rindow.
                 RDR.rindow.updateHeader( $rindow, headerContent );
-                RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
+                
+                var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
+                $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
 
                 RDR.rindow.updateTagMessage( args );
 
@@ -5739,10 +5736,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 // do stuff, populate the rindow.
                 RDR.rindow.updateHeader( $rindow, headerContent );
-                RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
 
-                _makeOtherComments();
-                _makeCommentBox();
+                var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
+                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
+                $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
+
+
+                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $otherComments );
+                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $commentBox, 'update' );
+                var $commentsWrap = $('<div class="rdr_commentsWrap"></div>');
+                var $backButton = _makeBackButton();
+                var $otherComments = _makeOtherComments();
+                var $commentBox = _makeCommentBox();
+                $commentsWrap.append($backButton, $otherComments, $commentBox);
+
+                $newPanel.append($commentsWrap);
 
                 var isMediaContainer = kind=="img" ||
                     kind=="imgage" ||
@@ -5764,7 +5772,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //todo: combine this with the tooltip for the tags
                     // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
-                    var $commentBox = $('<div class="rdr_commentBox"></div>').html(
+                    var $commentBox = $('<div class="rdr_commentBox rdr_innerWrap"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
                    //todo: combine this with the other make comments code
@@ -5833,7 +5841,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     // return $commentBox.append( $commentDiv );
                     $commentBox.append( $commentDiv )
-                    RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $commentBox, 'update' );
+                    return $commentBox;
+                }
+
+                function _makeBackButton(){
+                    var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                    $backButton.click( function() {
+                        $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
+                        RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
+                            $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
+                        });
+                        RDR.actions.indicators.update(hash);
+                    });
+                    return $backButton;
                 }
 
                 function _makeOtherComments(){
@@ -5864,27 +5884,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //else
 
                     // ok, get the content associated with this tag!
-                    var $otherComments = $('<div class="rdr_otherCommentsBox"></div>').hide().html(
-                        '<div class="rdr_back">&lt;&lt; Back</div>'+
-                        '<div class="rdr_comment_header"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>'
-                    );
-
-                    $otherComments.find('div.rdr_back').click( function() {
-                        if (kind=="text") {
-                            var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
-                                            '<h1>Reactions</h1>';
-                        } else {
-                            var headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions",
-                                //<div class="rdr_remember_image"><a href="javascript:void(0);"><span>&nbsp;</span></a></div>
-                                headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div>' +
-                                                '<h1>'+headerText+'</h1>';
-                        }
-                        RDR.rindow.updateHeader( $rindow, headerContent );
-                        $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
-                        RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
-                            $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
-                        });
-                    });
+                    var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
+                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
+                    $otherComments.append($header);
 
                     for ( var i in comments ) {
                         var this_comment = comments[i];
@@ -5892,7 +5894,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $otherComments.show();
 
-                            var $commentSet = $('<div class="rdr_commentSet" />'),
+                            var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
                                 $commentBy = $('<div class="rdr_commentBy" />'),
                                 $comment = $('<div class="rdr_comment" />'),
                                 $commentReplies = $('<div class="rdr_commentReplies" />'),
@@ -5905,14 +5907,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
                                 RDR.events.track('click_user_profile');
                             });
-                            $comment.html( '<div class="rdr_comment_body">"'+this_comment.body+'"</div>' );
+                            $comment.html(
+                                '<span class="rdr_quoteImg"></span>'+
+                                '<div class="rdr_comment_body">'+this_comment.body+'</div>'
+                            );
 
                             $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
                             $otherComments.append( $commentSet );
                         }
                     }
                     $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
-                    RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $otherComments );
+                    return $otherComments;
 
                 } //end makeOtherComments
             },
@@ -7431,7 +7436,7 @@ function $RFunctions($R){
                             if ( RDR.group.call_to_action == "" ) {
                                 RDR.group.call_to_action = "What's your reaction?";
                             }
-                            var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover" />')//chain
+                            var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover rdr_sbRollover_page" />')//chain
                                 .append('<h2>'+RDR.group.call_to_action+'</h2><div class="rdr_sbRolloverTable"/>');
 
                             $('#rdr_summary_tag_details').append( $sbRollover );
