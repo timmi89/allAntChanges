@@ -353,7 +353,9 @@ div.rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_innerWrap{
     padding: 8px !important;
 }
 
-div.rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; float:left !important; display:block !important;}
+div.rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; float:left !important; display:block !important; 
+    width: 100% !important;
+}
 div.rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
 div.rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
 

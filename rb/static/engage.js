@@ -211,7 +211,7 @@ function readrBoard($R){
                     */
                 }
             },
-            panelShow : function( $rindow, className, width, height, callback ) {
+            panelShow : function( $rindow, className, callback ) {
                 //RDR.rindow.panelShow
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
@@ -221,7 +221,6 @@ function readrBoard($R){
                 $showPanel.show().addClass('rdr-visible');
                 $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
                     if (callback) callback();
-                    RDR.rindow.updateSizes( $rindow, width, height );
                 });
             },
             panelHide : function( $rindow, className, width, height, callback ) {
@@ -269,67 +268,8 @@ function readrBoard($R){
                 $('#rdr_indicator_' + hash).hide();
             },
             updateSizes : function($rindow, setWidth, setHeight, kind) {
-                
-                RDR.rindow.jspUpdate($rindow);
-
-                //good god no!!!!!  :)
+                RDR.rindow.jspUpdate($rindow)
                 return;
-
-
-                //RDR.rindow.updateSizes:
-                // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
-                // RDR.rindow.jspUpdate( $rindow );
-                var rindowHeight = $rindow.height(),
-                    heightAdjustment = 36;
-                if ( $rindow.find('div.rdr_footer').length && $rindow.find('div.rdr_footer').css('display') != "none" ) {
-                    $rindow.css('padding-bottom','20px');
-                    heightAdjustment += 20;
-                } else {
-                    $rindow.css('padding-bottom','0px');
-                }
-
-                var visiblePane = {};
-                    visiblePane.height = 0;
-
-                visiblePane.$elm = ( $rindow.find('div.rdr-visible').length ) ? $rindow.find('div.rdr-visible').eq(0) : $rindow.find('div.rdr_body').eq(0);
-                if (visiblePane.$elm.find('div.jspPane').length==1) {
-                    visiblePane.height = visiblePane.$elm.find('div.jspPane').height();
-                    visiblePane.which = "hasJspPane";
-                } else {
-                    visiblePane.height = visiblePane.$elm.height();
-                    visiblePane.which = "rdr_body";
-                }
-                if ( visiblePane.height > 0 ) {
-                    if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
-                    if ( setHeight ) { // override if height is passed in
-                        visiblePane.height = setHeight,
-                        heightAdjustment = 0;
-                    }
-                    $rindow.find('div.jspContainer').height( visiblePane.height+4 );
-
-                    // this section sets width.  I know, it's goofy.
-                    var rindow_width = $rindow.width();
-                    if ( !setWidth ) {
-                        var rdr_contentSpace_width = $rindow.find('div.rdr_contentSpace').width(),
-                            rdr_body_jspScrollable_width = $rindow.find('table.rdr_tags').width(),  // tag tables tend to be wider than what their containers claim they are, for some reason
-                            visible_content_pane_width = ( rdr_body_jspScrollable_width>rdr_contentSpace_width ) ? rdr_body_jspScrollable_width:rdr_contentSpace_width;
-                        var setWidth = ( visible_content_pane_width <= rindow_width ) ? rindow_width:visible_content_pane_width;
-                    } else {
-                        visiblePane.$elm.css('width', setWidth+'px' );
-                    }
-                    
-
-                    // still goofy, i know.
-                    if ( Math.abs( setWidth - rindow_width ) > 2  ) $rindow.animate({ width: setWidth, height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
-                    else $rindow.animate({ height:(visiblePane.height + heightAdjustment) }, { duration:333, queue:false } );
-
-                    if ( visiblePane.which == "hasJspPane" ) {
-                        visiblePane.$elm.find('div.jspContainer').width(setWidth);
-                        // visiblePane.$elm.find('div.jspPane').width(setWidth-8);
-                        visiblePane.$elm.find('div.jspPane').width(setWidth);
-                    }
-                }
-                RDR.rindow.jspUpdate($rindow);
             },
             updatePageTagMessage: function(args, action) {
 
@@ -396,6 +336,7 @@ function readrBoard($R){
                                         $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 }
                                 if ( kind != "text" ) {
+                                    debugger;
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
@@ -613,7 +554,6 @@ function readrBoard($R){
             },
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
-
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
@@ -626,13 +566,6 @@ function readrBoard($R){
                         API.reinitialise();
                     }
                 });
-
-                // TODO this is a firefox/mac hack.  chrome didn't need it, but it doesn't impact chrome.  weird.
-                // so, check and see if commenting these two lines out negatively impacts the width of the rindow
-                // in readmode, for text, after viewing comments then returning to the reaction list.
-                var $firstPane = $rindow.find('div.rdr_body').eq(0);
-                // if ( !$firstPane.hasClass('rdr-visible') ) $firstPane.find('div.jspPane').width($firstPane.width()-8);
-
             },
             getHeight: function( $rindow, options ) {
 
@@ -4977,7 +4910,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     },
                     makeDetailsContent: function( hash ){
-                        debugger;
+                        // debugger;
                         //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
@@ -5696,7 +5629,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 
                 var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
-                $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
+                $rdr_body_wrap.append( $newPanel );
 
                 RDR.rindow.updateTagMessage( args );
 
@@ -5705,13 +5638,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     kind=="med" ||
                     kind=="media";
 
-                var viewMoreRindowWidth = isMediaContainer ? $rindow.data('initialWidth'):300,
-                    viewMoreRindowHeight = isMediaContainer ? 180:296;
-
-                RDR.rindow.panelShow( $rindow, 'rdr_view_more', viewMoreRindowWidth, null, function() {
+                RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
                     // if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
-                RDR.rindow.updateSizes( $rindow, viewMoreRindowWidth, viewMoreRindowHeight, summary.kind );
+                RDR.rindow.updateSizes( $rindow );
 
                 RDR.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
             },
@@ -5738,7 +5668,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
-                $rdr_body_wrap.append( $newPanel ).width(10000); // we don't care about horizontal width.  just needs to be wide enough to hold all columns next to each other.
+                $rdr_body_wrap.append( $newPanel );
 
 
                 // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $otherComments );
@@ -5756,13 +5686,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     kind=="med" ||
                     kind=="media";
 
-                var commentRindowWidth = isMediaContainer ? $rindow.data('initialWidth'):300,
-                    commentRindowHeight = isMediaContainer ? 180:296;
-
-                RDR.rindow.panelShow( $rindow, 'rdr_view_more', commentRindowWidth, null, function() {
+                RDR.rindow.updateSizes( $rindow );
+                RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
                     if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
-                RDR.rindow.updateSizes( $rindow, commentRindowWidth, commentRindowHeight, summary.kind );
 
                 RDR.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
 
