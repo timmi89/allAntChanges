@@ -71,7 +71,8 @@ function readrBoard($R){
                 media_selector: "embed, video, object, iframe",
                 iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
-                initial_pin_limit: 30,
+                /*this is basically not used right now*/
+                initial_pin_limit: 300,
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
