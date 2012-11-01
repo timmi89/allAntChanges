@@ -233,8 +233,8 @@ div.section_content h1.sectionHeader {
                     if (index<8) {
                         $pie_chart_labels.append('<li><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
                         chart_data.push( [reaction.body, reaction.count] );
-                    } else {
-                        $other_reactions.append('<li class="large"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
+                    } else if (index<30) {
+                        $other_reactions.append('<li class="medium"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
                     }
                     index++;
                 });
