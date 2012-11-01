@@ -338,7 +338,7 @@ function readrBoard($R){
                                         $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
                                 }
                                 if ( kind != "text" ) {
-                                    debugger;
+                                    
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
@@ -4724,45 +4724,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     });
 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
-                    if (isHelper) {
-                        $indicator.addClass('rdr_helper').hover(
-                            function() {
-                                var selector = ".rdr-" + hash;
-
-                                var $indicator = $('#rdr_indicator_'+hash),
-                                $indicator_body = $('#rdr_indicator_body_'+ hash),
-                                $container = $('.rdr-'+hash);
-
-                                coords = {
-                                    top: $indicator_body.offset().top -8,
-                                    left: $indicator_body.offset().left -5
-                                };
-
-                                var $rindow = RDR.rindow.draw({
-                                    coords: coords,
-                                    container: hash,
-                                    mode:"read"
-                                });
-                                var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="http://local.readrboard.com:8080/static/widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
-                                            
-                                RDR.rindow.updateHeader( $rindow, headerContent );
-                                RDR.events.track('paragraph_helper_view');
-
-                                $contentSpace = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') );
-                                $contentSpace.html('<div class="rdr_helper_text">Select some text and click<br/><strong>React to this</strong></div>');
-                                $rindow.attr('id','rdr_helper').on('mouseleave', function() {$('#rdr_helper').remove();});
-                            },
-                            function() {}
-                        );
-                    }
-                    //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                    $indicator.css('visibility','hidden');
+                    // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                    // $indicator.css('visibility','hidden');
 
                     _setupIndicators();
 
                     //run setup specific to this type
                     RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
-                    RDR.actions.indicators.update(hash);
+
 
                     //todo: combine this with the kindSpecificSetup above right?
                     if (kind == 'text'){
@@ -4833,7 +4802,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $rindow = $indicator.$rindow;
                         var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="http://local.readrboard.com:8080/static/widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
-                        // debugger;
                         $contentSpace = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') );
                         $contentSpace.html('<div class="rdr_helper_text">Select some text and click<br/><strong>React to this</strong></div>');
                     }
@@ -5004,7 +4972,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     },
                     makeDetailsContent: function( hash ){
-                        // debugger;
                         //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
