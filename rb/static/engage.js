@@ -883,9 +883,9 @@ function readrBoard($R){
                         else if (event.keyCode == '27') { //esc
                             //return false;
                             $input.blur();
-                        } else if ( $input.val().length > 20 ) {
+                        } else if ( $input.val().length > 25 ) {
                             var customTag = $input.val();
-                            $input.val( customTag.substr(0, 20) );
+                            $input.val( customTag.substr(0, 25) );
                         }
                     });
                     // if ( $container ) $container.append( $a_custom, " " );
@@ -7473,9 +7473,9 @@ function $RFunctions($R){
                                 else if (event.keyCode == '27') { //esc
                                     //return false;
                                     $input.blur();
-                                } else if ( $input.val().length > 20 ) {
+                                } else if ( $input.val().length > 25 ) {
                                     var customTag = $input.val();
-                                    $input.val( customTag.substr(0, 20) );
+                                    $input.val( customTag.substr(0, 25) );
                                 }
                             });
 
