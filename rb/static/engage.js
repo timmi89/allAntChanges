@@ -219,6 +219,9 @@ function readrBoard($R){
             },
             panelShow : function( $rindow, className, callback ) {
                 //RDR.rindow.panelShow
+                
+                console.log('panelEvent - panelShow');
+
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
                     $showPanel = $rdr_body_wrap.find('div.'+className),
@@ -350,7 +353,9 @@ function readrBoard($R){
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
-                                                        
+
+                                        console.log('panelEvent');
+
                                         $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
                                         RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
                                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
@@ -432,6 +437,8 @@ function readrBoard($R){
 
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
+
+                                    console.log('panelEvent');
 
                                     var newArgs = {
                                         hash: args.hash,
@@ -939,6 +946,7 @@ function readrBoard($R){
                         summary['$rindow_'+settings.mode.toLowerCase()] = $rindow;
                         $rindow.addClass('rdr_'+settings.mode.toLowerCase());
                         /* END do some utility stuff */
+                        //lol wat ?
 
                         /* START populate the header */
                         if ( settings.mode == "writeMode" ) {
@@ -3968,6 +3976,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.find('.rdr_select_user_board').append( $success ).find('select').hide();
 
                             $success.find('a.rdr_undo').click( function() {
+
+                                console.log('panelEvent');
+
                                 RDR.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
                             });
                         }
@@ -4135,6 +4146,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '</div>'
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                        
+                                        console.log('panelEvent');
+
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
@@ -4160,6 +4174,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '</div>'
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                        
+                                        console.log('panelEvent');
+
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
@@ -5845,6 +5862,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 function _makeBackButton(){
                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                     $backButton.click( function() {
+
+                        console.log('panelEvent');
+
                         $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
                         RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
