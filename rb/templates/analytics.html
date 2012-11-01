@@ -147,6 +147,17 @@
 <script>
 $( 'section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
+// Radialize the colors
+Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+    return {
+        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+        stops: [
+            [0, color],
+            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+        ]
+    };
+});
+
 // put in external file...
 RB.analytics = {
 
@@ -186,16 +197,6 @@ RB.analytics = {
 						tag_count++;
 					}
 					$('section[role="most popular tags"] ol').html( $(other_tag_list) );
-					// Radialize the colors
-                Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-                    return {
-                        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-                        stops: [
-                            [0, color],
-                            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-                        ]
-                    };
-                });
                 
                 // Build the chart
                 var pie_chart;
@@ -211,7 +212,7 @@ RB.analytics = {
                     },
                     tooltip: {
                         // pointFormat: '{series.name}',
-                        enabled:false
+                        // enabled:false
                     },
                     plotOptions: {
                         series: {
@@ -418,9 +419,11 @@ RB.analytics = {
 						text: 'Interaction Distribution'
 					},
 					xAxis: {
+						labels: {enabled:false}
 					},
 					yAxis: {
-						min: 0
+						min: 0,
+						title: {text:null}
 					},
 					legend: {
 						backgroundColor: '#FFFFFF',
