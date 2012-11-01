@@ -180,7 +180,7 @@ RB.analytics = {
 							$pie_chart_labels.append('<li><a href="/group/'+RB.group.short_name+'/?s='+response[i].interaction_node__body+'">'+response[i].interaction_node__body+' <span>('+response[i].count+')</span></a></li>');
 							pie_chart_data.push( [response[i].interaction_node__body, response[i].count] );
 						} else {
-							var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
+							var sizeClass = "medium"; //( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
 							other_tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
 						}
 						tag_count++;
@@ -198,7 +198,8 @@ RB.analytics = {
                 });
                 
                 // Build the chart
-                chart = new Highcharts.Chart({
+                var pie_chart;
+                pie_chart = new Highcharts.Chart({
                     chart: {
                         renderTo: 'pie_chart',
                         plotBackgroundColor: null,
@@ -437,9 +438,9 @@ RB.analytics = {
 						}
 					},
 					series: [{
-						name: 'Bookmarks',
-						data: [bookmarks]
-					}, {
+					// 	name: 'Bookmarks',
+					// 	data: [bookmarks]
+					// }, {
 						name: 'Comments',
 						data: [comments]
 					}, {
