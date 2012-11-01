@@ -74,7 +74,8 @@ function readrBoard($R){
                 media_selector: "embed, video, object, iframe",
                 iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
-                initial_pin_limit: 30,
+                /*this is basically not used right now*/
+                initial_pin_limit: 300,
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
@@ -83,7 +84,8 @@ function readrBoard($R){
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#flipbook',
                 slideshow_img_selector: '#flipbook div.image img',
-                
+                paragraph_helper: true,
+
                 //shareWidget Stuff//
                 //should be false by default!
                 sharebox_show: false,
@@ -1755,10 +1757,27 @@ function readrBoard($R){
 				str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
 				binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
 			},
-            cleanPara: function(para) {
-                // common function for cleaning the paragraph.  right now, it's removing spaces, tabs, newlines, and then double spaces
-                if( para && typeof para == "string" && para !== "" ) {
-                    return para.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+            getCleanText: function(textNode) {
+                // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
+                var $node = $(textNode);
+
+                //make sure it doesnt alredy have in indicator - it shouldn't.
+                var $indicator = $node.find('.rdr_indicator');
+                if($indicator.length){
+                    //todo: send us an error report - this may still be happening for slideshows.
+                    //This fix works fine, but we should fix the code to handle it before here.
+                    return;
+                }
+                
+                // get the node's text and smash case
+                // TODO: <br> tags and block-level tags can screw up words.  ex:
+                // hello<br>how are you?   here becomes
+                // hellohow are you?    <-- no space where the <br> was.  bad.
+                var node_text = $node.html().replace(/< *br *\/?>/gi, '\n');
+                var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
+
+                if( body && typeof body == "string" && body !== "" ) {
+                    return body.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
                 }
             },
             trimToLastWord: function(str){
@@ -1772,6 +1791,8 @@ function readrBoard($R){
             },
             cssSuperImportant: function($domNode, cssDict, shouldReplace){
                 //RDR.util.cssSuperImportant:
+                //todo: this needs improvement - it should be parsing the style into a dict and then checking for an existing style to override.
+
                 var inlineStyleStr = shouldReplace ?
                     "" : 
                     $domNode.attr('style') || "";
@@ -1806,15 +1827,19 @@ function readrBoard($R){
                 });
 
             },
-            insertParagraphHelpers: function() {
-                $('.rdr-node').not('img,iframe,.rdr-hashed').each( function() {
+            setupParagraphHelpers: function() {
+                //this is a jquery live event, so it will work for added components as well.
+                $('body').on('mouseover', '.rdr-node:not("img,iframe")', function() {
                     var hash = $(this).data('hash');
-                    
                     //todo: this hash was undefined sometimes for some reason and was causing an error - find out why
-                    if(!hash){
+                    var hasIndicator = $(this).hasClass('rdr-hasIndicator');
+                    if(!hash || hasIndicator){
                         return;
                     }
-                    RDR.actions.indicators.init(hash, true);
+                    RDR.actions.indicators.init(hash);
+                    //show it here, because the other hover event wont get triggered till the next time.
+                    var $indicator = $(this).find('.rdr_indicator');
+                    RDR.util.cssSuperImportant( $indicator, { display:"inline" });
                 });
                 $RDR.dequeue('initAjax');
             },
@@ -2475,7 +2500,7 @@ function readrBoard($R){
                 });
 
                 $RDR.queue('initAjax', function(next){
-                   RDR.util.insertParagraphHelpers();
+                   RDR.util.setupParagraphHelpers();
                 });
 
                 //start the dequeue chaindel
@@ -2892,13 +2917,7 @@ function readrBoard($R){
                             }
                         },
                         setupFunc: function(){
-                            // get the node's text and smash case
-                            // TODO: <br> tags and block-level tags can screw up words.  ex:
-                            // hello<br>how are you?   here becomes
-                            // hellohow are you?    <-- no space where the <br> was.  bad.
-                            var node_text = $(this).html().replace(/< *br *\/?>/gi, '\n');
-                            var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
-                            body = RDR.util.cleanPara( body );
+                            var body = RDR.util.getCleanText(this);
                             $(this).data('body',body);
                         }
 
@@ -2926,8 +2945,9 @@ function readrBoard($R){
                         group.setupFunc.apply(this);
                         $(this).data('kind', group.kind);
                     });
-                    $allNodes = $allNodes.add($group);
 
+                    $allNodes = $allNodes.add($group);
+                    
                     //flag exceptions for inline_indicators
                     var $inlineMediaSet = $allNodes.filter(RDR.group.inline_selector);
 
@@ -3287,6 +3307,7 @@ function readrBoard($R){
                                     RDR.actions.summaries.save(summary);
 
                                     RDR.actions.indicators.init( hash );
+
 
                                     //now run the type specific function with the //run the setup func above
                                     var kind = summary.kind;
@@ -4678,10 +4699,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     return $indicators;
                 },
-                init: function(hash, isHelper){
+                init: function(hash){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
-                    
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
@@ -4693,6 +4713,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     // don't insert floating pins for page-level interactions
                     if ( $container.hasClass('rdr-page-container') ) return;
                     //else
+
+                    $container.addClass('rdr-hasIndicator');
 
                     //check for and remove any existing indicator and indicator_details and remove for now.
                     //this shouldn't happen though.
@@ -4744,8 +4766,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //todo: combine this with the kindSpecificSetup above right?
                     if (kind == 'text'){
-                        _setupTriggerToFetchContentNodes();
+                        //This will be either a helperIndicator or a hidden indicator
+                        var isZeroCountIndicator = !( summary.counts.tags > 0 );
+
+                        $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
+                        if(isZeroCountIndicator){
+                            _setupHoverForShowRindow();
+                        }else{
+                            _setupHoverToFetchContentNodes(function(){
+                                _setupHoverForShowRindow();
+                                _showRindowAfterLoad();
+                            });
+                        }
                     }
+                    //the true tells it not to re-init to void the loop
+                    RDR.actions.indicators.update(hash, true);
 
                     function _setupIndicators(){
 
@@ -4761,42 +4796,85 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $indicator.css('visibility','visible');
                     }
 
-                    function _setupTriggerToFetchContentNodes(){
+                    function _setupHoverForShowRindow(){
+                        $indicator.on('mouseover.showRindow', function(){
+                            _makeRindow();
+                        });
+                    }
+                    function _makeRindow(){
+                        //only allow one indicator rindow.
+                        if($indicator.$rindow){
+                            $indicator.$rindow.remove();
+                        }
+
+                        var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
+                        
+                        //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
+                        //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
+                        if(!$rindow){
+                            return;
+                        }
+
+                        $indicator.$rindow = $rindow;
+                        
+                        if( $indicator.data('isZeroCountIndicator') ){
+                            _updateRindowForHelperIndicator();
+                        }else{
+                            RDR.events.track( 'view_node::'+hash, hash );
+                        }
+
+                        if ( typeof $rindow != "undefined" ) {
+                            RDR.rindow.updateSizes( $rindow );
+                            RDR.rindow.updateSizes( $rindow ); // needed kludge.
+                        }
+
+                    }
+                    function _updateRindowForHelperIndicator(){
+                        var $rindow = $indicator.$rindow;
+                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="http://local.readrboard.com:8080/static/widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
+                        RDR.rindow.updateHeader( $rindow, headerContent );
+                        // debugger;
+                        $contentSpace = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') );
+                        $contentSpace.html('<div class="rdr_helper_text">Select some text and click<br/><strong>React to this</strong></div>');
+                    }
+
+                    function _setupHoverToFetchContentNodes(callback){                        
                         //Note that the text indicators still don't have content_node info.
                         //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
                         //Setup callback for a successful fetch of the content_nodes for this container
-                        var onSuccessCallback = function(){
-                            $indicator.unbind('mouseover.contentNodeInit');
-                            // not using anymore:  ?
-                            // RDR.actions.indicators.utils.setupContentNodeHilites(hash);
-
-                            $indicator.on('mouseover.showRindow', function(){
-                                var selStates = $(this).data('selStates');
-                                RDR.events.track( 'view_node::'+hash, hash );
-                                var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-                                if ( typeof $rindow != "undefined" ) {
-                                    RDR.rindow.updateSizes( $rindow );
-                                    RDR.rindow.updateSizes( $rindow ); // needed kludge.
-                                }
-                            });
-                            $indicator.triggerHandler('mouseover.showRindow');
-                        };
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
                         $indicator.on('mouseover.contentNodeInit', function(){
-                            RDR.actions.content_nodes.init(hash, onSuccessCallback);
+                            RDR.actions.content_nodes.init(hash, callback);
                         });
                     }
-                },
-                update: function(hash){
-                    //RDR.actions.indicators.update:
-                    var summary = RDR.summaries[hash];
-                    //check if $indicator does not exist and run RDR.actions.indicators.init if needed.
-                    if( !summary.hasOwnProperty('$indicator') ){
-                        //init will add an $indicator object to summary and then re-call update.  This failsafe isn't really needed..
-                        summary.$indicator = "infinte loop failsafe.  This will get overritten immediately by the indicators.init function.";
-                        RDR.actions.indicators.init(hash);
+                    function _showRindowAfterLoad(){
+                        $indicator.unbind('mouseover.contentNodeInit');
+                        $indicator.triggerHandler('mouseover.showRindow');
                     }
+                },
+                update: function(hash, shouldSkipInit){
+                    //RDR.actions.indicators.update:
+                    var scope = this;
+                    var summary = RDR.summaries[hash];
 
+                    var isText = summary.kind === 'text';
+
+                    //just re-init everytime - this code is being a little brat.
+                    if(!shouldSkipInit){
+                    
+                        if(isText){
+                            //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
+                            summary.$container.closest('.rdr-node').find('.rdr_indicator').remove();
+                        }else{
+                            summary.$indicator.remove();
+                            $('#rdr_container_tracker_'+hash).remove();
+                        }
+
+                        RDR.actions.indicators.init(hash);
+                        //this will loop back from the .init.
+                        return;
+                    }
+                    
                     var $container = summary.$container,
                         $indicator = summary.$indicator,
                         $indicator_body = summary.$indicator_body,
@@ -4804,23 +4882,39 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
                     var $count = $indicator_body.find('.rdr_count'),
-                        $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false;
-                    if ( summary.counts.tags > 0 ) {
-                        if (summary.kind != "text") {
-                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
-                        } else {
+                        $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
+                        hasReactions = summary.counts.tags > 0;
+
+                    if ( hasReactions ) {
+                        if (isText) {
                             $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                        } else {
+                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
                         }
                         if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+
+                        RDR.actions.indicators.show(hash);
+                        
                     } else {
                         $count.html( '<span class="rdr_react_label">React to this</span>' );
+                        
+                        if(isText){
+                            if(RDR.group.paragraph_helper){
+                                RDR.events.track('paragraph_helper_view');
+                                RDR.actions.indicators.show(hash);
+                                $indicator.addClass('rdr_helper');
+                            }else{
+                                RDR.actions.indicators.hide(hash);
+                            }                                                        
+                        }
                     }
 
-                    if(summary.kind !== 'text'){
+                    if(!isText){
                         //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
                         $indicator_details.css({ 'visibility':'hidden' }).show();
                         RDR.actions.indicators.utils.makeDetailsContent( hash );
                         $indicator_details.css({ 'visibility':'visible' }); //.hide();
+                    }else{
 
                     }
 
@@ -4920,10 +5014,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
-                        var $existing = $indicator_details.find('div.rdr_body_wrap');
-                        $existing.remove();
 
-                    
+                        //just rebuild them
+                        var $oldDetails = $indicator_details.find('div.rdr_body_wrap');
+                        $oldDetails.remove();
+
                         var $indicator_details_innerWrap = $('<div class="rdr rdr_body_wrap" />'),
                             $detailsHeader = $('<div class="rdr rdr_header"><div class="rdr_loader"/></div>'),
                             modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0,
@@ -4946,7 +5041,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //builds out the $tagsList contents
                         if (summary.kind!=="text" && !$indicator_details.find('div.rdr_view_success').length ){
                             $indicator_details.data( 'initialWidth', $indicator_details.width()+2 );
-                            RDR.actions.indicators.utils.makeTagsListForMedia( hash );
+                            scope.makeTagsListForMedia( hash );
                         }
                     },
                     makeTagsListForMedia: function( hash, actionType ){
@@ -5476,19 +5571,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page);
                     }else{
-
                         RDR.actions.indicators.update( hash );
-
-                        //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                        if(summary.counts.tags > 0){
-                           RDR.actions.indicators.show(hash); //temp hack, 'true' is for 'dont fade in';
-                        }else{
-                            RDR.actions.indicators.hide(hash); //if deleted back to 0
-                        }
-
-                        //now update the page.
-                            //not working yet.  Page reads from a different kind of summary.
-                        //RDR.actions.summaries. update( 'pageSummary' );
                     }
 
                 },
@@ -6407,9 +6490,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         });
                         RDR.actions.sendHashes( hashes );
                     }
-
-                    //todo: everythign below here should be a separate function.  What is it doing?
-                    //todo: [eric] let the widget plugin handle this stuff.  Porter lets talk
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
@@ -7399,6 +7479,7 @@ function $RFunctions($R){
                                     tag.body = $input.val();
 
                                     args = { tag:tag, hash:hash, kind:"page" };
+                                    
                                     RDR.actions.interactions.ajax( args, 'react', 'create' );
                                     $input.blur();
                                 }
