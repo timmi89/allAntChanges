@@ -167,12 +167,16 @@ function readrBoard($R){
                 var $footer = $rindow.find('div.rdr_footer');
                 $footer.show(0);
                 if ( $content ) $footer.html( $content );
-                RDR.rindow.updateSizes( $rindow );
+                
+                //todo: examine resize
+                // RDR.rindow.updateSizes( $rindow );
             },
             hideFooter : function( $rindow ) {
                 //RDR.rindow.hideFooter:
                 $rindow.find('div.rdr_footer').hide(0);
-                RDR.rindow.updateSizes( $rindow );
+                
+                //todo: examine resize
+                // RDR.rindow.updateSizes( $rindow );
             },
             panelCreate : function( $rindow, className ) {
                 //RDR.rindow.panelCreate
@@ -236,7 +240,9 @@ function readrBoard($R){
                 $rdr_bodyFirst.animate({marginLeft:0},500, function() {
                     $showPanel.remove();
                     $rdr_body_wrap.width('auto');
-                    RDR.rindow.updateSizes( $rindow, width, height );
+                    
+                    //todo: examine resize
+                    // RDR.rindow.updateSizes( $rindow, width, height );
                     if (callback) callback();
                 });
             },
@@ -269,7 +275,8 @@ function readrBoard($R){
                 $rindow.removeClass('engaged');
                 $('#rdr_indicator_' + hash).hide();
             },
-            updateSizes : function($rindow, setWidth, setHeight, kind) {
+            updateSizes: function($rindow, setWidth, setHeight, kind) {
+                //RDR.rindow.updateSizes:
                 RDR.rindow.jspUpdate($rindow)
                 return;
             },
@@ -317,17 +324,17 @@ function readrBoard($R){
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
 
                                 // quick hack for too-thin images
-                                if ( $rindow.width() < 200 && kind != "text" ) {
-                                    var $success = $('<div class="rdr_view_success rdr_thin"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
-                                        undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
-                                        $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                                                   '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
-                                        $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                        $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td></tr><tr><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td class="rdr_select_user_board"></td></tr>').appendTo( $options ),
-                                        $share = $('<tr><td><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
+                                // if ( $rindow.width() < 200 && kind != "text" ) {
+                                //     var $success = $('<div class="rdr_view_success rdr_thin"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
+                                //         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
+                                //         $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                //                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
+                                //         $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
+                                //         $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td></tr><tr><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
+                                //         $save = $('<tr><td><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td class="rdr_select_user_board"></td></tr>').appendTo( $options ),
+                                //         $share = $('<tr><td><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
 
-                                } else {
+                                // } else {
                                     var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
                                         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
                                         $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
@@ -336,7 +343,8 @@ function readrBoard($R){
                                         $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
                                         $save = $('<tr><td><strong>Add To:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
                                         $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
-                                }
+                                // }
+
                                 if ( kind != "text" ) {
                                     
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
@@ -550,13 +558,17 @@ function readrBoard($R){
                             $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
                         });
                     }
-
-                    RDR.rindow.updateSizes( $rindow );
+                    
+                    // debugger;
+                    //todo: examine resize
+                    // RDR.rindow.updateSizes( $rindow );
                 }
             },
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
+                debugger;
+                return;
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
 
@@ -1198,7 +1210,9 @@ function readrBoard($R){
 
                 $new_rindow.on( "resizestop", function(event, ui) {
                     var $this = $(this);
-                    RDR.rindow.updateSizes( $this );
+                    
+                    //todo: examine resize
+                    // RDR.rindow.updateSizes( $this );
                 });
 
                 return $new_rindow;
@@ -3831,7 +3845,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 content_id = (content_node&&content_node.id) ? content_node.id:"",
                                 num_interactions = response.data.num_interactions;
 
-                            RDR.rindow.updateSizes( $rindow );
+                            //todo: examine resize
+                            // RDR.rindow.updateSizes( $rindow );
 
 
                             // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
@@ -4793,8 +4808,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         if ( typeof $rindow != "undefined" ) {
-                            RDR.rindow.updateSizes( $rindow );
-                            RDR.rindow.updateSizes( $rindow ); // needed kludge.
+                            
+                            //todo: examine resize
+                            // RDR.rindow.updateSizes( $rindow );
+                            // RDR.rindow.updateSizes( $rindow ); // needed kludge.
                         }
 
                     }
@@ -4972,6 +4989,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     },
                     makeDetailsContent: function( hash ){
+                        // debugger;
                         //RDR.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
                         var summary = RDR.summaries[hash],
@@ -5691,7 +5709,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
                     // if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
-                RDR.rindow.updateSizes( $rindow );
+                
+                //todo: examine resize
+                // RDR.rindow.updateSizes( $rindow );
 
                 RDR.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
             },
@@ -5736,7 +5756,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     kind=="med" ||
                     kind=="media";
 
-                RDR.rindow.updateSizes( $rindow );
+                //todo: examine resize
+                // RDR.rindow.updateSizes( $rindow );
+
                 RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
                     if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
