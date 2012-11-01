@@ -313,6 +313,7 @@ RB.analytics = {
 				} else if ( type == "content" ) {
 					var contentHtml = "";
 					for ( var i in response) {
+						console.dir(response[i]);
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						if ( response[i].content.kind == "img" ) {
 							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
