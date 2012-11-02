@@ -206,6 +206,7 @@ RB.analytics = {
 					if ( tag_count <= 8 ) {
 						$('div.most_popular').addClass('solo').siblings().hide();
 					} else {
+						$('div.most_popular').removeClass('solo').siblings().show();
 						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
 					}
                 
