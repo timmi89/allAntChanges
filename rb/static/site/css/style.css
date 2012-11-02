@@ -1246,6 +1246,7 @@ body div.simpleMessage{
 .reactions { overflow:auto; margin:20px 0 0; clear:both;}
 .section_content .reactions { overflow:auto; margin:20px auto 0; clear:both; width:960px;}
 .most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden; border-right:1px solid #e0e0e0;}
+.most_popular.solo { border-right:none; margin:0 235px !important;}
 .other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; }
 section[role="most popular tags"] ol li.large { font-size:20px; }
 .sectionHeader {position:relative;z-index:10;}
@@ -1289,6 +1290,7 @@ form.big-form input#id_call_to_action	{ width:100%; }
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
 section[role="datepicker"] label	{ display:inline; }
+#ui-datepicker-div {z-index:11 !important;}
 
 section[role="panels"] 					{ xfloat:left; overflow:auto; padding:10px; }
 section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }

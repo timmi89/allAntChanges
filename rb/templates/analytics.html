@@ -196,7 +196,18 @@ RB.analytics = {
 						}
 						tag_count++;
 					}
-					$('section[role="most popular tags"] ol').html( $(other_tag_list) );
+
+					if ( tag_count == 0 ) {
+						$('section[role="panels"]').hide().after(('<h1 style="margin:20px auto;text-align:center;">No interactions in this date range!</h1>'));
+						return;
+					} else {
+						$('section[role="panels"]').show();
+					}
+					if ( tag_count <= 8 ) {
+						$('div.most_popular').addClass('solo').siblings().hide();
+					} else {
+						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
+					}
                 
                 // Build the chart
                 var pie_chart;
