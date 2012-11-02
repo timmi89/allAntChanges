@@ -154,7 +154,7 @@ function readrBoard($R){
                 forceHeight: false,
                 rewritable: true
             },
-            updateHeader : function( $rindow, $content ) {
+            updateHeader: function( $rindow, $content ) {
                 //RDR.rindow.updateHeader:
                 var $header = $rindow.find('div.rdr_header');
                 if ( $content ) {
@@ -162,7 +162,7 @@ function readrBoard($R){
                     $header.find('div.rdr_loader').after( $content );
                 }
             },
-            updateFooter : function( $rindow, $content ) {
+            updateFooter: function( $rindow, $content ) {
                 //RDR.rindow.updateFooter:
                 var $footer = $rindow.find('div.rdr_footer');
                 $footer.show(0);
@@ -171,14 +171,14 @@ function readrBoard($R){
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
             },
-            hideFooter : function( $rindow ) {
+            hideFooter: function( $rindow ) {
                 //RDR.rindow.hideFooter:
                 $rindow.find('div.rdr_footer').hide(0);
                 
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
             },
-            panelCreate : function( $rindow, className ) {
+            panelCreate: function( $rindow, className ) {
                 //RDR.rindow.panelCreate
                 // later, I want to add the ability for this to create an absolutely-positioned panel
                 // that will slide OVER, not next to, current content... like a login panel sliding over the content.
@@ -198,7 +198,7 @@ function readrBoard($R){
         
                 return $newPanel;
             },
-            panelUpdate : function( $rindow, className, $content, replaceOrAppend, bindings ) {
+            panelUpdate: function( $rindow, className, $content, replaceOrAppend, bindings ) {
                 //RDR.rindow.panelUpdate:
                 if ( !$rindow ) return;
 
@@ -217,23 +217,71 @@ function readrBoard($R){
                     */
                 }
             },
-            panelShow : function( $rindow, className, callback ) {
-                //RDR.rindow.panelShow
+
+            // panelSwitch: function( $rindow, $toShow, callback ) {
+            //     //RDR.rindow.panelShow:
+                
+            //     console.log('panelEvent - panelSwitch');
+
+            //     var isLeftPanel = 
+            //     var $toHide = $rindow.data('visiblePanel');
+
+            //         $showPanel = $rindow.find('div.'+className),
+            //         rdr_bodyFirst_width = $rdr_bodyFirst.width();
+
+            //     $toShow
+            //         .show()
+            //         .addClass('rdr-visible')
+            //         .animate
+                
+            //     $rindow.data('visiblePanel', $toShow);
+
+            //     $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
+            //         if (callback) callback();
+            //     });
+            // },
+
+            panelShow: function( $rindow, $showPanel, callback ) {
+                //RDR.rindow.panelShow:
                 
                 console.log('panelEvent - panelShow');
 
-                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
-                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
-                    $showPanel = $rdr_body_wrap.find('div.'+className),
-                    rdr_bodyFirst_width = $rdr_bodyFirst.width();
+                var $hidePanel = $rindow.data('visiblePanel');
+                //do this for now, because there are too many places in the code to add this correctly
+                if(!$hidePanel){
+                    $hidePanel = $rindow.find('.rdr_body').eq(0);
+                }
 
-                $showPanel.show().addClass('rdr-visible');
-                $rdr_bodyFirst.animate({marginLeft:-(rdr_bodyFirst_width + 12)},500, function() {
-                    if (callback) callback();
-                });
+                var animWidth = $hidePanel.width();
+
+                $showPanel
+                    .show()
+                    .addClass('rdr-visible')
+                    .css({
+                        position: 'absolute',
+                        top: 0,
+                        left: animWidth
+                    });
+
+                var $panelWrap = $rindow.find('.rdr_body_wrap');
+                $panelWrap.animate({
+                        left: -animWidth
+                    },
+                    500,
+                    function() {
+                        $rindow.data('visiblePanel', $showPanel);
+                        RDR.rindow.updateSizes( $rindow );
+                        if (callback) callback();
+                    }
+                );
             },
-            panelHide : function( $rindow, className, width, height, callback ) {
+            panelHide: function( $rindow, $toHide, callback ) {
                 //RDR.rindow.panelHide
+                
+                console.log('panelEvent - panelhide');
+
+                return;
+
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0),
                     $showPanel = $rdr_body_wrap.find('div.'+className),
@@ -249,7 +297,7 @@ function readrBoard($R){
                     if (callback) callback();
                 });
             },
-            mediaRindowShow : function ( $mediaItem, callback ) {
+            mediaRindowShow: function ( $mediaItem, callback ) {
                 //RDR.rindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
@@ -264,7 +312,7 @@ function readrBoard($R){
                 }
                 $rindow.addClass('engaged')
             },
-            mediaRindowHide : function ( $mediaItem, callback ) {
+            mediaRindowHide: function ( $mediaItem, callback ) {
                 //RDR.rindow.mediaRindowHide:
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
@@ -278,10 +326,88 @@ function readrBoard($R){
                 $rindow.removeClass('engaged');
                 $('#rdr_indicator_' + hash).hide();
             },
-            updateSizes: function($rindow, setWidth, setHeight, kind) {
+            updateSizes: function($rindow, setWidth, setHeight, _kind) {
                 //RDR.rindow.updateSizes:
+
+                // setWidth = 300;
+                // setHeight = 300;
+
+                //RDR.rindow.updateSizes:
+                // feels like we should not need this, but behavior is more consistent if we have it.  ugh.
+                // RDR.rindow.jspUpdate( $rindow );
+                
+                // var rindowHeight = $rindow.height(),
+                //     heightAdjustment = 36;
+                // if ( $rindow.find('div.rdr_footer').length && $rindow.find('div.rdr_footer').css('display') != "none" ) {
+                //     $rindow.css('padding-bottom','20px');
+                //     heightAdjustment += 20;
+                // } else {
+                //     $rindow.css('padding-bottom','0px');
+                // }
+
+                var kind = _kind || (
+                    $rindow.hasClass('rdr_indicator_details') ?
+                    "media" :
+                    "text"
+                );
+
+                var $elm = (kind == "text") ? 
+                    $rindow.find('div.rdr-visible').eq(0) :
+                    $rindow.find('div.rdr_body').eq(0);
+                // var $elm = $rindow.find('div.rdr_body').eq(0);
+
+                var $jsPane = $elm.find('div.jspPane');
+                var containerWidth = $rindow.data('initialWidth');
+
+                var width;
+                var height;
+                var adjedHeight;
+
+                //fix this later.  We should be expanding only the body instead of the whole thing so we dont need this.
+                //note - includes padding
+                var rindowHeaderHeight = 29;
+
+                var defaults = {
+                    h: 200,
+                    w: 200,
+                    duration: 333
+                };
+
+                if(kind == "media"){
+                    defaults.w = containerWidth;
+                }else{
+                    defaults.w = $elm.width();
+                    defaults.h = $elm.height();
+                }
+                width = setWidth || defaults.w;
+                height = setHeight || defaults.h;
+                adjedHeight = height + rindowHeaderHeight;
+
+                // if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
+                // if ( setHeight ) { // override if height is passed in
+                //     visiblePane.height = setHeight,
+                //     heightAdjustment = 0;
+                // }
+                // $rindow.find('div.jspContainer').height( visiblePane.height+4 );
+
+                
+                // var rindow_width = $rindow.width();
+
+                // var setWidth = $rindow.find('div.rdr_contentSpace').width();
+            
+
+                $rindow.animate({
+                    width: width,
+                    height: adjedHeight
+                },{
+                    duration: defaults.duration,
+                    queue:false 
+                });
+
+                // $jsPane.width(setWidth);
+                // RDR.rindow.jspUpdate( $rindow, setWidth, kind );
+            
                 RDR.rindow.jspUpdate($rindow)
-                return;
             },
             updatePageTagMessage: function(args, action) {
 
@@ -574,8 +700,8 @@ function readrBoard($R){
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
-                debugger;
-                return;
+                // debugger;
+                // return;
                 $rindow.find('div.rdr_body').each( function() {
                     var $this = $(this);
 
@@ -5723,7 +5849,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     kind=="med" ||
                     kind=="media";
 
-                RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
+                RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     // if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
                 
@@ -5776,7 +5902,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
 
-                RDR.rindow.panelShow( $rindow, 'rdr_view_more', function() {
+                RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );
 

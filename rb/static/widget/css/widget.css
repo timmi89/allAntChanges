@@ -346,14 +346,22 @@ div.rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace        {
     background: #fbfbfb !important;
     position:relative !important;
     overflow:hidden !important;
-    min-width: 150px !important;
+    /*let the rindow dictate this.*/
+    width: 100% !important;
+    height: 100% !important;
 }
 div.rdr_sandbox div.rdr_indicator_details_wrapper div.rdr_innerWrap,
 div.rdr_sandbox div.rdr.rdr_window div.rdr_contentSpace div.rdr_innerWrap{
     padding: 8px !important;
 }
 
-div.rdr_sandbox div.rdr div.rdr_body   { max-height:266px !important; float:left !important; display:block !important; 
+div.rdr_sandbox div.rdr_body   {
+    max-height:266px !important;
+    float:left !important;
+    display:block !important;
+    position: relative;;
+}
+div.rdr_sandbox div.rdr_indicator_details div.rdr_body   {
     width: 100% !important;
 }
 div.rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
@@ -1585,12 +1593,13 @@ div.rdr_sandbox.rdr_media_details, div.rdr_sandbox.rdr_media_details div.rdr_ind
   position:static !important;
   display:block !important;
 }
-div.rdr_sandbox div.rdr_indicator_details div.rdr_body_wrap{
-    /*padding:4px 3px 3px 3px !important;*/
-    padding:0px !important;
-}
 div.rdr_sandbox div.rdr_body_wrap{
     padding:0px !important;
+    position: relative !important;
+}
+div.rdr_sandbox div.rdr_indicator_details div.rdr_body_wrap{
+    /*padding:4px 3px 3px 3px !important;*/
+    padding: 0px !important;
 }
 
 div.rdr_sandbox div.rdr_indicator_details .rdr_see_more {
@@ -1791,10 +1800,10 @@ div.rdr_sandbox span.rdr_indicator_categoryTitle{
 }
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { 
-    width:auto !important;
+    /*width:auto !important;*/
     display:inline-block !important;
     text-decoration:none !important;
-    margin:0 -3px -2px 1px;;
+    /*margin:0 -3px -2px 1px;;*/
 }
 div.rdr_sandbox div.rdr_tags_list a.rdr_tag {
     /*white-space:nowrap !important;*/
