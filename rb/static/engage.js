@@ -17,8 +17,8 @@ RDR.C = {
     summaryWidgetMaxHeight: 68,
      //+ header height + extra padding;
     rindowHeaderPadding: 29,
-    /*end: some constants that we need for now*/
-    rindowWidthForKindIsText: 200
+    rindowWidthForKindIsText: 200,
+    rindowAnimationSpeed: 333
 }
 
 RDR.engageScript = document.getElementById("readrboardscript") || findEngageScript();
@@ -299,12 +299,13 @@ function readrBoard($R){
                 $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 $hidePanel.addClass('rdr_hiddenPanel').removeClass('rdr_visiblePanel');
 
+                //update the size at the same time so the animations run in parallel
+                RDR.rindow.updateSizes( $rindow );
                 $panelWrap.animate({
                     left: -animWidth
                 },
-                500,
+                RDR.C.rindowAnimationSpeed,
                 function() {
-                    RDR.rindow.updateSizes( $rindow );
                     if (callback) callback();
                 });
             },
@@ -321,12 +322,13 @@ function readrBoard($R){
                 $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 $hidePanel.addClass('rdr_hiddenPanel').removeClass('rdr_visiblePanel');
             
+                //update the size at the same time so the animations run in parallel
+                RDR.rindow.updateSizes( $rindow );
                 $panelWrap.animate({
                     left: 0
                 },
-                500,
+                RDR.C.rindowAnimationSpeed,
                 function() {
-                    RDR.rindow.updateSizes( $rindow );
                     if (callback) callback();
                 });
             },
@@ -385,7 +387,7 @@ function readrBoard($R){
             updateSizes: function($rindow, setWidth, setHeight, _kind) {
                 //RDR.rindow.updateSizes:
 
-
+                //_kind should not need to be set manually
                 var kind = _kind || (
                     $rindow.hasClass('rdr_indicator_details') ?
                     "media" :
@@ -408,7 +410,7 @@ function readrBoard($R){
                 var defaults = {
                     h: 200,
                     w: 200,
-                    duration: 333
+                    duration: RDR.C.rindowAnimationSpeed
                 };
 
                 if(kind == "media"){
@@ -5977,7 +5979,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
-
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     // if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
                 } );

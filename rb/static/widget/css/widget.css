@@ -417,6 +417,7 @@ div.rdr_sandbox div.rdr div.rdr_view_success {
   font-size:11px !important;
   text-align:left !important;
   background:#f6f6f6 !important;
+  margin-bottom: 8px !important;
 }
 div.rdr_sandbox div.rdr div.rdr_view_more {
   background:#f6f6f6 !important;
