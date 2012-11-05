@@ -257,26 +257,25 @@ function readrBoard($R){
         
                 return $newPanel;
             },
-            panelUpdate: function( $rindow, className, $content, replaceOrAppend ) {
+            panelUpdate: function( $rindow, className, $newPanel, shouldAppendNotReplace ) {
                 //RDR.rindow.panelUpdate:
                 if ( !$rindow ) return;
-
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $panel = $rdr_body_wrap.find('div.'+className);
 
-                var shouldReplace = (!replaceOrAppend || replaceOrAppend == "replace");
-                if (shouldReplace){
-                    $panel.html( $content );
+                if (shouldAppendNotReplace){
+                    $panel.append( $newPanel );
                 }else{
-                    $panel.append( $content );
+                    $panel.replaceWith( $newPanel );
                 }
+                return $newPanel;
             },
 
             panelShow: function( $rindow, $showPanel, callback ) {
                 //RDR.rindow.panelShow:
                 
                 console.log('panelEvent - panelShow');
-                // debugger;
+                
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
                 var $hidePanel = $rindow.find('.rdr_visiblePanel');
                 //do this for now, because there are too many places in the code to add this correctly
@@ -313,15 +312,25 @@ function readrBoard($R){
                 //RDR.rindow.panelHide:
                 
                 console.log('panelEvent - panelhide');
-
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
-                var $showPanel = $rindow.find('.rdr_hiddenPanel');
-                var $hidePanel = $rindow.find('.rdr_visiblePanel');
-
                 $rindow.data('panelState', 1);
+                var $panelWrap = $rindow.find('.rdr_body_wrap');
+
+                //update the first panel
+                var isMediaContainer = $rindow.hasClass('rdr_indicator_details');
+                if (isMediaContainer){
+                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
+                }else{
+                    var isWriteMode = $rindow.hasClass('rdr_writemode');
+                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow, isWriteMode);
+                }
+                
+                var className = "rdr_tags_list";
+                var $hidePanel = $rindow.find('.rdr_visiblePanel');
+                $hidePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+
+                var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
                 $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
-                $hidePanel.addClass('rdr_hiddenPanel').removeClass('rdr_visiblePanel');
-            
+                
                 //update the size at the same time so the animations run in parallel
                 RDR.rindow.updateSizes( $rindow );
                 $panelWrap.animate({
@@ -493,27 +502,42 @@ function readrBoard($R){
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
 
-                                // quick hack for too-thin images
-                                // if ( $rindow.width() < 200 && kind != "text" ) {
-                                //     var $success = $('<div class="rdr_view_success rdr_thin"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
-                                //         undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
-                                //         $links = $('<div style="text-align:center;"><span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                //                                    '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span></div><hr/>').appendTo( $success ),
-                                //         $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                //         $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td></tr><tr><td class="rdr_comment_input"></td></tr><tr><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                //         $save = $('<tr><td><strong style="display:block;margin-top:10px;">Add To:</strong></td></tr><tr><td class="rdr_select_user_board"></td></tr>').appendTo( $options ),
-                                //         $share = $('<tr><td><strong style="display:block;margin-top:10px;">Share:</strong></td></tr><tr><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
+                                var isThinMedia = ( $rindow.width() < 200 && kind != "text" );
+                                var widthClass = isThinMedia ? 'rdr_thin' : 'rdr_wide';
+                                var $success = $('<div class="rdr_view_success '+widthClass+'"></div>'),
+                                    $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
+                                    $h1 = $('<h1><span>You reacted:</span> ' + tag.body + '</h1></div>').appendTo( $subheader ),
+                                    undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
+                                    $links = $(
+                                        '<div class="rdr_linkWrap">'+
+                                            '<span class="rdr_link">'+
+                                                '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a>'+
+                                            '</span>'+
+                                            '<span class="rdr_link">'+
+                                            '<a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span>'+
+                                        '</div>'
+                                    ).appendTo( $subheader ),
+                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
+                                    $sayMore = $(  
+                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                            '<div class="rdr_first_column"><strong>Say More:</strong></div>'+
+                                            '<div class="rdr_second_column rdr_comment_input"></div>'+
+                                            '<div class="rdr_last_column"><button class="rdr_add_comment">Add</button></div>'+
+                                        '</div>'
+                                    ).appendTo( $options ),
+                                    $save = $(
+                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                            '<div class="rdr_first_column"><strong>Add To:</strong></div>'+
+                                            '<div class="rdr_second_column rdr_select_user_board"></div>'+
+                                        '</div>'
+                                    ).appendTo( $options ),
+                                    $share = $(
+                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                            '<div class="rdr_first_column"><strong>Share:</strong></div>'+
+                                            '<div class="rdr_second_column rdr_share_buttons"></div>'+
+                                        '</div>'
+                                    ).appendTo( $options );
 
-                                // } else {
-                                    var $success = $('<div class="rdr_view_success rdr_wide"><h1><span>You reacted:</span> ' + tag.body + '</h1></div>'),
-                                        undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
-                                        $links = $('<span class="rdr_link"><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                                                   '<span class="rdr_link"><a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span><hr/>').appendTo( $success ),
-                                        $options = $('<table cellpadding="0" cellspacing="0" border="0"/>').appendTo( $success ),
-                                        $sayMore = $('<tr><td class="rdr_first_column"><strong>Say More:</strong></td><td colspan="3" class="rdr_comment_input"></td><td class="rdr_last_column"><button class="rdr_add_comment">Add</button></td></tr>').appendTo( $options ),
-                                        $save = $('<tr><td><strong>Add To:</strong></td><td colspan="4" class="rdr_select_user_board"></td></tr>').appendTo( $options ),
-                                        $share = $('<tr><td><strong>Share:</strong></td><td class="rdr_share_buttons"></td></tr>').appendTo( $options );
-                                // }
 
                                 if ( kind != "text" ) {
                                     
@@ -525,7 +549,8 @@ function readrBoard($R){
 
                                     });
                                 }
-                                RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, 'update' );
+                                var shouldAppendNotReplace = true;
+                                RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, shouldAppendNotReplace);
 
                                 var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
                                 // boards
@@ -536,7 +561,7 @@ function readrBoard($R){
                                 }
                                 $user_boards.append('<option value="" class="">----------</option>');
                                 $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
-                                $success.find('td.rdr_select_user_board').append($user_boards);
+                                $success.find('.rdr_select_user_board').append($user_boards);
 
                                 $user_boards.change( function() {
                                     var $this = $(this).find(':checked');
@@ -599,7 +624,7 @@ function readrBoard($R){
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
-                                    console.log('panelEvent');
+                                    console.log('panelEvent - undo1');
 
                                     var newArgs = {
                                         hash: args.hash,
@@ -614,7 +639,7 @@ function readrBoard($R){
                                 // $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             // }
 
-                            $success.find('td.rdr_comment_input').append(
+                            $success.find('.rdr_comment_input').append(
                                 '<div class="rdr_commentBox rdr_inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
                                     '<input type="text" class="rdr_add_comment_field rdr_inlineComment" value="Add a comment or #hashtag"/>'+
@@ -703,7 +728,7 @@ function readrBoard($R){
                             });
                             $shareSocial.append( $shareLinks );
 
-                            $success.find('td.rdr_share_buttons').append($shareSocial);
+                            $success.find('.rdr_share_buttons').append($shareSocial);
                         }
 
                         RDR.actions.containers.media.onEngage( hash );
@@ -720,7 +745,7 @@ function readrBoard($R){
                     }
                     
                     //todo: examine resize
-                    // RDR.rindow.updateSizes( $rindow );
+                    RDR.rindow.updateSizes( $rindow );
                 }
             },
             jspUpdate: function( $rindow ) {
@@ -1256,7 +1281,7 @@ function readrBoard($R){
                     $new_rindow.append(
                         '<div class="rdr rdr_header rdr_brtr rdr_brtl">'+
                         '<div class="rdr_loader"/></div>'+
-                            '<div class="rdr rdr_body_wrap clearfix"></div>'+
+                            '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
                             '<div class="rdr rdr_footer rdr_brbr rdr_brbl">'+
                         '</div>' 
                     );
@@ -4226,7 +4251,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
-                                        console.log('panelEvent');
+                                        console.log('panelEvent - undo2');
 
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
@@ -4254,7 +4279,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
-                                        console.log('panelEvent');
+                                        console.log('panelEvent - undo3');
 
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
@@ -4285,7 +4310,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                                 if ( uiMode =="writeMode" && $rindow.find('a.rdr_custom_tag').length == $rindow.find('a.rdr_custom_tag.rdr_tagged').length ) {
-                                    var tagsListMaxWidth = $rindow.width()+2, // really.
+                                    
+                                    // var tagsListMaxWidth = $rindow.width()+2, // really.
+                                    var tagsListMaxWidth = $rindow.width(), // really.
+                                    
                                         custom_tag = {count:0, id:"custom", body:"Add your own"};
 
                                     var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
@@ -4693,7 +4721,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // add a new, empty custom tag pill to the rindow
                             var $tag_table = ( $rindow.find('div.rdr_bookmark_media').length ) ? $rindow.find('div.rdr_bookmark_media').find('table.rdr_tags') : $rindow.find('table.rdr_tags'),
-                                tagsListMaxWidth = $rindow.width()+2, // really.
+                                // tagsListMaxWidth = $rindow.width()+2, // really.
+                                tagsListMaxWidth = $rindow.width(), // really.
                                 custom_tag = {count:0, id:"custom", body:"Add your own"};
 
                             var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true );
@@ -5101,7 +5130,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var headerText = RDR.rindow.makeDefaultPanelMessage($indicator_details);
                         var $header = RDR.rindow.makeHeader( headerText );
                         
-                        var $bodyWrap = $('<div class="rdr rdr_body_wrap clearfix" />');
+                        var $bodyWrap = $('<div class="rdr rdr_body_wrap rdr_clearfix" />');
                             
 
                         var kind = summary.kind;
@@ -5132,7 +5161,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     makeTagsListForText: function( $rindow, isWriteMode ){
                         //RDR.actions.indicators.utils.makeTagsListForText:
                         //todo: consolodate this with the same function for makeTagsListForMedia
-
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
 
@@ -5926,9 +5954,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     var className = "rdr_tags_list";
-                    var replaceOrAppend = "replace";
-
-                    RDR.rindow.panelUpdate($rindow, className, $tagsListContainer, replaceOrAppend )
+                    RDR.rindow.panelUpdate($rindow, className, $tagsListContainer);
 
                 } );
                 
