@@ -15,8 +15,7 @@ from chronos.jobs import *
 from threading import Thread
 from itertools import chain
 from datetime import datetime, timedelta
-
-
+from rb.auto_approval import autoCreateGroup
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -612,66 +611,15 @@ class SettingsHandler(AnonymousBaseHandler):
                 group = Group.objects.get(id=site.group.id)
 
             except Site.DoesNotExist:
-                # create a group
-                # group = MAKE A GROUP(host)
-                # now use group obj to create a site for this host
-                # settings:  temp_limit = 0.  blessed_tag_ids(1,2,3,4).  name=host.  short_name=host.  black_words_list: copy from group_id(readboard)
-                # approved = true.  requires_approval = false.  share
-                # sharing, rating, commenting, searching, bookmarking:  true, true, true
-                # anno_whitelist = p
-                group = Group.objects.create(
+
+                cookie_user = checkCookieToken(request)
+                cleaned_data = dict(
                     name=host,
                     short_name=host,
-                    approved=False,
-                    temp_interact=0,
-                    requires_approval=False,
-                    share = Feature.objects.get(id=1),
-                    rate = Feature.objects.get(id=1),
-                    comment = Feature.objects.get(id=1),
-                    bookmark = Feature.objects.get(id=1),
-                    search = Feature.objects.get(id=1),
-                    
+                    domain=host
                 )
-                
-                
-                default_groups = Group.objects.filter(short_name='default')
-                for dgroup in default_groups:
-                    if dgroup.short_name == 'default':
-                        default_group = dgroup
-                
-                group.word_blacklist = default_group.word_blacklist
-                group.anno_whitelist = default_group.anno_whitelist
-                group.save()
-                
-                blessed = GroupBlessedTag.objects.filter(group = default_group)
-                for blessing in blessed:
-                    GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
-                    
-                    
-                # site = MAKE A SITE(host, group)
-                Site.objects.create(
-                    name=host,
-                    domain=host,
-                    group=group
-                    
-                )
-                
-                # Add us to admins
-                readr_admins = SocialUser.objects.filter(
-                    user__email__in=(
-                        'porterbayne@gmail.com',
-                        'erchaves@gmail.com',
-                        'michael@readrboard.com'
-                    )
-                )
-                msg = EmailMessage("ReadrBoard group approval", generateApprovalEmail(group), "groups@readrboard.com", RB_SOCIAL_ADMINS )
-                                   
-                msg.content_subtype='html'
-                msg.send(False)
-                
-                for admin in readr_admins:
-                    GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
 
+                group = autoCreateGroup(cleaned_data, cookie_user)
         else:
             group = Group.objects.get(id=group_id)
             

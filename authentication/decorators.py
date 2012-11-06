@@ -2,8 +2,9 @@ from authentication.token import checkCookieToken
 from rb.models import Group, User, SocialUser, GroupAdmin, Site
 from django.http import HttpResponseRedirect
 from extras.facebook import GraphAPIError
-from settings import FACEBOOK_APP_ID, BASE_URL
+from settings import FACEBOOK_APP_ID, BASE_URL, TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE
 from api.utils import *
+from rb.auto_approval import *
 
 def requires_login(func):
     pass
@@ -72,16 +73,26 @@ def requires_admin_wordpress(func):
                 if short_name:
                     group = Group.objects.get(short_name=short_name)
                     if group not in admin_groups:
-                        
                         if group in admin_groups_unapproved:
                             context['user_unapproved_admin'] = "true"
                             params.append('user_unapproved_admin')
 
                         else:
-                            context['user_not_admin'] = "true"
-                            params.append('user_not_admin')
+                            # todo: this is just a cursory check for too many group admins.. Later we need to approve these correctly.
+                            groupAdminsForGroup = GroupAdmin.objects.filter(group=group)
+                            if len(groupAdminsForGroup) < TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE:
+                                group = autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=True)
+                                kwargs['admin_just_approved'] = True
+                                # quick hack - remake the Qparams after adding 'requested'
+                                context['refresh'] = "true"
+                                params.append('refresh')
+                                context['qParams'] = makeQParams()
 
-                        return HttpResponseRedirect(getURLForNotAdminRedirect())
+                            else:
+                                context['user_not_admin'] = "true"
+                                params.append('user_not_admin')
+
+                                return HttpResponseRedirect(getURLForNotAdminRedirect())
 
                     else:
                         kwargs['admin_groups'] = [group]

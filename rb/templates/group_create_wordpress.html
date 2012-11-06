@@ -64,7 +64,23 @@
         };
 
         var params = utils.getQueryParams();
-                
+        
+
+        var wordpressEditUrl = '/wordpress_edit/';
+        var query = window.location.search || "?";
+        query += "&refresh=true";
+        var wordpressRefreshUrl = wordpressEditUrl + query;
+
+        window.reloadPageAfterLogin = function(){
+            window.location = wordpressRefreshUrl;
+            return false;
+        }
+
+        /*quick hack*/
+        if(params.refresh){
+            window.reloadPageAfterLogin();
+        }
+        
         $(function(){
 
 
@@ -135,18 +151,6 @@
         </div>
     </div>
 
-    <script>
-    
-        var wordpressEditUrl = '/wordpress_edit/';
-        var query = window.location.search || "?";
-        query += "&refresh=true";
-        var wordpressRefreshUrl = wordpressEditUrl + query;
-
-        function reloadPageAfterLogin(){
-            window.location = wordpressRefreshUrl;
-            return false;
-        }
-    </script>
 {% endblock alreadyRequested %}
 
 {% block formAction %}
