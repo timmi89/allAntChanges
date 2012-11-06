@@ -4848,7 +4848,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="http://local.readrboard.com:8080/static/widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
+                        var headerContent = '<div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"></div><h1>Tell us what you think!</h1>';
                         RDR.rindow.updateHeader( $rindow, headerContent );
                         // debugger;
                         $contentSpace = ( $rindow.find('div.rdr_body').length ) ? $rindow.find('div.rdr_body') : $('<div class="rdr_body" />').appendTo( $rindow.find('div.rdr_body_wrap') );
