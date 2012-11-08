@@ -800,6 +800,7 @@ function readrBoard($R){
                 getNextCell: function( tag, $tag_table, maxWidth, useGutter ) {
                     //RDR.rindow.pillTable.getNextCell
                    
+
                     var pill_width = RDR.rindow.pill.getWidth( tag ),
                         $rows = $tag_table.find('tr'),
                         row_count = $rows.not('tr.rdr_nextSteps').length,
@@ -811,8 +812,11 @@ function readrBoard($R){
 
                     $.each( $first_row.find('td'), function(idx, cell) {
                         $cell = $(cell);
+                        //todo check 7 margin
                         if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of margin + borders on the sides
                     });
+                    
+                    console.log(firstRowWidth)
 
                     firstRowWidth += pill_width;
                     if ( ( firstRowWidth > maxWidth && row_count == 1 )
@@ -4070,7 +4074,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
-                            var $rindow = (args.rindow) ? args.rindow : $('div.rdr_tag_details.rdr_reacted');
+                            
+                            //carefull with this.. $('div.rdr_tag_details.rdr_reacted') without the rdr_live_hover was returning 2 nodes. shore this up later.
+                            var $rindow = (args.rindow) ? args.rindow : $('div.rdr_tag_details.rdr_reacted.rdr_live_hover');
                             $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             var safe_board_name = args.board_name.replace(/\s/g,"_"),
@@ -4080,9 +4086,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.find('.rdr_select_user_board').append( $success ).find('select').hide();
 
                             $success.find('a.rdr_undo').click( function() {
-
+                                
+                                args.rindow = $rindow;
                                 console.log('panelEvent');
-
                                 RDR.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
                             });
                         }
@@ -4101,12 +4107,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
+                            
                             var $rindow = args.rindow;
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                            $rindow.find('td.rdr_select_user_board').find('select').show();
-                            $rindow.find('td.rdr_select_user_board').find('div.rdr_success').remove();
-
+                            $rindow.find('.rdr_select_user_board').find('select').show();
+                            $rindow.find('.rdr_select_user_board').find('div.rdr_success').remove();
+                            
+                            //reset the select el.
+                            var $boardSelect = $rindow.find('.rdr_select_user_board select');
+                            $boardSelect.val(0);
                         }
                     }
                 },
@@ -4252,7 +4262,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
                                         console.log('panelEvent - undo2');
-
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
@@ -5170,6 +5179,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $tag_table = RDR.rindow.pillTable.make( tagsListMaxWidth );
                             $tag_table.find('tr').append('<td />');
 
+                        $rindow.append($tag_table);
+                        
                         if ( isWriteMode ) {
 
                             $.each( RDR.group.blessed_tags, function( idx, tag ){
@@ -7996,7 +8007,44 @@ function $RFunctions($R){
                     
                     $bubbleCount.append('<span>'+ P.imports.prettyNumber(count) +'</span>');
                     return $this;
-                }
+                },
+                openOwnedSummaryWidget: function(){
+                    var $this = $(this);
+                    var $rbButton = $this.find('.readrBoardSocialWidgetButton');
+                    var $summaryWrap = $rbButton.closest('.rdr_shareWidget').find('.rdr_summaryBarWrap');
+                    var $summaryBar = $summaryWrap.find('.rdr-summary');
+                    var width = $summaryWrap.width();
+                    
+                    if( !$summaryWrap.hasClass('visible') && !$summaryBar.is(':animated') ){
+                        $summaryWrap.addClass('visible').show();
+                            $summaryBar.css({
+                                left: -width-2,
+                            }).animate({
+                                left: 0
+                            }, function(){
+                                
+                            });
+                    }
+                    $rbButton.find('.rdr_bubbleButton').addClass('hover');
+                },
+
+                closeOwnedSummaryWidget: function(eventTarget){
+                    var $this = $(this);
+                    var $mouse_target = $(eventTarget);
+                    var $summaryWrap = $this.find('.rdr_summaryBarWrap');
+                    var $summaryBar = $summaryWrap.find('.rdr-summary');
+                    var width = $summaryWrap.width();
+                    var $rbButton = $this.find('.readrBoardSocialWidgetButton');
+
+                    if ( !$mouse_target.parents().hasClass('rdr') && !$summaryBar.is(':animated') ) {
+                        $summaryBar.animate({
+                                left: -width-2
+                            }, function(){
+                                $summaryWrap.removeClass('visible').hide();
+                            });
+                    }
+                    $rbButton.find('.rdr_bubbleButton').removeClass('hover');
+                },
             };
             //end methods
 
@@ -8257,41 +8305,14 @@ function $RFunctions($R){
                 var $rbButton = $this.find('.readrBoardSocialWidgetButton');
                 $rbButton.unbind('.rbSocialWidgetButton');
                 $rbButton.on( 'mouseenter.rbSocialWidgetButton', function(){
-                        var $summaryWrap = $(this).closest('.rdr_shareWidget').find('.rdr_summaryBarWrap');
-                        var $summaryBar = $summaryWrap.find('.rdr-summary');
-                        var width = $summaryWrap.width();
-                        
-                        if( !$summaryWrap.hasClass('visible') && !$summaryBar.is(':animated') ){
-                            $summaryWrap.addClass('visible').show();
-                                $summaryBar.css({
-                                    left: -width-2,
-                                }).animate({
-                                    left: 0
-                                }, function(){
-                                    
-                                });
-                        }
-                        $(this).find('.rdr_bubbleButton').addClass('hover');
-
+                    methods.openOwnedSummaryWidget.call($this);
                 }).on( 'mouseleave.rbSocialWidgetButton', function(event) {
-                    $(this).find('.rdr_bubbleButton').removeClass('hover');
                 });
                 
                 var $shareWidget = $page.find('.rdr_shareWidget');
                 $shareWidget.unbind('.rbSocialWidgetButton');
                 $shareWidget.on('mouseleave.rbSocialWidgetButton', function(event) {
-                    var $mouse_target = $(event.relatedTarget);
-                    var $summaryWrap = $(this).find('.rdr_summaryBarWrap');
-                    var $summaryBar = $summaryWrap.find('.rdr-summary');
-                    var width = $summaryWrap.width();
-
-                    if ( !$mouse_target.parents().hasClass('rdr') && !$summaryBar.is(':animated') ) {
-                        $summaryBar.animate({
-                                left: -width-2
-                            }, function(){
-                                $summaryWrap.removeClass('visible').hide();
-                            });
-                    }
+                    methods.closeOwnedSummaryWidget.call($this, event.relatedTarget);
                 });
             }
 
