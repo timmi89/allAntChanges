@@ -568,7 +568,14 @@ div.rdr_sandbox div.rdr div.rdr_comment .rdr_comment_body{
     margin-left: 27px !important;
 }
 
-div.rdr_sandbox div.rdr ul.shareLinks { display: block !important; top: 0 !important; padding: 0 !important; float:left !important; }
+div.rdr_sandbox div.rdr ul.shareLinks {
+    display: block !important;
+    top: 0 !important;
+    padding: 0 !important;
+    float:left !important;
+    /*give it a height so that before the images load the rindow measures correctly*/
+    height: 24px !important;
+}
 div.rdr_sandbox div.rdr ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
 div.rdr_sandbox div.rdr ul.shareLinks img       {width:25px !important; margin:0 !important;}
 

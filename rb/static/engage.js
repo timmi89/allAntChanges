@@ -188,7 +188,6 @@ function readrBoard($R){
                 
                 var hash = $rindow.data('hash');
                 var summary = RDR.summaries[hash];
-                if( !summary){debugger;}
                 var kind = _kind || (
                     $rindow.hasClass('rdr_indicator_details') ?
                     "media" :
@@ -331,6 +330,10 @@ function readrBoard($R){
                 var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
                 $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 
+                var animWidth = $showPanel.width();
+                $hidePanel.css('left', animWidth);
+                $panelWrap.css('left', -animWidth);
+
                 //update the size at the same time so the animations run in parallel
                 RDR.rindow.updateSizes( $rindow );
                 $panelWrap.animate({
@@ -719,10 +722,14 @@ function readrBoard($R){
                             // embed icons/links for diff SNS
                             var shareHash = hash;
                             $.each(socialNetworks, function(idx, val){
-                                $shareLinks.append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                                $shareLinks.find('li:last').click( function() {
+                                var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                                $shareLinks.append($link);
+                                $link.click( function() {
+                                    //hack to get the kind
+                                    var summary = RDR.summaries[hash];
+                                    var kind = summary.kind;
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                    RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                    RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
                                     return false;
                                 });
                             });
@@ -812,12 +819,10 @@ function readrBoard($R){
 
                     $.each( $first_row.find('td'), function(idx, cell) {
                         $cell = $(cell);
-                        //todo check 7 margin
-                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width()+7; // 7px of margin + borders on the sides
+                        var unneededExtraWidth = 7;
+                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width();//+unneededExtraWidth; // 7px of margin + borders on the sides
                     });
                     
-                    console.log(firstRowWidth)
-
                     firstRowWidth += pill_width;
                     if ( ( firstRowWidth > maxWidth && row_count == 1 )
                         || ( $last_row.find('td:not(.rdr_gutter)').length == $first_row.find('td:not(.rdr_gutter)').length && row_count > 1 ) ) {
@@ -4199,11 +4204,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         'id':content_node.id
                                     };
                                 }else{
+                                    debugger;
                                     var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
                                         selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
 
                                     content_node_data = {
                                         'container': rindow.data('container'),
+
+//todo ost srlstate!!!!
                                         'body': selState.text,
                                         'location': selState.serialRange,
                                         'kind': kind
@@ -5177,7 +5185,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />'),
                             $tag_table = RDR.rindow.pillTable.make( tagsListMaxWidth );
-                            $tag_table.find('tr').append('<td />');
 
                         $rindow.append($tag_table);
                         
