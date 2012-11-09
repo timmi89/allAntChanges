@@ -1840,16 +1840,42 @@ function readrBoard($R){
             cssSuperImportant: function($domNode, cssDict, shouldReplace){
                 //RDR.util.cssSuperImportant:
                 //todo: this needs improvement - it should be parsing the style into a dict and then checking for an existing style to override.
-
-                var inlineStyleStr = shouldReplace ?
-                    "" : 
-                    $domNode.attr('style') || "";
+                var inlineStyleStr = "";
 
                 $.each(cssDict,function(key,val){
-                    inlineStyleStr += (key+ ':' +val+ ' !important; ');
+                    //remove and then add to make sure we're not double adding it
+                    val.replace('!important', "");
+                    $.trim(val);
+                    val += " !important";
+                    cssDict[key] = val;
+                });
+
+                var newStyleDict = shouldReplace ? 
+                    cssDict : 
+                    $.extend( 
+                        RDR.util.parseCssAttrToDict( $domNode.attr('style') ),
+                        cssDict
+                    );
+
+                $.each(newStyleDict,function(key,val){
+                    inlineStyleStr += (key+ ':' +val+";");
                 });
                 $domNode.attr('style', inlineStyleStr);
                 return $domNode; //return the node for the hell of it.
+            },
+            parseCssAttrToDict: function(inlineStyleStr){
+                //RDR.util.parseCssAttrToDict:
+                var styleDict = {};
+                attrs = inlineStyleStr.split(';');
+                $.each(attrs,function(idx, attrPair){
+                    var attrSplit = attrPair.split(':');
+                    var key = $.trim(attrSplit[0]);
+                    var val = $.trim(attrSplit[1]);
+                    if(key.length && val.length){
+                        styleDict[ key ] = val;
+                    }
+                });
+                return styleDict;
             },
             fixBodyBorderOffsetIssue: function(){
                 //RDR.util.fixBodyBorderOffsetIssue:
