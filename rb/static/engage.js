@@ -38,6 +38,11 @@ RDR_offline = !!(
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR.safeThrow = function(msg){
+    if(RDR_offline){
+        throw msg;
+    }
+}
 
 //this doesn't need to run if we have an id on the script
 function findEngageScript(){
@@ -271,9 +276,9 @@ function readrBoard($R){
             },
 
             panelShow: function( $rindow, $showPanel, callback ) {
-                //RDR.rindow.panelShow:
+                //RDR.rindow.panelShow: 
                 
-                console.log('panelEvent - panelShow');
+                // panelEvent - panelShow
                 
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
                 var $hidePanel = $rindow.find('.rdr_visiblePanel');
@@ -307,11 +312,27 @@ function readrBoard($R){
                     if (callback) callback();
                 });
             },
+            panelEnsureFloatWidths: function( $rindow ) {
+                //RDR.rindow.panelEnsureFloatWidths:
+                //this is needed becuase after the tagList updates, the width of panel1 can change.
+                var $panelWrap = $rindow.find('.rdr_body_wrap');
+                var $showPanel = $rindow.find('.rdr_visiblePanel');
+                var $hidePanel = $rindow.find('.rdr_hiddenPanel');
+
+                var xOffset = $hidePanel.width();
+
+                $panelWrap.css({
+                    left: -xOffset
+                });
+                $showPanel.css({
+                    left: xOffset
+                });
+
+            },
             panelHide: function( $rindow, callback ) {
                 //RDR.rindow.panelHide:
                 
-                console.log('panelEvent - panelhide');
-                $rindow.data('panelState', 1);
+                // panelEvent - panelhide
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
 
                 //update the first panel
@@ -342,12 +363,13 @@ function readrBoard($R){
                 RDR.C.rindowAnimationSpeed,
                 function() {
                     if (callback) callback();
+                    $rindow.data('panelState', 1);
                 });
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             mediaRindowUpdateTagPanel: function ( $rindow ) {
                 // RDR.rindow.mediaRindowUpdateTagPanel:
-                console.log('panelEvent - backButton');
+                // panelEvent - backButton
 
                 var hash = $rindow.data('hash');
                 
@@ -367,30 +389,28 @@ function readrBoard($R){
 
             },
 
-            mediaRindowShow: function ( $mediaItem, callback ) {
+            mediaRindowShow: function ( $mediaItem ) {
                 //RDR.rindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
+                //not sure we need all this logic anymore
                 if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
-                    var animHeight = $rindow.find('div.rdr_tags_list').height() + 35;
-                    $rindow.data('hover',true).animate( {'height':animHeight+'px' }, 333, 'swing', function() {
-                        if (callback) callback();
-                    });
+                    $rindow.data('hover',true);
+                    RDR.rindow.updateSizes( $rindow );
                 }
                 $rindow.addClass('engaged')
             },
-            mediaRindowHide: function ( $mediaItem, callback ) {
+            mediaRindowHide: function ( $mediaItem ) {
                 //RDR.rindow.mediaRindowHide:
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
                 if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
-                    $rindow.data('hover', false).animate( {'height':'0px' }, 333, 'swing', function() {
+                    $rindow.data('hover', false).animate( {'height':'0px' }, RDR.C.rindowAnimationSpeed, function() {
                         $rindow.removeClass('rdr_has_border');
-                        if (callback) callback();
                     });
                 }
                 $rindow.removeClass('engaged');
@@ -522,20 +542,20 @@ function readrBoard($R){
                                     ).appendTo( $subheader ),
                                     $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
                                     $sayMore = $(  
-                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                        '<div class="rdr_sectionWrap rdr_commentsSection rdr_clearfix">'+
                                             '<div class="rdr_first_column"><strong>Say More:</strong></div>'+
                                             '<div class="rdr_second_column rdr_comment_input"></div>'+
                                             '<div class="rdr_last_column"><button class="rdr_add_comment">Add</button></div>'+
                                         '</div>'
                                     ).appendTo( $options ),
                                     $save = $(
-                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                        '<div class="rdr_sectionWrap rdr_boardsSection rdr_clearfix">'+
                                             '<div class="rdr_first_column"><strong>Add To:</strong></div>'+
                                             '<div class="rdr_second_column rdr_select_user_board"></div>'+
                                         '</div>'
                                     ).appendTo( $options ),
                                     $share = $(
-                                        '<div class="rdr_sectionWrap rdr_clearfix">'+
+                                        '<div class="rdr_sectionWrap rdr_shareSection rdr_clearfix">'+
                                             '<div class="rdr_first_column"><strong>Share:</strong></div>'+
                                             '<div class="rdr_second_column rdr_share_buttons"></div>'+
                                         '</div>'
@@ -627,7 +647,7 @@ function readrBoard($R){
                                 $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
-                                    console.log('panelEvent - undo1');
+                                    // panelEvent - undo1
 
                                     var newArgs = {
                                         hash: args.hash,
@@ -4093,7 +4113,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $success.find('a.rdr_undo').click( function() {
                                 
                                 args.rindow = $rindow;
-                                console.log('panelEvent');
+                                // panelEvent
                                 RDR.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
                             });
                         }
@@ -4204,14 +4224,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         'id':content_node.id
                                     };
                                 }else{
-                                    debugger;
                                     var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
                                         selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
-
+                                        if(!selState){
+                                            RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
+                                            return;
+                                        }
                                     content_node_data = {
                                         'container': rindow.data('container'),
-
-//todo ost srlstate!!!!
                                         'body': selState.text,
                                         'location': selState.serialRange,
                                         'kind': kind
@@ -4269,7 +4289,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
-                                        console.log('panelEvent - undo2');
+                                        // panelEvent - undo2
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
                                         _undoPageReaction(args);
@@ -4296,7 +4316,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
-                                        console.log('panelEvent - undo3');
+                                        // panelEvent - undo3
 
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
@@ -5164,6 +5184,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $rindow = $indicator_details;
                         if (isMediaContainer){
                             var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
+                            //a bit of a hack to make sure this state is setup right.
+                            if( !$tagsListContainer.hasClass('rdr_hiddenPanel') ){
+                                $tagsListContainer.addClass('rdr_visiblePanel');
+                            }
+
                         }else{
                             //this shouldn't happen with how things are setup now... consolodate later.
                             var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow );
@@ -5270,10 +5295,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.find('div.rdr_cell_wrapper').each( function() {
                                 $(this).hover(
                                     function() {
-                                        $().selog('hilite', summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState, 'on');
+                                        var selState = summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState;
+                                        //make sure it's not already transitiontion into a success state
+                                        //hacky because sometimes it doesnt have the data for 1 yet
+                                        var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                        if( isPanelState1 ){
+                                            $().selog('hilite', selState, 'on');
+                                            $rindow.data('selState', selState);
+                                        }
                                     },
                                     function() {
-                                        $().selog('hilite', summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState, 'off');
+                                        var selState = summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState;
+                                        //make sure it's not already transitiontion into a success state
+                                        //hacky because sometimes it doesnt have the data for 1 yet
+                                        var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                        if( isPanelState1 ){
+                                            $().selog('hilite', selState, 'off');                                        
+                                        }
                                     }
                                 );
                             });
@@ -5971,8 +6009,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow );
                     }
 
+                    $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
                     RDR.rindow.panelUpdate($rindow, className, $tagsListContainer);
+                    RDR.rindow.panelEnsureFloatWidths($rindow);
 
                 } );
                 
@@ -6024,8 +6064,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
-                    // if ( kind == "text" ) $().selog('hilite', summary.content_nodes[ content_node.id ].selState, 'on');
-                } );
+                    if ( kind == "text" ){
+                        var selState = summary.content_nodes[ content_node.id ].selState;
+                        $().selog('hilite', selState, 'on');
+                        $rindow.data('selState', selState);
+                    }
+                });
 
                 RDR.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
 
@@ -6209,10 +6253,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if ( !content_node_info.content ) content_node_info.content = content_node_info.body;
 
                     //patching in reliable info todo: redo this formating
-
-                    // //save content node
-
-                    // var selState = rindow.data('selState');
 
                     var content_node_data = {
                         'hash': hash,

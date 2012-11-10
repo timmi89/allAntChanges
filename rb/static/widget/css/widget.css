@@ -374,6 +374,9 @@ div.rdr_sandbox div.rdr_indicator_details div.rdr_body   {
     max-height: none !important;
 }
 div.rdr_sandbox div.rdr div.rdr_body div.jspPane   { margin:0 !important; }
+div.rdr_sandbox div.rdr div.rdr_body div.rdr_commentsWrap{
+    white-space: normal !important;
+}
 div.rdr_sandbox div.rdr div.jspScrollable   { outline:none!important; }
 
 div.rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none;; }
@@ -401,7 +404,7 @@ div.rdr_sandbox div.rdr button {
 }
 
 div.rdr_sandbox div.rdr div.rdr_view_success {
-  width:293px !important;
+  width:100% !important;
   min-height:120px !important;
   font-size:11px !important;
   text-align:left !important;
@@ -410,14 +413,27 @@ div.rdr_sandbox div.rdr div.rdr_view_success {
 }
 div.rdr_sandbox div.rdr div.rdr_view_more {
   background:#f6f6f6 !important;
+  width: 100% !important;
+}
+div.rdr_sandbox div.rdr_window div.rdr_view_more {
   min-width: 300px !important;
 }
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin {
-  width:180px !important;
+
 }
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide {
   width:auto !important;
 }
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_commentsSection .rdr_first_column{
+    padding-top: 1px !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_boardsSection .rdr_first_column{
+    padding-top: 4px !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_shareSection .rdr_first_column{
+    padding-top: 12px !important;
+}
+
 div.rdr_sandbox div.rdr div.rdr_view_success .rdr_subheader{
     padding: 8px 0 !important;
     border-bottom: 1px solid #e0e0e0 !important;
@@ -425,14 +441,19 @@ div.rdr_sandbox div.rdr div.rdr_view_success .rdr_subheader{
 div.rdr_sandbox div.rdr div.rdr_view_success h1 {
   display:inline-block !important;
   float: left !important;
-  padding: 0 10px !important;
+  padding: 0 0 0 10px !important;
 }
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin h1 {
+  padding: 0 0 4px 10px !important
+}
+
 div.rdr_sandbox div.rdr div.rdr_view_success h1 span {
   font-weight:normal !important;
 }
 div.rdr_sandbox div.rdr div.rdr_view_success .rdr_linkWrap{
   float: left !important;
   padding: 1px 0 !important;
+  margin-left: 10px !important;
 }
 div.rdr_sandbox div.rdr div.rdr_view_success .rdr_link a {
   color:#008be4 !important;
@@ -453,6 +474,10 @@ div.rdr_sandbox div.rdr div.rdr_view_success button {
   padding: 3px 5px !important;
   margin: -3px 0 0 8px !important;
 }
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin button {
+    margin: 0 !important;
+}
+
 
 div.rdr_sandbox div.rdr div.rdr_view_success td {
   padding:5px 7px !important;
@@ -461,23 +486,31 @@ div.rdr_sandbox div.rdr div.rdr_view_success td {
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin td {
   padding:1px 4px !important;
 }
-div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_sectionWrap {
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_sectionWrap {
     clear: both !important;
     padding: 6px 0 !important;
-    /*so that the comment button won't line break in the rindows for text*/
-    /*min-width: 275px !important;*/
 }
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_first_column {
   width:72px !important;
   float: left !important;
   padding-top: 5px !important;
 }
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin .rdr_first_column {
+    margin: 4px 0 !important;
+}
+
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_second_column,
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_last_column{
   float: left !important;
 }
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin .rdr_last_column{
+  margin: 2px 0 !important;
+}
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_comment_input {
     padding-right: 0 !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin .rdr_inlineCommentBox{
+    margin-top: 10px !important;
 }
 
 /* commentSet */
@@ -523,6 +556,7 @@ div.rdr_sandbox div.rdr div.rdr_info        {font:italic 11px Arial !important;c
 
 div.rdr_sandbox div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important; }
 div.rdr_sandbox div.rdr div.rdr_share_social                   { overflow:visible !important; position: relative !important; top: 4px !important; min-width:90px !important;}
+div.rdr_sandbox div.rdr div.rdr_view_success.rdr_thin div.rdr_share_social                   { top: 0 !important;}
 div.rdr_sandbox div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 div.rdr_sandbox div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; padding-top:5px !important; text-align:left !important;}
 
