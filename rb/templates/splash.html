@@ -51,7 +51,7 @@
             </div>
             <div class="rightSide video">
     			<!-- <h3 class="sectionHeader">See it in action</h3> -->
-                <iframe src="http://player.vimeo.com/video/44853134" width="640" height="360" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                <iframe src="http://player.vimeo.com/video/52704607" width="640" height="360" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 
                 <div class="clearDiv"></div>
             </div>
@@ -91,19 +91,40 @@
                     <div class="clearDiv"></div>
 
                 <div class="publisherSignupCallToAction">
-                        <a class="btn" href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Add ReadrBoard to your site - it's free!</a>
-                        <em style="display:block;font-size:12px;padding-top:5px;">Installation just means adding our Javascript to your site, and takes just a few minutes.<br/>We're in beta, and we'll respond ASAP.</em>
+                        <a class="btn" href="http://wordpress.org/extend/plugins/readrboard/" target="_blank" title="Add ReadrBoard to your WordPress site">Get the WordPress plugin</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a class="btn" href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Not a WordPress site?</a>
+                        <em style="display:block;font-size:12px;padding-top:5px;">Installation takes 5 minutes, whether you use WordPress or not.</em>
                     </div>
                 </div>
             </div>
 
             <div class="leftSide wide">
-                <a target="_blank" href="{{STATIC_URL}}site/images/demo-analytics-mockup.jpg" title="Demo Publisher Analytics for Readrboard" >
+                <a target="_blank" href="http://player.vimeo.com/video/52709226" data-fancybox-type="iframe" class="fancybox" title="Readrboard Publisher's Dashboard">
                     <img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
+                    <em style="text-align:center;display:block;">Click to see a 30-second video!</em>
                 </a>
+                <script>
+                $("a.fancybox").fancybox({
+                  wrapCSS    : 'fancybox-custom',
+                  helpers : {
+                    title : {
+                      type : 'inside'
+                    },
+                    overlay : {
+                      css : {
+                        'background-color' : '#eee'
+                      }
+                    }
+                  }
+                });
+                </script>
             </div>
     		<div class="rightSide narrow">
     			<ul class="bullet-points">
+                    <li>
+                        <h3>Free!</h3>
+                    </li>
     				<li>
     					<h3>Increase engagement 100%</h3>
     					<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>

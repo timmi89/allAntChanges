@@ -34,7 +34,27 @@
 </section>
 <section role="panels">
 
+	<div class="section_content">
+        <div class="reactions">
+            <div class="other_reactions">
+                <section role="most popular tags">
+                    <h1 class="sectionHeader">Other Reactions</h1>
+                    <ol></ol>
+                </section>
+            </div>
+            <div class="most_popular">
+                <h1 class="sectionHeader">Most Popular Reactions</h1>
+                <div id="pie_chart_labels">
+                    <ol></ol>
+                </div>
+                <div id="pie_chart_container">
+                    <div id="pie_chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 	<section role="wide panels">
+
 		<section role="interaction frequency">
 			<div role="total interactions">
 				<h1>0</h1>
@@ -45,10 +65,10 @@
 			</div>
 		</section> <!-- / interaction frequency -->
 
-		<section role="most popular tags">
+		<!-- <section role="most popular tags">
 			<h3>Most Popular Tags</h3>
 			<ol></ol>
-		</section> <!-- /most popular tags -->
+		</section> --> <!-- /most popular tags -->
 
 		<section role="most active pages">
 			<h3>Most Active Pages</h3>
@@ -127,6 +147,17 @@
 <script>
 $( 'section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
+// Radialize the colors
+Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+    return {
+        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+        stops: [
+            [0, color],
+            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+        ]
+    };
+});
+
 // put in external file...
 RB.analytics = {
 
@@ -148,12 +179,82 @@ RB.analytics = {
 			dataType: "jsonp",
 			success: function(response){
 				if (type == "tags") {
-					var tag_list = "";
+					// function SortByTagCount(a,b) { return b.count - a.count; }
+                	// interaction_order.sort( SortByTagCount );
+
+					var other_tag_list = "",
+						$pie_chart_labels = $('#pie_chart_labels ol'),
+						tag_count = 0,
+						pie_chart_data = [];
 					for ( var i in response ) {
-						var sizeClass = ( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-						tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						if ( tag_count < 8 ) {
+							$pie_chart_labels.append('<li><a href="/group/'+RB.group.short_name+'/?s='+response[i].interaction_node__body+'">'+response[i].interaction_node__body+' <span>('+response[i].count+')</span></a></li>');
+							pie_chart_data.push( [response[i].interaction_node__body, response[i].count] );
+						} else {
+							var sizeClass = "medium"; //( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
+							other_tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
+						}
+						tag_count++;
 					}
-					$('section[role="most popular tags"] ol').html( $(tag_list) );
+
+					if ( tag_count == 0 ) {
+						$('section[role="panels"]').hide().after(('<h1 style="margin:20px auto;text-align:center;">No interactions in this date range!</h1>'));
+						return;
+					} else {
+						$('section[role="panels"]').show();
+					}
+					if ( tag_count <= 8 ) {
+						$('div.most_popular').addClass('solo').siblings().hide();
+					} else {
+						$('div.most_popular').removeClass('solo').siblings().show();
+						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
+					}
+                
+                // Build the chart
+                var pie_chart;
+                pie_chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo: 'pie_chart',
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {
+                        // pointFormat: '{series.name}',
+                        // enabled:false
+                    },
+                    plotOptions: {
+                        series: {
+                            point: {
+                        events: {
+                            mouseOver: function() {
+                                var nthChild = this.x+1;
+                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
+                            },
+                            mouseOut: function() {
+                                var nthChild = this.x+1;
+                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
+                            }
+                        }
+                    },
+                        },
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        name: 'Reactions',
+                        data: pie_chart_data
+                    }]
+                });
 				} else if (type=="bookmarks") {
 					// var bookmarkHtml = "";
 					// for ( var i in response ) {
@@ -224,6 +325,7 @@ RB.analytics = {
 				} else if ( type == "content" ) {
 					var contentHtml = "";
 					for ( var i in response) {
+						console.dir(response[i]);
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						if ( response[i].content.kind == "img" ) {
 							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
@@ -330,9 +432,11 @@ RB.analytics = {
 						text: 'Interaction Distribution'
 					},
 					xAxis: {
+						labels: {enabled:false}
 					},
 					yAxis: {
-						min: 0
+						min: 0,
+						title: {text:null}
 					},
 					legend: {
 						backgroundColor: '#FFFFFF',
@@ -350,9 +454,9 @@ RB.analytics = {
 						}
 					},
 					series: [{
-						name: 'Bookmarks',
-						data: [bookmarks]
-					}, {
+					// 	name: 'Bookmarks',
+					// 	data: [bookmarks]
+					// }, {
 						name: 'Comments',
 						data: [comments]
 					}, {

@@ -108,7 +108,9 @@ urlpatterns = patterns('',
   
   
   # Group Supporting Pages
-  url(r'^signup/$', 'rb.views.create_group'),
+  # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
+  # url(r'^signup/$', 'rb.views.create_group'),
+  url(r'^signup/$', 'django.views.generic.simple.redirect_to', {'url': '/about/#publishers'}),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),

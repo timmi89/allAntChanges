@@ -624,7 +624,7 @@ nav 			{  background: none repeat scroll 0 0 #ddd; border:1px solid #aaa; border
 section[role="content"]	{
 	margin:36px 0 0 0;
 	padding:0;
-	background:#f3f3f3;
+	/*background:#f3f3f3;*/
 	overflow:auto;
 	position:relative;
 }
@@ -1209,6 +1209,51 @@ body div.simpleMessage{
     margin: 15px;
 }
 
+/* pie chart & other popular reactions */
+#pie_chart_container    { float:left; width:289px; position:relative;z-index:1; }
+#pie_chart              { position:relative; width:400px; height:400px; top:-40px; left:-60px;}
+#pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2;}
+#pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:20px;}
+#pie_chart_labels li a span         { font-size:12px; color:#999; }
+#pie_chart_labels li a              { text-decoration:none; display:block; padding:5px;}
+#pie_chart_labels li:nth-child(1) a { color:#17416f;}
+#pie_chart_labels li:nth-child(2) a { color:#5b1408;}
+#pie_chart_labels li:nth-child(3) a { color:#4a5c1a;}
+#pie_chart_labels li:nth-child(4) a { color:#40335c;}
+#pie_chart_labels li:nth-child(5) a { color:#236076;}
+#pie_chart_labels li:nth-child(6) a { color:#a85d28;}
+#pie_chart_labels li:nth-child(7) a { color:#6d83a4;}
+#pie_chart_labels li:nth-child(8) a { color:#82615f;}
+
+#pie_chart_labels li.active:nth-child(1) a { background:#17416f;color:#fff;}
+#pie_chart_labels li.active:nth-child(2) a { background:#5b1408;color:#fff;}
+#pie_chart_labels li.active:nth-child(3) a { background:#4a5c1a;color:#fff;}
+#pie_chart_labels li.active:nth-child(4) a { background:#40335c;color:#fff;}
+#pie_chart_labels li.active:nth-child(5) a { background:#236076;color:#fff;}
+#pie_chart_labels li.active:nth-child(6) a { background:#a85d28;color:#fff;}
+#pie_chart_labels li.active:nth-child(7) a { background:#6d83a4;color:#fff;}
+#pie_chart_labels li.active:nth-child(8) a { background:#82615f;color:#fff;}
+
+#pie_chart_labels li:hover:nth-child(1) a { background:#17416f;color:#fff;}
+#pie_chart_labels li:hover:nth-child(2) a { background:#5b1408;color:#fff;}
+#pie_chart_labels li:hover:nth-child(3) a { background:#4a5c1a;color:#fff;}
+#pie_chart_labels li:hover:nth-child(4) a { background:#40335c;color:#fff;}
+#pie_chart_labels li:hover:nth-child(5) a { background:#236076;color:#fff;}
+#pie_chart_labels li:hover:nth-child(6) a { background:#a85d28;color:#fff;}
+#pie_chart_labels li:hover:nth-child(7) a { background:#6d83a4;color:#fff;}
+#pie_chart_labels li:hover:nth-child(8) a { background:#82615f;color:#fff;}
+
+.reactions { overflow:auto; margin:20px 0 0; clear:both;}
+.section_content .reactions { overflow:auto; margin:20px auto 0; clear:both; width:960px;}
+.most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden; border-right:1px solid #e0e0e0;}
+.most_popular.solo { border-right:none; margin:0 235px !important;}
+.other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; }
+section[role="most popular tags"] ol li.large { font-size:20px; }
+.sectionHeader {position:relative;z-index:10;}
+
+
+#pie_chart_labels li.active a span         { color:#fff;}
+
 /* analytics dashboard */
 section[role="group panel header"] 			{ width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
 section[role="group panel header"] h3			{ float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
@@ -1245,6 +1290,7 @@ form.big-form input#id_call_to_action	{ width:100%; }
 section[role="datepicker"]			{ font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
 section[role="datepicker"] label	{ display:inline; }
+#ui-datepicker-div {z-index:11 !important;}
 
 section[role="panels"] 					{ xfloat:left; overflow:auto; padding:10px; }
 section[role="wide panels"] 			{ float:left; padding:0 10px 10px; width: 740px; }

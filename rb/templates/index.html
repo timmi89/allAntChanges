@@ -16,6 +16,7 @@
 
 {% if not profile_user and not group and not board %}
 <style>
+section[role="content"] {background:#f3f3f3;}
 section[role="main"] {margin-top: 0;}
 section[role="complementary"] {display:none;}
 header[role="banner"] { box-shadow:none !important; border-bottom:1px solid #d9d9d9; }
@@ -61,12 +62,6 @@ div.section_content h1.sectionHeader {
 <div id="how_the_web_feels">
     <h1>How the web feels today.</h1>
     <div class="section_content">
-        <style>
-        .reactions { overflow:auto; margin:20px 0 0; clear:both;}
-        .most_popular { float:left;width:489px; overflow-y:auto; overflow-x:hidden; border-right:1px solid #e0e0e0;}
-        .other_reactions { float:right;width:410px;padding-left:20px; overflow-y:auto; overflow-x:hidden; text-align:left; }
-        section[role="most popular tags"] ol li.large { font-size:20px; }
-        </style>
         <div class="reactions">
             <div class="other_reactions">
                 <section role="most popular tags">
@@ -76,42 +71,6 @@ div.section_content h1.sectionHeader {
             </div>
             <div class="most_popular">
                 <h1 class="sectionHeader">Most Popular Reactions</h1>
-                <style>
-                #pie_chart_container    { float:left; width:289px; position:relative;z-index:1; }
-                #pie_chart              { position:relative; width:400px; height:400px; top:-40px; left:-60px;}
-                #pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2;}
-                #pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:20px;}
-                #pie_chart_labels li a span         { font-size:12px; color:#999; }
-                #pie_chart_labels li a              { text-decoration:none; display:block; padding:5px;}
-                #pie_chart_labels li:nth-child(1) a { color:#17416f;}
-                #pie_chart_labels li:nth-child(2) a { color:#5b1408;}
-                #pie_chart_labels li:nth-child(3) a { color:#4a5c1a;}
-                #pie_chart_labels li:nth-child(4) a { color:#40335c;}
-                #pie_chart_labels li:nth-child(5) a { color:#236076;}
-                #pie_chart_labels li:nth-child(6) a { color:#a85d28;}
-                #pie_chart_labels li:nth-child(7) a { color:#6d83a4;}
-                #pie_chart_labels li:nth-child(8) a { color:#82615f;}
-
-                #pie_chart_labels li.active:nth-child(1) a { background:#17416f;color:#fff;}
-                #pie_chart_labels li.active:nth-child(2) a { background:#5b1408;color:#fff;}
-                #pie_chart_labels li.active:nth-child(3) a { background:#4a5c1a;color:#fff;}
-                #pie_chart_labels li.active:nth-child(4) a { background:#40335c;color:#fff;}
-                #pie_chart_labels li.active:nth-child(5) a { background:#236076;color:#fff;}
-                #pie_chart_labels li.active:nth-child(6) a { background:#a85d28;color:#fff;}
-                #pie_chart_labels li.active:nth-child(7) a { background:#6d83a4;color:#fff;}
-                #pie_chart_labels li.active:nth-child(8) a { background:#82615f;color:#fff;}
-
-                #pie_chart_labels li:hover:nth-child(1) a { background:#17416f;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(2) a { background:#5b1408;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(3) a { background:#4a5c1a;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(4) a { background:#40335c;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(5) a { background:#236076;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(6) a { background:#a85d28;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(7) a { background:#6d83a4;color:#fff;}
-                #pie_chart_labels li:hover:nth-child(8) a { background:#82615f;color:#fff;}
-
-                #pie_chart_labels li.active a span         { color:#fff;}
-                </style>
                 <div id="pie_chart_labels">
                     <ol></ol>
                 </div>
@@ -276,7 +235,7 @@ div.section_content h1.sectionHeader {
                         $pie_chart_labels.append('<li><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
                         chart_data.push( [reaction.body, reaction.count] );
                     } else {
-                        $other_reactions.append('<li class="large"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
+                        $other_reactions.append('<li class="medium"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
                     }
                     index++;
                 });

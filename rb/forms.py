@@ -2,6 +2,7 @@ from django import forms
 from rb.models import *
 import re
 from api import userutils
+from auto_approval import autoCreateGroup
 
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
@@ -240,50 +241,13 @@ class CreateGroupForm(forms.Form):
     
     def save(self, cookie_user, force_insert=False, force_update=False, commit=True, isAutoApproved=False, querystring_content=False):
 
-        try:
-            group = Group.objects.create(
-                name=self.cleaned_data['name'],
-                short_name=self.cleaned_data['short_name']
-            )
-            Site.objects.create(
-                name=self.cleaned_data['domain'],
-                domain=self.cleaned_data['domain'],
-                group=group,
-                querystring_content=querystring_content,
-            )
-            # Add us to admins
-            readr_admins = SocialUser.objects.filter(
-                user__email__in=(
-                    'porterbayne@gmail.com',
-                    'erchaves@gmail.com',
-                    'michael@readrboard.com',
-                )
-            ).exclude(id=social_user.id)
-        
-            for admin in readr_admins:
-                GroupAdmin.objects.create(group=group,social_user=admin,approved=True)
-              
-        except Exception, e:
-            groups = Group.objects.filter(
-                name=self.cleaned_data['name'],
-                short_name=self.cleaned_data['short_name']
-                )
-            if len(groups) == 1:
-                group = groups[0]
-            else:
-                raise Exception("More or less than one group with shortname found: " + self.cleaned_data['short_name'])
-            
-        
-        social_user = SocialUser.objects.get(user=cookie_user)
-        
-        group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=isAutoApproved)
+        cleaned_data = dict(
+            name=self.cleaned_data['name'],
+            short_name=self.cleaned_data['short_name'],
+            domain=self.cleaned_data['domain'],
+        )
 
-        ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
-
-        msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", RB_SOCIAL_ADMINS )
-        msg.content_subtype='html'
-        msg.send(False)
-          
+        group = autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=isAutoApproved, querystring_content=querystring_content)          
         return group
         
 

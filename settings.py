@@ -44,6 +44,8 @@ RB_SOCIAL_ADMINS = [
     'michael@readrboard.com',
 ]
 
+TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
+
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:

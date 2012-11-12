@@ -421,12 +421,19 @@ def wordpress(request, **kwargs):
     group = context.get('hostdomaingroup', None)
     hasRegistered = group != None
 
+    admin_just_approved = kwargs.get('admin_just_approved', False)
+    # just to refresh the page
+    if admin_just_approved:
+        # quick hack - 'requested' has been passed in, so this is actually the 'hasRegisted' url
+        return HttpResponseRedirect( hasNotRegisteredUrl )
+
     if cookie_user:
         if hasRegistered:
             admin_groups = kwargs.get('admin_groups', None)
             if admin_groups and (group in admin_groups):
                 if not true_short_name == short_name:
                     return HttpResponseRedirect( wordpressEdit )
+
 
                 return HttpResponseRedirect( settingsUrl(short_name) )
 
@@ -439,27 +446,28 @@ def wordpress(request, **kwargs):
     else:
         return HttpResponseRedirect(isNotAdminUrl)
 
-def create_group(request, **kwargs):
-    context = kwargs.get('context', {})
-    cookie_user = checkCookieToken(request)
-    if not cookie_user: return HttpResponseRedirect('/')
+# dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
+# def create_group(request, **kwargs):
+#     context = kwargs.get('context', {})
+#     cookie_user = checkCookieToken(request)
+#     if not cookie_user: return HttpResponseRedirect('/')
     
-    if request.method == 'POST':
-        form = CreateGroupForm(request.POST)
-        if form.is_valid():
-            form.save(cookie_user)
-            context['requested'] = True
-    else:
-        form = CreateGroupForm()
+#     if request.method == 'POST':
+#         form = CreateGroupForm(request.POST)
+#         if form.is_valid():
+#             form.save(cookie_user)
+#             context['requested'] = True
+#     else:
+#         form = CreateGroupForm()
         
-    context['form'] = form
-    context['fb_client_id'] = FACEBOOK_APP_ID
+#     context['form'] = form
+#     context['fb_client_id'] = FACEBOOK_APP_ID
 
-    return render_to_response(
-        "group_create.html",
-        context,
-        context_instance=RequestContext(request)
-    )
+#     return render_to_response(
+#         "group_create.html",
+#         context,
+#         context_instance=RequestContext(request)
+#     )
 
 @requires_admin_wordpress
 def create_group_wordpress(request, **kwargs):
