@@ -416,15 +416,22 @@ function readrBoard($R){
                 $rindow.removeClass('engaged');
                 $('#rdr_indicator_' + hash).hide();
             },
-            updateSizes: function($rindow, setWidth, setHeight, _kind) {
+            updateSizes: function($rindow, _options) {
                 //RDR.rindow.updateSizes:
 
+                // options are {
+                //     setWidth,
+                //     setHeight,
+                //     noAnimate
+                // }
+
                 //_kind should not need to be set manually
-                var kind = _kind || (
+                var kind = (
                     $rindow.hasClass('rdr_indicator_details') ?
                     "media" :
                     "text"
                 );
+                var options = _options || {};
 
                 var $elm = $rindow.find('.rdr_visiblePanel');
 
@@ -452,34 +459,24 @@ function readrBoard($R){
                 }
                 defaults.h = $elm.height();
 
-                width = setWidth || defaults.w;
-                height = setHeight || defaults.h;
+                width = options.setWidth || defaults.w;
+                height = options.setHeight || defaults.h;
                 adjedHeight = height + rindowHeaderHeight;
-
-                // if ( visiblePane.height > 260 ) visiblePane.height = 260; // an effective max-height.  is this right?
-                // if ( setHeight ) { // override if height is passed in
-                //     visiblePane.height = setHeight,
-                //     heightAdjustment = 0;
-                // }
-                // $rindow.find('div.jspContainer').height( visiblePane.height+4 );
-
-                
-                // var rindow_width = $rindow.width();
-
-                // var setWidth = $rindow.find('.rdr_body_wrap').width();
             
-
+                if(options.noAnimate){
+                    $rindow.css({
+                        width: width,
+                        height: adjedHeight
+                    });
+                }
                 $rindow.animate({
                     width: width,
                     height: adjedHeight
                 },{
                     duration: defaults.duration,
-                    queue:false 
+                    queue:false
                 });
 
-                // $jsPane.width(setWidth);
-                // RDR.rindow.jspUpdate( $rindow, setWidth, kind );
-            
                 RDR.rindow.jspUpdate($rindow)
             },
             updatePageTagMessage: function(args, action) {
@@ -4997,21 +4994,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.events.track( 'view_node::'+hash, hash );
                         }
 
-                        if ( typeof $rindow != "undefined" ) {
-                            
-                            //todo: examine resize
-                            // RDR.rindow.updateSizes( $rindow );
-                            // RDR.rindow.updateSizes( $rindow ); // needed kludge.
-                        }
-
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
                         var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
                         $rindow.find('.rdr_header').replaceWith($header);
-                        $rindowBody = $('<div class="rdr_body" />');
-                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click<br/><strong>React to this</strong></div>');
+                        $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
+                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>react to this</strong></div>');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
+                        RDR.rindow.updateSizes(
+                            $rindow, {
+                                noAnimate:true
+                            }
+                        );
                     }
 
                     function _setupHoverToFetchContentNodes(callback){                        
