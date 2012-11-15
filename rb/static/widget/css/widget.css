@@ -1083,7 +1083,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   font-weight:bold !important;
   color:#666 !important;
   font-size:11px !important;
-  padding-left:5px !important;
+  padding: 9px 8px 7px 8px !important;
   /*this border will fade into the side if it wraps to be the first on the left*/
   border-left: 1px dotted #ccc !important;
   left: -1px !important;
@@ -1094,7 +1094,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle:hover {
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr_reactToArticle_inner{
-    margin-top: -4px !important;
+    /*margin-top: -4px !important;*/
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle span{
@@ -1121,6 +1121,9 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
   padding-left:0 !important;
 }
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
+  /*todo*/
+  display: none !important;
+
   background:url("../images/readr_icons.png") no-repeat scroll 0 1px transparent !important;
   margin:0 0 -2px 0 !important;
 }
