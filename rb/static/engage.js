@@ -7683,7 +7683,10 @@ function $RFunctions($R){
 
                     // summary widget: specific tag totals
                     if ( page.toptags.length > 0 ){
-                        $react.find('div.rdr-sum-reactions').append('<a class="rdr_reactions_label">Reactions: </a>');
+                        $react.find('div.rdr-sum-reactions').append(
+                            '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                            '<a class="rdr_reactions_label">Reactions: </a>'
+                        );
                         // var $toptags = $('<div class="rdr-top-tags" />');
                         // $summary_widget.append( $toptags );
 
