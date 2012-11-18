@@ -1269,6 +1269,24 @@ ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 div.column              { float:left; width:45%; }
 div.leftColumn          { margin-right:5%; }
 div.column section      {margin-bottom: 10px;}
+div.column .formRow {
+    margin: 15px 0;
+}
+div.column .labelTitle{
+    margin: 6px 0 2px 0;
+}
+.word_blacklist_row .hidden{
+    display: none;
+}
+#toggle_word_blacklist_wrap a{
+    float: left;
+}
+#toggle_word_blacklist_wrap span.floatLeft{
+    float: left;
+    margin: 1px 0 0 6px;
+}
+
+
 form.big-form button            { clear:both; font-size:24px; display:inline-block; padding: 10px;}
 form.big-form h3            { color:#668294; border-bottom:1px solid #668294; margin:10px 0;}
 

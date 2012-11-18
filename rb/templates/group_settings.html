@@ -123,9 +123,27 @@
                 {{ form.requires_approval }}{{ form.requires_approval.errors }}
                 <label for="id_requires_approval"><span class="labelTitle">Requires Approval? </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
             </div>
-            <div class="formRow">
-                <label for="id_word_blacklist"><span class="labelTitle">Word Blacklist </span><span>Words that are automatically censored.</span></label>
-                {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
+            <div class="formRow word_blacklist_row">
+
+                <label for="id_word_blacklist">
+                    <span class="labelTitle">Censored Word List</span>
+                    <span>Comma separated list of words that will be automatically censored and replaced with ***</span>
+                </label>
+                <div id="toggle_word_blacklist_wrap">
+                    <label>
+                        <a href="#" id="toggle_word_blacklist">
+                            <span class="labelTitle word_blacklist_toggle_node">Edit Censored Word List</span>
+                            <span class="labelTitle word_blacklist_toggle_node hidden">Good heavens, my eyes!</span>
+                        </a>
+                        <span class="floatLeft word_blacklist_toggle_node">Warning: Rated R for Raunchy</span>
+                        <span class="floatLeft word_blacklist_toggle_node hidden">Hide this list and keep censoring</span>
+                    </label>
+                </div>
+                <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hidden">
+                    {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
+                </div>
+                <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" disabled="disabled" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
+
             </div>
         </section>
         <section class="">
@@ -173,6 +191,13 @@
                 $(this).closest('.formRow').removeClass('error');
                 $(this).closest('form').find('.errorMsg').hide();
                 $(this).closest('form').find('.successMsg').hide();
+            });
+
+            $('#toggle_word_blacklist').click(function(){
+                $('.word_blacklist_toggle_node').each(function(){
+                    $(this).toggleClass('hidden');
+                });
+                return false;
             });
 
         });
