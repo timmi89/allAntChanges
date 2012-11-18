@@ -128,11 +128,11 @@
                     val: '.readrboard_summary_widget_hook',
                     // val: 'article header'
                 },
-                //add this for now, because the default group tags weren't working for me.
-                {
-                    selector: '#groupSettings #id_blessed_tags',
-                    val: 'Love It;Uh, no.;hilarious;You sure?;amazing'
-                },
+                // //add this for now, because the default group tags weren't working for me.
+                // {
+                //     selector: '#groupSettings #id_blessed_tags',
+                //     val: 'Love It;Uh, no.;hilarious;You sure?;amazing'
+                // },
                 {
                     selector: '#groupSettings #id_no_readr',
                     val: '#header, #sidebar, #footer, #comments, #commentform'
@@ -146,7 +146,7 @@
 
                 var $this = $(this.selector);
                 var val = $this.val();
-                if (this.force || val == "" ){
+                if (this.force || $.trim(val) == "" ){
                     val = this.val
                 }
                 $this.val( val );
