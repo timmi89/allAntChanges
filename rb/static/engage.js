@@ -1955,10 +1955,11 @@ function readrBoard($R){
                     cssDict[key] = val;
                 });
 
+                var existingStyle = $domNode.attr('style') || "";
                 var newStyleDict = shouldReplace ? 
                     cssDict : 
                     $.extend( 
-                        RDR.util.parseCssAttrToDict( $domNode.attr('style') ),
+                        RDR.util.parseCssAttrToDict( existingStyle ),
                         cssDict
                     );
 
@@ -2963,11 +2964,11 @@ function readrBoard($R){
                 $(window).resize(RDR.util.throttledUpdateContainerTrackers());
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackList = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
+                var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
                 
                 var minImgWidth = 160;
 
-                $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackList, function(){
+                $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
                     RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
                     // only do whitelisted iframe src domains
@@ -3012,7 +3013,7 @@ function readrBoard($R){
                             RDR.actions.indicators.utils.borderHilites.engage(hash);
                         }
                     }
-                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackList, function(event){
+                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
                     var $this = $(this),
                         hash = $this.data('hash');
 
@@ -3114,7 +3115,7 @@ function readrBoard($R){
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
 
-                    //filter out blacklisted stuff
+                    //filter out blacklisted stuff and already hashed stuff
                     $group = $group.not('.rdr-hashed, .no-rdr');
                     group.$nodes = $group;
 
@@ -6645,7 +6646,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
-                if ( !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
+                if ( !selected || !selected.serialRange || !selected.text || (/^\s*$/g.test(selected.text)) ) return;
                 //else
 
                 //don't send text that's too long - mostly so that the ajax won't choke.
@@ -6656,7 +6657,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
 
                 // check if the blockparent is already hashed
-                if ( $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
+                if ( $rdrParent.length && $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
                     if(callback){
             
                         var hash = $rdrParent.data('hash')
