@@ -5846,8 +5846,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     });
 
-                    // RDR.actions.summaries.sortInteractions(hash);
-
+                    //don't forget to do this - the tags are built from this.
+                    
+                    RDR.actions.summaries.sortInteractions(hash);
+                    debugger;
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page);
