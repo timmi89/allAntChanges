@@ -2007,22 +2007,6 @@ function readrBoard($R){
                 });
 
             },
-            setupParagraphHelpers: function() {
-                //this is a jquery live event, so it will work for added components as well.
-                $('body').on('mouseover', '.rdr-node:not("img,iframe")', function() {
-                    var hash = $(this).data('hash');
-                    //todo: this hash was undefined sometimes for some reason and was causing an error - find out why
-                    var hasIndicator = $(this).hasClass('rdr-hasIndicator');
-                    if(!hash || hasIndicator){
-                        return;
-                    }
-                    RDR.actions.indicators.init(hash);
-                    //show it here, because the other hover event wont get triggered till the next time.
-                    var $indicator = $(this).find('.rdr_indicator');
-                    RDR.util.cssSuperImportant( $indicator, { display:"inline" });
-                });
-                $RDR.dequeue('initAjax');
-            },
             //_.throttle returns a function
             throttledUpdateContainerTrackers: function(){
                 return RDR.util._.throttle(
@@ -2678,10 +2662,6 @@ function readrBoard($R){
                    RDR.util.initPublicEvents();
                 });
 
-                $RDR.queue('initAjax', function(next){
-                   RDR.util.setupParagraphHelpers();
-                });
-
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
 
@@ -3170,23 +3150,11 @@ function readrBoard($R){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node').hover(
-                        function() {
-                            var $indicator = $('#rdr_indicator_'+hash);
-                            if ( $indicator.hasClass('rdr_helper') ) {
-                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
-                            }
-                        },
-                        function() {
-                            var $indicator = $('#rdr_indicator_'+hash);
-                            if ( $indicator.hasClass('rdr_helper') ) {
-                                RDR.util.cssSuperImportant( $indicator, { display:"none" });
-                            }
-                        }
-                    );
+                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
+                    RDR.actions.indicators.init(hash);
 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
@@ -4936,11 +4904,24 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //todo: combine this with the kindSpecificSetup above right?
                     if (kind == 'text'){
+                        $container.unbind('.rdr_helper');
+                        $container.bind('mouseenter.rdr_helper', function() {
+                            if ( $indicator.hasClass('rdr_helper') ) {
+                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                            }
+                        });
+                        $container.bind('mouseleave.rdr_helper', function(e) {
+                            if ( $indicator.hasClass('rdr_helper') ) {
+                                RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                            }
+                        });
+
                         //This will be either a helperIndicator or a hidden indicator
                         var isZeroCountIndicator = !( summary.counts.tags > 0 );
 
                         $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                         if(isZeroCountIndicator){
+                            $indicator.addClass('rdr_helper');
                             _setupHoverForShowRindow();
                         }else{
                             _setupHoverToFetchContentNodes(function(){
@@ -5107,8 +5088,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     RDR.actions.containers.media.onDisengage( hash );
                                 }
                             })//chain
-                            .on('mouseover', function() { $(this).addClass('rdr_live_hover'); })//chain
-                            .on('mouseout', function() { $(this).removeClass('rdr_live_hover');  });
+                            .on('mouseenter', function() { $(this).addClass('rdr_live_hover'); })//chain
+                            .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
