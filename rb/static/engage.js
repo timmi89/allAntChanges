@@ -312,23 +312,6 @@ function readrBoard($R){
                     if (callback) callback();
                 });
             },
-            panelEnsureFloatWidths: function( $rindow ) {
-                //RDR.rindow.panelEnsureFloatWidths:
-                //this is needed becuase after the tagList updates, the width of panel1 can change.
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
-                var $showPanel = $rindow.find('.rdr_visiblePanel');
-                var $hidePanel = $rindow.find('.rdr_hiddenPanel');
-
-                var xOffset = $hidePanel.width();
-
-                $panelWrap.css({
-                    left: -xOffset
-                });
-                $showPanel.css({
-                    left: xOffset
-                });
-
-            },
             panelHide: function( $rindow, callback ) {
                 //RDR.rindow.panelHide:
                 
@@ -365,6 +348,23 @@ function readrBoard($R){
                     if (callback) callback();
                     $rindow.data('panelState', 1);
                 });
+            },
+            panelEnsureFloatWidths: function( $rindow ) {
+                //RDR.rindow.panelEnsureFloatWidths:
+                //this is needed becuase after the tagList updates, the width of panel1 can change.
+                var $panelWrap = $rindow.find('.rdr_body_wrap');
+                var $showPanel = $rindow.find('.rdr_visiblePanel');
+                var $hidePanel = $rindow.find('.rdr_hiddenPanel');
+
+                var xOffset = $hidePanel.width();
+
+                $panelWrap.css({
+                    left: -xOffset
+                });
+                $showPanel.css({
+                    left: xOffset
+                });
+
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             mediaRindowUpdateTagPanel: function ( $rindow ) {
