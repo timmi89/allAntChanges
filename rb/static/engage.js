@@ -1977,7 +1977,7 @@ function readrBoard($R){
             parseCssAttrToDict: function(inlineStyleStr){
                 //RDR.util.parseCssAttrToDict:
                 var styleDict = {};
-                attrs = inlineStyleStr.split(';');
+                var attrs = inlineStyleStr.split(';');
                 $.each(attrs,function(idx, attrPair){
                     var attrSplit = attrPair.split(':');
                     var key = $.trim(attrSplit[0]);
