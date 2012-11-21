@@ -39,7 +39,12 @@ RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.r
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 RDR.safeThrow = function(msg){
-    if(RDR_offline){
+    //this will never actually throw in production (if !RDR_offline)
+    //this is used for errors that aren't stopship, but are definitely wrong behavior.
+    //set localDebug to true if you want to catch these while developing.
+    var debugMode = false;
+
+    if(RDR_offline && debugMode){
         throw msg;
     }
 }
@@ -5779,60 +5784,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     $.each( diff, function(interaction_node_type, nodes){
                         // This is now scoped to node_type - so nodes, summary_nodes, and counts here only pertain to their category (tag or comment, etc.)
-                        var summary_nodes = summary.top_interactions[interaction_node_type];
-
+                        
                         //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                         $.each(nodes, function(id,diffNode){
                             //coms or tags
 
-                            if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
-                                var summary_node = summary_nodes[id];
-                                summary_node.count += diffNode.delta;
-
-                                //also update page
-                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
-
-                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
-                                if( summary_node.count <= 0 ){
-                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
-                                }
-
-                            }else{
-                                //interaction doens't exist yet:
-                                //split between tags and comments:
-                                if(interaction_node_type == "tags"){
-                                    //todo: implement a diffNode.make function instead of this.
-                                    summary_nodes[id] = {
-                                        count: diffNode.delta, //this should always be 1.
-                                        body: diffNode.body,
-                                        id: id,
-                                        parent_id: diffNode.parent_id,
-                                        parent_interaction_node: diffNode.parent_interaction_node
-                                    };
-
-                                    //also update page
-                                    RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
-
-                                }else{
-                                    var user = diffNode.user;
-
-
-                                    summary_nodes[diffNode.tag_id] = {
-                                            //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
-                                            //count: diffNode.delta, //this should always be 1.
-                                        body: diffNode.body,
-                                        content_node: diffNode.content_node,
-                                        content_id: diffNode.content_id,
-                                        id: diffNode.id,
-                                        social_user: diffNode.social_user,
-                                        tag_id: diffNode.tag_id,
-                                        user: diffNode.user,
-                                        parent_id: diffNode.parent_id,
-                                        parent_interaction_node: diffNode.parent_interaction_node
-                                    }
-                                }
-
-                            }
+                            update_top_interactions_cache({
+                                hash: hash,
+                                summary: summary,
+                                interaction_node_type: interaction_node_type,
+                                id:id,
+                                diffNode: diffNode
+                            });
 
                             //update the summary's counts object
                             summary.counts[interaction_node_type] += diffNode.delta;
@@ -5846,10 +5809,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     });
 
-                    //don't forget to do this - the tags are built from this.
-                    
+                    //don't forget to do this.  Tags won't get built correctly if not updated.
                     RDR.actions.summaries.sortInteractions(hash);
-                    debugger;
+                    
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
                         makeSummaryWidget(RDR.page);
@@ -5857,6 +5819,68 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //only init if it's a text node, don't do it for media.
                         var shouldReInit = (summary.kind == 'text');
                         RDR.actions.indicators.update( hash, shouldReInit );
+                    }
+
+                    function update_top_interactions_cache(attrs){
+                        var hash = attrs.hash;
+                        var summary = attrs.summary;
+                        var interaction_node_type = attrs.interaction_node_type;
+                        var id = attrs.id;
+                        var diffNode = attrs.diffNode;
+                        
+                        var summary_nodes = summary.top_interactions[interaction_node_type];
+                        if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
+                            var summary_node = summary_nodes[id];
+                            summary_node.count += diffNode.delta;
+
+                            //also update page
+                            RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
+
+                            //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                            if( summary_node.count <= 0 ){
+                                delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                            }
+
+                        }else{
+                            //interaction doens't exist yet:
+                            //split between tags and comments:
+                            if(interaction_node_type == "tags"){
+                                //todo: implement a diffNode.make function instead of this.
+                                summary_nodes[id] = {
+                                    count: diffNode.delta, //this should always be 1.
+                                    body: diffNode.body,
+                                    id: id,
+                                    parent_id: diffNode.parent_id,
+                                    parent_interaction_node: diffNode.parent_interaction_node
+                                };
+
+                                //also update page
+                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
+
+                            }else{
+                                var user = diffNode.user;
+
+
+                                summary_nodes[diffNode.tag_id] = {
+                                        //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
+                                        //count: diffNode.delta, //this should always be 1.
+                                    body: diffNode.body,
+                                    content_node: diffNode.content_node,
+                                    content_id: diffNode.content_id,
+                                    id: diffNode.id,
+                                    social_user: diffNode.social_user,
+                                    tag_id: diffNode.tag_id,
+                                    user: diffNode.user,
+                                    parent_id: diffNode.parent_id,
+                                    parent_interaction_node: diffNode.parent_interaction_node
+                                }
+                            }
+
+                        }
+                    }
+
+                    function update_content_nodes_cache(attrs){
+
                     }
 
                 },
@@ -5926,8 +5950,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             });
                         });
                     }
-
                     summary.interaction_order.sort( SortByTagCount );
+                    
                 },
                 sortPopularTextContainers: function() {
                     // RDR.actions.summaries.sortPopularTextContainers
