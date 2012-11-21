@@ -4376,7 +4376,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 //if the summary doesn't have an id, set it
                                 summary.id = summary.id || args.container_id;
-                                
                                 //do updates
                                 var intNodeHelper = {
                                     id: interaction_node.id,
@@ -5499,8 +5498,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
-                            
                             //RDR.actions.indicators.utils.borderHilites.make:
+                            
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
@@ -5797,6 +5796,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 diffNode: diffNode
                             });
 
+                            //this will only work for deletions right now.
+                            // update_content_nodes_cache({
+                            //     hash: hash,
+                            //     summary: summary,
+                            //     interaction_node_type: interaction_node_type,
+                            //     id:id,
+                            //     diffNode: diffNode
+                            // });
+
                             //update the summary's counts object
                             summary.counts[interaction_node_type] += diffNode.delta;
                             summary.counts.interactions += diffNode.delta;
@@ -5880,7 +5888,66 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     function update_content_nodes_cache(attrs){
+                        //todo: this is still not 100% right - but updates better than not having it at all.
+                        //need to solve for the fact that we don't have the content_node id when we first make it.
 
+                        //todo this function sucks
+                        return; 
+                        //we cant do this yet..
+                        var hash = attrs.hash;
+                        var summary = attrs.summary;
+                        var interaction_node_type = attrs.interaction_node_type;
+                        var id = attrs.id;
+                        var diffNode = attrs.diffNode;
+                        
+                        //hmm, we don't always have this yet.
+                        var content_nodes = summary.content_nodes;
+                        if(!content_nodes){
+                            return;
+                        }
+                        $.each(content_nodes, function(id,content_node){
+                            //todo: this isn't 100% correct - should use an id, but we don't always have it.
+                            if(interaction_node_type == "tags"){
+                                //damn it we dont have this.
+                                if(id === diffNode.content_id){
+                                    //then consider this the correct node.
+
+                                    content_node.counts[interaction_node_type] += diffNode.delta;
+                                    content_node.counts[interactions] += diffNode.delta;
+
+                                    var tagId = diffNode.id;
+                                    var tagRecordInContentNode = content_node.top_interactions.tags[tagId];
+                                    if(tagRecordInContentNode){
+                                        tagRecordInContentNode.count += diffNode.delta;
+                                        if(tagRecordInContentNode.count <= 0){
+                                            delete content_node.top_interactions.tags[tagId];
+                                        }
+                                    }
+
+                                }
+                            }else if(interaction_node_type == "coms"){
+
+                                //todo - in progress...
+                                if(content_node.id === diffNode.content_id){
+
+                                    content_node.counts[interaction_node_type] += diffNode.delta;
+                                    content_node.counts[interactions] += diffNode.delta;
+
+                                    var contentNodeComs = content_node.top_interactions.coms;
+
+                                    //remove if deletion
+                                    if( diffNode.delta === -1){
+                                        $.each(contentNodeComs, function(idx, comNode){
+                                            //ugg, we dont have enough data to do this.
+                                        })
+
+                                    }else{
+                                           
+                                    }
+                                }
+                            }
+
+                        });
                     }
 
                 },
