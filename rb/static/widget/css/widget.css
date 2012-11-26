@@ -1772,7 +1772,9 @@ div.rdr_indicator_for_media.rdr_live_hover {
 div.rdr_sandbox div.rdr_indicator_details_for_media {
     overflow:hidden !important; /*for the animate() out to work nicely*/
     height:0;;
-    display:block !important;
+    /*should be hidden by default*/
+    display: none;;
+    /*display:block !important;*/
     margin:0 !important;
     box-shadow: 0 0px 4px #ccc !important;
     -moz-box-shadow: 0 0px 4px #ccc !important;

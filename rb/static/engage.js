@@ -395,10 +395,15 @@ function readrBoard($R){
             },
 
             mediaRindowShow: function ( $mediaItem ) {
+
                 //RDR.rindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
+
+                RDR.util.cssSuperImportant($rindow, {
+                    display: 'block',
+                });
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
                 //not sure we need all this logic anymore
@@ -416,6 +421,9 @@ function readrBoard($R){
                 if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, RDR.C.rindowAnimationSpeed, function() {
                         $rindow.removeClass('rdr_has_border');
+                        RDR.util.cssSuperImportant($rindow, {
+                            display: 'none',
+                        });
                     });
                 }
                 $rindow.removeClass('engaged');
@@ -2716,31 +2724,7 @@ function readrBoard($R){
 
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
-                
-                // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
-                // Firefox calculates it (returns a pixel value) while Chrome does not (returns the "50%")...
-                // yielding very different results when you parseInt that CSS value.
-                var bodyChanges = {
-                        paddingLeft : ( $('body').css('padding-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-left'))/100) ): parseInt($('body').css('padding-left')),
-                        marginLeft : ( $('body').css('margin-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-left'))/100) ): parseInt($('body').css('margin-left')),
-                        left : ( $('body').css('left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('left'))/100) ): parseInt($('body').css('left')),
-                        paddingLeft : ( $('body').css('padding-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-top'))/100) ): parseInt($('body').css('padding-top')),
-                        marginTop : ( $('body').css('margin-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-top'))/100) ): parseInt($('body').css('margin-top')),
-                        top : ( $('body').css('top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('top'))/100) ): parseInt($('body').css('top'))
-                    },
-                    bodyLeft = -(bodyChanges.marginLeft + bodyChanges.left + bodyChanges.paddingLeft ),
-                    bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
-
-                bodyLeft = isNaN(bodyLeft) ? 0 : bodyLeft;
-                bodyTop = isNaN(bodyTop) ? 0 : bodyTop;
-
-                RDR.util.cssSuperImportant($rdrSandbox, {
-                        left: bodyLeft+'px',
-                        top: bodyTop+'px'
-                    }, true);
-
-                $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
-
+          
                 var useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
                     !$('#rdr-page-summary').length &&
@@ -2893,11 +2877,36 @@ function readrBoard($R){
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
 
+                //todo - move this stuff to a function
+                    // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
+                    // Firefox calculates it (returns a pixel value) while Chrome does not (returns the "50%")...
+                    // yielding very different results when you parseInt that CSS value.
+                    var bodyChanges = {
+                            paddingLeft : ( $('body').css('padding-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-left'))/100) ): parseInt($('body').css('padding-left')),
+                            marginLeft : ( $('body').css('margin-left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-left'))/100) ): parseInt($('body').css('margin-left')),
+                            left : ( $('body').css('left').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('left'))/100) ): parseInt($('body').css('left')),
+                            paddingLeft : ( $('body').css('padding-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('padding-top'))/100) ): parseInt($('body').css('padding-top')),
+                            marginTop : ( $('body').css('margin-top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('margin-top'))/100) ): parseInt($('body').css('margin-top')),
+                            top : ( $('body').css('top').indexOf('%') != -1 ) ? ($(window).width() * (parseInt($('body').css('top'))/100) ): parseInt($('body').css('top'))
+                        },
+                        bodyLeft = -(bodyChanges.marginLeft + bodyChanges.left + bodyChanges.paddingLeft ),
+                        bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
+
+                    bodyLeft = isNaN(bodyLeft) ? 0 : bodyLeft;
+                    bodyTop = isNaN(bodyTop) ? 0 : bodyTop;
+
+                    RDR.util.cssSuperImportant($rdrSandbox, {
+                            left: bodyLeft+'px',
+                            top: bodyTop+'px'
+                        }, true);
+
+                    $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+
+
+
                 //div to hold indicatorBodies for media (images and video)
                 $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
-                
-                debugger;
-
+          
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
@@ -2976,25 +2985,33 @@ function readrBoard($R){
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                         $this.addClass('rdr_live_hover');
-                        // debugger;
 
                         if(!hasBeenHashed && !isBlacklisted){
-                            var hash = RDR.actions.hashNodes( $(this) );
-
-                            if(hash){
-                                RDR.actions.sendHashes( hash, function(){
-                                    $.each( hash, function(page_id, hashArray) {
-                                        if (hashArray.length == 1) {
-                                            hash = hashArray[0];
-                                        }
-                                    });
-                                    if( $this.hasClass('rdr_live_hover') ){
-                                        $('#rdr_indicator_'+hash).show();
-                                    }
-                                });
-                                RDR.actions.indicators.utils.borderHilites.update(hash);
-                                RDR.actions.indicators.utils.borderHilites.engage(hash);
+                            var hashListsByPageId = RDR.actions.hashNodes( $(this) );
+                            //we expect just the one here, so just get that one.
+                            var hash;
+                            $.each( hashListsByPageId, function(page_id, hashArray) {
+                                hash = hashArray[0];
+                            });
+                            if(!hash){
+                                //i think there should always be a hash though
+                                RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                                return;
                             }
+                        
+                            RDR.actions.sendHashes( hashListsByPageId, function(){
+                                if( $this.hasClass('rdr_live_hover') ){
+                                    $('#rdr_indicator_'+hash).show();
+                                    RDR.actions.indicators.utils.borderHilites.update(hash);
+                                    RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                }
+                            });
+                            //these calls are redundant to the same calls in the callback above,
+                            //but this will make them show up right away,
+                            //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
+                            RDR.actions.indicators.utils.borderHilites.update(hash);
+                            RDR.actions.indicators.utils.borderHilites.engage(hash);
+
                         } else {
                             var hash = $this.data('hash');
                             
@@ -3164,6 +3181,7 @@ function readrBoard($R){
 
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
+
                     RDR.actions.indicators.init(hash);
 
                     var page_id = RDR.util.getPageProperty('id', hash );
@@ -3275,7 +3293,8 @@ function readrBoard($R){
                         $(window).hashchange( function() {
                             RDR.rindow.closeAll();
                             var hash = RDR.actions.slideshows.findActiveHash();
-                            RDR.actions.indicators.init(hash);
+                            //todo: check on this
+                            RDR.actions.indicators.update(hash, true);
                         });
 
                         // var $slideshows = $(RDR.group.slideshow_trigger);
@@ -3464,7 +3483,7 @@ function readrBoard($R){
                                     summary.top_interactions.coms = newComs;
                                     RDR.actions.summaries.save(summary);
 
-                                    RDR.actions.indicators.init( hash );
+                                    RDR.actions.indicators.update( hash, true);
 
 
                                     //now run the type specific function with the //run the setup func above
@@ -4881,6 +4900,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 init: function(hash){
                     //RDR.actions.indicators.init:
                     //note: this should generally be called via RDR.actions.containers.setup
+                    
+                    //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
+
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
@@ -4898,9 +4920,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //check for and remove any existing indicator and indicator_details and remove for now.
                     //this shouldn't happen though.
                     //todo: solve for duplicate content that will have the same hash.
-                    $('#'+indicatorId +','+ '#'+indicatorDetailsId).each(function(){
-                        $(this).remove();
-                    });
+                    $('#rdr_indicator_'+hash).remove();
+                    $('#rdr_container_tracker_'+hash).remove();
+                    $('#rdr_indicator_details_'+hash).remove();
 
                     var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
                     // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
@@ -5085,14 +5107,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
                                 indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
-if(hash == 'd819d4fedaf2d82f1d10db2e106234f6'){
-                        debugger
-                    }
-
-                            // debugger;
                             var $existing = $('#rdr_container_tracker_'+hash);
                             if($existing.length){
-                                debugger;
+                                RDR.safeThrow('Images are not expected to get re-inited.');
+                                return;
                             }
 
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
@@ -5100,16 +5118,18 @@ if(hash == 'd819d4fedaf2d82f1d10db2e106234f6'){
 
                             _commonSetup();
 
-                            $indicator.on('click', function() {
-                                if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
-                                    RDR.actions.containers.media.onEngage( hash );
-                                    $(this).removeClass('rdr_live_hover');
-                                } else {
-                                    RDR.actions.containers.media.onDisengage( hash );
-                                }
-                            })//chain
-                            .on('mouseenter', function() { $(this).addClass('rdr_live_hover'); })//chain
-                            .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
+                            $indicator
+                                .appendTo($container_tracker)
+                                .on('click', function() {
+                                    if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
+                                        RDR.actions.containers.media.onEngage( hash );
+                                        $(this).removeClass('rdr_live_hover');
+                                    } else {
+                                        RDR.actions.containers.media.onDisengage( hash );
+                                    }
+                                })//chain
+                                .on('mouseenter', function() { $(this).addClass('rdr_live_hover'); })//chain
+                                .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
@@ -5410,7 +5430,6 @@ if(hash == 'd819d4fedaf2d82f1d10db2e106234f6'){
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
-                            // debugger;
                         //quick fix so this doesnt get run on text.
                         //TODO figure out where this was getting called for text containers.
                         var container = RDR.containers[hash];
