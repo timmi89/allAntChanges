@@ -2733,6 +2733,9 @@ function readrBoard($R){
                     bodyLeft = -(bodyChanges.marginLeft + bodyChanges.left + bodyChanges.paddingLeft ),
                     bodyTop = -(bodyChanges.marginTop + bodyChanges.top + bodyChanges.paddingTop );
 
+                bodyLeft = isNaN(bodyLeft) ? 0 : bodyLeft;
+                bodyTop = isNaN(bodyTop) ? 0 : bodyTop;
+
                 RDR.util.cssSuperImportant($rdrSandbox, {
                         left: bodyLeft+'px',
                         top: bodyTop+'px'
@@ -2972,6 +2975,7 @@ function readrBoard($R){
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                         $this.addClass('rdr_live_hover');
+                        // debugger;
 
                         if(!hasBeenHashed && !isBlacklisted){
                             var hash = RDR.actions.hashNodes( $(this) );
@@ -2987,7 +2991,7 @@ function readrBoard($R){
                                         $('#rdr_indicator_'+hash).show();
                                     }
                                 });
-// RDR.actions.indicators.utils.borderHilites.make(hash);
+                                RDR.actions.indicators.utils.borderHilites.update(hash);
                                 RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
                         } else {
@@ -5023,8 +5027,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
                             summary.$container.closest('.rdr-node').find('.rdr_indicator').remove();
                         }else{
-                            summary.$indicator.remove();
-                            $('#rdr_container_tracker_'+hash).remove();
+                            // summary.$indicator.remove();
+                            // $('#rdr_container_tracker_'+hash).remove();
                         }
 
                         RDR.actions.indicators.init(hash);
@@ -5079,6 +5083,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
                                 indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
+                            // debugger;
+                            var $existing = $('#rdr_container_tracker_'+hash);
+                            if($existing.length){
+                                debugger;
+                            }
+
                             $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
 
@@ -5131,7 +5141,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.appendTo($container_tracker);
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline');
                                 
                             }
@@ -5395,6 +5404,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $container = summary.$container,
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
+                            // debugger;
                         //quick fix so this doesnt get run on text.
                         //TODO figure out where this was getting called for text containers.
                         var container = RDR.containers[hash];
@@ -5499,7 +5509,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.make:
-                            
+
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
