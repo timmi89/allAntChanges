@@ -2650,12 +2650,13 @@ function readrBoard($R){
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
-                    that.initPageData();
-                    //next fired on ajax success
-                });
-                $RDR.queue('initAjax', function(next){
+                   //run this before initPageData.  There was a race condition
                    that.initEnvironment();
                    //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                    that.initPageData();
+                    //next fired on ajax success
                 });
 				$RDR.queue('initAjax', function(next){
                    // this will check for FB login status, too, and set user data
@@ -2716,9 +2717,6 @@ function readrBoard($R){
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
                 
-                //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
-
                 // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
                 // Firefox calculates it (returns a pixel value) while Chrome does not (returns the "50%")...
                 // yielding very different results when you parseInt that CSS value.
@@ -2891,11 +2889,14 @@ function readrBoard($R){
             },
             initEnvironment: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-                var $rdrSandbox = $('div#rdr_sandbox').appendTo('body');
+            
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
 
                 //div to hold indicatorBodies for media (images and video)
                 $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
+                
+                debugger;
 
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
@@ -3394,6 +3395,7 @@ function readrBoard($R){
 
                     var _setupFuncs = {
                         img: function(hash, summary){
+
                             var containerInfo = RDR.containers[hash];
                             var $container = containerInfo.$this;
 
@@ -5082,6 +5084,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
                                 indicatorDetailsId = 'rdr_indicator_details_'+hash;
+
+if(hash == 'd819d4fedaf2d82f1d10db2e106234f6'){
+                        debugger
+                    }
 
                             // debugger;
                             var $existing = $('#rdr_container_tracker_'+hash);
