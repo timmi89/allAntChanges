@@ -18,7 +18,13 @@ RDR.C = {
      //+ header height + extra padding;
     rindowHeaderPadding: 29,
     rindowWidthForKindIsText: 200,
-    rindowAnimationSpeed: 333
+    rindowAnimationSpeed: 333,
+    indicatorOpacity: 1,
+    helperIndicators: {
+        hoverDelay: 250,
+        fadeInTime: 300,
+        opacity: 0.6
+    }
 }
 
 RDR.engageScript = document.getElementById("readrboardscript") || findEngageScript();
@@ -403,7 +409,7 @@ function readrBoard($R){
 
 
                 RDR.util.cssSuperImportant($rindow, {
-                    display: 'block',
+                    display:"block",
                 });
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
@@ -423,7 +429,7 @@ function readrBoard($R){
                     $rindow.data('hover', false).animate( {'height':'0px' }, RDR.C.rindowAnimationSpeed, function() {
                         $rindow.removeClass('rdr_has_border');
                         RDR.util.cssSuperImportant($rindow, {
-                            display: 'none',
+                            display:"none",
                         });
                     });
                 }
@@ -4853,8 +4859,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
 
-                    // var textIndicatorOpacity = ( !$.browser.msie ) ? '0.4':'1.0';
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? '1.0':'1.0';
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? RDR.C.indicatorOpacity : '1' ;
 
                     if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
                         $indicators.not('.rdr_dont_show').css({
@@ -4943,14 +4948,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $container.bind('mouseenter.rdr_helper', function() {
                             var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                             if ( hasHelper) {
-                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
-                                RDR.events.track('paragraph_helper_show');
+                                RDR.actions.indicators.helpers.over($indicator);
                             }
                         });
                         $container.bind('mouseleave.rdr_helper', function(e) {
                             var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                             if ( hasHelper ) {
-                                RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                                RDR.actions.indicators.helpers.out($indicator);
                             }
                         });
 
@@ -5105,6 +5109,53 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     }
 
+                },
+                helpers: {
+                    //RDR.actions.indicators.helpers:
+                    over: function($indicator){
+                        //RDR.actions.indicators.helpers.over:
+
+                        RDR.events.track('paragraph_helper_show');
+                        
+                        var alreadyHovered = $indicator.data('containerHover');
+                        if( alreadyHovered ){
+                            return;
+                        }
+
+                        $indicator.data('containerHover', true);
+                        var hoverTimeout = setTimeout(function(){
+                            var hasHover = $indicator.data('containerHover');
+                            
+                            if(hasHover){
+                                
+                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                                
+                                $indicator
+                                    .css('opacity',0)
+                                    .animate({
+                                        'opacity': RDR.C.helperIndicators.opacity
+                                        }, RDR.C.helperIndicators.fadeInTime );
+                            }
+                        }, RDR.C.helperIndicators.hoverDelay);
+                        $indicator.data('hoverTimeout', hoverTimeout);
+                    },
+                    out: function($indicator){
+                        //RDR.actions.indicators.helpers.out:
+                        
+                        //temp hack
+                        //don't fade it out if the rindow is showing
+                            var hash = $indicator.data('hash');
+                            var summary = RDR.summaries[ hash ];
+                            var $rindow = summary.$rindow_readmode;
+                            if( $rindow && $rindow.is(':visible') ){
+                                return;
+                            }
+
+                        $indicator.data('containerHover', false);
+                        var hoverTimeout = $indicator.data('hoverTimeout');
+                        clearTimeout(hoverTimeout);
+                        RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                    }
                 },
                 utils:{
                     //RDR.actions.indicators.utils:
@@ -9580,7 +9631,7 @@ function $RFunctions($R){
 
                     $tip
                       .remove()
-                      .css({ top: 0, left: 0, display: 'block' })
+                      .css({ top: 0, left: 0, display:"block" })
                       .appendTo(inside ? this.$element : document.body)
 
                     pos = this.getPosition(inside)
