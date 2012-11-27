@@ -140,7 +140,8 @@ function readrBoard($R){
 		},
         events: {
             track : function( data, hash ) {
-                // RDR.events.track
+                // RDR.events.track:
+                
                 var standardData = "",
                     timestamp = new Date().getTime();
 
@@ -3356,6 +3357,8 @@ function readrBoard($R){
                             RDR.rindow.mediaRindowShow( $mediaItem );
                             $indicator_details.addClass('rdr_has_border');
                         }
+
+                        RDR.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         //RDR.actions.containers.media.onDisengage:
@@ -4938,12 +4941,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if (kind == 'text'){
                         $container.unbind('.rdr_helper');
                         $container.bind('mouseenter.rdr_helper', function() {
-                            if ( $indicator.hasClass('rdr_helper') ) {
+                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                            if ( hasHelper) {
                                 RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                                RDR.events.track('paragraph_helper_show');
                             }
                         });
                         $container.bind('mouseleave.rdr_helper', function(e) {
-                            if ( $indicator.hasClass('rdr_helper') ) {
+                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                            if ( hasHelper ) {
                                 RDR.util.cssSuperImportant( $indicator, { display:"none" });
                             }
                         });
@@ -4981,9 +4987,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $indicator.css('visibility','visible');
                     }
 
+
+
                     function _setupHoverForShowRindow(){
                         $indicator.on('mouseover.showRindow', function(){
                             _makeRindow();
+                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                            if( hasHelper ){
+                                RDR.events.track('paragraph_helper_engage');
+                            }
                         });
                     }
                     function _makeRindow(){
@@ -5085,7 +5097,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         
                         if(isText){
                             if(RDR.group.paragraph_helper){
-                                RDR.events.track('paragraph_helper_view');
                                 RDR.actions.indicators.show(hash);
                                 $indicator.addClass('rdr_helper');
                             }else{
