@@ -1619,7 +1619,7 @@ div.rdr_helper_text {
   line-height: 1.2em;
 }
 div.rdr_sandbox #rdr_indicator_details_wrapper{
-    z-index:11001 !important; /*should be larger than the indicator z-index*/
+    z-index:12001 !important; /*should be larger than the indicator z-index*/
     position:absolute !important;
     top:0 !important;
     left:0 !important;
