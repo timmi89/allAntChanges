@@ -2902,9 +2902,14 @@ function readrBoard($R){
                     bodyLeft = isNaN(bodyLeft) ? 0 : bodyLeft;
                     bodyTop = isNaN(bodyTop) ? 0 : bodyTop;
 
+                    //todo: do this better
+                    //add these offsets to the existing offsets that could come from fixBodyBorderOffsetIssue
+                    var currTop = parseInt( $rdrSandbox.css('top'), 10 );
+                    var currLeft = parseInt( $rdrSandbox.css('left'), 10);
+
                     RDR.util.cssSuperImportant($rdrSandbox, {
-                            left: bodyLeft+'px',
-                            top: bodyTop+'px'
+                            left: (currLeft+bodyLeft) +'px',
+                            top: (currTop+bodyTop)+'px'
                         }, true);
 
                     $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
