@@ -5004,9 +5004,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _makeRindow(){
                         //only allow one indicator rindow.
+                        
+                        //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow){
                             $indicator.$rindow.remove();
                         }
+                        // if(summary.$rindow){
+                        //     summary.$rindow.remove();
+                        // }
+                        // if(summary.$rindow_readmode){
+                        //     summary.$rindow_readmode.remove();
+                        // }
+                        //end - todo
+
 
                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
                         
@@ -5116,7 +5126,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.indicators.helpers.over:
 
                         RDR.events.track('paragraph_helper_show');
-                        
+
                         var alreadyHovered = $indicator.data('containerHover');
                         if( alreadyHovered ){
                             return;
