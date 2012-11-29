@@ -1060,6 +1060,10 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label {
   position: relative !important;
   top: 1px !important;
 }
+div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-sum-reactions a.rdr_reactions_label {
+    display: none !important;
+}
+
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover {
   text-decoration:none !important;
   background:none !important;
@@ -1087,6 +1091,10 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
   /*this border will fade into the side if it wraps to be the first on the left*/
   border-left: 1px dotted #ccc !important;
   left: -1px !important;
+}
+div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-sum-reactions a.rdr_reactToArticle{
+    border-left: none !important;
+    padding-left: 0 !important;
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle:hover {
@@ -1130,6 +1138,7 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_logo {
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions img.rdr_logo {
   background:none !important;
 }
+
 div.rdr.rdr-summary.rdr_bookmarklet {
   border-bottom: 12px solid #444 !important;
   border-right: none !important;

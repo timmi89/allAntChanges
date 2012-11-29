@@ -7681,14 +7681,32 @@ function $RFunctions($R){
                     $summary_row.append( $('<td valign="top" class="rdr_rb_logo"/>').append($RB), $('<td/>').append($react) );
                     $('td.rdr_rb_logo img').tooltip({placement:"right"});
 
+                    // fix for bad group defaults:
+                    if ( RDR.group.call_to_action == "" ) {
+                        RDR.group.call_to_action = "What's your reaction?";
+                    }
+                    var $reactToArticle = $(
+                        '<a class="rdr_tag rdr_reactToArticle">'+
+                            '<div class="rdr_reactToArticle_inner">'+
+                                '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                '<span>'+RDR.group.call_to_action+
+                                    '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                                '</span>'+
+                            '</div>'+
+                        '</a>'
+                    );
+
+                    $react.find('div.rdr-sum-reactions').append(
+                        '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                        '<a class="rdr_reactions_label">Reactions: </a>'
+                    );
+
                     // summary widget: specific tag totals
                     if ( page.toptags.length > 0 ){
-                        $react.find('div.rdr-sum-reactions').append(
-                            '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                            '<a class="rdr_reactions_label">Reactions: </a>'
-                        );
                         // var $toptags = $('<div class="rdr-top-tags" />');
                         // $summary_widget.append( $toptags );
+                        
+
 
                         //for ( var i = 0, j=page.toptags.length; i < j; i++ ) {
                         $.each( page.toptags, function(idx, this_tag) {
@@ -7699,42 +7717,15 @@ function $RFunctions($R){
                         });
                         $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
                         
-                        // add "react to this page" section
-
-                        // fix for bad group defaults:
-                        if ( RDR.group.call_to_action == "" ) {
-                            RDR.group.call_to_action = "What's your reaction?";
-                        }
-                        var $reactToArticle = $(
-                            '<a class="rdr_tag rdr_reactToArticle">'+
-                                '<div class="rdr_reactToArticle_inner">'+
-                                    '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                    '<span>'+RDR.group.call_to_action+
-                                        '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                    '</span>'+
-                                '</div>'+
-                            '</a>'
-                        );
-                        $react.find('div.rdr-sum-reactions').append( $reactToArticle );
-                        writePageReactionPills( $reactToArticle, page );
-                    } else {
-                        if ( RDR.group.call_to_action == "" ) {
-                            RDR.group.call_to_action = "What's your reaction?";
-                        }
-                        // add "react to this page" section
-                        var $reactToArticle = $(
-                            '<a class="rdr_tag rdr_reactToArticle rdr_noReactions">'+
-                                '<div class="rdr_reactToArticle_inner">'+
-                                    '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                    '<span>'+RDR.group.call_to_action+
-                                        '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                    '</span>'+
-                                '</div>'+
-                            '</a>'
-                        );
-                        $react.find('div.rdr-sum-reactions').append( $reactToArticle );
-                        writePageReactionPills( $reactToArticle, page );
+                    }else{
+                        //note that there is a minor bug where this won't work right after deleting a last reaction so the reactions go to 0..
+                        //but it really doesn't matter for now.
+                        //(reason is just because the summary object that gets passed in doesnt update right and is still passing in a tag)
+                        $summary_widget.addClass('rdr-summary-no-reactions')
                     }
+
+                    $react.find('div.rdr-sum-reactions').append( $reactToArticle );
+                    writePageReactionPills( $reactToArticle, page );
 
                     // removing for now 7/1/2012
                     // if ( page.topusers.length > 0 ){
