@@ -1016,26 +1016,18 @@ div.rdr.rdr-summary td.rdr_rb_logo {
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding: 6px 3px 0 10px !important;
+    padding: 5px 3px 0 10px !important;
     float: left !important;
     display: inline-block !important;
 }
-/*make sure the RB lines up*/
-div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-this-is-readrboard{
-    padding: 5px 3px 0 10px !important;
-}
-
 div.rdr.rdr-summary div.rdr-this-is-readrboard .rdr-logo{
     margin:0 !important;
     background:url("../images/readrboard_logo.png") no-repeat scroll 0 1px transparent !important;
     height: 20px !important;
-    width: 12px !important;
+    width: 32px !important;
     display: inline-block !important;
 }
-div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-this-is-readrboard .rdr-logo{
-    /* show the RB part also */
-    width: 32px !important;
-}
+
 div.rdr.rdr-summary div.rdr-this-is-readrboard div {
     margin-bottom:-8px !important;
     margin-top:3px !important;
