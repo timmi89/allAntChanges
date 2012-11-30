@@ -1016,10 +1016,25 @@ div.rdr.rdr-summary td.rdr_rb_logo {
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard {
     text-align:center !important;
-    padding:6px 1px 0 5px !important;
+    padding: 6px 3px 0 10px !important;
+    float: left !important;
+    display: inline-block !important;
 }
-div.rdr.rdr-summary div.rdr-this-is-readrboard img {
+/*make sure the RB lines up*/
+div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-this-is-readrboard{
+    padding: 5px 3px 0 10px !important;
+}
+
+div.rdr.rdr-summary div.rdr-this-is-readrboard .rdr-logo{
     margin:0 !important;
+    background:url("../images/readrboard_logo.png") no-repeat scroll 0 1px transparent !important;
+    height: 20px !important;
+    width: 12px !important;
+    display: inline-block !important;
+}
+div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-this-is-readrboard .rdr-logo{
+    /* show the RB part also */
+    width: 32px !important;
 }
 div.rdr.rdr-summary div.rdr-this-is-readrboard div {
     margin-bottom:-8px !important;
@@ -1081,7 +1096,7 @@ div.rdr.rdr-summary div.rdr-top-tags span em {
     font-style:normal !important;
     color:#aaa !important;
 }
-div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle {
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle { 
   display:inline-block !important;
   font-style:normal !important;
   font-weight:bold !important;
@@ -1123,6 +1138,11 @@ div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
   text-decoration:none !important;
   background:#d8e6f6 !important;
 }
+div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a,
+div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a:hover{
+    background: none !important;
+}
+
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions {
   border-left:0 none !important;
   margin-left:-13px !important;

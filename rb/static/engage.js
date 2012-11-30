@@ -7636,7 +7636,11 @@ function $RFunctions($R){
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     //having this go to our home page for now because we have no messaging for the page level reactions.
                     // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
-                    $RB.append('<a href="'+RDR_baseUrl+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    $RB.append(
+                        '<a href="'+RDR_baseUrl+'" target="_blank">'+
+                            '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
+                        '</a>'
+                    );
                     $RB.click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
@@ -7644,7 +7648,13 @@ function $RFunctions($R){
 
                     var $react = $('<div class="rdr-sum-headline" />');
 
-                    $react.append('<div class="rdr-sum-reactions"/>');
+                    var $sumReactions = $('<div class="rdr-sum-reactions"/>');
+                    $react.append($sumReactions);
+                    $sumReactions.append($RB);
+                    
+                    $summary_row.append( $('<td/>').append($react) );
+
+                    $RB.find('.rdr-logo').tooltip({placement:"right"});
 
                     $summary_widget.hoverIntent(
                         function() {
@@ -7678,9 +7688,6 @@ function $RFunctions($R){
                         }
                     );
 
-                    $summary_row.append( $('<td valign="top" class="rdr_rb_logo"/>').append($RB), $('<td/>').append($react) );
-                    $('td.rdr_rb_logo img').tooltip({placement:"right"});
-
                     // fix for bad group defaults:
                     if ( RDR.group.call_to_action == "" ) {
                         RDR.group.call_to_action = "What's your reaction?";
@@ -7697,7 +7704,6 @@ function $RFunctions($R){
                     );
 
                     $react.find('div.rdr-sum-reactions').append(
-                        '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
                         '<a class="rdr_reactions_label">Reactions: </a>'
                     );
 
