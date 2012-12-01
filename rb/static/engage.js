@@ -4451,6 +4451,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var newArgs = {
                                     hash: args.hash,
                                     kind: 'page',
+                                    //needs the page_id for now because getByPageId doesnt work for the summary widget
+                                    page_id:args.page_id,
                                     int_id: args.response.data.interaction.id,
                                     tag: args.tag,
                                     rindow: args.rindow
@@ -4479,7 +4481,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 // if ( args.scenario != "reactionExists" ) {
                                     //true for isPage
-                                    RDR.actions.summaries.update(args.hash, diff, true);
+                                    RDR.actions.summaries.update(args.hash, diff, true, args.page_id);
                                 // }
                             }
 
@@ -4617,10 +4619,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             };
                             diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
-
                             var isPage = (args.kind == 'page');
-
-                            RDR.actions.summaries.update(hash, diff, isPage);
+                            if(isPage){
+                                //a bit hacky
+                                RDR.actions.summaries.update(hash, diff, isPage, args.page_id);
+                            }else{
+                                RDR.actions.summaries.update(hash, diff);
+                            }
+                            
 
                             var usrMsgArgs = {
                                 msgType: "interactionSuccess",
@@ -5837,7 +5843,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     // RDR.actions.summaries.sortInteractions(hash);
 
                 },
-                update: function(hash, diff, isPage){
+                update: function(hash, diff, isPage, pageId){
                     //RDR.actions.summaries.update:
                     /*
                     //EXAMPLE: diff object.  keep commented out, but leave it here.
@@ -5876,6 +5882,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                             $.each(nodes, function(id,diffNode){
                                 //coms or tags
+                                //a bit hacky
+                                diffNode.page_id = pageId;
                                 RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
                             });
                         });
@@ -6074,7 +6082,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     
                         //also update page
                         var tagId = diffNode.id;
-                        var pageId = RDR.util.getPageProperty('id', hash);
+                        var pageId = diffNode.page_id || RDR.util.getPageProperty('id', hash);
                         var page = RDR.pages[pageId];
                         var toptags = page.toptags;
                         
@@ -7977,7 +7985,13 @@ function $RFunctions($R){
 
                                     tag.body = $input.val();
 
-                                    args = { tag:tag, hash:hash, kind:"page" };
+                                    args = {
+                                        tag:tag,
+                                        hash:hash,
+                                        kind:"page",
+                                        //needs the page_id for now because getByPageId doesnt work for the summary widget
+                                        page_id:page.id
+                                    };
                                     
                                     RDR.actions.interactions.ajax( args, 'react', 'create' );
                                     $input.blur();
