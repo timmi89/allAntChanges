@@ -4944,8 +4944,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     _setupIndicators();
 
                     if(!kind){
-                        debugger;
-                        RDR.safeThrow('indicator container has no kind attribute');
+                        //todo: I'll look into the source of this this, but this should work fine for now.
+                        // debugger;
+                        // RDR.safeThrow('indicator container has no kind attribute');
                         return;
                     }
                     //run setup specific to this type
@@ -7595,10 +7596,6 @@ function $RFunctions($R){
 
             };
             //end methods
-
-            //private functions:
-            function _secret(){
-            }
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
