@@ -703,7 +703,7 @@ div.rdr a.rdr_tag     {
     /*white-space: nowrap !important;*/
     z-index:10001 !important;
     /*width: 100% !important;*/
-    text-align: left !important;
+    text-align: center !important;
     vertical-align: middle !important;
     -webkit-box-sizing : border-box !important;
     -moz-box-sizing : border-box !important;
