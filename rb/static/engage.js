@@ -1566,7 +1566,7 @@ function readrBoard($R){
                     var content_node = diffNode.content_node;
 
 
-                    var $linkToComment = $('<span class="rdr_comment_hover"/>');
+                    var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
 
                     $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');

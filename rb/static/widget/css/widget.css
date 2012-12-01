@@ -426,6 +426,7 @@ div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide {
 }
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_commentsSection .rdr_first_column{
     padding-top: 1px !important;
+    min-height: 20px !important;
 }
 div.rdr_sandbox div.rdr div.rdr_view_success.rdr_wide .rdr_boardsSection .rdr_first_column{
     padding-top: 4px !important;
@@ -806,6 +807,11 @@ table.rdr_tags div.rdr_cell_wrapper {
 
 table.rdr_tags div.rdr_cell_wrapper:hover {
     background:url("../images/tag_bg_hover.png") top left repeat !important;
+}
+
+.rdr_comment_feedback{
+    position: relative !important;
+    top: -3px !important;
 }
 
 table.rdr_tags span.rdr_comment_hover {
