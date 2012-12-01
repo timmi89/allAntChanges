@@ -1182,6 +1182,12 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover {
 div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page {
   /*compensate for border*/
   margin-left: 1px !important;
+  margin-top: 1px !important;
+}
+div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page.rdr_boomarklet {
+  /*because it goes up instead of down*/
+  margin-top: auto !important;
+  margin-bottom: -1px !important;
 }
 
 
