@@ -4943,6 +4943,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     _setupIndicators();
 
+                    if(!kind){
+                        debugger;
+                        RDR.safeThrow('indicator container has no kind attribute');
+                        return;
+                    }
                     //run setup specific to this type
                     RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
