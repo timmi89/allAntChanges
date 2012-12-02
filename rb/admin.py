@@ -57,6 +57,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             
         }),
      )
+    search_fields = ['name','short_name',]
 
 class SocialUserAdmin(admin.ModelAdmin):
     list_display = (
@@ -69,6 +70,7 @@ class SocialUserAdmin(admin.ModelAdmin):
         'gender',
         'hometown'
     )
+    search_fields = ['id','username',]
 
 class SocialAuthAdmin(admin.ModelAdmin):
     list_display = (
@@ -93,7 +95,7 @@ class PageAdmin(admin.ModelAdmin):
         'url',
         'canonical_url'
     )
-    search_fields = ('title',)
+    search_fields = ('id', 'title', 'url')
 
 class ContainerAdmin(admin.ModelAdmin):
     list_display = ('id',
@@ -126,15 +128,18 @@ class InteractionAdmin(admin.ModelAdmin):
         'approved',
         'rank',
     )
+    search_fields = ['id',]
 
 class NodeValueAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'value')
 
 class GroupAdminAdmin(admin.ModelAdmin):
     list_display = ('group', 'social_user', 'approved')
+    search_fields = ['id','group__name',]
     
 class GroupBlessedTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'order')
+    search_fields = ['group__name', 'node__body', 'node__id']
 
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
