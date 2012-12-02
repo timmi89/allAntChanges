@@ -7,7 +7,13 @@ from django.contrib import admin
 #admin.site.unregister(Token)
 
 admin.site.register(Feature)
-admin.site.register(InteractionNode)
+
+class InteractionNodeAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'body',
+    )
+    search_fields = ('id', 'body',)
 
 class ContentAdmin(admin.ModelAdmin):
     list_display = (
@@ -148,6 +154,7 @@ class LinkAdmin(admin.ModelAdmin):
     list_display = ('id', 'base62', 'interaction', 'usage_count')
     readonly_fields = ('usage_count',)
 
+admin.site.register(InteractionNode, InteractionNodeAdmin)
 admin.site.register(SocialAuth, SocialAuthAdmin)
 admin.site.register(Link, LinkAdmin)
 admin.site.register(Page, PageAdmin)
