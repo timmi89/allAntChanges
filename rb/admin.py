@@ -92,6 +92,7 @@ class SiteAdmin(admin.ModelAdmin):
         'group',
         'querystring_content'
     )
+    search_fields = ['name','group__name', 'group__site__domain']
 
 class PageAdmin(admin.ModelAdmin):
     list_display = (
