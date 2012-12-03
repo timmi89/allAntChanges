@@ -1008,7 +1008,7 @@ section[role="main"] div.card.img div.content                               { ma
 section[role="main"] div.card.img div.content div.content_body img			{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:298px; margin-top:-1px; xxmargin-left:-35px; position:relative;z-index:1; xxborder-top:1px dashed #ccc; xxborder-bottom:1px dashed #ccc; xpadding:5px 0;}
 
-section[role="main"] div.card div.commpx;ents    { xxbackground:#eee; xxborder:1px solid #d3d4d4; xxbox-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:15px; display:none; }
+section[role="main"] div.card div.comments    { xxbackground:#eee; xxborder:1px solid #d3d4d4; xxbox-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:15px; display:none; }
 /*section[role="main"] div.card:hover div.comments    { background:#f0f0f0; }*/
 section[role="main"] div.card div.comments h2 { 
     font-size:12px; 
