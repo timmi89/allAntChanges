@@ -971,6 +971,37 @@ section[role="main"] div.card.txt div.content div.content_body        { font-siz
 section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
 section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
+
+section[role="main"] div.card div.content .buttonsMsg {
+    background:#fff;
+    border:1px solid #999;
+    font-size:11px;
+    padding:4px;
+}
+section[role="main"] div.card div.content .buttonsMsg a{
+    color: #1777AF;
+}
+section[role="main"] div.card div.content .tag_remove{
+    color: #A77;
+}
+section[role="main"] div.card div.content .comments{
+    padding: 5px;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -o-box-sizing:border-box;
+    box-sizing:border-box; 
+}
+
+#add_to_board_form .rateContentText{
+    background: #ddd;
+    padding: 10px;
+}
+#add_to_board_form .yourBoards{
+    float:right;
+    margin-left:10px;
+    margin-top: 5px;
+}
+
 /*section[role="main"] div.card.txt div.content div.content_body:first-child:first-letter { font-size:31px; line-height:33px; font-weight:bold; float:left; padding:0px 2px 0 0; text-transform:uppercase;}*/
 
 section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
@@ -979,16 +1010,21 @@ section[role="main"] div.card.med div.content div.content_body iframe		{ width:2
 
 section[role="main"] div.card div.comments    { xxbackground:#eee; xxborder:1px solid #d3d4d4; xxbox-shadow:0px 0px 2px #aaa; padding:5px; clear:both; margin:15px; display:none; }
 /*section[role="main"] div.card:hover div.comments    { background:#f0f0f0; }*/
-section[role="main"] div.card div.comments h2 { font-size:12px; }
-section[role="main"] div.card div.comment_container { position:relative; }
+section[role="main"] div.card div.comments h2 { 
+    font-size:12px; 
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+}
+section[role="main"] div.card div.comment_container { position:relative; border-bottom:1px solid #eee;}
 section[role="main"] div.card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
-section[role="main"] div.card div.comment_container .header   {overflow:hidden; color:#666; clear:both; border-top:1px solid #ccc; padding-top:3px;}
+section[role="main"] div.card div.comment_container .header   {overflow:hidden; color:#666; clear:both; padding-top:3px;}
 section[role="main"] div.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa;}
 section[role="main"] div.card div.comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
 section[role="main"] div.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
 section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
 section[role="main"] div.card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
-section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:5px 25px; font:normal 24px Helvetica, 'HelveticaRegular';}
+section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px Helvetica, 'HelveticaRegular';}
 section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
 section[role="main"] div.card div.comment_container .comment .comment_body  { font-size:12px; }
 section[role="main"] div.card div.comment_container .comment .quote.open  {    display:none;                background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
@@ -1210,9 +1246,16 @@ body div.simpleMessage{
 }
 
 /* pie chart & other popular reactions */
-#pie_chart_container    { float:left; width:289px; position:relative;z-index:1; }
+#pie_chart_container    { float:left; width:280px; height:320px; position:relative;z-index:1; overflow: hidden;}
 #pie_chart              { position:relative; width:400px; height:400px; top:-40px; left:-60px;}
-#pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2;}
+#pie_chart_labels { float:right;width:180px;text-align:left; position:relative;z-index:2; margin:10px;}
+#pie_chart_credit {
+    color: #DDD;
+    font-size: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
 #pie_chart_labels li                { list-style-type:none; margin:0;padding:0; font-family:Helvetica,Arial,sans-serif;font-weight:bold; font-size:20px;}
 #pie_chart_labels li a span         { font-size:12px; color:#999; }
 #pie_chart_labels li a              { text-decoration:none; display:block; padding:5px;}

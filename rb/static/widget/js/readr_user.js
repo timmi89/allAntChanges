@@ -44,6 +44,18 @@ var RDRAuth = RDRAuth ? RDRAuth : {};
 RDRAuth = {
 	rdr_user: {},
     popups: {},
+    //todo: make this stuff better
+    openGenericLoginWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/login/',
+            'readr_login',
+            windowProps
+        );
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
     openRbLoginWindow: function(options){   
         var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
@@ -55,7 +67,7 @@ RDRAuth = {
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
-    openRbCreateNewAccountWindow: function(options){
+    openRbCreateNewAccountWindow: function(options, replaceCurrentWindow){
         var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
         RDRAuth.popups.loginWindow = window.open(
@@ -64,6 +76,9 @@ RDRAuth = {
             windowProps
         );
         RDRAuth.popups.loginWindow.focus();
+        if(replaceCurrentWindow){
+            window.close();
+        }
         return false;
     },
     openRbForgotPasswordWindow: function(options){

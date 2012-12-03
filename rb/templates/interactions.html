@@ -250,6 +250,7 @@ $('#cards').addClass('user_profile');
                     "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
                     "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
                   },
+                  "user_id"           :   {{interaction.user.id}},
                   "user_profile_link" :   "/user/{{interaction.user.id}}",
                   "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
                   "user_name"         :   "{{ interaction.user.social_user.full_name }}",
@@ -263,6 +264,7 @@ $('#cards').addClass('user_profile');
                       "id": {{comment.id}},
                       "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
                       "created"           :   "{{ comment.created|date:"M d g:ia" }}",
+                      "user_id"           :   {{comment.user.id}},
                       "user_profile_link" :   "/user/{{comment.user.id}}",
                       "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
                       "user_name"         :   "{{ comment.user.social_user.full_name }}",
@@ -335,6 +337,7 @@ var metoos = {
                 "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
                 "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
               },
+              "user_id"           :   {{interaction.user.id}},
               "user_profile_link" :   "/user/{{interaction.user.id}}",
               "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
               "user_name"         :   "{{ interaction.user.social_user.full_name }}",
@@ -348,6 +351,7 @@ var metoos = {
                   "id": {{comment.id}},
                   "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
                   "created"           :   "{{ comment.created|date:"M d g:ia" }}",
+                  "user_id"           :   {{comment.user.id}},
                   "user_profile_link" :   "/user/{{comment.user.id}}",
                   "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
                   "user_name"         :   "{{ comment.user.social_user.full_name }}",
@@ -383,6 +387,9 @@ var metoos = {
 <script>
 var zIndex = 400;
 function writeCard( interaction, showBlocked ) {
+  
+  var userCookie = $.cookie('user_id');
+  var userOwnsInteraction = parseInt(userCookie, 10) === interaction.user_id;
 
   if ( window.location.href.indexOf('/page/') != -1 ) {
     // this should really be done by the back-end.
@@ -426,7 +433,7 @@ function writeCard( interaction, showBlocked ) {
         });
 
         $content.append(
-            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments" />');
+            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments"></div>');
     } else if ( interaction.kind == "med" ) {
       
         //apply this to the content_body to serve as a spacer.
@@ -442,23 +449,41 @@ function writeCard( interaction, showBlocked ) {
       // });
 
       $content.append(
-        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments" />');
+        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
     } else if ( interaction.kind == "txt" ) {
-      $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments" />');
+      $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments"></div>');
       if ( interaction.content_body.length > 30 ) {
         $card.addClass('long');
       }
     }
 
-    if ( $.cookie('user_id') ) {
-      var $buttons = $('<div class="buttons"><button class="me_too">+1 '+interaction.interaction_node_body+'</button> <button class="add_new_reaction">Add new reaction</button> <button class="add_new_comment">Comment</button> <button class="add_to_board">Add to board</button></div>');
-      if ( board_admin ) {
-        $buttons.append('<button class="delete_from_board">Delete from this board</button>');
-      }
-      $buttons.appendTo( $content );
+    var $buttons = $('<div class="buttons"></div>');
+    if ( userCookie ) {
+            //if this is the user's tag, give them the option to remove it -- they already added it, they can't add it any further!
+            if(userOwnsInteraction){
+                $buttons.append(
+                    '<button class="tag_remove">Undo this reaction</button>'
+                );
+            }else{
+                $buttons.append(
+                    '<button class="me_too">+1 '+interaction.interaction_node_body+'</button>'
+                );
+            }
+            $buttons.append(
+                '<button class="add_new_reaction">Add new reaction</button>'+
+                '<button class="add_new_comment">Comment</button>'+
+                '<button class="add_to_board">Add to board</button>'
+            );
+
+          if ( board_admin ) {
+            $buttons.append('<button class="delete_from_board">Delete from this board</button>');
+          }
     } else {
-      var $buttons = $('<div class="buttons"><div style="background:#fff;border:1px solid #999;font-size:11px;padding:2px;margin-right:5px;">To react or comment, log in with the link in the top left-hand corner of the screen.</div></div>').appendTo( $content );
+        $buttons.append(
+            '<div class="buttonsMsg">To react or comment, please <a href="/login" onclick="RDRAuth.openGenericLoginWindow(); return false;" >log in</a>.</div>'
+        );
     }
+    $buttons.appendTo( $content );
 
     var $meta = $('<div class="meta"/>'),
         $metaRight = $('<div class="metaRight"/>');
@@ -478,10 +503,13 @@ function writeCard( interaction, showBlocked ) {
                 groupName: interaction.group.short_name
             });
 
-    if ( $.cookie('user_id') ) {
+    if ( userCookie ) {
       // ADD A NEW REACTION
       $buttons.find('button.me_too').click( function() {
         RB.interactions.me_too( interaction.id );
+      });
+      $buttons.find('button.tag_remove').click( function() {
+        RB.interactions.delete_reaction( interaction.id );
       });
 
       // add a new reaction
@@ -492,7 +520,7 @@ function writeCard( interaction, showBlocked ) {
         } else if ( interaction.kind == "med" ) {
           $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
         } else if ( interaction.kind == "txt" ) {
-          $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
+          $rateContent = $('<div class="rateContent"><span>'+interaction.content_body+'</span></div>');
         }
 
         var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
@@ -522,13 +550,19 @@ function writeCard( interaction, showBlocked ) {
       if (interaction.kind != "pag" ) {
         $buttons.find('button.add_new_comment').click( function() {
           $('#add_new_comment_form').remove();
-          if ( interaction.kind == "img" ) {
-            var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
-          } else if ( interaction.kind == "med" ) {
-            $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
-          } else if ( interaction.kind == "txt" ) {
-            $rateContent = $('<div style="width:300px;background:#ddd;float:left;"><span style="display:block;padding:20px;">'+interaction.content_body+'</span></div>');
-          }
+            
+            //consolodate these duplicate functions
+            var $rateContent = $('<div class="rateContent">');
+            if ( interaction.kind == "img" ) {
+                $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
+            } else if ( interaction.kind == "med" ) {
+                $rateContent.append('<iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe>');
+            } else if ( interaction.kind == "txt" ) {
+                $rateContent.append('<span>'+interaction.content_body+'</span>')
+                .addClass('rateContentText');
+            }else {
+                $rateContent.append('<span>'+interaction.content_body+'</span>')
+            }
 
           var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3>'+interaction.interaction_node_body+'</h3>')//chain
                     .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><label>e.g. <strong>Wow, I totally agree</strong>, or <strong>#london2012</strong></label><button class="btn" id="new_comment_button">Add Comment</button></div>' )//chain
@@ -559,19 +593,28 @@ function writeCard( interaction, showBlocked ) {
       // ADD TO BOARD
       $buttons.find('button.add_to_board').click( function() {
         $('#add_to_board_form').remove();
-        if ( interaction.kind == "img" ) {
-          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
-        } else if ( interaction.kind == "med" ) {
-          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
-        } else if ( interaction.kind == "txt" ) {
-          $rateContent = $('<div style="width:290px;padding:5px;background:#ddd;float:left;"><span style="inline-display:block;padding:20px;">'+interaction.content_body+'</span></div>');
-        }
 
-        var $obj = $('<div style="width:600px;overflow:auto;" id="add_to_board_form" />').append('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2>')//chain
-                  .append( '<div style="width:280px;margin-left:10px;float:right;"><h4>Your Boards</h4><select style="width:95%;font-size:20px;" id="board_list"><option value="">Choose a board...</option></select></div>' )//chain
-                  .append( '<div style="width:280px;padding-bottom:2px;border-bottom:1px dotted #ccc;margin-bottom:2px;"><img src="'+profilePic+'" class="user_avatar" style="width:25px;"/> <h4 style="font-size:16px;display:inline-block;">'+interaction.user_name+':</h4></div>' )//chain
-                  .append( '<h3>'+interaction.interaction_node_body+'</h3>' )//chain
-                  .append( $rateContent );
+            //consolodate these duplicate functions
+            var $rateContent = $('<div class="rateContent">');
+            if ( interaction.kind == "img" ) {
+                $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
+            } else if ( interaction.kind == "med" ) {
+                $rateContent.append('<iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe>');
+            } else if ( interaction.kind == "txt" ) {
+                $rateContent.append('<span>'+interaction.content_body+'</span>')
+                .addClass('rateContentText');
+            }else {
+                $rateContent.append('<span>'+interaction.content_body+'</span>')
+            }
+
+        var $reactionWrap = $('<div class="reactionWrap" style="width:280px;"></div>')
+            .append( '<h3>'+interaction.interaction_node_body+'</h3>' )
+            .append( $rateContent );
+
+        var $obj = $('<div class="clearfix" style="width:600px;overflow:auto;" id="add_to_board_form" />').append('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2>')//chain
+                  .append( '<div class="boardUserInfo" style="padding-bottom:2px;border-bottom:1px dotted #ccc;margin-bottom:6px;"><img src="'+profilePic+'" class="user_avatar" style="width:25px;"/> <h4 style="font-size:16px;display:inline-block;">'+interaction.user_name+':</h4></div>' )//chain
+                  .append( '<div class="yourBoards"><h4>Your Boards</h4><select style="width:95%;font-size:20px;" id="board_list"><option value="">Choose a board...</option></select></div>' )
+                  .append($reactionWrap);
         
         var $user_boards = $obj.find('#board_list');
 
@@ -628,14 +671,16 @@ function writeComment( comment, parent, showBlocked ) {
     }
 
     var $comments = $card.find('div.comments'),
-        $comment_container = $('<div class="comment_container"/>');
+        $comment_container = $('<div class="comment_container clearfix"/>');
+
+    var userName = comment.user_name || "Anonymous";
 
     $comment_container.html(
         '<div class="header">' +
             '<div class="when">'+comment.created+'</div>' +
             '<a href="'+comment.user_profile_link+'">' +
                 '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
-                '<div class="who">'+comment.user_name+'</div>' +
+                '<div class="who">'+userName+'</div>' +
             '</a>' +
         '</div>' +
         '<div class="comment">' +
@@ -652,9 +697,11 @@ function writeComment( comment, parent, showBlocked ) {
         );
     }
 
-      $comments.show();
-      if ( !$comments.find('h2').length ) $comments.append('<h2>Comments &amp; Tags</h2>');
-      $comments.find('h2').after( $comment_container );
+    $comments.show();
+    if ( !$comments.find('h2').length ){
+        $comments.append('<h2>Comments &amp; Tags</h2>');
+    }
+    $comments.find('h2').after( $comment_container );
   }
 }
 

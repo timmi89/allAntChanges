@@ -43,7 +43,7 @@
   
   {% block msgHeader %}
   <h1>ReadrBoard Login</h1>
-  <h3>The page you have requested requires that you log in.</h3>
+  <h3 style="font-size: 14px;">Please log in.</h3>
   {% endblock msgHeader %}
  
   <div id="login-options" style="overflow:auto;">
@@ -57,7 +57,12 @@
     </div>
     
     {% block signupButton %}
+    <div style="float:left;padding:6px;">
+        <a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({width:535,height:350});" style="font-size:11px;
+    font-style:italic;">Or create a new account</a>
+    </div>
     {% endblock signupButton %}
+
   </div>
 
 {% endblock mainContent %}
