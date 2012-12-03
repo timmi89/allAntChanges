@@ -631,9 +631,9 @@ RB = {
                             $message;
                         
                         if( deleteWasSuccessful ){
-                            $message = $('<div><em>You have removed this reaction from <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                            $message = $('<div><em>This reaction was removed from <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }else{
-                            $message = $('<div><em>Sorry, there was an error.</em></div>');
+                            $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
                         var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
