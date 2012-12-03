@@ -606,6 +606,48 @@ RB = {
                 }
             });
         },
+        delete_reaction : function(interaction_id) {
+            // RB.interactions.delete_reaction
+            var sendData = {"interaction_id":interaction_id};
+            
+            $.ajax({
+                beforeSend: function( xhr ) {
+                    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
+                },
+                url: "/api/tagremove/",
+                type: "post",
+                data: {
+                    json: $.toJSON( sendData )
+                },
+                success: function(response) {
+
+                    if (response.status == "success" ) {
+
+                        var deleteWasSuccessful = response.data == interaction_id;
+                        
+                        var $card = $('#card_'+interaction_id),
+                            //change this name later to make this make more sense.
+                            $outcome = $card.find('div.me_too_outcome'),
+                            $message;
+                        
+                        if( deleteWasSuccessful ){
+                            $message = $('<div><em>You have removed this reaction from <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                        }else{
+                            $message = $('<div><em>Sorry, there was an error.</em></div>');
+                        }
+
+                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
+                        $close.find('a').click( function() {
+                            $('#card_'+interaction_id).find('div.me_too_outcome').hide(333);
+                        });
+
+                        $message.append($close );
+                        $outcome.html( $message );
+                        $outcome.show(333);
+                    }
+                }
+            });
+        },
         add_to_board : function(interaction_id, board_id, board_title) {
             // RB.interactions.add_to_board
             var sendData = {"board_id":board_id, "int_id":interaction_id};

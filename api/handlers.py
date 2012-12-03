@@ -323,6 +323,29 @@ class MeTooHandler(AnonymousBaseHandler):
         
         return interaction
 
+class TagRemoveHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'POST')
+
+    @status_response
+    @json_data_post
+    def create(self, request, data):
+        owner = checkCookieToken(request)
+        if owner is None:
+            return {'message':'not_logged_in'}
+        
+        interaction_id = data.get('interaction_id', None)
+        
+        if interaction_id is not None:
+            try:
+                interaction = Interaction.objects.get(id = interaction_id)
+                deleteInteraction(interaction, owner)
+
+                # todo: do we need to do the equivalent to AsynchAgreeNotification here?
+                    
+            except Interaction.DoesNotExist:
+                return {'message' : 'no such interaction for tagRemove'}
+        
+        return interaction_id
 
 class StreamResponseHandler(AnonymousBaseHandler):
     allowed_methods = ('POST')
