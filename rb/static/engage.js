@@ -4009,6 +4009,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.interactions.comment.onSuccess:
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
+                        
                             var $rindow = args.rindow,
                                 hash = args.hash,
                                 response = args.response,
@@ -5884,7 +5885,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //coms or tags
                                 //a bit hacky
                                 diffNode.page_id = pageId;
-                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
+                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
                             });
                         });
                         return;
@@ -5963,17 +5964,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var diffNode = attrs.diffNode;
                         
                         var summary_nodes = summary.top_interactions[interaction_node_type];
-                        if( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined' ){
+                        var interactionExists = ( summary_nodes.hasOwnProperty(id) && typeof summary_nodes[id] !== 'undefined');
+                        if( interactionExists ){
                             var summary_node = summary_nodes[id];
+
+                            //note that for coms this just covers the case where it exists and we delete it.
                             summary_node.count += diffNode.delta;
 
-                            //also update page
-                            RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
-
-                            //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
-                            if( summary_node.count <= 0 ){
-                                delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                            if(interaction_node_type == "tags"){
+                                //also update page
+                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                
+                                //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
+                                if( summary_node.count <= 0 ){
+                                    delete summary_nodes[id]; //don't try to use summary_node here instead of summary_nodes[id].
+                                }
                             }
+
 
                         }else{
                             //interaction doens't exist yet:
@@ -5989,7 +5996,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 };
 
                                 //also update page
-                                RDR.actions.summaries.pageLevelUpdate(hash, diffNode);
+                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
 
                             }else{
                                 var user = diffNode.user;
@@ -6077,8 +6084,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                 },
-                pageLevelUpdate: function(hash, diffNode){
-                    //RDR.actions.summaries.pageLevelUpdate:
+                updatePageSummaryTags: function(hash, diffNode){
+                    //RDR.actions.summaries.updatePageSummaryTags:
                     
                         //also update page
                         var tagId = diffNode.id;
@@ -7607,6 +7614,7 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
+                    
                     var page = settings;
                     
                     var widgetClass = 'rdr-summary-key-'+page.key;
