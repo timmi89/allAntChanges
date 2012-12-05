@@ -980,6 +980,7 @@ section[role="main"] div.card div.content .buttonsMsg {
 }
 section[role="main"] div.card div.content .buttonsMsg a{
     color: #1777AF;
+    font-weight: bold;
 }
 section[role="main"] div.card div.content .tag_remove{
     color: #A77;
