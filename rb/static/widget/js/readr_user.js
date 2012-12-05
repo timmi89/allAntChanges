@@ -38,10 +38,24 @@ function getWindowProps(options){
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
-//Do we expect this do work, because it won't - it just redeclares it below.
-var RDRAuth = RDRAuth ? RDRAuth : {};
 
-RDRAuth = {
+window.RDRAuth = {
+    isOffline: (document.domain == "local.readrboard.com"),
+    popupBlockAudit: function( sourceFileStr, sourceFuncStr ){
+        // RDRAuth.popupBlockAudit
+        
+        sourceFileStr = sourceFileStr || "";
+        sourceFuncStr = sourceFuncStr || "";
+        var sourceStr = sourceFileStr + ( sourceFuncStr ? "."+sourceFuncStr : "" );
+
+        var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
+        RDRAuth.events.track(eventStr);
+
+        if(RDRAuth.isOffline){
+            //temp debuggering - remove this later.
+            alert(eventStr);
+        }
+    },
 	rdr_user: {},
     popups: {},
     //todo: make this stuff better
@@ -116,6 +130,10 @@ RDRAuth = {
 	            $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
 	        $('#rdr_event_pixels').append($event);
+
+            // if(RDRAuth.isOffline){
+            //     console.log(eventSrc);
+            // }
     	}
 	},
 	postMessage: function(params) {
@@ -187,6 +205,7 @@ RDRAuth = {
 					}
 				});
 			} else {
+
 				RDRAuth.doFBLogin();
 			}
 		// }
@@ -334,7 +353,16 @@ RDRAuth = {
 			}
 		});
 	},
-    
+    FBLoginCallback: function(response) {
+        RDRAuth.popupBlockAudit('fake@@@', 'FBLoginCallback');
+        if (response.authResponse) {
+            RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
+                RDRAuth.checkFBStatus();
+            });
+        }else{
+            RDRAuth.popupBlockAudit('readr_user', 'FBLoginCallback');
+        }
+    },
     checkIfWordpressRefresh : function() {
         //temp hack to check if this is a wordpress iframe
         //todo: do this better
@@ -372,7 +400,7 @@ RDRAuth = {
                     if( RDRAuth.checkIfWordpressRefresh() ){
                         return;
                     }
-
+                    debugger;
                     if (top == self) {
 						window.location.reload();
 					}
@@ -509,6 +537,8 @@ RDRAuth = {
 			}
 		}
 	},
+
+    //not using this for now in case it causes popups by burying the popup call one more level
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
 		FB.login(function(response) {
@@ -518,13 +548,11 @@ RDRAuth = {
 		      	RDRAuth.checkFBStatus();
 		      // });
 		    });
-		  } else {
+            } else {
 
-		  }
+                RDRAuth.events.track( 'FBLogin failed or was canceled - called from readr_user.doFBLogin');
+            }
 		}, {scope: 'email'});
-
-
-
 	},
 	doRBLogin: function(requesting_action) {
         // RDRAuth.doRBLogin

@@ -10,6 +10,7 @@ RB = {
     group: {},
     user_auth: {
 		doFBLogin: function(requesting_action) {
+
 			FB.login(function(response) {
               if (response.authResponse) {
                 FB.api('/me', function(response) {
@@ -18,6 +19,7 @@ RB = {
                   // });
                 });
               } else {
+                RDRAuth.events.track( 'FBLogin failed or was canceled - called from readr_scripts.doFBLogin');
               }
             }, {scope: 'email'});
 		}
