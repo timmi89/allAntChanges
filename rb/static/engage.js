@@ -7020,21 +7020,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     } else {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
                         widgetSummarySettings.jqFunc = "append";
-                        //this is hacky and sucks, do it better later
-                        if ( widgetSummarySettings.$anchor.hasClass('defaultSummaryBar') ){
-                            //then we added it as the bookmarklet defaultSummaryBar - not the pub defined one.
-
-                            //add a margin to the publishers body
-                            //- use existing in case their shit already depends on a margin
-                            var $body = $('body');
-                            var existingmargin = parseInt($body.css('marginTop'), 10);
-                            // RDR.util.cssSuperImportant( $body, {
-                            //    "margin-top": existingmargin + 40
-                            // });
-                            if ( $body.css('position') == "relative" ) {
-                                $body.addClass('rdr_heightAdjustment');
-                            }
-                        }
                     }
                     
                     //div to hold summary tag detail "menus"
