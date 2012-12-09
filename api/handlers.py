@@ -340,8 +340,6 @@ class TagRemoveHandler(AnonymousBaseHandler):
                 interaction = Interaction.objects.get(id = interaction_id)
                 deleteInteraction(interaction, owner)
 
-                # todo: do we need to do the equivalent to AsynchAgreeNotification here?
-                    
             except Interaction.DoesNotExist:
                 return {'message' : 'no such interaction for tagRemove'}
         
