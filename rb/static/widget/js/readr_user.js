@@ -43,7 +43,6 @@ window.RDRAuth = {
     isOffline: (document.domain == "local.readrboard.com"),
     popupBlockAudit: function( sourceFileStr, sourceFuncStr ){
         // RDRAuth.popupBlockAudit
-        
         sourceFileStr = sourceFileStr || "";
         sourceFuncStr = sourceFuncStr || "";
         var sourceStr = sourceFileStr + ( sourceFuncStr ? "."+sourceFuncStr : "" );
@@ -52,8 +51,8 @@ window.RDRAuth = {
         RDRAuth.events.track(eventStr);
 
         if(RDRAuth.isOffline){
-            //temp debuggering - remove this later.
-            alert(eventStr);
+            //uncomment this for quick testing on local
+            // alert(eventStr);
         }
     },
 	rdr_user: {},
@@ -205,7 +204,6 @@ window.RDRAuth = {
 					}
 				});
 			} else {
-
 				RDRAuth.doFBLogin();
 			}
 		// }
@@ -354,7 +352,6 @@ window.RDRAuth = {
 		});
 	},
     FBLoginCallback: function(response) {
-        RDRAuth.popupBlockAudit('fake@@@', 'FBLoginCallback');
         if (response.authResponse) {
             RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
                 RDRAuth.checkFBStatus();
@@ -400,7 +397,6 @@ window.RDRAuth = {
                     if( RDRAuth.checkIfWordpressRefresh() ){
                         return;
                     }
-                    debugger;
                     if (top == self) {
 						window.location.reload();
 					}
@@ -538,19 +534,21 @@ window.RDRAuth = {
 		}
 	},
 
-    //not using this for now in case it causes popups by burying the popup call one more level
+    //only using this sometimes - other cases we call the inner FB.login function inline... try to gauge if one causes more popup blocking
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
 		FB.login(function(response) {
-		  if (response.authResponse) {
-		    // FB.api('/me', function(response) {
-		      RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
-		      	RDRAuth.checkFBStatus();
-		      // });
-		    });
+		    if (response.authResponse) {
+    		    // FB.api('/me', function(response) {
+    		    RDRAuth.getReadrToken(
+                    FB.getAuthResponse(),
+                    function() {
+                        RDRAuth.checkFBStatus();
+        		      // });
+                    }
+                );
             } else {
-
-                RDRAuth.events.track( 'FBLogin failed or was canceled - called from readr_user.doFBLogin');
+                RDRAuth.popupBlockAudit('readr_user','doFBLogin');
             }
 		}, {scope: 'email'});
 	},

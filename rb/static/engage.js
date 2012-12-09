@@ -2493,7 +2493,7 @@ function readrBoard($R){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden;" />' );
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden; width:360px !important;" />' );
                     
                     var $header = RDR.rindow.makeHeader( h1_text );
                     $rindow.find('.rdr_header').replaceWith($header);
@@ -4952,7 +4952,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     if(!kind){
                         //todo: I'll look into the source of this this, but this should work fine for now.
-                        // debugger;
                         // RDR.safeThrow('indicator container has no kind attribute');
                         return;
                     }
