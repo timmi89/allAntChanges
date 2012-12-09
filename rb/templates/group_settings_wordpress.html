@@ -99,10 +99,10 @@
 
             var data = $.toJSON({
                 company_name: params.company_name,
+                host_xdm_url: params.host_xdm_url,
                 hostdomain: params.hostdomain
             });
-            var urlPrefix = "http://";
-            var hostPath = urlPrefix+params.hostdomain;
+            var hostPath = params.host_xdm_url;
             $.postMessage(
                 data,
                 hostPath,
