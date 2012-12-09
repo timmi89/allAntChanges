@@ -8,22 +8,6 @@ var RB = RB ? RB : {};
 RB = {
     RDR_offline: RDR_offline,
     group: {},
-    user_auth: {
-		doFBLogin: function(requesting_action) {
-
-			FB.login(function(response) {
-              if (response.authResponse) {
-                FB.api('/me', function(response) {
-                  RDRAuth.FBLoginResponse(response, requesting_action);
-                  // FB.logout(function(response) {
-                  // });
-                });
-              } else {
-                RDRAuth.events.track( 'FBLogin failed or was canceled - called from readr_scripts.doFBLogin');
-              }
-            }, {scope: 'email'});
-		}
-    },
     querystring: function(key) {
         var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
         var qs_args = [];
