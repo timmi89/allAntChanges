@@ -78,27 +78,11 @@ def addDefaultsForNewGroup(group, cookie_user):
     for blessing in blessed:
         GroupBlessedTag.objects.create(group=group, node=blessing.node, order=blessing.order )
     #
-
-    # todo - confirm that we don't need this line: .exclude(id=social_user.id) and consolodate these
-    if social_user:
-        # Also add us to admins
-        readr_admins = SocialUser.objects.filter(
-            user__email__in=(
-                'porterbayne@gmail.com',
-                'erchaves@gmail.com',
-                'michael@readrboard.com',
-            )
-            # user__email__in=RB_SOCIAL_ADMINS
-        ).exclude(id=social_user.id)
-    else:
-        readr_admins = SocialUser.objects.filter(
-            user__email__in=(
-                'porterbayne@gmail.com',
-                'erchaves@gmail.com',
-                'michael@readrboard.com',
-            )
-            # user__email__in=RB_SOCIAL_ADMINS
-        )
+    
+    # //todo
+    readr_admins = SocialUser.objects.filter(
+        user__email__in=RB_SOCIAL_ADMINS
+    )
 
 
     for admin in readr_admins:
