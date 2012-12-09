@@ -124,6 +124,7 @@ def friendlylogin_wordpress(request, **kwargs):
 
     params = [
         'hostplatform',
+        'host_xdm_url',
         'hostdomain',
         'short_name',
         'company_name',
@@ -413,6 +414,7 @@ def wordpress(request, **kwargs):
     wordpressEdit = '/wordpress_edit/'+context['qParams']
     settingsUrl = lambda shortname: '/settings_wordpress/'+shortname+"/"+context['qParams']
 
+    host_xdm_url = kwargs.get('host_xdm_url', None)
     hostdomain = kwargs.get('hostdomain', None)
     cookie_user = kwargs.get('cookie_user', None)
     short_name = context.get('short_name', None)
@@ -754,6 +756,8 @@ def settings_wordpress(request, **kwargs):
     #not sure why these got lost from @requires_admin_wordpress - figure out later.
     context['cookie_user'] = kwargs['cookie_user']
     context['short_name'] = group.short_name
+    # this isn't needed in the template.  If we need it later, figure out why it's getting lost in the decorator
+    # context['host_xdm_url'] = '...'
     context['hostdomain'] = site.domain
     context['fb_client_id'] = FACEBOOK_APP_ID
     

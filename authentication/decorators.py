@@ -17,6 +17,9 @@ def requires_admin_wordpress(func):
 
         params = [
             'hostplatform',
+            # e.g. https://www.somedomain.com
+            'host_xdm_url',
+            # hostdomain has www removed, unlike host_xdm_url
             'hostdomain',
             'short_name',
             'company_name',
