@@ -102,7 +102,7 @@ function readrBoard($R){
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
-                call_to_action: "What's your reaction?",
+                call_to_action: "What do you think?",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 slideshow_trigger: '#flipbook',
@@ -214,7 +214,7 @@ function readrBoard($R){
 
                 if( kind == "text" ){
                     if ( $rindow.data('mode') == "writeMode" ) {
-                        headerText = "Your reaction to this?";
+                        headerText = "What do you think?";
                     } else {
                         if (kind=="text") {
                             headerText = 'Reactions';
@@ -231,7 +231,7 @@ function readrBoard($R){
                     headerText = (summary.counts.tags>0) ? 
                             summary.counts.tags + " Reactions" :
                             ($rindow.width()>=(175+modForIE)) ? 
-                                "Your reaction to this?":
+                                "What do you think?":
                                 "React:";
                 }
 
@@ -418,7 +418,7 @@ function readrBoard($R){
                     $rindow.data('hover',true);
                     RDR.rindow.updateSizes( $rindow );
                 }
-                $rindow.addClass('engaged')
+                $rindow.addClass('rdr_engaged')
             },
             mediaRindowHide: function ( $mediaItem ) {
                 //RDR.rindow.mediaRindowHide:
@@ -427,13 +427,13 @@ function readrBoard($R){
 
                 if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
                     $rindow.data('hover', false).animate( {'height':'0px' }, RDR.C.rindowAnimationSpeed, function() {
-                        $rindow.removeClass('rdr_has_border');
+                        // $rindow.removeClass('rdr_has_border');
                         RDR.util.cssSuperImportant($rindow, {
                             display:"none",
                         });
                     });
                 }
-                $rindow.removeClass('engaged');
+                $rindow.removeClass('rdr_engaged');
                 $('#rdr_indicator_' + hash).hide();
             },
             updateSizes: function($rindow, _options) {
@@ -928,7 +928,7 @@ function readrBoard($R){
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( tagCount == "" ) {
-                        var message = 'Click to add this reaction here';
+                        var message = '';
                     } else {
                         var peoples = ( tagCount == 1 ) ? "person":"people",
                             message = tagCount+' '+peoples+' had this reaction. Click to agree.',
@@ -1644,7 +1644,7 @@ function readrBoard($R){
                 var items = [
                     {
                         "item":"reaction",
-                        "tipText":"React to this",
+                        "tipText":"What do you think?",
                         "onclick":function(){
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
@@ -1678,7 +1678,7 @@ function readrBoard($R){
                     $indicatorAnchor = $(
                         '<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">'+
                             '<span class="rdr rdr_react_icon">'+val.item+'</span>'+
-                            '<span class="rdr rdr_react_label">React to this</span>'+
+                            '<span class="rdr rdr_react_label">What do you think?</span>'+
                             '<div class="rdr_clear"></div>'+
                         '</a>'
                     );
@@ -1726,23 +1726,15 @@ function readrBoard($R){
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                         hash = $actionbar.data('hash'),
-                        $containerTracker = $('#rdr_container_tracker_'+hash),
-                        $mediaBorderWrap = $containerTracker.find('.rdr_media_border_wrap');
+                        $containerTracker = $('#rdr_container_tracker_'+hash);
 
                     if(typeof effect !== "undefined"){ //quick hack to signal fade effect
                         //make more robust if we want more animations
-                        var $fadeSet = $().add($actionbar).add($mediaBorderWrap);
                         //I wanted to combine these into one animation, but jquery didn't like that.
                         $actionbar.fadeOut(200);
-                        $mediaBorderWrap.fadeOut(200, function(){
-                            $(this).hide();
-                            cleanup($actionbar, hash);
-                        });
                     }
                     else{
                         cleanup($actionbar, hash);
-
-                        $mediaBorderWrap.hide();
 
                         var $indicator = $('#rdr_indicator_'+hash);
                     }
@@ -2229,7 +2221,7 @@ function readrBoard($R){
 
                     //brute force for now -
                     //if they click the X we need this;
-                    RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    $('div.rdr_indicator_for_media').hide();
                     
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
@@ -2247,7 +2239,6 @@ function readrBoard($R){
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('rdr_shared');
                     RDR.actions.indicators.utils.updateContainerTracker(hash);
-                    RDR.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -3013,23 +3004,23 @@ function readrBoard($R){
                         
                             RDR.actions.sendHashes( hashListsByPageId, function(){
                                 if( $this.hasClass('rdr_live_hover') ){
-                                    $('#rdr_indicator_'+hash).show();
-                                    RDR.actions.indicators.utils.borderHilites.update(hash);
-                                    RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                    // $('#rdr_indicator_'+hash).show();
+                                    if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                                        $('#rdr_indicator_' + hash).show();
+                                    }
                                 }
                             });
                             //these calls are redundant to the same calls in the callback above,
                             //but this will make them show up right away,
                             //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                            RDR.actions.indicators.utils.borderHilites.update(hash);
-                            RDR.actions.indicators.utils.borderHilites.engage(hash);
 
                         } else {
                             var hash = $this.data('hash');
                             
                             $this.addClass('rdr_live_hover');
-                            $('#rdr_indicator_' + hash).show();
-                            RDR.actions.indicators.utils.borderHilites.engage(hash);
+                            if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                                $('#rdr_indicator_' + hash).show();
+                            }
                         }
                     }
                 }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
@@ -3037,9 +3028,9 @@ function readrBoard($R){
                         hash = $this.data('hash');
 
                     RDR.checkIndicatorHover = setTimeout( function() {
-                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('engaged') ) {
+                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                             $this.removeClass('rdr_live_hover');
-                            RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                            $('#rdr_indicator_' + hash).hide();
                         }
                         clearTimeout( RDR.checkIndicatorHover );
                     }, 250);
@@ -3057,7 +3048,7 @@ function readrBoard($R){
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
                 RDR.actions.containers.media.disengageAll();
-                RDR.actions.indicators.utils.borderHilites.disengageAll();
+                $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
                 $().selog('hilite', true, 'off');
@@ -3366,7 +3357,7 @@ function readrBoard($R){
                             $mediaItem.data('hover',true).data('hash', hash);
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
                             RDR.rindow.mediaRindowShow( $mediaItem );
-                            $indicator_details.addClass('rdr_has_border');
+                            // $indicator_details.addClass('rdr_has_border');
                         }
 
                         RDR.events.track( 'view_node::'+hash, hash );
@@ -5058,7 +5049,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
-                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>react to this</strong></div>');
+                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
                         RDR.rindow.updateSizes(
                             $rindow, {
@@ -5125,7 +5116,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         RDR.actions.indicators.show(hash);
                         
                     } else {
-                        $count.html( '<span class="rdr_react_label">React to this</span>' );
+                        $count.html( '<span class="rdr_react_label">What do you think?</span>' );
                         
                         if(isText){
                             if(RDR.group.paragraph_helper){
@@ -5228,7 +5219,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
                                 // if ( summary.kind == "media" && $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar rdr_has_border');
+                                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
                                     // .appendTo('div.rdr_media_details');
                                     $('div.rdr_media_details').html( $indicator_details );
                                     $container_tracker.addClass('rdr_inline_video');
@@ -5599,11 +5590,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = $container.height()+modIEHeight+38;
+                            var cssTop = $container.height()+modIEHeight-15;
                             $indicator.data('top', cssTop);
 
                             RDR.util.cssSuperImportant( $indicator, {
-                                left: 12+'px',
+                                left: 4+'px',
                                 top: cssTop+'px'
                             }, true);
 
@@ -5614,191 +5605,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             }
                         }
-
-                        RDR.actions.indicators.utils.borderHilites.update(hash);
-
-                    },
-                    borderHilites: {
-                        //RDR.actions.indicators.utils.borderHilites:
-
-                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                        make: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.make:
-
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
-                                                        
-                            if( !$container_tracker.hasClass('rdr_inline_video') ){
-                                
-                                if( !$mediaBorderWrap.length ){
-                                    $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                                }
-                                $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                                var borders = {
-                                    'top': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'right': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'bottom': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'left': {
-                                        $side: null,
-                                        css: {}
-                                    }
-                                };
-
-                                $mediaBorderWrap.data('borders',borders);
-                                RDR.actions.indicators.utils.borderHilites.update(hash);
-                            }
-
-                        },
-                        update: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.update:
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-                            
-                            if( !$mediaBorderWrap.length ){
-                                //failsafe that shouldnt be needed.
-                                if( this.makeAttempt > 1 ) return;
-                                this.makeAttempt ++;
-                                RDR.actions.indicators.utils.borderHilites.make(hash);
-                                //just return here.  the make function will call this update function again and this will be bypassed.
-                                return;
-                            }
-                            //else
-                            this.makeAttempt = 0;
-
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
-                                }
-                            };
-                            
-                            var hiliteThickness = 2,
-                                containerWidth,
-                                containerHeight;
-
-                            var hasBorder = false;
-                            //for checking if it has a border.
-                            //If so we'll use outerWidth and outerHeight to take it into account.
-                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
-
-                            $.each( borders, function(side, data){
-                                //set the value in the object using the key's string as a helper
-                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
-                      
-                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                                if( !data.$side.length ){
-                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                                }
-
-                                //if any side has a border - set hasBorder to true
-                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                                    hasBorder = true;
-                                }
-
-                            });
-                            
-                            //figure out dims
-                            if(hasBorder){
-                                containerWidth = $container.outerWidth();
-                                containerHeight = $container.outerHeight();
-                            }else{
-                                containerWidth = $container.width();
-                                containerHeight = $container.height();
-                            }
-
-                            //use dims to make the css rules for each border side
-                            borders.top.css = {
-                                width: containerWidth+'px',
-                                height: 0+'px',
-                                top: -hiliteThickness+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.right.css = {
-                                width:0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: containerWidth+'px'
-                            };
-                            borders.bottom.css = {
-                                width: containerWidth+'px',
-                                height: 0+'px',
-                                top: containerHeight+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.left.css = {
-                                width: 0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: -hiliteThickness+'px'
-                            };
-
-                            $.each( borders, function( side, data ){
-                                RDR.util.cssSuperImportant( data.$side, data.css, true );
-                            });                       
-                    
-                        },
-                        engage: function(hash, isShareLink){
-                            //RDR.actions.indicators.utils.borderHilites.engage:
-                            var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-
-                            $mediaBorderWrap.addClass('engaged');
-                            
-                            if (isShareLink) {
-                                $mediaBorderWrap.addClass('engagedForShareLink');
-                            }
-                        },
-                        disengage: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.disengage:
-                            var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
-
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('#rdr_indicator_' + hash).hide();
-                        },
-                        engageAll: function(){
-                            //RDR.actions.indicators.utils.borderHilites.engageAll:
-                            $mediaBorderWrap = $('.rdr_media_border_wrap');
-                            $mediaBorderWrap.addClass('engaged');
-                        },
-                        disengageAll: function(){
-                            //RDR.actions.indicators.utils.borderHilites.disengageAll:
-                            $mediaBorderWrap = $('.rdr_media_border_wrap');
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('div.rdr_indicator_for_media').hide();
-                        }
                     }
-
                 }//end RDR.actions.indicators.utils
             },
             summaries:{
@@ -6439,7 +6246,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 RDR.events.track('click_user_profile');
                             });
                             $comment.html(
-                                '<span class="rdr_quoteImg"></span>'+
+                                // '<span class="rdr_quoteImg"></span>'+
                                 '<div class="rdr_comment_body">'+this_comment.body+'</div>'
                             );
 
@@ -7693,7 +7500,7 @@ function $RFunctions($R){
 
                     // fix for bad group defaults:
                     if ( RDR.group.call_to_action == "" ) {
-                        RDR.group.call_to_action = "What's your reaction?";
+                        RDR.group.call_to_action = "What do you think?";
                     }
                     var $reactToArticle = $(
                         '<a class="rdr_tag rdr_reactToArticle">'+
@@ -7940,10 +7747,10 @@ function $RFunctions($R){
                                 offsets = $this.offset();
 
                             if ( RDR.group.call_to_action == "" ) {
-                                RDR.group.call_to_action = "What's your reaction?";
+                                RDR.group.call_to_action = 'What do you think?';
                             }
                             var $sbRollover = $('<div class="rdr rdr_tag_details rdr_sbRollover rdr_sbRollover_page" />')//chain
-                                .append('<h2>'+RDR.group.call_to_action+'</h2><div class="rdr_sbRolloverTable"/>');
+                                .append('<h2>'+RDR.group.call_to_action+'<img class="rdr_ui_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" /></h2><div class="rdr_sbRolloverTable"/>');
 
                             $('#rdr_summary_tag_details').append( $sbRollover );
 
@@ -8028,7 +7835,7 @@ function $RFunctions($R){
                                     top:30,
                                     left:0
                                 };
-                                $sbRollover.css('top', offsets.top + sbRolloverModifier.top + 'px').css('left',offsets.left + +sbRolloverModifier.left + 'px').show();
+                                $sbRollover.css('top', offsets.top - 32 + sbRolloverModifier.top + 'px').css('left',offsets.left + +sbRolloverModifier.left + 'px').show();
                             }
                             // $details.data('container',hash).data('kind', 'page'); // hardcoding page since this is only used in the button to +1 a page reaction
 
