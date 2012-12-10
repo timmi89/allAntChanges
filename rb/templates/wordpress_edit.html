@@ -67,8 +67,7 @@
             }
             
             if(data){
-                var urlPrefix = "http://";
-                var hostPath = urlPrefix+params.hostdomain;
+                var hostPath = params.host_xdm_url;
                 $.postMessage(
                     data,
                     hostPath,
