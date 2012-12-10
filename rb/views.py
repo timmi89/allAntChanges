@@ -337,7 +337,7 @@ def board(request, board_id=None, **kwargs):
             social = SocialUser.objects.get(user=board.owner)
             context['social_user'] = model_to_dict(social, fields=('id','full_name', 'img_url'))
         except SocialUser.DoesNotExist:
-            logger.warn("Balls")
+            logger.warning("Balls")
             
         if cookie_user in board.admins.all():
             context['board_admin'] = True
@@ -697,7 +697,7 @@ def reset_rb_password(request):
             user_id = request.POST['uid']
         except KeyError, ke:
             context['message']  = 'There was a problem with your reset token. Please reopen this page from the link in your email.'
-            logger.warn(str(ke))
+            logger.warning(str(ke))
     
         form = ChangePasswordForm(request.POST)
         is_valid_token = validatePasswordToken(user_id, password_token)
