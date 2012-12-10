@@ -505,7 +505,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         
         cached_result = cache.get('page_containers' + str(page))
         if cached_result is not None:
-            logger.info("returning page containers from cache")
+            #logger.info("returning page containers from cache")
             return cached_result
         else:
             # Force evaluation by making lists
@@ -569,7 +569,7 @@ class PageDataHandler(AnonymousBaseHandler):
             # Find all the interactions on page
             cached_result = cache.get('page_data' + str(current_page.id))
             if cached_result is not None:
-                logger.info('returning page data cached result')
+                #logger.info('returning page data cached result')
                 pages_data.append(cached_result)
             else:
                 result_dict = getSinglePageDataDict(current_page.id)
