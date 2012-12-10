@@ -329,7 +329,7 @@ div.rdr_sandbox .rdr_tooltip_about                                  { margin:0 0
 
 /* global tag defs */
 div.rdr_sandbox div.rdr h1, 
-div.rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#666 !important; margin:0 !important; font-size:12px !important; padding:5px 9px 0 12px !important; border:none !important; }
+div.rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#666 !important; margin:0 !important; font-size:11px !important; padding:5px 9px 0 12px !important; border:none !important; }
 div.rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px !important; color:#008be4 !important;}
 
 div.rdr_sandbox div.rdr li {background:none !important; padding:0 !important;}
