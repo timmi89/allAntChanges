@@ -1893,6 +1893,10 @@ div.rdr_sandbox a.rdr_tag:hover {
     /*font: normal 11px/1 "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif !important;*/
     text-shadow: 0 1px 1px white !important;
 }
+div.rdr_sandbox a.rdr_tag:hover span.rdr_tag_count {
+    top: -1px !important;
+}
+
 
 div.rdr_sandbox span.rdr_tags_list_tag {
     padding:2px !important;
