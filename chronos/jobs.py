@@ -2,7 +2,7 @@ import settings
 import httplib
 from django.core.cache import cache
 import traceback
-from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries
+from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict
 import logging
 logger = logging.getLogger('rb.standard')
 

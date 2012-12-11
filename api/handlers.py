@@ -618,12 +618,12 @@ class SettingsHandler(AnonymousBaseHandler):
             
         #if group.approved == False:   
         #    return HttpResponse("Group not approved")
-        cached result = cache.get('group_settings'+group.id)
+        cached_result = cache.get('group_settings'+ str(group.id))
         if cached_result is not None:
             return cached_result
         settings_dict = getSettingsDict(group)
         try:
-            cache_updater = GroupSettingsDataCacheUpdater(method="update", group_id=current_page.id)
+            cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group)
             t = Thread(target=cache_updater, kwargs={})
             t.start()
         except Exception, e:
