@@ -115,7 +115,10 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         self.method = kwargs['method']
         
     def hydrate(self):
-        self.key = 'page_containers' + str(self.page_id)
+        if len(self.hashes) == 1:
+            self.key = 'page_containers' + str(self.page_id) + ":" + str(self.hashes)
+        else:
+            self.key = 'page_containers' + str(self.page_id)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         

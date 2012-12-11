@@ -502,10 +502,12 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             
         # Guard against undefined page string being passed in
         if not isinstance(page, int): raise JSONException("Bad Page ID")
-        
-        cached_result = cache.get('page_containers' + str(page))
+        if len(hashes) == 1:
+            cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
+        else:
+            cached_result = cache.get('page_containers' + str(page))
+            
         if cached_result is not None:
-            #logger.info("returning page containers from cache")
             return cached_result
         else:
             # Force evaluation by making lists

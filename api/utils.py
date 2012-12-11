@@ -304,6 +304,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
+        
+        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id) + ":" + container.hash)
+        t = Thread(target=container_cache_updater, kwargs={})
+        t.start()
+        
     except Exception, e:
         logger.warning(traceback.format_exc(50))   
     
@@ -390,7 +395,6 @@ def getSinglePageDataDict(page_id):
     
     
 def getKnownUnknownContainerSummaries(page_id, hashes):
-    print page_id
     page = Page.objects.get(id=page_id)  
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
     ids = [container[0] for container in containers]
