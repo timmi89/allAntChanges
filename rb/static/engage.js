@@ -3027,13 +3027,16 @@ function readrBoard($R){
                     var $this = $(this),
                         hash = $this.data('hash');
 
-                    RDR.checkIndicatorHover = setTimeout( function() {
-                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                            $this.removeClass('rdr_live_hover');
-                            $('#rdr_indicator_' + hash).hide();
-                        }
-                        clearTimeout( RDR.checkIndicatorHover );
-                    }, 250);
+                    // RDR.checkIndicatorHover = setTimeout( function() {
+                    //     if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                    //         $this.removeClass('rdr_live_hover');
+                    //         $('#rdr_indicator_' + hash).hide();
+                    //     }
+                    //     clearTimeout( RDR.checkIndicatorHover );
+                    // }, 250);
+                        
+                        $this.removeClass('rdr_live_hover');
+                        $('#rdr_indicator_' + hash).hide();
                 });
 
                 RDR.actions.slideshows.setup();
