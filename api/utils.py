@@ -237,6 +237,22 @@ def deleteInteraction(interaction, user):
         # This will delete an interaction and all of it's children
         try:
             interaction.delete();
+            try:
+                cache_updater = PageDataCacheUpdater(method="delete", page_id=interaction.page.id)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=interaction.page.id)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + interaction.container.hash)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))   
+    
         except:
             raise JSONException("Error deleting the interaction")
         if tempuser: return dict(deleted_interaction=interaction, num_interactions=num_interactions-1)
