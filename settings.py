@@ -124,6 +124,12 @@ if DEBUG:
           'PORT':     '',
         }
     }
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'readr.cache'
+        }
+    }
     """
     CACHES = {
         'default': {
@@ -181,12 +187,7 @@ else:
       
     }
     """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache'
-        }
-    }
+    
     """
     CACHES = {
         'default': {

@@ -618,40 +618,17 @@ class SettingsHandler(AnonymousBaseHandler):
             
         #if group.approved == False:   
         #    return HttpResponse("Group not approved")
-        
-        settings_dict = model_to_dict(
-            group,
-            exclude=[
-                'admins',
-                'word_blacklist',
-                'approved',
-                'requires_approval',
-                'share',
-                'rate',
-                'comment',
-                'bookmark',
-                'search',
-                'logo_url_sm',
-                'logo_url_med',
-                'logo_url_lg']
-        )
-        
-        blessed_tags = InteractionNode.objects.filter(
-            groupblessedtag__group=group.id
-        ).order_by('groupblessedtag__order')
-        
-        owner = checkCookieToken(request)
-        if owner is not None:
-            try:
-                social_user = SocialUser.objects.get(user = owner)
-                user_tags = InteractionNode.objects.filter(userdefaulttag__social_user = social_user)
-                blessed_tags = list(chain(blessed_tags, user_tags))
-                #logger.info(blessed_tags)
-            except SocialUser.DoesNotExist:
-                logger.info("User does not have social account")
-                
-        settings_dict['blessed_tags'] = blessed_tags
-        
+        cached result = cache.get('group_settings'+group.id)
+        if cached_result is not None:
+            return cached_result
+        settings_dict = getSettingsDict(group)
+        try:
+            cache_updater = GroupSettingsDataCacheUpdater(method="update", group_id=current_page.id)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))   
+              
         return settings_dict
 
 

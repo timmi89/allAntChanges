@@ -409,6 +409,30 @@ def getKnownUnknownContainerSummaries(page_id, hashes):
     cacheable_result = dict(known=known, unknown=unknown)
     return cacheable_result
 
-    
+def getSettingsDict(group):
+       settings_dict = model_to_dict(
+            group,
+            exclude=[
+                'admins',
+                'word_blacklist',
+                'approved',
+                'requires_approval',
+                'share',
+                'rate',
+                'comment',
+                'bookmark',
+                'search',
+                'logo_url_sm',
+                'logo_url_med',
+                'logo_url_lg']
+        )
+
+        blessed_tags = InteractionNode.objects.filter(
+            groupblessedtag__group=group.id
+        ).order_by('groupblessedtag__order')
+
+        settings_dict['blessed_tags'] = blessed_tags
+        return settings_dict
+
     
     

@@ -122,7 +122,15 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         
+class GroupSettingsDataCacheUpdater(CacheUpdater):        
+    def __init__(self, **kwargs):
+        self.group = kwargs['group']
+        self.method = kwargs['method']
         
+    def hydrate(self):
+        self.key = 'group_settings' + str(self.group.id)
+        if self.method == 'update':  
+            self.value = getSettingsDict(self.group)
         
         
          
