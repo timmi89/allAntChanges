@@ -321,7 +321,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         
-        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id) + ":" + container.hash)
+        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         

@@ -508,6 +508,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             cached_result = cache.get('page_containers' + str(page))
             
         if cached_result is not None:
+            logger.info('CACHE HIT FOR CONTAINER SUMMARY')
             return cached_result
         else:
             # Force evaluation by making lists

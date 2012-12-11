@@ -111,7 +111,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
     
     def __init__(self, **kwargs):
         self.page_id = kwargs['page_id']
-        self.hashes = kwargs['hashes']
+        self.hashes = kwargs.get('hashes',[])
         self.method = kwargs['method']
         
     def hydrate(self):
