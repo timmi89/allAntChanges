@@ -1864,10 +1864,22 @@ function readrBoard($R){
 
                 return summary;
             },
-            getPageProperty: function( prop, hash ) {
+            getPageProperty: function( prop, hashOrObject ) {
             //RDR.util.getPageProperty
+            // goal is, generally, to get the Page ID integer.
                 if (!prop) prop = "id";
-                if (!hash) return false;
+
+                // this code is to accommodate passing in either a hash (string) or jquery element to 
+                if (typeof hashOrObject == "object") {
+                	if ( $(hashOrObject).closest('.rdr-page-container').length && $(hashOrObject).closest('.rdr-page-container').data('page_id') ) {
+                		return parseInt( $(hashOrObject).closest('.rdr-page-container').data('page_id') );
+                	}
+            	} else if (!hashOrObject) {
+            		return false;
+            	}
+            	if ( typeof hashOrObject == "string" ) {
+            		var hash = hashOrObject;
+            	}
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
 
@@ -7939,7 +7951,7 @@ function $RFunctions($R){
                             function() {
                                 
                                 var $this = $(this),
-                                    hash = $this.closest('.rdr-page-container').data('hash'),
+                                    hash = ( $this.closest('.rdr-page-container').data('hash') ) ? $this.closest('.rdr-page-container').data('hash') : $this,
                                     page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                     offsets = $this.offset(),
                                     tag_id = $this.data('tag_id'),
