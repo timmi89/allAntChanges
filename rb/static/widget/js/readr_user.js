@@ -69,6 +69,11 @@ window.RDRAuth = {
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
+    openFBLoginWindowFromPopup: function(options){
+        RDRAuth.closeWindowOnSuccess = true;
+        RDRAuth.doFBLogin();
+        return false;
+    },
     openRbLoginWindow: function(options){   
         var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
@@ -285,6 +290,9 @@ window.RDRAuth = {
 
                 if( RDRAuth.checkIfWordpressRefresh() ){
                     return;
+                }
+                if( RDRAuth.closeWindowOnSuccess ){
+                    window.close();
                 }
 
 				if (top == self) {
@@ -538,18 +546,7 @@ window.RDRAuth = {
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
 		FB.login(function(response) {
-		    if (response.authResponse) {
-    		    // FB.api('/me', function(response) {
-    		    RDRAuth.getReadrToken(
-                    FB.getAuthResponse(),
-                    function() {
-                        RDRAuth.checkFBStatus();
-        		      // });
-                    }
-                );
-            } else {
-                RDRAuth.popupBlockAudit('readr_user','doFBLogin');
-            }
+            RDRAuth.FBLoginCallback(response);
 		}, {scope: 'email'});
 	},
 	doRBLogin: function(requesting_action) {
