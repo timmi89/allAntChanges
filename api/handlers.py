@@ -10,12 +10,14 @@ from authentication.token import *
 from settings import BASE_URL, STATIC_URL, RB_SOCIAL_ADMINS
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
+from django.core.cache import cache
 from django.db.models import Q
 from chronos.jobs import *
 from threading import Thread
 from itertools import chain
 from datetime import datetime, timedelta
 from rb.auto_approval import autoCreateGroup
+import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -500,20 +502,24 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             
         # Guard against undefined page string being passed in
         if not isinstance(page, int): raise JSONException("Bad Page ID")
-
-        # Force evaluation by making lists
-        containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-        ids = [container[0] for container in containers]
-        interactions = list(Interaction.objects.filter(
-            container__in=ids,
-            page=page,
-            approved=True
-        ).select_related('interaction_node','content','user',('social_user')))
-
-        known = getContainerSummaries(interactions, containers)
-        unknown = list(set(hashes) - set(known.keys()))
-
-        return dict(known=known, unknown=unknown)
+        if len(hashes) == 1:
+            cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
+        else:
+            cached_result = cache.get('page_containers' + str(page))
+            
+        if cached_result is not None:
+            logger.info('CACHE HIT FOR CONTAINER SUMMARY')
+            return cached_result
+        else:
+            # Force evaluation by making lists
+            cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+            try:
+                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))  
+            return cacheable_result
 
 class ContentSummaryHandler(AnonymousBaseHandler):
     @status_response
@@ -564,53 +570,20 @@ class PageDataHandler(AnonymousBaseHandler):
         
         for current_page in pages:
             # Find all the interactions on page
-            iop = interactions.filter(page=current_page)
-        
-            # Retrieve containers
-            containers = Container.objects.filter(id__in=iop.values('container'))
-        
-            parents = interactions.filter(page=current_page, parent=None)
-            par_con = []
-            for parent in parents:
-                par_con.append({parent.container.id:parent.id})
-            # Get page interaction counts, grouped by kind
-            values = iop.order_by('kind').values('kind')
-            # Annotate values with count of interactions
-            summary = values.annotate(count=Count('id'))
-        
-            # ---Find top 10 tags on a given page---
-            tags = InteractionNode.objects.filter(
-                interaction__kind='tag',
-                interaction__page=current_page,
-                interaction__approved=True
-            )
-            ordered_tags = tags.order_by('body')
-            tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-            toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
-          
-            # ---Find top 10 shares on a give page---
-            content = Content.objects.filter(interaction__page=current_page.id)
-            shares = content.filter(interaction__kind='shr')
-            sharecounts = shares.annotate(Count("id"))
-            topshares = sharecounts.values("body").order_by()[:10]
-
-            # ---Find top 10 non-temp users on a given page---
-            socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
-
-            userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
-            topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
-        
-            pages_data.append(
-                dict(
-                    id=current_page.id,
-                    summary=summary,
-                    toptags=toptags,
-                    topusers=topusers,
-                    topshares=topshares,
-                    containers=containers,
-                    parents = par_con
-                )
-            )
+            cached_result = cache.get('page_data' + str(current_page.id))
+            if cached_result is not None:
+                #logger.info('returning page data cached result')
+                pages_data.append(cached_result)
+            else:
+                result_dict = getSinglePageDataDict(current_page.id)
+                pages_data.append(result_dict)
+                try:
+                    cache_updater = PageDataCacheUpdater(method="update", page_id=current_page.id)
+                    t = Thread(target=cache_updater, kwargs={})
+                    t.start()
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))   
+              
         
         return pages_data
 
@@ -646,40 +619,17 @@ class SettingsHandler(AnonymousBaseHandler):
             
         #if group.approved == False:   
         #    return HttpResponse("Group not approved")
-        
-        settings_dict = model_to_dict(
-            group,
-            exclude=[
-                'admins',
-                'word_blacklist',
-                'approved',
-                'requires_approval',
-                'share',
-                'rate',
-                'comment',
-                'bookmark',
-                'search',
-                'logo_url_sm',
-                'logo_url_med',
-                'logo_url_lg']
-        )
-        
-        blessed_tags = InteractionNode.objects.filter(
-            groupblessedtag__group=group.id
-        ).order_by('groupblessedtag__order')
-        
-        owner = checkCookieToken(request)
-        if owner is not None:
-            try:
-                social_user = SocialUser.objects.get(user = owner)
-                user_tags = InteractionNode.objects.filter(userdefaulttag__social_user = social_user)
-                blessed_tags = list(chain(blessed_tags, user_tags))
-                logger.info(blessed_tags)
-            except SocialUser.DoesNotExist:
-                logger.info("User does not have social account")
-                
-        settings_dict['blessed_tags'] = blessed_tags
-        
+        cached_result = cache.get('group_settings'+ str(group.id))
+        if cached_result is not None:
+            return cached_result
+        settings_dict = getSettingsDict(group)
+        try:
+            cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))   
+              
         return settings_dict
 
 

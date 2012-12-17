@@ -15,6 +15,8 @@ import StringIO
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
+from threading import Thread
+from chronos.jobs import *
 
 import traceback
 import logging
@@ -298,6 +300,14 @@ class GroupForm(forms.ModelForm):
             GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
+        try:
+            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+        except Exception, e:
+            logger.warning('BAd nEWz, bOnz0!')
+        
+
         return m
             
     

@@ -1,4 +1,6 @@
 from readrboard.rb.models import *
+from readrboard.rb.profanity_filter import ProfanitiesFilter
+from readrboard.chronos.jobs import *
 from django.db.models import Q
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.forms.models import model_to_dict
@@ -7,14 +9,14 @@ import random
 import json
 import re
 import time
+from threading import Thread
 from exceptions import FBException, JSONException
-from readrboard.rb.profanity_filter import ProfanitiesFilter
 from urlparse import urlsplit, urlunsplit
 import logging
 logger = logging.getLogger('rb.standard')
 
 blacklist = ['fuck','shit','poop','cock','cunt']
-
+    
 def getTagCommentData(comment):
     comment_data = {}
     comment_data['comment'] = comment.interaction_node.body
@@ -235,6 +237,22 @@ def deleteInteraction(interaction, user):
         # This will delete an interaction and all of it's children
         try:
             interaction.delete();
+            try:
+                cache_updater = PageDataCacheUpdater(method="delete", page_id=interaction.page.id)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=interaction.page.id)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + interaction.container.hash)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))   
+    
         except:
             raise JSONException("Error deleting the interaction")
         if tempuser: return dict(deleted_interaction=interaction, num_interactions=num_interactions-1)
@@ -294,7 +312,22 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         existing=False,
         container=container
     )
-
+    try:
+        cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
+        t = Thread(target=cache_updater, kwargs={})
+        t.start()
+        
+        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
+        t = Thread(target=container_cache_updater, kwargs={})
+        t.start()
+        
+        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
+        t = Thread(target=container_cache_updater, kwargs={})
+        t.start()
+        
+    except Exception, e:
+        logger.warning(traceback.format_exc(50))   
+    
     if tempuser: 
         ret['num_interactions']=num_interactions+1
 
@@ -325,3 +358,97 @@ def searchBoards(search_term, page_num):
         board_dict['social_user'] = owner_social_map[board.owner.id]
         board_list.append(board_dict)
     return board_list
+
+
+def getSinglePageDataDict(page_id):
+    current_page = Page.objects.get(id=page_id)
+    iop = Interaction.objects.filter(page=current_page)
+            
+    # Retrieve containers
+    containers = Container.objects.filter(id__in=iop.values('container'))
+
+    parents = iop.filter(page=current_page, parent=None)
+    par_con = []
+    for parent in parents:
+        par_con.append({parent.container.id:parent.id})
+    # Get page interaction counts, grouped by kind
+    values = iop.order_by('kind').values('kind')
+    # Annotate values with count of interactions
+    summary = values.annotate(count=Count('id'))
+
+    # ---Find top 10 tags on a given page---
+    tags = InteractionNode.objects.filter(
+        interaction__kind='tag',
+        interaction__page=current_page,
+        interaction__approved=True
+    )
+    ordered_tags = tags.order_by('body')
+    tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
+    toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
+  
+    # ---Find top 10 shares on a give page---
+    content = Content.objects.filter(interaction__page=current_page.id)
+    shares = content.filter(interaction__kind='shr')
+    sharecounts = shares.annotate(Count("id"))
+    topshares = sharecounts.values("body").order_by()[:10]
+
+    # ---Find top 10 non-temp users on a given page---
+    socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
+
+    userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
+    topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
+    result_dict = dict(
+            id=current_page.id,
+            summary=summary,
+            toptags=toptags,
+            topusers=topusers,
+            topshares=topshares,
+            containers=containers,
+            parents = par_con
+        )
+    return result_dict
+    
+    
+    
+def getKnownUnknownContainerSummaries(page_id, hashes):
+    page = Page.objects.get(id=page_id)  
+    containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
+    ids = [container[0] for container in containers]
+    interactions = list(Interaction.objects.filter(
+        container__in=ids,
+        page=page,
+        approved=True
+    ).select_related('interaction_node','content','user',('social_user')))
+
+    known = getContainerSummaries(interactions, containers)
+    unknown = list(set(hashes) - set(known.keys()))
+    cacheable_result = dict(known=known, unknown=unknown)
+    return cacheable_result
+
+def getSettingsDict(group):
+    settings_dict = model_to_dict(
+         group,
+         exclude=[
+             'admins',
+             'word_blacklist',
+             'approved',
+             'requires_approval',
+             'share',
+             'rate',
+             'comment',
+             'bookmark',
+             'search',
+             'logo_url_sm',
+             'logo_url_med',
+             'logo_url_lg']
+     )
+    
+    blessed_tags = InteractionNode.objects.filter(
+         groupblessedtag__group=group.id
+     ).order_by('groupblessedtag__order')
+    
+    settings_dict['blessed_tags'] = blessed_tags
+    return settings_dict
+
+    
+    
