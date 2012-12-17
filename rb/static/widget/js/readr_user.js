@@ -143,6 +143,10 @@ window.RDRAuth = {
         trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
+            
+            //disable for now..
+            return;
+
             if( typeof _gaq === "undefined" ){
                 return;
             }
