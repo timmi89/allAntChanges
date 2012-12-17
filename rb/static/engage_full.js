@@ -143,7 +143,7 @@ function readrBoard($R){
             }
         },
         styles: {
-		},
+        },
         events: {
             track : function( data, hash ) {
                 // RDR.events.track:
@@ -162,7 +162,7 @@ function readrBoard($R){
                 $('#rdr_event_pixels').append($event);
             }
         },
-		rindow: {
+        rindow: {
             defaults:{
                 coords:{
                     left:100,
@@ -1379,9 +1379,9 @@ function readrBoard($R){
             },
             closeAll: function() {
                 var $allRindows = $('div.rdr.rdr_window');
-				RDR.rindow.close( $allRindows );
+                RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
-			},
+            },
             clearHilites: function( $rindows ){
                 var selStates = [];
                 $rindows.each(function(idx,rindow){
@@ -1595,7 +1595,7 @@ function readrBoard($R){
             }//end RDR.rindow.update
         },
         actionbar: {
-			draw: function(settings) {
+            draw: function(settings) {
                 //RDR.actionbar.draw:
                 //expand to make settings explicit
 
@@ -1721,7 +1721,7 @@ function readrBoard($R){
                 return $new_actionbar;
 
             },
-			close: function($actionbars, effect){
+            close: function($actionbars, effect){
                 //RDR.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
@@ -1754,7 +1754,7 @@ function readrBoard($R){
                     $actionbar.remove();
                 }
 
-			},
+            },
             closeSuggest: function(hashes) {
                 //hashes can be a single hash or a list of hashes
                 var $actionbars = $();
@@ -1796,8 +1796,8 @@ function readrBoard($R){
                 var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
             }
-		},
-		util: {
+        },
+        util: {
             checkForSelectedTextAndLaunchRindow: function(){
                 //RDR.util.checkForSelectedTextAndLaunchRindow
                     
@@ -1864,10 +1864,22 @@ function readrBoard($R){
 
                 return summary;
             },
-            getPageProperty: function( prop, hash ) {
+            getPageProperty: function( prop, hashOrObject ) {
             //RDR.util.getPageProperty
+            // goal is, generally, to get the Page ID integer.
                 if (!prop) prop = "id";
-                if (!hash) return false;
+
+                // this code is to accommodate passing in either a hash (string) or jquery element to 
+                if (typeof hashOrObject == "object") {
+                    if ( $(hashOrObject).closest('.rdr-page-container').length && $(hashOrObject).closest('.rdr-page-container').data('page_id') ) {
+                        return parseInt( $(hashOrObject).closest('.rdr-page-container').data('page_id') );
+                    }
+                } else if (!hashOrObject) {
+                    return false;
+                }
+                if ( typeof hashOrObject == "string" ) {
+                    var hash = hashOrObject;
+                }
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                 var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
 
@@ -1879,13 +1891,13 @@ function readrBoard($R){
             },
             stayInWindow: function(settings) {
 
-	           var rWin = $(window),
-	                winWidth = rWin.width(),
-	                winHeight = rWin.height(),
-	                winScroll = rWin.scrollTop(),
-					w = settings.width,
-					h = settings.height,
-					coords = settings.coords,
+               var rWin = $(window),
+                    winWidth = rWin.width(),
+                    winHeight = rWin.height(),
+                    winScroll = rWin.scrollTop(),
+                    w = settings.width,
+                    h = settings.height,
+                    coords = settings.coords,
                     paddingY = settings.paddingY || 10,
                     paddingX = settings.paddingX || 10,
                     ignoreWindowEdges = (settings.ignoreWindowEdges) ? settings.ignoreWindowEdges:""; // ignoreWindowEdges - check for index of t, r, b, l
@@ -1897,31 +1909,31 @@ function readrBoard($R){
                     coords.top = winHeight + winScroll - h - paddingY;
                 }
                 if ( ( ignoreWindowEdges.indexOf('l') == -1 ) && coords.left < paddingX ) {
-					coords.left = paddingX;
-				}
+                    coords.left = paddingX;
+                }
                 if ( ( ignoreWindowEdges.indexOf('t') == -1 ) && coords.top < (winScroll + paddingY) ) {
-					coords.top = winScroll + paddingY;
-				}
+                    coords.top = winScroll + paddingY;
+                }
 
                 return coords;
             },
             md5: {
-				hexcase:0,
-				b64pad:"",
-				chrsz:8,
-				hex_md5: function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
-				core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-				md5_cmn: function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
-				md5_ff: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-				md5_gg: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-				md5_hh: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-				md5_ii: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
-				safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
-				bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
+                hexcase:0,
+                b64pad:"",
+                chrsz:8,
+                hex_md5: function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
+                core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+                md5_cmn: function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
+                md5_ff: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+                md5_gg: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+                md5_hh: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+                md5_ii: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+                safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
+                bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
                 //the line below is called out by jsLint because it uses Array() instead of [].  We can ignore, or I'm sure we could change it if we wanted to.
-				str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-				binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
-			},
+                str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+                binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+            },
             getCleanText: function(textNode) {
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 var $node = $(textNode);
@@ -2149,7 +2161,7 @@ function readrBoard($R){
             window.$RDR = $RDR;
             window.$R = $R;
         },
-		session: {
+        session: {
             alertBar: {
                 make: function( whichAlert, data) {
                     // RDR.session.alertBar.make:
@@ -2338,7 +2350,7 @@ function readrBoard($R){
                     break;
                 }
             },
-			createXDMframe: function() {
+            createXDMframe: function() {
 
                 RDR.session.receiveMessage({}, function() {
                     RDR.util.userLoginState();
@@ -2353,11 +2365,11 @@ function readrBoard($R){
                 $('#rdr_sandbox').append( $xdmIframe );
 
 
-				// this is the postMessage receiver for ALL messages posted.
+                // this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 
                 $RDR.dequeue('initAjax');
-			},
+            },
             receiveMessage: function(args, callbackFunction) {
                 //args is passed through this function into the callback as a parameter.
                 //The only side effect is that it adds a user property to args ( args[user] ).
@@ -2429,7 +2441,7 @@ function readrBoard($R){
                     RDR_baseUrl
                 );
             },
-			login: function() {},
+            login: function() {},
             checkForMaxInteractions: function(args, callback){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
 
@@ -2440,7 +2452,7 @@ function readrBoard($R){
                 }
                 return true;
             },
-			showLoginPanel: function(args, callback) {
+            showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
 
                 $('.rdr_rewritable').removeClass('rdr_rewritable');
@@ -2493,8 +2505,8 @@ function readrBoard($R){
 
                     RDR.events.track( 'show_login' );
                 }
-			},
-			killUser: function() {
+            },
+            killUser: function() {
                 RDR.user = {};
                 $.postMessage(
                     "killUser",
@@ -2643,7 +2655,7 @@ function readrBoard($R){
                     }
                 }
             }
-		},
+        },
         actions: {
             //RDR.actions:
             aboutReadrBoard: function() {
@@ -2664,7 +2676,7 @@ function readrBoard($R){
                     that.initPageData();
                     //next fired on ajax success
                 });
-				$RDR.queue('initAjax', function(next){
+                $RDR.queue('initAjax', function(next){
                    // this will check for FB login status, too, and set user data
                    RDR.session.createXDMframe();
                    //next fired on ajax success
@@ -2832,14 +2844,14 @@ function readrBoard($R){
                 };
 
                 //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
-				//might not want to send canonical, or, send it separately if/only if it's different than URL
-				$.ajax({
+                //might not want to send canonical, or, send it separately if/only if it's different than URL
+                $.ajax({
                     url: RDR_baseUrl+"/api/page/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: { json: $.toJSON(sendData) },
-					success: function(response) {
+                    success: function(response) {
                         RDR.events.track( 'load' );
 
                         $.each( response.data, function(key,page){
@@ -2866,7 +2878,7 @@ function readrBoard($R){
                     error: function(response) {
                         //for now, ignore error and carry on with mockup
                     }
-				});
+                });
 
             },
             initEnvironment: function(){
@@ -3226,9 +3238,9 @@ function readrBoard($R){
 
                     //build the sendData with the hashes from above
                     sendData = {
-	                   short_name : RDR.group.short_name,
-	                   pageID: parseInt( page_id ),
-	                   hashes: sendable_hashes
+                       short_name : RDR.group.short_name,
+                       pageID: parseInt( page_id ),
+                       hashes: sendable_hashes
                     };
 
                     // send the data!
@@ -7939,7 +7951,7 @@ function $RFunctions($R){
                             function() {
                                 
                                 var $this = $(this),
-                                    hash = $this.closest('.rdr-page-container').data('hash'),
+                                    hash = ( $this.closest('.rdr-page-container').data('hash') ) ? $this.closest('.rdr-page-container').data('hash') : $this,
                                     page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
                                     offsets = $this.offset(),
                                     tag_id = $this.data('tag_id'),
