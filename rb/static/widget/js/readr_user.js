@@ -49,6 +49,7 @@ window.RDRAuth = {
 
         var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
         RDRAuth.events.track(eventStr);
+        RDRAuth.events.trackGoogleEvent('login', 'failed', 'fb - from:'+sourceStr);
 
         if(RDRAuth.isOffline){
             //uncomment this for quick testing on local
@@ -138,7 +139,15 @@ window.RDRAuth = {
             // if(RDRAuth.isOffline){
             //     console.log(eventSrc);
             // }
-    	}
+    	},
+        trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
+            //record to google events as well.
+            //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
+            if( typeof _gaq === "undefined" ){
+                return;
+            }
+            _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+        }
 	},
 	postMessage: function(params) {
 		if ( typeof $.postMessage == "function" ) {
