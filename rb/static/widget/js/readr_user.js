@@ -49,7 +49,7 @@ window.RDRAuth = {
 
         var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
         RDRAuth.events.track(eventStr);
-        RDRAuth.events.trackGoogleEvent('login', 'failed', 'fb - from:'+sourceStr);
+        RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'fb - from:'+sourceStr);
 
         if(RDRAuth.isOffline){
             //uncomment this for quick testing on local
