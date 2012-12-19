@@ -144,9 +144,6 @@ window.RDRAuth = {
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
-            //disable for now..
-            return;
-
             if( typeof _gaq === "undefined" ){
                 return;
             }
@@ -346,11 +343,6 @@ window.RDRAuth = {
 						            '<h5>Settings</h5>' +
 						            '<label for="private_profile">' +
 						              '(Reload the page to edit your setttings.)' +
-						            //   'Profile is private' +
-						            // '</label>' +
-						            // '<label for="follow_email">' +
-						            //   '<input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> ' +
-						            //   'Send me email when someone follows my activity.' +
 						            '</label>');
 								$('#logged-in').html( $user ).append($user_menu);
 							}
