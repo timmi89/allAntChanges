@@ -124,20 +124,7 @@ if DEBUG:
           'PORT':     '',
         }
     }
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache'
-        }
-    }
-    """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '127.0.0.1:11211',
-        }
-    }
-    """
+    
 
 else:
     URL_NO_PROTO = 'www.readrboard.com'
@@ -186,14 +173,11 @@ else:
       }
       
     }
-    """
-    
-    """
+
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':600
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'readr.cache'
         }
     }
 
@@ -331,7 +315,7 @@ if DEBUG: INSTALLED_APPS.append('devserver')
 if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
-    #'devserver.modules.sql.SQLRealTimeModule',
+    'devserver.modules.sql.SQLRealTimeModule',
     'devserver.modules.sql.SQLSummaryModule',
     # 'devserver.modules.profile.ProfileSummaryModule',
 
