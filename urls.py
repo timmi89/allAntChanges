@@ -86,7 +86,12 @@ urlpatterns = patterns('',
   url(r'^faq/$', 'rb.views.faq'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^splash/$', 'rb.views.splash'),
-  url(r'^login/$', 'rb.views.login'),
+  
+  # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
+  # the error is 'str' object has no attribute 'status_code' 
+  # and it seems to be caused by the request.META.get('HTTP_REFERER') code, which I don't understand why we want in there.
+  # fix this after we investegate and understand.
+  url(r'^login/$', 'rb.views.friendlylogin'),
   url(r'^friendlylogin/$', 'rb.views.friendlylogin'),
   url(r'^friendlylogin_wordpress/$', 'rb.views.friendlylogin_wordpress'),
   
