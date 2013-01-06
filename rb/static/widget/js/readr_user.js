@@ -136,14 +136,30 @@ window.RDRAuth = {
 
 	        $('#rdr_event_pixels').append($event);
 
+            //uncomment for debugging
             // if(RDRAuth.isOffline){
-            //     console.log(eventSrc);
+            //     console.log(
+            //         'rb event tracking: '
+            //         +eventSrc
+            //     );
             // }
     	},
         trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
+            //uncomment for debugging
+            // if(RDRAuth.isOffline){
+            //     console.log(
+            //         'google event tracking: '
+            //         +'category: '+category+', '
+            //         +'action: '+action+', '
+            //         +'opt_label: '+opt_label+', '
+            //         +'opt_value: '+opt_value+', '
+            //         +'opt_noninteraction: '+opt_noninteraction
+            //     );
+            // }
+
             if( typeof _gaq === "undefined" ){
                 return;
             }
