@@ -49,7 +49,7 @@ window.RDRAuth = {
 
         var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
         RDRAuth.events.track(eventStr);
-        RDRAuth.events.trackGoogleEvent('login', 'failed', 'fb - from:'+sourceStr);
+        RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'fb - from:'+sourceStr);
 
         if(RDRAuth.isOffline){
             //uncomment this for quick testing on local
@@ -136,16 +136,29 @@ window.RDRAuth = {
 
 	        $('#rdr_event_pixels').append($event);
 
+            //uncomment for debugging
             // if(RDRAuth.isOffline){
-            //     console.log(eventSrc);
+            //     console.log(
+            //         'rb event tracking: '
+            //         +eventSrc
+            //     );
             // }
     	},
         trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
-            //disable for now..
-            return;
+            //uncomment for debugging
+            // if(RDRAuth.isOffline){
+            //     console.log(
+            //         'google event tracking: '
+            //         +'category: '+category+', '
+            //         +'action: '+action+', '
+            //         +'opt_label: '+opt_label+', '
+            //         +'opt_value: '+opt_value+', '
+            //         +'opt_noninteraction: '+opt_noninteraction
+            //     );
+            // }
 
             if( typeof _gaq === "undefined" ){
                 return;
@@ -346,11 +359,6 @@ window.RDRAuth = {
 						            '<h5>Settings</h5>' +
 						            '<label for="private_profile">' +
 						              '(Reload the page to edit your setttings.)' +
-						            //   'Profile is private' +
-						            // '</label>' +
-						            // '<label for="follow_email">' +
-						            //   '<input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> ' +
-						            //   'Send me email when someone follows my activity.' +
 						            '</label>');
 								$('#logged-in').html( $user ).append($user_menu);
 							}

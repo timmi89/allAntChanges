@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US" xmlns:x2="http://www.w3.org/2002/06/xhtml2" xmlns:fb="http://www.facebook.com/2008/fbml">
    <head>
-     <title>Log In to ReadrBoard</title>
-    	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-    	<script type="text/javascript">
+    <title>Log In to ReadrBoard</title>
+
+	<script type="text/javascript">
    		var RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
 		RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
 		RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
@@ -12,16 +12,13 @@
 	    var h = 245;
 	    var l = (window.screen.width/2)-(w/2);
 	    var t = (window.screen.height/2)-(h/2);
-
-		// var date = new Date();
-		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
-		// var cachebuster = date.getTime();
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
-   		</script>
+        
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ));
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ));
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ));
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
+	</script>
 	<style type="text/css">
     	body	{ color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; background:#fff; }
     	img		{ border:0; }
@@ -42,6 +39,33 @@
         }
 
 	</style>
+   
+    <script type="text/javascript">
+        $(function(){
+            $('#login-buttons a').click( function() {
+                $('#might-need-to-click-here').show();
+                $('#fb-logged-out').hide();
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+    if(!RDR_offline){
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-24372992-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    }else{
+        //just a dummy array for testing
+        window._gaq = _gaq || [];
+    }
+    </script>
+
    </head>
    <body>
    	<div id="fb-root"></div>
@@ -63,12 +87,6 @@
                 <a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow();" style="">Or create a new account</a>
 			</div> -->
 
-			<script>
-			$('#login-buttons a').click( function() {
-				$('#might-need-to-click-here').show();
-				$('#fb-logged-out').hide();
-			});
-			</script>
 		</div>
         <div class="prviacyBlurb">
             <strong><span style="color:#008be4;">ReadrBoard</span> values your privacy.</strong>  <a href="http://www.readrboard.com/faq/" target="_blank">Learn more</a>.

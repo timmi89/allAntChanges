@@ -14,23 +14,15 @@
 		RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com";
 		RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
     
-    if(RDR_offline){
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-    }else{
-        document.write( unescape( '%3Cscript src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-    }
-
-		// var date = new Date();
-		// TODO use the following line.  it creates a cachebuster that represents the current day/week/month
-		// var cachebuster = String( parseInt( date.getDate() / 7 )+1 )+String(date.getMonth()) + String(date.getYear());
-		// var cachebuster = date.getTime();
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-		document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+    document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+	document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+    document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
 
    	</script>
     <script type="text/javascript">
-
+    if(!RDR_offline){
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-24372992-1']);
       _gaq.push(['_trackPageview']);
@@ -40,7 +32,10 @@
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
-
+    }else{
+        //just a dummy array for testing
+        window._gaq = _gaq || [];
+    }
     </script>
 
    </head>
@@ -57,8 +52,7 @@
         })(FB);
 	</script>
 	 <script type="text/javascript">
-		document.write( unescape( '%3Cscript src="/static/widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
-	
+        
 		$(document).ready( function() {			
 			
 			if ( $.cookie('location') && $.cookie('container_hash') ) {
