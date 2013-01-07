@@ -37,6 +37,7 @@
         window._gaq = _gaq || [];
     }
     </script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 
    </head>
    <body style="padding:0;margin:0;color:#fff;background:transparent;">
@@ -51,6 +52,16 @@
             });
         })(FB);
 	</script>
+    <script type="text/javascript">
+        //don't depend on Firebase
+        (function(Firebase){
+            if(typeof Firebase === "undefined") return;
+            window._firebaseDB = new Firebase(
+                'https://readrboard.firebaseio.com/'
+            );
+        })(Firebase);
+    </script>
+    
 	 <script type="text/javascript">
         
 		$(document).ready( function() {			
