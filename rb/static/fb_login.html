@@ -76,7 +76,7 @@
 		<div style="overflow:auto;" id="login-buttons">
 			<div class="loginButton"  style="float:left;padding-right:9px;border-right:1px solid #ccc;">
 				<div id="fb-login-button">
-					<a href="javascript:void(0);" onclick="FB.login( function(response){ RDRAuth.FBLoginCallback(response); }, {scope: 'email'} );"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+					<a href="javascript:void(0);" onclick="RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
 				</div>
 			</div>
 			<div class="loginButton" style="float:left;padding-left:6px;">
