@@ -41,21 +41,6 @@ function getWindowProps(options){
 
 window.RDRAuth = {
     isOffline: (document.domain == "local.readrboard.com"),
-    popupBlockAudit: function( sourceFileStr, sourceFuncStr ){
-        // RDRAuth.popupBlockAudit
-        sourceFileStr = sourceFileStr || "";
-        sourceFuncStr = sourceFuncStr || "";
-        var sourceStr = sourceFileStr + ( sourceFuncStr ? "."+sourceFuncStr : "" );
-
-        var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
-        RDRAuth.events.track(eventStr);
-        RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'fb - from:'+sourceStr);
-
-        if(RDRAuth.isOffline){
-            //uncomment this for quick testing on local
-            // alert(eventStr);
-        }
-    },
 	rdr_user: {},
     popups: {},
     //todo: make this stuff better
@@ -136,34 +121,51 @@ window.RDRAuth = {
 
 	        $('#rdr_event_pixels').append($event);
 
-            //uncomment for debugging
-            // if(RDRAuth.isOffline){
-            //     console.log(
-            //         'rb event tracking: '
-            //         +eventSrc
-            //     );
-            // }
+            if(RDRAuth.isOffline){
+                //uncomment for debugging
+                // console.log( 'rb event tracking: ' +eventSrc );
+            }
     	},
         trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
-            //uncomment for debugging
-            // if(RDRAuth.isOffline){
-            //     console.log(
-            //         'google event tracking: '
-            //         +'category: '+category+', '
-            //         +'action: '+action+', '
-            //         +'opt_label: '+opt_label+', '
-            //         +'opt_value: '+opt_value+', '
-            //         +'opt_noninteraction: '+opt_noninteraction
-            //     );
-            // }
+            if(RDRAuth.isOffline){
+                //uncomment for debugging
+                // console.log('google event tracking: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+            }
 
             if( typeof _gaq === "undefined" ){
                 return;
             }
             _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+        },
+        helpers: {
+            trackFBLoginAttempt: function(){
+                // RDRAuth.events.helpers.trackFBLoginAttempt
+
+                var eventStr = 'FBLogin attempted';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackGoogleEvent('login', 'attempted', 'auth: fb');
+
+                if(RDRAuth.isOffline){
+                    //uncomment this for quick testing on local
+                    // alert(eventStr);
+                }
+            },
+            trackFBLoginFail: function(){
+                // RDRAuth.events.helpers.trackFBLoginFail
+                var eventStr = 'FBLogin failed or was canceled';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'auth: fb');
+
+                if(RDRAuth.isOffline){
+                    //uncomment this for quick testing on local
+                    // alert(eventStr);
+                }
+            }
         }
 	},
 	postMessage: function(params) {
@@ -386,7 +388,7 @@ window.RDRAuth = {
                 RDRAuth.checkFBStatus();
             });
         }else{
-            RDRAuth.popupBlockAudit('readr_user', 'FBLoginCallback');
+            RDRAuth.events.helpers.trackFBLoginFail();
         }
     },
     checkIfWordpressRefresh : function() {
@@ -562,10 +564,11 @@ window.RDRAuth = {
 			}
 		}
 	},
-
-    //only using this sometimes - other cases we call the inner FB.login function inline... try to gauge if one causes more popup blocking
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
+        
+        RDRAuth.events.helpers.trackFBLoginAttempt();
+
 		FB.login(function(response) {
             RDRAuth.FBLoginCallback(response);
 		}, {scope: 'email'});
