@@ -135,20 +135,21 @@ window.RDRAuth = {
                 // console.log('google event tracking: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
             }
 
-            //for now just add this here to mirror the google event tracking
-            var firebaseEventTrackingTest = _firebaseDB.child("eventTrackingTest");
-            firebaseEventTrackingTest.push({
-                category: category,
-                action: action,
-                opt_label: opt_label || null,
-                opt_value: opt_value || null,
-                opt_noninteraction: opt_noninteraction || null
-            });
-
-            if( typeof _gaq === "undefined" ){
-                return;
+            if( typeof _gaq !== "undefined" ){
+                _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
             }
-            _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+
+            //for now just add this here to mirror the google event tracking
+            if( typeof _firebaseDB !== "undefined" ){
+                var firebaseEventTrackingTest = _firebaseDB.child("eventTrackingTest");
+                firebaseEventTrackingTest.push({
+                    category: category,
+                    action: action,
+                    opt_label: opt_label || null,
+                    opt_value: opt_value || null,
+                    opt_noninteraction: opt_noninteraction || null
+                });
+            }
         },
         helpers: {
             trackFBLoginAttempt: function(){

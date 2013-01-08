@@ -101,6 +101,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         _gaq = _gaq || [];
     }
     </script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 </head>
 
 <body class="clearfix {% block bodyClass %}{% endblock %}">    
@@ -118,6 +119,15 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               status:true, xfbml:true, oauth:true
             });
         })(FB);
+    </script>
+    <script type="text/javascript">
+        //don't depend on Firebase
+        (function(Firebase){
+            if(typeof Firebase === "undefined") return;
+            window._firebaseDB = new Firebase(
+                'https://readrboard.firebaseio.com/'
+            );
+        })(Firebase);
     </script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
