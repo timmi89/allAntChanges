@@ -124,6 +124,7 @@ if DEBUG:
           'PORT':     '',
         }
     }
+    """
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -137,7 +138,7 @@ if DEBUG:
             'LOCATION': '127.0.0.1:11211',
         }
     }
-    """
+    
 
 else:
     URL_NO_PROTO = 'www.readrboard.com'
@@ -332,7 +333,7 @@ if DEBUG: INSTALLED_APPS.append('django_extensions')
 
 DEVSERVER_MODULES = (
     #'devserver.modules.sql.SQLRealTimeModule',
-    'devserver.modules.sql.SQLSummaryModule',
+    #'devserver.modules.sql.SQLSummaryModule',
     # 'devserver.modules.profile.ProfileSummaryModule',
 
     # Modules not enabled by default

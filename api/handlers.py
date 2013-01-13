@@ -494,27 +494,30 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
-        
+        logger.warning("HASHES: " + str(hashes))
         try:
             page = data['pageID']
         except KeyError:
             raise JSONException("Couldn't get pageID")
             
+        
         # Guard against undefined page string being passed in
         if not isinstance(page, int): raise JSONException("Bad Page ID")
+        
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
             cached_result = cache.get('page_containers' + str(page))
-            
+          
+        logger.warning('cache: '+str(cached_result))
         if cached_result is not None:
-            logger.info('CACHE HIT FOR CONTAINER SUMMARY')
             return cached_result
         else:
             # Force evaluation by making lists
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
             try:
                 cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
+                
                 t = Thread(target=cache_updater, kwargs={})
                 t.start()
             except Exception, e:

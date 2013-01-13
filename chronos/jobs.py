@@ -115,10 +115,14 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         self.method = kwargs['method']
         
     def hydrate(self):
+        
         if len(self.hashes) == 1:
             self.key = 'page_containers' + str(self.page_id) + ":" + str(self.hashes)
         else:
             self.key = 'page_containers' + str(self.page_id)
+           
+        #self.key = 'page_containers' + str(self.page_id)
+        logger.warning('hydrating using key: ' + self.key)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         
@@ -132,5 +136,16 @@ class GroupSettingsDataCacheUpdater(CacheUpdater):
         if self.method == 'update':  
             self.value = getSettingsDict(self.group)
         
+
+class ViewCacheUpdater(CacheUpdater):   
+    def __init__(self, **kwargs):
+        self.view = kwargs['view']
+        self.page = kwargs['page_num']
         
+        self.method = kwargs['method']
+        
+    def hydrate(self):
+        self.key = self.view + ":" + str(self.page)
+        if self.method == 'update':  
+            self.value = getSettingsDict(self.group)
          
