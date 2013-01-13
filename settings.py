@@ -124,7 +124,7 @@ if DEBUG:
           'PORT':     '',
         }
     }
-    """
+    
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -138,7 +138,7 @@ if DEBUG:
             'LOCATION': '127.0.0.1:11211',
         }
     }
-    
+    """
 
 else:
     URL_NO_PROTO = 'www.readrboard.com'
