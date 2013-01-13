@@ -10,18 +10,11 @@
 {% block bodyClass %}wide{% endblock %}
 
 {% block mainContent %}
-    <div id="splashAnnounce">
-        <div class="theSpitch" style="margin-left:200px;">
-            <img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:-5px 15px 20px 0;width:100px;"/>
-            <h3 class="no-rdr" style="padding-left:120px;width:450px;text-align:left;"><span>"Readrboard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. We use it and recommend it to our clients."</span><em style="display:block;margin-top:15px;font-size:18px;">- Shane Snow<br/>Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></h3>
-        </div>
-    </div>
     <div id="splashBlurbs">
     	<div id="readers" class="blurb blurb-for-readers selected">
             <h1 class="sectionBanner">Why you'll love ReadrBoard</h1>
     		<div class="leftSide">
                 <h3 style="color: #aaa; font-style: italic; top: -5px; position: relative;">ReadrBoard lets you:
-                    <!-- <em style="display:block;font-family:Arial;font-size:16px;font-weight:normal;color:#666;">on sites using ReadrBoard</em> -->
                 </h3>
                 <ul class="bullet-points">
                     <li>
@@ -37,10 +30,6 @@
                         <h3>Discover</h3>
                         <span>Find readers who share your interests and see what's catching their attention.</span>
                     </li>
-                    <!-- <li>
-                        <h3>Bookmark</h3>
-                        <span>Save favorite parts of a page in your private bookmark list.</span>
-                    </li> -->
                     <li>
                         <h3>Follow Your Favorites</h3>
                         <span>Every reader and publisher has a <a href="http://www.readrboard.com/user/11/" target="_blank">profile</a> to showcase their reactions.  Follow your favorites to discover inspiring content.</span>
@@ -50,20 +39,33 @@
                 </ul>
             </div>
             <div class="rightSide video">
-    			<!-- <h3 class="sectionHeader">See it in action</h3> -->
                 <iframe src="http://player.vimeo.com/video/52704607" width="640" height="360" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-
                 <div class="clearDiv"></div>
             </div>
             <div class="clearDiv"></div>
         </div>
         <div id="publishers" class="blurb blurb-for-publishers">
-            <a name="publisher_information"/>
-            <h1 class="sectionBanner">Why Publishers love ReadrBoard</h1>
+            <style>
+            #publishers         { text-align:center; }
+            #publishers h1      { text-align:center;font-family:Helvetica,Arial,sans-serif;color:#008be4;font-weight:bold;font-size:28px;width:720px;margin:0 auto;}
+            #publishers p       { text-align:left; width:700px;margin:20px auto;}
+            #publishers .theSpitch > div { margin:0 auto; width:600px; }
+            #publishers hr { border-top:1px solid #ccc; margin:30px auto; width:700px;}
+            #publishers strong { color:#008be4;}
+            </style>
+            <a name="publisher_information"></a>
+            <h1 class="">Why Publishers love ReadrBoard</h1>
+            <div class="theSpitch">
+                <div>
+                    <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:18px;"><img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"Readrboard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. <br/>We use it and recommend it to our clients."</span><em style="display:block;margin-top:15px;font-size:14px;">- Shane Snow, Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></blockquote>
+                </div>
+            </div>
+
             
             <div class="splashQuoteSection">
-                <h4>Testimonials from our Partner Publishers</h4>
                 <div class="splashQuotes">
+                    <!--
+                    <h4>Testimonials from our Partner Publishers</h4>
                     <div class="splashQuote">
                         <div class="splashQuoteLogo">
                             <a href="http://hypervocal.com" target="_blank"><img src="{{ STATIC_URL }}global/group/logos/hypervocal-logo.png" title="HyperVocal logo" /></a>
@@ -89,7 +91,9 @@
                         </div>
                     </div>
                     <div class="clearDiv"></div>
+                -->
 
+                <hr/>
                 <div class="publisherSignupCallToAction">
                         <a class="btn" href="http://wordpress.org/extend/plugins/readrboard/" target="_blank" title="Add ReadrBoard to your WordPress site">Get the WordPress plugin</a>
                         &nbsp;&nbsp;&nbsp;
@@ -97,9 +101,10 @@
                         <em style="display:block;font-size:12px;padding-top:5px;">Installation takes 5 minutes, whether you use WordPress or not.</em>
                     </div>
                 </div>
-            </div>
-
-            <div class="leftSide wide">
+                <hr/>
+                <h1>Find out what content your readers really care about.  Find out why.</h1>
+                <p>ReadrBoard enables readers to react to any page on your site -- or any part of a page.  If an image in your slideshow grabs them, or a point made in the third paragraph below the fold is what's really grabbing people, they can use ReadrBoard to let you and other readers know.</p>
+                <p>But they don't +1 what catches their attention.  <strong>They react</strong>.  With organic* reactions like "Hilarious", "omg", "Tell me more", and so much more, you'll understand your community's take on your content, and so will they.</p>
                 <a target="_blank" href="http://player.vimeo.com/video/52709226" data-fancybox-type="iframe" class="fancybox" title="Readrboard Publisher's Dashboard">
                     <img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
                     <em style="text-align:center;display:block;">Click to see a 30-second video!</em>
@@ -119,47 +124,47 @@
                   }
                 });
                 </script>
+                <hr/>
+                <h1>Engage (way) more readers</h1>
+                <h3 style="font-weight:normal;padding:20px 10px;float:left;width:45%;clear:none;color:#666;">
+                    Get 1.5-2x <strong>more reactions</strong><br/>than comments
+                    <em style="display:block;font-size:14px;">But keep your comment thread!</em>
+                </h3>
+                <h3 style="font-weight:normal;padding:20px 10px 0;float:left;width:45%;clear:none;color:#666;">
+                    Each reaction will be <br/><strong>actively read</strong> by 100 other readers
+                    <em style="display:block;font-size:14px;">Your active "1%" of readers make your site <br/>measurably more engaging for the other 99%.</em>
+                </h3>
+                <div class="clear"></div>
+                <p style="text-align:center;"><em>ReadrBoard's simple, point-and-click is being used by readers who aren't commenting.  It's literally a new strata of community engagement.</em></p>
+                <hr/>
+                <h1>It's free!</h1>
+                <hr/>
+                <h1>Add to any page on your site in under 5 minutes</h1>
+                <p style="text-align:center;">We timed it.</p>
+                <p style="text-align:center;">Whether using our WordPress plugin or embedding our Javascript, it's simple to make our fast-loading widget available to all of your readers, on any page you like.</p>
+                <hr/>
+                <h1>On-<em>Brand</em> Engagement</h1>
+                <p style="text-align:center;">75% of ReadrBoard reactions use the "default" reactions, which you customize for your site.</p>
+                <hr/>
+                <h1>On-<em>Site</em> Engagement</h1>
+                <p>With more readers engaging with ReadrBoard than comment threads (and often, more than your Tweet & StumbleUpon buttons), ReadrBoard is opening up community interactions on your site, not on someone's Facebook wall or Twitter stream.</p>
+                <p>This is great for you, and great for your readers, who are going give more and gain more when engaging with people who certainly share at least one thing in common -- an interest in your content!</p>
+                <hr/>
+                <h1>Simple, Safe Moderation</h1>
+                <p>You can remove unwanted reactions from your site, or only allow the reactions you approve to appear in front of other readers.</p>
+                <hr/>
+                <h1>Help define the next generation of online engagement</h1>
+                <p>We're in beta, building our vision: a simple way to know what more people really think and feel across the web.  We want it to be easy for people to see what is catching fire, understand why, and form and share an opinion on it.  And it needs to be easy to measure, and easy to distribute.</p>
+                <p>We want your input!  With feedback from you and our fantastic beta partners, we believe we’re building something extremely useful, newly insightful, and simply fun to use.</p>
+                <hr/>
+                <div class="publisherSignupCallToAction">
+                        <a class="btn" href="http://wordpress.org/extend/plugins/readrboard/" target="_blank" title="Add ReadrBoard to your WordPress site">Get the WordPress plugin</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a class="btn" href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Not a WordPress site?</a>
+                        <em style="display:block;font-size:12px;padding-top:5px;">Installation takes 5 minutes, whether you use WordPress or not.</em>
+                    </div>
+                </div>
             </div>
-    		<div class="rightSide narrow">
-    			<ul class="bullet-points">
-                    <li>
-                        <h3>Free!</h3>
-                    </li>
-    				<li>
-    					<h3>Increase engagement 100%</h3>
-    					<span>Readers use ReadrBoard <strong>at least as much as comments</strong>.  This means:</span>
-    					<div class="test">
-    						<ul class="sub-bullets">
-    							<li>
-    								<span>Better quality interactions with your content</span>
-    							</li>
-    							<li>
-    								<span>Increased shared links</span>
-    							</li>
-    							<li>
-    								<span>Longer site visits</span>
-    							</li>
-    						</ul>
-    					</div>
-    				</li>
-    				<li>
-    					<h3>Know your readers</h3>
-    					<span>Better understand your community's tastes, sentiments, and interests.</span>
-    				</li>
-    				<li>
-    					<h3>All-new analytics</h3>
-    					<span>Deeply understand why certain content drives interest &amp; engagement. (See the screenshot to the left.)</span>
-    				</li>
-    				<li>
-    					<h3>Simple moderation</h3>
-    					<span>Should something inappropriate show up, you can block it in one click.</span>
-    				</li>
-                    <li>
-                        <h3>Add to any page on your site</h3>
-                        <span>Add just one line of Javascript to your site to enable all-new levels of engagement with your content.</span>
-                    </li>
-    			</ul>
-    		</div>
     		<div class="clearDiv"></div>
     	</div>
     	
@@ -181,73 +186,8 @@
             <div class="clearDiv"></div>
             <span>Hi, we're ReadrBoard. </span>
             <a href="/team/" >Meet the team.</a>
+            <br/><br/><br/><br/>
         </div>
-
-    	<div class="partnerLogoSection">
-    		<h3>Try ReadrBoard live on our Partners' websites</h3>
-    		<div>
-    			<ul class="partnerLogos">
-    				<li>
-    					<a href="http://hypervocal.com/" target="_blank">
-    						<img class="greyscaleImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/hypervocal-logo-lg.png" alt="hypervocal logo" />
-    						<img class="colorImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/hypervocal-logo-lg.png" alt="hypervocal logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.racialicious.com/" target="_blank">
-    						<img class="greyscaleImg wideImg" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/racialicious-logo-for-splash.png" alt="racialicious logo" />
-    						<img class="colorImg wideImg" style="display:none;" src="{{BASE_URL}}{{STATIC_URL}}global/group/logos/racialicious-logo-for-splash.png" alt="racialicious logo" />
-    					</a>
-    				</li>
-    				{% comment %}
-    				<li>
-    					<a href="http://www.fathomaway.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/fathom-logo-lg.png" alt="fathom logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.reuters.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/reuters-logo-lg.png" alt="reuters logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.dailycandy.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/dailycandy-logo-lg.png" alt="dailycandy logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.foodnetwork.co.uk/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/foodnetwork_uk-logo-lg.png" alt="foodnetwork logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.nearlyweds.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/nearlyweds-logo-lg.png" alt="nearlyweds logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.onewed.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/onewed-logo-lg.png" alt="onewed logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.politico.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/politico-logo-lg.png" alt="politico logo" />
-    					</a>
-    				</li>
-    				<li>
-    					<a href="http://www.themarknews.com/" target="_blank">
-    						<img src="{{BASE_URL}}{{STATIC_URL}}global/group/logos-greyscale/themark-logo-lg.png" alt="themarknews logo" />
-    					</a>
-    				</li>
-    				{% endcomment %}
-    			</ul>
-    			<div class="moreLogos">
-    				More launching soon...
-    			</div>
-    			<div class="clearDiv"></div>
-    		</div>
-    	</div>
     </div>
 {% endblock %}
 

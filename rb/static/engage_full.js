@@ -7020,13 +7020,12 @@ function $RFunctions($R){
     //run init functions
     RDR.actions.init();
 
-
     function initCommonUtils($){
         $.extend(RDR, {
             commonUtil: {
-                prettyNumber: function(int){
+                prettyNumber: function(anInt){
                     // RDR.commonUtil.prettyNumber:
-                    var parsedInt = parseInt(int, 10); //convert if we can.
+                    var parsedInt = parseInt(anInt, 10); //convert if we can.
                     if( isNaN(parsedInt) || parsedInt<0 ) return false;
                     //else
 
@@ -9281,7 +9280,8 @@ function $RFunctions($R){
         }
 
         function plugin_jquery_mousewheel($){
-            /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
+            /* 
+              Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
               Licensed under the MIT License (LICENSE.txt).
 
               Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
@@ -9291,7 +9291,8 @@ function $RFunctions($R){
               Version: 3.0.6
 
               Requires: 1.2.2+
-             */var types=['DOMMouseScroll','mousewheel'];if($.event.fixHooks){for(var i=types.length;i;){$.event.fixHooks[types[--i]]=$.event.mouseHooks;}}
+             */
+            var types=['DOMMouseScroll','mousewheel'];if($.event.fixHooks){for(var i=types.length;i;){$.event.fixHooks[types[--i]]=$.event.mouseHooks;}}
             $.event.special.mousewheel={setup:function(){if(this.addEventListener){for(var i=types.length;i;){this.addEventListener(types[--i],handler,false);}}else{this.onmousewheel=handler;}},teardown:function(){if(this.removeEventListener){for(var i=types.length;i;){this.removeEventListener(types[--i],handler,false);}}else{this.onmousewheel=null;}}};$.fn.extend({mousewheel:function(fn){return fn?this.bind("mousewheel",fn):this.trigger("mousewheel");},unmousewheel:function(fn){return this.unbind("mousewheel",fn);}});function handler(event){var orgEvent=event||window.event,args=[].slice.call(arguments,1),delta=0,returnValue=true,deltaX=0,deltaY=0;event=$.event.fix(orgEvent);event.type="mousewheel";if(orgEvent.wheelDelta){delta=orgEvent.wheelDelta/120;}
             if(orgEvent.detail){delta=-orgEvent.detail/3;}
             deltaY=delta;if(orgEvent.axis!==undefined&&orgEvent.axis===orgEvent.HORIZONTAL_AXIS){deltaY=0;deltaX=-1*delta;}
@@ -9833,4 +9834,3 @@ function $RFunctions($R){
 // }
 
 })();
-/*auditing cachebusting 2012/12/02/12:17*/

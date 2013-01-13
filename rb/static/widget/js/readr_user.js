@@ -41,21 +41,6 @@ function getWindowProps(options){
 
 window.RDRAuth = {
     isOffline: (document.domain == "local.readrboard.com"),
-    popupBlockAudit: function( sourceFileStr, sourceFuncStr ){
-        // RDRAuth.popupBlockAudit
-        sourceFileStr = sourceFileStr || "";
-        sourceFuncStr = sourceFuncStr || "";
-        var sourceStr = sourceFileStr + ( sourceFuncStr ? "."+sourceFuncStr : "" );
-
-        var eventStr = 'FBLogin failed or was canceled - source: ' +sourceStr;
-        RDRAuth.events.track(eventStr);
-        RDRAuth.events.trackGoogleEvent('login', 'failed', 'fb - from:'+sourceStr);
-
-        if(RDRAuth.isOffline){
-            //uncomment this for quick testing on local
-            // alert(eventStr);
-        }
-    },
 	rdr_user: {},
     popups: {},
     //todo: make this stuff better
@@ -136,21 +121,62 @@ window.RDRAuth = {
 
 	        $('#rdr_event_pixels').append($event);
 
-            // if(RDRAuth.isOffline){
-            //     console.log(eventSrc);
-            // }
+            if(RDRAuth.isOffline){
+                //uncomment for debugging
+                // console.log( 'rb event tracking: ' +eventSrc );
+            }
     	},
         trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
             //record to google events as well.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
-            //disable for now..
-            return;
-
-            if( typeof _gaq === "undefined" ){
-                return;
+            if(RDRAuth.isOffline){
+                //uncomment for debugging
+                // console.log('google event tracking: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
             }
-            _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+
+            if( typeof _gaq !== "undefined" ){
+                _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+            }
+
+            //for now just add this here to mirror the google event tracking
+            if( typeof _firebaseDB !== "undefined" ){
+                var firebaseEventTrackingTest = _firebaseDB.child("eventTrackingTest");
+                firebaseEventTrackingTest.push({
+                    category: category,
+                    action: action,
+                    opt_label: opt_label || null,
+                    opt_value: opt_value || null,
+                    opt_noninteraction: opt_noninteraction || null
+                });
+            }
+        },
+        helpers: {
+            trackFBLoginAttempt: function(){
+                // RDRAuth.events.helpers.trackFBLoginAttempt
+
+                var eventStr = 'FBLogin attempted';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackGoogleEvent('login', 'attempted', 'auth: fb');
+
+                if(RDRAuth.isOffline){
+                    //uncomment this for quick testing on local
+                    // alert(eventStr);
+                }
+            },
+            trackFBLoginFail: function(){
+                // RDRAuth.events.helpers.trackFBLoginFail
+                var eventStr = 'FBLogin failed or was canceled';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'auth: fb');
+
+                if(RDRAuth.isOffline){
+                    //uncomment this for quick testing on local
+                    // alert(eventStr);
+                }
+            }
         }
 	},
 	postMessage: function(params) {
@@ -346,11 +372,6 @@ window.RDRAuth = {
 						            '<h5>Settings</h5>' +
 						            '<label for="private_profile">' +
 						              '(Reload the page to edit your setttings.)' +
-						            //   'Profile is private' +
-						            // '</label>' +
-						            // '<label for="follow_email">' +
-						            //   '<input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> ' +
-						            //   'Send me email when someone follows my activity.' +
 						            '</label>');
 								$('#logged-in').html( $user ).append($user_menu);
 							}
@@ -378,7 +399,7 @@ window.RDRAuth = {
                 RDRAuth.checkFBStatus();
             });
         }else{
-            RDRAuth.popupBlockAudit('readr_user', 'FBLoginCallback');
+            RDRAuth.events.helpers.trackFBLoginFail();
         }
     },
     checkIfWordpressRefresh : function() {
@@ -554,10 +575,11 @@ window.RDRAuth = {
 			}
 		}
 	},
-
-    //only using this sometimes - other cases we call the inner FB.login function inline... try to gauge if one causes more popup blocking
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
+        
+        RDRAuth.events.helpers.trackFBLoginAttempt();
+
 		FB.login(function(response) {
             RDRAuth.FBLoginCallback(response);
 		}, {scope: 'email'});

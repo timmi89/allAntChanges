@@ -61,7 +61,7 @@ h1.sectionBanner{
 #splashAnnounceInner{
 }
 div.splashQuoteSection{
-    border-bottom: 1px dashed #CCCCCC;
+    /*border-bottom: 1px dashed #CCCCCC;*/
     margin-bottom: 20px;
 }
 div.splashQuoteSection h4{
@@ -218,7 +218,7 @@ div.splashQuote {
 }
 
 #splashBlurbs h2, #splashBlurbs h3{
-	color:#2f4e6d;
+	color:#008be4;
 	padding:0;
 	margin:0;
 	clear:both;

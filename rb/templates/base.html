@@ -85,20 +85,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% block extendedHead %}
 {% endblock %}
 
-<script type="text/javascript">
+    <script type="text/javascript">
+    if(!RDR_offline){
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-24372992-1']);
+      _gaq.push(['_trackPageview']);
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-24372992-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    }else{
+        //just a dummy array for testing
+        _gaq = _gaq || [];
+    }
+    </script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 </head>
 
 <body class="clearfix {% block bodyClass %}{% endblock %}">    
@@ -116,6 +119,15 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
               status:true, xfbml:true, oauth:true
             });
         })(FB);
+    </script>
+    <script type="text/javascript">
+        //don't depend on Firebase
+        (function(Firebase){
+            if(typeof Firebase === "undefined") return;
+            window._firebaseDB = new Firebase(
+                'https://readrboard.firebaseio.com/'
+            );
+        })(Firebase);
     </script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
@@ -180,7 +192,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           <div id="login-options" style="overflow:auto;">
             <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
               <div id="fb-login-button">
-                <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); FB.login( function(response){ RDRAuth.FBLoginCallback(response); }, {scope: 'email'} );"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
+                <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
               </div>
             </div>
             <div style="float:left;padding-left:6px;">
