@@ -308,11 +308,12 @@ div.splashQuote {
 
 .publisherSignupCallToAction{
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom:30px;
     text-align: center;
 }
 .publisherSignupCallToAction a{
     font-size: 20px;
+    padding:10px;
 }
 /*for slideshow*/
 #promoDiv{
