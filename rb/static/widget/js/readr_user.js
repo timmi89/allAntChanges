@@ -151,7 +151,7 @@ window.RDRAuth = {
 
             if(RDRAuth.isOffline){
                 //uncomment for debugging
-                console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+                // console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
 
                 //don't log events while offline
                 return;
