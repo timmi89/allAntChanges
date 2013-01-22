@@ -161,15 +161,18 @@ window.RDRAuth = {
                 _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
             }
 
-            //for now just add this here to mirror the google event tracking
-            if( typeof _firebaseDB !== "undefined" ){
-                var firebaseEventTrackingTest = _firebaseDB.child("eventTrackingTest");
-                firebaseEventTrackingTest.push({
+            if( typeof Parse !== "undefined" ){
+                var EventTracking = Parse.Object.extend("EventTracking");
+                var eventTracking = new EventTracking();
+                eventTracking.save({
                     category: category,
                     action: action,
                     opt_label: opt_label,
                     opt_value: opt_value,
                     opt_noninteraction: opt_noninteraction
+                }, {
+                  success: function(object) {
+                  }
                 });
             }
         },
