@@ -1667,7 +1667,6 @@ div.rdr_indicator_for_text.rdr_helper div.rdr_indicator_body {
 }
 div.rdr_helper_text {
   text-align: center !important;
-  height: 24px !important;
   margin: 0 6px 8px 0 !important;
   padding: 4px 7px 0px !important;
   width: 160px !important;

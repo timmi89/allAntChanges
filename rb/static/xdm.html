@@ -37,7 +37,8 @@
         window._gaq = _gaq || [];
     }
     </script>
-    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+    
+    <script src="http://www.parsecdn.com/js/parse-1.1.15.min.js"></script>
 
    </head>
    <body style="padding:0;margin:0;color:#fff;background:transparent;">
@@ -46,20 +47,21 @@
      <script type="text/javascript">
         //don't depend on Facebook
         (function(FB){
-            if(typeof FB === "undefined") return;
+            if(typeof FB === "undefined"){
+                return;
+            }
             FB.init({ 
                 appId:'163759626987948', cookie:true, status:true, xfbml:true, oauth:true
             });
         })(FB);
 	</script>
+
     <script type="text/javascript">
-        //don't depend on Firebase
-        (function(Firebase){
-            if(typeof Firebase === "undefined") return;
-            window._firebaseDB = new Firebase(
-                'https://readrboard.firebaseio.com/'
-            );
-        })(Firebase);
+        //don't depend on Parse
+        (function(Parse){
+            if(typeof Parse === "undefined") return;
+            Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+        })(Parse);
     </script>
     
 	 <script type="text/javascript">

@@ -65,7 +65,7 @@
         window._gaq = _gaq || [];
     }
     </script>
-    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
+    <script src="http://www.parsecdn.com/js/parse-1.1.15.min.js"></script>
 
    </head>
    <body>
@@ -81,7 +81,7 @@
 				</div>
 			</div>
 			<div class="loginButton" style="float:left;padding-left:6px;">
-				<a href="javascript:void(0);" onclick="RDRAuth.rbloginWindow = window.open(RDR_baseUrl+'/rb_login/?group_id='+qs_args.group_id, 'readr_login','menubar=1,resizable=1,width=400,height=300,top='+t+',left='+l);RDRAuth.checkRBLoginWindow();return false;"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+				<a href="javascript:void(0);" onclick="RDRAuth.doRBLogin();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
             </div>
             <!-- 
             <div class="rbCreateAccount" style="">
@@ -118,14 +118,13 @@
 		$('#groupname').text( decodeURI(qs_args.group_name) );
 	</script>
     <script type="text/javascript">
-        //don't depend on Firebase
-        (function(Firebase){
-            if(typeof Firebase === "undefined") return;
-            window._firebaseDB = new Firebase(
-                'https://readrboard.firebaseio.com/'
-            );
-        })(Firebase);
+        //don't depend on Parse
+        (function(Parse){
+            if(typeof Parse === "undefined") return;
+            Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+        })(Parse);
     </script>
+
 
    </body>
 </html>
