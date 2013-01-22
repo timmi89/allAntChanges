@@ -145,7 +145,7 @@ function readrBoard($R){
         styles: {
         },
         events: {
-            track : function( data, hash ) {
+            track: function( data, hash ) {
                 // RDR.events.track:
                 
                 var standardData = "",
@@ -160,7 +160,25 @@ function readrBoard($R){
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
-            }
+
+            },
+            trackEventToCloud: function( params ) {
+                // RDR.events.trackEventToCloud
+                
+                var data = $.toJSON({
+                    category: params.category,
+                    action: params.action,
+                    opt_label: params.opt_label || null,
+                    opt_value: params.opt_value || null,
+                    opt_noninteraction: params.opt_noninteraction || null
+                });
+                
+                $.postMessage(
+                    "register-event::"+data,
+                    RDR_baseUrl + "/static/xdm.html",
+                    window.frames['rdr-xdm-hidden']
+                );
+            }    
         },
         rindow: {
             defaults:{
@@ -747,6 +765,7 @@ function readrBoard($R){
                                 }
                             }
 
+                            //note: it looks like there is different share link code for pages...
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
                                     '<div class="rdr_label_icon"></div>'+
@@ -763,6 +782,13 @@ function readrBoard($R){
                                 $shareLinks.append($link);
                                 $link.click( function() {
                                     //hack to get the kind
+
+                                    RDR.events.trackEventToCloud({
+                                        category: "share",
+                                        action: "share_open_attempt",
+                                        opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+args.tag.body
+                                    });
+
                                     var summary = RDR.summaries[hash];
                                     var kind = summary.kind;
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
@@ -1102,6 +1128,12 @@ function readrBoard($R){
 
                             // writeMode
                             RDR.events.track('start_react_text');
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown",
+                                opt_label: "kind: text, hash: " + hash
+                            });
+
                             var newSel;
                             if ( kind == "text" ) {
                                 //Trigger the smart text selection and highlight
@@ -1672,6 +1704,12 @@ function readrBoard($R){
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
+                RDR.events.trackEventToCloud({
+                    category: "actonbar",
+                    action: "actionbar_shown",
+                    opt_label: "kind: "+kind+", hash: "+hash+", content: "+content
+                });
+
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
@@ -2112,6 +2150,17 @@ function readrBoard($R){
                         }
                         whenDone();
                         throttling = true;
+                    };
+                },
+                once: function(func) {
+                    //RDR.util._.once:
+                    var ran = false, memo;
+                    return function() {
+                        if (ran) return memo;
+                        ran = true;
+                        memo = func.apply(this, arguments);
+                        func = null;
+                        return memo;
                     };
                 }
             },
@@ -3374,8 +3423,6 @@ function readrBoard($R){
                             RDR.rindow.mediaRindowShow( $mediaItem );
                             // $indicator_details.addClass('rdr_has_border');
                         }
-
-                        RDR.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         //RDR.actions.containers.media.onDisengage:
@@ -4569,6 +4616,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _makeShareIcons(args){
                                 // embed icons/links for diff SNS
+
+                                //Looks like this is only for page level reactions - consolodate later
+
                                 var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
                                 var shareHash = args.hash;
                                 var $shareWrapper = $('<div class="shareWrapper" ></div>');
@@ -4578,6 +4628,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $.each(socialNetworks, function(idx, val){
                                     $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
                                     $shareWrapper.find('a.rdr_share_link:last').click( function() {
+                                        
+                                        RDR.events.trackEventToCloud({
+                                            category: "share",
+                                            action: "share_open_attempt",
+                                            opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body
+                                        });
+
                                         RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
@@ -4664,7 +4721,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 RDR.events.track( 'temp_limit_hit_s' );
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4 !important;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
                                     RDR.session.showLoginPanel(args);
                                 });
@@ -5053,8 +5110,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
+
+                            RDR.events.track('paragraph_helper_show');
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "indicator_helper_rindow_shown",
+                                opt_label: "kind: text, hash: " + hash
+                            });
                         }else{
                             RDR.events.track( 'view_node::'+hash, hash );
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown",
+                                opt_label: "kind: text, hash: " + hash
+                            });
                         }
 
                     }
@@ -5063,7 +5132,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
-                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
+                        $rindowBody.html('<div class="rdr_helper_text rdr_clearfix">Select some text and click <strong>What do you think?</strong><div class="rdr_clear"></div></div>');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
                         RDR.rindow.updateSizes(
                             $rindow, {
@@ -5148,12 +5217,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     over: function($indicator){
                         //RDR.actions.indicators.helpers.over:
 
-                        RDR.events.track('paragraph_helper_show');
-
                         var alreadyHovered = $indicator.data('containerHover');
                         if( alreadyHovered ){
                             return;
                         }
+                        var hash = $indicator.data('hash');
 
                         $indicator.data('containerHover', true);
                         var hoverTimeout = setTimeout(function(){
@@ -5168,6 +5236,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     .animate({
                                         'opacity': RDR.C.helperIndicators.opacity
                                         }, RDR.C.helperIndicators.fadeInTime );
+
                             }
                         }, RDR.C.helperIndicators.hoverDelay);
                         $indicator.data('hoverTimeout', hoverTimeout);
@@ -5219,6 +5288,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
                                         RDR.actions.containers.media.onEngage( hash );
                                         $(this).removeClass('rdr_live_hover');
+                                        
+                                        RDR.events.track( 'view_node::'+hash, hash );
+                                        RDR.events.trackEventToCloud({
+                                            category: "engage",
+                                            action: "rindow_shown",
+                                            opt_label: "kind: media, hash: " + hash
+                                        });
+
                                     } else {
                                         RDR.actions.containers.media.onDisengage( hash );
                                     }
@@ -7485,7 +7562,10 @@ function $RFunctions($R){
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
                                 $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
+                            //note that this event is defined a little loosely.
+                            //It will get triggered on any hover over the summaryWidget
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
+                            
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             if (
                                 $this.hasClass('rdr-too-many-reactions') &&
@@ -7775,7 +7855,9 @@ function $RFunctions($R){
                             // 7/1/2012: we'll probably roll this into the react flyout.
                             var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page.  Type it in, then press Enter."><input type="text" value="Add your own" class="rdr_default"/></a>');
                             $a_custom.find('input').focus( function() {
+                                
                                 RDR.events.track('start_custom_reaction_summ');
+
                                 var $input = $(this);
                                 $input.removeClass('rdr_default').closest('div.rdr_sbRollover').addClass('rdr_reacted');
                                 if ( $input.val() == "Add your own" ) {
@@ -7977,6 +8059,13 @@ function $RFunctions($R){
 
                                 getReactedContent( $this, counts );
                                 $this.addClass('rdr_live_hover');
+
+                                RDR.events.trackEventToCloud({
+                                    category: "summarybar",
+                                    action: "reactions_view",
+                                    opt_label: "page: "+page.id+", tag: "+tag_body
+                                });
+
                             },
                             function() {
                                 var $this = $(this),

@@ -46,7 +46,9 @@
      <script type="text/javascript">
         //don't depend on Facebook
         (function(FB){
-            if(typeof FB === "undefined") return;
+            if(typeof FB === "undefined"){
+                return;
+            }
             FB.init({ 
                 appId:'163759626987948', cookie:true, status:true, xfbml:true, oauth:true
             });
