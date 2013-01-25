@@ -105,8 +105,6 @@ function readrBoard($R){
                 call_to_action: "What do you think?",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
-                slideshow_trigger: '#flipbook',
-                slideshow_img_selector: '#flipbook div.image img',
                 paragraph_helper: true,
 
                 //shareWidget Stuff//
@@ -145,7 +143,7 @@ function readrBoard($R){
         styles: {
         },
         events: {
-            track: function( data, hash ) {
+            track : function( data, hash ) {
                 // RDR.events.track:
                 
                 var standardData = "",
@@ -160,25 +158,7 @@ function readrBoard($R){
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
-
-            },
-            trackEventToCloud: function( params ) {
-                // RDR.events.trackEventToCloud
-                
-                var data = $.toJSON({
-                    category: params.category,
-                    action: params.action,
-                    opt_label: params.opt_label || null,
-                    opt_value: params.opt_value || null,
-                    opt_noninteraction: params.opt_noninteraction || null
-                });
-                
-                $.postMessage(
-                    "register-event::"+data,
-                    RDR_baseUrl + "/static/xdm.html",
-                    window.frames['rdr-xdm-hidden']
-                );
-            }    
+            }
         },
         rindow: {
             defaults:{
@@ -765,7 +745,6 @@ function readrBoard($R){
                                 }
                             }
 
-                            //note: it looks like there is different share link code for pages...
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
                                     '<div class="rdr_label_icon"></div>'+
@@ -782,13 +761,6 @@ function readrBoard($R){
                                 $shareLinks.append($link);
                                 $link.click( function() {
                                     //hack to get the kind
-
-                                    RDR.events.trackEventToCloud({
-                                        category: "share",
-                                        action: "share_open_attempt",
-                                        opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+args.tag.body
-                                    });
-
                                     var summary = RDR.summaries[hash];
                                     var kind = summary.kind;
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
@@ -1128,12 +1100,6 @@ function readrBoard($R){
 
                             // writeMode
                             RDR.events.track('start_react_text');
-                            RDR.events.trackEventToCloud({
-                                category: "engage",
-                                action: "rindow_shown",
-                                opt_label: "kind: text, hash: " + hash
-                            });
-
                             var newSel;
                             if ( kind == "text" ) {
                                 //Trigger the smart text selection and highlight
@@ -1704,12 +1670,6 @@ function readrBoard($R){
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
-                RDR.events.trackEventToCloud({
-                    category: "actonbar",
-                    action: "actionbar_shown",
-                    opt_label: "kind: "+kind+", hash: "+hash+", content: "+content
-                });
-
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
@@ -2150,17 +2110,6 @@ function readrBoard($R){
                         }
                         whenDone();
                         throttling = true;
-                    };
-                },
-                once: function(func) {
-                    //RDR.util._.once:
-                    var ran = false, memo;
-                    return function() {
-                        if (ran) return memo;
-                        ran = true;
-                        memo = func.apply(this, arguments);
-                        func = null;
-                        return memo;
                     };
                 }
             },
@@ -3100,8 +3049,6 @@ function readrBoard($R){
                         $('#rdr_indicator_' + hash).hide();
                 });
 
-                RDR.actions.slideshows.setup();
-
                 $RDR.dequeue('initAjax');
             },
             UIClearState: function(){
@@ -3353,52 +3300,6 @@ function readrBoard($R){
                     });
                 }
             },
-            slideshows: {
-                setup: function() {
-                    // RDR.actions.slideshows.setup
-                    if ( RDR.group.slideshow_trigger ) {
-                        $(window).hashchange( function() {
-                            RDR.rindow.closeAll();
-                            var hash = RDR.actions.slideshows.findActiveHash();
-                            //todo: check on this
-                            RDR.actions.indicators.update(hash, true);
-                        });
-
-                        // var $slideshows = $(RDR.group.slideshow_trigger);
-                        // $.each( $slideshows, function( idx, slideshow ) {
-                        //     var $slideshow = $(slideshow);
-                        //     $slideshow.hover(
-                        //         function(){
-                        //             // var hash = RDR.actions.slideshows.findActiveHash();
-                        //             // RDR.actions.indicators.init(hash);
-                        //             // RDR.actions.containers.media.onEngage( hash );
-                        //         },
-                        //         function(){
-                        //             // RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
-                        //         }
-                        //     );
-                        // });
-                    }
-                },
-                findActiveHash: function() {
-                    // RDR.actions.slideshows.findActiveHash
-                    if ( RDR.group.slideshow_trigger && RDR.group.slideshow_img_selector ) {
-                        var $slideshow_images = $(RDR.group.slideshow_img_selector),
-                            hash = "";
-
-                        $.each( $slideshow_images, function( idx, img ) {
-                            var $img = $(img);
-                            if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
-                                hash = $img.data('hash');
-                                return false;
-                            }
-                        });
-                        return hash;
-                    } else {
-                        return "";
-                    }
-                }
-            },
             containers: {
                 media: {
                     //RDR.actions.containers.media:
@@ -3423,6 +3324,8 @@ function readrBoard($R){
                             RDR.rindow.mediaRindowShow( $mediaItem );
                             // $indicator_details.addClass('rdr_has_border');
                         }
+
+                        RDR.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         //RDR.actions.containers.media.onDisengage:
@@ -4616,9 +4519,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _makeShareIcons(args){
                                 // embed icons/links for diff SNS
-
-                                //Looks like this is only for page level reactions - consolodate later
-
                                 var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
                                 var shareHash = args.hash;
                                 var $shareWrapper = $('<div class="shareWrapper" ></div>');
@@ -4628,13 +4528,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $.each(socialNetworks, function(idx, val){
                                     $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
                                     $shareWrapper.find('a.rdr_share_link:last').click( function() {
-                                        
-                                        RDR.events.trackEventToCloud({
-                                            category: "share",
-                                            action: "share_open_attempt",
-                                            opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body
-                                        });
-
                                         RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
@@ -4721,7 +4614,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
                             } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
                                 RDR.events.track( 'temp_limit_hit_s' );
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4 !important;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
+                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
                                 $message.find('a').click( function() {
                                     RDR.session.showLoginPanel(args);
                                 });
@@ -5110,20 +5003,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
-
-                            RDR.events.track('paragraph_helper_show');
-                            RDR.events.trackEventToCloud({
-                                category: "engage",
-                                action: "indicator_helper_rindow_shown",
-                                opt_label: "kind: text, hash: " + hash
-                            });
                         }else{
                             RDR.events.track( 'view_node::'+hash, hash );
-                            RDR.events.trackEventToCloud({
-                                category: "engage",
-                                action: "rindow_shown",
-                                opt_label: "kind: text, hash: " + hash
-                            });
                         }
 
                     }
@@ -5132,7 +5013,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
-                        $rindowBody.html('<div class="rdr_helper_text rdr_clearfix">Select some text and click <strong>What do you think?</strong><div class="rdr_clear"></div></div>');
+                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
                         RDR.rindow.updateSizes(
                             $rindow, {
@@ -5217,11 +5098,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     over: function($indicator){
                         //RDR.actions.indicators.helpers.over:
 
+                        RDR.events.track('paragraph_helper_show');
+
                         var alreadyHovered = $indicator.data('containerHover');
                         if( alreadyHovered ){
                             return;
                         }
-                        var hash = $indicator.data('hash');
 
                         $indicator.data('containerHover', true);
                         var hoverTimeout = setTimeout(function(){
@@ -5236,7 +5118,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     .animate({
                                         'opacity': RDR.C.helperIndicators.opacity
                                         }, RDR.C.helperIndicators.fadeInTime );
-
                             }
                         }, RDR.C.helperIndicators.hoverDelay);
                         $indicator.data('hoverTimeout', hoverTimeout);
@@ -5288,14 +5169,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
                                         RDR.actions.containers.media.onEngage( hash );
                                         $(this).removeClass('rdr_live_hover');
-                                        
-                                        RDR.events.track( 'view_node::'+hash, hash );
-                                        RDR.events.trackEventToCloud({
-                                            category: "engage",
-                                            action: "rindow_shown",
-                                            opt_label: "kind: media, hash: " + hash
-                                        });
-
                                     } else {
                                         RDR.actions.containers.media.onDisengage( hash );
                                     }
@@ -7133,7 +7006,6 @@ function $RFunctions($R){
         plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_enhancedOffset($R);
-        plugin_jquery_hashChange($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_jScrollPane($R);
@@ -7562,10 +7434,7 @@ function $RFunctions($R){
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
                                 $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
-                            //note that this event is defined a little loosely.
-                            //It will get triggered on any hover over the summaryWidget
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
-                            
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             if (
                                 $this.hasClass('rdr-too-many-reactions') &&
@@ -7855,9 +7724,7 @@ function $RFunctions($R){
                             // 7/1/2012: we'll probably roll this into the react flyout.
                             var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction to this page.  Type it in, then press Enter."><input type="text" value="Add your own" class="rdr_default"/></a>');
                             $a_custom.find('input').focus( function() {
-                                
                                 RDR.events.track('start_custom_reaction_summ');
-
                                 var $input = $(this);
                                 $input.removeClass('rdr_default').closest('div.rdr_sbRollover').addClass('rdr_reacted');
                                 if ( $input.val() == "Add your own" ) {
@@ -8059,13 +7926,6 @@ function $RFunctions($R){
 
                                 getReactedContent( $this, counts );
                                 $this.addClass('rdr_live_hover');
-
-                                RDR.events.trackEventToCloud({
-                                    category: "summarybar",
-                                    action: "reactions_view",
-                                    opt_label: "page: "+page.id+", tag: "+tag_body
-                                });
-
                             },
                             function() {
                                 var $this = $(this),
@@ -9349,24 +9209,6 @@ function $RFunctions($R){
             };
         }
         //end function plugin_jquery_improvedCSS
-
-        //todo: I don't think we're using this any more - remove it?
-        function plugin_jquery_hashChange($){
-            /*
-             * jQuery hashchange event - v1.3 - 7/21/2010
-             * http://benalman.com/projects/jquery-hashchange-plugin/
-             *
-             * Copyright (c) 2010 "Cowboy" Ben Alman
-             * Dual licensed under the MIT and GPL licenses.
-             * http://benalman.com/about/license/
-             */
-
-            // args passed into minified function
-            var e = window,
-                b = undefined;
-
-            var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})();
-        }
 
         function plugin_jquery_mousewheel($){
             /* 
