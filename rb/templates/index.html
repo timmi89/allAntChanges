@@ -15,48 +15,6 @@
 {% block mainContent %}
 
 {% if not profile_user and not group and not board %}
-<style>
-section[role="content"] {background:#f3f3f3;}
-section[role="main"] {margin-top: 0;}
-section[role="complementary"] {display:none;}
-header[role="banner"] { box-shadow:none !important; border-bottom:1px solid #d9d9d9; }
-#how_the_web_feels, #more_content {
-    background:#fff;
-    width:100%;
-    box-shadow:0 0 6px #bbb;
-    text-align:center;
-}
-#how_the_web_feels { min-height:400px; }
-#more_content { padding-top:15px; }
-#how_the_web_feels h1 { font-weight:bold; color:#8e8e8e; font-size:64px;padding:20px;}
-#more_info {
-    padding:15px 0 5px;
-}
-div.section_content {
-    margin:0 auto;
-    width:920px;
-}
-div.section_content #cards {
-    margin:0;
-    padding:0;
-    width:616px;
-}
-#how_the_web_feels div.section_content h1.sectionHeader,
-div.section_content h1.sectionHeader {
-    text-align:left;
-    background:none;
-    font-size:18px;
-    color:#000;
-    padding:0 0 0 5px;
-    margin-bottom:10px;
-}
-#how_the_web_feels div.section_content h1.sectionHeader {
-    margin-top:0px;
-    position:relative;
-    z-index:2;
-}
-#how_the_web_feels section[role="most popular tags"] ol { margin-left:5px; }
-</style>
 {% if not query_string and not singleton %}
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <div id="how_the_web_feels">
@@ -128,14 +86,6 @@ div.section_content h1.sectionHeader {
 {% endif %}
 
 {% if board %}
-<style>
-#board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
-#board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
-#board_header .board_meta       { padding:10px 20px; background:none repeat scroll 0 0 rgba(0, 0, 0, 0.05); margin:20px auto; overflow:auto; box-shadow:0px 0px 3px #bbb inset; }
-#board_header h2    { font-size:18px; font-style:italic; }
-#board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold;}
-#board_header .board_meta button    { float:right; line-height:26px; }
-</style>
 <div id="board_header">
     <h1>{{ board.title }}</h1>
     {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
