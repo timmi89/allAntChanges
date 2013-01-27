@@ -8,7 +8,14 @@
 
 {% block sidebarContent %}
 <div id="sidebar">
-  {% include "sidebar.html" %}
+    {% if not profile_user and not group and not board %}
+    {% if not query_string and not singleton %}
+    <!-- homepage sidebar -->
+    {% include "homepage_sidebar.html" %}
+    {% endif %}
+    {% endif %}
+    
+    {% include "sidebar.html" %}
 </div>
 {% endblock sidebarContent %}
 
@@ -16,6 +23,9 @@
 
 {% if not profile_user and not group and not board %}
 {% if not query_string and not singleton %}
+<section role="tag cloud grid">
+</section>
+<h2>All Reactions</h2>
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <div id="how_the_web_feels">
     <h1>How the web feels today.</h1>
@@ -105,32 +115,6 @@
 {% if not profile_user and not group and not board and not query_string %}
 <div id="more_content">
     <div class="section_content">
-        <style>
-        div.otherContent {
-            width:280px;
-            float:right;
-        }
-        div.component { margin-bottom:20px; }
-        div.component ul { list-style-type:none; padding:0;margin:0 0 0 5px;text-align:left;}
-        div.component ul li { margin-bottom:5px;}
-        div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
-        div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
-        div.component ul li a img { width:30px; display:inline-block; margin:0 5px -7px 0;}
-        </style>
-        <div class="otherContent">
-            <div class="component active_sites">
-                <h1 class="sectionHeader">Active Sites</h1>
-                <ul></ul>
-            </div>
-            <div class="component people">
-                <h1 class="sectionHeader">Active People</h1>
-                <ul></ul>
-            </div>
-            <div class="component active_pages">
-                <h1 class="sectionHeader">Active Pages</h1>
-                <ul></ul>
-            </div>
-        </div>
 {% endif %}
 
     {% block cards %}

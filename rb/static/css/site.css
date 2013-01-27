@@ -25,6 +25,9 @@
 
 /* global for now */
 
+/* fix the damn box model */
+* { box-sizing: border-box; }
+
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;
   box-shadow:0px 0px 6px #aaa;
@@ -55,6 +58,36 @@ header[role="banner"] #site_search button	{ width:25px; height:22px; background:
 header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; height:39px; border-left:1px solid #393939;display:none; }
 header[role="banner"] #settings:hover nav 	{ display:block; }
 
+/* group admin footer */
+section[role="group panel header"]      { width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
+section[role="group panel header"] h3     { float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
+section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
+ul.link-list 		{ list-style-type:none; overflow:auto; float:right; margin-left: -18px; margin-bottom:0;}
+ul.link-list li 	{ float:left; margin-right:20px; }
+ul.link-list li a			{ color:#fff; font-size:12px; }
+ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
+
+/* sidebar */
+section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px;}
+section[role="complementary"] { width:220px; border-right:1px solid #d9d9d9; display:block; float:left; vertical-align:top;}
+section[role="complementary"] h1 { margin:0; }
+section[role="complementary"] h2 { height:90px; text-align:center; color:#b7b7b7; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:20px;}
+section[role="complementary"] div.component { margin-bottom:30px; width:200px; }
+section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:14px; }
+section[role="complementary"] div.component ul { list-style-type:none; padding:0;margin:0 0 0 20px;text-align:left;}
+section[role="complementary"] div.component ul li { margin-bottom:5px;}
+section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
+section[role="complementary"] div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
+section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px -7px 0;}
+
+
+section[role="main"] { margin-left:219px; border-left:1px solid #d9d9d9; display:block; vertical-align:top; }
+section[role="main"] h2 { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px;}
+
+/* homepage */
+section[role="tag cloud grid"] { height:200px; width:100%; background:#84b8ef; }
+
+
 /* board header */
 #board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
 #board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
@@ -62,3 +95,6 @@ header[role="banner"] #settings:hover nav 	{ display:block; }
 #board_header h2    { font-size:18px; font-style:italic; }
 #board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold;}
 #board_header .board_meta button    { float:right; line-height:26px; }
+
+
+
