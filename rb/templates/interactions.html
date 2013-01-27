@@ -136,7 +136,9 @@ div.otherContent {display:none;}
 {% endif %}
 
 {% if not board %}
+{% if not query_string %} 
 <h2 class="header">All Reactions</h2>
+{% endif %}
 {% endif %}
 <section id="content"></section>
 <script>

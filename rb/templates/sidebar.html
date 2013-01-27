@@ -1,5 +1,13 @@
 {% load static %}
 
+{% if query_string %}
+<div id="avatar">
+  <h2 style="line-height:24px;height:auto;padding:20px 0;">
+    <em style="font-weight:normal;font-size:18px;">Search for <br/></em>
+    <strong style="color:454545;font-size:28px;">{{ query_string }}</strong>
+  </h2>
+</div>
+{% endif %}
 {% if group %}
 <div id="avatar">
   {% if group.logo_url_lg %}<h2><img src="{{ group.logo_url_lg }}" /></h2>{% endif %}
