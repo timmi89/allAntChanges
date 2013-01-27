@@ -11,7 +11,7 @@
   {% else %}
     <form action="/admin_request/{{ group.short_name }}/" method="post">
       {% csrf_token %}
-      <button type="submit">Request Access</button>
+      <button type="submit btn">Request Access</button>
     </form>
   {% endif %}
  </section>

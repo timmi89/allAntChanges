@@ -314,7 +314,7 @@ RB = {
                         var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
                         $.each( response.data.paginated_follows, function(idx, followed_item) {
                             var board_id = followed_item.brd.id;
-                            $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
+                            $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
                         });
                         var boards_width = $('#content').width() + $('#pages').width();
                         $boards.width( boards_width );
@@ -459,7 +459,7 @@ RB = {
                         var $boards = $('<div id="board_listing"><h2>ReadrBoards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
-                            $boards.find('ul').append('<li><a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a></li>');
+                            $boards.find('ul').append('<li><a style="font-size:18px;" class="btn btn-info" href="/board/'+board.id+'">'+board.title+'</a></li>');
                         });
                         var boards_width = $('#content').width() + $('#pages').width();
                         $boards.width( boards_width );
@@ -503,7 +503,7 @@ RB = {
                             if ( board.social_user.img_url != null ) {
                                 $li.find('.user_meta a').prepend('<img src="'+board.social_user.img_url+'" style="margin-bottom: -5px; height:22px; max-width: 22px;"> ');
                             }
-                            $li.append('<a style="font-size:18px;" href="/board/'+board.id+'">'+board.title+'</a>');
+                            $li.append('<a style="font-size:18px;" class="btn btn-info" href="/board/'+board.id+'">'+board.title+'</a>');
                             
                             board_count++;
                             if ( board_count < 7 ) {

@@ -31,6 +31,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 <script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.jscrollpane.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.browser_detect.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.mousewheel.js"></script>
 <script src="{{ STATIC_URL }}js/readr_site_scripts.js"></script>
 <script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
@@ -84,7 +85,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     <div id="site_search">
       <form method="get" id="searchform" action="">
         <fieldset>
-          <button>Search</button>
+          <button class="btn">Search</button>
           <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
         </fieldset>
       </form>

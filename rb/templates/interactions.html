@@ -64,33 +64,7 @@
 }
 .card:hover .buttons { display:block; }
 
-#board_listing  {
-  margin:0 auto 20px;
-  overflow:auto;
-  padding:2px;
-}
 
-#board_listing ul {
-  width:855px;
-  padding:0;
-  margin:0 auto;
-}
-#board_listing li {
-  background: url("/static/site/images/tile-background.jpg") repeat scroll 0 0 #F0F0F0;
-  box-shadow: 0 0 4px #aaa;
-  display: block;
-  float: left;
-  font-weight: bold;
-  list-style-type: none;
-  margin: 10px;
-  padding: 10px;
-  text-align: center;
-  width: 245px;
-}
-#board_listing li .user_meta {
-  background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;
-  border:1px dashed #aaa;
-}
 .fancybox-inner h3{
     font-weight: bold;
     font-style: italic;
@@ -418,21 +392,21 @@ function writeCard( interaction, showBlocked ) {
             //if this is the user's tag, give them the option to remove it -- they already added it, they can't add it any further!
             if(userOwnsInteraction){
                 $buttons.append(
-                    '<button class="tag_remove">Undo this reaction</button>'
+                    '<button class="tag_remove btn">Undo this reaction</button>'
                 );
             }else{
                 $buttons.append(
-                    '<button class="me_too">+1 '+interaction.interaction_node_body+'</button>'
+                    '<button class="me_too btn">+1 '+interaction.interaction_node_body+'</button>'
                 );
             }
             $buttons.append(
-                '<button class="add_new_reaction">Add new reaction</button>'+
-                '<button class="add_new_comment">Comment</button>'+
-                '<button class="add_to_board">Add to board</button>'
+                '<button class="btn add_new_reaction">Add new reaction</button>'+
+                '<button class="btn add_new_comment">Comment</button>'+
+                '<button class="btn add_to_board">Add to board</button>'
             );
 
           if ( board_admin ) {
-            $buttons.append('<button class="delete_from_board">Delete from this board</button>');
+            $buttons.append('<button class="delete_from_board btn">Delete from this board</button>');
           }
     } else {
         $buttons.append(
@@ -483,7 +457,7 @@ function writeCard( interaction, showBlocked ) {
         }
 
         var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button">Add Reaction</button></div>' )//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button btn">Add Reaction</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           wrapCSS    : 'fancybox-custom',
@@ -643,9 +617,7 @@ function writeComment( comment, parent, showBlocked ) {
             '</a>' +
         '</div>' +
         '<div class="comment">' +
-            '<div class="quote open">"</div>' +
             '<div class="comment_body">'+comment.comment+'</div>' +
-            '<div class="quote close">"</div>' +
         '</div>'
     );
 

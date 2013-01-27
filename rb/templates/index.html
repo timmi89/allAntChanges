@@ -36,7 +36,7 @@
     <h1>{{ board.title }}</h1>
     {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
     <div class="board_meta">
-        <button id="board_follow_button">Follow this board</button>
+        <button id="board_follow_button" class="btn">Follow this board</button>
         <span id="board_follower_count" style="display:block;float:right;margin:9px 8px 0 0;font-size:12px;"></span>
         {% if board.owner.first_name %}
         <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.first_name }} {{ board.owner.last_name }}</a></h3>
