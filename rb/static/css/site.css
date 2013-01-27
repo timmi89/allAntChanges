@@ -37,7 +37,7 @@ header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-i
 header[role="banner"] a.logo    { display:block; }
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:218px; }
 
-header[role="banner"] #user				{ float:right;margin-top:2px;}
+header[role="banner"] #user				{ float:right;margin:2px 10px;}
 header[role="banner"] #user	#logged-in      { visibility:hidden; height:37px; font-size:11px;}
 header[role="banner"] #user	#logged-out 	  { height:37px;}
 header[role="banner"] #user	#logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
@@ -842,3 +842,13 @@ div.splashQuote {
     margin-bottom:10px;
 
 }
+
+/* publisher prmo sticky footer */
+#publisher_promo { position:fixed;bottom:0;height:40px;width:100%;z-index:1000;cursor:pointer;}
+#publisher_promo section { margin:0 auto;width:90%; color:#354c65; background:#84b8ef;text-align:center;min-width:800px;box-shadow:0 0 4px #ccc; padding-top:4px;}
+#publisher_promo h1 { font-size:28px; display:inline-block; }
+#publisher_promo p { font-size:18px; display:inline-block; margin-left:10px; margin-top:-3px;}
+#publisher_promo i  { color:#f42; }
+#publisher_promo a  { font-weight:bold; }
+
+

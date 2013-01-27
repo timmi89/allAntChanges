@@ -81,16 +81,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     {% block headerDisplay %}
     {% endblock headerDisplay %}
 
-    {% block siteSearch %}
-    <div id="site_search">
-      <form method="get" id="searchform" action="">
-        <fieldset>
-          <button class="btn">Search</button>
-          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-        </fieldset>
-      </form>
-    </div>
-    {% endblock siteSearch %}
     <div id="user">
         {% block userStatus %}
         <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
@@ -140,6 +130,17 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </div>
         {% endblock %}
       </div>
+
+      {% block siteSearch %}
+    <div id="site_search">
+      <form method="get" id="searchform" action="">
+        <fieldset>
+          <button class="btn">Search</button>
+          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
+        </fieldset>
+      </form>
+    </div>
+    {% endblock siteSearch %}
     
     <a href="/" class="logo"><h1>ReadrBoard</h1></a>
     <div id="settings">
