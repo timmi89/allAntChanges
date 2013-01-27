@@ -84,22 +84,24 @@ section[role="complementary"] div.component ul li a { font-weight:bold;color:#65
 section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px -7px 0;}
 
 
-section[role="main"] { margin-left:219px; border-left:1px solid #d9d9d9; display:block; vertical-align:top; }
-section[role="main"] h2 { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px;}
+section[role="main"] { margin-left:219px; padding-right:20px; border-left:1px solid #d9d9d9; display:block; vertical-align:top; }
+section[role="main"] h2.header { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px; margin:0;}
 
 /* homepage */
 section[role="tag cloud grid"] { height:210px; background:#000;}
 
 
+
+
 /* cards */
-section[role="main"] div.card header      { padding:15px 20px 0; z-index:3; overflow:auto; text-align:left;}
+section[role="main"] div.card header      { z-index:3; overflow:auto; text-align:left; margin-bottom:20px;}
 section[role="main"] div.card a.added_by_user         { display:block; float:left; }
-section[role="main"] div.card div.who_and_what        { float:left; margin:5px 10px; color:#999; max-width:185px; }
+section[role="main"] div.card div.who_and_what        { float:left; margin:2px 6px; color:#999; }
 section[role="main"] div.card.wide div.who_and_what   { max-width:485px; }
-section[role="main"] div.card div.who_and_what h1     { font-size:32px; font-weight:bold; max-width:205px; }
+section[role="main"] div.card div.who_and_what h1     { font-size:40px; font-weight:bold; margin-bottom:0;}
 section[role="main"] div.card.wide div.who_and_what h1     { max-width:505px; }
-section[role="main"] div.card div.who_and_what h1 a   { color:#454545; text-decoration:none; }
-section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px;}
+section[role="main"] div.card div.who_and_what h1 a   { color:#737373; text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
 section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
 section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
 section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; }
@@ -119,9 +121,8 @@ section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative; padding:0 25px 15px;}
-section[role="main"] div.card.pag div.meta 				{ }
-
+section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:25px 5px 5px; overflow:auto; position: relative; text-align:left;}
+section[role="main"] div.card.pag div.meta        { margin-top:0; }
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { width:200px; }
 section[role="main"] div.card div.meta div.title a    { color:#888; font-size:14px; font-weight:bold; }
@@ -134,7 +135,7 @@ section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px
 
 
 section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
-section[role="main"] div.metaRight { float: left; width: 200px; overflow:hidden;}
+section[role="main"] div.metaRight { float: left; overflow:hidden;}
 section[role="main"] div.card.wide div.metaRight { width: 500px; }
 
 section[role="main"] div.metaRight em.from { display:block; color:#787878; padding:0px 4px;}
@@ -157,7 +158,55 @@ section[role="main"] div.card.pag_container div.meta div.date{
     top: -16px;
 }
 
+section[role="main"] div.card.txt div.content           { margin:15px 0 0; position:relative;z-index:2;}
+section[role="main"] div.card.txt div.content div.content_body    { font-size:22px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; color:#84b8ef; line-height:30px;}
+/*section[role="main"] div.card.txt div.content div.content_body        { font-size:20px; font-weight:400; font-family:Georgia,Cambria,"Times New Roman",Times,serif; color:#999; padding:10px 20px 20px; text-align:center;}*/
+section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
+section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
+section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
 
+section[role="main"] div.card div.content .buttonsMsg {
+    background:#fff;
+    border:1px solid #999;
+    font-size:11px;
+    padding:4px;
+}
+section[role="main"] div.card div.content .buttonsMsg a{
+    color: #1777AF;
+    font-weight: bold;
+}
+section[role="main"] div.card div.content .tag_remove{
+    color: #A77;
+}
+section[role="main"] div.card div.content .comments{
+    padding: 10px;
+    text-align:left;
+}
+
+section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
+section[role="main"] div.card.img div.content div.content_body img			{ width:100%; margin-top:-1px; position:relative;z-index:1; box-shadow:0px 0px 10px #aaa;}
+section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; margin-top:-1px; position:relative;z-index:1; box-shadow:0px 0px 10px #aaa;}
+
+section[role="main"] div.card div.comments    { background:#f0f0f0; border:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
+section[role="main"] div.card div.comments h2 { 
+    font-size:12px; 
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+}
+section[role="main"] div.card div.comment_container { position:relative; border-bottom:1px solid #eee;}
+section[role="main"] div.card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
+section[role="main"] div.card div.comment_container .header   {overflow:hidden; color:#666; clear:both; padding-top:3px;}
+section[role="main"] div.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa;}
+section[role="main"] div.card div.comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
+section[role="main"] div.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
+section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
+section[role="main"] div.card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
+section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px Helvetica, 'HelveticaRegular';}
+section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
+section[role="main"] div.card div.comment_container .comment .comment_body  { font-size:12px; }
+section[role="main"] div.card div.comment_container .comment .quote.open  {    display:none;                background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
+section[role="main"] div.card div.comment_container .comment .quote.close {    display:none;                background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
 
 
 

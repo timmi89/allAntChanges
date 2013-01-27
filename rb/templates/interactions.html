@@ -1,19 +1,13 @@
 <style>
-
 #content {
-  /*overflow:auto;*/
-  /*float:left;*/
-  /*width:610px;*/
   position:relative;
   visibility:hidden;
-  /*to account for top margin of cards*/
-  top: -10px;
   min-height:400px;
 }
 #content .card {
-  float:left;
   width:50%;
-  padding:0 0 10px 0;
+  max-width:500px;
+  padding:20px 20px 30px 20px;
   margin:0;
   background:#fff;
   border:1px solid #d9d9d9;
@@ -21,8 +15,12 @@
   border-left:none;
   text-align:center;
 }
+#content .card:hover {
+  background:#e8f2fd;
+}
 #content .card .group {
   font-size:13px;
+  line-height:16px;
   font-weight:normal;
   font-family:Georgia,serif;
 }
@@ -35,8 +33,6 @@
   color:#008be4;
 }
 .card .group img {
-  margin-bottom: -4px;
-  margin-top: 2px;
   margin-right:3px;
 }
 .card .group span {
@@ -44,25 +40,13 @@
   display:inline-block;
 }
 .card .group a:hover {text-decoration:none;}
-/*#pages  {
-  float:right;
-  overflow:auto;
-  background:#f7f8f9;
-  border:1px solid #ccc;
-  margin-left:10px;
-  visibility:hidden;
-}
-#pages .card .group {
-  font-size:11px;
-  font-weight:bold;
-  color:#7ebadf;
-}*/
 
 .card .buttons {
   position:absolute;left:0px;z-index:1;display:none;
   background:rgba(0,0,0,0.1);
   width:100%;
-  bottom:0;
+  bottom:0px;
+  border-bottom:3px solid #333;
 }
 .card .buttons button {
   color: #777;
@@ -177,7 +161,7 @@ div.otherContent {display:none;}
 {% endif %}
 
 {% if not board %}
-<h2>All Reactions</h2>
+<h2 class="header">All Reactions</h2>
 {% endif %}
 <section id="content"></section>
 <script>
@@ -454,7 +438,6 @@ function writeCard( interaction, showBlocked ) {
             '<div class="buttonsMsg">To react or comment, please <a href="/login" onclick="RDRAuth.openGenericLoginWindow(); return false;" >log in</a>.</div>'
         );
     }
-    $buttons.appendTo( $content );
 
     var $meta = $('<div class="meta"/>'),
         $metaRight = $('<div class="metaRight"/>');
@@ -464,11 +447,15 @@ function writeCard( interaction, showBlocked ) {
     $meta.append('<div class="clear" /><div class="me_too_outcome" />');
     
     if ( interaction.kind == "pag" ) {
-      var from_text = 'the whole article at';
+      var from_text = 'the whole page at';
+    } else if ( interaction.kind == "txt" ) {
+      var from_text = 'quote from';
+    } else if ( interaction.kind == "img" ) {
+      var from_text = 'picture from';
     } else {
-      var from_text = 'from';
+      var from_text = 'video from';
     }
-    $metaRight.append('<div class="group"><em class="from">'+from_text+'</em><a href=/group/' + interaction.group.short_name + ' class="group_link"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a>: <a href="{{ BASE_URL }}/i/'+interaction.id+'" class="title" target="_blank">'+interaction.page_title+'</a></div>')
+    $metaRight.append('<div class="group"><em class="from">'+from_text+'</em><a href=/group/' + interaction.group.short_name + ' class="group_link"><img src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /> <span>'+interaction.domain+'</span></a>: <a href="{{ BASE_URL }}/i/'+interaction.id+'" class="title" target="_blank">'+interaction.page_title+' <i class="icon-external-link"></i></a></div>')
             .data({
                 interactionId: interaction.id,
                 groupName: interaction.group.short_name
@@ -624,7 +611,7 @@ function writeCard( interaction, showBlocked ) {
 
     }
 
-    $card.append( $header, $content, $meta );
+    $card.append( $header, $content, $meta, $buttons );
     zIndex--;
 
     $('#cards #content').append( $card ); 
@@ -670,7 +657,7 @@ function writeComment( comment, parent, showBlocked ) {
 
     $comments.show();
     if ( !$comments.find('h2').length ){
-        $comments.append('<h2>Comments &amp; Tags</h2>');
+        $comments.append('<h2>Comments</h2>');
     }
     $comments.find('h2').after( $comment_container );
   }
@@ -700,81 +687,34 @@ $.each( metoos, function(interaction_id, count) {
 
 var $container = $('#content');
 
-// // modified Isotope methods for gutters in masonry
-//   $.Isotope.prototype._getMasonryGutterColumns = function() {
-//     var gutter = this.options.masonry && this.options.masonry.gutterWidth || 0;
-//         containerWidth = this.element.width();
-  
-//     this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
-//                   // or use the size of the first item
-//                   this.$filteredAtoms.outerWidth(true) ||
-//                   // if there's no items, use size of container
-//                   containerWidth;
-
-//     this.masonry.columnWidth += gutter;
-
-//     this.masonry.cols = Math.floor( ( containerWidth + gutter ) / this.masonry.columnWidth );
-//     this.masonry.cols = Math.max( this.masonry.cols, 1 );
-//   };
-
-//   $.Isotope.prototype._masonryReset = function() {
-//     // layout-specific props
-//     this.masonry = {};
-//     // FIXME shouldn't have to call this again
-//     this._getMasonryGutterColumns();
-//     var i = this.masonry.cols;
-//     this.masonry.colYs = [];
-//     while (i--) {
-//       this.masonry.colYs.push( 0 );
-//     }
-//   };
-
-//   $.Isotope.prototype._masonryResizeChanged = function() {
-//     var prevSegments = this.masonry.cols;
-//     // update cols/rows
-//     this._getMasonryGutterColumns();
-//     // return if updated cols/rows is not equal to previous
-//     return ( this.masonry.cols !== prevSegments );
-//   };
-
 function cardReset() {
   {% if profile_user or group or board %}
-  $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
-  var contentWidth = $('#cards').width(),
-      numColumns = parseInt(contentWidth/312);
+  // $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
+  // var contentWidth = $('#cards').width(),
+  //     numColumns = parseInt(contentWidth/312);
   
   {% if singleton %}
-  if ( $('div.card.img').length || $('div.card.med').length ) {
-    $('#content').width( 305);
-  }
+  // if ( $('div.card.img').length || $('div.card.med').length ) {
+  //   $('#content').width( 305);
+  // }
   {% endif %}
 
   {% if not singleton %}
-  $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
+  // $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
   {% endif %}
-  $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
+  // $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
   {% endif %}
 
 $container.isotope({
   // options...
   resizable: false, // disable normal resizing
   // set columnWidth to a percentage of container width
-  masonry: { columnWidth: $container.width() / 5 },
+  // masonry: { columnWidth: $container.width() / 10 },
   itemSelector : 'div.card'
 }, function() {
   $('#content').css('visibility','visible')
 });
 
-  // DELETE
-  // $container.isotope({
-  //     masonry: {
-  //       columnWidth: 302,
-  //       gutterWidth: 10
-  //     },
-  //     itemSelector : 'div.card'
-  // }, function() {
-  //   $('#content').css('visibility','visible')
-  // });
 }
 
 function getContentDimsStyle(dims){
@@ -789,7 +729,7 @@ function getContentDimsStyle(dims){
     //else
 
     //this must match our .card{width:300px + margin-left:2px} css
-    var CARDWIDTH = 302;
+    var CARDWIDTH = $('.card').eq(0).width();
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
     minHeight += 3;
