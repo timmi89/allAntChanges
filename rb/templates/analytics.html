@@ -155,17 +155,15 @@ RB.analytics = {
 			dataType: "jsonp",
 			success: function(response){
 				if (type == "tags") {
-					// function SortByTagCount(a,b) { return b.count - a.count; }
-                	// interaction_order.sort( SortByTagCount );
-console.dir(response);
-					
+					$('#tag_cloud_container').html('<section role="tag cloud grid"/>');
+
 					function SortByTagCount(a,b) { return b.count - a.count; }
 	                var sorted_interactions = [];
 
 	                $.each( response, function(idx, reaction_data) {
 	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
 	                });
-console.dir(sorted_interactions);
+
 	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
 
 	                // do tag cloud logic
@@ -175,6 +173,8 @@ console.dir(sorted_interactions);
 	                    currentBoxSize = 0,
 	                    colorInt = 1,
 	                    $tagCloud = $('section[role="tag cloud grid"]');
+
+	                $tagCloud.html('').removeAttr('style').removeClass('isotope');
 	                while ( sorted_interactions.length ) {
 	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
 	                        var median = Math.floor(sorted_interactions.length/2);
@@ -220,42 +220,14 @@ console.dir(sorted_interactions);
 	                        currentTagBoxAnimating++;
 	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
 	                            clearInterval( animationQueue );
+	                        	if ( $('#tag_cloud_container').jScrollPane().data().jsp ) { $('#tag_cloud_container').jScrollPane().data().jsp.destroy(); }
 	                            initHorizontalScrollbar();
 	                        }
 	                    }
 	                    function initHorizontalScrollbar(){
 	                        $('#tag_cloud_container').jScrollPane();
-	                        // $('section[role="tag cloud grid"]').jScrollPane();
 	                    }
 	                });
-					/*
-
-					var tag_count = 0;
-
-					for ( var i in response ) {
-						if ( tag_count < 8 ) {
-							$pie_chart_labels.append('<li><a href="/group/'+RB.group.short_name+'/?s='+response[i].interaction_node__body+'">'+response[i].interaction_node__body+' <span>('+response[i].count+')</span></a></li>');
-							pie_chart_data.push( [response[i].interaction_node__body, response[i].count] );
-						} else {
-							var sizeClass = "medium"; //( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-							other_tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
-						}
-						tag_count++;
-					}
-
-					if ( tag_count == 0 ) {
-						$('section[role="panels"]').hide().after(('<h1 style="margin:20px auto;text-align:center;">No interactions in this date range!</h1>'));
-						return;
-					} else {
-						$('section[role="panels"]').show();
-					}
-					if ( tag_count <= 8 ) {
-						$('div.most_popular').addClass('solo').siblings().hide();
-					} else {
-						$('div.most_popular').removeClass('solo').siblings().show();
-						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
-					}
-					*/
 				} else if (type=="shares") {
 
 					var shareHtml = "";
