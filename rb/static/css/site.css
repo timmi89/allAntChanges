@@ -27,15 +27,17 @@
 
 /* fix the damn box model */
 * { box-sizing: border-box; }
+h1, 
+h2 { font-family:Helvetica,'HelveticaBold',Arial; }
 
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;
   box-shadow:0px 0px 6px #aaa;
 }
-header[role="banner"] a.logo    { display:block; width:165px; }
-header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:165px;}
+header[role="banner"] a.logo    { display:block; }
+header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:218px; }
 
-header[role="banner"] #user				{ right:8px; position:absolute; top:2px; }
+header[role="banner"] #user				{ float:right;margin-top:2px;}
 header[role="banner"] #user	#logged-in      { visibility:hidden; height:37px; font-size:11px;}
 header[role="banner"] #user	#logged-out 	  { height:37px;}
 header[role="banner"] #user	#logged-in img	{ float:left; max-width:30px; max-height:30px; border:1px solid #424242; }
@@ -51,7 +53,7 @@ header[role="banner"] #user #logged-in #log-out-link label  { font-size:11px; }
 header[role="banner"] #user #logged-in #log-out-link h5  { color:#999; font-size:10px;text-transform:uppercase;border-top:1px solid #aaa;margin-top:5px;padding-top:5px; }
 header[role="banner"] #user	#logged-in:hover #log-out-link	{ display:block; }
 
-header[role="banner"] #site_search			{ position:absolute; left:190px; top:6px; display:block; }
+header[role="banner"] #site_search			{ margin:6px 10px 0px 30px; display:block; float:right; }
 header[role="banner"] #site_search input	{ background:#eee;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;}
 header[role="banner"] #site_search button	{ width:25px; height:22px; background:url(../images/site/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:1px;}
 
@@ -85,7 +87,7 @@ section[role="main"] { margin-left:219px; border-left:1px solid #d9d9d9; display
 section[role="main"] h2 { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px;}
 
 /* homepage */
-section[role="tag cloud grid"] { height:200px; width:100%; background:#84b8ef; }
+section[role="tag cloud grid"] { height:210px; width:10000px; background:#000;}
 
 
 /* board header */

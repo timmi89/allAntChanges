@@ -23,12 +23,55 @@
 
 {% if not profile_user and not group and not board %}
 {% if not query_string and not singleton %}
+<style>
+.box { text-align:center; font-family:Helvetica,'HelveticaBold',Arial; font-weight:bold; box-sizing: border-box;}
+.box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
+.box div.tag { position:relative; height:100%;}
+/*.box .count { bottom:25%;position:absolute; font-size:14px !important; width:100%;}*/
+/*.box3 .count { bottom:20%;}*/
+.box1 { width:210px; height:210px; padding:90px 20px 0;}
+.box .count { font-size:20px !important; }
+.box3 .count { font-size:11px !important; }
+.box2 { width:210px; height:140px; padding:50px 20px 0;}
+.box3 { width:105px; height:70px; padding:20px 5px 0;}
+.color1 { background:#84b8ef; color:#354c65;}
+.color2 { background:#419bac; }
+.color3 { background:#d7f360; }
+.color4 { background:#9dd55e; }
+.color5 { background:#495564; }
+</style>
 <section role="tag cloud grid">
+    <div class="color1 box2 box"><div class="tag">lol<br><span class="count">101</span></div></div>
+    <div class="color1 box3 box"><div class="tag">craisins<br/><span class="count">14</span></div></div>
+    <div class="color2 box3 box"><div class="tag">hilarious<br/><span class="count">59</span></div></div>
+    <div class="color4 box1 box"><div class="tag">amazeballs<br/><span class="count">133</span></div></div>
+    <div class="color5 box2 box"><div class="tag">uh<br/><span class="count">311</span></div></div>
+    <div class="color3 box3 box"><div class="tag">omg that is amazing<br/><span class="count">11</span></div></div>
+    <div class="color2 box3 box"><div class="tag">uh, no<br/><span class="count">100</span></div></div>
+    <div class="color3 box1 box"><div class="tag">wild<br/><span class="count">67</span></div></div>
+    <div class="color4 box2 box"><div class="tag">cosign<br/><span class="count">10</span></div></div>
+    <div class="color5 box3 box"><div class="tag">problematc<br/><span class="count">101</span></div></div>
+    <div class="color1 box3 box"><div class="tag">provocative<br/><span class="count">45</span></div></div>
+    <div class="color2 box1 box"><div class="tag">awesomesauce<br/><span class="count">23</span></div></div>
+    <div class="color3 box2 box"><div class="tag">killer<br/><span class="count">959</span></div></div>
+    <div class="color4 box3 box"><div class="tag">dislike<br/><span class="count">38</span></div></div>
+    <div class="color5 box3 box"><div class="tag">meh<br/><span class="count">5</span></div></div>
+    <div class="color1 box1 box"><div class="tag">unicorns<br/><span class="count">275</span></div></div>
 </section>
+<script>
+// logic to pull the tags from the results array:  middle, last, last, first
+// then get count of colors, and iterate through
+
+$('section[role="tag cloud grid"]').isotope({
+  layoutMode: 'masonryHorizontal',
+  masonryHorizontal: {
+    rowHeight: 70
+  }
+});
+$('.box').bigtext().click( function() { window.location.href += 's='+$(this).data('tag'); });;
+</script>
 <h2>All Reactions</h2>
-<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <div id="how_the_web_feels">
-    <h1>How the web feels today.</h1>
     <div class="section_content">
         <div class="reactions">
             <div class="other_reactions">
@@ -38,16 +81,7 @@
                 </section>
             </div>
             <div class="most_popular">
-                <h1 class="sectionHeader">Most Popular Reactions</h1>
-                <div id="pie_chart_labels">
-                    <ol></ol>
-                </div>
-                <div id="pie_chart_container">
-                    <div id="pie_chart"></div>
-                    <div id="pie_chart_credit">
-                        <span>Highcharts.com</span>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -159,8 +193,7 @@
                     // });
                 });
 
-                interaction_order.sort( SortByTagCount );
-
+                interaction_order.sort( SortByTagCount ); // each as a .body and a .count
                 // reactions
                 var chart_data = [],
                     index = 0;
@@ -193,63 +226,6 @@
                 $.each( response.data.pages, function(page_url, page_data) {
                     var $active_people = $('div.active_pages ul');
                         $active_people.append('<li><a href="'+page_url+'" target="_blank">'+page_data.page.title+'</a></li>');
-                });
-                
-                
-                // Radialize the colors
-                Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-                    return {
-                        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-                        stops: [
-                            [0, color],
-                            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-                        ]
-                    };
-                });
-                
-                // Build the chart
-                chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'pie_chart',
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false
-                    },
-                    title: {
-                        text: ''
-                    },
-                    tooltip: {
-                        // pointFormat: '{series.name}',
-                        enabled:false
-                    },
-                    plotOptions: {
-                        series: {
-                            point: {
-                        events: {
-                            mouseOver: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
-                            },
-                            mouseOut: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
-                            }
-                        }
-                    },
-                        },
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'Reactions',
-                        data: chart_data
-                    }]
                 });
             }
         });
