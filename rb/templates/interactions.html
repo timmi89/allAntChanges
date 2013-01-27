@@ -93,24 +93,48 @@ body{
     width: 100%;
 }
 
+section[role="complementary"]{ display:none; }
 section[role="main"]{
-    padding: 40px 0 20px 0 !important;
-    background: #555;
+    width: 960px;
+    margin: 0 auto;
+    background:#555;
+    border:0;
+    padding: 10px 0 0 0;
 }
 
 section[role="content"]{
+  width: 100%;
+  background:none;
     /*extra padding for the fixed footers*/
     padding-bottom: 46px !important;
     margin: 30px 0 !important;
 }
 #cards {
     /*clear min-height*/
-  width:322px !important;
+  width:440px !important;
   min-height:0 !important;
   margin:20px auto !important;
   /*max-width:615px !important;*/
 }
 
+#cards .card {
+  width:440px !important;
+}
+.singleReactionHeader {
+  text-align:center;
+  color:#fff;
+}
+#seeItLink {
+  color:#84b8ef;
+}
+
+.seeAllReactionsButtonWrap {
+  margin-top:-50px;
+  text-align:center;
+}
+.seeAllReactionsButtonWrap a {
+  color:#84b8ef;
+}
 footer{
     position: fixed;
     width: 100%;
@@ -136,7 +160,7 @@ div.otherContent {display:none;}
 {% endif %}
 
 {% if not board %}
-{% if not query_string %} 
+{% if not query_string and not singleton %} 
 <h2 class="header">All Reactions</h2>
 {% endif %}
 {% endif %}
