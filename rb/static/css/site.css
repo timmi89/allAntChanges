@@ -88,9 +88,25 @@ section[role="main"] { margin-left:219px; padding-right:20px; border-left:1px so
 section[role="main"] h2.header { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px; margin:0;}
 
 /* homepage */
+
+/* tag cloud grid */
 section[role="tag cloud grid"] { height:210px; background:#000;}
-
-
+section[role="tag cloud grid"] a { text-decoration:none;}
+.box { text-align:center; font-family:Helvetica,'HelveticaBold',Arial; font-weight:bold; box-sizing: border-box; overflow:hidden;}
+.box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
+.box1 div.tag { position:relative; height:100%; bottom:-125%;}
+.box2 div.tag { position:relative; height:100%; top:-125%;}
+.box3 div.tag { position:relative; height:100%; top:-125%;}
+.box .count { font-size:20px !important; }
+.box3 .count { font-size:11px !important; display:block;margin-top:0px;}
+.box1 { width:210px; height:210px; padding:90px 20px 0;}
+.box2 { width:210px; height:140px; padding:50px 20px 0;}
+.box3 { width:105px; height:70px; padding:20px 5px 0;}
+.color1 { background:#84b8ef; color:#354c65;}
+.color2 { background:#419bac; color:#454545;}
+.color3 { background:#d7f360; color:#454545;}
+.color4 { background:#9dd55e; color:#454545;}
+.color5 { background:#495564; color:#ccc;}
 
 
 /* cards */
@@ -204,13 +220,6 @@ section[role="main"] div.card div.comment_container .header .who        {float:l
 section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px Helvetica, 'HelveticaRegular';}
 section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
 section[role="main"] div.card div.comment_container .comment .comment_body  { font-size:12px; }
-section[role="main"] div.card div.comment_container .comment .quote.open  {    display:none;                background:url(../images/quote_open.png) top left no-repeat; top:8px;left:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-section[role="main"] div.card div.comment_container .comment .quote.close {    display:none;                background:url(../images/quote_close.png) top left no-repeat; bottom:20px;right:0; position:absolute; height:20px; width:20px; text-indent:-9999px;}
-
-
-
-
-
 
 
 

@@ -23,42 +23,10 @@
 
 {% if not profile_user and not group and not board %}
 {% if not query_string and not singleton %}
-<style>
-.box { text-align:center; font-family:Helvetica,'HelveticaBold',Arial; font-weight:bold; box-sizing: border-box;}
-.box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
-.box div.tag { position:relative; height:100%;}
-/*.box .count { bottom:25%;position:absolute; font-size:14px !important; width:100%;}*/
-/*.box3 .count { bottom:20%;}*/
-.box1 { width:210px; height:210px; padding:90px 20px 0;}
-.box .count { font-size:20px !important; }
-.box3 .count { font-size:11px !important; display:block;margin-top:0px;}
-.box2 { width:210px; height:140px; padding:50px 20px 0;}
-.box3 { width:105px; height:70px; padding:20px 5px 0;}
-.color1 { background:#84b8ef; color:#354c65;}
-.color2 { background:#419bac; color:#454545;}
-.color3 { background:#d7f360; color:#454545;}
-.color4 { background:#9dd55e; color:#454545;}
-.color5 { background:#495564; color:#ccc;}
-</style>
 <div class="tag_cloud_container">
-<section role="tag cloud grid">
-    <!-- <div class="color1 box2 box"><div class="tag">lol<br/><span class="count">101</span></div></div>
-    <div class="color2 box3 box"><div class="tag">craisins<br/><span class="count">14</span></div></div>
-    <div class="color3 box3 box"><div class="tag">hilarious<br/><span class="count">59</span></div></div>
-    <div class="color4 box1 box"><div class="tag">amazeballs<br/><span class="count">133</span></div></div>
-    <div class="color5 box2 box"><div class="tag">uh<br/><span class="count">311</span></div></div>
-    <div class="color1 box3 box"><div class="tag">omg that is amazing<br/><span class="count">11</span></div></div>
-    <div class="color2 box3 box"><div class="tag">uh, no<br/><span class="count">100</span></div></div>
-    <div class="color3 box1 box"><div class="tag">wild<br/><span class="count">67</span></div></div>
-    <div class="color4 box2 box"><div class="tag">cosign<br/><span class="count">10</span></div></div>
-    <div class="color5 box3 box"><div class="tag">problematic<br/><span class="count">101</span></div></div>
-    <div class="color1 box3 box"><div class="tag">provocative<br/><span class="count">45</span></div></div>
-    <div class="color2 box1 box"><div class="tag">awesomesauce<br/><span class="count">23</span></div></div>
-    <div class="color3 box2 box"><div class="tag">killer<br/><span class="count">959</span></div></div>
-    <div class="color4 box3 box"><div class="tag">dislike<br/><span class="count">38</span></div></div>
-    <div class="color5 box3 box"><div class="tag">meh<br/><span class="count">5</span></div></div>
-    <div class="color1 box1 box"><div class="tag">unicorns<br/><span class="count">275</span></div></div> -->
-</section>
+    <section role="tag cloud grid">
+        <!-- this will get dynamically populated -->
+    </section>
 </div>
 {% endif %}
 {% endif %}
@@ -137,17 +105,16 @@
                 while ( sorted_interactions.length ) {
                     if ( boxSizes[ currentBoxSize ] == "medium" ) {
                         var median = Math.floor(sorted_interactions.length/2);
-                        // medium_tags.push( sorted_interactions[ median ] );
-                        var $thisBox = $( '<div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div>' ).data('tag', sorted_interactions[ median ].body);
+                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
                         $tagCloud.append( $thisBox );
                         sorted_interactions.splice( median, 1 );
                     } else if ( boxSizes[ currentBoxSize ] == "small" ) {
                         var thisTag = sorted_interactions.pop(),
-                            $thisBox = $( '<div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div>' ).data('tag', thisTag.body);
+                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
                         $tagCloud.append( $thisBox );
                     } else if ( boxSizes[ currentBoxSize ] == "big" ) {
                         var thisTag = sorted_interactions.shift(),
-                            $thisBox = $( '<div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div>' ).data('tag', thisTag.body);
+                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
                         $tagCloud.append( $thisBox );
                     }
                     
@@ -164,8 +131,26 @@
                   masonryHorizontal: {
                     rowHeight: 70
                   }
+                }, function() {
+                    $('.box').bigtext();
+                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+                        currentTagBoxAnimating = 0;
+                    var animationQueue = setInterval( animateNextBox, 100 );
+
+                    function animateNextBox() {
+                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+                        if ( $thisBox.hasClass('box1') ) {
+                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+                        } else {
+                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+                        }
+                        currentTagBoxAnimating++;
+                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+                            clearInterval( animationQueue );
+                        }
+                    }
                 });
-                $('.box').bigtext().click( function() { window.location.href += 's='+$(this).data('tag'); });;
+
                 
                 // people
                 $.each( response.data.users, function(user_id, user_data) {
