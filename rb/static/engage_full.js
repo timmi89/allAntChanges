@@ -525,7 +525,6 @@ function readrBoard($R){
                             } else {
                                 args[key] = copyThisArg;
                             }
-                            // $.extend( args, copyThisArg );
                         });
                     }
 
