@@ -12,21 +12,14 @@
 }
 #content .card {
   float:left;
-  width:300px;
+  width:50%;
   padding:0 0 10px 0;
-  margin:10px 0 10px 2px;
+  margin:0;
   background:#fff;
-  border:1px solid #ccc;
+  border:1px solid #d9d9d9;
   border-top:none;
-  box-shadow:0 0 2px #bbb;
-  text-align:left;
-}
-#content .card.long {
-  /*width:612px;*/
-  text-align:left;
-}
-#content .card:hover {
-  box-shadow:0px 0px 2px #008be4;
+  border-left:none;
+  text-align:center;
 }
 #content .card .group {
   font-size:13px;
@@ -65,16 +58,11 @@
   color:#7ebadf;
 }*/
 
-.card .content{
-    position: relative;
-}
 .card .buttons {
   position:absolute;left:0px;z-index:1;display:none;
   background:rgba(0,0,0,0.1);
   width:100%;
-}
-.card .buttons {
-  top:-20px;
+  bottom:0;
 }
 .card .buttons button {
   color: #777;
@@ -712,42 +700,42 @@ $.each( metoos, function(interaction_id, count) {
 
 var $container = $('#content');
 
-// modified Isotope methods for gutters in masonry
-  $.Isotope.prototype._getMasonryGutterColumns = function() {
-    var gutter = this.options.masonry && this.options.masonry.gutterWidth || 0;
-        containerWidth = this.element.width();
+// // modified Isotope methods for gutters in masonry
+//   $.Isotope.prototype._getMasonryGutterColumns = function() {
+//     var gutter = this.options.masonry && this.options.masonry.gutterWidth || 0;
+//         containerWidth = this.element.width();
   
-    this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
-                  // or use the size of the first item
-                  this.$filteredAtoms.outerWidth(true) ||
-                  // if there's no items, use size of container
-                  containerWidth;
+//     this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
+//                   // or use the size of the first item
+//                   this.$filteredAtoms.outerWidth(true) ||
+//                   // if there's no items, use size of container
+//                   containerWidth;
 
-    this.masonry.columnWidth += gutter;
+//     this.masonry.columnWidth += gutter;
 
-    this.masonry.cols = Math.floor( ( containerWidth + gutter ) / this.masonry.columnWidth );
-    this.masonry.cols = Math.max( this.masonry.cols, 1 );
-  };
+//     this.masonry.cols = Math.floor( ( containerWidth + gutter ) / this.masonry.columnWidth );
+//     this.masonry.cols = Math.max( this.masonry.cols, 1 );
+//   };
 
-  $.Isotope.prototype._masonryReset = function() {
-    // layout-specific props
-    this.masonry = {};
-    // FIXME shouldn't have to call this again
-    this._getMasonryGutterColumns();
-    var i = this.masonry.cols;
-    this.masonry.colYs = [];
-    while (i--) {
-      this.masonry.colYs.push( 0 );
-    }
-  };
+//   $.Isotope.prototype._masonryReset = function() {
+//     // layout-specific props
+//     this.masonry = {};
+//     // FIXME shouldn't have to call this again
+//     this._getMasonryGutterColumns();
+//     var i = this.masonry.cols;
+//     this.masonry.colYs = [];
+//     while (i--) {
+//       this.masonry.colYs.push( 0 );
+//     }
+//   };
 
-  $.Isotope.prototype._masonryResizeChanged = function() {
-    var prevSegments = this.masonry.cols;
-    // update cols/rows
-    this._getMasonryGutterColumns();
-    // return if updated cols/rows is not equal to previous
-    return ( this.masonry.cols !== prevSegments );
-  };
+//   $.Isotope.prototype._masonryResizeChanged = function() {
+//     var prevSegments = this.masonry.cols;
+//     // update cols/rows
+//     this._getMasonryGutterColumns();
+//     // return if updated cols/rows is not equal to previous
+//     return ( this.masonry.cols !== prevSegments );
+//   };
 
 function cardReset() {
   {% if profile_user or group or board %}
@@ -767,15 +755,26 @@ function cardReset() {
   $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
   {% endif %}
 
-  $container.isotope({
-      masonry: {
-        columnWidth: 302,
-        gutterWidth: 10
-      },
-      itemSelector : 'div.card'
-  }, function() {
-    $('#content').css('visibility','visible')
-  });
+$container.isotope({
+  // options...
+  resizable: false, // disable normal resizing
+  // set columnWidth to a percentage of container width
+  masonry: { columnWidth: $container.width() / 5 },
+  itemSelector : 'div.card'
+}, function() {
+  $('#content').css('visibility','visible')
+});
+
+  // DELETE
+  // $container.isotope({
+  //     masonry: {
+  //       columnWidth: 302,
+  //       gutterWidth: 10
+  //     },
+  //     itemSelector : 'div.card'
+  // }, function() {
+  //   $('#content').css('visibility','visible')
+  // });
 }
 
 function getContentDimsStyle(dims){

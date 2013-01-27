@@ -91,6 +91,83 @@ section[role="main"] h2 { height:90px; color:#737373; border-top:1px solid #d9d9
 section[role="tag cloud grid"] { height:210px; background:#000;}
 
 
+/* cards */
+section[role="main"] div.card header      { padding:15px 20px 0; z-index:3; overflow:auto; text-align:left;}
+section[role="main"] div.card a.added_by_user         { display:block; float:left; }
+section[role="main"] div.card div.who_and_what        { float:left; margin:5px 10px; color:#999; max-width:185px; }
+section[role="main"] div.card.wide div.who_and_what   { max-width:485px; }
+section[role="main"] div.card div.who_and_what h1     { font-size:32px; font-weight:bold; max-width:205px; }
+section[role="main"] div.card.wide div.who_and_what h1     { max-width:505px; }
+section[role="main"] div.card div.who_and_what h1 a   { color:#454545; text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px;}
+section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
+section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; }
+section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-decoration:underline; }
+
+section[role="main"] div.card div.date {
+    font-size: 10px;
+    /*position: absolute;*/
+    /*right: 0;*/
+    color:#bbb;
+    float:right;
+    margin-bottom:-17px;
+}
+
+section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:5px;}
+section[role="main"] div.card:hover div.block_content   { display:block; }
+section[role="main"] div.card div.block_content a { color:red; }
+
+section[role="main"] div.card header h1	span 	{ font-size:20px; }
+section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:5px; overflow:auto; position: relative; padding:0 25px 15px;}
+section[role="main"] div.card.pag div.meta 				{ }
+
+section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
+section[role="main"] div.card div.meta div.title      { width:200px; }
+section[role="main"] div.card div.meta div.title a    { color:#888; font-size:14px; font-weight:bold; }
+section[role="main"] div.card div.meta div.title a.external_link    {  display: block;float: right;font-size: 20px;margin-left: 10px; }
+section[role="main"] div.card div.meta div.content_type   { margin:0 0 0 8px; xxbackground:url(../images/type_text.png) top left no-repeat; xxtext-indent:-9999px; float:left; }
+section[role="main"] div.card.img div.meta div.content_type,
+section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
+section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px;}
+
+
+
+section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
+section[role="main"] div.metaRight { float: left; width: 200px; overflow:hidden;}
+section[role="main"] div.card.wide div.metaRight { width: 500px; }
+
+section[role="main"] div.metaRight em.from { display:block; color:#787878; padding:0px 4px;}
+section[role="main"] div.metaRight div.publisher { width: 190px;}
+
+section[role="main"] div.card.pag_container div.meta { z-index: 5; overflow: visible; margin: 8px 0;}
+section[role="main"] div.card.pag_container div.metaLeft { float: left; width: 40px;}
+section[role="main"] div.card.pag_container div.metaLeft .pageIcon { position: absolute;}
+section[role="main"] div.card.pag_container div.metaRight { float: left; width: 90px;}
+section[role="main"] div.card.pag_container div.metaRight div.publisher { width: auto;}
+
+section[role="main"] div.card.pag_container header{
+    border-bottom:  1px solid #DDDDDD;
+}
+section[role="main"] div.card.pag_container div.meta div.date{
+    background-color: white;
+    padding: 0 4px;
+    position: absolute;
+    right: 5px;
+    top: -16px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 /* board header */
 #board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
 #board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
