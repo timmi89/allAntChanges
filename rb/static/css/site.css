@@ -160,7 +160,6 @@ section[role="main"] div.card.pag_container div.meta div.date{
 
 section[role="main"] div.card.txt div.content           { margin:15px 0 0; position:relative;z-index:2;}
 section[role="main"] div.card.txt div.content div.content_body    { font-size:22px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; color:#84b8ef; line-height:30px;}
-/*section[role="main"] div.card.txt div.content div.content_body        { font-size:20px; font-weight:400; font-family:Georgia,Cambria,"Times New Roman",Times,serif; color:#999; padding:10px 20px 20px; text-align:center;}*/
 section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
 section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
