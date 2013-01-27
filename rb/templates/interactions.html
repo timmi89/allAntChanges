@@ -5,7 +5,7 @@
   min-height:400px;
 }
 #content .card {
-  width:50%;
+  /*width:50%;*/
   max-width:500px;
   padding:20px 20px 30px 20px;
   margin:0;
@@ -340,7 +340,8 @@ var metoos = {
 </div>
 
 <script>
-var zIndex = 400;
+var zIndex = 400,
+    cardWidth = Math.floor( $('#cards').width()/2 );
 function writeCard( interaction, showBlocked ) {
   
   var userCookie = $.cookie('user_id');
@@ -362,7 +363,7 @@ function writeCard( interaction, showBlocked ) {
   if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
     
     // write the card first, then append the comment
-    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+'" />'),
+    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+';width:'+cardWidth+'px;" />'),
         hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png",
         $header = $('<header/>').attr('title', interaction.interaction_node_body)//chain
@@ -739,9 +740,6 @@ function getContentDimsStyle(dims){
 }
 
 $(document).ready(function(){
-  cardReset();
-});
-$(window).resize( function() {
   cardReset();
 });
 
