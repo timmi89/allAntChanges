@@ -23,7 +23,7 @@
 
 {% if not profile_user and not group and not board %}
 {% if not query_string and not singleton %}
-<div class="tag_cloud_container">
+<div id="tag_cloud_container">
     <section role="tag cloud grid">
         <!-- this will get dynamically populated -->
     </section>
@@ -147,7 +147,12 @@
                         currentTagBoxAnimating++;
                         if ( currentTagBoxAnimating > tagBoxesCount ) {
                             clearInterval( animationQueue );
+                            initHorizontalScrollbar();
                         }
+                    }
+                    function initHorizontalScrollbar(){
+                        $('#tag_cloud_container').jScrollPane();
+                        // $('section[role="tag cloud grid"]').jScrollPane();
                     }
                 });
 
