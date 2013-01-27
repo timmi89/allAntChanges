@@ -26,7 +26,7 @@
 /* global for now */
 
 /* fix the damn box model */
-* { box-sizing: border-box; }
+* { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; }
 h1, 
 h2 { font-family:Helvetica,'HelveticaBold',Arial; }
 
