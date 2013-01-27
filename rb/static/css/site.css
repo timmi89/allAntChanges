@@ -858,4 +858,10 @@ section[role="datepicker"]      { font-size:12px; background:#eee; padding:5px; 
 section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
 section[role="datepicker"] label  { display:inline; }
 #ui-datepicker-div {z-index:11 !important;}
+section[role="interaction frequency"]         { overflow:auto; text-align:center; }
+div[role="total interactions"] h1      { font-family:Helvetica,'HelveticaBold',Arial; font-size:180px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+div[role="total interactions"]            { text-align:center;}
+
+
+
 

@@ -28,7 +28,17 @@
 <section role="panels">
 
 	<div class="section_content">
-        <div class="reactions">
+		<div role="total interactions">
+			<h1>0</h1>
+			<h4>Interactions</h4>
+		</div>
+        <div class="reactions" style="width:960px;overflow:hidden;">
+        	<div id="tag_cloud_container">
+			    <section role="tag cloud grid">
+			        <!-- this will get dynamically populated -->
+			    </section>
+			</div>
+			<!--
             <div class="other_reactions">
                 <section role="most popular tags">
                     <h1 class="sectionHeader">Other Reactions</h1>
@@ -47,24 +57,16 @@
                     </div>
                 </div>
             </div>
+        	-->
         </div>
     </div>
 	<section role="wide panels">
 
 		<section role="interaction frequency">
-			<div role="total interactions">
-				<h1>0</h1>
-				<h4>Interactions</h4>
-			</div>
 			<div role="frequency chart" id="frequency_chart">
 				<h5>frequency chart</h5>
 			</div>
 		</section> <!-- / interaction frequency -->
-
-		<!-- <section role="most popular tags">
-			<h3>Most Popular Tags</h3>
-			<ol></ol>
-		</section> --> <!-- /most popular tags -->
 
 		<section role="most active pages">
 			<h3>Most Active Pages</h3>
@@ -177,11 +179,81 @@ RB.analytics = {
 				if (type == "tags") {
 					// function SortByTagCount(a,b) { return b.count - a.count; }
                 	// interaction_order.sort( SortByTagCount );
+console.dir(response);
+					
+					function SortByTagCount(a,b) { return b.count - a.count; }
+	                var sorted_interactions = [];
 
-					var other_tag_list = "",
-						$pie_chart_labels = $('#pie_chart_labels ol'),
-						tag_count = 0,
-						pie_chart_data = [];
+	                $.each( response, function(idx, reaction_data) {
+	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
+	                });
+console.dir(sorted_interactions);
+	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
+
+	                // do tag cloud logic
+	                // render the tag cloud
+	                // medium, small, small, big
+	                var boxSizes = [ "medium", "small", "small", "big" ],
+	                    currentBoxSize = 0,
+	                    colorInt = 1,
+	                    $tagCloud = $('section[role="tag cloud grid"]');
+	                while ( sorted_interactions.length ) {
+	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
+	                        var median = Math.floor(sorted_interactions.length/2);
+	                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                        sorted_interactions.splice( median, 1 );
+	                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
+	                        var thisTag = sorted_interactions.pop(),
+	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
+	                        var thisTag = sorted_interactions.shift(),
+	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                    }
+	                    
+	                    // set next color and box size
+	                    colorInt++;
+	                    currentBoxSize++;
+	                    if ( colorInt == 6 ) colorInt = 1;
+	                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
+	                }
+
+	                // isotope and bigtext the cloud
+	                $('section[role="tag cloud grid"]').isotope({
+	                  layoutMode: 'masonryHorizontal',
+	                  masonryHorizontal: {
+	                    rowHeight: 70
+	                  }
+	                }, function() {
+	                    $('.box').bigtext();
+	                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+	                        currentTagBoxAnimating = 0;
+	                    var animationQueue = setInterval( animateNextBox, 100 );
+
+	                    function animateNextBox() {
+	                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+	                        if ( $thisBox.hasClass('box1') ) {
+	                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+	                        } else {
+	                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+	                        }
+	                        currentTagBoxAnimating++;
+	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+	                            clearInterval( animationQueue );
+	                            initHorizontalScrollbar();
+	                        }
+	                    }
+	                    function initHorizontalScrollbar(){
+	                        $('#tag_cloud_container').jScrollPane();
+	                        // $('section[role="tag cloud grid"]').jScrollPane();
+	                    }
+	                });
+					/*
+
+					var tag_count = 0;
+
 					for ( var i in response ) {
 						if ( tag_count < 8 ) {
 							$pie_chart_labels.append('<li><a href="/group/'+RB.group.short_name+'/?s='+response[i].interaction_node__body+'">'+response[i].interaction_node__body+' <span>('+response[i].count+')</span></a></li>');
@@ -205,67 +277,7 @@ RB.analytics = {
 						$('div.most_popular').removeClass('solo').siblings().show();
 						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
 					}
-                
-                // Build the chart
-                var pie_chart;
-                pie_chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'pie_chart',
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false
-                    },
-                    title: {
-                        text: ''
-                    },
-                    tooltip: {
-                        // pointFormat: '{series.name}',
-                        // enabled:false
-                    },
-                    plotOptions: {
-                        series: {
-                            point: {
-                        events: {
-                            mouseOver: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
-                            },
-                            mouseOut: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
-                            }
-                        }
-                    },
-                        },
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'Reactions',
-                        data: pie_chart_data
-                    }]
-                });
-				} else if (type=="bookmarks") {
-					// var bookmarkHtml = "";
-					// for ( var i in response ) {
-					// 	var bookmark = response[i];
-					// 	bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
-					// 	for ( var j in bookmark[1].related_reactions ) {
-					// 		var reaction = bookmark[1].related_reactions[j];
-					// 		bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
-					// 		if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
-					// 	}
-					// 	bookmarkHtml += '</td></tr>'; 
-					// 	// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
-					// }
-
-					// $('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
+					*/
 				} else if (type=="shares") {
 
 					var shareHtml = "";
@@ -416,6 +428,7 @@ RB.analytics = {
 				$('div[role="total interactions"] h1').text( total );
 
 				// make chart
+				// keep this chart for now
 				var chart;
 				chart = new Highcharts.Chart({
 					chart: {
