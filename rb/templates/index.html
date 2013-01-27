@@ -40,6 +40,7 @@
 .color4 { background:#9dd55e; }
 .color5 { background:#495564; }
 </style>
+<div class="tag_cloud_container">
 <section role="tag cloud grid">
     <div class="color1 box2 box"><div class="tag">lol<br><span class="count">101</span></div></div>
     <div class="color1 box3 box"><div class="tag">craisins<br/><span class="count">14</span></div></div>
@@ -58,6 +59,7 @@
     <div class="color5 box3 box"><div class="tag">meh<br/><span class="count">5</span></div></div>
     <div class="color1 box1 box"><div class="tag">unicorns<br/><span class="count">275</span></div></div>
 </section>
+</div>
 <script>
 // logic to pull the tags from the results array:  middle, last, last, first
 // then get count of colors, and iterate through
@@ -70,62 +72,6 @@ $('section[role="tag cloud grid"]').isotope({
 });
 $('.box').bigtext().click( function() { window.location.href += 's='+$(this).data('tag'); });;
 </script>
-<h2>All Reactions</h2>
-<div id="how_the_web_feels">
-    <div class="section_content">
-        <div class="reactions">
-            <div class="other_reactions">
-                <section role="most popular tags">
-                    <h1 class="sectionHeader">Other Reactions</h1>
-                    <ol></ol>
-                </section>
-            </div>
-            <div class="most_popular">
-
-            </div>
-        </div>
-    </div>
-</div>
-<div id="more_info">
-    <div class="section_content">
-        <div class="whatIsReadrBoard">
-            <div class="whatIsReadrBoardWrap">
-                <h2>What is ReadrBoard?</h2>
-                ReadrBoard makes it easy to react to any phrase, 
-                image, video, or article on the web -- with the click of a button.
-                <div><a href="/publishers/">Add to your website</a> &nbsp;|&nbsp;<a href="/react/">Add to your browser</a></div>
-            </div>
-        </div>
-        <div class="featureQuoteWrap">
-            <div class="featureQuoteWrapInner">
-                <a href="http://www.readrboard.com/user/1662/" target="_blank">
-                    <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
-                </a>
-                <h3>
-                    <em>"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</em>
-                    <span class="alexis">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a></span>
-                    <span class="cofounder">Co-Founder, Reddit</span>
-                </h3>
-            </div>
-        </div>
-        <div class="asSeenOnWrap">
-            <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
-            </a>
-            <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
-            </a>
-
-            <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
-            </a>
-
-            <a class="a4" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
-            </a>
-        </div>
-    </div>
-</div>
 {% endif %}
 {% endif %}
 
@@ -194,22 +140,9 @@ $('.box').bigtext().click( function() { window.location.href += 's='+$(this).dat
                 });
 
                 interaction_order.sort( SortByTagCount ); // each as a .body and a .count
-                // reactions
-                var chart_data = [],
-                    index = 0;
 
-                $.each( interaction_order, function(idx, reaction) {
-                    var $pie_chart_labels = $('#pie_chart_labels ol'),
-                        $other_reactions = $('section[role="most popular tags"] ol');
-                    if (index<8) {
-                        $pie_chart_labels.append('<li><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
-                        chart_data.push( [reaction.body, reaction.count] );
-                    } else {
-                        $other_reactions.append('<li class="medium"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
-                    }
-                    index++;
-                });
-
+                // do tag cloud logic
+                
                 // people
                 $.each( response.data.users, function(user_id, user_data) {
                     var $active_people = $('div.people ul');
