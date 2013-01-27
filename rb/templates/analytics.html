@@ -4,16 +4,9 @@
 
 {% block bodyClass %}wide{% endblock %}
 
-{% block topjavascript %}
-<script src="{{ STATIC_URL }}global/js/jquery-1.6.2.min.js"></script>
-<script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
+{% block extendedHead %}
 <script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
-{% endblock %}
-
-{% block extendedHead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
 <style>
     section[role="datepicker"] button {

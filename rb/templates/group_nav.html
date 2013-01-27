@@ -24,3 +24,12 @@ section[role="content"] {padding-bottom:30px !important;}
 	</section>
 </div>
 {% endif %}
+
+{% if cookie_user and cookie_user.social_user and not cookie_user.social_user.admin_group %}
+<div id="publisher_promo" onclick="window.location.href='/publishers/'">
+	<section>
+  		<h1><i class="icon-heart"></i> Publishers!</h1>
+  		<p>ReadrBoard increases your engagement &amp; builds your community, for FREE.  <a href="/publishers/">Learn more.</a></p>
+	</section>
+</div>
+{% endif %}

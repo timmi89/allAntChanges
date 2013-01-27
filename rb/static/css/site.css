@@ -852,3 +852,10 @@ div.splashQuote {
 #publisher_promo a  { font-weight:bold; }
 
 
+
+/* analytics */
+section[role="datepicker"]      { font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
+section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
+section[role="datepicker"] label  { display:inline; }
+#ui-datepicker-div {z-index:11 !important;}
+
