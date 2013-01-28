@@ -189,9 +189,9 @@ function readrBoard($R){
                 );
 
                 var $header = $('<div class="rdr rdr_header">');
+                var $header_arrow = $('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
                 var $loader = $('<div class="rdr_loader" />');
-                $header.append($loader);
-                $header.append($headerContent);
+                $header.append( $header_arrow, $loader, $headerContent );
                 
                 $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
                     RDR.events.track('click_rb_icon_rindow');
@@ -456,13 +456,12 @@ function readrBoard($R){
                 // var $jsPane = $elm.find('div.jspPane');
                 var containerWidth = $rindow.data('initialWidth');
 
-                var width;
-                var height;
-                var adjedHeight;
+                var width,
+                    height;
 
                 //fix this later.  We should be expanding only the body instead of the whole thing so we dont need this.
                 //note - includes padding
-                var rindowHeaderHeight = 29;
+                var rindowHeaderHeight = 0;
 
                 var defaults = {
                     h: 200,
@@ -479,17 +478,16 @@ function readrBoard($R){
 
                 width = options.setWidth || defaults.w;
                 height = options.setHeight || defaults.h;
-                adjedHeight = height + rindowHeaderHeight;
             
                 if(options.noAnimate){
                     $rindow.css({
                         width: width,
-                        height: adjedHeight
+                        height: height
                     });
                 }
                 $rindow.animate({
                     width: width,
-                    height: adjedHeight
+                    height: height
                 },{
                     duration: defaults.duration,
                     queue:false
@@ -1135,6 +1133,7 @@ function readrBoard($R){
                             }
                         } else {
                             // readMode
+                            // show textmode
                             var selector = ".rdr-" + hash;
 
                             var $indicator = $('#rdr_indicator_'+hash),
@@ -1143,7 +1142,7 @@ function readrBoard($R){
                             $container = $('.rdr-'+hash);
 
                             coords = {
-                                top: $indicator_body.offset().top -8,
+                                top: $indicator_body.offset().top + 22,
                                 left: $indicator_body.offset().left -5
                             };
 
@@ -1198,12 +1197,12 @@ function readrBoard($R){
 
                         /* START modify the rindow size */
                         var contentWidth = $bodyWrap.width(),
-                            contentHeight = $bodyWrap.height() + RDR.C.rindowHeaderPadding;
+                            contentHeight = $bodyWrap.height() + RDR.C.rindowHeaderPadding;  // canwechangethis
                             
                         var newCoords = RDR.util.stayInWindow({coords:coords, width:contentWidth, height:contentHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         $rindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
-
+console.log('contentHeight: '+contentHeight);
                         $rindow.animate({
                             width:contentWidth,
                             height:contentHeight
@@ -1319,14 +1318,15 @@ function readrBoard($R){
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
                 
-                if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here
+                if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
                     $new_rindow.html('');
                     $new_rindow.append(
                         '<div class="rdr rdr_header rdr_brtr rdr_brtl">'+
-                        '<div class="rdr_loader"/></div>'+
-                            '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
-                            '<div class="rdr rdr_footer rdr_brbr rdr_brbl">'+
-                        '</div>' 
+                            '<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
+                            '<div class="rdr_loader"></div>'+
+                        '</div>'+
+                        '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
+                        '<div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>'
                     );
 
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
