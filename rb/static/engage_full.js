@@ -1196,16 +1196,14 @@ function readrBoard($R){
                         /* END create the tag pills.  read / write mode matters. */
 
                         /* START modify the rindow size */
-                        var contentWidth = $bodyWrap.width(),
-                            contentHeight = $bodyWrap.height() + RDR.C.rindowHeaderPadding;  // canwechangethis
+                        var contentWidth = $bodyWrap.width();
                             
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:contentWidth, height:contentHeight, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = RDR.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         $rindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
-console.log('contentHeight: '+contentHeight);
+
                         $rindow.animate({
-                            width:contentWidth,
-                            height:contentHeight
+                            width:contentWidth
                         }, 333, 'swing' );
 
                         $rindow.data( 'initialWidth', contentWidth );
