@@ -13,7 +13,7 @@ RDR.hasLoaded = true;
 
 /*some constants that we need for now*/
 RDR.C = {
-    /*tied to div.rdr a.rdr_tag height*/
+    /*tied to div.rdr div.rdr_tag height*/
     summaryWidgetMaxHeight: 68,
      //+ header height + extra padding;
     rindowHeaderPadding: 29,
@@ -334,7 +334,7 @@ function readrBoard($R){
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
                 }else{
                     var isWriteMode = $rindow.hasClass('rdr_writemode');
-                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow, isWriteMode);
+                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode);
                 }
                 
                 var className = "rdr_tags_list";
@@ -537,9 +537,7 @@ function readrBoard($R){
 
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
 
-                                var isThinMedia = ( $rindow.width() < 200 && kind != "text" );
-                                var widthClass = isThinMedia ? 'rdr_thin' : 'rdr_wide';
-                                var $success = $('<div class="rdr_view_success '+widthClass+'"></div>'),
+                                var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
                                     $h1 = $('<h1><span>You reacted:</span> ' + tag.body + '</h1></div>').appendTo( $subheader ),
                                     undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
@@ -830,15 +828,18 @@ function readrBoard($R){
             //     */
             //     return gotoHeight;
             // },
+            
             pillTable: {
+                // deprecated
                 make: function( maxWidth ) {
+                    // deprecated
                     //RDR.rindow.pillTable.make
                     var $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" style="max-width:'+maxWidth+'px;"><tr></tr></table>');
                     return $tag_table;
                 },
                 getNextCell: function( tag, $tag_table, maxWidth, useGutter ) {
+                    // deprecated
                     //RDR.rindow.pillTable.getNextCell
-                   
 
                     var pill_width = RDR.rindow.pill.getWidth( tag ),
                         $rows = $tag_table.find('tr'),
@@ -898,8 +899,9 @@ function readrBoard($R){
                     return $last_cell_wrapper;
                 }
             },
-            pill: {
+            tagBox: {
                 getWidth: function( tag ) {
+                    // deprecated?
                     //RDR.rindow.pill.getWidth
                     //write a quick pill to the sandbox to get its width, then remove it.
 
@@ -914,12 +916,11 @@ function readrBoard($R){
                     return pill_width;
                 },
                 make: function( tag, $container, $rindow, content_node_id ) {
-                    //RDR.rindow.pill.make:
+                    //RDR.rindow.tagBox.make:
                     var tagCount = ( tag.count ) ? tag.count:"",
                         hash = $rindow.data('container'),
                         summary = RDR.summaries[hash],
-                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
-                        pill_width = RDR.rindow.pill.getWidth( tag );
+                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"";
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( tagCount == "" ) {
@@ -929,9 +930,15 @@ function readrBoard($R){
                             message = tagCount+' '+peoples+' had this reaction. Click to agree.',
                             tagCount = '(' + tagCount + ')';
                     }
-                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'">'+tag.body+'</a>').data('tag_id',tag.id);
-                    
-                    var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
+
+                    // pre-tagBox:
+                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
+
+                    // PORTER RESUME HERE
+                    // temp:
+                        var colorInt = 1,
+                            boxSize = 1;
+                    var $tagBox = $('<div class="rdr_color'+colorInt+' rdr_box'+boxSize+' rdr_box"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tag.body+'<br/><span class="rdr_count">'+tagCount+'</span></div></div>')
                         .data({
                             tag_id: tag.id,
                             tag_count: tagCount,
@@ -939,11 +946,11 @@ function readrBoard($R){
                         });
 
                     if ( content_node_id ) {
-                        $a.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
+                        $tagBox.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
                         content_node.id = content_node_id;
                     }
 
-                    $a.click( function() {
+                    $tagBox.click( function() {
                         $(this).addClass('rdr_tagged');
                         $rindow.removeClass('rdr_rewritable');
                         var hash = $rindow.data('container');
@@ -963,7 +970,7 @@ function readrBoard($R){
                         $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
                     });
 
-                    $container.append( $a, " " );
+                    $container.append( $tagBox, " " );
                     // $('a.rdr_tooltip_this').tooltip({  });
 
                     // figure out if we should add a comment indicator + comment hover
@@ -1007,19 +1014,11 @@ function readrBoard($R){
                             return false;
                         });
 
-                        // $a.append('<span class="rdr_comment_indicator"></span>');
-
-                        $a.append( $commentHover );
+                        $tagBox.append( $commentHover );
                         $commentHover.tooltip();
-                        $a.closest('td').addClass('rdr_has_pillHover');
-
-                        // if (pill_width > (max_width+18)) {
-                        //     $a.closest('td').addClass('rdr_truncated_pill');
-                        //     $a.find('span.rdr_tag_name').append('<span class="rdr_truncated" />');
-                        // }
                     }
 
-                    return $a;
+                    return $tagBox;
                 }
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
@@ -1045,7 +1044,7 @@ function readrBoard($R){
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                         }
-                        // $input.closest('a.rdr_tag').removeClass('rdr_hover');
+                        // $input.closest('div.rdr_tag').removeClass('rdr_hover');
                     }).keyup( function(event) {
                         var $input = $(this),
                             tag = {},
@@ -1094,7 +1093,7 @@ function readrBoard($R){
 
                         /* START create rindow based on write vs. read mode */
                         if ( settings.mode == "writeMode" ) {
-
+                            // show writemode text
                             // writeMode
                             RDR.events.track('start_react_text');
                             var newSel;
@@ -1126,6 +1125,7 @@ function readrBoard($R){
                                 }
                             } else {
                                 // draw the window over the actionbar
+                                // is this used??
                                 var coords = {
                                     top: $container.offset().top,
                                     left: $container.offset().right
@@ -1133,7 +1133,7 @@ function readrBoard($R){
                             }
                         } else {
                             // readMode
-                            // show textmode
+                            // show readmode text
                             var selector = ".rdr-" + hash;
 
                             var $indicator = $('#rdr_indicator_'+hash),
@@ -1168,7 +1168,6 @@ function readrBoard($R){
                         summary['$rindow_'+settings.mode.toLowerCase()] = $rindow;
                         $rindow.addClass('rdr_'+settings.mode.toLowerCase());
                         /* END do some utility stuff */
-                        //lol wat ?
 
                         /* START populate the header */
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
@@ -1179,7 +1178,10 @@ function readrBoard($R){
                         /* START create the tag pills.  read / write mode matters. (??) */
                         $rindow.addClass('rdr_reactions');
 
+                        // should be removeable START
+                        // b/c we should be unifying media + txt, and this line is for the media drawer, i think.  [pb]
                         if ( $rindow.find('table.rdr_tags').length ) return;
+                        // should be removeable END
                         var $bodyWrap = $rindow.find('div.rdr_body_wrap');
                         var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
 
@@ -1188,11 +1190,9 @@ function readrBoard($R){
                             $oldTagList.remove();
                         }
 
-                        var $tagList = RDR.actions.indicators.utils.makeTagsListForText( $rindow, settings.mode == "writeMode" );
+                        // write inline tags: initial rindow instantiation
+                        var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
                         $bodyWrap.append($tagList);
-                        
-
-
                         /* END create the tag pills.  read / write mode matters. */
 
                         /* START modify the rindow size */
@@ -1210,7 +1210,7 @@ function readrBoard($R){
 
 
                         //todo
-                        $rindow.find('div.rdr_cell_wrapper a.rdr_tag').css({'width':'100%'});
+                        $rindow.find('div.rdr_cell_wrapper div.rdr_tag').css({'width':'100%'});
 
                         // return $rindow to RDR.rindow.make
                         return $rindow;
@@ -4214,7 +4214,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         'id':content_node.id
                                     };
                                 }else{
-                                    var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
+                                    var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
                                         selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
                                         if(!selState){
                                             RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
@@ -4704,7 +4704,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     'kind':kind
                                 };
                             }else{
-                                var content_node_id = rindow.find('a.rdr_tag_'+tag.id).data('content_node_id'),
+                                var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
                                     selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
 
                                 content_node_data = {
@@ -5275,7 +5275,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         }else{
                             //this shouldn't happen with how things are setup now... consolodate later.
-                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow );
+                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
                         }
 
                         $bodyWrap.append($tagsListContainer);
@@ -5284,79 +5284,47 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
 
                     //move these from indicators-  they dont belong here
-                    makeTagsListForText: function( $rindow, isWriteMode ){
-                        //RDR.actions.indicators.utils.makeTagsListForText:
+                    makeTagsListForInline: function( $rindow, isWriteMode ){
+                        //RDR.actions.indicators.utils.makeTagsListForInline:
                         //todo: consolodate this with the same function for makeTagsListForMedia
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
 
                         var tagsListMaxWidth = 100;
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />'),
-                            $tag_table = RDR.rindow.pillTable.make( tagsListMaxWidth );
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
 
-                        $rindow.append($tag_table);
+                        $rindow.append($tagsListContainer);
                         
                         if ( isWriteMode ) {
-
+                            // PORTER RESUME HERE
+                            // write inline tags: writemode
                             $.each( RDR.group.blessed_tags, function( idx, tag ){
-                                // don't write an empty blessed tag pill
-                                if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
-                                    // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
-                                    var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
-                                        $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, false );
+                                // don't write an empty blessed tag box
+                                if ( !$tagsListContainer.find('div.rdr_tag_'+tag.id).length ) {
+                                    var $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, false );
 
                                 }
                             });
 
                         } else {
+                            // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
                             $.each( summary.interaction_order, function( idx, interaction ){
                                 var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
-                                    $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
-                                    $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, interaction.content_node_id );
+                                    $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
                             });
                         }
 
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
                         if ( isWriteMode ) {
-                            // the custom_tag is used for simulating the creation of a custom pill, to get the right width
+                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, 200 ),
-                                // $pill_container = $tag_table.find('td:last-child'),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow );
+                                $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
 
                                 $rindow.removeClass('rdr_rewritable');
                         }
 
-                        $tag_table.find('tr').each( function() {
-                            $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
-                        });
-
-                        if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
-                            $tag_table.addClass('rdr-one-column');
-
-                            $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
-                                var $this = $(this),
-                                    $rindow = $this.closest('div.rdr_window');
-
-                                thisWidth = $rindow.data('initialWidth');
-                            }).on('mouseleave', function() {
-                                var $this = $(this),
-                                    $rindow = $this.closest('div.rdr_window');
-                                thisWidth = $rindow.width();
-                            });
-                        }
-
-                        // now that we've created the first row, unset the max-width and set the table width.
-                        // this lets us have the table flow to full width... without having had to loop through
-                        // table cells in getNextCell to recalculate the width throughout
-                        var tableTableWidth = ( $tag_table.find('td').length == 1 ) ? ( $rindow.width() ) : 200;
-                        $tag_table.css('max-width','none').width(tableTableWidth);
-
-                        // if (actionType=="bookmark") {
-                        //     $tag_table.append('<tr class="rdr_note_instruction"><td colspan="100"><div class="rdr_info"><em>Notes are private.  Only you can see them.</em></div></td></tr>');
-                        // }
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( !isWriteMode ) {
                             $rindow.on( 'mouseleave', function(e) {
@@ -5379,7 +5347,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.find('div.rdr_cell_wrapper').each( function() {
                                 $(this).hover(
                                     function() {
-                                        var selState = summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState;
+                                        var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
                                         //make sure it's not already transitiontion into a success state
                                         //hacky because sometimes it doesnt have the data for 1 yet
                                         var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
@@ -5389,7 +5357,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     },
                                     function() {
-                                        var selState = summary.content_nodes[$(this).find('a.rdr_tag').data('content_node_id')].selState;
+                                        var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
                                         //make sure it's not already transitiontion into a success state
                                         //hacky because sometimes it doesnt have the data for 1 yet
                                         var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
@@ -5428,7 +5396,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $.each( RDR.group.blessed_tags, function( idx, tag ){
                                 // don't write an empty blessed tag pill
-                                if ( !$tag_table.find('a.rdr_tag_'+tag.id).length ) {
+                                if ( !$tag_table.find('div.rdr_tag_'+tag.id).length ) {
                                     // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
                                     var $pill_container = $tag_table.find('td:last-child'),
                                         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, false );
@@ -5961,9 +5929,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
             },
             insertContainerIcon: function( hash ) {},
-            viewContainerReactions: function( hash ) {
-                //Note: No longer used --> moved to RDR.rindow.make('readMode', options)
-            },
             viewReactionSuccess: function(args) {
                 //RDR.actions.viewReactionSuccess
                 var tag = args.tag,
@@ -6003,7 +5968,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     if (isMediaContainer){
                         var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
                     }else{
-                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForText( $rindow );
+                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
                     }
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
@@ -7006,6 +6971,7 @@ function $RFunctions($R){
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_scrollStartAndStop($R);
+        plugin_jquery_isotope($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_bigText($R);
         plugin_jquery_hoverIntent($R);
@@ -7870,7 +7836,7 @@ function $RFunctions($R){
                 function writeTag(tag, page) {
                     var tagCount, $span;
 
-                    if ( $react.find('a.rdr_tag_'+tag.id).length === 0 ) { // removing tag count check for now:  && $react.find('a.rdr_tag').length < 4
+                    if ( $react.find('div.rdr_tag_'+tag.id).length === 0 ) { // removing tag count check for now:  && $react.find('div.rdr_tag').length < 4
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"+";
 
                         if ( tagCount == "+" ) {
@@ -9239,6 +9205,25 @@ function $RFunctions($R){
             * @version ??
             */
             var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
+        }
+
+        function plugin_jquery_isotope($){
+            /**
+             * Isotope v1.5.25
+             * An exquisite jQuery plugin for magical layouts
+             * http://isotope.metafizzy.co
+             *
+             * Commercial use requires one-time license fee
+             * http://metafizzy.co/#licenses
+             *
+             * Copyright 2012 David DeSandro / Metafizzy
+             */
+            //fix minifier quirks
+            var b = $,
+            a = window,
+            c = undefined;
+            "use strict";
+            var d=a.document,e=a.Modernizr,f=function(a){return a.charAt(0).toUpperCase()+a.slice(1)},g="Moz Webkit O Ms".split(" "),h=function(a){var b=d.documentElement.style,c;if(typeof b[a]=="string")return a;a=f(a);for(var e=0,h=g.length;e<h;e++){c=g[e]+a;if(typeof b[c]=="string")return c}},i=h("transform"),j=h("transitionProperty"),k={csstransforms:function(){return!!i},csstransforms3d:function(){var a=!!h("perspective");if(a){var c=" -o- -moz- -ms- -webkit- -khtml- ".split(" "),d="@media ("+c.join("transform-3d),(")+"modernizr)",e=b("<style>"+d+"{#modernizr{height:3px}}"+"</style>").appendTo("head"),f=b('<div id="modernizr" />').appendTo("html");a=f.height()===3,f.remove(),e.remove()}return a},csstransitions:function(){return!!j}},l;if(e)for(l in k)e.hasOwnProperty(l)||e.addTest(l,k[l]);else{e=a.Modernizr={_version:"1.6ish: miniModernizr for Isotope"};var m=" ",n;for(l in k)n=k[l](),e[l]=n,m+=" "+(n?"":"no-")+l;b("html").addClass(m)}if(e.csstransforms){var o=e.csstransforms3d?{translate:function(a){return"translate3d("+a[0]+"px, "+a[1]+"px, 0) "},scale:function(a){return"scale3d("+a+", "+a+", 1) "}}:{translate:function(a){return"translate("+a[0]+"px, "+a[1]+"px) "},scale:function(a){return"scale("+a+") "}},p=function(a,c,d){var e=b.data(a,"isoTransform")||{},f={},g,h={},j;f[c]=d,b.extend(e,f);for(g in e)j=e[g],h[g]=o[g](j);var k=h.translate||"",l=h.scale||"",m=k+l;b.data(a,"isoTransform",e),a.style[i]=m};b.cssNumber.scale=!0,b.cssHooks.scale={set:function(a,b){p(a,"scale",b)},get:function(a,c){var d=b.data(a,"isoTransform");return d&&d.scale?d.scale:1}},b.fx.step.scale=function(a){b.cssHooks.scale.set(a.elem,a.now+a.unit)},b.cssNumber.translate=!0,b.cssHooks.translate={set:function(a,b){p(a,"translate",b)},get:function(a,c){var d=b.data(a,"isoTransform");return d&&d.translate?d.translate:[0,0]}}}var q,r;e.csstransitions&&(q={WebkitTransitionProperty:"webkitTransitionEnd",MozTransitionProperty:"transitionend",OTransitionProperty:"oTransitionEnd otransitionend",transitionProperty:"transitionend"}[j],r=h("transitionDuration"));var s=b.event,t=b.event.handle?"handle":"dispatch",u;s.special.smartresize={setup:function(){b(this).bind("resize",s.special.smartresize.handler)},teardown:function(){b(this).unbind("resize",s.special.smartresize.handler)},handler:function(a,b){var c=this,d=arguments;a.type="smartresize",u&&clearTimeout(u),u=setTimeout(function(){s[t].apply(c,d)},b==="execAsap"?0:100)}},b.fn.smartresize=function(a){return a?this.bind("smartresize",a):this.trigger("smartresize",["execAsap"])},b.Isotope=function(a,c,d){this.element=b(c),this._create(a),this._init(d)};var v=["width","height"],w=b(a);b.Isotope.settings={resizable:!0,layoutMode:"masonry",containerClass:"isotope",itemClass:"isotope-item",hiddenClass:"isotope-hidden",hiddenStyle:{opacity:0,scale:.001},visibleStyle:{opacity:1,scale:1},containerStyle:{position:"relative",overflow:"hidden"},animationEngine:"best-available",animationOptions:{queue:!1,duration:800},sortBy:"original-order",sortAscending:!0,resizesContainer:!0,transformsEnabled:!0,itemPositionDataEnabled:!1},b.Isotope.prototype={_create:function(a){this.options=b.extend({},b.Isotope.settings,a),this.styleQueue=[],this.elemCount=0;var c=this.element[0].style;this.originalStyle={};var d=v.slice(0);for(var e in this.options.containerStyle)d.push(e);for(var f=0,g=d.length;f<g;f++)e=d[f],this.originalStyle[e]=c[e]||"";this.element.css(this.options.containerStyle),this._updateAnimationEngine(),this._updateUsingTransforms();var h={"original-order":function(a,b){return b.elemCount++,b.elemCount},random:function(){return Math.random()}};this.options.getSortData=b.extend(this.options.getSortData,h),this.reloadItems(),this.offset={left:parseInt(this.element.css("padding-left")||0,10),top:parseInt(this.element.css("padding-top")||0,10)};var i=this;setTimeout(function(){i.element.addClass(i.options.containerClass)},0),this.options.resizable&&w.bind("smartresize.isotope",function(){i.resize()}),this.element.delegate("."+this.options.hiddenClass,"click",function(){return!1})},_getAtoms:function(a){var b=this.options.itemSelector,c=b?a.filter(b).add(a.find(b)):a,d={position:"absolute"};return c=c.filter(function(a,b){return b.nodeType===1}),this.usingTransforms&&(d.left=0,d.top=0),c.css(d).addClass(this.options.itemClass),this.updateSortData(c,!0),c},_init:function(a){this.$filteredAtoms=this._filter(this.$allAtoms),this._sort(),this.reLayout(a)},option:function(a){if(b.isPlainObject(a)){this.options=b.extend(!0,this.options,a);var c;for(var d in a)c="_update"+f(d),this[c]&&this[c]()}},_updateAnimationEngine:function(){var a=this.options.animationEngine.toLowerCase().replace(/[ _\-]/g,""),b;switch(a){case"css":case"none":b=!1;break;case"jquery":b=!0;break;default:b=!e.csstransitions}this.isUsingJQueryAnimation=b,this._updateUsingTransforms()},_updateTransformsEnabled:function(){this._updateUsingTransforms()},_updateUsingTransforms:function(){var a=this.usingTransforms=this.options.transformsEnabled&&e.csstransforms&&e.csstransitions&&!this.isUsingJQueryAnimation;a||(delete this.options.hiddenStyle.scale,delete this.options.visibleStyle.scale),this.getPositionStyles=a?this._translate:this._positionAbs},_filter:function(a){var b=this.options.filter===""?"*":this.options.filter;if(!b)return a;var c=this.options.hiddenClass,d="."+c,e=a.filter(d),f=e;if(b!=="*"){f=e.filter(b);var g=a.not(d).not(b).addClass(c);this.styleQueue.push({$el:g,style:this.options.hiddenStyle})}return this.styleQueue.push({$el:f,style:this.options.visibleStyle}),f.removeClass(c),a.filter(b)},updateSortData:function(a,c){var d=this,e=this.options.getSortData,f,g;a.each(function(){f=b(this),g={};for(var a in e)!c&&a==="original-order"?g[a]=b.data(this,"isotope-sort-data")[a]:g[a]=e[a](f,d);b.data(this,"isotope-sort-data",g)})},_sort:function(){var a=this.options.sortBy,b=this._getSorter,c=this.options.sortAscending?1:-1,d=function(d,e){var f=b(d,a),g=b(e,a);return f===g&&a!=="original-order"&&(f=b(d,"original-order"),g=b(e,"original-order")),(f>g?1:f<g?-1:0)*c};this.$filteredAtoms.sort(d)},_getSorter:function(a,c){return b.data(a,"isotope-sort-data")[c]},_translate:function(a,b){return{translate:[a,b]}},_positionAbs:function(a,b){return{left:a,top:b}},_pushPosition:function(a,b,c){b=Math.round(b+this.offset.left),c=Math.round(c+this.offset.top);var d=this.getPositionStyles(b,c);this.styleQueue.push({$el:a,style:d}),this.options.itemPositionDataEnabled&&a.data("isotope-item-position",{x:b,y:c})},layout:function(a,b){var c=this.options.layoutMode;this["_"+c+"Layout"](a);if(this.options.resizesContainer){var d=this["_"+c+"GetContainerSize"]();this.styleQueue.push({$el:this.element,style:d})}this._processStyleQueue(a,b),this.isLaidOut=!0},_processStyleQueue:function(a,c){var d=this.isLaidOut?this.isUsingJQueryAnimation?"animate":"css":"css",f=this.options.animationOptions,g=this.options.onLayout,h,i,j,k;i=function(a,b){b.$el[d](b.style,f)};if(this._isInserting&&this.isUsingJQueryAnimation)i=function(a,b){h=b.$el.hasClass("no-transition")?"css":d,b.$el[h](b.style,f)};else if(c||g||f.complete){var l=!1,m=[c,g,f.complete],n=this;j=!0,k=function(){if(l)return;var b;for(var c=0,d=m.length;c<d;c++)b=m[c],typeof b=="function"&&b.call(n.element,a,n);l=!0};if(this.isUsingJQueryAnimation&&d==="animate")f.complete=k,j=!1;else if(e.csstransitions){var o=0,p=this.styleQueue[0],s=p&&p.$el,t;while(!s||!s.length){t=this.styleQueue[o++];if(!t)return;s=t.$el}var u=parseFloat(getComputedStyle(s[0])[r]);u>0&&(i=function(a,b){b.$el[d](b.style,f).one(q,k)},j=!1)}}b.each(this.styleQueue,i),j&&k(),this.styleQueue=[]},resize:function(){this["_"+this.options.layoutMode+"ResizeChanged"]()&&this.reLayout()},reLayout:function(a){this["_"+this.options.layoutMode+"Reset"](),this.layout(this.$filteredAtoms,a)},addItems:function(a,b){var c=this._getAtoms(a);this.$allAtoms=this.$allAtoms.add(c),b&&b(c)},insert:function(a,b){this.element.append(a);var c=this;this.addItems(a,function(a){var d=c._filter(a);c._addHideAppended(d),c._sort(),c.reLayout(),c._revealAppended(d,b)})},appended:function(a,b){var c=this;this.addItems(a,function(a){c._addHideAppended(a),c.layout(a),c._revealAppended(a,b)})},_addHideAppended:function(a){this.$filteredAtoms=this.$filteredAtoms.add(a),a.addClass("no-transition"),this._isInserting=!0,this.styleQueue.push({$el:a,style:this.options.hiddenStyle})},_revealAppended:function(a,b){var c=this;setTimeout(function(){a.removeClass("no-transition"),c.styleQueue.push({$el:a,style:c.options.visibleStyle}),c._isInserting=!1,c._processStyleQueue(a,b)},10)},reloadItems:function(){this.$allAtoms=this._getAtoms(this.element.children())},remove:function(a,b){this.$allAtoms=this.$allAtoms.not(a),this.$filteredAtoms=this.$filteredAtoms.not(a);var c=this,d=function(){a.remove(),b&&b.call(c.element)};a.filter(":not(."+this.options.hiddenClass+")").length?(this.styleQueue.push({$el:a,style:this.options.hiddenStyle}),this._sort(),this.reLayout(d)):d()},shuffle:function(a){this.updateSortData(this.$allAtoms),this.options.sortBy="random",this._sort(),this.reLayout(a)},destroy:function(){var a=this.usingTransforms,b=this.options;this.$allAtoms.removeClass(b.hiddenClass+" "+b.itemClass).each(function(){var b=this.style;b.position="",b.top="",b.left="",b.opacity="",a&&(b[i]="")});var c=this.element[0].style;for(var d in this.originalStyle)c[d]=this.originalStyle[d];this.element.unbind(".isotope").undelegate("."+b.hiddenClass,"click").removeClass(b.containerClass).removeData("isotope"),w.unbind(".isotope")},_getSegments:function(a){var b=this.options.layoutMode,c=a?"rowHeight":"columnWidth",d=a?"height":"width",e=a?"rows":"cols",g=this.element[d](),h,i=this.options[b]&&this.options[b][c]||this.$filteredAtoms["outer"+f(d)](!0)||g;h=Math.floor(g/i),h=Math.max(h,1),this[b][e]=h,this[b][c]=i},_checkIfSegmentsChanged:function(a){var b=this.options.layoutMode,c=a?"rows":"cols",d=this[b][c];return this._getSegments(a),this[b][c]!==d},_masonryReset:function(){this.masonry={},this._getSegments();var a=this.masonry.cols;this.masonry.colYs=[];while(a--)this.masonry.colYs.push(0)},_masonryLayout:function(a){var c=this,d=c.masonry;a.each(function(){var a=b(this),e=Math.ceil(a.outerWidth(!0)/d.columnWidth);e=Math.min(e,d.cols);if(e===1)c._masonryPlaceBrick(a,d.colYs);else{var f=d.cols+1-e,g=[],h,i;for(i=0;i<f;i++)h=d.colYs.slice(i,i+e),g[i]=Math.max.apply(Math,h);c._masonryPlaceBrick(a,g)}})},_masonryPlaceBrick:function(a,b){var c=Math.min.apply(Math,b),d=0;for(var e=0,f=b.length;e<f;e++)if(b[e]===c){d=e;break}var g=this.masonry.columnWidth*d,h=c;this._pushPosition(a,g,h);var i=c+a.outerHeight(!0),j=this.masonry.cols+1-f;for(e=0;e<j;e++)this.masonry.colYs[d+e]=i},_masonryGetContainerSize:function(){var a=Math.max.apply(Math,this.masonry.colYs);return{height:a}},_masonryResizeChanged:function(){return this._checkIfSegmentsChanged()},_fitRowsReset:function(){this.fitRows={x:0,y:0,height:0}},_fitRowsLayout:function(a){var c=this,d=this.element.width(),e=this.fitRows;a.each(function(){var a=b(this),f=a.outerWidth(!0),g=a.outerHeight(!0);e.x!==0&&f+e.x>d&&(e.x=0,e.y=e.height),c._pushPosition(a,e.x,e.y),e.height=Math.max(e.y+g,e.height),e.x+=f})},_fitRowsGetContainerSize:function(){return{height:this.fitRows.height}},_fitRowsResizeChanged:function(){return!0},_cellsByRowReset:function(){this.cellsByRow={index:0},this._getSegments(),this._getSegments(!0)},_cellsByRowLayout:function(a){var c=this,d=this.cellsByRow;a.each(function(){var a=b(this),e=d.index%d.cols,f=Math.floor(d.index/d.cols),g=(e+.5)*d.columnWidth-a.outerWidth(!0)/2,h=(f+.5)*d.rowHeight-a.outerHeight(!0)/2;c._pushPosition(a,g,h),d.index++})},_cellsByRowGetContainerSize:function(){return{height:Math.ceil(this.$filteredAtoms.length/this.cellsByRow.cols)*this.cellsByRow.rowHeight+this.offset.top}},_cellsByRowResizeChanged:function(){return this._checkIfSegmentsChanged()},_straightDownReset:function(){this.straightDown={y:0}},_straightDownLayout:function(a){var c=this;a.each(function(a){var d=b(this);c._pushPosition(d,0,c.straightDown.y),c.straightDown.y+=d.outerHeight(!0)})},_straightDownGetContainerSize:function(){return{height:this.straightDown.y}},_straightDownResizeChanged:function(){return!0},_masonryHorizontalReset:function(){this.masonryHorizontal={},this._getSegments(!0);var a=this.masonryHorizontal.rows;this.masonryHorizontal.rowXs=[];while(a--)this.masonryHorizontal.rowXs.push(0)},_masonryHorizontalLayout:function(a){var c=this,d=c.masonryHorizontal;a.each(function(){var a=b(this),e=Math.ceil(a.outerHeight(!0)/d.rowHeight);e=Math.min(e,d.rows);if(e===1)c._masonryHorizontalPlaceBrick(a,d.rowXs);else{var f=d.rows+1-e,g=[],h,i;for(i=0;i<f;i++)h=d.rowXs.slice(i,i+e),g[i]=Math.max.apply(Math,h);c._masonryHorizontalPlaceBrick(a,g)}})},_masonryHorizontalPlaceBrick:function(a,b){var c=Math.min.apply(Math,b),d=0;for(var e=0,f=b.length;e<f;e++)if(b[e]===c){d=e;break}var g=c,h=this.masonryHorizontal.rowHeight*d;this._pushPosition(a,g,h);var i=c+a.outerWidth(!0),j=this.masonryHorizontal.rows+1-f;for(e=0;e<j;e++)this.masonryHorizontal.rowXs[d+e]=i},_masonryHorizontalGetContainerSize:function(){var a=Math.max.apply(Math,this.masonryHorizontal.rowXs);return{width:a}},_masonryHorizontalResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_fitColumnsReset:function(){this.fitColumns={x:0,y:0,width:0}},_fitColumnsLayout:function(a){var c=this,d=this.element.height(),e=this.fitColumns;a.each(function(){var a=b(this),f=a.outerWidth(!0),g=a.outerHeight(!0);e.y!==0&&g+e.y>d&&(e.x=e.width,e.y=0),c._pushPosition(a,e.x,e.y),e.width=Math.max(e.x+f,e.width),e.y+=g})},_fitColumnsGetContainerSize:function(){return{width:this.fitColumns.width}},_fitColumnsResizeChanged:function(){return!0},_cellsByColumnReset:function(){this.cellsByColumn={index:0},this._getSegments(),this._getSegments(!0)},_cellsByColumnLayout:function(a){var c=this,d=this.cellsByColumn;a.each(function(){var a=b(this),e=Math.floor(d.index/d.rows),f=d.index%d.rows,g=(e+.5)*d.columnWidth-a.outerWidth(!0)/2,h=(f+.5)*d.rowHeight-a.outerHeight(!0)/2;c._pushPosition(a,g,h),d.index++})},_cellsByColumnGetContainerSize:function(){return{width:Math.ceil(this.$filteredAtoms.length/this.cellsByColumn.rows)*this.cellsByColumn.columnWidth}},_cellsByColumnResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_straightAcrossReset:function(){this.straightAcross={x:0}},_straightAcrossLayout:function(a){var c=this;a.each(function(a){var d=b(this);c._pushPosition(d,c.straightAcross.x,0),c.straightAcross.x+=d.outerWidth(!0)})},_straightAcrossGetContainerSize:function(){return{width:this.straightAcross.x}},_straightAcrossResizeChanged:function(){return!0}},b.fn.imagesLoaded=function(a){function h(){a.call(c,d)}function i(a){var c=a.target;c.src!==f&&b.inArray(c,g)===-1&&(g.push(c),--e<=0&&(setTimeout(h),d.unbind(".imagesLoaded",i)))}var c=this,d=c.find("img").add(c.filter("img")),e=d.length,f="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",g=[];return e||h(),d.bind("load.imagesLoaded error.imagesLoaded",i).each(function(){var a=this.src;this.src=f,this.src=a}),c};var x=function(b){a.console&&a.console.error(b)};b.fn.isotope=function(a,c){if(typeof a=="string"){var d=Array.prototype.slice.call(arguments,1);this.each(function(){var c=b.data(this,"isotope");if(!c){x("cannot call methods on isotope prior to initialization; attempted to call method '"+a+"'");return}if(!b.isFunction(c[a])||a.charAt(0)==="_"){x("no such method '"+a+"' for isotope instance");return}c[a].apply(c,d)})}else this.each(function(){var d=b.data(this,"isotope");d?(d.option(a),d._init(c)):b.data(this,"isotope",new b.Isotope(a,this,c))});return this}
         }
 
         function plugin_jquery_jScrollPane($){
