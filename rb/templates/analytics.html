@@ -155,7 +155,7 @@ RB.analytics = {
 			dataType: "jsonp",
 			success: function(response){
 				if (type == "tags") {
-					$('#tag_cloud_container').html('<section role="tag cloud grid"/>');
+					$('section[role="tag cloud grid"]').isotope('destroy').html('<section role="tag cloud grid"/>');
 
 					function SortByTagCount(a,b) { return b.count - a.count; }
 	                var sorted_interactions = [];
@@ -302,7 +302,7 @@ RB.analytics = {
 					var userHtml = "";
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
-							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user.id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user.id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
+							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
 								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
 								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -452,9 +452,30 @@ if ( RB.util.getHashValue('start') ) {
 if ( RB.util.getHashValue('end') ) {
 	RB.analytics.endDate = RB.util.getHashValue('end');
 } else {
-	RB.analytics.endDate = "{% now "m/d/y" %}";
-	// this line is here b/c i suck at python datetime string BS:
-	RB.analytics.endDate = RB.analytics.endDate.split('/')[0]+'/'+(parseInt(RB.analytics.endDate.split('/')[1])+1)+'/'+RB.analytics.endDate.split('/')[2];
+	// these lines are here b/c i suck at python datetime string BS:
+	var dateArray = "{% now "m/d/y" %}".split('/');
+	if ( parseInt(dateArray[1]) == 30 ) {
+		switch ( parseInt(dateArray[0]) ) {
+			case 9:
+				RB.analytics.endDate = '10/1/'+parseInt(dateArray[2]);
+				break;
+			case 4:
+				RB.analytics.endDate = '5/1/'+parseInt(dateArray[2]);
+				break;
+			case 6:
+				RB.analytics.endDate = '7/1/'+parseInt(dateArray[2]);
+				break;
+			case 11:
+				RB.analytics.endDate = '12/1/'+parseInt(dateArray[2]);
+				break;
+		}
+	} else if ( parseInt(dateArray[1]) == 31 ) {
+		if ( parseInt(dateArray[0]) == 12 ) {
+			RB.analytics.endDate = '1/1/'+parseInt(dateArray[2]+1);
+		} else {
+			RB.analytics.endDate = (parseInt(dateArray[0])+1)+'/1/'+parseInt(dateArray[2]);
+		}
+	}
 }
 
 $('input[name="start_date"]').val( RB.analytics.startDate );
