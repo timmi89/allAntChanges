@@ -73,6 +73,7 @@ var ints_3 = [
   { body:"Tag One", count: 11 },
   { body:"Dizzamn", count: 10 },
   { body:"Huzzah", count: 3 },
+  // { body:"Huzzah", count: 7 },
   { body:"lol", count: 4 },
   { body:"Love It", count:7  },
   { body:"Wow", count:5  },
@@ -114,7 +115,7 @@ function writeTagBoxes( tagList ) {
   var buckets = createTagBuckets( tagList ),
       $container = $('section[role="tag cloud grid"]'),
       colorInt = 1;
-  
+$Container = $container;  
   // $.each( buckets, function(idx, bucket) {
     while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
 
@@ -128,16 +129,13 @@ function writeTagBoxes( tagList ) {
           writeTagBox( thisTag, "medium");
         }  
         if ( buckets.small.length ) {
-          console.log('write some small shit');
           var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
               $smContainer = $('<div class="box box3 container contains'+numSmallTags+'"></div>').appendTo( $container );
-          
+
           for ( i=0; i < numSmallTags; i++ ) {
             var thisTag = buckets.small.shift();
             writeTagBox( thisTag, "small", $smContainer );
           }
-
-          if ( !buckets.medium.length && !buckets.small.length ) { $smContainer.addClass('wide'); }
 
         }
       }
@@ -146,7 +144,8 @@ function writeTagBoxes( tagList ) {
         if ( !$tagContainer ) { $tagContainer = $container; }
         // this can go away if we change CSS class names
         var boxSize = ( size == "big" ) ? "box1" : ( size == "medium" ) ? "box2" : "box3",
-            wideBox  = ( !buckets.medium.length && !buckets.small.length ) ? "wide" : "";
+            wideBox = "";
+
         $thisBox = $( '<div class="color'+colorInt+' '+boxSize+' box '+wideBox+'"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div>' );
         $tagContainer.append( $thisBox );
 
@@ -155,7 +154,11 @@ function writeTagBoxes( tagList ) {
         if ( colorInt == 6 ) colorInt = 1;
       }
 
+    }
 
+    // is it the last thing?  i.e. should it be wide?
+    if ( $container.children('.box').not('.box1').length % 2 != 0 ) {
+      $container.children('.box').not('.box1').last().addClass('wide').find('.box3').addClass('wide');
     }
 
     function isotopeTags( $container ) {
@@ -170,7 +173,7 @@ function writeTagBoxes( tagList ) {
 
           var tagBoxesCount = $('section[role="tag cloud grid"] div.box').length,
               currentTagBoxAnimating = 0;
-          var animationQueue = setInterval( animateNextBox, 100 );
+          var animationQueue = setInterval( animateNextBox, 50 );
 
           function animateNextBox() {
               var $thisBox = $('section[role="tag cloud grid"] div.box:eq('+currentTagBoxAnimating+')');
