@@ -9,22 +9,12 @@
 <body>
   <style>
   * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing:border-box; }
-  .test_container             { background:#ddd; width:320px; position:relative; font-family:Helvetica; font-weight:bold;}
-  .test_box                   { display:block; }
-  .caption { text-align:center; }
-  .test_box_large             { background:#eef; width:320px; height:100px;} 
-  .test_box_medium            { background:#fee; width:160px; } 
-  .test_box_small_container.column   { width:160px; padding:0; } 
-  .test_box_small_container.row      { width:320px; padding:0; clear:both; } 
-  .test_box_small_container.row .test_box      { float:left; } 
-  .test_box_small             { background:#efe; width:160px; } 
-
   section[role="tag cloud grid"] { background:#000; width:320px !important; height:auto;}
-  .box1 { width:320px; height:110px; padding:30px 15px 0;}
-  .box2 { width:160px; height:110px; padding:20px 10px 0;}
+  .box1 { width:320px; height:110px; padding:20px 15px 0;}
+  .box2 { width:160px; height:110px; padding:35px 10px 0;}
   .box3 { width:160px; height:55px; padding:15px 5px 0;}
   .contains1 .box3 { width:160px; height:110px; padding:20px 10px 0;}
-  .box2.wide { width:320px; height:80px; }
+  .box2.wide { width:320px; height:80px; padding:20px 10px 0;}
   .box3.wide { width:320px; height:55px; }
   .box3.container { padding:0; height:110px;}
   .box3.container.wide { height:55px;}
@@ -192,7 +182,7 @@ $Container = $container;
     isotopeTags( $container );
 }
 
-writeTagBoxes( ints_3 );
+writeTagBoxes( ints_2 );
 // $('.box1').bigtext({ maxfontsize:48 });
 // $('.box2').bigtext({ maxfontsize:24 });
 // $('.box3').bigtext({ maxfontsize:14 });
