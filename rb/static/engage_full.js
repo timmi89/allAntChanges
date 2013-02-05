@@ -900,6 +900,12 @@ function readrBoard($R){
                 }
             },
             tagBox: {
+                setWidth: function( $rindow, width ) {
+                    // RDR.rindow.tagBox.setWidth
+                    // should probably just be RDR.rindow.setWidth ??
+                    // width must be 320, 480, or 640
+                    $rindow.removeClass('w320 w480 w640').addClass('w'+width);
+                },
                 getWidth: function( tag ) {
                     // deprecated?
                     //RDR.rindow.pill.getWidth
@@ -917,6 +923,7 @@ function readrBoard($R){
                 },
                 make: function( tag, $container, $rindow, content_node_id ) {
                     //RDR.rindow.tagBox.make:
+                    // deprecated?
                     var tagCount = ( tag.count ) ? tag.count:"",
                         hash = $rindow.data('container'),
                         summary = RDR.summaries[hash],
@@ -950,6 +957,12 @@ function readrBoard($R){
                         content_node.id = content_node_id;
                     }
 
+
+
+
+
+/*
+add back in
                     $tagBox.click( function() {
                         $(this).addClass('rdr_tagged');
                         $rindow.removeClass('rdr_rewritable');
@@ -1017,6 +1030,11 @@ function readrBoard($R){
                         $tagBox.append( $commentHover );
                         $commentHover.tooltip();
                     }
+
+*/
+
+
+
 
                     return $tagBox;
                 }
@@ -5286,37 +5304,173 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //move these from indicators-  they dont belong here
                     makeTagsListForInline: function( $rindow, isWriteMode ){
                         //RDR.actions.indicators.utils.makeTagsListForInline:
-                        //todo: consolodate this with the same function for makeTagsListForMedia
+                        //todo: consolidate this with the same function for makeTagsListForMedia
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
 
-                        var tagsListMaxWidth = 100;
 
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
+                        $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
-                        $rindow.append($tagsListContainer);
-                        
+                        // sort a list of tags into their buckets
+                        // private function, but could be a RDR.util or RDR.tagBox function
+                        function createTagBuckets( tagList ) {
+                          // would rather this property was .count, not .tag_count.  #rewrite.
+                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
+
+                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
+                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
+                          var buckets = {
+                            big: [],
+                            medium: [],
+                            small: []
+                          },
+                          max = tagList[0].tag_count,
+                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
+                          min = tagList[ tagList.length-1 ].tag_count,
+                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
+                          midValue = ( median > avg ) ? median:avg;
+
+                          $.each( tagList, function(idx, tag) {
+                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                buckets.big.push( tag );
+                                return;
+                              } else if ( tag.tag_count > midValue ) {
+                                buckets.medium.push( tag );
+                                return;
+                              } else {
+                                buckets.small.push( tag );
+                                return;
+                              }
+
+                          });
+                          console.log(buckets);
+                          return buckets;
+                        }
+
                         if ( isWriteMode ) {
                             // PORTER RESUME HERE
                             // write inline tags: writemode
-                            $.each( RDR.group.blessed_tags, function( idx, tag ){
-                                // don't write an empty blessed tag box
-                                if ( !$tagsListContainer.find('div.rdr_tag_'+tag.id).length ) {
-                                    var $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, false );
+                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                            writeTagBoxes( RDR.group.blessed_tags );
 
-                                }
-                            });
+                            // $.each( RDR.group.blessed_tags, function( idx, tag ){
+                            //     // don't write an empty blessed tag box
+                            //     if ( !$tagsListContainer.find('div.rdr_tag_'+tag.id).length ) {
+                            //         var $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, false );
+
+                            //     }
+                            // });
 
                         } else {
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
+                            console.dir(summary.interaction_order);
                             $.each( summary.interaction_order, function( idx, interaction ){
                                 var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
                                     $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
                             });
                         }
 
+
+/*****************************************/
+                        function writeTagBoxes( tagList ) {
+                        var buckets = createTagBuckets( tagList ),
+                              colorInt = 1;
+
+                          while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+
+                            if ( buckets.big.length ) {
+                              var thisTag = buckets.big.shift();
+                              writeTagBox( thisTag, "big");        
+                            } else {
+                              
+                              if ( buckets.medium.length ) {
+                                var thisTag = buckets.medium.shift();
+                                writeTagBox( thisTag, "medium");
+                              }  
+                              if ( buckets.small.length ) {
+                                var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
+                                    $smContainer = $('<div class="box box_small container contains'+numSmallTags+'"></div>').appendTo( $tagsListContainer );
+
+                                for ( i=0; i < numSmallTags; i++ ) {
+                                  var thisTag = buckets.small.shift();
+                                  writeTagBox( thisTag, "small", $smContainer );
+                                }
+
+                              }
+                            }
+                            
+                            function writeTagBox( tag, size, $tagContainer ) {
+                              // default container is the $tagsListContainer that is scoped to makeTagsListForInline():
+                              if ( !$tagContainer ) { $tagContainer = $tagsListContainer; } 
+
+                              // this can go away if we change CSS class names
+                              var boxSize = ( size == "big" ) ? "box_big" : ( size == "medium" ) ? "box_medium" : "box_small",
+                                  wideBox = "",
+                                  writeMode = ( isWriteMode ) ? 'writeMode' : '';
+
+                              $thisBox = $( '<div class="color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="tag">'+thisTag.body+'<br/></div></div>' );
+                              if ( thisTag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
+                                $thisBox.append(' <span class="count">'+thisTag.tag_count+'</span> ');
+                              }
+                              $tagContainer.append( $thisBox );
+
+                              // set next color 
+                              colorInt++;
+                              if ( colorInt == 6 ) colorInt = 1;
+                            }
+
+                          }
+
+                          // is it the last thing?  i.e. should it be wide?
+                          if ( $tagsListContainer.children('.box').not('.box_big').length % 2 != 0 ) {
+                            $tagsListContainer.children('.box').not('.box_big').last().addClass('wide').find('.box_small').addClass('wide');
+                          }
+
+                          function isotopeTags( $tagsListContainer ) {
+                            $tagsListContainer.isotope({
+                              masonry: {
+                                columnWidth: 160
+                              }
+                            }, function() {
+                                $('.box_big').bigtext({ maxfontsize:48 });
+                                $('.box_medium').bigtext({ maxfontsize:24 });
+                                $('.box_small:not(.writeMode)').bigtext({ maxfontsize:14 });
+                                $('.box_small.writeMode').bigtext({ maxfontsize:24 });
+
+                                var tagBoxesCount = $tagsListContainer.find('div.box').length,
+                                    currentTagBoxAnimating = 0;
+                                var animationQueue = setInterval( animateNextBox, 50 );
+
+                                function animateNextBox() {
+                                    var $thisBox = $tagsListContainer.find('div.box:eq('+currentTagBoxAnimating+')');
+                                    if ( $thisBox.hasClass('box_big') ) {
+                                        $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+                                    } else {
+                                        $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+                                    }
+                                    currentTagBoxAnimating++;
+                                    if ( currentTagBoxAnimating > tagBoxesCount ) {
+                                        clearInterval( animationQueue );
+                                    }
+                                }
+                            });
+                          } // isotopeTags
+
+                          isotopeTags( $tagsListContainer );
+                      } // writeTagBoxes
+/*****************************************/
+
+
+
+
+
+
+                
+
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        /**********
                         if ( isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
@@ -5324,7 +5478,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 $rindow.removeClass('rdr_rewritable');
                         }
+                        */
 
+                        
+
+                        /**********
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( !isWriteMode ) {
                             $rindow.on( 'mouseleave', function(e) {
@@ -5368,8 +5526,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 );
                             });
                         }
+                        */
 
-                        $tagsListContainer.append($tag_table);
+                        // $tagsListContainer.append($tag_table);
                         return $tagsListContainer;
                     },
                     makeTagsListForMedia: function( $rindow ){
@@ -7372,7 +7531,7 @@ function $RFunctions($R){
 
                     var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     //having this go to our home page for now because we have no messaging for the page level reactions.
-                    // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
+                    // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'  :#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
                     $RB.append(
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
