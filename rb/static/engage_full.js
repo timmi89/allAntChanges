@@ -1041,55 +1041,63 @@ add back in
             },
             writeCustomTag: function( $container, $rindow, actionType ) {
                 //RDR.rindow.writeCustomTag
-                if ( $container.find('a.rdr_custom_tag').not('a.rdr_custom_tag.rdr_tagged').length == 0) {
+                // think we don't need $container or actionType
+
+                var $container = $rindow.find('.rdr_footer');
+                $container.append( '<div class="rdr_box"></div> ');
+
+                if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
                         helpText =  ( actionType=="react" ) ? "Add your own" : "Add tag...";
 
                     // add custom tag
-                    var $a_custom = $('<a class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><input type="text" value="'+helpText+'" class="rdr_default"/></a>');
-                    $a_custom.find('input').focus( function() {
-                        RDR.events.track('start_custom_reaction_rindow');
-                        var $input = $(this);
-                        $input.removeClass('rdr_default');
-                        if ( $input.val() == helpText ) {
-                            $input.val('');
-                        }
-                    }).blur( function() {
-                        var $input = $(this);
-                        if ( $input.val() === "" ) {
-                            $input.val( helpText );
-                        }
-                        if ( $input.val() == helpText ) {
-                            $input.addClass('rdr_default');
-                        }
-                        // $input.closest('div.rdr_tag').removeClass('rdr_hover');
-                    }).keyup( function(event) {
-                        var $input = $(this),
-                            tag = {},
-                            hash = $rindow.data('container');
+                    var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><div contenteditable="true">'+helpText+'</div></div>');
+                    
 
-                        if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            tag.body = $input.val();
-                            $input.parent().addClass('rdr_tagged');
+// $custom.find('div').focus( function() {
+//     RDR.events.track('start_custom_reaction_rindow');
+//     var $input = $(this);
+//     $input.removeClass('rdr_default');
+//     if ( $input.val() == helpText ) {
+//         $input.val('');
+//     }
+// }).blur( function() {
+//     var $input = $(this);
+//     if ( $input.val() === "" ) {
+//         $input.val( helpText );
+//     }
+//     if ( $input.val() == helpText ) {
+//         $input.addClass('rdr_default');
+//     }
+//     // $input.closest('div.rdr_tag').removeClass('rdr_hover');
+// }).keyup( function(event) {
+//     var $input = $(this),
+//         tag = {},
+//         hash = $rindow.data('container');
 
-                            // args = { tag:tag, hash:hash, kind:"page" };
-                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
-                            RDR.actions.interactions.ajax( args, actionType, 'create' );
-                            $input.blur();
-                        }
-                        else if (event.keyCode == '27') { //esc
-                            //return false;
-                            $input.blur();
-                        } else if ( $input.val().length > 25 ) {
-                            var customTag = $input.val();
-                            $input.val( customTag.substr(0, 25) );
-                        }
-                    });
-                    // if ( $container ) $container.append( $a_custom, " " );
-                    // else return $a_custom;
-                    $container.append( $a_custom, " " );
-                    $a_custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
-                    $a_custom.tooltip();
+//     if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+//         tag.body = $input.val();
+//         $input.parent().addClass('rdr_tagged');
+
+//         // args = { tag:tag, hash:hash, kind:"page" };
+//         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
+//         RDR.actions.interactions.ajax( args, actionType, 'create' );
+//         $input.blur();
+//     }
+//     else if (event.keyCode == '27') { //esc
+//         //return false;
+//         $input.blur();
+//     } else if ( $input.val().length > 25 ) {
+//         var customTag = $input.val();
+//         $input.val( customTag.substr(0, 25) );
+//     }
+// });
+                    
+                    $container.find('.rdr_box').append( $custom, " " );
+                    $custom.bigtext({ maxfontsize:32 });
+
+                    // $custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
+                    $custom.tooltip();
                 }
             },
             _rindowTypes: {
@@ -5354,14 +5362,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             writeTagBoxes( RDR.group.blessed_tags );
 
-                            // $.each( RDR.group.blessed_tags, function( idx, tag ){
-                            //     // don't write an empty blessed tag box
-                            //     if ( !$tagsListContainer.find('div.rdr_tag_'+tag.id).length ) {
-                            //         var $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, false );
-
-                            //     }
-                            // });
-
                         } else {
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
@@ -5382,7 +5382,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             if ( buckets.big.length ) {
                               var thisTag = buckets.big.shift();
-                              writeTagBox( thisTag, "big");        
+                              writeTagBox( thisTag, "big");
                             } else {
                               
                               if ( buckets.medium.length ) {
@@ -5391,7 +5391,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               }  
                               if ( buckets.small.length ) {
                                 var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
-                                    $smContainer = $('<div class="box box_small container contains'+numSmallTags+'"></div>').appendTo( $tagsListContainer );
+                                    $smContainer = $('<div class="rdr_box rdr_box_small rdr_container rdr_contains'+numSmallTags+'"></div>').appendTo( $tagsListContainer );
 
                                 for ( i=0; i < numSmallTags; i++ ) {
                                   var thisTag = buckets.small.shift();
@@ -5406,11 +5406,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               if ( !$tagContainer ) { $tagContainer = $tagsListContainer; } 
 
                               // this can go away if we change CSS class names
-                              var boxSize = ( size == "big" ) ? "box_big" : ( size == "medium" ) ? "box_medium" : "box_small",
+                              var boxSize = ( size == "big" ) ? "rdr_box_big" : ( size == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
                                   wideBox = "",
-                                  writeMode = ( isWriteMode ) ? 'writeMode' : '';
+                                  writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '';
 
-                              $thisBox = $( '<div class="color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="tag">'+thisTag.body+'<br/></div></div>' );
+                              $thisBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag">'+thisTag.body+'<br/></div></div>' );
                               if ( thisTag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
                                 $thisBox.append(' <span class="count">'+thisTag.tag_count+'</span> ');
                               }
@@ -5424,8 +5424,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           }
 
                           // is it the last thing?  i.e. should it be wide?
-                          if ( $tagsListContainer.children('.box').not('.box_big').length % 2 != 0 ) {
-                            $tagsListContainer.children('.box').not('.box_big').last().addClass('wide').find('.box_small').addClass('wide');
+                          if ( $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
+                            $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last().addClass('rdr_wide').find('.rdr_box_small').addClass('rdr_wide');
                           }
 
                           function isotopeTags( $tagsListContainer ) {
@@ -5434,21 +5434,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 columnWidth: 160
                               }
                             }, function() {
-                                $('.box_big').bigtext({ maxfontsize:48 });
-                                $('.box_medium').bigtext({ maxfontsize:24 });
-                                $('.box_small:not(.writeMode)').bigtext({ maxfontsize:14 });
-                                $('.box_small.writeMode').bigtext({ maxfontsize:24 });
+                                $('.rdr_box_big').bigtext({ maxfontsize:48 });
+                                $('.rdr_box_medium').bigtext({ maxfontsize:24 });
+                                $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:14 });
+                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
 
-                                var tagBoxesCount = $tagsListContainer.find('div.box').length,
+                                var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                     currentTagBoxAnimating = 0;
                                 var animationQueue = setInterval( animateNextBox, 50 );
 
                                 function animateNextBox() {
-                                    var $thisBox = $tagsListContainer.find('div.box:eq('+currentTagBoxAnimating+')');
-                                    if ( $thisBox.hasClass('box_big') ) {
-                                        $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+                                    var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
+                                    if ( $thisBox.hasClass('rdr_box_big') ) {
+                                        $thisBox.find('div.rdr_tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
                                     } else {
-                                        $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+                                        $thisBox.find('div.rdr_tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
                                     }
                                     currentTagBoxAnimating++;
                                     if ( currentTagBoxAnimating > tagBoxesCount ) {
@@ -5463,14 +5463,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 /*****************************************/
 
 
-
-
-
-
-                
-
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        /**********
                         if ( isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
@@ -5478,7 +5471,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 $rindow.removeClass('rdr_rewritable');
                         }
-                        */
+
+
+
+
+                
+
 
                         
 
