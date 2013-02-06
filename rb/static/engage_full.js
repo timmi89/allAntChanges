@@ -3753,6 +3753,27 @@ function readrBoard($R){
 
                     var summary = RDR.summaries[hash];
 
+
+                    //todo: i think this should be killed - check later!
+                    
+                    //hack to interupt the ajax call if we've already gotten the content nodes.
+                    if(summary.content_nodes && summary.content_nodes.length > 0){
+                        console.log(hash + " already fetched");
+                        //finally, run the success callback function
+                        if ( onSuccessCallback ) {
+                            onSuccessCallback();
+                        }
+
+                        if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                            $.each(RDR.contentNodeQueue[hash], function(){
+                                var func = RDR.contentNodeQueue[hash].pop();
+                                func(hash);
+                            });
+                        }
+                        return;
+                    }
+
+
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "container_id":summary.id
@@ -3815,6 +3836,13 @@ function readrBoard($R){
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
                                 onSuccessCallback();
+                            }
+
+                            if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                                $.each(RDR.contentNodeQueue[hash], function(){
+                                    var func = RDR.contentNodeQueue[hash].pop();
+                                    func(hash);
+                                });
                             }
                         }
                     });
@@ -7734,7 +7762,10 @@ function $RFunctions($R){
                                                 }
                                             });
                                         } else {
-                                            RDR.actions.content_nodes.init( hash, function() {
+                                            RDR.contentNodeQueue = RDR.contentNodeQueue || {};
+                                            RDR.contentNodeQueue[hash] = RDR.contentNodeQueue[hash] || [];
+                                            
+                                            RDR.contentNodeQueue[hash].push(function(hash) {
                                                 $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
                                                     if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
                                                         var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
@@ -7745,6 +7776,13 @@ function $RFunctions($R){
                                                 });
                                                 showReactedContent($this, counts);
                                             });
+                                            
+                                            //quick hack to only run this once per hash from this loop.
+                                            RDR.content_nodes_init_once = RDR.content_nodes_init_once || {};
+                                            RDR.content_nodes_init_once[hash] = RDR.content_nodes_init_once[hash] || RDR.util._.once(function(){
+                                                RDR.actions.content_nodes.init( hash );
+                                            });
+                                            RDR.content_nodes_init_once[hash]();
                                             return;
                                         }
                                     }
