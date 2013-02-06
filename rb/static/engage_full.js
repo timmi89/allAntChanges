@@ -921,13 +921,21 @@ function readrBoard($R){
                     delete $pill;
                     return pill_width;
                 },
-                make: function( tag, $container, $rindow, content_node_id ) {
-                    //RDR.rindow.tagBox.make:
-                    // deprecated?
-                    var tagCount = ( tag.count ) ? tag.count:"",
+                // make: function( tag, $container, $rindow, content_node_id ) {
+                make: function( params ) {
+                    // RDR.rindow.tagBox.make:
+
+                    var tag = params.tag,
+                        boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
+                        $rindow = ( params.$rindow ) ? params.$rindow : null,
+                        $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$rindow ) ? params.$rindow.find('div.rdr_body.rdr_tags_list') : null,
+                        tagCount = ( tag.tag_count ) ? tag.tag_count:"",
+                        colorInt = ( params.colorInt ) ? params.colorInt:1,
+                        isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         hash = $rindow.data('container'),
                         summary = RDR.summaries[hash],
-                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"";
+                        content_node = (params.content_node_id) ? summary.content_nodes[ params.content_node_id ]:"";
+
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( tagCount == "" ) {
@@ -937,22 +945,29 @@ function readrBoard($R){
                             message = tagCount+' '+peoples+' had this reaction. Click to agree.',
                             tagCount = '(' + tagCount + ')';
                     }
+                    // this can go away if we change CSS class names
+                    var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
+                      wideBox = "",
+                      writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
+                      tagBody = ( tag.body ) ? tag.body:tag.tag_body;
 
-                    // pre-tagBox:
-                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
-
-                    // PORTER RESUME HERE
-                    // temp:
-                        var colorInt = 1,
-                            boxSize = 1;
-                    var $tagBox = $('<div class="rdr_color'+colorInt+' rdr_box'+boxSize+' rdr_box"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tag.body+'<br/><span class="rdr_count">'+tagCount+'</span></div></div>')
+                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'<br/></div></div>' )//chain
                         .data({
                             tag_id: tag.id,
                             tag_count: tagCount,
                             parent_id:tag.parent_id
                         });
+                    if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
+                        $tagBox.append(' <span class="count">'+tag.tag_count+'</span> ');
+                    }
+                    $tagContainer.append( $tagBox );
 
-                    if ( content_node_id ) {
+
+
+                    // pre-tagBox:
+                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
+
+                    if ( typeof content_node_id != "undefined" ) {
                         $tagBox.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
                         content_node.id = content_node_id;
                     }
@@ -961,77 +976,76 @@ function readrBoard($R){
 
 
 
-/*
-add back in
-                    $tagBox.click( function() {
-                        $(this).addClass('rdr_tagged');
-                        $rindow.removeClass('rdr_rewritable');
-                        var hash = $rindow.data('container');
-                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                        RDR.actions.interactions.ajax( args, 'react', 'create');
-                    }).hover(function() {
-                        var $this = $(this);
 
-                        if ( !$this.hasClass('rdr_tagged') ) {
-                            var $tagCount = $this.find('span.rdr_tag_count');
-                            $tagCount.width( $tagCount.width() );
-                            $tagCount.text('+');
-                        }
+                    // $tagBox.click( function() {
+                    //     $(this).addClass('rdr_tagged');
+                    //     $rindow.removeClass('rdr_rewritable');
+                    //     var hash = $rindow.data('container');
+                    //     args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                    //     RDR.actions.interactions.ajax( args, 'react', 'create');
+                    // }).hover(function() {
+                    //     var $this = $(this);
 
-                    }, function() {
-                        var $this = $(this);
-                        $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
-                    });
+                    //     if ( !$this.hasClass('rdr_tagged') ) {
+                    //         var $tagCount = $this.find('span.rdr_tag_count');
+                    //         $tagCount.width( $tagCount.width() );
+                    //         $tagCount.text('+');
+                    //     }
 
-                    $container.append( $tagBox, " " );
-                    // $('a.rdr_tooltip_this').tooltip({  });
+                    // }, function() {
+                    //     var $this = $(this);
+                    //     $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
+                    // });
 
-                    // figure out if we should add a comment indicator + comment hover
-                    var comments = {},
-                        num_comments = 0;
+                    // $container.append( $tagBox, " " );
+                    // // $('a.rdr_tooltip_this').tooltip({  });
 
-                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-                        $.each( content_node.top_interactions.coms, function(idx, comment) {
-                            if ( comment.tag_id == tag.id ) {
-                                num_comments++;
-                                if ( $.isEmptyObject( comments ) ) comments = content_node.top_interactions.coms;
-                            }
-                        });
-                    }
+                    // // figure out if we should add a comment indicator + comment hover
+                    // var comments = {},
+                    //     num_comments = 0;
 
-                    //New Check 
-                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
-                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
-                        !$.isEmptyObject(summary.top_interactions) &&
-                        !$.isEmptyObject(summary.top_interactions.coms)
+                    // if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+                    //     $.each( content_node.top_interactions.coms, function(idx, comment) {
+                    //         if ( comment.tag_id == tag.id ) {
+                    //             num_comments++;
+                    //             if ( $.isEmptyObject( comments ) ) comments = content_node.top_interactions.coms;
+                    //         }
+                    //     });
+                    // }
 
-                    if (crazyCheckForDataTieOver) {
-                        comments = summary.top_interactions.coms[tag.id];
-                        if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
-                    }
+                    // //New Check 
+                    // var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
+                    //     (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
+                    //     !$.isEmptyObject(summary.top_interactions) &&
+                    //     !$.isEmptyObject(summary.top_interactions.coms)
 
-                    // add the comment indicator + comment hover... if we should!
-                    if ( !$.isEmptyObject( comments ) ) {
-                        var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments"/>');
+                    // if (crazyCheckForDataTieOver) {
+                    //     comments = summary.top_interactions.coms[tag.id];
+                    //     if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
+                    // }
 
-                        $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
-                        $commentHover.click( function() {
-                            $(this).tooltip('hide');
-                            RDR.actions.viewCommentContent({
-                                tag:tag,
-                                hash:hash,
-                                rindow:$rindow,
-                                content_node:content_node,
-                                selState:content_node.selState
-                            });
-                            return false;
-                        });
+                    // // add the comment indicator + comment hover... if we should!
+                    // if ( !$.isEmptyObject( comments ) ) {
+                    //     var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments"/>');
 
-                        $tagBox.append( $commentHover );
-                        $commentHover.tooltip();
-                    }
+                    //     $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
+                    //     $commentHover.click( function() {
+                    //         $(this).tooltip('hide');
+                    //         RDR.actions.viewCommentContent({
+                    //             tag:tag,
+                    //             hash:hash,
+                    //             rindow:$rindow,
+                    //             content_node:content_node,
+                    //             selState:content_node.selState
+                    //         });
+                    //         return false;
+                    //     });
 
-*/
+                    //     $tagBox.append( $commentHover );
+                    //     $commentHover.tooltip();
+                    // }
+
+
 
 
 
@@ -5351,7 +5365,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               }
 
                           });
-                          console.log(buckets);
                           return buckets;
                         }
 
@@ -5365,14 +5378,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
                             console.dir(summary.interaction_order);
-                            $.each( summary.interaction_order, function( idx, interaction ){
-                                var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
-                                    $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
-                            });
+                            writeTagBoxes( summary.interaction_order );
+                            // $.each( summary.interaction_order, function( idx, interaction ){
+                            //     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
+                            //         $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
+                            // });
                         }
 
 
-/*****************************************/
                         function writeTagBoxes( tagList ) {
                         var buckets = createTagBuckets( tagList ),
                               colorInt = 1;
@@ -5381,12 +5394,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             if ( buckets.big.length ) {
                               var thisTag = buckets.big.shift();
-                              writeTagBox( thisTag, "big");
+                              RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                // set next color 
+                                colorInt++;
+                                if ( colorInt == 6 ) colorInt = 1;
                             } else {
                               
                               if ( buckets.medium.length ) {
                                 var thisTag = buckets.medium.shift();
-                                writeTagBox( thisTag, "medium");
+                                RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "medium", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                // set next color 
+                                colorInt++;
+                                if ( colorInt == 6 ) colorInt = 1;
                               }  
                               if ( buckets.small.length ) {
                                 var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
@@ -5394,30 +5413,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 for ( i=0; i < numSmallTags; i++ ) {
                                   var thisTag = buckets.small.shift();
-                                  writeTagBox( thisTag, "small", $smContainer );
+                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $tagContainer:$smContainer, $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  // set next color 
+                                colorInt++;
+                                if ( colorInt == 6 ) colorInt = 1;
                                 }
 
                               }
-                            }
-                            
-                            function writeTagBox( tag, size, $tagContainer ) {
-                              // default container is the $tagsListContainer that is scoped to makeTagsListForInline():
-                              if ( !$tagContainer ) { $tagContainer = $tagsListContainer; } 
-
-                              // this can go away if we change CSS class names
-                              var boxSize = ( size == "big" ) ? "rdr_box_big" : ( size == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
-                                  wideBox = "",
-                                  writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '';
-
-                              $thisBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag">'+thisTag.body+'<br/></div></div>' );
-                              if ( thisTag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                                $thisBox.append(' <span class="count">'+thisTag.tag_count+'</span> ');
-                              }
-                              $tagContainer.append( $thisBox );
-
-                              // set next color 
-                              colorInt++;
-                              if ( colorInt == 6 ) colorInt = 1;
                             }
 
                           }
@@ -5459,7 +5461,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                           isotopeTags( $tagsListContainer );
                       } // writeTagBoxes
-/*****************************************/
 
 
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
@@ -5467,19 +5468,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var custom_tag = {count:0, id:"custom", body:"Add your own"},
                                 $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-
                                 $rindow.removeClass('rdr_rewritable');
                         }
 
 
-
-
-                
-
-
                         
 
-                        /**********
+
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( !isWriteMode ) {
                             $rindow.on( 'mouseleave', function(e) {
@@ -5523,7 +5518,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 );
                             });
                         }
-                        */
+
 
                         // $tagsListContainer.append($tag_table);
                         return $tagsListContainer;
