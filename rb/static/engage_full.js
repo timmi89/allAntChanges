@@ -958,7 +958,7 @@ function readrBoard($R){
                             parent_id:tag.parent_id
                         });
                     if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                        $tagBox.append(' <span class="count">'+tag.tag_count+'</span> ');
+                        $tagBox.find('.rdr_tag').append(' <span class="count">'+tag.tag_count+'</span> ');
                     }
                     $tagContainer.append( $tagBox );
 
@@ -5378,6 +5378,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
                             console.dir(summary.interaction_order);
+                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             writeTagBoxes( summary.interaction_order );
                             // $.each( summary.interaction_order, function( idx, interaction ){
                             //     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
