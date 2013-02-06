@@ -369,7 +369,8 @@ div.rdr_sandbox div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !
 div.rdr_sandbox div.rdr div.rdr_footer                         { 
     background:#fff !important;
     position:relative !important;
-    height:32px !important;
+    min-height:32px !important;
+    text-align:center !important;
     z-index:5 !important;
     /*todo: revisit the better way to do this*/
     -webkit-box-sizing : border-box !important;
@@ -377,7 +378,13 @@ div.rdr_sandbox div.rdr div.rdr_footer                         {
     -o-box-sizing : border-box !important;
     box-sizing : border-box !important;
 }
-
+div.rdr_sandbox div.rdr div.rdr_footer em {
+  display:block !important;
+  padding:11px 0 !important;
+  font-family:'HelveticaRegular' !important;
+  color:#999 !important;
+  font-style:italic !important;
+}
 
 div.rdr_sandbox div#rdr_indicator_details_wrapper div.rdr_innerWrap,
 div.rdr_sandbox div.rdr.rdr_window div.rdr_innerWrap{

@@ -934,16 +934,15 @@ function readrBoard($R){
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         hash = $rindow.data('container'),
                         summary = RDR.summaries[hash],
-                        content_node = (params.content_node_id) ? summary.content_nodes[ params.content_node_id ]:"";
-
+                        content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
+                        content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"";
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( tagCount == "" ) {
                         var message = '';
                     } else {
                         var peoples = ( tagCount == 1 ) ? "person":"people",
-                            message = tagCount+' '+peoples+' had this reaction. Click to agree.',
-                            tagCount = '(' + tagCount + ')';
+                            message = tagCount+' '+peoples+' had this reaction. Click to agree.';
                     }
                     // this can go away if we change CSS class names
                     var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
@@ -951,11 +950,11 @@ function readrBoard($R){
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
                       tagBody = ( tag.body ) ? tag.body:tag.tag_body;
 
-                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'<br/></div></div>' )//chain
-                        .data({
+                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'<br/></div></div>' );
+                    $tagBox.find('.rdr_tag').data({
                             tag_id: tag.id,
                             tag_count: tagCount,
-                            parent_id:tag.parent_id
+                            parent_id: tag.parent_id
                         });
                     if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
                         $tagBox.find('.rdr_tag').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
@@ -967,35 +966,30 @@ function readrBoard($R){
                     // pre-tagBox:
                     // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
 
-                    if ( typeof content_node_id != "undefined" ) {
-                        $tagBox.data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
+                    if ( content_node_id ) {
+                        $tagBox.find('.rdr_tag').data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
                         content_node.id = content_node_id;
                     }
 
+                    $tagBox.click( function() {
+                        $(this).addClass('rdr_tagged');
+                        $rindow.removeClass('rdr_rewritable');
+                        var hash = $rindow.data('container');
+                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                        RDR.actions.interactions.ajax( args, 'react', 'create');
+                    }).hover(function() {
+                        var $this = $(this);
 
+                        if ( !$this.hasClass('rdr_tagged') ) {
+                            var $tagCount = $this.find('span.rdr_tag_count');
+                            $tagCount.width( $tagCount.width() );
+                            $tagCount.text('+');
+                        }
 
-
-
-
-                    // $tagBox.click( function() {
-                    //     $(this).addClass('rdr_tagged');
-                    //     $rindow.removeClass('rdr_rewritable');
-                    //     var hash = $rindow.data('container');
-                    //     args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                    //     RDR.actions.interactions.ajax( args, 'react', 'create');
-                    // }).hover(function() {
-                    //     var $this = $(this);
-
-                    //     if ( !$this.hasClass('rdr_tagged') ) {
-                    //         var $tagCount = $this.find('span.rdr_tag_count');
-                    //         $tagCount.width( $tagCount.width() );
-                    //         $tagCount.text('+');
-                    //     }
-
-                    // }, function() {
-                    //     var $this = $(this);
-                    //     $this.find('span.rdr_tag_count').text( $this.data('tag_count') );
-                    // });
+                    }, function() {
+                        var $this = $(this);
+                        $this.find('span.rdr_tag_count').text( $this.find('.rdr_tag').data('tag_count') );
+                    });
 
                     // $container.append( $tagBox, " " );
                     // // $('a.rdr_tooltip_this').tooltip({  });
@@ -3902,6 +3896,11 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
                     // but our URLs expect /tag/, so this rewrite that.
                     var int_type_for_url = (int_type=="react") ? "tag":int_type;
 
+// more stupid forcing thanks to disparate attribtue names
+if ( typeof sendData.tag != "undefined" ) {
+    sendData.tag.body = ( sendData.tag.body ) ? sendData.tag.body:sendData.tag.tag_body;
+}
+
 // TODO forcing.  react-to-page code seems to need a hash, and stores it.  IE is not hashing page correctly.
 // and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
@@ -4242,7 +4241,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             }else{
                                 //is text
-
                                 //todo: fix this temp hackery
                                 if(content_node){
                                     content_node_data = {
@@ -5336,6 +5334,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // sort a list of tags into their buckets
                         // private function, but could be a RDR.util or RDR.tagBox function
                         function createTagBuckets( tagList ) {
+
                           // would rather this property was .count, not .tag_count.  #rewrite.
                           function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
@@ -5365,6 +5364,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               }
 
                           });
+
                           return buckets;
                         }
 
@@ -5377,6 +5377,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
+                            RDR.rindow.updateFooter( $rindow, '<em>+ To add your own, select some text</em>' );
+
+// RDR.actions.summaries.sortInteractions(hash);
+// $.each( summary.interaction_order, function( idx, interaction ){
+//     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
+//         $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
+//         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, interaction.content_node_id );
+// });
+
+
+
                             // $.each( summary.interaction_order, function( idx, interaction ){
                             //     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
                             //         $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
@@ -5388,7 +5399,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var buckets = createTagBuckets( tagList ),
                               colorInt = 1;
 
-                            // size the rindow
+                            // size the rindow based on # of reactions
                             if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -5499,7 +5510,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 clearTimeout(timeoutCloseEvt);
                             });
 
-                            $rindow.find('div.rdr_cell_wrapper').each( function() {
+                            $rindow.find('div.rdr_box').each( function() {
                                 $(this).hover(
                                     function() {
                                         var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
