@@ -904,7 +904,7 @@ function readrBoard($R){
                     // RDR.rindow.tagBox.setWidth
                     // should probably just be RDR.rindow.setWidth ??
                     // width must be 320, 480, or 640
-                    $rindow.removeClass('w320 w480 w640').addClass('w'+width);
+                    $rindow.removeClass('w160 w320 w480 w640').addClass('w'+width);
                 },
                 getWidth: function( tag ) {
                     // deprecated?
@@ -958,7 +958,7 @@ function readrBoard($R){
                             parent_id:tag.parent_id
                         });
                     if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                        $tagBox.find('.rdr_tag').append(' <span class="count">'+tag.tag_count+'</span> ');
+                        $tagBox.find('.rdr_tag').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
                     }
                     $tagContainer.append( $tagBox );
 
@@ -1334,7 +1334,7 @@ function readrBoard($R){
 
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget"></div>');
+                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -5371,14 +5371,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         if ( isWriteMode ) {
                             // PORTER RESUME HERE
                             // write inline tags: writemode
-                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             writeTagBoxes( RDR.group.blessed_tags );
 
                         } else {
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
-                            console.dir(summary.interaction_order);
-                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             writeTagBoxes( summary.interaction_order );
                             // $.each( summary.interaction_order, function( idx, interaction ){
                             //     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
@@ -5390,6 +5387,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         function writeTagBoxes( tagList ) {
                         var buckets = createTagBuckets( tagList ),
                               colorInt = 1;
+
+                            // size the rindow
+                            if ( tagList.length > 1 ) {
+                                if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                            } 
 
                           while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
 
@@ -5426,7 +5430,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           }
 
                           // is it the last thing?  i.e. should it be wide?
-                          if ( $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
+                          if ( tagList.length > 1 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
                             $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last().addClass('rdr_wide').find('.rdr_box_small').addClass('rdr_wide');
                           }
 
