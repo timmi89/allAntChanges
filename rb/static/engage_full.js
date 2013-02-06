@@ -539,7 +539,7 @@ function readrBoard($R){
 
                                 var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
-                                    $h1 = $('<h1><span>You reacted:</span> ' + tag.body + '</h1></div>').appendTo( $subheader ),
+                                    $h1 = $('<h1><span>You reacted:</span> ' + tag.tag_body + '</h1></div>').appendTo( $subheader ),
                                     undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
                                     $links = $(
                                         '<div class="rdr_linkWrap">'+
@@ -944,8 +944,10 @@ function readrBoard($R){
                         var peoples = ( tagCount == 1 ) ? "person":"people",
                             message = tagCount+' '+peoples+' had this reaction. Click to agree.';
                     }
+                    
                     // this can go away if we change CSS class names
                     var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
+                    // var boxSize = "rdr_box_"+ boxSize, 
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
                       tagBody = ( tag.body ) ? tag.body:tag.tag_body;
@@ -5381,23 +5383,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             writeTagBoxes( summary.interaction_order );
                             RDR.rindow.updateFooter( $rindow, '<em>+ To add your own, select some text</em>' );
 
-// RDR.actions.summaries.sortInteractions(hash);
-// $.each( summary.interaction_order, function( idx, interaction ){
-//     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
-//         $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, 200 ),
-//         $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, interaction.content_node_id );
-// });
-
-
-
-                            // $.each( summary.interaction_order, function( idx, interaction ){
-                            //     var tag = { id:interaction.tag_id, count:interaction.tag_count, body:interaction.tag_body, parent_id:interaction.parent_id },
-                            //         $tagBox = RDR.rindow.tagBox.make( tag, $tagsListContainer, $rindow, interaction.content_node_id );
-                            // });
                         }
 
 
                         function writeTagBoxes( tagList ) {
+                            if ( !tagList.length ) { return; }
                         var buckets = createTagBuckets( tagList ),
                               colorInt = 1;
 
@@ -6100,7 +6090,6 @@ return;
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
                 //RDR.actions.viewReactionSuccess
-                console.log('viewReactionSuccess');
                 var tag = args.tag,
                     $rindow = args.rindow,
                     interaction = args.response.data.interaction,

@@ -494,6 +494,32 @@ div.rdr_sandbox div.rdr div.rdr_view_success .rdr_sectionWrap {
     padding: 6px 0 !important;
 }
 
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_commentsSection .rdr_first_column{
+    padding-top: 1px !important;
+    min-height: 20px !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_boardsSection .rdr_first_column{
+    padding-top: 4px !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_shareSection .rdr_first_column{
+    padding-top: 12px !important;
+}
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_first_column {
+  width:72px !important;
+  float: left !important;
+  padding-top: 5px !important;
+}
+
+
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_second_column,
+div.rdr_sandbox div.rdr div.rdr_view_success .rdr_last_column{
+  float: left !important;
+}
+
+
+
+
+
 /* commentSet */
 div.rdr_sandbox div.rdr div.rdr_commentSet {
     /*margin:5px 10px !important;
