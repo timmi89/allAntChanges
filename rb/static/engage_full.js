@@ -4357,11 +4357,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
 
                             } else {
-                                $('#rdr_loginPanel').remove()
+                                // not a page-level reaction
+                                $('#rdr_loginPanel').remove();
 
                                 // init vars
                                 var $rindow = args.rindow,
-                                    $tag_table = $rindow.find('table.rdr_tags'),
+                                    // $tag_table = $rindow.find('table.rdr_tags'),
                                     uiMode = $rindow.data('mode') || 'writeMode',
                                     response = args.response,
                                     interaction = response.interaction,
@@ -4373,17 +4374,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //clear loader
                                 if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                                if ( uiMode =="writeMode" && $rindow.find('a.rdr_custom_tag').length == $rindow.find('a.rdr_custom_tag.rdr_tagged').length ) {
+                                // should be removeable :: not needed in a tagbox world?
+                                // if ( uiMode =="writeMode" && $rindow.find('a.rdr_custom_tag').length == $rindow.find('a.rdr_custom_tag.rdr_tagged').length ) {
                                     
-                                    // var tagsListMaxWidth = $rindow.width()+2, // really.
-                                    var tagsListMaxWidth = $rindow.width(), // really.
+                                //     // var tagsListMaxWidth = $rindow.width()+2, // really.
+                                //     var tagsListMaxWidth = $rindow.width(), // really.
                                     
-                                        custom_tag = {count:0, id:"custom", body:"Add your own"};
+                                //         custom_tag = {count:0, id:"custom", body:"Add your own"};
 
-                                    var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
-                                    // var $pill_container = $tag_table.find('td:last-child'),
-                                        $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
-                                }
+                                //     var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
+                                //     // var $pill_container = $tag_table.find('td:last-child'),
+                                //         $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
+                                // }
 
                                 //temp tie-over
                                 var hash = args.hash,
@@ -5541,7 +5543,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
                     makeTagsListForMedia: function( $rindow ){
                         //RDR.actions.indicators.utils.makeTagsListForMedia:
-
+return;
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
                             
@@ -6098,6 +6100,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
                 //RDR.actions.viewReactionSuccess
+                console.log('viewReactionSuccess');
                 var tag = args.tag,
                     $rindow = args.rindow,
                     interaction = args.response.data.interaction,
