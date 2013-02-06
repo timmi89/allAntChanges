@@ -1048,55 +1048,54 @@ add back in
 
                 if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText =  ( actionType=="react" ) ? "Add your own" : "Add tag...";
+                        helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
 
                     // add custom tag
-                    var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><div contenteditable="true">'+helpText+'</div></div>');
+                    // var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><div contenteditable="true">'+helpText+'</div></div>');
+                    var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><input value="'+helpText+'" /></div>');
                     
 
-// $custom.find('div').focus( function() {
-//     RDR.events.track('start_custom_reaction_rindow');
-//     var $input = $(this);
-//     $input.removeClass('rdr_default');
-//     if ( $input.val() == helpText ) {
-//         $input.val('');
-//     }
-// }).blur( function() {
-//     var $input = $(this);
-//     if ( $input.val() === "" ) {
-//         $input.val( helpText );
-//     }
-//     if ( $input.val() == helpText ) {
-//         $input.addClass('rdr_default');
-//     }
-//     // $input.closest('div.rdr_tag').removeClass('rdr_hover');
-// }).keyup( function(event) {
-//     var $input = $(this),
-//         tag = {},
-//         hash = $rindow.data('container');
+                    $custom.find('input').focus( function() {
+                        RDR.events.track('start_custom_reaction_rindow');
+                        var $input = $(this);
+                        $input.removeClass('rdr_default');
+                        if ( $input.val() == helpText ) {
+                            $input.val('');
+                        }
+                    }).blur( function() {
+                        var $input = $(this);
+                        if ( $input.val() === "" ) {
+                            $input.val( helpText );
+                        }
+                        if ( $input.val() == helpText ) {
+                            $input.addClass('rdr_default');
+                        }
+                        $input.closest('div.rdr_tag').removeClass('rdr_hover');
 
-//     if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-//         tag.body = $input.val();
-//         $input.parent().addClass('rdr_tagged');
+                    }).keyup( function(event) {
+                        var $input = $(this),
+                            tag = {},
+                            hash = $rindow.data('container');
 
-//         // args = { tag:tag, hash:hash, kind:"page" };
-//         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
-//         RDR.actions.interactions.ajax( args, actionType, 'create' );
-//         $input.blur();
-//     }
-//     else if (event.keyCode == '27') { //esc
-//         //return false;
-//         $input.blur();
-//     } else if ( $input.val().length > 25 ) {
-//         var customTag = $input.val();
-//         $input.val( customTag.substr(0, 25) );
-//     }
-// });
+                        if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
+                            tag.body = $input.val();
+                            $input.parent().addClass('rdr_tagged');
+
+                            // args = { tag:tag, hash:hash, kind:"page" };
+                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
+                            RDR.actions.interactions.ajax( args, actionType, 'create' );
+                            $input.blur();
+                        }
+                        else if (event.keyCode == '27') { //esc
+                            //return false;
+                            $input.blur();
+                        } else if ( $input.val().length > 25 ) {
+                            var customTag = $input.val();
+                            $input.val( customTag.substr(0, 25) );
+                        }
+                    });
                     
                     $container.find('.rdr_box').append( $custom, " " );
-                    $custom.bigtext({ maxfontsize:32 });
-
-                    // $custom.closest('div.rdr_cell_wrapper').addClass('rdr_custom_tag_container');
                     $custom.tooltip();
                 }
             },
@@ -5435,9 +5434,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               }
                             }, function() {
                                 $('.rdr_box_big').bigtext({ maxfontsize:48 });
-                                $('.rdr_box_medium').bigtext({ maxfontsize:24 });
+                                $('.rdr_box_medium').bigtext({ maxfontsize:22 });
                                 $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:14 });
-                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
+                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:22 });
 
                                 var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                     currentTagBoxAnimating = 0;
