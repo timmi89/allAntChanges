@@ -6095,7 +6095,7 @@ return;
                     interaction = args.response.data.interaction,
                     content_node = ( args.content_node == "" ) ? args.response.data.content_node:args.content_node;
 
-                $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more');
+                $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more').find('.rdr_footer').hide();
                 //temp tie-over
                 var hash = args.hash,
                     summary = RDR.summaries[hash],
