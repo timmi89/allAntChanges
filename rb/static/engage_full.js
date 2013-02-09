@@ -273,6 +273,7 @@ function readrBoard($R){
             },
             panelUpdate: function( $rindow, className, $newPanel, shouldAppendNotReplace ) {
                 //RDR.rindow.panelUpdate:
+
                 if ( !$rindow ) return;
                 var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
                     $panel = $rdr_body_wrap.find('div.'+className);
@@ -287,7 +288,6 @@ function readrBoard($R){
 
             panelShow: function( $rindow, $showPanel, callback ) {
                 //RDR.rindow.panelShow: 
-                
                 // panelEvent - panelShow
                 
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
@@ -436,7 +436,6 @@ function readrBoard($R){
             },
             updateSizes: function($rindow, _options) {
                 //RDR.rindow.updateSizes:
-
                 // options are {
                 //     setWidth,
                 //     setHeight,
@@ -474,11 +473,11 @@ function readrBoard($R){
                 }else{
                     defaults.w = $elm.width();
                 }
-                defaults.h = $elm.height();
+                defaults.h = $elm.height() + 32; // 32px is the header height
 
                 width = options.setWidth || defaults.w;
                 height = options.setHeight || defaults.h;
-            
+
                 if(options.noAnimate){
                     $rindow.css({
                         width: width,
@@ -962,11 +961,6 @@ function readrBoard($R){
                         $tagBox.find('.rdr_tag').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
                     }
                     $tagContainer.append( $tagBox );
-
-
-
-                    // pre-tagBox:
-                    // var $a = $('<a class="rdr_tag rdr_tag_'+tag.id+' rdr_tooltip_this" title="'+message+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">'+tagCount+'</span></a> ')
 
                     if ( content_node_id ) {
                         $tagBox.find('.rdr_tag').data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
@@ -5222,8 +5216,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: readmode
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
-                            RDR.rindow.updateFooter( $rindow, '<em>+ To add your own, select some text</em>' );
-
+                            RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
                         }
 
 
@@ -5973,6 +5966,7 @@ return;
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
+                    RDR.rindow.hideFooter($rindow);
                     RDR.rindow.panelUpdate($rindow, className, $tagsListContainer);
                     RDR.rindow.panelEnsureFloatWidths($rindow);
 
@@ -7007,32 +7001,32 @@ function $RFunctions($R){
              *      $.log("%s is %d years old.", "Bob", 42);
              *      $('div.someClass').log().hide();
              */
-            $.log = function () {
+            $.clog = function () {
                 if ( window.console && window.console.log && window.console.log.apply ) {
                     window.console.log.apply(window.console, arguments);
                 }
             };
-            $.fn.log = function () {
+            $.fn.clog = function () {
                 var logArgs = arguments || this;
-                $.log(logArgs);
+                $.clog(logArgs);
                 return this;
             };
 
 
             //alias console.log to global log
             //in case client already has log defined (remove for production anyway)
-            if (typeof log === "undefined"){
-                log = function(){
+            if (typeof clog === "undefined"){
+                clog = function(){
                     $.each(arguments, function(idx, val){
-                        $.log(val);
+                        $.clog(val);
                     });
                 };
             }
 
             //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
             if(typeof jQuery !== 'undefined'){
-                jQuery.log = $.log;
-                jQuery.fn.log = $.fn.log;
+                jQuery.clog = $.clog;
+                jQuery.fn.clog = $.fn.clog;
             }
 
         }

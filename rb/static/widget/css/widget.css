@@ -1676,8 +1676,13 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px 
 div.rdr_sandbox div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr_sandbox div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small { height:110px !important; padding:35px 10px 0 !important;}
+div.rdr_sandbox div.rdr.rdr_window div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small.rdr_wide { padding:21px 10px 0 !important; }
+
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px !important; height:80px !important; padding:20px 10px 0 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px !important; height:55px !important; padding-top:19px !important;}
+
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px !important; height:55px !important; padding-top:16px !important;}
+div.rdr_sandbox div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:160px !important; }
+
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container { padding:0 !important; height:110px !important;}
 div.rdr_sandbox div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_wide { height:55px !important;}
