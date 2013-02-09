@@ -952,7 +952,7 @@ function readrBoard($R){
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
                       tagBody = ( tag.body ) ? tag.body:tag.tag_body;
 
-                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'<br/></div></div>' );
+                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'<br/></div></div>' );
                     $tagBox.find('.rdr_tag').data({
                             tag_id: tag.id,
                             tag_count: tagCount,
@@ -2600,8 +2600,6 @@ function readrBoard($R){
 
                                     userMsg = (interactionInfo.type == 'tag') ?
                                         "You have tagged this <em>"+interactionInfo.body+"</em>." :
-                                    (interactionInfo.type == 'bookmark') ?
-                                        "You have stored this <em>"+interactionInfo.body+"</em>." :
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
@@ -4694,163 +4692,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     RDR.actions.interactions.ajax( args, 'react', 'create' );
                                 });
                             }
-                        }
-                    }
-                },
-                bookmark: {
-                    preAjax: function(args){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
-                    },
-                    customSendData: function(args){
-                        //RDR.actions.interactions.bookmark.customSendData:
-                        var hash = args.hash,
-                            summary = RDR.summaries[hash],
-                            kind,
-                            tag,
-                            sendData;
-
-                        kind = summary.kind;
-
-                        var $container = $('.rdr-'+hash);
-
-                        var rindow = args.rindow,
-                            tag_li = args.tag;
-
-                        tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
-
-                        var content_node_data = {};
-                        //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
-                        var content_node = args.content_node || null;
-
-                        if(kind == 'img' || kind == 'media' || kind == 'med'){
-                            var body = $container[0].src;
-
-                            content_node_data = {
-                                'container': rindow.data('container'),
-                                'body': body,
-                                'kind':kind,
-                                'hash':hash
-                            };
-
-                        }else{
-                            //is text
-
-                            //todo: fix this temp hackery
-                            if(content_node){
-                                content_node_data = {
-                                    'container': rindow.data('container'),
-                                    'body': content_node.body,
-                                    'location': content_node.location,
-                                    'kind':kind
-                                };
-                            }else{
-                                var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
-                                    selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
-
-                                content_node_data = {
-                                    'container': rindow.data('container'),
-                                    'body': selState.text,
-                                    'location': selState.serialRange,
-                                    'kind': kind
-                                };
-                            }
-                        }
-
-                        sendData = {
-                            //interaction level attrs
-                            "tag" : tag,
-                            "node": content_node,                        //null if writemode
-                            "content_node_data":content_node_data,
-                            "hash": content_node_data.container,
-                            //page level attrs
-                            "user_id" : RDR.user.user_id,
-                            "readr_token" : RDR.user.readr_token,
-                            "group_id" : RDR.group.id,
-                            "page_id" : RDR.util.getPageProperty('id', hash),
-                            "int_id" : args.int_id
-                        };
-
-                        return sendData;
-                    },
-                    onSuccess: {
-                        //RDR.actions.interactions.bookmark.onSuccess:
-                        create: function(args){
-
-                            // init vars
-                            var $rindow = args.rindow,
-                                uiMode = $rindow.data('mode') || 'writeMode',
-                                response = args.response,
-                                interaction = response.interaction,
-                                interaction_node = response.data.interaction.interaction_node,
-                                sendData = args.sendData,
-                                tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag, // janky!
-                                int_id = response.data.interaction.id;
-
-                            //clear loader
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                            args = $.extend(args, {scenario:"bookmarkSuccess"});
-
-                            // add a new, empty custom tag pill to the rindow
-                            var $tag_table = ( $rindow.find('div.rdr_bookmark_media').length ) ? $rindow.find('div.rdr_bookmark_media').find('table.rdr_tags') : $rindow.find('table.rdr_tags'),
-                                // tagsListMaxWidth = $rindow.width()+2, // really.
-                                tagsListMaxWidth = $rindow.width(), // really.
-                                custom_tag = {count:0, id:"custom", body:"Add your own"};
-
-                            var $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true );
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'bookmark' );
-
-                            RDR.rindow.updateTagMessage( args );
-                        },
-                        remove: function(args){
-                            //RDR.actions.interactions.bookmark.onSuccess.remove:
-
-                            var $rindow = args.rindow,
-                                tag = args.tag,
-                                int_id = args.int_id,
-                                deleted_interaction_node = args.deleted_interaction.interaction_node;
-
-                            //clear loader
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                            var usrMsgArgs = {
-                                msgType: "interactionSuccess",
-                                interactionInfo: {
-                                    type: 'bookmark',
-                                    body: deleted_interaction_node.body,
-                                    remove: true
-                                },
-                                rindow:$rindow
-                            };
-                            //queued up to be released in the sharestart function after the animation finishes
-                            // NOT TRUE ANYMORE?
-                            $rindow.queue('userMessage', function(){
-                                RDR.session.rindowUserMessage.show( usrMsgArgs );
-                            });
-                        }
-                    },
-                    onFail: function(args){
-                        //RDR.actions.interactions.bookmark.onFail:
-
-                        //todo: we prob want to move most of this to a general onFail for all interactions.
-                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
-
-                        var $rindow = args.rindow,
-                            tag_li = args.tag;
-
-                        var response = args.response;
-
-                        //clear the loader
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                        if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            RDR.session.showLoginPanel( args );
-                        } else {
-                            // if it failed, see if we can fix it, and if so, try this function one more time
-                            RDR.session.handleGetUserFail( args, function() {
-                                RDR.actions.interactions.ajax( args, 'bookmark', 'create' );
-                            });
                         }
                     }
                 }
