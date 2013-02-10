@@ -281,6 +281,7 @@ function readrBoard($R){
                 if (shouldAppendNotReplace){
                     $panel.append( $newPanel );
                 }else{
+                    // replacewith bug
                     $panel.replaceWith( $newPanel );
                 }
                 return $newPanel;
@@ -344,6 +345,7 @@ function readrBoard($R){
                 var $hidePanel = $rindow.find('.rdr_visiblePanel');
                 $hidePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
 
+                // replacewith bug
                 var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
                 $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 
@@ -1035,6 +1037,7 @@ function readrBoard($R){
 
                         $commentHover.append( '<i class="icon-comment"></i> '+num_comments );
                         $commentHover.click( function() {
+                            // replacewith bug
                             $(this).tooltip('hide');
                             RDR.actions.viewCommentContent({
                                 tag:tag,
@@ -5235,7 +5238,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: readmode, for all content types (kind)
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
-                            RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
+                            clog( summary );
+                            if ( summary.kind =="text" ) {
+                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
+                            } else {
+                                RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
+                                $rindow.find('.rdr_footer').addClass('rdr_cta').click( function() {
+                                    $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                });
+                            }
                         }
 
 
