@@ -8,139 +8,35 @@
 
 {% block sidebarContent %}
 <div id="sidebar">
-  {% include "sidebar.html" %}
+    {% if not profile_user and not group and not board %}
+    {% if not query_string and not singleton %}
+    <!-- homepage sidebar -->
+    {% include "homepage_sidebar.html" %}
+    {% endif %}
+    {% endif %}
+    
+    {% include "sidebar.html" %}
 </div>
 {% endblock sidebarContent %}
 
 {% block mainContent %}
 
 {% if not profile_user and not group and not board %}
-<style>
-section[role="content"] {background:#f3f3f3;}
-section[role="main"] {margin-top: 0;}
-section[role="complementary"] {display:none;}
-header[role="banner"] { box-shadow:none !important; border-bottom:1px solid #d9d9d9; }
-#how_the_web_feels, #more_content {
-    background:#fff;
-    width:100%;
-    box-shadow:0 0 6px #bbb;
-    text-align:center;
-}
-#how_the_web_feels { min-height:400px; }
-#more_content { padding-top:15px; }
-#how_the_web_feels h1 { font-weight:bold; color:#8e8e8e; font-size:64px;padding:20px;}
-#more_info {
-    padding:15px 0 5px;
-}
-div.section_content {
-    margin:0 auto;
-    width:920px;
-}
-div.section_content #cards {
-    margin:0;
-    padding:0;
-    width:616px;
-}
-#how_the_web_feels div.section_content h1.sectionHeader,
-div.section_content h1.sectionHeader {
-    text-align:left;
-    background:none;
-    font-size:18px;
-    color:#000;
-    padding:0 0 0 5px;
-    margin-bottom:10px;
-}
-#how_the_web_feels div.section_content h1.sectionHeader {
-    margin-top:0px;
-    position:relative;
-    z-index:2;
-}
-#how_the_web_feels section[role="most popular tags"] ol { margin-left:5px; }
-</style>
 {% if not query_string and not singleton %}
-<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
-<div id="how_the_web_feels">
-    <h1>How the web feels today.</h1>
-    <div class="section_content">
-        <div class="reactions">
-            <div class="other_reactions">
-                <section role="most popular tags">
-                    <h1 class="sectionHeader">Other Reactions</h1>
-                    <ol></ol>
-                </section>
-            </div>
-            <div class="most_popular">
-                <h1 class="sectionHeader">Most Popular Reactions</h1>
-                <div id="pie_chart_labels">
-                    <ol></ol>
-                </div>
-                <div id="pie_chart_container">
-                    <div id="pie_chart"></div>
-                    <div id="pie_chart_credit">
-                        <span>Highcharts.com</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="more_info">
-    <div class="section_content">
-        <div class="whatIsReadrBoard">
-            <div class="whatIsReadrBoardWrap">
-                <h2>What is ReadrBoard?</h2>
-                ReadrBoard makes it easy to react to any phrase, 
-                image, video, or article on the web -- with the click of a button.
-                <div><a href="/publishers/">Add to your website</a> &nbsp;|&nbsp;<a href="/react/">Add to your browser</a></div>
-            </div>
-        </div>
-        <div class="featureQuoteWrap">
-            <div class="featureQuoteWrapInner">
-                <a href="http://www.readrboard.com/user/1662/" target="_blank">
-                    <img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" />
-                </a>
-                <h3>
-                    <em>"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</em>
-                    <span class="alexis">- <a href="http://www.readrboard.com/user/1662/" target="_blank">Alexis Ohanian</a></span>
-                    <span class="cofounder">Co-Founder, Reddit</span>
-                </h3>
-            </div>
-        </div>
-        <div class="asSeenOnWrap">
-            <a class="a1" href="http://dailycandy.com/everywhere/article/129857/Online-finds-fashion-and-fodder" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/dailycandy.png" />
-            </a>
-            <a class="a2" href="http://contently.com/blog/readrboard-getting-past-like/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/content-strategist.png" />
-            </a>
-
-            <a class="a3" href="http://netted.net/2012/08/15/now-thats-remarkable/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/netted.png" />
-            </a>
-
-            <a class="a4" href="http://journalists.org/2012/01/06/how-they-did-it-readrboard/" target="_blank">
-                <img src="{{ STATIC_URL }}site/images/as-seen-on/ona.png" />
-            </a>
-        </div>
-    </div>
+<div id="tag_cloud_container">
+    <section role="tag cloud grid">
+        <!-- this will get dynamically populated -->
+    </section>
 </div>
 {% endif %}
 {% endif %}
 
 {% if board %}
-<style>
-#board_header { margin:0 auto; padding:10px; text-align:center; margin-top:-30px; }
-#board_header h1 { font-size:32px; font-weight:bold; text-shadow:1px 1px 2px #aaa;}
-#board_header .board_meta       { padding:10px 20px; background:none repeat scroll 0 0 rgba(0, 0, 0, 0.05); margin:20px auto; overflow:auto; box-shadow:0px 0px 3px #bbb inset; }
-#board_header h2    { font-size:18px; font-style:italic; }
-#board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold;}
-#board_header .board_meta button    { float:right; line-height:26px; }
-</style>
 <div id="board_header">
     <h1>{{ board.title }}</h1>
     {% if board.description %}<h2>{{ board.description }}</h2>{% endif %}
     <div class="board_meta">
-        <button id="board_follow_button">Follow this board</button>
+        <button id="board_follow_button" class="btn">Follow this board</button>
         <span id="board_follower_count" style="display:block;float:right;margin:9px 8px 0 0;font-size:12px;"></span>
         {% if board.owner.first_name %}
         <h3><a href="/user/{{ board.owner.id }}">{{ board.owner.first_name }} {{ board.owner.last_name }}</a></h3>
@@ -155,32 +51,6 @@ div.section_content h1.sectionHeader {
 {% if not profile_user and not group and not board and not query_string %}
 <div id="more_content">
     <div class="section_content">
-        <style>
-        div.otherContent {
-            width:280px;
-            float:right;
-        }
-        div.component { margin-bottom:20px; }
-        div.component ul { list-style-type:none; padding:0;margin:0 0 0 5px;text-align:left;}
-        div.component ul li { margin-bottom:5px;}
-        div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
-        div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
-        div.component ul li a img { width:30px; display:inline-block; margin:0 5px -7px 0;}
-        </style>
-        <div class="otherContent">
-            <div class="component active_sites">
-                <h1 class="sectionHeader">Active Sites</h1>
-                <ul></ul>
-            </div>
-            <div class="component people">
-                <h1 class="sectionHeader">Active People</h1>
-                <ul></ul>
-            </div>
-            <div class="component active_pages">
-                <h1 class="sectionHeader">Active Pages</h1>
-                <ul></ul>
-            </div>
-        </div>
 {% endif %}
 
     {% block cards %}
@@ -217,32 +87,76 @@ div.section_content h1.sectionHeader {
             success: function(response) {
 
                 function SortByTagCount(a,b) { return b.count - a.count; }
-                var interaction_order = [];
+                var sorted_interactions = [];
 
                 $.each( response.data.nodes, function(reaction_body, reaction_data) {
-                    interaction_order.push( { body:reaction_body, count:reaction_data.count } );
-                    // $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
-                    // });
+                    sorted_interactions.push( { body:reaction_body, count:reaction_data.count } );
                 });
 
-                interaction_order.sort( SortByTagCount );
+                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
 
-                // reactions
-                var chart_data = [],
-                    index = 0;
-
-                $.each( interaction_order, function(idx, reaction) {
-                    var $pie_chart_labels = $('#pie_chart_labels ol'),
-                        $other_reactions = $('section[role="most popular tags"] ol');
-                    if (index<8) {
-                        $pie_chart_labels.append('<li><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
-                        chart_data.push( [reaction.body, reaction.count] );
-                    } else {
-                        $other_reactions.append('<li class="medium"><a href="/?s='+reaction.body+'">'+reaction.body+' <span>('+reaction.count+')</span></a></li>');
+                // do tag cloud logic
+                // render the tag cloud
+                // medium, small, small, big
+                var boxSizes = [ "medium", "small", "small", "big" ],
+                    currentBoxSize = 0,
+                    colorInt = 1,
+                    $tagCloud = $('section[role="tag cloud grid"]');
+                while ( sorted_interactions.length ) {
+                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
+                        var median = Math.floor(sorted_interactions.length/2);
+                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
+                        $tagCloud.append( $thisBox );
+                        sorted_interactions.splice( median, 1 );
+                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
+                        var thisTag = sorted_interactions.pop(),
+                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+                        $tagCloud.append( $thisBox );
+                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
+                        var thisTag = sorted_interactions.shift(),
+                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+                        $tagCloud.append( $thisBox );
                     }
-                    index++;
+                    
+                    // set next color and box size
+                    colorInt++;
+                    currentBoxSize++;
+                    if ( colorInt == 6 ) colorInt = 1;
+                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
+                }
+
+                // isotope and bigtext the cloud
+                $('section[role="tag cloud grid"]').isotope({
+                  layoutMode: 'masonryHorizontal',
+                  masonryHorizontal: {
+                    rowHeight: 70
+                  }
+                }, function() {
+                    $('.box').bigtext();
+                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+                        currentTagBoxAnimating = 0;
+                    var animationQueue = setInterval( animateNextBox, 100 );
+
+                    function animateNextBox() {
+                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+                        if ( $thisBox.hasClass('box1') ) {
+                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+                        } else {
+                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+                        }
+                        currentTagBoxAnimating++;
+                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+                            clearInterval( animationQueue );
+                            initHorizontalScrollbar();
+                        }
+                    }
+                    function initHorizontalScrollbar(){
+                        $('#tag_cloud_container').jScrollPane();
+                        // $('section[role="tag cloud grid"]').jScrollPane();
+                    }
                 });
 
+                
                 // people
                 $.each( response.data.users, function(user_id, user_data) {
                     var $active_people = $('div.people ul');
@@ -259,63 +173,6 @@ div.section_content h1.sectionHeader {
                 $.each( response.data.pages, function(page_url, page_data) {
                     var $active_people = $('div.active_pages ul');
                         $active_people.append('<li><a href="'+page_url+'" target="_blank">'+page_data.page.title+'</a></li>');
-                });
-                
-                
-                // Radialize the colors
-                Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-                    return {
-                        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-                        stops: [
-                            [0, color],
-                            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-                        ]
-                    };
-                });
-                
-                // Build the chart
-                chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'pie_chart',
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false
-                    },
-                    title: {
-                        text: ''
-                    },
-                    tooltip: {
-                        // pointFormat: '{series.name}',
-                        enabled:false
-                    },
-                    plotOptions: {
-                        series: {
-                            point: {
-                        events: {
-                            mouseOver: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
-                            },
-                            mouseOut: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
-                            }
-                        }
-                    },
-                        },
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'Reactions',
-                        data: chart_data
-                    }]
                 });
             }
         });

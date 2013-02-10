@@ -4,16 +4,9 @@
 
 {% block bodyClass %}wide{% endblock %}
 
-{% block topjavascript %}
-<script src="{{ STATIC_URL }}global/js/jquery-1.6.2.min.js"></script>
-<script src="{{ STATIC_URL }}site/js/readr_scripts.js"></script>
+{% block extendedHead %}
 <script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
-{% endblock %}
-
-{% block extendedHead %}
 <link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
 <style>
     section[role="datepicker"] button {
@@ -35,43 +28,26 @@
 <section role="panels">
 
 	<div class="section_content">
-        <div class="reactions">
-            <div class="other_reactions">
-                <section role="most popular tags">
-                    <h1 class="sectionHeader">Other Reactions</h1>
-                    <ol></ol>
-                </section>
-            </div>
-            <div class="most_popular">
-                <h1 class="sectionHeader">Most Popular Reactions</h1>
-                <div id="pie_chart_labels">
-                    <ol></ol>
-                </div>
-                <div id="pie_chart_container">
-                    <div id="pie_chart"></div>
-                    <div id="pie_chart_credit">
-                        <span>Highcharts.com</span>
-                    </div>
-                </div>
-            </div>
+		<div role="total interactions">
+			<h1>0</h1>
+			<h4>Interactions</h4>
+		</div>
+        <div class="reactions" style="width:960px;overflow:hidden;">
+        	<h1 style="margin:40px 0 0;text-align:center;width:960x;">Reactions</h1>
+        	<div id="tag_cloud_container">
+			    <section role="tag cloud grid">
+			        <!-- this will get dynamically populated -->
+			    </section>
+			</div>
         </div>
     </div>
 	<section role="wide panels">
 
 		<section role="interaction frequency">
-			<div role="total interactions">
-				<h1>0</h1>
-				<h4>Interactions</h4>
-			</div>
 			<div role="frequency chart" id="frequency_chart">
 				<h5>frequency chart</h5>
 			</div>
 		</section> <!-- / interaction frequency -->
-
-		<!-- <section role="most popular tags">
-			<h3>Most Popular Tags</h3>
-			<ol></ol>
-		</section> --> <!-- /most popular tags -->
 
 		<section role="most active pages">
 			<h3>Most Active Pages</h3>
@@ -80,9 +56,9 @@
 					<tr>
 						<td role="url">URL</td>
 						<td role="title">Title</td>
-						<td role="reactions"><img src="/static/site/images/blank.png" class="icon" /> Reactions</td>
-						<td role="shares"><img src="/static/site/images/blank.png" class="icon" /> Shares</td>
-						<td role="comments"><img src="/static/site/images/blank.png" class="icon" /> Comments</td>
+						<td role="reactions">Reactions</td>
+						<td role="shares">Shares</td>
+						<td role="comments">Comments</td>
 					</tr>
 				</thead>
 				<tbody></tbody>
@@ -96,18 +72,15 @@
 					<tr>
 						<!-- <td role="via">via</td> -->
 						<td role="content">Content</td>
-						<td role="reactions"><img src="/static/site/images/blank.png" class="icon" /> Reactions</td>
-						<td role="shares"><img src="/static/site/images/blank.png" class="icon" /> Shares</td>
-						<td role="comments"><img src="/static/site/images/blank.png" class="icon" /> Comments</td>
+						<td role="reactions">Reactions</td>
+						<td role="shares">Shares</td>
+						<td role="comments">Comments</td>
 					</tr>
 				</thead>
 				<tbody></tbody>
 			</table>
 		</section> <!-- /most active content -->
 
-	</section> <!-- / wide panels -->
-
-	<section role="thin panels">
 		<section role="most active readers">
 			<h3>Most Active Readers</h3>
 			<table role="active user table" cellpadding="0" cellspacing="0" border="0">
@@ -182,97 +155,79 @@ RB.analytics = {
 			dataType: "jsonp",
 			success: function(response){
 				if (type == "tags") {
-					// function SortByTagCount(a,b) { return b.count - a.count; }
-                	// interaction_order.sort( SortByTagCount );
+					$('section[role="tag cloud grid"]').isotope('destroy').html('<section role="tag cloud grid"/>');
 
-					var other_tag_list = "",
-						$pie_chart_labels = $('#pie_chart_labels ol'),
-						tag_count = 0,
-						pie_chart_data = [];
-					for ( var i in response ) {
-						if ( tag_count < 8 ) {
-							$pie_chart_labels.append('<li><a href="/group/'+RB.group.short_name+'/?s='+response[i].interaction_node__body+'">'+response[i].interaction_node__body+' <span>('+response[i].count+')</span></a></li>');
-							pie_chart_data.push( [response[i].interaction_node__body, response[i].count] );
-						} else {
-							var sizeClass = "medium"; //( response[i].count > 7 ) ? "large" : (response[i].count > 4 ) ? "medium" : "small";
-							other_tag_list += '<li class="'+sizeClass+'"><a href="/group/{{ group.short_name }}/?s='+response[i].interaction_node__body+'" target="_blank">('+response[i].count+') '+response[i].interaction_node__body+'</a></li>';
-						}
-						tag_count++;
-					}
+					function SortByTagCount(a,b) { return b.count - a.count; }
+	                var sorted_interactions = [];
 
-					if ( tag_count == 0 ) {
-						$('section[role="panels"]').hide().after(('<h1 style="margin:20px auto;text-align:center;">No interactions in this date range!</h1>'));
-						return;
-					} else {
-						$('section[role="panels"]').show();
-					}
-					if ( tag_count <= 8 ) {
-						$('div.most_popular').addClass('solo').siblings().hide();
-					} else {
-						$('div.most_popular').removeClass('solo').siblings().show();
-						$('section[role="most popular tags"] ol').html( $(other_tag_list) );
-					}
-                
-                // Build the chart
-                var pie_chart;
-                pie_chart = new Highcharts.Chart({
-                    chart: {
-                        renderTo: 'pie_chart',
-                        plotBackgroundColor: null,
-                        plotBorderWidth: null,
-                        plotShadow: false
-                    },
-                    title: {
-                        text: ''
-                    },
-                    tooltip: {
-                        // pointFormat: '{series.name}',
-                        // enabled:false
-                    },
-                    plotOptions: {
-                        series: {
-                            point: {
-                        events: {
-                            mouseOver: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').addClass('active');
-                            },
-                            mouseOut: function() {
-                                var nthChild = this.x+1;
-                                $('#pie_chart_labels ol li:nth-child('+nthChild+')').removeClass('active');
-                            }
-                        }
-                    },
-                        },
-                        pie: {
-                            allowPointSelect: true,
-                            cursor: 'pointer',
-                            dataLabels: {
-                                enabled: false
-                            }
-                        }
-                    },
-                    series: [{
-                        type: 'pie',
-                        name: 'Reactions',
-                        data: pie_chart_data
-                    }]
-                });
-				} else if (type=="bookmarks") {
-					// var bookmarkHtml = "";
-					// for ( var i in response ) {
-					// 	var bookmark = response[i];
-					// 	bookmarkHtml += '<tr><td role="content">('+bookmark[0].count+') '+bookmark[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
-					// 	for ( var j in bookmark[1].related_reactions ) {
-					// 		var reaction = bookmark[1].related_reactions[j];
-					// 		bookmarkHtml += '('+reaction.count+') '+reaction.interaction_node__body;
-					// 		if ( j < bookmark[1].related_reactions.length - 1 ) bookmarkHtml += ", ";
-					// 	}
-					// 	bookmarkHtml += '</td></tr>'; 
-					// 	// bookmarkHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
-					// }
+	                $.each( response, function(idx, reaction_data) {
+	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
+	                });
 
-					// $('table[role="popular bookmarks"] tbody').html( $(bookmarkHtml) );
+	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
+
+	                // do tag cloud logic
+	                // render the tag cloud
+	                // medium, small, small, big
+	                var boxSizes = [ "medium", "small", "small", "big" ],
+	                    currentBoxSize = 0,
+	                    colorInt = 1,
+	                    $tagCloud = $('section[role="tag cloud grid"]');
+
+	                $tagCloud.html('').removeAttr('style').removeClass('isotope');
+	                while ( sorted_interactions.length ) {
+	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
+	                        var median = Math.floor(sorted_interactions.length/2);
+	                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                        sorted_interactions.splice( median, 1 );
+	                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
+	                        var thisTag = sorted_interactions.pop(),
+	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
+	                        var thisTag = sorted_interactions.shift(),
+	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+	                        $tagCloud.append( $thisBox );
+	                    }
+	                    
+	                    // set next color and box size
+	                    colorInt++;
+	                    currentBoxSize++;
+	                    if ( colorInt == 6 ) colorInt = 1;
+	                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
+	                }
+
+	                // isotope and bigtext the cloud
+	                $('section[role="tag cloud grid"]').isotope({
+	                  layoutMode: 'masonryHorizontal',
+	                  masonryHorizontal: {
+	                    rowHeight: 70
+	                  }
+	                }, function() {
+	                    $('.box').bigtext();
+	                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+	                        currentTagBoxAnimating = 0;
+	                    var animationQueue = setInterval( animateNextBox, 100 );
+
+	                    function animateNextBox() {
+	                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+	                        if ( $thisBox.hasClass('box1') ) {
+	                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+	                        } else {
+	                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+	                        }
+	                        currentTagBoxAnimating++;
+	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+	                            clearInterval( animationQueue );
+	                        	if ( $('#tag_cloud_container').jScrollPane().data().jsp ) { $('#tag_cloud_container').jScrollPane().data().jsp.destroy(); }
+	                            initHorizontalScrollbar();
+	                        }
+	                    }
+	                    function initHorizontalScrollbar(){
+	                        $('#tag_cloud_container').jScrollPane();
+	                    }
+	                });
 				} else if (type=="shares") {
 
 					var shareHtml = "";
@@ -328,7 +283,6 @@ RB.analytics = {
 				} else if ( type == "content" ) {
 					var contentHtml = "";
 					for ( var i in response) {
-						console.dir(response[i]);
 						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
 						if ( response[i].content.kind == "img" ) {
 							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
@@ -348,7 +302,7 @@ RB.analytics = {
 					var userHtml = "";
 					for ( var i in response) {
 						if ( response[i].user.img_url ) {
-							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user.id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user.id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
+							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
 								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
 								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
 								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -424,6 +378,7 @@ RB.analytics = {
 				$('div[role="total interactions"] h1').text( total );
 
 				// make chart
+				// keep this chart for now
 				var chart;
 				chart = new Highcharts.Chart({
 					chart: {
@@ -497,9 +452,30 @@ if ( RB.util.getHashValue('start') ) {
 if ( RB.util.getHashValue('end') ) {
 	RB.analytics.endDate = RB.util.getHashValue('end');
 } else {
-	RB.analytics.endDate = "{% now "m/d/y" %}";
-	// this line is here b/c i suck at python datetime string BS:
-	RB.analytics.endDate = RB.analytics.endDate.split('/')[0]+'/'+(parseInt(RB.analytics.endDate.split('/')[1])+1)+'/'+RB.analytics.endDate.split('/')[2];
+	// these lines are here b/c i suck at python datetime string BS:
+	var dateArray = "{% now "m/d/y" %}".split('/');
+	if ( parseInt(dateArray[1]) == 30 ) {
+		switch ( parseInt(dateArray[0]) ) {
+			case 9:
+				RB.analytics.endDate = '10/1/'+parseInt(dateArray[2]);
+				break;
+			case 4:
+				RB.analytics.endDate = '5/1/'+parseInt(dateArray[2]);
+				break;
+			case 6:
+				RB.analytics.endDate = '7/1/'+parseInt(dateArray[2]);
+				break;
+			case 11:
+				RB.analytics.endDate = '12/1/'+parseInt(dateArray[2]);
+				break;
+		}
+	} else if ( parseInt(dateArray[1]) == 31 ) {
+		if ( parseInt(dateArray[0]) == 12 ) {
+			RB.analytics.endDate = '1/1/'+parseInt(dateArray[2]+1);
+		} else {
+			RB.analytics.endDate = (parseInt(dateArray[0])+1)+'/1/'+parseInt(dateArray[2]);
+		}
+	}
 }
 
 $('input[name="start_date"]').val( RB.analytics.startDate );
