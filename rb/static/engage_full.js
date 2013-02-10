@@ -14,7 +14,7 @@ RDR.hasLoaded = true;
 /*some constants that we need for now*/
 RDR.C = {
     /*tied to div.rdr div.rdr_tag height*/
-    summaryWidgetMaxHeight: 68,
+    // summaryWidgetMaxHeight: 68,
      //+ header height + extra padding;
     rindowHeaderPadding: 29,
     rindowWidthForKindIsText: 200,
@@ -3063,9 +3063,7 @@ function readrBoard($R){
                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                 $('#rdr_indicator_' + hash).show();
                             }
-                            RDR.actions.content_nodes.init(hash, function(){
-
-                            });
+                            RDR.actions.content_nodes.init(hash, function(){});
                         }
                     }
                 }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
@@ -5235,7 +5233,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
+                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction here, select some text</em>' );
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
