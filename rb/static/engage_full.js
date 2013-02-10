@@ -1117,6 +1117,7 @@ function readrBoard($R){
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
 
                         if ( settings.is_page == true ) {
+                            //RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                             var page = settings.page,
                                 $summary_widget = $('.rdr-summary-'+page.id),
                                 coords = {
@@ -1244,7 +1245,7 @@ function readrBoard($R){
 
                         // write inline tags: initial rindow instantiation
                         if ( settings.is_page == true ) {
-                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page.toptags );
+                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page );
                         } else {
                             var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
                         }
@@ -5200,10 +5201,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
 
                     //move these from indicators-  they dont belong here
-                    makeTagsListForInline: function( $rindow, isWriteMode, page_tags ){
+                    makeTagsListForInline: function( $rindow, isWriteMode, page ){
                         //RDR.actions.indicators.utils.makeTagsListForInline:
                         //todo: consolidate this with the same function for makeTagsListForMedia
-                        // tags only used for page-level
+                        // page is the page object, not a boolean
+
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
 
@@ -5248,8 +5250,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           return buckets;
                         }
 
-                        if ( typeof page_tags != "undefined" ) {
-                            writeTagBoxes(page_tags);
+                        if ( typeof page != "undefined" ) {
+                            if ( !isWriteMode ) {
+                                // write page-level tags: readmode
+                                writeTagBoxes( page.toptags );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> | <span class="rdr_what_is_it">What is this?</span>' );
+                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
+                                    $rindow.remove();
+                                    $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
+                                });
+                                $rindow.find('span.rdr_what_is_it').click( function() {
+                                    alert('explain what ReadrBoard is');
+                                    return false;
+                                });
+                            } else {
+                                // write page-level tags: writemode
+                                writeTagBoxes( RDR.group.blessed_tags );
+                                var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                                $rindow.removeClass('rdr_rewritable');
+
+                            }
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
@@ -5275,8 +5295,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( typeof page_tags != "undefined" ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                            if ( typeof page != "undefined" ) {
+                                if ( !isWriteMode ) { RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
+                                else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -5358,10 +5379,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
 
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        if ( isWriteMode ) {
+                        if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
+                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                         }
 
@@ -7437,18 +7458,17 @@ function $RFunctions($R){
                     // var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     //having this go to our home page for now because we have no messaging for the page level reactions.
                     // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'  :#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
-clog(1);
+
                     $summary_widget.append(
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
                     );
-clog(2);
+
                     $summary_widget.find('.rdr-logo').click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
 
-clog( $summary_widget );
                     // var $react = $('<div class="rdr-sum-headline" />');
 
                     // var $sumReactions = $('<div class="rdr-sum-reactions"/>');
