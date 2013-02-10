@@ -902,7 +902,6 @@ function readrBoard($R){
             tagBox: {
                 setWidth: function( $rindow, width ) {
                     // RDR.rindow.tagBox.setWidth
-                    clog('RDR.rindow.tagBox.setWidth: '+width);
                     // should probably just be RDR.rindow.setWidth ??
                     // width must be 320, 480, or 640
                     $rindow.removeClass('w160 w320 w480 w640').addClass('w'+width);
@@ -1116,7 +1115,6 @@ function readrBoard($R){
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
-                        clog(settings);
 
                         if ( settings.is_page == true ) {
                             var page = settings.page,
@@ -5251,12 +5249,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         if ( typeof page_tags != "undefined" ) {
-writeTagBoxes(page_tags);
-                            // $.each( tags, function(idx, this_tag) {
-                            //     if ( this_tag && this_tag.tag_count > 0 ) {
-                            //         clog( this_tag );
-                            //     }
-                            // });
+                            writeTagBoxes(page_tags);
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
@@ -5283,10 +5276,8 @@ writeTagBoxes(page_tags);
 
                             // size the rindow based on # of reactions
                             if ( typeof page_tags != "undefined" ) {
-                                clog('set width 1');
-                                RDR.rindow.tagBox.setWidth( $rindow, 640 );
+                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
                             } else if ( tagList.length > 1 ) {
-                                clog('set width 2');
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -7473,7 +7464,7 @@ clog( $summary_widget );
                             // var $this = $(this),
                             //     $visibleReactions = $this.find('div.rdr-sum-headline'),
                             //     $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
-var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+                            var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             // if (
@@ -7516,33 +7507,14 @@ var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.t
                     //     '</a>'
                     // );
 
+                    var total_reactions = 0;
+                    $.each( page.toptags, function(idx, tag) {
+                        total_reactions +=  tag.tag_count;
+                    });
                     $summary_widget.append(
-                        '<a class="rdr_reactions_label">'+page.toptags.length+' Reactions</a>'
+                        '<a class="rdr_reactions_label">'+total_reactions+' Reactions</a>'
                     );
 
-                    // summary widget: specific tag totals
-                    if ( page.toptags.length > 0 ){
-                        // var $toptags = $('<div class="rdr-top-tags" />');
-                        // $summary_widget.append( $toptags );
-                        
-
-
-
-/*
- var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-    RDR.rindow.make( 'writeMode', {
-    "hash": hash,
-    "kind": kind,
-    "content": content
-});
-*/
-
-
-                        // $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
-                        
-                    }else{
-                        // no reactions -- so, show some message
-                    }
 
                     // $react.find('div.rdr-sum-reactions').append( $reactToArticle );
                     // writePageReactionPills( $reactToArticle, page );
