@@ -3072,6 +3072,9 @@ function readrBoard($R){
                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                 $('#rdr_indicator_' + hash).show();
                             }
+                            RDR.actions.content_nodes.init(hash, function(){
+
+                            });
                         }
                     }
                 }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
@@ -5067,7 +5070,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $(this).removeClass('rdr_live_hover');
                                 })//chain
                                 .on('mouseenter', function() { 
-                                    RDR.actions.content_nodes.init(hash, function(){});
+                                    // RDR.actions.content_nodes.init(hash, function(){});
                                     $(this).addClass('rdr_live_hover');
                                 })//chain
                                 .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
@@ -5325,7 +5328,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     } else {
                                         $thisBox.find('div.rdr_tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
                                     }
-                                    $thisBox.find('.rdr_comment_hover').animate( {right:'5px'}, { queue:false, duration:333 });
+                                    $thisBox.find('.rdr_comment_hover').animate( {marginRight:'5px'}, { queue:false, duration:333 });
                                     currentTagBoxAnimating++;
                                     if ( currentTagBoxAnimating > tagBoxesCount ) {
                                         clearInterval( animationQueue );
