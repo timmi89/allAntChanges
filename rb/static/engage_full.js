@@ -330,13 +330,15 @@ function readrBoard($R){
 
                 //update the first panel
                 // canwechangethis
-                var isMediaContainer = $rindow.hasClass('rdr_indicator_details');
-                if (isMediaContainer){
-                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                }else{
-                    var isWriteMode = $rindow.hasClass('rdr_writemode'),
-                        $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
-                }
+                // var isMediaContainer = $rindow.hasClass('rdr_indicator_details');
+                // if (isMediaContainer){
+                //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
+                // }else{
+                //     var isWriteMode = $rindow.hasClass('rdr_writemode'),
+                //         $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
+                // }
+                var isWriteMode = $rindow.hasClass('rdr_writemode'),
+                    $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
                 
                 var className = "rdr_tags_list";
                 var $hidePanel = $rindow.find('.rdr_visiblePanel');
@@ -379,6 +381,7 @@ function readrBoard($R){
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             mediaRindowUpdateTagPanel: function ( $rindow ) {
+                // rename this, it's used everywhere.
 // canwechangethis
                 // RDR.rindow.mediaRindowUpdateTagPanel:
                 // panelEvent - backButton
@@ -580,6 +583,8 @@ function readrBoard($R){
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
+                                        var $header = RDR.rindow.makeHeader( 'Reactions' );
+                                        $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.mediaRindowUpdateTagPanel( $rindow );
 
                                     });
@@ -948,6 +953,8 @@ function readrBoard($R){
                     // abstract this when we abstract the same thing in the previous function.
                     if ( tagCount == "" ) {
                         var message = '';
+                    } else if ( tagCount == -101 ) {
+                        message = "Click to add this reaction here.";
                     } else {
                         var peoples = ( tagCount == 1 ) ? "person":"people",
                             message = tagCount+' '+peoples+' had this reaction. Click to agree.';
@@ -1157,25 +1164,32 @@ function readrBoard($R){
                                 }
                             } else {
                                 // draw the window over the actionbar
-                                // is this used??
+                                // need to do media border hilites
                                 var coords = {
-                                    top: $container.offset().top,
-                                    left: $container.offset().right
+                                    top: $container.offset().bottom+5,
+                                    left: $container.offset().left
                                 };
                             }
                         } else {
                             // readMode
-                            // show readmode text
+                            // show readmode 
                             var selector = ".rdr-" + hash;
 
                             var $indicator = $('#rdr_indicator_'+hash),
                             $indicator_body = $('#rdr_indicator_body_'+ hash),
                             $container = $('.rdr-'+hash);
 
-                            coords = {
-                                top: $indicator_body.offset().top + 22,
-                                left: $indicator_body.offset().left -5
-                            };
+                            if ( kind == "text" ) {
+                                coords = {
+                                    top: $indicator_body.offset().top + 22,
+                                    left: $indicator_body.offset().left -5
+                                };
+                            } else {
+                                var coords = {
+                                    top: $container.offset().bottom+5,
+                                    left: $container.offset().left
+                                };
+                            }
 
                             // $indicatorDetails.hide();
                         }
@@ -1209,10 +1223,6 @@ function readrBoard($R){
                         /* START create the tag pills.  read / write mode matters. (??) */
                         $rindow.addClass('rdr_reactions');
 
-                        // should be removeable START
-                        // b/c we should be unifying media + txt, and this line is for the media drawer, i think.  [pb]
-                        if ( $rindow.find('table.rdr_tags').length ) return;
-                        // should be removeable END
                         var $bodyWrap = $rindow.find('div.rdr_body_wrap');
                         var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
 
@@ -1281,6 +1291,7 @@ function readrBoard($R){
                     customOptions = RDR.rindow._rindowTypes.customOptions,
                     settings = $.extend( {}, defaultOptions, customOptions, options, {mode:rindowType} );
                 //call make function for appropriate type
+
                 var $rindow = RDR.rindow._rindowTypes.tagMode.make(settings);
                 
                 // return $rindow to whatever called RDR.rindow.make
@@ -3332,6 +3343,7 @@ function readrBoard($R){
                     //RDR.actions.containers.media:
                     //actions for the special cases of media containers
                     onEngage: function(hash){
+                        return;
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
@@ -3355,6 +3367,7 @@ function readrBoard($R){
                         RDR.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
+                        return;
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
                         var $mediaItem = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
@@ -5040,16 +5053,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
 
                             _commonSetup();
-
                             $indicator
                                 .appendTo($container_tracker)
                                 .on('click', function() {
-                                    if ( $('#rdr_indicator_details_'+hash).height() < 10 ) {
-                                        RDR.actions.containers.media.onEngage( hash );
-                                        $(this).removeClass('rdr_live_hover');
+                                    if ( summary.counts.interactions == 0 ) {
+                                        var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     } else {
-                                        RDR.actions.containers.media.onDisengage( hash );
+                                        var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
                                     }
+                                    $(this).removeClass('rdr_live_hover');
                                 })//chain
                                 .on('mouseenter', function() { $(this).addClass('rdr_live_hover'); })//chain
                                 .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
@@ -5058,6 +5070,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
+                                // canwechangethis or remove...
                                 if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
                                 // if ( summary.kind == "media" && $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
@@ -5148,17 +5161,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         var $rindow = $indicator_details;
-                        if (isMediaContainer){
-                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                            //a bit of a hack to make sure this state is setup right.
-                            if( $tagsListContainer && !$tagsListContainer.hasClass('rdr_hiddenPanel') ){
-                                $tagsListContainer.addClass('rdr_visiblePanel');
-                            }
+                        // if (isMediaContainer){
+                        //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
+                        //     //a bit of a hack to make sure this state is setup right.
+                        //     if( $tagsListContainer && !$tagsListContainer.hasClass('rdr_hiddenPanel') ){
+                        //         $tagsListContainer.addClass('rdr_visiblePanel');
+                        //     }
 
-                        }else{
-                            //this shouldn't happen with how things are setup now... consolodate later.
-                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
-                        }
+                        // }else{
+                        //     //this shouldn't happen with how things are setup now... consolodate later.
+                        //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                        // }
+                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                         $bodyWrap.append($tagsListContainer);
 
@@ -5214,12 +5228,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         if ( isWriteMode ) {
-                            // PORTER RESUME HERE
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
 
                         } else {
-                            // write inline tags: readmode
+                            // write inline tags: readmode, for all content types (kind)
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
@@ -5343,29 +5356,31 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 clearTimeout(timeoutCloseEvt);
                             });
 
-                            $rindow.find('div.rdr_box').each( function() {
-                                $(this).hover(
-                                    function() {
-                                        var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                        //make sure it's not already transitiontion into a success state
-                                        //hacky because sometimes it doesnt have the data for 1 yet
-                                        var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                        if( isPanelState1 ){
-                                            $().selog('hilite', selState, 'on');
-                                            $rindow.data('selState', selState);
+                            if ( summary.kind == "text" ) {
+                                $rindow.find('div.rdr_box').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'on');
+                                                $rindow.data('selState', selState);
+                                            }
+                                        },
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'off');                                        
+                                            }
                                         }
-                                    },
-                                    function() {
-                                        var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                        //make sure it's not already transitiontion into a success state
-                                        //hacky because sometimes it doesnt have the data for 1 yet
-                                        var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                        if( isPanelState1 ){
-                                            $().selog('hilite', selState, 'off');                                        
-                                        }
-                                    }
-                                );
-                            });
+                                    );
+                                });
+                            }
                         }
 
 
@@ -5881,10 +5896,16 @@ return;
                     summary.interaction_order = [];
 
                     if ( !$.isEmptyObject( summary.content_nodes ) ) {
+                        // text requires iterating through the possible content nodes
                         $.each( summary.content_nodes, function( node_id, node_data ) {
                             $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
                             });
+                        });
+                    } else if ( !$.isEmptyObject( summary.top_interactions ) ) {
+                        // images+media are their own content nodes (for now.  video will split out later.)
+                        $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
+                            summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, parent_id:tag_data.parent_id } );
                         });
                     }
                     summary.interaction_order.sort( SortByTagCount );
@@ -5893,6 +5914,7 @@ return;
                 sortPopularTextContainers: function() {
                     // RDR.actions.summaries.sortPopularTextContainers
                     // only sort the most popular whitelisted
+                    // is this used??
                     function SortByCount(a,b) { return b.interactions - a.interactions; }
 
                     RDR.text_container_popularity = [];
@@ -5908,6 +5930,7 @@ return;
                 },
                 displayPopularIndicators: function () {
                     // RDR.actions.summaries.displayPopularIndicators
+                    // is this used??
 
                     for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
                         if ( RDR.text_container_popularity[i] ) $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
@@ -5915,6 +5938,7 @@ return;
                 },
                 showLessPopularIndicators: function() {
                     // RDR.actions.summaries.showLessPopularIndicators
+                    // is this used??
                     var hashesToShow = [];
 
                     for ( var i=RDR.group.initial_pin_limit; i<RDR.text_container_popularity.length; i++) {
@@ -5967,11 +5991,12 @@ return;
                         $().selog('hilite', selState, 'on');
                     }
 
-                    if (isMediaContainer){
-                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                    }else{
-                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
-                    }
+                    // if (isMediaContainer){
+                    //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
+                    // }else{
+                    //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                    // }
+                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
@@ -6122,6 +6147,8 @@ return;
                 function _makeBackButton(){
                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                     $backButton.click( function() {
+                        var $header = RDR.rindow.makeHeader( 'Reactions' );
+                        $rindow.find('.rdr_header').replaceWith($header)
                         RDR.rindow.mediaRindowUpdateTagPanel( $rindow );
                     });
                     return $backButton;
@@ -9414,7 +9441,7 @@ function $RFunctions($R){
                         tp = {top: pos.top + pos.height, left: pos.left + pos.width / 2 - actualWidth / 2}
                         break
                       case 'top':
-                        tp = {top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2}
+                        tp = {top: pos.top - actualHeight - 5, left: pos.left + pos.width / 2 - actualWidth / 2}
                         break
                       case 'left':
                         tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}

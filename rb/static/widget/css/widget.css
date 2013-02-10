@@ -1138,11 +1138,10 @@ div#rdr-page-summary.defaultSummaryBar .rdr-summary{
 }
 
 /* custom in-page highlight */
-.rdr_hilite {
+/*.rdr_hilite {
     background-color: #fe7 !important;
     color: #333333 !important;
     text-decoration: none !important;
-    /*disable user selection*/
     background-image: -webkit-gradient(
     linear,
     left bottom,
@@ -1156,6 +1155,19 @@ div#rdr-page-summary.defaultSummaryBar .rdr-summary{
     -moz-user-select:none !important; 
     user-select:none !important;
 }
+*/
+.rdr_hilite {
+    background-color: #333 !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    -webkit-user-select:none !important; 
+    -k-user-select:none !important; 
+    -moz-user-select:none !important; 
+    user-select:none !important;
+}
+
+
+
 
 .rdr_hilite_start{}
 .rdr_hilite_end{}
@@ -1697,7 +1709,7 @@ div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { padding:5px 10
 /*div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag div { text-align:center !important; margin:0 auto;}*/
 div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center !important; margin:0 auto; font-family:'HelveticaBold' !important; font-size:16px !important; border:none !important; }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { display:block !important; position: absolute !important; bottom: 3px !important; right:-25px; font-size:10px !important; color:#fff !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { display:block !important; position: absolute !important; bottom: 5px !important; right:-25px; font-size:10px !important; color:#fff !important;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover i { font-size:12px !important; color:#fff !important; margin-right:2px !important; }
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover span.rdr_comment_hover i,
