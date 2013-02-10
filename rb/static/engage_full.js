@@ -2167,6 +2167,17 @@ function readrBoard($R){
                         whenDone();
                         throttling = true;
                     };
+                },
+                once: function(func) {
+                    //RDR.util._.once:
+                    var ran = false, memo;
+                    return function() {
+                        if (ran) return memo;
+                        ran = true;
+                        memo = func.apply(this, arguments);
+                        func = null;
+                        return memo;
+                    };
                 }
             },
             getQueryParams: function(optQueryString) {
@@ -7540,7 +7551,7 @@ function $RFunctions($R){
                                 $visibleReactions = $this.find('div.rdr-sum-headline'),
                                 $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
-                            RDR.events.track( 'view_summary::'+$this.data('page_id') );
+
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             if (
                                 $this.hasClass('rdr-too-many-reactions') &&
