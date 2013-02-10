@@ -7517,7 +7517,7 @@ var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.t
                     // );
 
                     $summary_widget.append(
-                        '<a class="rdr_reactions_label">Reactions</a>'
+                        '<a class="rdr_reactions_label">'+page.toptags.length+' Reactions</a>'
                     );
 
                     // summary widget: specific tag totals

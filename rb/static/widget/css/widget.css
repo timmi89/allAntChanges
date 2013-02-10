@@ -766,8 +766,8 @@ div.rdr.rdr-summary {
     padding-left:2px !important;
     margin-bottom:10px !important;
     float:none;;
-    width:88px;
     cursor:pointer !important;
+    display:inline-block !important;
 }
 div.rdr.rdr-summary:hover {
   background:#eee !important;
