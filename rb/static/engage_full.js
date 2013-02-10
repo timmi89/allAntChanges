@@ -1111,7 +1111,7 @@ function readrBoard($R){
                             $input.val( customTag.substr(0, 25) );
                         }
                     });
-                    
+
                     $container.find('.rdr_box').append( $custom, " " );
                     $custom.tooltip();
                 }
@@ -4397,7 +4397,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 //     var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
                                 //     // var $pill_container = $tag_table.find('td:last-child'),
-                                //         $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow, 'react' );
+
                                 // }
 
                                 //temp tie-over
@@ -5233,17 +5233,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         if ( isWriteMode ) {
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
-
                         } else {
                             // write inline tags: readmode, for all content types (kind)
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
-                            clog( summary );
                             if ( summary.kind =="text" ) {
                                 RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction, select some text</em>' );
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
-                                $rindow.find('.rdr_footer').addClass('rdr_cta').click( function() {
+                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
+                                    $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                 });
                             }
@@ -5393,7 +5392,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 });
                             }
                         }
-
 
                         // $tagsListContainer.append($tag_table);
                         return $tagsListContainer;
