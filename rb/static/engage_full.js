@@ -329,15 +329,6 @@ function readrBoard($R){
                 // panelEvent - panelhide
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
 
-                //update the first panel
-                // canwechangethis
-                // var isMediaContainer = $rindow.hasClass('rdr_indicator_details');
-                // if (isMediaContainer){
-                //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                // }else{
-                //     var isWriteMode = $rindow.hasClass('rdr_writemode'),
-                //         $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
-                // }
                 var isWriteMode = $rindow.hasClass('rdr_writemode'),
                     $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
                 
@@ -1188,7 +1179,6 @@ function readrBoard($R){
                                     left: $indicator_body.offset().left -5
                                 };
                             } else {
-                                clog( $(selector).width() );
                                 var coords = {
                                     top: $container.offset().bottom+5,
                                     left: $container.offset().left
