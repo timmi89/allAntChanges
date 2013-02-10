@@ -7380,8 +7380,8 @@ function $RFunctions($R){
                     $('.'+widgetClass).remove();
 
                     var $summary_widget_parent = $(page.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"><table cellpadding="0" cellspacing="0" border="0"><tr/></table></div>').addClass(widgetClass),
-                        $summary_row = $summary_widget.find('tr');
+                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"></div>').addClass(widgetClass);
+                        // $summary_row = $summary_widget.find('tr');
 
                     if ( RDR.engageScriptParams.bookmarklet == "true" ) {
                         $summary_widget.addClass('rdr_bookmarklet');
@@ -7407,78 +7407,81 @@ function $RFunctions($R){
                         if ( typeof summary.kind != "undefined" && summary.kind == "tag" ) total_interactions = summary.count;
                     });
 
-                    var $RB = $('<div class="rdr-this-is-readrboard"></div>');
+                    // var $RB = $('<div class="rdr-this-is-readrboard"></div>');
                     //having this go to our home page for now because we have no messaging for the page level reactions.
                     // $RB.append('<a href="'+RDR_baseUrl+'/page/'+page.id+'" target="_blank"><img title="This is <strong style=\'  :#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/readrboard_logo.png" class="no-rdr" /></a>');
-                    $RB.append(
+clog(1);
+                    $summary_widget.append(
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
                     );
-                    $RB.click( function() {
+clog(2);
+                    $summary_widget.find('.rdr-logo').click( function() {
                         RDR.events.track('click_rb_icon_summ');
                     });
 
+clog( $summary_widget );
+                    // var $react = $('<div class="rdr-sum-headline" />');
 
-                    var $react = $('<div class="rdr-sum-headline" />');
-
-                    var $sumReactions = $('<div class="rdr-sum-reactions"/>');
-                    $react.append($sumReactions);
-                    $sumReactions.append($RB);
+                    // var $sumReactions = $('<div class="rdr-sum-reactions"/>');
+                    // $react.append($sumReactions);
+                    // $sumReactions.append($RB);
                     
-                    $summary_row.append( $('<td/>').append($react) );
+                    // $summary_row.append( $('<td/>').append($react) );
 
-                    $RB.find('.rdr-logo').tooltip({placement:"right"});
+                    $summary_widget.find('.rdr-logo').tooltip({});
 
                     $summary_widget.hoverIntent(
                         function() {
-                            var $this = $(this),
-                                $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
+                            // var $this = $(this),
+                            //     $visibleReactions = $this.find('div.rdr-sum-headline'),
+                            //     $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
 
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
-                            if (
-                                $this.hasClass('rdr-too-many-reactions') &&
-                                !$this.hasClass('rdr_stayExpanded') &&
-                                !$visibleReactions.is(':animated')
-                            ){
-                                $visibleReactions.height( RDR.C.summaryWidgetMaxHeight ).css('max-height','none').animate({ height:$sbRollover.height() });
-                            }
+                            // if (
+                            //     $this.hasClass('rdr-too-many-reactions') &&
+                            //     !$this.hasClass('rdr_stayExpanded') &&
+                            //     !$visibleReactions.is(':animated')
+                            // ){
+                            //     $visibleReactions.height( RDR.C.summaryWidgetMaxHeight ).css('max-height','none').animate({ height:$sbRollover.height() });
+                            // }
                         },
                         function() {
-                            var $this = $(this),
-                                $visibleReactions = $this.find('div.rdr-sum-headline'),
-                                $sbRollover = $visibleReactions.find('div');
+                            // var $this = $(this),
+                            //     $visibleReactions = $this.find('div.rdr-sum-headline'),
+                            //     $sbRollover = $visibleReactions.find('div');
 
-                            // if ( $visibleReactions.height() > 68 && !$visibleReactions.is(':animated') ) {
-                            if (
-                                $this.hasClass('rdr-too-many-reactions') &&
-                                !$this.hasClass('rdr_stayExpanded') &&
-                                !$visibleReactions.is(':animated') 
-                            ){
-                                $visibleReactions.animate({ height: RDR.C.summaryWidgetMaxHeight });
-                            }
+                            // // if ( $visibleReactions.height() > 68 && !$visibleReactions.is(':animated') ) {
+                            // if (
+                            //     $this.hasClass('rdr-too-many-reactions') &&
+                            //     !$this.hasClass('rdr_stayExpanded') &&
+                            //     !$visibleReactions.is(':animated') 
+                            // ){
+                            //     $visibleReactions.animate({ height: RDR.C.summaryWidgetMaxHeight });
+                            // }
                         }
                     );
 
                     // fix for bad group defaults:
-                    if ( RDR.group.call_to_action == "" ) {
-                        RDR.group.call_to_action = "What do you think?";
-                    }
-                    var $reactToArticle = $(
-                        '<a class="rdr_tag rdr_reactToArticle">'+
-                            '<div class="rdr_reactToArticle_inner">'+
-                                '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                '<span>'+RDR.group.call_to_action+
-                                    '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
-                                '</span>'+
-                            '</div>'+
-                        '</a>'
-                    );
+                    // if ( RDR.group.call_to_action == "" ) {
+                    //     RDR.group.call_to_action = "What do you think?";
+                    // }
 
-                    $react.find('div.rdr-sum-reactions').append(
-                        '<a class="rdr_reactions_label">Reactions: </a>'
+                    // var $reactToArticle = $(
+                    //     '<a class="rdr_tag rdr_reactToArticle">'+
+                    //         '<div class="rdr_reactToArticle_inner">'+
+                    //             '<img class="rdr_logo" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                    //             '<span>'+RDR.group.call_to_action+
+                    //                 '<img class="rdr_arrow" src="'+RDR_staticUrl+'widget/images/blank.png" />'+
+                    //             '</span>'+
+                    //         '</div>'+
+                    //     '</a>'
+                    // );
+
+                    $summary_widget.append(
+                        '<a class="rdr_reactions_label">Reactions</a>'
                     );
 
                     // summary widget: specific tag totals
@@ -7492,20 +7495,18 @@ function $RFunctions($R){
                         $.each( page.toptags, function(idx, this_tag) {
                             // var this_tag = page.toptags[i];
                             if ( this_tag && this_tag.tag_count > 0 ) {
-                                writeTag( this_tag, page );
+                                clog( this_tag );
+                                // writeTag( this_tag, page );
                             }
                         });
-                        $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
+                        // $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
                         
                     }else{
-                        //note that there is a minor bug where this won't work right after deleting a last reaction so the reactions go to 0..
-                        //but it really doesn't matter for now.
-                        //(reason is just because the summary object that gets passed in doesnt update right and is still passing in a tag)
-                        $summary_widget.addClass('rdr-summary-no-reactions')
+                        // no reactions -- so, show some message
                     }
 
-                    $react.find('div.rdr-sum-reactions').append( $reactToArticle );
-                    writePageReactionPills( $reactToArticle, page );
+                    // $react.find('div.rdr-sum-reactions').append( $reactToArticle );
+                    // writePageReactionPills( $reactToArticle, page );
 
                     // removing for now 7/1/2012
                     // if ( page.topusers.length > 0 ){
@@ -7525,11 +7526,11 @@ function $RFunctions($R){
 
                     // }
 
-                    if ( $react.find('div').height() > RDR.C.summaryWidgetMaxHeight ) {
-                        $summary_widget.addClass('rdr-too-many-reactions');
-                    }
+                    // if ( $react.find('div').height() > RDR.C.summaryWidgetMaxHeight ) {
+                    //     $summary_widget.addClass('rdr-too-many-reactions');
+                    // }
 
-                    $summary_widget.append( $('<div class="rdr_info" />') );
+                    // $summary_widget.append( $('<div class="rdr_info" />') );
 
                 function getReactedContent($this, counts) {
                     
