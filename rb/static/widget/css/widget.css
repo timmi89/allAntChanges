@@ -1579,9 +1579,9 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
     color: #666666 !important;
     font: 12px Arial,sans-serif !important;
     padding: 5px 5px 2px 4px !important;
-    -moz-box-shadow:0 0 10px 1px #aaa  !important;
-    -webkit-box-shadow:0 0 10px 1px #aaa  !important;
-    box-shadow:0 0 10px 1px #aaa !important;
+    -moz-box-shadow:0 0 5px #ccc !important;
+    -webkit-box-shadow:0 0 5px #ccc !important;
+    box-shadow:0 0 5px #ccc !important;
 
 }
 

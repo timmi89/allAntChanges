@@ -5066,7 +5066,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                     $(this).removeClass('rdr_live_hover');
                                 })//chain
-                                .on('mouseenter', function() { $(this).addClass('rdr_live_hover'); })//chain
+                                .on('mouseenter', function() { 
+                                    RDR.actions.content_nodes.init(hash, function(){});
+                                    $(this).addClass('rdr_live_hover');
+                                })//chain
                                 .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
