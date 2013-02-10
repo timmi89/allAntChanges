@@ -902,6 +902,7 @@ function readrBoard($R){
             tagBox: {
                 setWidth: function( $rindow, width ) {
                     // RDR.rindow.tagBox.setWidth
+                    clog('RDR.rindow.tagBox.setWidth: '+width);
                     // should probably just be RDR.rindow.setWidth ??
                     // width must be 320, 480, or 640
                     $rindow.removeClass('w160 w320 w480 w640').addClass('w'+width);
@@ -1115,97 +1116,116 @@ function readrBoard($R){
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
-                        var hash = settings.hash;
-                        var summary = RDR.summaries[hash],
-                            $container = summary.$container,
-                            kind = summary.kind,
-                            rewritable = (settings.rewritable == false) ? false:true,
-                            coords = {};
+                        clog(settings);
 
-                        var actionType = (settings.actionType) ? settings.actionType:"react";
+                        if ( settings.is_page == true ) {
+                            var page = settings.page,
+                                $summary_widget = $('.rdr-summary-'+page.id),
+                                coords = {
+                                    top: $summary_widget.offset().bottom+5,
+                                    left: $summary_widget.offset().left
+                                },
+                                
+                                $rindow = RDR.rindow.draw({
+                                    coords: coords,
+                                    container: $summary_widget,
+                                    content: 'page',
+                                    kind: 'page',
+                                    // selState: newSel,
+                                    // rewritable:rewritable,
+                                    mode:settings.mode
+                                });
+                        } else {
+                            var hash = settings.hash;
+                            var summary = RDR.summaries[hash],
+                                $container = summary.$container,
+                                kind = summary.kind,
+                                rewritable = (settings.rewritable == false) ? false:true,
+                                coords = {};
 
-                        /* START create rindow based on write vs. read mode */
-                        if ( settings.mode == "writeMode" ) {
-                            // show writemode text
-                            // writeMode
-                            RDR.events.track('start_react_text');
-                            var newSel;
-                            if ( kind == "text" ) {
-                                //Trigger the smart text selection and highlight
-                                newSel = $container.selog('helpers', 'smartHilite');
-                                if(!newSel) return false;
-                                //temp fix to set the content (the text) of the selection to the new selection
-                                //todo: make selog more integrated with the rest of the code
-                                settings.content = newSel.text;
-                                coords.left = coords.left + 40;
-                                coords.top = coords.top + 35;
-                                //if sel exists, reset the offset coords
-                                if(newSel){
-                                    //todo - combine with copy of this
-                                    var hiliter = newSel.hiliter,
-                                    $hiliteEnd = hiliter.get$end();
+                            var actionType = (settings.actionType) ? settings.actionType:"react";
 
-                                    //testing adjusting the position with overrides from the hilite span
-                                    if( $hiliteEnd ){
-                                        var $helper = $('<span />');
-                                        $helper.insertAfter( $hiliteEnd );
-                                        var strRight = $helper.offset().right;
-                                        var strBottom = $helper.offset().bottom;
-                                        $helper.remove();
-                                        coords.left = strRight + 5; //with a little padding
-                                        coords.top = strBottom;
+                            /* START create rindow based on write vs. read mode */
+                            if ( settings.mode == "writeMode" ) {
+                                // show writemode text
+                                // writeMode
+                                RDR.events.track('start_react_text');
+                                var newSel;
+                                if ( kind == "text" ) {
+                                    //Trigger the smart text selection and highlight
+                                    newSel = $container.selog('helpers', 'smartHilite');
+                                    if(!newSel) return false;
+                                    //temp fix to set the content (the text) of the selection to the new selection
+                                    //todo: make selog more integrated with the rest of the code
+                                    settings.content = newSel.text;
+                                    coords.left = coords.left + 40;
+                                    coords.top = coords.top + 35;
+                                    //if sel exists, reset the offset coords
+                                    if(newSel){
+                                        //todo - combine with copy of this
+                                        var hiliter = newSel.hiliter,
+                                        $hiliteEnd = hiliter.get$end();
+
+                                        //testing adjusting the position with overrides from the hilite span
+                                        if( $hiliteEnd ){
+                                            var $helper = $('<span />');
+                                            $helper.insertAfter( $hiliteEnd );
+                                            var strRight = $helper.offset().right;
+                                            var strBottom = $helper.offset().bottom;
+                                            $helper.remove();
+                                            coords.left = strRight + 5; //with a little padding
+                                            coords.top = strBottom;
+                                        }
                                     }
+                                } else {
+                                    // draw the window over the actionbar
+                                    // need to do media border hilites
+                                    var coords = {
+                                        top: $container.offset().bottom+5,
+                                        left: $container.offset().left
+                                    };
                                 }
                             } else {
-                                // draw the window over the actionbar
-                                // need to do media border hilites
-                                var coords = {
-                                    top: $container.offset().bottom+5,
-                                    left: $container.offset().left
-                                };
-                            }
-                        } else {
-                            // readMode
-                            // show readmode 
-                            var selector = ".rdr-" + hash;
+                                // readMode
+                                // show readmode 
+                                var selector = ".rdr-" + hash;
 
-                            var $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_body = $('#rdr_indicator_body_'+ hash),
-                            $container = $('.rdr-'+hash);
+                                var $indicator = $('#rdr_indicator_'+hash),
+                                $indicator_body = $('#rdr_indicator_body_'+ hash),
+                                $container = $('.rdr-'+hash);
 
-                            if ( kind == "text" ) {
-                                coords = {
-                                    top: $indicator_body.offset().top + 22,
-                                    left: $indicator_body.offset().left -5
-                                };
-                            } else {
-                                var coords = {
-                                    top: $container.offset().bottom+5,
-                                    left: $container.offset().left
-                                };
+                                if ( kind == "text" ) {
+                                    coords = {
+                                        top: $indicator_body.offset().top + 22,
+                                        left: $indicator_body.offset().left -5
+                                    };
+                                } else {
+                                    var coords = {
+                                        top: $container.offset().bottom+5,
+                                        left: $container.offset().left
+                                    };
+                                }
+
+                                // $indicatorDetails.hide();
                             }
 
-                            // $indicatorDetails.hide();
+                            var $rindow = RDR.rindow.draw({
+                                coords: coords,
+                                container: hash,
+                                content: settings.content,
+                                kind: kind,
+                                selState: newSel,
+                                rewritable:rewritable,
+                                mode:settings.mode
+                            });
+                            //later we should consolodate the use of 'container' and 'hash' as the key
+                            $rindow.data('hash', hash);
+                            summary['$rindow_'+settings.mode.toLowerCase()] = $rindow;
                         }
-
-                        var $rindow = RDR.rindow.draw({
-                            coords: coords,
-                            container: hash,
-                            content: settings.content,
-                            kind: kind,
-                            selState: newSel,
-                            rewritable:rewritable,
-                            mode:settings.mode
-                        });
-                        //later we should consolodate the use of 'container' and 'hash' as the key
-                        $rindow.data('hash', hash);
 
                         /* END create rindow based on write vs. read mode */
 
-                        /* START do some utility stuff */
-                        summary['$rindow_'+settings.mode.toLowerCase()] = $rindow;
                         $rindow.addClass('rdr_'+settings.mode.toLowerCase());
-                        /* END do some utility stuff */
 
                         /* START populate the header */
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
@@ -1213,11 +1233,11 @@ function readrBoard($R){
                         var $header = RDR.rindow.makeHeader( headerText );
                         $rindow.find('.rdr_header').replaceWith($header);
 
-                        /* START create the tag pills.  read / write mode matters. (??) */
+                        /* START create the tag boxes.  read / write mode matters. (??) */
                         $rindow.addClass('rdr_reactions');
 
                         var $bodyWrap = $rindow.find('div.rdr_body_wrap');
-                        var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
+                        // var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
 
                         var $oldTagList = $rindow.find('div.rdr_body');
                         if($oldTagList.length){
@@ -1225,9 +1245,13 @@ function readrBoard($R){
                         }
 
                         // write inline tags: initial rindow instantiation
-                        var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
+                        if ( settings.is_page == true ) {
+                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page.toptags );
+                        } else {
+                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
+                        }
                         $bodyWrap.append($tagList);
-                        /* END create the tag pills.  read / write mode matters. */
+                        /* END create the tag boxes.  read / write mode matters. */
 
                         /* START modify the rindow size */
                         var contentWidth = $bodyWrap.width(),
@@ -5178,9 +5202,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
 
                     //move these from indicators-  they dont belong here
-                    makeTagsListForInline: function( $rindow, isWriteMode ){
+                    makeTagsListForInline: function( $rindow, isWriteMode, page_tags ){
                         //RDR.actions.indicators.utils.makeTagsListForInline:
                         //todo: consolidate this with the same function for makeTagsListForMedia
+                        // tags only used for page-level
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
 
@@ -5225,7 +5250,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           return buckets;
                         }
 
-                        if ( isWriteMode ) {
+                        if ( typeof page_tags != "undefined" ) {
+writeTagBoxes(page_tags);
+                            // $.each( tags, function(idx, this_tag) {
+                            //     if ( this_tag && this_tag.tag_count > 0 ) {
+                            //         clog( this_tag );
+                            //     }
+                            // });
+                        } else if ( isWriteMode ) {
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
                         } else {
@@ -5250,7 +5282,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( tagList.length > 1 ) {
+                            if ( typeof page_tags != "undefined" ) {
+                                clog('set width 1');
+                                RDR.rindow.tagBox.setWidth( $rindow, 640 );
+                            } else if ( tagList.length > 1 ) {
+                                clog('set width 2');
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -7437,7 +7473,7 @@ clog( $summary_widget );
                             // var $this = $(this),
                             //     $visibleReactions = $this.find('div.rdr-sum-headline'),
                             //     $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
-
+var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
                             RDR.events.track( 'view_summary::'+$this.data('page_id') );
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             // if (
@@ -7491,14 +7527,17 @@ clog( $summary_widget );
                         
 
 
-                        //for ( var i = 0, j=page.toptags.length; i < j; i++ ) {
-                        $.each( page.toptags, function(idx, this_tag) {
-                            // var this_tag = page.toptags[i];
-                            if ( this_tag && this_tag.tag_count > 0 ) {
-                                clog( this_tag );
-                                // writeTag( this_tag, page );
-                            }
-                        });
+
+/*
+ var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
+    RDR.rindow.make( 'writeMode', {
+    "hash": hash,
+    "kind": kind,
+    "content": content
+});
+*/
+
+
                         // $react.find('div.rdr-sum-reactions a:last-child').addClass('rdr_lastchild');
                         
                     }else{

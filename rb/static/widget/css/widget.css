@@ -763,10 +763,15 @@ div.rdr_sandbox div.rdr_info {padding: 10px 10px 2px 10px !important;}
 
 div.rdr.rdr-summary {
     padding-bottom:0px !important;
+    padding-left:2px !important;
     margin-bottom:10px !important;
     float:none;;
+    width:88px;
+    cursor:pointer !important;
 }
-
+div.rdr.rdr-summary:hover {
+  background:#eee !important;
+}
 div.rdr_shareWidget div.rdr.rdr-summary {
     border:1px solid #ccc !important;
 }
