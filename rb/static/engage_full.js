@@ -499,7 +499,7 @@ function readrBoard($R){
                     queue:false
                 });
 
-                RDR.rindow.jspUpdate($rindow)
+                RDR.rindow.jspUpdate($rindow);
             },
             updatePageTagMessage: function(args, action) {
 
@@ -1188,6 +1188,7 @@ function readrBoard($R){
                                     left: $indicator_body.offset().left -5
                                 };
                             } else {
+                                clog( $(selector).width() );
                                 var coords = {
                                     top: $container.offset().bottom+5,
                                     left: $container.offset().left
@@ -1208,7 +1209,6 @@ function readrBoard($R){
                         });
                         //later we should consolodate the use of 'container' and 'hash' as the key
                         $rindow.data('hash', hash);
-
 
                         /* END create rindow based on write vs. read mode */
 
@@ -1256,6 +1256,7 @@ function readrBoard($R){
 
                         //todo
                         $rindow.find('div.rdr_cell_wrapper div.rdr_tag').css({'width':'100%'});
+                        // $rindow.find('div.rdr_custom_tag input').focus();
 
                         // return $rindow to RDR.rindow.make
                         return $rindow;
@@ -5328,7 +5329,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     } else {
                                         $thisBox.find('div.rdr_tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
                                     }
-                                    $thisBox.find('.rdr_comment_hover').animate( {marginRight:'5px'}, { queue:false, duration:333 });
+                                    $thisBox.find('.rdr_comment_hover').animate( {marginRight:'0px'}, { queue:false, duration:333 });
                                     currentTagBoxAnimating++;
                                     if ( currentTagBoxAnimating > tagBoxesCount ) {
                                         clearInterval( animationQueue );
@@ -5400,6 +5401,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         // $tagsListContainer.append($tag_table);
+                        // RDR.rindow.jspUpdate($rindow);
                         return $tagsListContainer;
                     },
                     makeTagsListForMedia: function( $rindow ){
