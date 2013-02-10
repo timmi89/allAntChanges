@@ -3753,27 +3753,6 @@ function readrBoard($R){
 
                     var summary = RDR.summaries[hash];
 
-
-                    //todo: i think this should be killed - check later!
-                    
-                    //hack to interupt the ajax call if we've already gotten the content nodes.
-                    if(summary.content_nodes && summary.content_nodes.length > 0){
-                        console.log(hash + " already fetched");
-                        //finally, run the success callback function
-                        if ( onSuccessCallback ) {
-                            onSuccessCallback();
-                        }
-
-                        if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
-                            $.each(RDR.contentNodeQueue[hash], function(){
-                                var func = RDR.contentNodeQueue[hash].pop();
-                                func(hash);
-                            });
-                        }
-                        return;
-                    }
-
-
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "container_id":summary.id
@@ -3838,6 +3817,7 @@ function readrBoard($R){
                                 onSuccessCallback();
                             }
 
+                            //also run any callbacks that get queued up on the summarybar hover
                             if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
                                 $.each(RDR.contentNodeQueue[hash], function(){
                                     var func = RDR.contentNodeQueue[hash].pop();
