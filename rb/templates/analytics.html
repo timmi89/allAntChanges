@@ -360,23 +360,29 @@
             // var parseTrackingRepo = "EventTracking";
 
             var ParseTracker = Parse.Object.extend(parseTrackingRepo);
-            var query = new Parse.Query(ParseTracker);                        
 
-            query.greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate);
-            query.lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate);
-            query.equalTo("group_id", RB.group.id);
-            query.limit(30);
-            query.find({
-              success: function(results) {
-                // debugger;
-                var res = $.toJSON(results);
-                $('.parseTest').html(res);
-                // alert("Successfully retrieved " + results.length + " scores.");
-              },
-              error: function(error) {
-                alert("Error: " + error.code + " " + error.message);
-              }
+            getAllData(ParseTracker, {
+                success: function(results) {
+                    // debugger;
+                    var res = $.toJSON(results);
+                    $('.parseTest').html(res);
+                    // alert("Successfully retrieved " + results.length + " scores.");
+                },
+                error: function(error) {
+                    alert("Error: " + error.code + " " + error.message);
+                }
             });
+
+            // RB.analytics.parseData
+
+            function getAllData(Table, callbacks){
+                var query = new Parse.Query(Table);
+                query.greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate);
+                query.lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate);
+                query.equalTo("group_id", RB.group.id);
+                query.limit(30);
+                query.find(callbacks);
+            }
 
         },
     	interactionFrequency: function( args ) {
