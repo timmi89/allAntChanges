@@ -239,7 +239,7 @@ function readrBoard($R){
                 //RDR.rindow.updateFooter:
                 var $footer = $rindow.find('div.rdr_footer');
                 $footer.show(0);
-                if ( $content ) $footer.html( $content );
+                if ( typeof $content != "undefined" ) $footer.html( $content );
                 
                 //todo: examine resize
                 // RDR.rindow.updateSizes( $rindow );
@@ -1245,7 +1245,7 @@ function readrBoard($R){
 
                         // write inline tags: initial rindow instantiation
                         if ( settings.is_page == true ) {
-                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page );
+                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
                         } else {
                             var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
                         }
@@ -4318,13 +4318,39 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //RDR.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
 
+                            // init vars
+                            var $rindow = args.rindow,
+                                // $tag_table = $rindow.find('table.rdr_tags'),
+                                uiMode = $rindow.data('mode') || 'writeMode',
+                                response = args.response,
+                                interaction = response.interaction,
+                                interaction_node = response.data.interaction.interaction_node,
+                                sendData = args.sendData,
+                                tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
+                                int_id = response.data.interaction.id;
+                            $('#rdr_loginPanel').remove();
+                            //clear loader
+                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
                             $('.rdr_twtooltip').remove();
 
                             if (args.kind && args.kind == "page") {
+                                // init vars
+                                /*
+                                var $rindow = args.rindow,
+                                    // $tag_table = $rindow.find('table.rdr_tags'),
+                                    uiMode = $rindow.data('mode') || 'writeMode',
+                                    response = args.response,
+                                    interaction = response.interaction,
+                                    interaction_node = response.data.interaction.interaction_node,
+                                    sendData = args.sendData,
+                                    tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
+                                    int_id = response.data.interaction.id;
+*/
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
-                                var $summary_box = $('div.rdr_sbRollover');
+                                var $summary_box = $rindow.find('.rdr_tags_list');
                                 var $pageTagResponse = $('<div class="rdr_info"></div>');
                                 var $saveToBoard = _makeBoardList(args);
                                 var $shareIcons = _makeShareIcons(args);
@@ -4383,37 +4409,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $pageTagResponse.append($shareIcons);
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                 }
+                                RDR.rindow.updateSizes(
+                                    $summary_box, {
+                                        noAnimate:true,
+                                        setHeight:95
+                                    }
+                                );
+                                RDR.rindow.updateFooter( $rindow, '' );
 
                             } else {
                                 // not a page-level reaction
-                                $('#rdr_loginPanel').remove();
-
-                                // init vars
-                                var $rindow = args.rindow,
-                                    // $tag_table = $rindow.find('table.rdr_tags'),
-                                    uiMode = $rindow.data('mode') || 'writeMode',
-                                    response = args.response,
-                                    interaction = response.interaction,
-                                    interaction_node = response.data.interaction.interaction_node,
-                                    sendData = args.sendData,
-                                    tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
-                                    int_id = response.data.interaction.id;
-
-                                //clear loader
-                                if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                                // should be removeable :: not needed in a tagbox world?
-                                // if ( uiMode =="writeMode" && $rindow.find('a.rdr_custom_tag').length == $rindow.find('a.rdr_custom_tag.rdr_tagged').length ) {
-                                    
-                                //     // var tagsListMaxWidth = $rindow.width()+2, // really.
-                                //     var tagsListMaxWidth = $rindow.width(), // really.
-                                    
-                                //         custom_tag = {count:0, id:"custom", body:"Add your own"};
-
-                                //     var $pill_container = (args.kind != "text") ? $tag_table.find('td:last-child') : RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
-                                //     // var $pill_container = $tag_table.find('td:last-child'),
-
-                                // }
 
                                 //temp tie-over
                                 var hash = args.hash,
@@ -5278,7 +5283,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a reaction here, select some text</em>' );
+                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a different reaction, select some text</em>' );
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
@@ -5350,9 +5355,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               }
                             }, function() {
                                 $('.rdr_box_big').bigtext({ maxfontsize:48 });
-                                $('.rdr_box_medium').bigtext({ maxfontsize:22 });
-                                $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:14 });
-                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:22 });
+                                $('.rdr_box_medium').bigtext({ maxfontsize:28 });
+                                $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
+                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
 
                                 var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                     currentTagBoxAnimating = 0;
@@ -5409,7 +5414,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 clearTimeout(timeoutCloseEvt);
                             });
 
-                            if ( summary.kind == "text" ) {
+                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
                                 $rindow.find('div.rdr_box').each( function() {
                                     $(this).hover(
                                         function() {
@@ -7485,7 +7490,7 @@ function $RFunctions($R){
                             //     $visibleReactions = $this.find('div.rdr-sum-headline'),
                             //     $sbRollover = $visibleReactions.find('div.rdr-sum-reactions');
                             var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                            RDR.events.track( 'view_summary::'+$this.data('page_id') );
+                            RDR.events.track( 'view_summary::'+$(this).data('page_id') );
                             // if ( $sbRollover.height() > 68 && !$visibleReactions.is(':animated') ) {
                             // if (
                             //     $this.hasClass('rdr-too-many-reactions') &&
