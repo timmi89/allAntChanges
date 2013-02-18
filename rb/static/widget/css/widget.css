@@ -1009,62 +1009,61 @@ div.rdr.rdr_window div.rdr_tags_list .rdr_info {
   margin-left: 1px !important;
   margin-top: 1px !important;
 }*/
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page.rdr_boomarklet {
-  /*because it goes up instead of down*/
+/*div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page.rdr_boomarklet {
   margin-top: auto !important;
   margin-bottom: -1px !important;
 }
+*/
 
-
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1, div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h2 {
+div.rdr .rdr_body.rdr_page_reactions_summary h1, div.rdr .rdr_body.rdr_page_reactions_summary h2 {
   margin-bottom:5px !important;
   text-transform: none !important;
   background:none !important;
   border:none !important;
   margin-top:-2px !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover h1 {
+div.rdr .rdr_body.rdr_page_reactions_summary h1 {
   font-size:18px !important;
   border-bottom:1px solid #999 !important;
   padding-bottom:5px !important;
   margin-bottom:0px !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover table {
+div.rdr .rdr_body.rdr_page_reactions_summary table {
   min-width:150px !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td {
+div.rdr .rdr_body.rdr_page_reactions_summary td {
   padding:5px 0 !important;
   cursor:pointer !important;
   border:0 !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr:hover {
+div.rdr .rdr_body.rdr_page_reactions_summary tr:hover {
   background:#dae7f5 !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions td {
+div.rdr .rdr_body.rdr_page_reactions_summary tr.rdr_page_reactions td {
   text-align:center !important;
   padding:10px !important;
   cursor:auto !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover tr.rdr_page_reactions.has_other_reactions td {
+div.rdr .rdr_body.rdr_page_reactions_summary tr.rdr_page_reactions.has_other_reactions td {
     border-bottom:1px solid #ddd !important;
 }
 
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count {
+div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count {
   text-align:center !important;
   width:60px !important;
   padding:5px !important;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h4 {
+div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count h4 {
   font-size:16px !important;
   font-weight:bold !important;
   font-style:normal !italic;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_count h5 {
+div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count h5 {
   font-size:12px !important;
   font-weight:bold !important;
   font-style:normal !italic;
 }
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_content {
+div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_content {
   max-width:300px !important;
   font-family:Georgia,serif !important;
   font-size:13px !important;
@@ -1072,7 +1071,7 @@ div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover td.rdr_content {
   text-decoration:none !important;
 }
 
-div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover div.rdr_sbRolloverTable a.rdr_tag{
+div.rdr .rdr_body.rdr_page_reactions_summary div.rdr_sbRolloverTable a.rdr_tag{
   display:inline-block !important;
   white-space:normal !important;
 }
