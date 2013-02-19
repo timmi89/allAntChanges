@@ -33,20 +33,30 @@
             </div>
         
 	<div class="section_content">
-		<div role="total interactions">
-			<h1>0</h1>
-			<h4>Interactions</h4>
-		</div>
-        <div class="reactions" style="width:960px;overflow:hidden;">
-        	<h1 style="margin:40px 0 0;text-align:center;width:960x;">Reactions</h1>
-        	<div id="tag_cloud_container">
-			    <section role="tag cloud grid">
-			        <!-- this will get dynamically populated -->
-			    </section>
-			</div>
+        
+        <div id="interactionBigStats">
+            <div id="interactionBigStatsInner">
+        		<div id="interactionWriteCount" role="total interactions" class="bigStat">
+        			<h1>0</h1>
+        			<h4>Interactions</h4>
+        		</div>
+                <div id="interactionReadCount" role="total reaction views" class="bigStat">
+                    <h1>0</h1>
+                    <h4>Interaction Views</h4>
+                </div>
+            </div>
         </div>
+        <div class="reactions" style="width:960px;overflow:hidden;">
+            <h1 style="margin:40px 0 0;text-align:center;width:960x;">Reactions</h1>
+            <div id="tag_cloud_container">
+                <section role="tag cloud grid">
+                    <!-- this will get dynamically populated -->
+                </section>
+            </div>
+        </div>  
     </div>
-	<section role="wide panels">
+	
+    <section>
 
 		<section role="interaction frequency">
 			<div role="frequency chart" id="frequency_chart">
@@ -89,14 +99,17 @@
 		<section role="most active readers">
 			<h3>Most Active Readers</h3>
 			<table role="active user table" cellpadding="0" cellspacing="0" border="0">
-				<thead>
-					<td colspan="2">Reader</td>
-					<td role="reactions"><img src="/static/site/images/blank.png" class="icon" /></td>
-					<td role="shares"><img src="/static/site/images/blank.png" class="icon" /></td>
-					<td role="comments"><img src="/static/site/images/blank.png" class="icon" /></td>
-				</thead>
-				<tbody></tbody>
-			</table>
+                <thead>
+                    <tr>
+                        <!-- <td role="via">via</td> -->
+                        <td role="content">Reader</td>
+                        <td role="reactions">Reactions</td>
+                        <td role="shares">Shares</td>
+                        <td role="comments">Comments</td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
 		</section> <!-- / most active readers -->
 
 		<section role="recent pages" style="display:none;">
@@ -297,7 +310,10 @@
     							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
     						} else if ( response[i].content.kind == "med" ) {
     							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
-    						}
+    						}else{
+                                //this seemed to be happedning sometimes.  And the formatting gets messed up.
+                                contentHtml += '<td role="content"></td>';
+                            }
     						contentHtml += '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
     						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
@@ -309,7 +325,11 @@
     					var userHtml = "";
     					for ( var i in response) {
     						if ( response[i].user.img_url ) {
-    							userHtml += '<tr><td role="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></td><td><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></td>'
+    							userHtml += '<tr>'
+                                    + '<td role="user">'
+                                        + '<div class="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></div>'
+                                        + '<div class="userName"><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></div>'
+                                    + '</td>'
     								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
     								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -354,34 +374,49 @@
             if( typeof Parse === "undefined" ){
                 return;
             }
-            debugger;
-            //todo: temp 
-            var parseTrackingRepo = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
-            // var parseTrackingRepo = "EventTracking";
 
+            var parseTrackingRepo = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
             var ParseTracker = Parse.Object.extend(parseTrackingRepo);
 
-            getAllData(ParseTracker, {
+            getReactionCount(ParseTracker, {
                 success: function(results) {
-                    // debugger;
                     var res = $.toJSON(results);
-                    $('.parseTest').html(res);
-                    // alert("Successfully retrieved " + results.length + " scores.");
+                    $('#interactionReadCount h1').text(res);
                 },
                 error: function(error) {
                     alert("Error: " + error.code + " " + error.message);
                 }
             });
 
-            // RB.analytics.parseData
+            //todo: do something with this data!
+            getAllData(ParseTracker, {
+                success: function(results) {
+                    var res = $.toJSON(results);
+                    // debugger;
+                },
+                error: function(error) {
+                    alert("Error: " + error.code + " " + error.message);
+                }
+            });
 
             function getAllData(Table, callbacks){
                 var query = new Parse.Query(Table);
+                query = _setQueryDefaults(query);
+                query.limit(30);
+                //using the native Parse function 'find'
+                query.find(callbacks);
+            }
+
+            function getReactionCount(Table, callbacks){
+                var query = new Parse.Query(Table);
+                query = _setQueryDefaults(query);
+                query.count(callbacks);
+            }
+            function _setQueryDefaults(query){
                 query.greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate);
                 query.lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate);
                 query.equalTo("group_id", RB.group.id);
-                query.limit(30);
-                query.find(callbacks);
+                return query;
             }
 
         },
