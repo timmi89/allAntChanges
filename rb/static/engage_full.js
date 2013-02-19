@@ -1088,36 +1088,45 @@ function readrBoard($R){
                     // kind-specific click event
                     // porter resume here.  make sure the counts and write element are passed into getReactedContent
                     if ( kind == "page" ) {
-                        $tagBox.click( function() {
-                            // $(this).addClass('rdr_tagged');
-                            RDR.rindow.hideFooter($rindow);
-                            $rindow.removeClass('rdr_rewritable');
+                        if ( isWriteMode == false ) {
+                            $tagBox.click( function() {
+                                RDR.rindow.hideFooter($rindow);
+                                $rindow.removeClass('rdr_rewritable');
 
-                            var page = RDR.pages[ RDR.util.getPageProperty('id', hash) ],
-                                tag_count = tag.tag_count,
-                                counts = {
-                                    "img":0,
-                                    "text":0,
-                                    "media":0,
-                                    "page":(tag_count=="+")?0:tag_count
-                                };
+                                var page = RDR.pages[ RDR.util.getPageProperty('id', hash) ],
+                                    tag_count = tag.tag_count,
+                                    counts = {
+                                        "img":0,
+                                        "text":0,
+                                        "media":0,
+                                        "page":(tag_count=="+")?0:tag_count
+                                    };
 
-                            $.each( page.containers, function( idx, container ) {
-                                if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
-                                    if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
-                                        counts[RDR.summaries[container.hash].kind] += RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
-                                        counts.page -= RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                $.each( page.containers, function( idx, container ) {
+                                    if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
+                                        if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
+                                            counts[RDR.summaries[container.hash].kind] += RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                            counts.page -= RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                        }
                                     }
-                                }
+                                });
+
+                                var $this = $(this),
+                                    $reactionsTable = createReactedContentTable($this, counts);
+
+                                renderReactedContent( $reactionsTable, tag );
+
+                                $this.addClass('rdr_live_hover');
                             });
-
-                            var $this = $(this),
-                                $reactionsTable = createReactedContentTable($this, counts);
-
-                            renderReactedContent( $reactionsTable, tag );
-
-                            $this.addClass('rdr_live_hover');
-                        });
+                        } else {
+                            $tagBox.click( function() {
+                                $(this).addClass('rdr_tagged');
+                                $rindow.removeClass('rdr_rewritable');
+                                var hash = $rindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                            });
+                        }
                     } else {
                         $tagBox.click( function() {
                             $(this).addClass('rdr_tagged');
@@ -7659,7 +7668,7 @@ function $RFunctions($R){
 
                     $summary_widget.append(
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
-                            '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site to learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
+                            '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
                     );
 
