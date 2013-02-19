@@ -2093,6 +2093,62 @@ function readrBoard($R){
                 }
                 return parseInt( page_id );
             },
+            buildInteractionData: function() {
+                //RDR.util.buildInteractionData
+                /*
+
+
+
+                In short, the following code blows chunks.
+                Can't wait for the MVVC rewrite.
+
+
+
+                */
+                $.each( RDR.summaries, function(hash, summary) {
+                    $.each( summary.top_interactions.tags, function(tag_id,interaction) {
+                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                
+                            if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
+
+                                var this_interaction = node.top_interactions.tags[ tag_id ];
+
+                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                
+                                // this content node's content, location is what we want
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                            }
+                        });
+                        
+                        // should be able to remove this:
+                        // if (typeof interaction != "undefined" ) {
+                        //     if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                        //     if ( typeof RDR.interaction_data[ tag_id ][ interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {}; }
+
+                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
+                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
+                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
+                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
+
+                        //     $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                        //         if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
+                        //             var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
+                        //             // this content node's content, location is what we want
+                        //             RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                        //             RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                        //         }
+                        //     });
+                        // }
+                    });
+                });
+            },
             stayInWindow: function(settings) {
 
                var rWin = $(window),
@@ -2692,6 +2748,8 @@ function readrBoard($R){
                         ignoreWindowEdges:"bt"
                     });
 
+                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+
                     // store the arguments and callback function that were in progress when this Login panel was called
                     if ( args ) $rindow.data( 'args', args );
                     if ( callback ) $rindow.data( 'callback', callback );
@@ -2702,11 +2760,11 @@ function readrBoard($R){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="360" height="140" frameborder="0" style="overflow:hidden; width:360px !important;" />' );
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
                     
                     var $header = RDR.rindow.makeHeader( h1_text );
                     $rindow.find('.rdr_header').replaceWith($header);
-                    
+                    RDR.rindow.hideFooter($rindow);
                     $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
 
                     RDR.events.track( 'show_login' );
@@ -7661,64 +7719,12 @@ function $RFunctions($R){
                 $.each( RDR.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
                         if (typeof interaction != "undefined" ) {
-
-
-
-                            /*
-
-
-
-                            In short, the following code blows chunks.
-                            Can't wait for the MVVC rewrite.
-
-
-
-                            */
-
                             if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
-                                
-                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                if ( typeof RDR.interaction_data[ tag_id ][ interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {}; }
-
-                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
-                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
-                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
-                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
-
-                                $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                    if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
-                                        var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
-                                        // this content node's content, location is what we want
-                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                                    }
-                                });
+                                RDR.util.buildInteractionData();
                             } else {
                                 RDR.actions.content_nodes.init( hash, function() {
-                                    $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                            
-                                        if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
-
-                                            var this_interaction = node.top_interactions.tags[ tag_id ];
-
-                                            if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                            if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
-                                            
-                                            // this content node's content, location is what we want
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                                        }
-                                        // calling here means it will rerender, which is fine, b/c there's a bunch of async calls and this makes it appear to update
-                                        // var $reactionsTable = createReactedContentTable($this, counts);
-                                        // renderReactedContent( $reactionsTable, localTag );
-                                    });
+                                    RDR.util.buildInteractionData();
                                 });
-                                // return;
                             }
                         }
                     });
