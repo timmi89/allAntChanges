@@ -999,12 +999,22 @@ function readrBoard($R){
                             var $header = RDR.rindow.makeHeader( 'Reactions' );
                             $rindow.find('.rdr_header').replaceWith($header)
 
-                            if ( $rindow.data('initialWidth') >= 480 ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                            }
 
                             // RDR.rindow.updateTagPanel( $rindow );
-                            RDR.rindow.panelHide( $rindow );
+                            // RDR.rindow.panelHide( $rindow );
+
+                            var $panelWrap = $rindow.find('.rdr_body_wrap');
+                            $panelWrap.find('.rdr_visiblePanel').removeClass('rdr_visiblePanel');
+                            $panelWrap.find('.rdr_hiddenPanel').removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                            $panelWrap.animate({
+                                left: 0
+                            });
+
+                            if ( $rindow.data('initialWidth') >= 480 ) {
+                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                RDR.rindow.updateSizes( $rindow );
+                            }
+
                         });
                         return $backButton;
                     }
@@ -1269,8 +1279,6 @@ function readrBoard($R){
                                     container: $summary_widget,
                                     content: 'page',
                                     kind: 'page',
-                                    // selState: newSel,
-                                    // rewritable:rewritable,
                                     mode:settings.mode
                                 });
 
@@ -1494,6 +1502,7 @@ function readrBoard($R){
                     maxWidth = settings.maxWidth;
 
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
                     $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160"></div>');
                     if ( settings.id ) {
@@ -1502,10 +1511,6 @@ function readrBoard($R){
                                                      // logs in, the login rindow knows what function to then call
                         $new_rindow.attr('id',settings.id);
                     }
-
-                    // may not need selector.  was a test to see if we can embed the rindow within a document, optionally.
-                    //todo: do we still want this feature that uses .selector ?
-                    //for now don't do this.  I don't know what it does.
 
                     //this is instead of the if / else below
                     $('#rdr_sandbox').append( $new_rindow );
