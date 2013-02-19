@@ -1005,15 +1005,6 @@ div.rdr.rdr_window div.rdr_tags_list .rdr_info {
   padding-top: 5px !important;
   background:#fff !important;
 }
-/*div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page {
-  margin-left: 1px !important;
-  margin-top: 1px !important;
-}*/
-/*div.rdr_sandbox div.rdr.rdr_tag_details.rdr_sbRollover_page.rdr_boomarklet {
-  margin-top: auto !important;
-  margin-bottom: -1px !important;
-}
-*/
 
 div.rdr .rdr_body.rdr_page_reactions_summary h1, div.rdr .rdr_body.rdr_page_reactions_summary h2 {
   margin-bottom:5px !important;
@@ -1029,12 +1020,13 @@ div.rdr .rdr_body.rdr_page_reactions_summary h1 {
   margin-bottom:0px !important;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary table {
-  min-width:150px !important;
+  min-width:320px !important;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary td {
   padding:5px 0 !important;
   cursor:pointer !important;
   border:0 !important;
+  vertical-align:middle !important;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary tr:hover {
   background:#dae7f5 !important;
@@ -1051,7 +1043,7 @@ div.rdr .rdr_body.rdr_page_reactions_summary tr.rdr_page_reactions.has_other_rea
 div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count {
   text-align:center !important;
   width:60px !important;
-  padding:5px !important;
+  padding:15px !important;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count h4 {
   font-size:16px !important;
@@ -1064,14 +1056,17 @@ div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_count h5 {
   font-style:normal !italic;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_content {
-  max-width:300px !important;
+  /*max-width:300px !important;*/
   font-family:Georgia,serif !important;
   font-size:13px !important;
   font-style:italic !important;
   text-decoration:none !important;
 }
 
-div.rdr .rdr_body.rdr_page_reactions_summary div.rdr_sbRolloverTable a.rdr_tag{
+div.rdr .rdr_body.rdr_page_reactions_summary .reaction_summary_table {
+  background:#fff !important;
+}
+div.rdr .rdr_body.rdr_page_reactions_summary .reaction_summary_table a.rdr_tag{
   display:inline-block !important;
   white-space:normal !important;
 }

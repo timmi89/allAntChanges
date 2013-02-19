@@ -373,21 +373,12 @@ function readrBoard($R){
 
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
-            mediaRindowUpdateTagPanel: function ( $rindow ) {
-                // rename this, it's used everywhere.
+            updateTagPanel: function ( $rindow ) {
 // canwechangethis
-                // RDR.rindow.mediaRindowUpdateTagPanel:
+                // RDR.rindow.updateTagPanel:
                 // panelEvent - backButton
 
                 var hash = $rindow.data('hash');
-                
-                // RDR.actions.indicators.update(hash);
-                // RDR.rindow.update(hash, null, {preserveRindow:true} );
-                // $rindow.find('.rdr_tags_list').addClass('rdr_hiddenPanel');
-                
-                //build tags in $tagsList.  Use visibility hidden instead of hide to ensure width is measured without a FOUC.
-                // $indicator_details.css({ 'visibility':'hidden' }).show();
-                // $indicator_details.css({ 'visibility':'visible' }); //.hide();
 
                 RDR.rindow.panelHide( $rindow );
                 RDR.rindow.tagBox.setWidth( $rindow, $rindow.data('initialWidth') );
@@ -578,7 +569,7 @@ function readrBoard($R){
                                     $backButton.click( function() {
                                         var $header = RDR.rindow.makeHeader( 'Reactions' );
                                         $rindow.find('.rdr_header').replaceWith($header);
-                                        RDR.rindow.mediaRindowUpdateTagPanel( $rindow );
+                                        RDR.rindow.updateTagPanel( $rindow );
 
                                     });
                                 }
@@ -980,110 +971,65 @@ function readrBoard($R){
                         content_node.id = content_node_id;
                     }
 
-                    
-                    function getReactedContent($this, counts, localTag) {
-                        // get all of the content_nodes for this page
-                        // may want to limit this on back-end by a date range
-                        if ( typeof RDR.interaction_data == "undefined" ) {
-                            RDR.interaction_data = {};
-                        }
-                        
-                        if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
-                            // just do this once per page load for a given tag.  means it won't update... we'll address that later.
-                            if ( typeof RDR.interaction_data[ localTag.id ] == "undefined" ) {
-                                $.each( RDR.summaries, function(hash, summary) {
-                                    $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                                        if (typeof interaction != "undefined" ) {
+                    function renderReactedContent( $reactionsTable, tag ) {
+                        if ( !$rindow.find('.rdr_view_more').length || !$rindow.find('.rdr_view_more').hasClass('rdr_visiblePanel') ) {
+                            var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
+                            var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
+                            $rdr_body_wrap.append( $newPanel );
 
+                            $newPanel.append( $reactionsTable ).addClass('rdr_page_reactions_summary');
 
-
-                                            /*
-
-
-
-                                            In short, the following code blows chunks.
-                                            Can't wait for the MVVC rewrite.
-
-
-
-                                            */
-
-                                            if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
-                                                
-                                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                                if ( typeof RDR.interaction_data[ tag_id ][ interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {}; }
-
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
-                                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
-
-                                                $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                                    if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
-                                                        var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
-                                                        // this content node's content, location is what we want
-                                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                                                    }
-                                                });
-                                            } else {
-                                                RDR.actions.content_nodes.init( hash, function() {
-                                                    $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                                            
-                                                        if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
-
-                                                            var this_interaction = node.top_interactions.tags[ tag_id ];
-
-                                                            if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                                            if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
-                                                            
-                                                            // this content node's content, location is what we want
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                                                        }
-                                                    });
-                                                    // calling here means it will rerender, which is fine, b/c there's a bunch of async calls and this makes it appear to update
-                                                    showReactedContent($this, counts);
-                                                });
-                                                return;
-                                            }
-                                        }
-                                    });
-                                });
-                            } else {
-                                showReactedContent($this, counts);
-                            }
+                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                            RDR.rindow.panelShow( $rindow, $newPanel, function() {
+                                RDR.rindow.hideFooter($rindow);
+                                RDR.rindow.panelEnsureFloatWidths($rindow);
+                            });
                         } else {
-                            showReactedContent($this, counts);
+                            $rindow.find('.rdr_body').html( $reactionsTable );
+                            RDR.rindow.jspUpdate( $rindow );
                         }
+
+                        var $header = RDR.rindow.makeHeader( tag.tag_count + ' \'' + tag.body + '\' reactions' );
+                            $rindow.find('.rdr_header').replaceWith($header)
+                    } // renderReactedContent
+
+                    function _makeBackButton(){
+                        var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                        $backButton.click( function() {
+                            var $header = RDR.rindow.makeHeader( 'Reactions' );
+                            $rindow.find('.rdr_header').replaceWith($header)
+
+                            if ( $rindow.data('initialWidth') >= 480 ) {
+                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                            }
+
+                            // RDR.rindow.updateTagPanel( $rindow );
+                            RDR.rindow.panelHide( $rindow );
+                        });
+                        return $backButton;
                     }
 
-                    function showReactedContent($this, counts) {
+                    function createReactedContentTable($this, counts) {
                         $().selog('hilite', true, 'off');
+                        $('.rdr_twtooltip').remove();
 
-                        var $reactionsContainer = $('<div class="rdr_sbRolloverTable"><h1>'+tag.body+' ('+tag.count+')</h1></div>'),
-                            $reactions = $('<table cellpadding="0" cellspacing="0" border="0"><tbody><tr class="rdr_page_reactions"></tr></tbody></table>');
-
+                        var $backButton = _makeBackButton(),
+                            $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="rdr_page_reactions"></tr></tbody>');
 
                         // add count of page-level reactions
                         if ( counts && counts.page ) {
                             var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
-                            $reactions.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td>');
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td>');
                         }
-                        
+
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
                             // iterate through and create an array of counts + $tr.  this is then sortable.
-
-                            $reactions.addClass('has_other_reactions');
+                            $reactionsTable.find('.rdr_page_reactions').addClass('has_other_reactions');
                             $.each( RDR.interaction_data[ tag.id ], function(int_id, data) {
-                                if ( !$reactions.find('tr.rdr_int_summary_'+int_id).length ) {
+                                if ( !$reactionsTable.find('tr.rdr_int_summary_'+int_id).length ) {
                                     var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
                                         thing = RDR.interaction_data[ tag.id ][ int_id ];
+
                                     if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
                                         var reaction_word = (thing.interaction.count>1) ? "reactions":"reaction";
                                         $tr.append('<td class="rdr_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
@@ -1109,42 +1055,41 @@ function readrBoard($R){
                                         });
 
                                         // insert the new content into the right place, ordered by count
-                                        if ( !$reactions.find('tr.rdr_content_reaction').length ) {
-                                            $reactions.find('tbody').append( $tr );
+                                        if ( !$reactionsTable.find('tr.rdr_content_reaction').length ) {
+                                            $reactionsTable.find('tbody').append( $tr );
                                         } else {
-                                            var insertIndex = ($reactions.find('tr.rdr_content_reaction').length-1);
-                                            $.each( $reactions.find('tr.rdr_content_reaction'), function(idx, existing_tr) {
+                                            var insertIndex = 0;
+                                            $.each( $reactionsTable.find('tr.rdr_content_reaction'), function(idx, existing_tr) {
                                                 if ( parseInt(thing.interaction.count) > parseInt($(existing_tr).data('count')) ) {
                                                     insertIndex = idx;
                                                     return false;
                                                 }
                                             });
-                                            $reactions.find('tr.rdr_content_reaction:eq('+insertIndex+')').before( $tr );
+                                            $reactionsTable.find('tr.rdr_content_reaction:eq('+insertIndex+')').before( $tr );
                                         }
                                     }
                                 }
                             });
                         }
-                        $rindow.find('.rdr_body').html( $reactions.html() );
-                    }
+                        return $('<div/>').append( $backButton, $reactionsTable );
+                    } // createReactedContentTable
 
                     // kind-specific click event
                     // porter resume here.  make sure the counts and write element are passed into getReactedContent
                     if ( kind == "page" ) {
                         $tagBox.click( function() {
                             // $(this).addClass('rdr_tagged');
+                            RDR.rindow.hideFooter($rindow);
                             $rindow.removeClass('rdr_rewritable');
 
-                            var $this = $(this),
-                                hash = ( $this.closest('.rdr-page-container').data('hash') ) ? $this.closest('.rdr-page-container').data('hash') : $this,
-                                page = RDR.pages[ RDR.util.getPageProperty('id',hash) ],
+                            var page = RDR.pages[ RDR.util.getPageProperty('id', hash) ],
+                                tag_count = tag.tag_count,
                                 counts = {
                                     "img":0,
                                     "text":0,
                                     "media":0,
-                                    "page":(tag.tag_count=="+")?0:tag.tag_count
-                                },
-                                otherCountsWidth = 0;
+                                    "page":(tag_count=="+")?0:tag_count
+                                };
 
                             $.each( page.containers, function( idx, container ) {
                                 if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
@@ -1155,9 +1100,12 @@ function readrBoard($R){
                                 }
                             });
 
-                            getReactedContent( $this, counts, tag );
-                            $this.addClass('rdr_live_hover');
+                            var $this = $(this),
+                                $reactionsTable = createReactedContentTable($this, counts);
 
+                            renderReactedContent( $reactionsTable, tag );
+
+                            $this.addClass('rdr_live_hover');
                         });
                     } else {
                         $tagBox.click( function() {
@@ -1304,15 +1252,19 @@ function readrBoard($R){
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
 
                         if ( settings.is_page == true ) {
-                            //RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                             var page = settings.page,
                                 $summary_widget = $('.rdr-summary-'+page.id),
                                 coords = {
                                     top: $summary_widget.offset().bottom+5,
                                     left: $summary_widget.offset().left
-                                },
-                                
-                                $rindow = RDR.rindow.draw({
+                                };
+
+                            // don't redraw summary rindow if already showing
+                            if ( $('div.rdr_page_key_' + $summary_widget.data('page_key') ).length ) {
+                                return;
+                            }
+
+                            var $rindow = RDR.rindow.draw({
                                     coords: coords,
                                     container: $summary_widget,
                                     content: 'page',
@@ -1321,6 +1273,7 @@ function readrBoard($R){
                                     // rewritable:rewritable,
                                     mode:settings.mode
                                 });
+
                         } else {
                             var hash = settings.hash;
                             var summary = RDR.summaries[hash],
@@ -1559,6 +1512,10 @@ function readrBoard($R){
                 }
                 if ( settings.rewritable != true ) {
                     $new_rindow.removeClass('rdr_rewritable');
+                }
+
+                if ( settings.kind == "page" ) {
+                    $new_rindow.addClass('rdr_page_key_' + options.container.data('page_key') ).addClass('rdr_page_summary');
                 }
 
                 $new_rindow.data(settings);// jquery obj of the rewritable window
@@ -2504,6 +2461,8 @@ function readrBoard($R){
 
                     var selState = $container.selog('save', {'serialRange':serialRange} );
                     $().selog('hilite', selState, 'on');
+
+                    $('div.rdr_page_summary').remove();
                 }
 
                 var targetOffset = $container.offset().top,
@@ -5454,7 +5413,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
-                            $tagsListContainer.addClass('rdr_page_reactions_summary');
                             if ( !isWriteMode ) {
                                 // write page-level tags: readmode
                                 writeTagBoxes( page.toptags );
@@ -6406,7 +6364,7 @@ return;
                     $backButton.click( function() {
                         var $header = RDR.rindow.makeHeader( 'Reactions' );
                         $rindow.find('.rdr_header').replaceWith($header)
-                        RDR.rindow.mediaRindowUpdateTagPanel( $rindow );
+                        RDR.rindow.updateTagPanel( $rindow );
                     });
                     return $backButton;
                 }
@@ -7669,6 +7627,9 @@ function $RFunctions($R){
 
                     $summary_widget.hoverIntent(
                         function() {
+                            // let's get the reaction summaries for the page here.
+                            getReactedContent();
+
                             var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
                             RDR.events.track( 'view_summary::'+$(this).data('page_id') );
                         },
@@ -7684,6 +7645,81 @@ function $RFunctions($R){
                         '<a class="rdr_reactions_label">'+total_reactions+' Reactions</a>'
                     );
             }
+
+            function getReactedContent( counts ) {
+                // get all of the content_nodes for this page
+                // may want to limit this on back-end by a date range
+                if ( typeof RDR.interaction_data == "undefined" ) {
+                    RDR.interaction_data = {};
+                }
+                
+                $.each( RDR.summaries, function(hash, summary) {
+                    $.each( summary.top_interactions.tags, function(tag_id,interaction) {
+                        if (typeof interaction != "undefined" ) {
+
+
+
+                            /*
+
+
+
+                            In short, the following code blows chunks.
+                            Can't wait for the MVVC rewrite.
+
+
+
+                            */
+
+                            if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
+                                
+                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                if ( typeof RDR.interaction_data[ tag_id ][ interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {}; }
+
+                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
+                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
+                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
+                                RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
+
+                                $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                    if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
+                                        var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
+                                        // this content node's content, location is what we want
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                        RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                    }
+                                });
+                            } else {
+                                RDR.actions.content_nodes.init( hash, function() {
+                                    $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                            
+                                        if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
+
+                                            var this_interaction = node.top_interactions.tags[ tag_id ];
+
+                                            if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                            if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                            
+                                            // this content node's content, location is what we want
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                            RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                        }
+                                        // calling here means it will rerender, which is fine, b/c there's a bunch of async calls and this makes it appear to update
+                                        // var $reactionsTable = createReactedContentTable($this, counts);
+                                        // renderReactedContent( $reactionsTable, localTag );
+                                    });
+                                });
+                                // return;
+                            }
+                        }
+                    });
+                });
+            } // getReactedContent
+
 
         }
         //end function plugin_jquery_rdrWidgetSummary
