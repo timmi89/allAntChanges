@@ -2102,6 +2102,7 @@ function readrBoard($R){
                 In short, the following code blows chunks.
                 Can't wait for the MVVC rewrite.
 
+                this just circles through a bunch of crap and rebuilds the RDR.interaction_data object
 
 
                 */
@@ -2126,26 +2127,6 @@ function readrBoard($R){
                                 RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
                             }
                         });
-                        
-                        // should be able to remove this:
-                        // if (typeof interaction != "undefined" ) {
-                        //     if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                        //     if ( typeof RDR.interaction_data[ tag_id ][ interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ interaction.parent_id ] = {}; }
-
-                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].hash = hash;
-                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].container_id = summary.id;
-                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag = { body:interaction.body, id:tag_id};
-                        //     RDR.interaction_data[ tag_id ][ interaction.parent_id ].kind = summary.kind;
-
-                        //     $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                        //         if ( typeof node.top_interactions != "undefined" && typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ] != "undefined" ) {
-                        //             var this_interaction = node.top_interactions.tags[ RDR.interaction_data[ tag_id ][ interaction.parent_id ].tag.id ];
-                        //             // this content node's content, location is what we want
-                        //             RDR.interaction_data[ tag_id ][ interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                        //             RDR.interaction_data[ tag_id ][ interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                        //         }
-                        //     });
-                        // }
                     });
                 });
             },
