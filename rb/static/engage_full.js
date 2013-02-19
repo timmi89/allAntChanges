@@ -792,104 +792,6 @@ function readrBoard($R){
                     }
                 });
             },
-            // getHeight: function( $rindow, options ) {
-
-            //     //RDR.rindow.getHeight:
-            //     var settings = $.extend({}, this.defaults, options);
-
-            //     var height = $rindow.height(),
-            //         gotoHeight = settings.targetHeight ? settings.targetHeight : settings.defaultHeight;
-
-            //     //check for outside range
-            //     gotoHeight = ( gotoHeight < settings.minHeight ) ? settings.minHeight :
-            //     ( gotoHeight > settings.maxHeight ) ? settings.maxHeight : gotoHeight;
-
-            //     //finally, if forceHeight, overide regardless
-            //     gotoHeight = settings.forceHeight ? settings.forceHeight : gotoHeight;
-
-            //     //for now, just return the height
-            //     /*
-            //     if( !settings.animate ){
-            //         $rindow.height(gotoHeight);
-            //     }else{
-            //         $rindow.animate({
-            //             height:gotoHeight
-            //         }, settings.animTime)
-            //     }
-            //     */
-            //     return gotoHeight;
-            // },
-            
-            pillTable: {
-                // deprecated
-                make: function( maxWidth ) {
-                    // deprecated
-                    //RDR.rindow.pillTable.make
-                    var $tag_table = $('<table cellpadding="0" cellspacing="0" border="0" class="rdr_tags" style="max-width:'+maxWidth+'px;"><tr></tr></table>');
-                    return $tag_table;
-                },
-                getNextCell: function( tag, $tag_table, maxWidth, useGutter ) {
-                    // deprecated
-                    //RDR.rindow.pillTable.getNextCell
-
-                    var pill_width = RDR.rindow.pill.getWidth( tag ),
-                        $rows = $tag_table.find('tr'),
-                        row_count = $rows.not('tr.rdr_nextSteps').length,
-                        $first_row = $rows.eq(0),
-                        $last_row = $rows.not('tr.rdr_nextSteps').eq(-1);
-
-                    var firstRowWidth = 0,
-                        $cell;
-
-                    $.each( $first_row.find('td'), function(idx, cell) {
-                        $cell = $(cell);
-                        var unneededExtraWidth = 7;
-                        if ( !$cell.hasClass('rdr_gutter') ) firstRowWidth += $cell.width();//+unneededExtraWidth; // 7px of margin + borders on the sides
-                    });
-                    
-                    firstRowWidth += pill_width;
-                    if ( ( firstRowWidth > maxWidth && row_count == 1 )
-                        || ( $last_row.find('td:not(.rdr_gutter)').length == $first_row.find('td:not(.rdr_gutter)').length && row_count > 1 ) ) {
-
-                        // if there is still a gutter, remove it.
-                        $last_row.find('td.rdr_gutter').remove();
-
-                        // on the last row, add "rdr-last-child" to the last td.
-                        $rows.eq(-1).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
-
-                        // add a new row
-                        var $new_row = $('<tr><td><div class="rdr_cell_wrapper"/></td></tr>');
-                        $tag_table.append( $new_row );
-                        if (row_count == 1) row_count++;
-
-                    } else {
-                        $last_row.append('<td><div class="rdr_cell_wrapper"/></td>');
-                    }
-
-                    // [pb] is this being used???
-                    if ( useGutter ) {
-                        if ( row_count == 1 ) {
-                            $tag_table.find('td.rdr_gutter').remove();
-                            var gutter_width = maxWidth - firstRowWidth;
-                            $first_row.append('<td class="rdr_gutter" style="width:'+gutter_width+'px;"/>');
-                        }
-                    }
-                    var $last_cell = $tag_table.find('tr:not(.rdr_nextSteps)').eq(-1).find('td:not(.rdr_gutter)').eq(-1),
-                        $last_cell_wrapper = $last_cell.find('div.rdr_cell_wrapper');
-
-                    $last_cell_wrapper.css('z-index', ( 1000 - $tag_table.find('td').length ) );
-
-                    // if ( row_count > 1 ) {
-                    //     var parentIndex = $last_cell_wrapper.parent().index(),
-                    //         setWidth = $first_row.find('td').eq(parentIndex).find('div.rdr_cell_wrapper').width(),
-                    //         firstSetWidth = $first_row.find('td').eq(0).find('div.rdr_cell_wrapper').width();
-
-                    //     $last_cell_wrapper.data( 'max-width', setWidth-18 );
-                    // }
-
-                    return $last_cell_wrapper;
-                }
-            },
             tagBox: {
                 setWidth: function( $rindow, width ) {
                     // RDR.rindow.tagBox.setWidth
@@ -903,25 +805,8 @@ function readrBoard($R){
                     // width must be 320, 480, or 640
                     $rindow.find('.rdr_body, .jspContainer').height( height );
                 },
-                getWidth: function( tag ) {
-                    // deprecated?
-                    //RDR.rindow.pill.getWidth
-                    //write a quick pill to the sandbox to get its width, then remove it.
-
-                    // abstract this when we abstract the same thing in the next function.
-                    var tagCount = ( tag.count ) ? tag.count:"+",
-                        $pill = $('<a class="rdr_tag rdr_tag_'+tag.id+'"><span class="rdr_tag_name">'+tag.body+'</span><span class="rdr_tag_count">('+tagCount+')</span></a> ');
-
-                    $('#rdr_sandbox').append( $pill );
-                    var pill_width = $pill.width();
-                    $pill.remove();
-                    delete $pill;
-                    return pill_width;
-                },
-                // make: function( tag, $container, $rindow, content_node_id ) {
                 make: function( params ) {
                     //RDR.rindow.tagBox.make:
-
                     var tag = params.tag,
                         boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
                         $rindow = ( params.$rindow ) ? params.$rindow : null,
@@ -1394,7 +1279,6 @@ function readrBoard($R){
                         $rindow.addClass('rdr_reactions');
 
                         var $bodyWrap = $rindow.find('div.rdr_body_wrap');
-                        // var count = 0; // used for counting how many tags are created, to know where to put the custom tag pill
 
                         var $oldTagList = $rindow.find('div.rdr_body');
                         if($oldTagList.length){
@@ -1538,12 +1422,12 @@ function readrBoard($R){
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
                     $new_rindow.html('');
                     $new_rindow.append(
-                        '<div class="rdr rdr_header rdr_brtr rdr_brtl">'+
+                        '<div class="rdr rdr_header">'+
                             '<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="rdr_loader"></div>'+
                         '</div>'+
                         '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
-                        '<div class="rdr rdr_footer rdr_brbr rdr_brbl"></div>'
+                        '<div class="rdr rdr_footer"></div>'
                     );
 
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
@@ -1694,13 +1578,14 @@ function readrBoard($R){
 
                     $tag.addClass('rdr_comment_indicator');
                     _tempCopyOfCommentHover(diffNode, $tag, $rindow);
-                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $rindow );
+                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $rindow ); // deprecated?
                     _addLinkToViewComs(diffNode, $tag, $rindow);
 
 
                 }
 
                 function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($rindow) {
+                    // deprecated?
                     var $tag_table = $rindow.find('table.rdr_tags')
 
                     // this is a duplication of code from elsewhere:
@@ -1729,7 +1614,7 @@ function readrBoard($R){
 
                     var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
 
-                    //filter so we get only the coms per this pill (tag_id and content_id)
+                    //filter so we get only the coms per this tagBox (tag_id and content_id)
                     var comsPerContentNodeAndTagId = $.map( comsPerContentNodeId, function(node){
                         return (node.tag_id === diffNode.tag_id ? node : null);
                     });
@@ -1762,16 +1647,9 @@ function readrBoard($R){
                         });
                     });
 
-                    // $a.append('<span class="rdr_comment_indicator"></span>');
-
-
                     $a.append( $commentHover );
-                    $a.closest('td').addClass('rdr_has_pillHover');
+                    $a.closest('td').addClass('rdr_has_pillHover'); // deprecated?
 
-                    // if (pill_width > (max_width+18)) {
-                    //     $a.closest('td').addClass('rdr_truncated_pill');
-                    //     $a.find('span.rdr_tag_name').append('<span class="rdr_truncated" />');
-                    // }
                 }
                 function _addLinkToViewComs(diffNode, $tag, $rindow){
 
@@ -2460,10 +2338,10 @@ function readrBoard($R){
                     if (typeof $msg1 != "undefined" ) {
                         $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
 
-                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_brbl rdr_brbr rdr_' + whichAlert + '" />');
+                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_' + whichAlert + '" />');
 
                         $alertContent.append(
-                            $('<div class="rdr_alert_box_1 rdr_brtl rdr_brtr" />').append($pinIcon).append($msg1),
+                            $('<div class="rdr_alert_box_1" />').append($pinIcon).append($msg1),
                             $('<div class="rdr_alert_box_2" />').append($msg2),
                             '<div class="rdr rdr_alert_box_x">x</div>'
                         );
@@ -2838,9 +2716,6 @@ function readrBoard($R){
                                         RDR.session.showLoginPanel( click_args );
                                     });
 
-                                    // PILLSTODO remove these?
-                                    // $rindow.find('div.rdr_shareBox').html( $inlineTempMsg );
-                                    // $rindow.find('div.rdr_commentBox').hide();
                                 }
 
                                 break;
@@ -5331,10 +5206,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     function() {
                                         $indicator_details.addClass('rdr_live_hover');
                                         RDR.actions.containers.media.onEngage( hash );
-                                    // },
-                                    // function(e) {
-                                    //     $indicator_details.removeClass('rdr_live_hover');
-                                    //     RDR.actions.containers.media.onDisengage( hash );
                                     }
                                 );
 
@@ -5396,17 +5267,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
 
                         var $rindow = $indicator_details;
-                        // if (isMediaContainer){
-                        //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                        //     //a bit of a hack to make sure this state is setup right.
-                        //     if( $tagsListContainer && !$tagsListContainer.hasClass('rdr_hiddenPanel') ){
-                        //         $tagsListContainer.addClass('rdr_visiblePanel');
-                        //     }
-
-                        // }else{
-                        //     //this shouldn't happen with how things are setup now... consolodate later.
-                        //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
-                        // }
                         var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                         $bodyWrap.append($tagsListContainer);
@@ -5417,7 +5277,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //move these from indicators-  they dont belong here
                     makeTagsListForInline: function( $rindow, isWriteMode, page ){
                         //RDR.actions.indicators.utils.makeTagsListForInline:
-                        //todo: consolidate this with the same function for makeTagsListForMedia
                         // page is the page object, not a boolean
 
                         var hash = $rindow.data('hash');
@@ -5655,62 +5514,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // RDR.rindow.jspUpdate($rindow);
                         return $tagsListContainer;
                     },
-                    makeTagsListForMedia: function( $rindow ){
-                        //RDR.actions.indicators.utils.makeTagsListForMedia:
-// should be removeable 
-return;
-                        var hash = $rindow.data('hash');
-                        var summary = RDR.summaries[hash];
-                            
-                        var tagsListMaxWidth = $rindow.outerWidth();
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />'),
-                            $tag_table = RDR.rindow.pillTable.make( tagsListMaxWidth );
-
-                        $tag_table.find('tr').append('<td />');
-
-                        if ( summary.top_interactions && summary.top_interactions.tags ) {
-
-                            // add existing tag pills for this media item
-                            $.each( summary.top_interactions.tags, function( tag_id, tag ){
-                                tag.id = tag_id;
-                                // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
-                                var $pill_container = $tag_table.find('td:last-child'),
-                                    $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, false );
-                            });
-
-                            $.each( RDR.group.blessed_tags, function( idx, tag ){
-                                // don't write an empty blessed tag pill
-                                if ( !$tag_table.find('div.rdr_tag_'+tag.id).length ) {
-                                    // var $pill_container = RDR.rindow.pillTable.getNextCell( tag, $tag_table, tagsListMaxWidth, true ),
-                                    var $pill_container = $tag_table.find('td:last-child'),
-                                        $pill = RDR.rindow.pill.make( tag, $pill_container, $rindow, false );
-                                }
-                            });
-
-                            // add a custom tag pill
-                            var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                                // $pill_container = RDR.rindow.pillTable.getNextCell( custom_tag, $tag_table, tagsListMaxWidth, true ),
-                                $pill_container = $tag_table.find('td:last-child'),
-                                $custom_pill = RDR.rindow.writeCustomTag( $pill_container, $rindow );
-
-                            $tag_table.find('tr').each( function() {
-                                $(this).find('td:last-child:not(:first-child)').addClass('rdr-last-child');
-                            });
-
-                            if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
-                                $tag_table.addClass('rdr-one-column');
-                            }
-
-                            // now that we've created the first row, unset the max-width and set the table width.
-                            // this lets us have the table flow to full width... without having had to loop through
-                            // table cells in getNextCell to recalculate the width throughout
-                            // $tag_table.css('max-width','none').width(tagsListMaxWidth);
-                        }
-
-                        $tagsListContainer.append($tag_table);
-                        return $tagsListContainer;
-                    },
-
                     updateContainerTrackers: function(){
                         $.each( RDR.containers, function(idx, container) {
                             if ( container.kind && ( container.kind == "img" || container.kind == "media" || container.kind == "med") ) {
@@ -6259,11 +6062,6 @@ return;
                         $().selog('hilite', selState, 'on');
                     }
 
-                    // if (isMediaContainer){
-                    //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForMedia( $rindow );
-                    // }else{
-                    //     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
-                    // }
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
