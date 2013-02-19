@@ -998,6 +998,7 @@ function readrBoard($R){
                         $backButton.click( function() {
                             var $header = RDR.rindow.makeHeader( 'Reactions' );
                             $rindow.find('.rdr_header').replaceWith($header)
+                            RDR.rindow.updateFooter( $rindow );
 
 
                             // RDR.rindow.updateTagPanel( $rindow );
@@ -1012,7 +1013,7 @@ function readrBoard($R){
 
                             if ( $rindow.data('initialWidth') >= 480 ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                                RDR.rindow.updateSizes( $rindow );
+                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
                             }
 
                         });
@@ -2096,7 +2097,6 @@ function readrBoard($R){
             buildInteractionData: function() {
                 //RDR.util.buildInteractionData
                 /*
-
 
 
                 In short, the following code blows chunks.
