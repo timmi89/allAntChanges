@@ -223,7 +223,8 @@ def generatePasswordEmail(username, email):
     return (user, password_email)
 
 def generateFollowEmail(owner):
-    follow_email = getEmailTemplate('follow_email.html') % (settings.BASE_URL, owner.id, owner.social_user.username)
+    #follow_email = getEmailTemplate('follow_email.html') % (settings.BASE_URL, owner.id, owner.social_user.username)
+    follow_email = getEmailTemplateFromWeb('agree', user_id=user.id, follow_id=owner.id)
     return (follow_email)
 
 def generateGroupApprovalEmail(group):
