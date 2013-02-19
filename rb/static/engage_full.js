@@ -374,7 +374,6 @@ function readrBoard($R){
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             updateTagPanel: function ( $rindow ) {
-// canwechangethis
                 // RDR.rindow.updateTagPanel:
                 // panelEvent - backButton
 
@@ -387,7 +386,6 @@ function readrBoard($R){
             },
 
             mediaRindowShow: function ( $mediaItem ) {
-// canwechangethis
                 //RDR.rindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
@@ -407,7 +405,6 @@ function readrBoard($R){
             },
             mediaRindowHide: function ( $mediaItem ) {
                 //RDR.rindow.mediaRindowHide:
-// canwechangethis
                 var hash = $mediaItem.data('hash'),
                     $rindow = $('#rdr_indicator_details_'+hash);
 
@@ -3188,7 +3185,14 @@ function readrBoard($R){
 
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
-                RDR.actions.containers.media.disengageAll();
+
+                // remove some boxes.  this used to be RDR.actions.containers.media.disengageAll
+                var hashes = [];
+                $('.rdr_live_hover').each(function(){
+                    var hash = $(this).data('hash');
+                    hashes.push(hash);
+                    RDR.actions.containers.media.onDisengage(hash);
+                });
                 $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
@@ -3431,65 +3435,6 @@ function readrBoard($R){
                 }
             },
             containers: {
-                media: {
-                    //RDR.actions.containers.media:
-                    //actions for the special cases of media containers
-                    onEngage: function(hash){
-                        return;
-                        //RDR.actions.containers.media.onEngage:
-                        // action to be run when media container is engaged - typically with a click on the indicator
-
-                        var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
-
-                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
-                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
-
-                        var containerInfo = RDR.containers[hash];
-                        if ( containerInfo ) {
-                            var $mediaItem = containerInfo.$this;
-
-                            $mediaItem.data('hover',true).data('hash', hash);
-                            RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            RDR.rindow.mediaRindowShow( $mediaItem );
-                            // $indicator_details.addClass('rdr_has_border');
-                        }
-
-                        RDR.events.track( 'view_node::'+hash, hash );
-                    },
-                    onDisengage: function(hash){
-                        return;
-                        //RDR.actions.containers.media.onDisengage:
-                        //actions to be run when media container is disengaged - typically with a hover off of the container
-                        var $mediaItem = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
-
-                        var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
-                        clearTimeout(timeoutCloseEvt);
-
-                        timeoutCloseEvt = setTimeout(function(){
-                            var containerInfo = RDR.containers[hash];
-                            if ( containerInfo ) {
-                                $mediaItem.data('hover',false).data('hash', hash);
-                                RDR.rindow.mediaRindowHide( $mediaItem );
-                            }
-                        },100);
-                        $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
-                    },
-                    disengageAll: function(){
-                        //RDR.actions.containers.media.disengageAll:
-
-                        //only need to run this for containers that are active
-                        var hashes = [];
-                        $('.rdr_live_hover').each(function(){
-                            var hash = $(this).data('hash');
-                            hashes.push(hash);
-                            RDR.actions.containers.media.onDisengage(hash);
-                        });
-                    }
-                },
                 save: function(settings){
                     //RDR.actions.containers.save:
 
@@ -5180,12 +5125,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
-                                // canwechangethis or remove...
                                 if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
-                                // if ( summary.kind == "media" && $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
-                                    // .appendTo('div.rdr_media_details');
+
                                     $('div.rdr_media_details').html( $indicator_details );
                                     $container_tracker.addClass('rdr_inline_video');
                                     
