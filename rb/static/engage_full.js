@@ -105,8 +105,6 @@ function readrBoard($R){
                 call_to_action: "What do you think?",
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
-                slideshow_trigger: '#flipbook',
-                slideshow_img_selector: '#flipbook div.image img',
                 paragraph_helper: true,
 
                 //shareWidget Stuff//
@@ -527,7 +525,6 @@ function readrBoard($R){
                             } else {
                                 args[key] = copyThisArg;
                             }
-                            // $.extend( args, copyThisArg );
                         });
                     }
 
@@ -3051,8 +3048,6 @@ function readrBoard($R){
                         $('#rdr_indicator_' + hash).hide();
                 });
 
-                RDR.actions.slideshows.setup();
-
                 $RDR.dequeue('initAjax');
             },
             UIClearState: function(){
@@ -3302,52 +3297,6 @@ function readrBoard($R){
                             }
                         }
                     });
-                }
-            },
-            slideshows: {
-                setup: function() {
-                    // RDR.actions.slideshows.setup
-                    if ( RDR.group.slideshow_trigger ) {
-                        $(window).hashchange( function() {
-                            RDR.rindow.closeAll();
-                            var hash = RDR.actions.slideshows.findActiveHash();
-                            //todo: check on this
-                            RDR.actions.indicators.update(hash, true);
-                        });
-
-                        // var $slideshows = $(RDR.group.slideshow_trigger);
-                        // $.each( $slideshows, function( idx, slideshow ) {
-                        //     var $slideshow = $(slideshow);
-                        //     $slideshow.hover(
-                        //         function(){
-                        //             // var hash = RDR.actions.slideshows.findActiveHash();
-                        //             // RDR.actions.indicators.init(hash);
-                        //             // RDR.actions.containers.media.onEngage( hash );
-                        //         },
-                        //         function(){
-                        //             // RDR.actions.containers.media.onDisengage( RDR.actions.slideshows.findActiveHash() );
-                        //         }
-                        //     );
-                        // });
-                    }
-                },
-                findActiveHash: function() {
-                    // RDR.actions.slideshows.findActiveHash
-                    if ( RDR.group.slideshow_trigger && RDR.group.slideshow_img_selector ) {
-                        var $slideshow_images = $(RDR.group.slideshow_img_selector),
-                            hash = "";
-
-                        $.each( $slideshow_images, function( idx, img ) {
-                            var $img = $(img);
-                            if ( $img.is(':visible') && $img.parents(':hidden').length == 0 && $img.data('hash') ) {
-                                hash = $img.data('hash');
-                                return false;
-                            }
-                        });
-                        return hash;
-                    } else {
-                        return "";
-                    }
                 }
             },
             containers: {
@@ -6984,7 +6933,7 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"global/css/helvetica.css" );
+        css.push( RDR_staticUrl+"css/fonts/helvetica.css" );
     }
     if ( $R.browser.msie ) {
         css.push( RDR_staticUrl+"widget/css/ie.css" );
@@ -7056,7 +7005,6 @@ function $RFunctions($R){
         plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_enhancedOffset($R);
-        plugin_jquery_hashChange($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_jScrollPane($R);
@@ -9260,24 +9208,6 @@ function $RFunctions($R){
             };
         }
         //end function plugin_jquery_improvedCSS
-
-        //todo: I don't think we're using this any more - remove it?
-        function plugin_jquery_hashChange($){
-            /*
-             * jQuery hashchange event - v1.3 - 7/21/2010
-             * http://benalman.com/projects/jquery-hashchange-plugin/
-             *
-             * Copyright (c) 2010 "Cowboy" Ben Alman
-             * Dual licensed under the MIT and GPL licenses.
-             * http://benalman.com/about/license/
-             */
-
-            // args passed into minified function
-            var e = window,
-                b = undefined;
-
-            var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})();
-        }
 
         function plugin_jquery_mousewheel($){
             /* 

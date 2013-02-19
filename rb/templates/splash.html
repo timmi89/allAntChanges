@@ -2,7 +2,6 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}site/css/splash.css?v={{ timestamp|date:"U" }}">
 <link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
@@ -11,8 +10,13 @@
 
 {% block mainContent %}
     <div id="splashBlurbs">
+        <div class="theSpitch">
+            <div>
+                <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:24px;line-height:30px;"><img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</span><em style="display:block;margin-top:15px;font-size:18px;">- Alexis Ohanian, Co-Founder <a href="http://reddit.com/">Reddit</a> </em></blockquote>
+            </div>
+        </div>
     	<div id="readers" class="blurb blurb-for-readers selected">
-            <h1 class="sectionBanner">Why you'll love ReadrBoard</h1>
+            <h1 class="">Why you'll love ReadrBoard</h1>
     		<div class="leftSide">
                 <h3 style="color: #aaa; font-style: italic; top: -5px; position: relative;">ReadrBoard lets you:
                 </h3>
@@ -47,17 +51,17 @@
         <div id="publishers" class="blurb blurb-for-publishers">
             <style>
             #publishers         { text-align:center; }
-            #publishers h1      { text-align:center;font-family:Helvetica,Arial,sans-serif;color:#008be4;font-weight:bold;font-size:28px;width:720px;margin:0 auto;}
+            #splashBlurbs h1      { text-align:center;font-family:Helvetica,Arial,sans-serif;color:#008be4;font-weight:bold;font-size:28px;width:720px;margin:0 auto;}
             #publishers p       { text-align:left; width:700px;margin:20px auto;}
-            #publishers .theSpitch > div { margin:0 auto; width:600px; }
-            #publishers hr { border-top:1px solid #ccc; margin:30px auto; width:700px;}
-            #publishers strong { color:#008be4;}
+            #splashBlurbs .theSpitch > div { margin:0 auto; width:600px; }
+            #splashBurbs hr { border-top:1px solid #ccc; margin:30px auto; width:700px;}
+            #splashBlurbs strong { color:#008be4;}
             </style>
             <a name="publisher_information"></a>
             <h1 class="">Why Publishers love ReadrBoard</h1>
             <div class="theSpitch">
                 <div>
-                    <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:18px;"><img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"Readrboard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. <br/>We use it and recommend it to our clients."</span><em style="display:block;margin-top:15px;font-size:14px;">- Shane Snow, Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></blockquote>
+                    <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:18px;"><img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"Readrboard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. <br/>We use it and recommend it to our clients."</span><em style="display:block;margin-top:15px;font-size:18px;">- Shane Snow, Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></blockquote>
                 </div>
             </div>
 
@@ -102,12 +106,33 @@
                     </div>
                 </div>
                 <hr/>
+                <h3>A few of our favorite publishing partners</h3>
+                <style>
+                .partner_logos img { margin:0 10px 10px 0; }
+                </style>
+                <div class="partner_logos">
+                    <img src="{{STATIC_URL}}site/images/logo_dailycandy.png" />
+                    <img src="{{STATIC_URL}}site/images/as-seen-on/content-strategist.png" style="height:40px;" />
+                    <img src="{{STATIC_URL}}site/images/logo_civic_mit.png" style="height:60px;" />
+                    <img src="{{STATIC_URL}}site/images/logo_racialicious.png" />
+                    <img src="{{STATIC_URL}}site/images/logo_bridal_guide.png" />
+                    <img src="{{STATIC_URL}}site/images/logo_gazette.png" />
+                    <img src="{{STATIC_URL}}site/images/logo_altweeklies.png" style="height:60px;" />
+                    <img src="{{STATIC_URL}}site/images/logo_college_media.png" />
+                    <img src="{{STATIC_URL}}site/images/logos_modern_nomad.png" />
+                </div>
+                <hr/>
                 <h1>Find out what content your readers really care about.  Find out why.</h1>
                 <p>ReadrBoard enables readers to react to any page on your site -- or any part of a page.  If an image in your slideshow grabs them, or a point made in the third paragraph below the fold is what's really grabbing people, they can use ReadrBoard to let you and other readers know.</p>
-                <p>But they don't +1 what catches their attention.  <strong>They react</strong>.  With organic* reactions like "Hilarious", "omg", "Tell me more", and so much more, you'll understand your community's take on your content, and so will they.</p>
+                <p>But they don't +1 what catches their attention.  <strong>They react</strong>.  With organic* reactions like "Hilarious", "omg", "Tell me more", and so much more, you'll understand your community's real take on your content, and so will they.</p>
+                <img src="{{STATIC_URL}}site/images/publishers_01.png" />
+                <em style="font-size:13px;display:block;margin-top:20px;">* Readers can use reactions you define, or add their own.</em>
+                <hr/>
+                <h1>Interest + Sentiment Data.</h1>
+                <h3>That you can't get anywhere else.</h3>
                 <a target="_blank" href="http://player.vimeo.com/video/52709226" data-fancybox-type="iframe" class="fancybox" title="Readrboard Publisher's Dashboard">
+                    <h3 style="font-weight:normal;padding:20px 10px;color:#666;text-align:center;display:block;">View this 30-second video to check it out.</h3>
                     <img src="{{STATIC_URL}}site/images/demo-analytics-mockup-sm.jpg" alt="Demo Publisher Analytics" id="analytics_screenshot"/>
-                    <em style="text-align:center;display:block;">Click to see a 30-second video!</em>
                 </a>
                 <script>
                 $("a.fancybox").fancybox({

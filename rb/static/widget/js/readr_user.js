@@ -10,6 +10,13 @@ if ( typeof qs_args.group_id == "undefined" ) qs_args.group_id = "";
 if ( typeof $.receiveMessage == "function") {
 	$.receiveMessage(
 		function(e){
+
+            var keys = {
+                registerEvent: "register-event::"
+            };
+            var jsonData;
+            var data;
+
 		    if( e.data == "getUser" ) {
 	    		RDRAuth.getUser();
 	    	} else if ( e.data == "reloadXDMframe" ) {
@@ -24,7 +31,11 @@ if ( typeof $.receiveMessage == "function") {
 		    	RDRAuth.testMessage();
 	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
 	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
-	    	}
+	    	} else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
+                jsonData = e.data.split(keys.registerEvent)[1];
+                data = $.parseJSON(jsonData);
+                RDRAuth.events.trackEventToCloud(data);
+            }
 		},
 		qs_args.parentHost
 	);
@@ -63,6 +74,7 @@ window.RDRAuth = {
     openRbLoginWindow: function(options){   
         var windowProps = getWindowProps(options);
         RDRAuth.checkRBLoginWindow();
+        
         RDRAuth.popups.loginWindow = window.open(
             RDR_baseUrl+'/rb_login/',
             'readr_login',
@@ -107,9 +119,9 @@ window.RDRAuth = {
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
-	events : {
-		track : function( data ) {
-	        // RDRAuth.events.track
+	events: {
+		track: function( data ) {
+	        // RDRAuth.events.track:
 	        // mirrors the event tracker from the widget
 	        var standardData = "";
 
@@ -126,28 +138,41 @@ window.RDRAuth = {
                 // console.log( 'rb event tracking: ' +eventSrc );
             }
     	},
-        trackGoogleEvent: function(category, action, opt_label, opt_value, opt_noninteraction){
-            //record to google events as well.
+        trackEventToCloud: function(params){
+            // RDRAuth.events.trackEventToCloud
+            //Record events to 3rd party event tracking.  These parameters match Google's event tracking API.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
             
+            var category = params.category,
+                action = params.action,
+                opt_label = params.opt_label || null,
+                opt_value = params.opt_value  || null,
+                opt_noninteraction = params.opt_noninteraction  || null;
+
             if(RDRAuth.isOffline){
                 //uncomment for debugging
-                // console.log('google event tracking: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+                // console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+
+                //don't log events while offline
+                return;
             }
 
             if( typeof _gaq !== "undefined" ){
                 _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
             }
 
-            //for now just add this here to mirror the google event tracking
-            if( typeof _firebaseDB !== "undefined" ){
-                var firebaseEventTrackingTest = _firebaseDB.child("eventTrackingTest");
-                firebaseEventTrackingTest.push({
+            if( typeof Parse !== "undefined" ){
+                var EventTracking = Parse.Object.extend("EventTracking");
+                var eventTracking = new EventTracking();
+                eventTracking.save({
                     category: category,
                     action: action,
-                    opt_label: opt_label || null,
-                    opt_value: opt_value || null,
-                    opt_noninteraction: opt_noninteraction || null
+                    opt_label: opt_label,
+                    opt_value: opt_value,
+                    opt_noninteraction: opt_noninteraction
+                }, {
+                  success: function(object) {
+                  }
                 });
             }
         },
@@ -158,24 +183,49 @@ window.RDRAuth = {
                 var eventStr = 'FBLogin attempted';
                 RDRAuth.events.track(eventStr);
 
-                RDRAuth.events.trackGoogleEvent('login', 'attempted', 'auth: fb');
-
-                if(RDRAuth.isOffline){
-                    //uncomment this for quick testing on local
-                    // alert(eventStr);
-                }
+                RDRAuth.events.trackEventToCloud({
+                    category: 'login',
+                    action: 'attempted',
+                    opt_label: 'auth: fb'
+                });
             },
             trackFBLoginFail: function(){
                 // RDRAuth.events.helpers.trackFBLoginFail
                 var eventStr = 'FBLogin failed or was canceled';
                 RDRAuth.events.track(eventStr);
 
-                RDRAuth.events.trackGoogleEvent('login', 'failed-or-canceled', 'auth: fb');
+                RDRAuth.events.trackEventToCloud({
+                    category: 'login',
+                    action: 'failed_or_canceled',
+                    opt_label: 'auth: fb'
+                });
+            },
+            trackRBLoginAttempt: function(){
+                // RDRAuth.events.helpers.trackFBLoginAttempt
 
-                if(RDRAuth.isOffline){
-                    //uncomment this for quick testing on local
-                    // alert(eventStr);
-                }
+                var eventStr = 'RBLogin attempted';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackEventToCloud({
+                    category: 'login',
+                    action: 'attempted',
+                    opt_label: 'auth: rb'
+                });
+            },
+            trackRBLoginFail: function(){
+                // RDRAuth.events.helpers.trackFBLoginFail
+
+                //I didn't find a clear way to track this yet.  Not being called...
+                return;
+
+                var eventStr = 'RBLogin failed or was canceled';
+                RDRAuth.events.track(eventStr);
+
+                RDRAuth.events.trackEventToCloud({
+                    category: 'login',
+                    action: 'failed_or_canceled',
+                    opt_label: 'auth: rb'
+                });
             }
         }
 	},
@@ -586,8 +636,8 @@ window.RDRAuth = {
 	},
 	doRBLogin: function(requesting_action) {
         // RDRAuth.doRBLogin
-        
-
+        RDRAuth.events.helpers.trackRBLoginAttempt();
+        RDRAuth.openRbLoginWindow();
     },
     doRBlogout: function() {
          RDRAuth.killUser( function() {

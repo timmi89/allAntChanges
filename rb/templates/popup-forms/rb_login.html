@@ -22,7 +22,11 @@
 	<script type="text/javascript">
 
 		RDRAuth.events.track('show_login_form');
-        RDRAuth.events.trackGoogleEvent('login', 'show_form');
+        RDRAuth.events.trackEventToCloud({
+            category: 'login',
+            action: 'show_form',
+            opt_label: 'auth: rb'
+        });
 
 		$('input[name="username"]').focus();
 		$('#groupname').text( decodeURI(qs_args.group_name) );
@@ -56,9 +60,8 @@
                                 .fadeIn();
 						} else {
 							RDRAuth.setUser(response);
-                            RDRAuth.events.track('login_success');
-							RDRAuth.events.trackGoogleEvent('login', 'success', 'rb - from:rb_login.html');
-							window.location.href=RDR_baseUrl+'/rb_login_success/';
+                            
+                            window.location.href=RDR_baseUrl+'/rb_login_success/';
 						}
 					}
 				}
