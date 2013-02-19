@@ -54,77 +54,42 @@ if DEBUG:
     BASE_URL_SECURE = 'https://local.readrboard.com:8080'
     STATIC_URL = '//local.readrboard.com:8080/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
-    """
-    DATABASES = {
-      'default': {
-          'ENGINE':   'django.db.backends.mysql',
-          'NAME':     'readrboard',
-          'USER':     'root',
-          'PASSWORD': '4rc4n30n3',
-          'HOST':     '192.168.1.7', 
-          'PORT':     '',
-        },
-      'readonly1': {
-          'ENGINE':   'django.db.backends.mysql',
-          'NAME':     'readrboard',
-          'USER':     'root',
-          'PASSWORD': '4rc4n30n3',
-          'HOST':     '192.168.1.9', 
-          'PORT':     '',
-        },
-      'readonly2': {
-          'ENGINE':   'django.db.backends.mysql',
-          'NAME':     'readrboard',
-          'USER':     'root',
-          'PASSWORD': '4rc4n30n3',
-          'HOST':     '192.168.1.14', 
-          'PORT':     '',
-        },
-        'slave1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        }
-    }
-    """
-    DATABASES = {
-      'default': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        },
-      'readonly1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        },
-      'readonly2': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        },
-        'slave1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        }
-    }
     
+    DATABASES = {
+      'default': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+      'readonly1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+      'readonly2': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        },
+        'slave1': {
+          'ENGINE':   'django.db.backends.sqlite3',
+          'NAME':     'readrdb.db',
+          'USER':     '',
+          'PASSWORD': '',
+          'HOST':     '', 
+          'PORT':     '',
+        }
+    }
+    """
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -138,7 +103,7 @@ if DEBUG:
             'LOCATION': '127.0.0.1:11211',
         }
     }
-    """
+    
 
 else:
     URL_NO_PROTO = 'www.readrboard.com'

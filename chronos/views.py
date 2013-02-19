@@ -26,6 +26,16 @@ rules = {'threshold1':ThresholdNotificationRule(threshold = 1),
          'threshold100':ThresholdNotificationRule(threshold = 100)
          }
 
+page_rules = [ThresholdNotificationRule(threshold = 1), 
+         ThresholdNotificationRule(threshold = 2),
+         ThresholdNotificationRule(threshold = 3),
+         ThresholdNotificationRule(threshold = 5), 
+         ThresholdNotificationRule(threshold = 10), 
+         ThresholdNotificationRule(threshold = 25), 
+         ThresholdNotificationRule(threshold = 50), 
+         ThresholdNotificationRule(threshold = 100)
+         ]
+
 MILLI_RANK_INC = 60000
 
 def agree(request, interaction_id = None, **kwargs):
@@ -77,7 +87,7 @@ def agree(request, interaction_id = None, **kwargs):
         context_instance=RequestContext(request)
     )
 
-#@requires_access_key
+
 def comment(request, interaction_id = None, **kwargs):
     context = {}
     
@@ -128,4 +138,109 @@ def comment(request, interaction_id = None, **kwargs):
         context_instance=RequestContext(request)
     )
 
-   
+def page(request, interaction_id = None, **kwargs):
+    context = {}
+    try:
+        interaction = Interaction.objects.get(id = interaction_id)
+        #social_user = SocialUser.objects.get(user = interaction.user)
+        page = interaction.page
+        page_interactions_list = list(page.interactions().exclude(user = interaction.user).order_by('created'))
+        user_set = set()
+        distance = 1
+        for p_i in page_interactions_list:
+            logger.info(p_i)
+            for threshold in page_rules:
+                if threshold.passes(count=distance, exact=True):
+                    logger.info("sending page notification to:" + p_i.user.email)
+                    msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
+                                           generatePageEmail(p_i.user, interaction), 
+                                           "hello@readrboard.com", 
+                                           [p_i.user.email])
+                    msg.content_subtype='html'
+                    msg.send(False)
+            
+        
+                        
+    except Interaction.DoesNotExist:
+        logger.info("BAD INTERACTION ID")
+    #except SocialUser.DoesNotExist:
+        #logger.info("NO SOCIAL USER")
+    except Exception, ex:
+        logger.info(ex)
+    
+    return render_to_response(
+        "chronos.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+def email_agree(request, interaction_id, user_id, count):
+    context = {}
+    interaction = Interaction.objects.get(id=interaction_id)
+    page = interaction.page
+    user = User.objects.get(id=user_id)
+    page_interactions = Interaction.objects.filter(page=page)
+    context['interaction'] = interaction
+    context['page'] = page
+    context['user'] = user
+    context['count'] = count
+    context['page_interactions'] = page_interactions
+    context['base_url'] = settings.BASE_URL
+    return render_to_response(
+        "agree_email.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+def email_comment(request, interaction_id, user_id):
+    context = {}
+    interaction = Interaction.objects.get(id=interaction_id)
+    page = interaction.page
+    user = User.objects.get(id=user_id)
+    page_interactions = Interaction.objects.filter(page=page)
+    context['interaction'] = interaction
+    context['page'] = page
+    context['user'] = user
+    context['page_interactions'] = page_interactions
+    context['base_url'] = settings.BASE_URL
+    return render_to_response(
+        "comment_email.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+def email_page(request, interaction_id, user_id):
+    context = {}
+    interaction = Interaction.objects.get(id=interaction_id)
+    page = interaction.page
+    user = User.objects.get(id=user_id)
+    page_interactions = Interaction.objects.filter(page=page)
+    context['interaction'] = interaction
+    context['page'] = page
+    context['user'] = user
+    context['page_interactions'] = page_interactions
+    context['base_url'] = settings.BASE_URL
+    return render_to_response(
+        "page_email.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+    
+def email_follow(request, user_id, follow_id):
+    context = {}
+    user = User.objects.get(id=user_id)    
+    follower = User.objects.get(id=follow_id)
+    follow_social = SocialUser.objects.get(user=follower)
+    context['user'] = user
+    context['follower'] = follower
+    context['follow_social'] = follow_social
+    context['base_url'] = settings.BASE_URL
+    
+    return render_to_response(
+        "follow_email.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+

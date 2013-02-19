@@ -40,7 +40,14 @@ class AsynchCommentNotification(AbstractAsynchronousNotification):
         self.url = '/chronos/comment/' + str(kwargs['interaction_id']) + '/'
         logger.info('comment url ' + str(self.url))
         return self.url
-    
+
+class AsynchPageNotification(AbstractAsynchronousNotification):
+    def generate_url(self, **kwargs):
+        self.url = '/chronos/page/' + str(kwargs['interaction_id']) + '/'
+        logger.info('page url ' + str(self.url))
+        return self.url
+ 
+  
 class AbstractNotificationRuleImpl(object):
     args = None
     def __init__(self, **kwargs):
@@ -54,7 +61,9 @@ class AbstractNotificationRuleImpl(object):
 class ThresholdNotificationRule(AbstractNotificationRuleImpl):
 
     def passes(self, **kwargs):
-        count = kwargs['count']  
+        count = kwargs['count']
+        if kwargs.has_key('exact'):
+            return True if count == self.args['threshold'] else False
         return True if count >= self.args['threshold'] else False
         
         
