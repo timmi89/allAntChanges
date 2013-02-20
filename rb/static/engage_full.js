@@ -337,10 +337,12 @@ function readrBoard($R){
                 $hidePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
 
                 // replacewith bug
-                var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
-                $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
+                // var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
+                // $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
+                $tagsListContainer.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 
-                var animWidth = $showPanel.width();
+                // var animWidth = $showPanel.width();
+                var animWidth = $tagsListContainer.width();
                 $hidePanel.css('left', animWidth);
                 $panelWrap.css('left', -animWidth);
 
@@ -882,16 +884,16 @@ function readrBoard($R){
                             $rindow.find('.rdr_header').replaceWith($header)
                             RDR.rindow.updateFooter( $rindow );
 
-
-                            // RDR.rindow.updateTagPanel( $rindow );
-                            // RDR.rindow.panelHide( $rindow );
-
-                            var $panelWrap = $rindow.find('.rdr_body_wrap');
-                            $panelWrap.find('.rdr_visiblePanel').removeClass('rdr_visiblePanel');
-                            $panelWrap.find('.rdr_hiddenPanel').removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                            var $panelWrap = $rindow.find('.rdr_body_wrap'),
+                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'), // .removeClass('rdr_visiblePanel');
+                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel'); //.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                            
                             $panelWrap.animate({
                                 left: 0
                             });
+                            
+                            $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+                            $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
 
                             if ( $rindow.data('initialWidth') >= 480 ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
@@ -912,7 +914,7 @@ function readrBoard($R){
                         // add count of page-level reactions
                         if ( counts && counts.page ) {
                             var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td>');
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>page</strong></td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
@@ -3185,14 +3187,7 @@ function readrBoard($R){
 
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
-
-                // remove some boxes.  this used to be RDR.actions.containers.media.disengageAll
-                var hashes = [];
-                $('.rdr_live_hover').each(function(){
-                    var hash = $(this).data('hash');
-                    hashes.push(hash);
-                    RDR.actions.containers.media.onDisengage(hash);
-                });
+                RDR.actions.containers.media.disengageAll();
                 $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
@@ -3435,6 +3430,67 @@ function readrBoard($R){
                 }
             },
             containers: {
+                media: {
+                    //RDR.actions.containers.media:
+                    //actions for the special cases of media containers
+                    onEngage: function(hash){
+                        // deprecated?
+                        return;
+                        //RDR.actions.containers.media.onEngage:
+                        // action to be run when media container is engaged - typically with a click on the indicator
+
+                        var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                            $indicator = $('#rdr_indicator_'+hash),
+                            $indicator_details = $('#rdr_indicator_details_'+hash);
+
+                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+
+                        var containerInfo = RDR.containers[hash];
+                        if ( containerInfo ) {
+                            var $mediaItem = containerInfo.$this;
+
+                            $mediaItem.data('hover',true).data('hash', hash);
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
+                            RDR.rindow.mediaRindowShow( $mediaItem );
+                            // $indicator_details.addClass('rdr_has_border');
+                        }
+
+                        RDR.events.track( 'view_node::'+hash, hash );
+                    },
+                    onDisengage: function(hash){
+                        // deprecated?
+                        return;
+                        //RDR.actions.containers.media.onDisengage:
+                        //actions to be run when media container is disengaged - typically with a hover off of the container
+                        var $mediaItem = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                            $indicator = $('#rdr_indicator_'+hash),
+                            $indicator_details = $('#rdr_indicator_details_'+hash);
+
+                        var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
+                        clearTimeout(timeoutCloseEvt);
+
+                        timeoutCloseEvt = setTimeout(function(){
+                            var containerInfo = RDR.containers[hash];
+                            if ( containerInfo ) {
+                                $mediaItem.data('hover',false).data('hash', hash);
+                                RDR.rindow.mediaRindowHide( $mediaItem );
+                            }
+                        },100);
+                        $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
+                    },
+                    disengageAll: function(){
+                        //RDR.actions.containers.media.disengageAll:
+
+                        //only need to run this for containers that are active
+                        var hashes = [];
+                        $('.rdr_live_hover').each(function(){
+                            var hash = $(this).data('hash');
+                            hashes.push(hash);
+                            RDR.actions.containers.media.onDisengage(hash);
+                        });
+                    }
+                },
                 save: function(settings){
                     //RDR.actions.containers.save:
 
@@ -5226,7 +5282,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var summary = RDR.summaries[hash];
 
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+
+                        // replacewith bug -- attempted fix
+                        // if ( !$rindow.find('.rdr_tags_list').length ) {
+                        //     // $rindow.find('.rdr_tags_list').remove();
+                        //     $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        // }
+
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         // sort a list of tags into their buckets
@@ -5277,7 +5340,52 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                                 $rindow.find('span.rdr_what_is_it').click( function() {
-                                    alert('explain what ReadrBoard is');
+                                    // alert('explain what ReadrBoard is');
+
+
+                                    /*
+                                    coords = [];
+                        coords.left = ( $(window).width() / 2 ) - 200;
+                        coords.top = 150 + $(window).scrollTop();
+                    }
+
+
+                    var $rindow = RDR.rindow.draw({
+                        coords:coords,
+                        id: "rdr_loginPanel",
+                        // pnlWidth:360,
+                        pnls:1,
+                        height:175,
+                        ignoreWindowEdges:"bt"
+                    });
+
+                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+
+                    // store the arguments and callback function that were in progress when this Login panel was called
+                    if ( args ) $rindow.data( 'args', args );
+                    if ( callback ) $rindow.data( 'callback', callback );
+
+                    // create the iframe containing the login panel
+                    // var $loginHtml = $('<div class="rdr_login" />'),
+                    var iframeUrl = RDR_baseUrl + "/static/fb_login.html",
+                        parentUrl = window.location.href,
+                        parentHost = window.location.protocol + "//" + window.location.host,
+                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                    
+                    var $header = RDR.rindow.makeHeader( h1_text );
+                    $rindow.find('.rdr_header').replaceWith($header);
+                    RDR.rindow.hideFooter($rindow);
+                    $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
+
+                    RDR.events.track( 'show_login' );
+                                    */
+
+
+
+
+
+
                                     return false;
                                 });
                             } else {
@@ -6049,8 +6157,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 $rdr_body_wrap.append( $newPanel );
 
 
-                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $otherComments );
-                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $commentBox, 'update' );
                 var $commentsWrap = $('<div class="rdr_commentsWrap"></div>');
                 var $backButton = _makeBackButton();
                 var $otherComments = _makeOtherComments();
