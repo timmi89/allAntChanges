@@ -27,7 +27,7 @@
     	<button class="btn" type="submit" >Update</button>
     </form>
 </section>
-<section role="panels">
+<section id="analyticsReport" role="panels">
 
             <div class="parseTest">
             </div>
@@ -64,7 +64,7 @@
 			</div>
 		</section> <!-- / interaction frequency -->
 
-		<section role="most active pages">
+		<section role="most active pages" class="analyticsReportTable">
 			<h3>Most Active Pages</h3>
 			<table role="active pages table" cellpadding="0" cellspacing="0" border="0">
 				<thead>
@@ -72,6 +72,7 @@
 						<td role="url">URL</td>
 						<td role="title">Title</td>
 						<td role="reactions">Reactions</td>
+                        <td role="reactionViews">Reaction Views</td>
 						<td role="shares">Shares</td>
 						<td role="comments">Comments</td>
 					</tr>
@@ -80,7 +81,7 @@
 			</table>
 		</section><!-- /most popular tags -->
 
-		<section role="most active content">
+		<section role="most active content" class="analyticsReportTable">
 			<h3>Most Active Content</h3>
 			<table role="active content table" cellpadding="0" cellspacing="0" border="0">
 				<thead>
@@ -88,6 +89,7 @@
 						<!-- <td role="via">via</td> -->
 						<td role="content">Content</td>
 						<td role="reactions">Reactions</td>
+                        <td role="reactionViews">Reaction Views</td>
 						<td role="shares">Shares</td>
 						<td role="comments">Comments</td>
 					</tr>
@@ -96,7 +98,7 @@
 			</table>
 		</section> <!-- /most active content -->
 
-		<section role="most active readers">
+		<section role="most active readers" class="analyticsReportTable">
 			<h3>Most Active Readers</h3>
 			<table role="active user table" cellpadding="0" cellspacing="0" border="0">
                 <thead>
@@ -104,6 +106,7 @@
                         <!-- <td role="via">via</td> -->
                         <td role="content">Reader</td>
                         <td role="reactions">Reactions</td>
+                        <td role="reactionViews">Reaction Views</td>
                         <td role="shares">Shares</td>
                         <td role="comments">Comments</td>
                     </tr>
@@ -112,14 +115,14 @@
             </table>
 		</section> <!-- / most active readers -->
 
-		<section role="recent pages" style="display:none;">
+		<section role="recent pages" style="display:none;" class="analyticsReportTable">
 			<h3>Recently Active Pages</h3>
 			<table role="recent pages table" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
 			</table>
 		</section> <!-- / most popular bookmarks -->
 
-		<section role="most popular shares">
+		<section role="most popular shares" class="analyticsReportTable">
 			<h3>Popular Shared Content</h3>
 			<table role="popular shares" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
@@ -127,7 +130,7 @@
 		</section> <!-- / most popular shares -->
 
 		<!-- 
-		<section role="most popular bookmarks">
+		<section role="most popular bookmarks" class="analyticsReportTable">
 			<h3>Popular Bookmarked Content</h3>
 			<table role="popular bookmarks" cellpadding="0" cellspacing="0" border="0">
 				<tbody></tbody>
@@ -253,7 +256,7 @@
     					var shareHtml = "";
     					for ( var i in response ) {
     						var share = response[i];
-    						shareHtml += '<tr><td role="content">('+share[0].count+') '+share[0].content__body+'</td></tr><tr><td role="reactions"><strong>Reactions:</strong>';
+    						shareHtml += '<tr><td role="content">('+share[0].count+') '+share[0].content__body+'</td></tr><tr><td><strong>Reactions: </strong>';
     						for ( var j in share[1].related_reactions ) {
     							var reaction = share[1].related_reactions[j];
     							shareHtml += '('+reaction.count+') '+reaction.interaction_node__body;
@@ -286,8 +289,15 @@
     			contentType: "application/json",
     			dataType: "jsonp",
     			success: function(response){
-    				if ( type == "pages" ) {
-    					var pageHtml = "";
+
+                    var reactionViews = 0;
+    				
+                    if ( type == "pages" ) {
+                        
+                        reactionViews = 1;
+
+                        var pageHtml = "";
+
     					for ( var i in response) {
     						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
     						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
@@ -295,12 +305,16 @@
     						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
     						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
     						+'<td role="reactions">'+tagCount+'</td>'
+                            +'<td role="reactionViews">'+reactionViews+'</td>'
     						+'<td role="shares">'+shrCount+'</td>'
     						+'<td role="comments">'+comCount+'</td></tr>';
     					}
 
     					$('table[role="active pages table"] tbody').html( pageHtml );
     				} else if ( type == "content" ) {
+                        
+                        reactionViews = 2;
+
     					var contentHtml = "";
     					for ( var i in response) {
     						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
@@ -314,7 +328,9 @@
                                 //this seemed to be happedning sometimes.  And the formatting gets messed up.
                                 contentHtml += '<td role="content"></td>';
                             }
-    						contentHtml += '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+    						contentHtml += 
+                            '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                            +'<td role="reactionViews">'+reactionViews+'</td>'
     						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
     					}
@@ -322,7 +338,10 @@
     					$('table[role="active content table"] tbody').html( contentHtml );
     					
     				} else if ( type == "users" ) {
-    					var userHtml = "";
+    				
+                        reactionViews = 3;
+
+                    	var userHtml = "";
     					for ( var i in response) {
     						if ( response[i].user.img_url ) {
     							userHtml += '<tr>'
@@ -331,6 +350,7 @@
                                         + '<div class="userName"><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></div>'
                                     + '</td>'
     								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                                    + '<td role="reactionViews">'+reactionViews+'</td>'
     								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
     							+ '</tr>';

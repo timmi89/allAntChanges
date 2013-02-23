@@ -797,24 +797,26 @@ table[role="active pages table"] td[role="url"] div:hover a   { text-decoration:
 table[role="active content table"] td[role="via"] div:hover a img,
 table[role="active pages table"] td[role="url"] div:hover a img { display:inline; }
 
-table[role="active content table"] tbody td[role="content"],
-table[role="active user table"] tbody td[role="content"]
-                                                                { font-size:12px; font-style:italic; padding:0 0 10px 0; width:515px;}
+
+#analyticsReport .analyticsReportTable td[role="reactions"],
+#analyticsReport .analyticsReportTable td[role="reactionViews"],
+#analyticsReport .analyticsReportTable td[role="shares"],
+#analyticsReport .analyticsReportTable td[role="comments"]{
+    width:108px;
+    text-align:center;
+    font-size:12px;
+}
+
+#analyticsReport .analyticsReportTable td[role="content"]{
+    font-style:italic;
+    padding:8px 0 8px 10px;
+}
+#analyticsReport .analyticsReportTable td[role="url"]{
+    width: 130px;
+}
 
 table[role="active content table"] tbody td[role="content"] img { max-width:80px; max-height:80px; }
 table[role="active pages table"] tbody td[role="title"]     { font-style:italic; }
-
-table[role="active content table"] td[role="reactions"],
-table[role="active user table"] td[role="reactions"],
-table[role="active pages table"] td[role="reactions"]     { width:90px; text-align:center; color:; }
-
-table[role="active content table"] td[role="shares"],
-table[role="active user table"] td[role="shares"],
-table[role="active pages table"] td[role="shares"]        { width:90px; text-align:center; color:; }
-
-table[role="active content table"] td[role="comments"],
-table[role="active user table"] td[role="comments"],
-table[role="active pages table"] td[role="comments"]      { width:90px; text-align:center; color:; }
 
 table[role="active user table"] thead td        { font-weight:bold; }
 table[role="active user table"] td            { vertical-align:middle; font-size:12px; }
