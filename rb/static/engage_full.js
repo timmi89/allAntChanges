@@ -924,8 +924,8 @@ function readrBoard($R){
                             RDR.rindow.updateFooter( $rindow );
 
                             var $panelWrap = $rindow.find('.rdr_body_wrap'),
-                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'), // .removeClass('rdr_visiblePanel');
-                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel'); //.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
+                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
                             
                             $panelWrap.animate({
                                 left: 0
@@ -937,6 +937,8 @@ function readrBoard($R){
                             if ( $rindow.data('initialWidth') >= 480 ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                            } else {
+                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
                         });
@@ -2075,25 +2077,27 @@ function readrBoard($R){
                 */
                 $.each( RDR.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                
-                            if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
+                        if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
+                            $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                    
+                                if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
 
-                                var this_interaction = node.top_interactions.tags[ tag_id ];
+                                    var this_interaction = node.top_interactions.tags[ tag_id ];
 
-                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
 
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
-                                
-                                // this content node's content, location is what we want
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                            }
-                        });
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                    
+                                    // this content node's content, location is what we want
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                }
+                            });
+                        }
                     });
                 });
             },
@@ -5472,7 +5476,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                                 $rindow.find('span.rdr_what_is_it').click( function() {
-                                    // alert('explain what ReadrBoard is');
 
 
                                     /*
@@ -5553,8 +5556,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // size the rindow based on # of reactions
                             if ( typeof page != "undefined" && isWriteMode ) {
-                                // if ( !isWriteMode ) { clog(11111);RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
-                                // else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
