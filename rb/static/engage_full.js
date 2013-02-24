@@ -5009,7 +5009,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
+                        var $header = RDR.rindow.makeHeader( "<span style='font-size:13px !important;'>Say what you think</span>" );
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
@@ -5104,22 +5104,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             return;
                         }
 
-                        $indicator.data('containerHover', true);
-                        var hoverTimeout = setTimeout(function(){
-                            var hasHover = $indicator.data('containerHover');
+                        // fade in.
+                        // removing for now. UI feedback was "I didn't see that" from a small sample.
+                        // $indicator.data('containerHover', true);
+                        // var hoverTimeout = setTimeout(function(){
+                        //     var hasHover = $indicator.data('containerHover');
                             
-                            if(hasHover){
+                        //     if(hasHover){
                                 
-                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        //         RDR.util.cssSuperImportant( $indicator, { display:"inline" });
                                 
-                                $indicator
-                                    .css('opacity',0)
-                                    .animate({
-                                        'opacity': RDR.C.helperIndicators.opacity
-                                        }, RDR.C.helperIndicators.fadeInTime );
-                            }
-                        }, RDR.C.helperIndicators.hoverDelay);
-                        $indicator.data('hoverTimeout', hoverTimeout);
+                        //         // $indicator
+                        //         //     .css('opacity',0)
+                        //         //     .animate({
+                        //         //         'opacity': RDR.C.helperIndicators.opacity
+                        //         //         }, RDR.C.helperIndicators.fadeInTime );
+                        //     }
+                        // }, RDR.C.helperIndicators.hoverDelay);
+                        // $indicator.data('hoverTimeout', hoverTimeout);
+                        RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        $indicator.css('opacity', RDR.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
                         //RDR.actions.indicators.helpers.out:
@@ -5285,12 +5289,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
 
-                        // replacewith bug -- attempted fix
-                        // if ( !$rindow.find('.rdr_tags_list').length ) {
-                        //     // $rindow.find('.rdr_tags_list').remove();
-                        //     $rindow.find('.rdr_body_wrap').append($tagsListContainer);
-                        // }
-
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         // sort a list of tags into their buckets
@@ -5335,7 +5333,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( !isWriteMode ) {
                                 // write page-level tags: readmode
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> | <span class="rdr_what_is_it">What is this?</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it">What is this?</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
@@ -5421,9 +5419,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( typeof page != "undefined" ) {
-                                if ( !isWriteMode ) { RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
-                                else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                            if ( typeof page != "undefined" && isWriteMode ) {
+                                // if ( !isWriteMode ) { clog(11111);RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
+                                // else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -7539,12 +7538,15 @@ function $RFunctions($R){
                         }
                     );
 
-                    var total_reactions = 0;
+                    var total_reactions = 0,
+                        total_reactions_label = "";
                     $.each( page.toptags, function(idx, tag) {
                         total_reactions +=  tag.tag_count;
                     });
+                    if ( total_reactions > 0 ) total_reactions_label = total_reactions+" ";
+
                     $summary_widget.append(
-                        '<a class="rdr_reactions_label">'+total_reactions+' Reactions</a>'
+                        '<a class="rdr_reactions_label">'+total_reactions_label+'Reactions</a>'
                     );
             }
 
