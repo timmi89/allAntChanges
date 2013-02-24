@@ -460,10 +460,11 @@
                 }).length;
             },
             _setQueryDefaults: function(query){
-                query.greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate);
-                query.lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate);
-                query.equalTo("group_id", RB.group.id);
-                return query;
+                return query
+                    .greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate)
+                    .lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate)
+                    .containedIn("action", ["rindow_shown_readmode", "rindow_shown_summarybar"])
+                    .equalTo("group_id", RB.group.id);
             }
         },
 
