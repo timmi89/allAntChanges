@@ -158,7 +158,33 @@ function readrBoard($R){
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
-            }
+
+            },
+            trackEventToCloud: function( params ) {
+                // RDR.events.trackEventToCloud
+                
+                var data = $.toJSON({
+                    category: params.category,
+                    action: params.action,
+                    opt_label: params.opt_label || null,
+                    opt_value: params.opt_value || null,
+                    opt_noninteraction: params.opt_noninteraction || null,
+                    
+                    shareNetwork: params.shareNetwork || null,
+                    container_hash: params.container_hash || null,
+                    container_kind: params.container_kind || null,
+                    page_id: params.page_id || null,
+                    tag_body: params.tag_body || null,
+                    user_id: RDR.user.user_id || null,
+                    group_id: RDR.group.id || null
+                });
+
+                $.postMessage(
+                    "register-event::"+data,
+                    RDR_baseUrl + "/static/xdm.html",
+                    window.frames['rdr-xdm-hidden']
+                );
+            }    
         },
         rindow: {
             defaults:{
@@ -745,8 +771,21 @@ function readrBoard($R){
                                 var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                                 $shareLinks.append($link);
                                 $link.click( function() {
-                                    //hack to get the kind
+                                    
+                                    var tag_body = args.tag.tag_body;
+
+                                    RDR.events.trackEventToCloud({
+                                        category: "share",
+                                        action: "share_open_attempt",
+                                        opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
+                                        container_hash: hash,
+                                        container_kind: args.kind,
+                                        page_id: args.page_id,
+                                        tag_body: tag_body
+                                    });
+
                                     var summary = RDR.summaries[hash];
+                                    //hack to get the kind
                                     var kind = summary.kind;
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                                     RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
@@ -1178,6 +1217,8 @@ function readrBoard($R){
 
                         } else {
                             var hash = settings.hash;
+                            var page_id = RDR.util.getPageProperty('id', hash );
+
                             var summary = RDR.summaries[hash],
                                 $container = summary.$container,
                                 kind = summary.kind,
@@ -1190,7 +1231,19 @@ function readrBoard($R){
                             if ( settings.mode == "writeMode" ) {
                                 // show writemode text
                                 // writeMode
+                                
+
                                 RDR.events.track('start_react_text');
+                                RDR.events.trackEventToCloud({
+                                    category: "engage",
+                                    action: "rindow_shown_writemode",
+                                    opt_label: "kind: text, hash: " + hash,
+                                    container_hash: hash,
+                                    container_kind: kind,
+                                    page_id: page_id
+                                });
+
+
                                 var newSel;
                                 if ( kind == "text" ) {
                                     //Trigger the smart text selection and highlight
@@ -1245,6 +1298,18 @@ function readrBoard($R){
                                         top: $container.offset().bottom+5,
                                         left: $container.offset().left
                                     };
+
+                                    //log media readmode
+                                    RDR.events.track( 'view_node::'+hash, hash );
+                                    RDR.events.trackEventToCloud({
+                                        category: "engage",
+                                        action: "rindow_shown_readmode",
+                                        opt_label: "kind: "+kind+", hash: " + hash,
+                                        container_hash: hash,
+                                        container_kind: kind,
+                                        page_id: page_id
+                                    });
+
                                 }
 
                                 // $indicatorDetails.hide();
@@ -1695,7 +1760,8 @@ function readrBoard($R){
                     coords = settings.coords,
                     kind = settings.kind,
                     content = settings.content,
-                    src_with_path = settings.src_with_path || undefined; //used for media only
+                    src_with_path = settings.src_with_path || undefined, //used for media only
+                    page_id = RDR.util.getPageProperty('id', hash );
 
                 var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
@@ -1763,6 +1829,14 @@ function readrBoard($R){
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
+                RDR.events.trackEventToCloud({
+                    category: "actonbar",
+                    action: "actionbar_shown",
+                    opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
+                    container_hash: hash,
+                    container_kind: kind,
+                    page_id: page_id
+                });
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
@@ -2239,6 +2313,17 @@ function readrBoard($R){
                         }
                         whenDone();
                         throttling = true;
+                    };
+                },
+                once: function(func) {
+                    //RDR.util._.once:
+                    var ran = false, memo;
+                    return function() {
+                        if (ran) return memo;
+                        ran = true;
+                        memo = func.apply(this, arguments);
+                        func = null;
+                        return memo;
                     };
                 }
             },
@@ -3456,7 +3541,8 @@ function readrBoard($R){
                             // $indicator_details.addClass('rdr_has_border');
                         }
 
-                        RDR.events.track( 'view_node::'+hash, hash );
+                        // deprecated - see above
+                        // RDR.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         // deprecated?
@@ -3861,6 +3947,14 @@ function readrBoard($R){
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
                                 onSuccessCallback();
+                            }
+
+                            //also run any callbacks that get queued up on the summarybar hover
+                            if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                                $.each(RDR.contentNodeQueue[hash], function(){
+                                    var func = RDR.contentNodeQueue[hash].pop();
+                                    func(hash);
+                                });
                             }
                         }
                     });
@@ -4682,6 +4776,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $.each(socialNetworks, function(idx, val){
                                     $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
                                     $shareWrapper.find('a.rdr_share_link:last').click( function() {
+                                        
+                                        RDR.events.trackEventToCloud({
+                                            category: "share",
+                                            action: "share_open_attempt",
+                                            opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
+                                            shareNetwork: val,
+                                            container_hash: args.hash,
+                                            container_kind: args.kind,
+                                            page_id: args.page_id
+                                        });
+
                                         RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
@@ -4991,7 +5096,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //end - todo
 
                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-                        
+                        var page_id = RDR.util.getPageProperty('id', hash );
+
                         //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
                         if(!$rindow){
@@ -5000,10 +5106,29 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         $indicator.$rindow = $rindow;
                         
+                        //these should probably be moved under tagMode.make (called by rindow.make) where the image tracking lives.
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
+
+                            RDR.events.track('paragraph_helper_show');
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown_indicatorhelper",
+                                opt_label: "kind: text, hash: " + hash,
+                                container_hash: hash,
+                                container_kind: "text",
+                                page_id: page_id
+                            });
                         }else{
                             RDR.events.track( 'view_node::'+hash, hash );
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown_readmode",
+                                opt_label: "kind: text, hash: " + hash,
+                                container_hash: hash,
+                                container_kind: "text",
+                                page_id: page_id
+                            });
                         }
 
                     }
@@ -5149,7 +5274,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $indicator_body = summary.$indicator_body,
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
-                                indicatorDetailsId = 'rdr_indicator_details_'+hash;
+                                indicatorDetailsId = 'rdr_indicator_details_'+hash,
+                                page_id = RDR.util.getPageProperty('id', hash );
 
                             var $existing = $('#rdr_container_tracker_'+hash);
                             if($existing.length){
@@ -7529,9 +7655,17 @@ function $RFunctions($R){
                         function() {
                             // let's get the reaction summaries for the page here.
                             getReactedContent();
+                            var page_id = $(this).data('page_id');
 
                             var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                            RDR.events.track( 'view_summary::'+$(this).data('page_id') );
+                            RDR.events.track( 'view_summary::'+page_id );
+                            RDR.events.trackEventToCloud({
+                                category: "summarybar",
+                                action: "rindow_shown_summarybar",
+                                opt_label: "page: "+page_id,
+                                page_id: page_id
+                            });
+
                         },
                         function() {
                         }
