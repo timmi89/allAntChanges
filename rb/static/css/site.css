@@ -96,7 +96,7 @@ section[role="main"] h2.header { height:90px; color:#737373; border-top:1px soli
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
 #board_listing ul { margin-bottom:0;}
-#board_listing li { padding-left:20px; }
+#board_listing li { padding-left:20px; display:inline-block;}
 #board_listing li .user_meta { background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;border:1px dashed #aaa; }
 #board_listing h2 { padding-left:20px; color:#737373; padding-top:10px; }
 
@@ -729,15 +729,43 @@ div.splashQuote {
 
 
 /* analytics */
+section[role="datepicker"] form{
+    margin: 0;
+}
 section[role="datepicker"]      { font-size:12px; background:#eee; padding:5px; border-top:1px solid #7f7f7f; border-bottom:1px solid #7f7f7f; }
-section[role="datepicker"] input  { width:80px; text-align:center; margin:o 3px; }
+section[role="datepicker"] input  { width:80px; text-align:center; margin:0 3px; }
 section[role="datepicker"] label  { display:inline; }
 #ui-datepicker-div {z-index:11 !important;}
 section[role="interaction frequency"]         { overflow:auto; text-align:center; }
-div[role="total interactions"] h1      { font-family:Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
-div[role="total interactions"] h4      { margin:-10px 0 10px;}
-div[role="total interactions"]            { text-align:center;}
-div[role="frequency chart"]             { margin-top:40px; }
+
+#interactionBigStats .bigStat h1      { font-family:Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+#interactionBigStats .bigStat h4      { margin:-10px 0 10px;}
+
+#interactionBigStats {
+    left: 50%;
+    position: relative;
+    display: block;
+    float: left;
+    text-align: center;
+}
+#interactionBigStatsInner{
+    left: -50%;
+    display: block;
+    position: relative;
+}
+#interactionBigStats .bigStat {
+    margin: 0 60px;
+}
+#interactionWriteCount{
+    float: left;
+}
+#interactionReadCount{
+    float: right;
+}
+
+div[role="frequency chart"] {
+    margin:60px 0 20px 0;
+}
 
 table[role="active content table"] thead td,
 table[role="active pages table"] thead td           { font-weight:bold;}
@@ -769,27 +797,36 @@ table[role="active pages table"] td[role="url"] div:hover a   { text-decoration:
 table[role="active content table"] td[role="via"] div:hover a img,
 table[role="active pages table"] td[role="url"] div:hover a img { display:inline; }
 
-table[role="active content table"] tbody td[role="content"]   { font-size:12px; font-style:italic; padding:0 0 10px 0; width:515px;}
+
+#analyticsReport .analyticsReportTable td[role="reactions"],
+#analyticsReport .analyticsReportTable td[role="reactionViews"],
+#analyticsReport .analyticsReportTable td[role="shares"],
+#analyticsReport .analyticsReportTable td[role="comments"]{
+    width:108px;
+    text-align:center;
+    font-size:12px;
+}
+
+#analyticsReport .analyticsReportTable td[role="content"]{
+    font-style:italic;
+    padding:8px 0 8px 10px;
+}
+#analyticsReport .analyticsReportTable td[role="url"]{
+    width: 130px;
+}
+
 table[role="active content table"] tbody td[role="content"] img { max-width:80px; max-height:80px; }
 table[role="active pages table"] tbody td[role="title"]     { font-style:italic; }
 
-table[role="active content table"] td[role="reactions"],
-table[role="active pages table"] td[role="reactions"]     { width:90px; text-align:center; color:; }
-
-table[role="active content table"] td[role="shares"],
-table[role="active pages table"] td[role="shares"]        { width:90px; text-align:center; color:; }
-
-table[role="active content table"] td[role="comments"],
-table[role="active pages table"] td[role="comments"]      { width:90px; text-align:center; color:; }
-
 table[role="active user table"] thead td        { font-weight:bold; }
 table[role="active user table"] td            { vertical-align:middle; font-size:12px; }
-table[role="active user table"] td[role="avatar"]   { width:35px; text-align:left;}
-table[role="active user table"] td[role="avatar"] img { width:25px; }
-
-table[role="active user table"] td[role="reactions"],
-table[role="active user table"] td[role="shares"],
-table[role="active user table"] td[role="comments"]   { text-align:center; width:30px; }
-
-
+table[role="active user table"] .avatar,
+table[role="active user table"] .userName      {
+    float: left;
+    display: inline;
+}
+table[role="active user table"] .userName      {
+    margin: 10px 0 0 15px;
+}
+table[role="active user table"] .avatar         { width:35px; text-align:left;}
 

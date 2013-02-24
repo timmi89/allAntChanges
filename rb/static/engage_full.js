@@ -158,7 +158,33 @@ function readrBoard($R){
                     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 $('#rdr_event_pixels').append($event);
-            }
+
+            },
+            trackEventToCloud: function( params ) {
+                // RDR.events.trackEventToCloud
+                
+                var data = $.toJSON({
+                    category: params.category,
+                    action: params.action,
+                    opt_label: params.opt_label || null,
+                    opt_value: params.opt_value || null,
+                    opt_noninteraction: params.opt_noninteraction || null,
+                    
+                    shareNetwork: params.shareNetwork || null,
+                    container_hash: params.container_hash || null,
+                    container_kind: params.container_kind || null,
+                    page_id: params.page_id || null,
+                    tag_body: params.tag_body || null,
+                    user_id: RDR.user.user_id || null,
+                    group_id: RDR.group.id || null
+                });
+
+                $.postMessage(
+                    "register-event::"+data,
+                    RDR_baseUrl + "/static/xdm.html",
+                    window.frames['rdr-xdm-hidden']
+                );
+            }    
         },
         rindow: {
             defaults:{
@@ -337,10 +363,12 @@ function readrBoard($R){
                 $hidePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
 
                 // replacewith bug
-                var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
-                $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
+                // var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
+                // $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
+                $tagsListContainer.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
                 
-                var animWidth = $showPanel.width();
+                // var animWidth = $showPanel.width();
+                var animWidth = $tagsListContainer.width();
                 $hidePanel.css('left', animWidth);
                 $panelWrap.css('left', -animWidth);
 
@@ -743,8 +771,21 @@ function readrBoard($R){
                                 var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                                 $shareLinks.append($link);
                                 $link.click( function() {
-                                    //hack to get the kind
+                                    
+                                    var tag_body = args.tag.tag_body;
+
+                                    RDR.events.trackEventToCloud({
+                                        category: "share",
+                                        action: "share_open_attempt",
+                                        opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
+                                        container_hash: hash,
+                                        container_kind: args.kind,
+                                        page_id: args.page_id,
+                                        tag_body: tag_body
+                                    });
+
                                     var summary = RDR.summaries[hash];
+                                    //hack to get the kind
                                     var kind = summary.kind;
                                     RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
                                     RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
@@ -882,20 +923,22 @@ function readrBoard($R){
                             $rindow.find('.rdr_header').replaceWith($header)
                             RDR.rindow.updateFooter( $rindow );
 
-
-                            // RDR.rindow.updateTagPanel( $rindow );
-                            // RDR.rindow.panelHide( $rindow );
-
-                            var $panelWrap = $rindow.find('.rdr_body_wrap');
-                            $panelWrap.find('.rdr_visiblePanel').removeClass('rdr_visiblePanel');
-                            $panelWrap.find('.rdr_hiddenPanel').removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                            var $panelWrap = $rindow.find('.rdr_body_wrap'),
+                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
+                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
+                            
                             $panelWrap.animate({
                                 left: 0
                             });
 
+                            $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+                            $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
+
                             if ( $rindow.data('initialWidth') >= 480 ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                            } else {
+                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
                         });
@@ -912,7 +955,7 @@ function readrBoard($R){
                         // add count of page-level reactions
                         if ( counts && counts.page ) {
                             var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>article</strong></td>');
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>page</strong></td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
@@ -1122,6 +1165,8 @@ function readrBoard($R){
                             tag = {},
                             hash = $rindow.data('container');
 
+                        //note that hash is a $(dom) element, not a hash.  Fix this later.
+
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             tag.body = $input.val();
                             $input.parent().addClass('rdr_tagged');
@@ -1176,6 +1221,8 @@ function readrBoard($R){
 
                         } else {
                             var hash = settings.hash;
+                            var page_id = RDR.util.getPageProperty('id', hash );
+
                             var summary = RDR.summaries[hash],
                                 $container = summary.$container,
                                 kind = summary.kind,
@@ -1188,7 +1235,19 @@ function readrBoard($R){
                             if ( settings.mode == "writeMode" ) {
                                 // show writemode text
                                 // writeMode
+                                
+
                                 RDR.events.track('start_react_text');
+                                RDR.events.trackEventToCloud({
+                                    category: "engage",
+                                    action: "rindow_shown_writemode",
+                                    opt_label: "kind: text, hash: " + hash,
+                                    container_hash: hash,
+                                    container_kind: kind,
+                                    page_id: page_id
+                                });
+
+
                                 var newSel;
                                 if ( kind == "text" ) {
                                     //Trigger the smart text selection and highlight
@@ -1243,6 +1302,18 @@ function readrBoard($R){
                                         top: $container.offset().bottom+5,
                                         left: $container.offset().left
                                     };
+
+                                    //log media readmode
+                                    RDR.events.track( 'view_node::'+hash, hash );
+                                    RDR.events.trackEventToCloud({
+                                        category: "engage",
+                                        action: "rindow_shown_readmode",
+                                        opt_label: "kind: "+kind+", hash: " + hash,
+                                        container_hash: hash,
+                                        container_kind: kind,
+                                        page_id: page_id
+                                    });
+
                                 }
 
                                 // $indicatorDetails.hide();
@@ -1693,7 +1764,8 @@ function readrBoard($R){
                     coords = settings.coords,
                     kind = settings.kind,
                     content = settings.content,
-                    src_with_path = settings.src_with_path || undefined; //used for media only
+                    src_with_path = settings.src_with_path || undefined, //used for media only
+                    page_id = RDR.util.getPageProperty('id', hash );
 
                 var actionbar_id = "rdr_actionbar_"+hash;
                 var $actionbars = $('div.rdr_actionbar');
@@ -1761,6 +1833,14 @@ function readrBoard($R){
                 ];
 
                 RDR.events.track( 'show_action_bar::'+content );
+                RDR.events.trackEventToCloud({
+                    category: "actonbar",
+                    action: "actionbar_shown",
+                    opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
+                    container_hash: hash,
+                    container_kind: kind,
+                    page_id: page_id
+                });
 
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
@@ -1992,25 +2072,27 @@ function readrBoard($R){
                 */
                 $.each( RDR.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                
-                            if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
+                        if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
+                            $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                    
+                                if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
 
-                                var this_interaction = node.top_interactions.tags[ tag_id ];
+                                    var this_interaction = node.top_interactions.tags[ tag_id ];
 
-                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
 
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
-                                
-                                // this content node's content, location is what we want
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                            }
-                        });
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                    
+                                    // this content node's content, location is what we want
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                }
+                            });
+                        }
                     });
                 });
             },
@@ -2237,6 +2319,17 @@ function readrBoard($R){
                         }
                         whenDone();
                         throttling = true;
+                    };
+                },
+                once: function(func) {
+                    //RDR.util._.once:
+                    var ran = false, memo;
+                    return function() {
+                        if (ran) return memo;
+                        ran = true;
+                        memo = func.apply(this, arguments);
+                        func = null;
+                        return memo;
                     };
                 }
             },
@@ -3185,14 +3278,7 @@ function readrBoard($R){
 
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
-
-                // remove some boxes.  this used to be RDR.actions.containers.media.disengageAll
-                var hashes = [];
-                $('.rdr_live_hover').each(function(){
-                    var hash = $(this).data('hash');
-                    hashes.push(hash);
-                    RDR.actions.containers.media.onDisengage(hash);
-                });
+                RDR.actions.containers.media.disengageAll();
                 $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
@@ -3435,6 +3521,68 @@ function readrBoard($R){
                 }
             },
             containers: {
+                media: {
+                    //RDR.actions.containers.media:
+                    //actions for the special cases of media containers
+                    onEngage: function(hash){
+                        // deprecated?
+                        return;
+                        //RDR.actions.containers.media.onEngage:
+                        // action to be run when media container is engaged - typically with a click on the indicator
+
+                        var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                            $indicator = $('#rdr_indicator_'+hash),
+                            $indicator_details = $('#rdr_indicator_details_'+hash);
+
+                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+
+                        var containerInfo = RDR.containers[hash];
+                        if ( containerInfo ) {
+                            var $mediaItem = containerInfo.$this;
+
+                            $mediaItem.data('hover',true).data('hash', hash);
+                            RDR.actions.indicators.utils.updateContainerTracker(hash);
+                            RDR.rindow.mediaRindowShow( $mediaItem );
+                            // $indicator_details.addClass('rdr_has_border');
+                        }
+
+                        // deprecated - see above
+                        // RDR.events.track( 'view_node::'+hash, hash );
+                    },
+                    onDisengage: function(hash){
+                        // deprecated?
+                        return;
+                        //RDR.actions.containers.media.onDisengage:
+                        //actions to be run when media container is disengaged - typically with a hover off of the container
+                        var $mediaItem = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                            $indicator = $('#rdr_indicator_'+hash),
+                            $indicator_details = $('#rdr_indicator_details_'+hash);
+
+                        var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
+                        clearTimeout(timeoutCloseEvt);
+
+                        timeoutCloseEvt = setTimeout(function(){
+                            var containerInfo = RDR.containers[hash];
+                            if ( containerInfo ) {
+                                $mediaItem.data('hover',false).data('hash', hash);
+                                RDR.rindow.mediaRindowHide( $mediaItem );
+                            }
+                        },100);
+                        $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
+                    },
+                    disengageAll: function(){
+                        //RDR.actions.containers.media.disengageAll:
+
+                        //only need to run this for containers that are active
+                        var hashes = [];
+                        $('.rdr_live_hover').each(function(){
+                            var hash = $(this).data('hash');
+                            hashes.push(hash);
+                            RDR.actions.containers.media.onDisengage(hash);
+                        });
+                    }
+                },
                 save: function(settings){
                     //RDR.actions.containers.save:
 
@@ -3805,6 +3953,14 @@ function readrBoard($R){
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
                                 onSuccessCallback();
+                            }
+
+                            //also run any callbacks that get queued up on the summarybar hover
+                            if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                                $.each(RDR.contentNodeQueue[hash], function(){
+                                    var func = RDR.contentNodeQueue[hash].pop();
+                                    func(hash);
+                                });
                             }
                         }
                     });
@@ -4626,6 +4782,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $.each(socialNetworks, function(idx, val){
                                     $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
                                     $shareWrapper.find('a.rdr_share_link:last').click( function() {
+                                        
+                                        RDR.events.trackEventToCloud({
+                                            category: "share",
+                                            action: "share_open_attempt",
+                                            opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
+                                            shareNetwork: val,
+                                            container_kind: args.kind,
+                                            page_id: args.page_id
+                                        });
+
                                         RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
@@ -4935,7 +5101,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //end - todo
 
                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-                        
+                        var page_id = RDR.util.getPageProperty('id', hash );
+
                         //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
                         if(!$rindow){
@@ -4944,16 +5111,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         $indicator.$rindow = $rindow;
                         
+                        //these should probably be moved under tagMode.make (called by rindow.make) where the image tracking lives.
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
+
+                            RDR.events.track('paragraph_helper_show');
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown_indicatorhelper",
+                                opt_label: "kind: text, hash: " + hash,
+                                container_hash: hash,
+                                container_kind: "text",
+                                page_id: page_id
+                            });
                         }else{
                             RDR.events.track( 'view_node::'+hash, hash );
+                            RDR.events.trackEventToCloud({
+                                category: "engage",
+                                action: "rindow_shown_readmode",
+                                opt_label: "kind: text, hash: " + hash,
+                                container_hash: hash,
+                                container_kind: "text",
+                                page_id: page_id
+                            });
                         }
 
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( "Tell us what you think!" );
+                        var $header = RDR.rindow.makeHeader( "<span style='font-size:13px !important;'>Say what you think</span>" );
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
@@ -5048,22 +5234,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             return;
                         }
 
-                        $indicator.data('containerHover', true);
-                        var hoverTimeout = setTimeout(function(){
-                            var hasHover = $indicator.data('containerHover');
+                        // fade in.
+                        // removing for now. UI feedback was "I didn't see that" from a small sample.
+                        // $indicator.data('containerHover', true);
+                        // var hoverTimeout = setTimeout(function(){
+                        //     var hasHover = $indicator.data('containerHover');
                             
-                            if(hasHover){
+                        //     if(hasHover){
                                 
-                                RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        //         RDR.util.cssSuperImportant( $indicator, { display:"inline" });
                                 
-                                $indicator
-                                    .css('opacity',0)
-                                    .animate({
-                                        'opacity': RDR.C.helperIndicators.opacity
-                                        }, RDR.C.helperIndicators.fadeInTime );
-                            }
-                        }, RDR.C.helperIndicators.hoverDelay);
-                        $indicator.data('hoverTimeout', hoverTimeout);
+                        //         // $indicator
+                        //         //     .css('opacity',0)
+                        //         //     .animate({
+                        //         //         'opacity': RDR.C.helperIndicators.opacity
+                        //         //         }, RDR.C.helperIndicators.fadeInTime );
+                        //     }
+                        // }, RDR.C.helperIndicators.hoverDelay);
+                        // $indicator.data('hoverTimeout', hoverTimeout);
+                        RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        $indicator.css('opacity', RDR.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
                         //RDR.actions.indicators.helpers.out:
@@ -5093,7 +5283,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 $indicator_body = summary.$indicator_body,
                                 $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
-                                indicatorDetailsId = 'rdr_indicator_details_'+hash;
+                                indicatorDetailsId = 'rdr_indicator_details_'+hash,
+                                page_id = RDR.util.getPageProperty('id', hash );
 
                             var $existing = $('#rdr_container_tracker_'+hash);
                             if($existing.length){
@@ -5125,6 +5316,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
+                                // deprecated?
                                 if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
@@ -5152,7 +5344,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').prepend('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
                                 
                             }
 
@@ -5226,7 +5418,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var summary = RDR.summaries[hash];
 
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />');
+                        // For IE8 and earlier version.
+                        if (!Date.now) {
+                          Date.now = function() {
+                            return new Date().valueOf();
+                          }
+                        }
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         // sort a list of tags into their buckets
@@ -5271,13 +5470,57 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( !isWriteMode ) {
                                 // write page-level tags: readmode
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> | <span class="rdr_what_is_it">What is this?</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it">What is this?</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                                 $rindow.find('span.rdr_what_is_it').click( function() {
-                                    alert('explain what ReadrBoard is');
+
+
+                                    /*
+                                    coords = [];
+                        coords.left = ( $(window).width() / 2 ) - 200;
+                        coords.top = 150 + $(window).scrollTop();
+                    }
+
+
+                    var $rindow = RDR.rindow.draw({
+                        coords:coords,
+                        id: "rdr_loginPanel",
+                        // pnlWidth:360,
+                        pnls:1,
+                        height:175,
+                        ignoreWindowEdges:"bt"
+                    });
+
+                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+
+                    // store the arguments and callback function that were in progress when this Login panel was called
+                    if ( args ) $rindow.data( 'args', args );
+                    if ( callback ) $rindow.data( 'callback', callback );
+
+                    // create the iframe containing the login panel
+                    // var $loginHtml = $('<div class="rdr_login" />'),
+                    var iframeUrl = RDR_baseUrl + "/static/fb_login.html",
+                        parentUrl = window.location.href,
+                        parentHost = window.location.protocol + "//" + window.location.host,
+                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
+                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                    
+                    var $header = RDR.rindow.makeHeader( h1_text );
+                    $rindow.find('.rdr_header').replaceWith($header);
+                    RDR.rindow.hideFooter($rindow);
+                    $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
+
+                    RDR.events.track( 'show_login' );
+                                    */
+
+
+
+
+
+
                                     return false;
                                 });
                             } else {
@@ -5312,9 +5555,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                               colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( typeof page != "undefined" ) {
-                                if ( !isWriteMode ) { RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
-                                else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                            if ( typeof page != "undefined" && isWriteMode ) {
+                                RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -6049,8 +6291,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 $rdr_body_wrap.append( $newPanel );
 
 
-                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $otherComments );
-                // RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $commentBox, 'update' );
                 var $commentsWrap = $('<div class="rdr_commentsWrap"></div>');
                 var $backButton = _makeBackButton();
                 var $otherComments = _makeOtherComments();
@@ -6275,6 +6515,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         );
                     // }
 
+                    if ( typeof tag.body == "undefined" ) {
+                        tag.body = tag.tag_body;
+                    }
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
@@ -7408,6 +7651,7 @@ function $RFunctions($R){
                     $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     $summary_widget.append(
+                        '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
@@ -7423,20 +7667,31 @@ function $RFunctions($R){
                         function() {
                             // let's get the reaction summaries for the page here.
                             getReactedContent();
+                            var page_id = $(this).data('page_id');
 
                             var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                            RDR.events.track( 'view_summary::'+$(this).data('page_id') );
+                            RDR.events.track( 'view_summary::'+page_id );
+                            RDR.events.trackEventToCloud({
+                                category: "summarybar",
+                                action: "rindow_shown_summarybar",
+                                opt_label: "page: "+page_id,
+                                page_id: page_id
+                            });
+
                         },
                         function() {
                         }
                     );
 
-                    var total_reactions = 0;
+                    var total_reactions = 0,
+                        total_reactions_label = "";
                     $.each( page.toptags, function(idx, tag) {
                         total_reactions +=  tag.tag_count;
                     });
+                    if ( total_reactions > 0 ) total_reactions_label = total_reactions+" ";
+
                     $summary_widget.append(
-                        '<a class="rdr_reactions_label">'+total_reactions+' Reactions</a>'
+                        '<a class="rdr_reactions_label">'+total_reactions_label+'Reactions</a>'
                     );
             }
 

@@ -138,7 +138,11 @@ urlpatterns = patterns('',
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )
+
 from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
         url(r'^static/(?P<path>.*)$', 'serve'),        
