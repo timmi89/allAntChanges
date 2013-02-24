@@ -5291,6 +5291,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var summary = RDR.summaries[hash];
 
 
+                        // For IE8 and earlier version.
+                        if (!Date.now) {
+                          Date.now = function() {
+                            return new Date().valueOf();
+                          }
+                        }
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
 
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);

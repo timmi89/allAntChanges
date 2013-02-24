@@ -743,7 +743,7 @@ div.rdr.rdr-summary {
   height:30px !important;
   background: -moz-linear-gradient(
     top,
-    #ffffff 1000%,
+    #ffffff,
     #eeeeee) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
@@ -770,7 +770,7 @@ div.rdr.rdr-summary {
 div.rdr.rdr-summary:hover {
   background: -moz-linear-gradient(
     top,
-    #ffffff 1000%,
+    #ffffff 100%,
     #e5f5ff) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
@@ -794,7 +794,7 @@ div.rdr.rdr-summary .rdr_chevron_cta {
 div.rdr.rdr-summary:hover .rdr_chevron_cta {
   background: -moz-linear-gradient(
     top,
-    #f7f7f7 1000%,
+    #f7f7f7 100%,
     #dddddd) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
@@ -1590,7 +1590,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
   height:24px !important;
   background: -moz-linear-gradient(
     top,
-    #ffffff 1000%,
+    #ffffff 100%,
     #eeeeee) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
@@ -1617,7 +1617,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 div.rdr_indicator_for_media div.rdr_indicator_body:hover {
   background: -moz-linear-gradient(
     top,
-    #ffffff 1000%,
+    #ffffff 100%,
     #e5f5ff) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
@@ -1638,7 +1638,7 @@ div.rdr_indicator_for_media .rdr_chevron_cta {
 div.rdr_indicator_for_media:hover .rdr_chevron_cta {
   background: -moz-linear-gradient(
     top,
-    #f7f7f7 1000%,
+    #f7f7f7 100%,
     #dddddd) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
