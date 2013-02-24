@@ -149,16 +149,19 @@ def page(request, interaction_id = None, **kwargs):
         distance = 1
         for p_i in page_interactions_list:
             logger.info(p_i)
-            for threshold in page_rules:
-                if threshold.passes(count=distance, exact=True):
-                    logger.info("sending page notification to:" + p_i.user.email)
-                    msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
-                                           generatePageEmail(p_i.user, interaction), 
-                                           "hello@readrboard.com", 
-                                           [p_i.user.email])
-                    msg.content_subtype='html'
-                    msg.send(False)
-            
+            if interaction.parent and interaction.parent != p_i:
+                for threshold in page_rules:
+                    
+                    if threshold.passes(count=distance, exact=True) and not p_i.user in user_set:
+                        logger.info("sending page notification to:" + p_i.user.email)
+                        msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
+                                               generatePageEmail(p_i.user, interaction), 
+                                               "hello@readrboard.com", 
+                                               [p_i.user.email])
+                        msg.content_subtype='html'
+                        msg.send(False)
+                        user_set.add(p_i.user)
+                distance +=1
         
                         
     except Interaction.DoesNotExist:

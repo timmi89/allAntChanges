@@ -313,7 +313,6 @@ class MeTooHandler(AnonymousBaseHandler):
                 parent = Interaction.objects.get(id = parent_id)
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, parent.kind, parent.interaction_node, parent.page.site.group, parent)
                 try:
-                    logger.info("INTERACTION: " + str(interaction))
                     notification = AsynchAgreeNotification()
                     #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
                     t = Thread(target=notification, kwargs={"interaction_id":parent_id})

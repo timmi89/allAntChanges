@@ -325,6 +325,10 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         
+        notification = AsynchPageNotification()
+        t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
+        t.start()
+
     except Exception, e:
         logger.warning(traceback.format_exc(50))   
     
