@@ -972,13 +972,13 @@ div.rdr.rdr-summary div.rdr-sum-reactions span{
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
-  text-decoration:none !important;
+  /*text-decoration:none !important;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f0f0f0));
     background-image: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -moz-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -ms-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -o-linear-gradient(top, #ffffff, #f0f0f0);
-    background-image: linear-gradient(top, #ffffff, #f0f0f0);
+    background-image: linear-gradient(top, #ffffff, #f0f0f0);*/
 }
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a,
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a:hover{
@@ -1626,8 +1626,8 @@ div.rdr_indicator_for_media div.rdr_indicator_body:hover {
 }
 
 div.rdr_indicator_for_media .rdr_chevron_cta {
-  display: block !important;
-  float: right !important;
+  display: inline-block !important;
+  /*float: right !important;*/
   border-left: 1px solid #ddd !important;
   height: 30px !important;
   width:23px !important;
@@ -1695,7 +1695,7 @@ div.rdr_sandbox.rdr_media_details div.rdr_indicator_details_for_media {
 
 div.rdr_indicator_for_media_inline div.rdr_indicator_body { 
     left:-12px !important;
-    top:-36px !important;    
+    top:-8px !important;    
 }
 
 div.rdr_sandbox div#rdr_event_pixels {

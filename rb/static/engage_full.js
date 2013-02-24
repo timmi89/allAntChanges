@@ -3948,7 +3948,14 @@ function readrBoard($R){
 
                             // remove from po' man's throttling array
                             // po' man's throttling
-                            RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
+                            // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
+                            // var y = [1, 2, 3]
+                            // var removeItem = 2;
+
+                            RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                              return value != hash;
+                            });
+
 
                             //finally, run the success callback function
                             if ( onSuccessCallback ) {
@@ -5344,7 +5351,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').prepend('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
                                 
                             }
 
