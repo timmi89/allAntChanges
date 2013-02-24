@@ -96,7 +96,7 @@ section[role="main"] h2.header { height:90px; color:#737373; border-top:1px soli
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
 #board_listing ul { margin-bottom:0;}
-#board_listing li { padding-left:20px; }
+#board_listing li { padding-left:20px; display:inline-block;}
 #board_listing li .user_meta { background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;border:1px dashed #aaa; }
 #board_listing h2 { padding-left:20px; color:#737373; padding-top:10px; }
 
