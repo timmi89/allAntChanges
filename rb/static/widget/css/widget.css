@@ -1001,19 +1001,6 @@ div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle.rdr_noReactions i
   background:none !important;
 }
 
-div.rdr.rdr-summary.rdr_bookmarklet {
-  border-bottom: 12px solid #444 !important;
-  border-right: none !important;
-  border-left: none !important;
-}
-div.rdr.rdr-summary.rdr_bookmarklet div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
-    background:url("../images/summary_box_arrow.png") no-repeat scroll -1px 0 transparent !important;
-    height:8px !important;
-    width:10px !important;
-    position: relative !important;
-    margin: 0px !important;
-    left: 2px !important;
-}
 div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactToArticle img.rdr_arrow {
   display:none !important;
 }

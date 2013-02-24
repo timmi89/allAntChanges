@@ -6381,6 +6381,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         );
                     // }
 
+                    if ( typeof tag.body == "undefined" ) {
+                        tag.body = tag.tag_body;
+                    }
                     var sendData = {
                         "tag" : tag,
                         "hash": content_node_info.hash,
