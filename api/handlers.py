@@ -399,7 +399,6 @@ class StreamCommentHandler(AnonymousBaseHandler):
                 # Create the interaction
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'com', comment, parent.page.site.group, parent)
                 try:
-                    logger.info(interaction)
                     notification = AsynchCommentNotification()
                     t = Thread(target=notification, kwargs={"interaction_id":parent.id,})
                     t.start()
@@ -488,7 +487,6 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
-        logger.warning("HASHES: " + str(hashes))
         try:
             page = data['pageID']
         except KeyError:
@@ -502,8 +500,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
             cached_result = cache.get('page_containers' + str(page))
-          
-        logger.warning('cache: '+str(cached_result))
+        
         if cached_result is not None:
             return cached_result
         else:
