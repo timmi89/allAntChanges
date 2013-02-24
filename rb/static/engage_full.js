@@ -878,6 +878,7 @@ function readrBoard($R){
                     } // renderReactedContent
 
                     function _makeBackButton(){
+                        clog('_makeBackButton');
                         var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                         $backButton.click( function() {
                             var $header = RDR.rindow.makeHeader( 'Reactions' );
@@ -885,8 +886,8 @@ function readrBoard($R){
                             RDR.rindow.updateFooter( $rindow );
 
                             var $panelWrap = $rindow.find('.rdr_body_wrap'),
-                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'), // .removeClass('rdr_visiblePanel');
-                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel'); //.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel').next().addClass('rdr_hiddenPanel');
+                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
+                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
                             
                             $panelWrap.animate({
                                 left: 0
@@ -898,6 +899,8 @@ function readrBoard($R){
                             if ( $rindow.data('initialWidth') >= 480 ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                            } else {
+                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
                         });
@@ -5339,7 +5342,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                                 $rindow.find('span.rdr_what_is_it').click( function() {
-                                    // alert('explain what ReadrBoard is');
 
 
                                     /*
@@ -5420,8 +5422,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // size the rindow based on # of reactions
                             if ( typeof page != "undefined" && isWriteMode ) {
-                                // if ( !isWriteMode ) { clog(11111);RDR.rindow.tagBox.setWidth( $rindow, 480 ); }
-                                // else { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
