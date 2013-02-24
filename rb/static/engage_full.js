@@ -891,7 +891,7 @@ function readrBoard($R){
                             $panelWrap.animate({
                                 left: 0
                             });
-                            
+
                             $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
                             $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
 
@@ -5181,6 +5181,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
+                                // deprecated?
                                 if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
                                         .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
@@ -5208,7 +5209,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').prepend('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
                                 
                             }
 
@@ -7514,6 +7515,7 @@ function $RFunctions($R){
                     $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                     $summary_widget.append(
+                        '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
                         '<a href="'+RDR_baseUrl+'" target="_blank">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
