@@ -81,26 +81,9 @@
 			</table>
 		</section><!-- /most popular tags -->
 
-		<section role="most active content" class="analyticsReportTable">
-			<h3>Most Active Content</h3>
-			<table role="active content table" cellpadding="0" cellspacing="0" border="0">
-				<thead>
-					<tr>
-						<!-- <td role="via">via</td> -->
-						<td role="content">Content</td>
-						<td role="reactions">Reactions</td>
-                        <td role="reactionViews">Reaction Views</td>
-						<td role="shares">Shares</td>
-						<td role="comments">Comments</td>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-		</section> <!-- /most active content -->
-
-		<section role="most active readers" class="analyticsReportTable">
-			<h3>Most Active Readers</h3>
-			<table role="active user table" cellpadding="0" cellspacing="0" border="0">
+        <section role="most active readers" class="analyticsReportTable">
+            <h3>Most Active Readers</h3>
+            <table id="userTable" role="active user table" cellpadding="0" cellspacing="0" border="0">
                 <thead>
                     <tr>
                         <!-- <td role="via">via</td> -->
@@ -113,8 +96,24 @@
                 </thead>
                 <tbody></tbody>
             </table>
-		</section> <!-- / most active readers -->
+        </section> <!-- / most active readers -->
 
+		<section role="most active content" class="analyticsReportTable">
+			<h3>Most Active Content</h3>
+			<table role="active content table" cellpadding="0" cellspacing="0" border="0">
+				<thead>
+					<tr>
+						<!-- <td role="via">via</td> -->
+						<td role="content">Content</td>
+						<td role="reactions">Reactions</td>
+						<td role="shares">Shares</td>
+						<td role="comments">Comments</td>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</section> <!-- /most active content -->
+		
 		<section role="recent pages" style="display:none;" class="analyticsReportTable">
 			<h3>Recently Active Pages</h3>
 			<table role="recent pages table" cellpadding="0" cellspacing="0" border="0">
@@ -159,7 +158,6 @@
 
     // put in external file...
     RB.analytics = {
-        parseData: {},
     	mostPopular: function( args ) {
     		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
     		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
@@ -290,33 +288,32 @@
     			dataType: "jsonp",
     			success: function(response){
 
-                    var reactionViews = 0;
-    				
                     if ( type == "pages" ) {
-                        
-                        reactionViews = 1;
-
+                       
                         var pageHtml = "";
 
     					for ( var i in response) {
+                            var pageId = response[i].page.id;
     						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
     						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
     						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
     						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
     						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
     						+'<td role="reactions">'+tagCount+'</td>'
-                            +'<td role="reactionViews">'+reactionViews+'</td>'
+                            +'<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerPage(pageId) +'</td>'
     						+'<td role="shares">'+shrCount+'</td>'
     						+'<td role="comments">'+comCount+'</td></tr>';
     					}
 
     					$('table[role="active pages table"] tbody').html( pageHtml );
     				} else if ( type == "content" ) {
-                        
-                        reactionViews = 2;
 
     					var contentHtml = "";
+                        var contentId = null;
+
     					for ( var i in response) {
+                            contentId = response[i].content.id;
+
     						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
     						if ( response[i].content.kind == "img" ) {
     							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
@@ -330,7 +327,6 @@
                             }
     						contentHtml += 
                             '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-                            +'<td role="reactionViews">'+reactionViews+'</td>'
     						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
     					}
@@ -338,19 +334,21 @@
     					$('table[role="active content table"] tbody').html( contentHtml );
     					
     				} else if ( type == "users" ) {
-    				
-                        reactionViews = 3;
-
                     	var userHtml = "";
     					for ( var i in response) {
-    						if ( response[i].user.img_url ) {
+                            var img_url = response[i].user.img_url;
+                            var full_name = response[i].user.full_name;
+    						if ( img_url ) {
+                                //fix this construction.
+                                var user = response[i].user.user;
+
     							userHtml += '<tr>'
                                     + '<td role="user">'
-                                        + '<div class="avatar"><a href="/user/'+response[i].user.user_id+'" target="_blank"><img src="'+response[i].user.img_url+'" /></a></div>'
-                                        + '<div class="userName"><a href="/user/'+response[i].user.user_id+'" target="_blank">'+response[i].user.full_name+'</a></div>'
+                                        + '<div class="avatar"><a href="/user/'+user.id+'" target="_blank"><img src="'+img_url+'" /></a></div>'
+                                        + '<div class="userName"><a href="/user/'+user.id+'" target="_blank">'+full_name+'</a></div>'
                                     + '</td>'
     								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-                                    + '<td role="reactionViews">'+reactionViews+'</td>'
+                                    + '<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerUser(user.id) +'</td>'
     								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
     								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
     							+ '</tr>';
@@ -389,57 +387,86 @@
     			}
     		});
     	},
-        initParse: function(){
 
-            if( typeof Parse === "undefined" ){
-                return;
-            }
+        parse: {
+            repo: null,
+            collection: null,
+            loadingHTML: "loading",
+            init: function(){
 
-            var parseTrackingRepo = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
-            var ParseTracker = Parse.Object.extend(parseTrackingRepo);
+                var Self = RB.analytics.parse;
 
-            getReactionCount(ParseTracker, {
-                success: function(results) {
-                    var res = $.toJSON(results);
-                    $('#interactionReadCount h1').text(res);
-                },
-                error: function(error) {
-                    alert("Error: " + error.code + " " + error.message);
+                if( typeof Parse === "undefined" ){
+                    return;
                 }
-            });
 
-            //todo: do something with this data!
-            getAllData(ParseTracker, {
-                success: function(results) {
-                    var res = $.toJSON(results);
-                    // debugger;
-                },
-                error: function(error) {
-                    alert("Error: " + error.code + " " + error.message);
+                var repoName = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
+                Self.repo = Parse.Object.extend(repoName);
+
+                getReactionViewCount(Self.repo, {
+                    success: function(results) {
+                        var res = $.toJSON(results);
+                        $('#interactionReadCount h1').text(res);
+                    },
+                    error: function(error) {
+                        alert("Error: " + error.code + " " + error.message);
+                    }
+                });
+
+                //todo: do something with this data!
+                getAllData(Self.repo, {
+                    success: function(results) {
+                        // debugger;
+                        RB.analytics.mostActive({type:'users'});
+                    },
+                    error: function(error) {
+                        alert("Error: " + error.code + " " + error.message);
+                    }
+                });
+
+                function getAllData(Table, callbacks){
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    //arbitary number...  This needs to be made more efficient later.
+                    query.limit(300);
+                    Self.collection = query.collection();
+                    Self.collection.fetch(callbacks);
                 }
-            });
 
-            function getAllData(Table, callbacks){
-                var query = new Parse.Query(Table);
-                query = _setQueryDefaults(query);
-                query.limit(30);
-                //using the native Parse function 'find'
-                query.find(callbacks);
-            }
+                function getReactionViewCount(Table, callbacks){
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    query.count(callbacks);
+                }
+            },
 
-            function getReactionCount(Table, callbacks){
-                var query = new Parse.Query(Table);
-                query = _setQueryDefaults(query);
-                query.count(callbacks);
-            }
-            function _setQueryDefaults(query){
+            getReactionViewsPerPage: function(pageId){
+                var Self = RB.analytics.parse;
+                return Self._getCountPerId(pageId, "page_id");
+            },
+
+            getReactionViewsPerUser: function(userId){
+                var Self = RB.analytics.parse;
+                return Self._getCountPerId(userId, "user_id");
+            },
+            _getCountPerId: function(id, fieldName){
+
+                if(!id || !RB.analytics.parse.collection){
+                    return RB.analytics.parse.loadingHTML;
+                }
+
+                return RB.analytics.parse.collection.filter(function(model){
+                    return model.get(fieldName) == id;
+                }).length;
+            },
+            _setQueryDefaults: function(query){
                 query.greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate);
                 query.lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate);
                 query.equalTo("group_id", RB.group.id);
                 return query;
             }
-
         },
+
     	interactionFrequency: function( args ) {
     		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
     		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
@@ -539,7 +566,7 @@
 
     		RB.analytics.recentlyActive();
 
-            RB.analytics.initParse();
+            RB.analytics.parse.init();
     	}
     };
 
@@ -599,19 +626,4 @@
 })();
 </script>
 
-
-
 {% endblock mainContent %}
-
-
-
-
-
-
-
-
-
-
-
-
-
