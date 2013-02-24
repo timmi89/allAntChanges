@@ -878,7 +878,6 @@ function readrBoard($R){
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        clog('_makeBackButton');
                         var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                         $backButton.click( function() {
                             var $header = RDR.rindow.makeHeader( 'Reactions' );
@@ -1997,25 +1996,27 @@ function readrBoard($R){
                 */
                 $.each( RDR.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                        $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                
-                            if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
+                        if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
+                            $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                                    
+                                if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
 
-                                var this_interaction = node.top_interactions.tags[ tag_id ];
+                                    var this_interaction = node.top_interactions.tags[ tag_id ];
 
-                                if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
-                                if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
 
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
-                                
-                                // this content node's content, location is what we want
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
-                            }
-                        });
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                    
+                                    // this content node's content, location is what we want
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                }
+                            });
+                        }
                     });
                 });
             },
