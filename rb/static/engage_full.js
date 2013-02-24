@@ -1163,6 +1163,13 @@ function readrBoard($R){
                             tag = {},
                             hash = $rindow.data('container');
 
+
+                        //fun! it thinks the hash is a container.  I think this only happens for 
+                        if( typeof hash != "string" ){
+                            debugger;
+                            hash = "";
+                        }
+
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             tag.body = $input.val();
                             $input.parent().addClass('rdr_tagged');
