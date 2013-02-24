@@ -1165,12 +1165,7 @@ function readrBoard($R){
                             tag = {},
                             hash = $rindow.data('container');
 
-
-                        //fun! it thinks the hash is a container.  I think this only happens for 
-                        if( typeof hash != "string" ){
-                            debugger;
-                            hash = "";
-                        }
+                        //note that hash is a $(dom) element, not a hash.  Fix this later.
 
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             tag.body = $input.val();
@@ -4793,7 +4788,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                             action: "share_open_attempt",
                                             opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
                                             shareNetwork: val,
-                                            container_hash: args.hash,
                                             container_kind: args.kind,
                                             page_id: args.page_id
                                         });
