@@ -26,11 +26,9 @@ rules = {'threshold1':ThresholdNotificationRule(threshold = 1),
          'threshold100':ThresholdNotificationRule(threshold = 100)
          }
 
-page_rules = [ThresholdNotificationRule(threshold = 1), 
-         ThresholdNotificationRule(threshold = 2),
-         ThresholdNotificationRule(threshold = 3),
+page_rules = [ThresholdNotificationRule(threshold = 1),
          ThresholdNotificationRule(threshold = 5), 
-         ThresholdNotificationRule(threshold = 10), 
+         ThresholdNotificationRule(threshold = 10),
          ThresholdNotificationRule(threshold = 25), 
          ThresholdNotificationRule(threshold = 50), 
          ThresholdNotificationRule(threshold = 100)
@@ -98,7 +96,6 @@ def comment(request, interaction_id = None, **kwargs):
         interaction.rank = new_rank
         interaction.save()
         if social_user.notification_email_option:
-            logger.info("comment notification?")
             child_interactions = Interaction.objects.exclude(user=interaction.user).filter(parent = interaction, kind = 'com').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
@@ -142,17 +139,14 @@ def page(request, interaction_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
-        #social_user = SocialUser.objects.get(user = interaction.user)
         page = interaction.page
-        page_interactions_list = list(page.interactions().exclude(user = interaction.user).order_by('created'))
+        page_interactions_list = list(page.interactions().order_by('created'))
         user_set = set()
         distance = 1
         for p_i in page_interactions_list:
-            logger.info(p_i)
-            if interaction.parent and interaction.parent != p_i:
+            if not interaction.parent or interaction.parent != p_i:
                 for threshold in page_rules:
-                    
-                    if threshold.passes(count=distance, exact=True) and not p_i.user in user_set:
+                    if threshold.passes(count=distance, exact=True) and not p_i.user.email.startswith('tempuser') and not p_i.user in user_set:
                         logger.info("sending page notification to:" + p_i.user.email)
                         msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
                                                generatePageEmail(p_i.user, interaction), 
@@ -166,8 +160,6 @@ def page(request, interaction_id = None, **kwargs):
                         
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
-    #except SocialUser.DoesNotExist:
-        #logger.info("NO SOCIAL USER")
     except Exception, ex:
         logger.info(ex)
     

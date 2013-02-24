@@ -247,9 +247,7 @@ class CommentHandler(InteractionHandler):
         
         interaction = createInteraction(parent.page, parent.container, parent.content, user, 'com', comment, group, parent)
         try:
-            logger.info(interaction)
             notification = AsynchCommentNotification()
-            #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
             t = Thread(target=notification, kwargs={"interaction_id":parent.id,})
             t.start()
         except Exception, e:
@@ -366,9 +364,7 @@ class StreamResponseHandler(AnonymousBaseHandler):
                 inode = createInteractionNode(None, tag_body, parent.page.site.group)
                 interaction = createInteraction(parent.page, parent.container, parent.content, owner, 'tag', inode, parent.page.site.group, None)
                 try:
-                    logger.info("INTERACTION: " + str(interaction))
                     notification = AsynchAgreeNotification()
-                    #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
                     t = Thread(target=notification, kwargs={"interaction_id":parent_id})
                     t.start()
                 except Exception, e:
@@ -405,7 +401,6 @@ class StreamCommentHandler(AnonymousBaseHandler):
                 try:
                     logger.info(interaction)
                     notification = AsynchCommentNotification()
-                    #t = Thread(target=notification, kwargs={"interaction_id":interaction['interaction'].id,})
                     t = Thread(target=notification, kwargs={"interaction_id":parent.id,})
                     t.start()
                 except Exception, e:

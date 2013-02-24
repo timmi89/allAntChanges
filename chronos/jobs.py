@@ -19,9 +19,7 @@ class AbstractAsynchronousNotification(object):
     def fire(self, url):
         logger.info("NO PROTO URL: " + str(settings.URL_NO_PROTO) + " *** " + str(url))
         try:
-            #hcon = httplib.HTTPConnection(settings.BASE_URL, timeout=3)
-            hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=3)
-            hcon.connect()
+            hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=30)
             hcon.request('GET', url)
             resp = hcon.getresponse()
             lines = resp.read()

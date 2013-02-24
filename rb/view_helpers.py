@@ -58,7 +58,8 @@ def main_helper(request, user_id = None, short_name = None, **kwargs):
             ).values_list('group_id', flat=True)
         
         except SocialUser.DoesNotExist:
-            logger.info("SOCIAL USER DOES NOT EXIST FOR: " + str(cookie_user))
+            pass
+            #logger.info("SOCIAL USER DOES NOT EXIST FOR: " + str(cookie_user))
         
     return context
 
@@ -140,7 +141,7 @@ def filter_interactions(interactions, context, **kwargs):
         interactions = interactions.filter(approved=True)
 
     if 'filtered' in kwargs:
-        logger.info('filtering')
+        #logger.info('filtering')
         #interactions = interactions.filter( Q(user = cookie_user) & ~Q(user__email__exact='tempuser@readrboard.com') | Q(page__site__group__approved = True))
         interactions = interactions.filter(page__site__group__approved = True)
 

@@ -176,24 +176,39 @@ def generateConfirmation(user):
 
 
 def generateConfirmationEmail(user):
-    message = getEmailTemplate('confirmation_email.html') % (user.username, settings.BASE_URL, user.id, generateConfirmation(user))
-    
+    message = getEmailTemplate('confirmation_email.html') % (user.username, settings.BASE_URL, 
+                                                             user.id, generateConfirmation(user))
     return message      
 
 def generateAgreeEmail(user, count, interaction):
     #message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
     message = getEmailTemplateFromWeb('agree', user_id=user.id, interaction_id=interaction.id, count=count)
+    if message is None:
+        raise Exception("None for agree email on interaction: " + str(interaction) + " to user: " 
+                        + str(user) 
+                        + " count:" 
+                        + str(count))
     return message
 
 def generateCommentEmail(user, interaction):
     #message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
     message = getEmailTemplateFromWeb('comment', user_id=user.id, interaction_id=interaction.id)
+    if message is None:
+        raise Exception("None for comment email on interaction: " 
+                        + str(interaction) 
+                        + " to user: " 
+                        + str(user))
     return message
 
 
 def generatePageEmail(user, interaction):
     #message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
     message = getEmailTemplateFromWeb('page', user_id=user.id, interaction_id=interaction.id)
+    if message is None:
+        raise Exception("None for page email on interaction: " 
+                        + str(interaction) 
+                        + " to user: " 
+                        + str(user))
     return message
 
 
@@ -254,24 +269,28 @@ def getEmailTemplate(template_filename):
 def getEmailTemplateFromWeb(template_name, **kwargs):
     try:
         if template_name == 'comment':
-            url = '/chronos/email/comment/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])
+            url = '/chronos/email/comment/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'agree':
-            url = '/chronos/email/agree/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id']) + ',' + str(kwargs['count'])
+            url = '/chronos/email/agree/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id']) + '/' + str(kwargs['count'])+ '/'
         elif template_name == 'page':
-            url = '/chronos/email/page/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])
+            url = '/chronos/email/page/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'follow':
-            url = '/chronos/email/follow/' + str(kwargs['user_id']) + '/' + str(kwargs['follow_id'])
+            url = '/chronos/email/follow/' + str(kwargs['user_id']) + '/' + str(kwargs['follow_id'])+ '/'
         else:
             raise Exception('no template by that name:' + template_name)
-        hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=3)
-        hcon.connect()
+        hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=30)
+        #hcon.connect()
         hcon.request('GET', url)
         resp = hcon.getresponse()
         page = resp.read()
+        if page is not None:
+            logger.info("PAGE GENERATED: " + url)
+        else:
+            logger.info("NONE PAGE" + url)
         hcon.close()
         return page
     except Exception, e:
-        logger.info("BLOW" + str(e))
+        logger.info("BLOW: " + str(e))
 
 
 
