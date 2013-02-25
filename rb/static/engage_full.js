@@ -868,7 +868,7 @@ function readrBoard($R){
                         message = "Click to add this reaction here.";
                     } else {
                         var peoples = ( tagCount == 1 ) ? "person":"people",
-                            message = tagCount+' '+peoples+' had this reaction. Click to agree.';
+                            message = tagCount+' '+peoples+' had this reaction.<br/>Click if you agree.';
                     }
                     
                     // this can go away if we change CSS class names
