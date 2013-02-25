@@ -5306,15 +5306,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator
                                 .appendTo($container_tracker)
                                 .on('mouseenter', function() {
-                                    $(this).addClass('rdr_live_hover');
                                     if ( summary.counts.interactions == 0 ) {
                                         var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     } else {
                                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
                                     }
-                                    $(this).removeClass('rdr_live_hover');
+                                    $(this).addClass('rdr_live_hover');
                                 })//chain
-                                .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
+                                .on('mouseleave', function() {
+                                    $(this).removeClass('rdr_live_hover');
+                                });
 
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
