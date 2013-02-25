@@ -5477,48 +5477,38 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( !isWriteMode ) {
                                 // write page-level tags: readmode
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it">What is this?</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
-                                $rindow.find('span.rdr_what_is_it').click( function() {
+                                // $rindow.find('span.rdr_what_is_it').click( function() {
+
+                                    // var coords = [];
+                                    // coords.left = ( $(window).width() / 2 ) - 200;
+                                    // coords.top = 150 + $(window).scrollTop();
 
 
+                                    // var $what_is_this_rindow = RDR.rindow.draw({
+                                    //     coords:coords,
+                                    //     id: "rdr_what_is_this",
+                                    //     pnls:1,
+                                    //     height:275,
+                                    //     ignoreWindowEdges:"bt"
+                                    // });
+
+                                    // RDR.rindow.tagBox.setWidth( $what_is_this_rindow, 320 );
+                                    // $what_is_this_rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( '<h1>hello word</h1>' );
+
+                                    // var $header = RDR.rindow.makeHeader( 'header text' );
+                                    // $what_is_this_rindow.find('.rdr_header').replaceWith($header);
+                                    // store the arguments and callback function that were in progress when this Login panel was called
+                                    // if ( args ) $rindow.data( 'args', args );
+                                    // if ( callback ) $rindow.data( 'callback', callback );
                                     /*
-                                    coords = [];
-                        coords.left = ( $(window).width() / 2 ) - 200;
-                        coords.top = 150 + $(window).scrollTop();
-                    }
 
-
-                    var $rindow = RDR.rindow.draw({
-                        coords:coords,
-                        id: "rdr_loginPanel",
-                        // pnlWidth:360,
-                        pnls:1,
-                        height:175,
-                        ignoreWindowEdges:"bt"
-                    });
-
-                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
-
-                    // store the arguments and callback function that were in progress when this Login panel was called
-                    if ( args ) $rindow.data( 'args', args );
-                    if ( callback ) $rindow.data( 'callback', callback );
-
-                    // create the iframe containing the login panel
-                    // var $loginHtml = $('<div class="rdr_login" />'),
-                    var iframeUrl = RDR_baseUrl + "/static/fb_login.html",
-                        parentUrl = window.location.href,
-                        parentHost = window.location.protocol + "//" + window.location.host,
-                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
                     
-                    var $header = RDR.rindow.makeHeader( h1_text );
-                    $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.hideFooter($rindow);
-                    $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
 
                     RDR.events.track( 'show_login' );
                                     */
@@ -5528,8 +5518,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
 
 
-                                    return false;
-                                });
+                                    // return false;
+                                // });
                             } else {
                                 // write page-level tags: writemode
                                 writeTagBoxes( RDR.group.blessed_tags );
