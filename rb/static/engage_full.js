@@ -5305,17 +5305,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             _commonSetup();
                             $indicator
                                 .appendTo($container_tracker)
-                                .on('click', function() {
+                                .on('mouseenter', function() {
+                                    $(this).addClass('rdr_live_hover');
                                     if ( summary.counts.interactions == 0 ) {
                                         var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     } else {
                                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
                                     }
                                     $(this).removeClass('rdr_live_hover');
-                                })//chain
-                                .on('mouseenter', function() { 
-                                    // RDR.actions.content_nodes.init(hash, function(){});
-                                    $(this).addClass('rdr_live_hover');
                                 })//chain
                                 .on('mouseleave', function() { $(this).removeClass('rdr_live_hover');  });
 
@@ -7176,7 +7173,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv16" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv17" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -7245,7 +7242,6 @@ function $RFunctions($R){
         plugin_jquery_isotope($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_bigText($R);
-        plugin_jquery_hoverIntent($R);
         plugin_jquery_twitterTip($R);
         plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_shareWidget($R);
@@ -7650,7 +7646,7 @@ function $RFunctions($R){
 
                     $summary_widget.find('.rdr-logo').tooltip({});
 
-                    $summary_widget.hoverIntent(
+                    $summary_widget.hover(
                         function() {
                             // let's get the reaction summaries for the page here.
                             getReactedContent();
@@ -9043,24 +9039,6 @@ function $RFunctions($R){
         function plugin_jquery_bigText($){
             function testLineDimensions(a,b,c,d,e,f){var g;return a.css(c,d+f),g=a.width(),g>=b?(a.css(c,""),g==b?{match:"exact",size:parseFloat((parseFloat(d)-.1).toFixed(3))}:{match:"estimate",size:parseFloat((parseFloat(d)-e).toFixed(3))}):!1}function calculateSizes(a,b,c,d,e){var f=a.clone(!0).addClass("bigtext-cloned").css({fontFamily:a.css("font-family"),"min-width":parseInt(c,10),width:"auto",position:"absolute",left:-9999,top:-9999}).appendTo(document.body),g=[],h=[],i=[],j=[];return f.find(b).css({"float":"left",clear:"left"}).each(function(){var h,b=$(this),f=[4,1,.4,.1];if(b.hasClass(BigText.EXEMPT_CLASS))return g.push(null),j.push(null),i.push(!1),void 0;var k=20,l=parseFloat(b.css("font-size")),m=b.width(),n=(m/l).toFixed(6),o=parseFloat(((c-k)/n).toFixed(3));a:for(var p=0,q=f.length;q>p;p++)b:for(var r=1,s=4;s>=r;r++){if(o+r*f[p]>d){o=d;break a}if(h=testLineDimensions(b,c,"font-size",o+r*f[p],f[p],"px"),h!==!1){if(o=h.size,"exact"==h.match)break a;break b}}j.push(c/o),o>d?(g.push(d),i.push(!1)):e&&e>o?(g.push(e),i.push(!0)):(g.push(o),i.push(!1))}).each(function(a){var f,b=$(this),d=0,e=1;if(b.hasClass(BigText.EXEMPT_CLASS))return h.push(null),void 0;b.css("font-size",g[a]+"px");for(var i=1,j=5;j>i;i+=e)if(f=testLineDimensions(b,c,"word-spacing",i,e,"px"),f!==!1){d=f.size;break}b.css("font-size",""),h.push(d)}).removeAttr("style"),f.remove(),{fontSizes:g,wordSpacings:h,ratios:j,minFontSizes:i}}var counter=0,$headCache=$("head"),oldBigText=window.BigText,oldjQueryMethod=$.fn.bigtext,BigText={DEFAULT_MIN_FONT_SIZE_PX:null,DEFAULT_MAX_FONT_SIZE_PX:528,GLOBAL_STYLE_ID:"bigtext-style",STYLE_ID:"bigtext-id",LINE_CLASS_PREFIX:"bigtext-line",EXEMPT_CLASS:"bigtext-exempt",DEFAULT_CHILD_SELECTOR:"> div",childSelectors:{div:"> div",ol:"> li",ul:"> li"},noConflict:function(a){return a&&($.fn.bigtext=oldjQueryMethod,window.BigText=oldBigText),BigText},init:function(){$("#"+BigText.GLOBAL_STYLE_ID).length||$headCache.append(BigText.generateStyleTag(BigText.GLOBAL_STYLE_ID,[".bigtext * { white-space: nowrap; }",".bigtext ."+BigText.EXEMPT_CLASS+", .bigtext ."+BigText.EXEMPT_CLASS+" * { white-space: normal; }"]))},bindResize:function(a,b){$.throttle?$(window).unbind(a).bind(a,$.throttle(100,b)):($.fn.smartresize&&(a="smartresize."+a),$(window).unbind(a).bind(a,b))},getStyleId:function(a){return BigText.STYLE_ID+"-"+a},generateStyleTag:function(a,b){return $("<style>"+b.join("\n")+"</style>").attr("id",a)},clearCss:function(a){var b=BigText.getStyleId(a);$("#"+b).remove()},generateCss:function(a,b,c,d){var e=[];BigText.clearCss(a);for(var f=0,g=b.length;g>f;f++)e.push("#"+a+" ."+BigText.LINE_CLASS_PREFIX+f+" {"+(d[f]?" white-space: normal;":"")+(b[f]?" font-size: "+b[f]+"px;":"")+(c[f]?" word-spacing: "+c[f]+"px;":"")+"}");return BigText.generateStyleTag(BigText.getStyleId(a),e)},jQueryMethod:function(a){return BigText.init(),a=$.extend({minfontsize:BigText.DEFAULT_MIN_FONT_SIZE_PX,maxfontsize:BigText.DEFAULT_MAX_FONT_SIZE_PX,childSelector:"",resize:!0},a||{}),this.each(function(){var b=$(this).addClass("bigtext"),c=a.childSelector||BigText.childSelectors[this.tagName.toLowerCase()]||BigText.DEFAULT_CHILD_SELECTOR,d=b.width(),e=b.attr("id");e||(e="bigtext-id"+counter++,b.attr("id",e)),a.resize&&BigText.bindResize("resize.bigtext-event-"+e,function(){BigText.jQueryMethod.call($("#"+e),a)}),BigText.clearCss(e),b.find(c).addClass(function(a,b){return[b.replace(RegExp("\\b"+BigText.LINE_CLASS_PREFIX+"\\d+\\b"),""),BigText.LINE_CLASS_PREFIX+a].join(" ")});var f=calculateSizes(b,c,d,a.maxfontsize,a.minfontsize);$headCache.append(BigText.generateCss(e,f.fontSizes,f.wordSpacings,f.minFontSizes))})}};$.fn.bigtext=BigText.jQueryMethod,window.BigText=BigText;
         }
-        //function plugin_jquery_hoverIntent
-        function plugin_jquery_hoverIntent($){
-
-            /**
-            * hoverIntent r6 // 2011.02.26 // jQuery 1.5.1+
-            * <http://cherne.net/brian/resources/jquery.hoverIntent.html>
-            *
-            * @param  f  onMouseOver function || An object with configuration options
-            * @param  g  onMouseOut function  || Nothing (use configuration options object)
-            * @author    Brian Cherne brian(at)cherne(dot)net
-            */
-            // (function($){
-            $.fn.hoverIntent=function(f,g){var cfg={sensitivity:7,interval:50,timeout:0};cfg=$.extend(cfg,g?{over:f,out:g}:f);var cX,cY,pX,pY;var track=function(ev){cX=ev.pageX;cY=ev.pageY};var compare=function(ev,ob){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t);if((Math.abs(pX-cX)+Math.abs(pY-cY))<cfg.sensitivity){$(ob).unbind("mousemove",track);ob.hoverIntent_s=1;return cfg.over.apply(ob,[ev])}else{pX=cX;pY=cY;ob.hoverIntent_t=setTimeout(function(){compare(ev,ob)},cfg.interval)}};var delay=function(ev,ob){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t);ob.hoverIntent_s=0;return cfg.out.apply(ob,[ev])};var handleHover=function(e){var ev=$.extend({},e);var ob=this;if(ob.hoverIntent_t){ob.hoverIntent_t=clearTimeout(ob.hoverIntent_t)}if(e.type=="mouseenter"){pX=ev.pageX;pY=ev.pageY;$(ob).bind("mousemove",track);if(ob.hoverIntent_s!=1){ob.hoverIntent_t=setTimeout(function(){compare(ev,ob)},cfg.interval)}}else{$(ob).unbind("mousemove",track);if(ob.hoverIntent_s==1){ob.hoverIntent_t=setTimeout(function(){delay(ev,ob)},cfg.timeout)}}};return this.bind('mouseenter',handleHover).bind('mouseleave',handleHover)}
-            // }
-            // )(jQuery);
-        }
-        //end function plugin_jquery_hoverIntent
-
 
         //function plugin_jquery_twitterTip
         function plugin_jquery_twitterTip($){
