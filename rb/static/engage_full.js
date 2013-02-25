@@ -226,7 +226,7 @@ function readrBoard($R){
             },
             makeDefaultPanelMessage: function( $rindow, _kind ) {
                 //RDR.rindow.makeDefaultPanelMessage:
-                
+
                 var hash = $rindow.data('hash');
                 var summary = RDR.summaries[hash];
                 var kind = _kind || (
@@ -7176,7 +7176,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv13" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv15" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
