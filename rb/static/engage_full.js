@@ -5505,18 +5505,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     // store the arguments and callback function that were in progress when this Login panel was called
                                     // if ( args ) $rindow.data( 'args', args );
                                     // if ( callback ) $rindow.data( 'callback', callback );
-                                    /*
 
-                    
-                    RDR.rindow.hideFooter($rindow);
-
-                    RDR.events.track( 'show_login' );
-                                    */
-
-
-
-
-
+                                    // RDR.events.track( 'show_login' );
 
                                     // return false;
                                 // });
