@@ -5537,10 +5537,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
                         var buckets = createTagBuckets( tagList ),
-                              colorInt = 1;
+                            bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
+                            colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( typeof page != "undefined" && isWriteMode ) {
+                            if ( bucketTotal > 6 ) {
+                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                            } else if ( typeof page != "undefined" && isWriteMode ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
                                 if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
@@ -5604,12 +5607,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 function animateNextBox() {
                                     var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                    if ( $thisBox.hasClass('rdr_box_big') ) {
-                                        $thisBox.find('div.rdr_tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
-                                    } else {
-                                        $thisBox.find('div.rdr_tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
-                                    }
-                                    $thisBox.find('.rdr_comment_hover').animate( {marginRight:'0px'}, { queue:false, duration:333 });
+                                    $thisBox.find('div.rdr_tag').addClass('rdr_animated');
+                                    $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
                                     currentTagBoxAnimating++;
                                     if ( currentTagBoxAnimating > tagBoxesCount ) {
                                         clearInterval( animationQueue );
