@@ -861,7 +861,7 @@ function readrBoard($R){
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
-                        message = 'Click to see what people reacted to';
+                        message = (isWriteMode) ? "Click to add this reaction here.":'Click to see what people reacted to';
                     } else if ( tagCount == "" ) {
                         message = '';
                     } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
@@ -5472,7 +5472,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
-                            if ( !isWriteMode ) {
+                            if ( !isWriteMode && page.toptags.length ) {
                                 // write page-level tags: readmode
                                 writeTagBoxes( page.toptags );
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>' );
@@ -5510,6 +5510,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 // });
                             } else {
                                 // write page-level tags: writemode
+                                var $header = RDR.rindow.makeHeader( 'What do you think?' ),
+                                    isWriteMode = true;
+                                $rindow.find('.rdr_header').replaceWith($header);
                                 writeTagBoxes( RDR.group.blessed_tags );
                                 var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
