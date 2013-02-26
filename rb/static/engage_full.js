@@ -4052,7 +4052,6 @@ function readrBoard($R){
                 //RDR.actions.interactions:
                 ajax: function(args, int_type, action_type){
                     //RDR.actions.interactions.ajax:
-
                     //temp tie-over
                     var hash = args.hash,
                         summary = RDR.summaries[hash],
@@ -4063,16 +4062,13 @@ function readrBoard($R){
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
-
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
-
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, defaultSendData, customSendData );
-
                         newArgs.sendData = sendData;
 
                         //fix hash
@@ -4086,11 +4082,11 @@ function readrBoard($R){
                     });
                 },
                 send: function(args, int_type, action_type){
+                    // RDR.actions.interactions.send
                     // /api/tag/create
                     // /api/comment/create
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
-
                     if (sendData.rindow) delete sendData.rindow;
                     if (sendData.settings) delete sendData.settings;
                     if (sendData.selState) delete sendData.selState;
@@ -4106,12 +4102,10 @@ function readrBoard($R){
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
-
 // TODO force forcing
 if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
-
                     // [porter] I changed all references to "tag" to be "react" so the widget code is easier to understand
                     // but our URLs expect /tag/, so this rewrite that.
                     var int_type_for_url = (int_type=="react") ? "tag":int_type;
@@ -4120,7 +4114,6 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 if ( typeof sendData.tag != "undefined" ) {
     sendData.tag.body = ( sendData.tag.body ) ? sendData.tag.body:sendData.tag.tag_body;
 }
-
 // TODO forcing.  react-to-page code seems to need a hash, and stores it.  IE is not hashing page correctly.
 // and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
@@ -4132,7 +4125,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 }
                     //todo: consider making a generic url router
                     var url = RDR_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
-
                     var hitMax = RDR.session.checkForMaxInteractions(args);
 
                     if (hitMax) {
@@ -4561,7 +4553,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         '</div>'
                                     );
                                     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
-                                        
                                         // panelEvent - undo2
                                         var args = event.data.args;
                                         args.rindow = $(this).closest('.rdr_tag_details');
@@ -4855,7 +4846,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 RDR.actions.summaries.update(hash, diff);
                             }
                             
-
                             var usrMsgArgs = {
                                 msgType: "interactionSuccess",
                                 interactionInfo: {
