@@ -143,488 +143,509 @@
 <script>
 (function(){
 
-    $( 'section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
+    // $(function(){
 
-    // Radialize the colors
-    Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-        return {
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    });
+        // Radialize the colors
+        Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+            return {
+                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                stops: [
+                    [0, color],
+                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                ]
+            };
+        });
 
-    // put in external file...
-    RB.analytics = {
-    	mostPopular: function( args ) {
-    		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-    		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
-    		var type = ( args && args.type ) ? args.type : "tags";  // users, pages, content
-    		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+        // put in external file...
+        RB.analytics = {
+        	mostPopular: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "tags";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
-    		var querystring = "?" +
-    			"start="+start +
-    			"&end="+end +
-    			"&max_count="+max_count;
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
 
-    		$.ajax({
-    			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/popular/'+querystring,
-    			type: "get",
-    			contentType: "application/json",
-    			dataType: "jsonp",
-    			success: function(response){
-    				if (type == "tags") {
-    					$('section[role="tag cloud grid"]').isotope('destroy').html('<section role="tag cloud grid"/>');
+        		$.ajax({
+        			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/popular/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				if (type == "tags") {
+        					$('section[role="tag cloud grid"]').isotope('destroy').html('<section role="tag cloud grid"/>');
 
-    					function SortByTagCount(a,b) { return b.count - a.count; }
-    	                var sorted_interactions = [];
+        					function SortByTagCount(a,b) { return b.count - a.count; }
+        	                var sorted_interactions = [];
 
-    	                $.each( response, function(idx, reaction_data) {
-    	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
-    	                });
+        	                $.each( response, function(idx, reaction_data) {
+        	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
+        	                });
 
-    	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
+        	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
 
-    	                // do tag cloud logic
-    	                // render the tag cloud
-    	                // medium, small, small, big
-    	                var boxSizes = [ "medium", "small", "small", "big" ],
-    	                    currentBoxSize = 0,
-    	                    colorInt = 1,
-    	                    $tagCloud = $('section[role="tag cloud grid"]');
+        	                // do tag cloud logic
+        	                // render the tag cloud
+        	                // medium, small, small, big
+        	                var boxSizes = [ "medium", "small", "small", "big" ],
+        	                    currentBoxSize = 0,
+        	                    colorInt = 1,
+        	                    $tagCloud = $('section[role="tag cloud grid"]');
 
-    	                $tagCloud.html('').removeAttr('style').removeClass('isotope');
-    	                while ( sorted_interactions.length ) {
-    	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
-    	                        var median = Math.floor(sorted_interactions.length/2);
-    	                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
-    	                        $tagCloud.append( $thisBox );
-    	                        sorted_interactions.splice( median, 1 );
-    	                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
-    	                        var thisTag = sorted_interactions.pop(),
-    	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
-    	                        $tagCloud.append( $thisBox );
-    	                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
-    	                        var thisTag = sorted_interactions.shift(),
-    	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
-    	                        $tagCloud.append( $thisBox );
-    	                    }
-    	                    
-    	                    // set next color and box size
-    	                    colorInt++;
-    	                    currentBoxSize++;
-    	                    if ( colorInt == 6 ) colorInt = 1;
-    	                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
-    	                }
+        	                $tagCloud.html('').removeAttr('style').removeClass('isotope');
+        	                while ( sorted_interactions.length ) {
+        	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
+        	                        var median = Math.floor(sorted_interactions.length/2);
+        	                        var $thisBox = $( '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                        sorted_interactions.splice( median, 1 );
+        	                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
+        	                        var thisTag = sorted_interactions.pop(),
+        	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
+        	                        var thisTag = sorted_interactions.shift(),
+        	                            $thisBox = $( '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                    }
+        	                    
+        	                    // set next color and box size
+        	                    colorInt++;
+        	                    currentBoxSize++;
+        	                    if ( colorInt == 6 ) colorInt = 1;
+        	                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
+        	                }
 
-    	                // isotope and bigtext the cloud
-    	                $('section[role="tag cloud grid"]').isotope({
-    	                  layoutMode: 'masonryHorizontal',
-    	                  masonryHorizontal: {
-    	                    rowHeight: 70
-    	                  }
-    	                }, function() {
-    	                    $('.box').bigtext();
-    	                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
-    	                        currentTagBoxAnimating = 0;
-    	                    var animationQueue = setInterval( animateNextBox, 100 );
+        	                // isotope and bigtext the cloud
+        	                $('section[role="tag cloud grid"]').isotope({
+        	                  layoutMode: 'masonryHorizontal',
+        	                  masonryHorizontal: {
+        	                    rowHeight: 70
+        	                  }
+        	                }, function() {
+        	                    $('.box').bigtext();
+        	                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+        	                        currentTagBoxAnimating = 0;
+        	                    var animationQueue = setInterval( animateNextBox, 100 );
 
-    	                    function animateNextBox() {
-    	                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
-    	                        if ( $thisBox.hasClass('box1') ) {
-    	                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
-    	                        } else {
-    	                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
-    	                        }
-    	                        currentTagBoxAnimating++;
-    	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
-    	                            clearInterval( animationQueue );
-    	                        	if ( $('#tag_cloud_container').jScrollPane().data().jsp ) { $('#tag_cloud_container').jScrollPane().data().jsp.destroy(); }
-    	                            initHorizontalScrollbar();
-    	                        }
-    	                    }
-    	                    function initHorizontalScrollbar(){
-    	                        $('#tag_cloud_container').jScrollPane();
-    	                    }
-    	                });
-    				} else if (type=="shares") {
+        	                    function animateNextBox() {
+        	                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+        	                        if ( $thisBox.hasClass('box1') ) {
+        	                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+        	                        } else {
+        	                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+        	                        }
+        	                        currentTagBoxAnimating++;
+        	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+        	                            clearInterval( animationQueue );
+        	                        	if ( $('#tag_cloud_container').jScrollPane().data().jsp ) { $('#tag_cloud_container').jScrollPane().data().jsp.destroy(); }
+        	                            initHorizontalScrollbar();
+        	                        }
+        	                    }
+        	                    function initHorizontalScrollbar(){
+        	                        $('#tag_cloud_container').jScrollPane();
+        	                    }
+        	                });
+        				} else if (type=="shares") {
 
-    					var shareHtml = "";
-    					for ( var i in response ) {
-    						var share = response[i];
-    						shareHtml += '<tr><td role="content">('+share[0].count+') '+share[0].content__body+'</td></tr><tr><td><strong>Reactions: </strong>';
-    						for ( var j in share[1].related_reactions ) {
-    							var reaction = share[1].related_reactions[j];
-    							shareHtml += '('+reaction.count+') '+reaction.interaction_node__body;
-    							if ( j < share[1].related_reactions.length - 1 ) shareHtml += ", ";
-    						}
-    						shareHtml += '</td></tr><tr>'; 
-    						// shareHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
-    					}
+        					var shareHtml = "";
+        					for ( var i in response ) {
+        						var share = response[i];
+        						shareHtml += '<tr><td role="content">('+share[0].count+') '+share[0].content__body+'</td></tr><tr><td><strong>Reactions: </strong>';
+        						for ( var j in share[1].related_reactions ) {
+        							var reaction = share[1].related_reactions[j];
+        							shareHtml += '('+reaction.count+') '+reaction.interaction_node__body;
+        							if ( j < share[1].related_reactions.length - 1 ) shareHtml += ", ";
+        						}
+        						shareHtml += '</td></tr><tr>'; 
+        						// shareHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
+        					}
 
-    					$('table[role="popular shares"] tbody').html( $(shareHtml) );
-    				}
-    				
-    			}
-    		});
-    	},
-    	mostActive: function( args ) {
-    		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-    		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
-    		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
-    		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+        					$('table[role="popular shares"] tbody').html( $(shareHtml) );
+        				}
+        				
+        			}
+        		});
+        	},
+        	mostActive: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
-    		var querystring = "?" +
-    			"start="+start +
-    			"&end="+end +
-    			"&max_count="+max_count;
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
 
-    		$.ajax({
-    			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/active/'+querystring,
-    			type: "get",
-    			contentType: "application/json",
-    			dataType: "jsonp",
-    			success: function(response){
+        		$.ajax({
+        			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/active/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
 
-                    if ( type == "pages" ) {
-                       
-                        var pageHtml = "";
+                        if ( type == "pages" ) {
+                           
+                            var pageHtml = "";
 
-    					for ( var i in response) {
-                            var pageId = response[i].page.id;
-    						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
-    						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
-    						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
-    						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
-    						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
-    						+'<td role="reactions">'+tagCount+'</td>'
-                            +'<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerPage(pageId) +'</td>'
-    						+'<td role="shares">'+shrCount+'</td>'
-    						+'<td role="comments">'+comCount+'</td></tr>';
-    					}
+        					for ( var i in response) {
+                                var pageId = response[i].page.id;
+        						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
+        						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
+        						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
+        						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+        						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
+        						+'<td role="reactions">'+tagCount+'</td>'
+                                +'<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerPage(pageId) +'</td>'
+        						+'<td role="shares">'+shrCount+'</td>'
+        						+'<td role="comments">'+comCount+'</td></tr>';
+        					}
 
-    					$('table[role="active pages table"] tbody').html( pageHtml );
-    				} else if ( type == "content" ) {
+        					$('table[role="active pages table"] tbody').html( pageHtml );
+        				} else if ( type == "content" ) {
 
-    					var contentHtml = "";
-                        var contentId = null;
+        					var contentHtml = "";
+                            var contentId = null;
 
-    					for ( var i in response) {
-                            contentId = response[i].content.id;
+        					for ( var i in response) {
+                                contentId = response[i].content.id;
 
-    						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
-    						if ( response[i].content.kind == "img" ) {
-    							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
-    						} else if ( response[i].content.kind == "txt" ) {
-    							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
-    						} else if ( response[i].content.kind == "med" ) {
-    							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
-    						}else{
-                                //this seemed to be happedning sometimes.  And the formatting gets messed up.
-                                contentHtml += '<td role="content"></td>';
-                            }
-    						contentHtml += 
-                            '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-    						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
-    						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
-    					}
+        						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+        						if ( response[i].content.kind == "img" ) {
+        							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
+        						} else if ( response[i].content.kind == "txt" ) {
+        							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
+        						} else if ( response[i].content.kind == "med" ) {
+        							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
+        						}else{
+                                    //this seemed to be happedning sometimes.  And the formatting gets messed up.
+                                    contentHtml += '<td role="content"></td>';
+                                }
+        						contentHtml += 
+                                '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+        						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
+        						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
+        					}
 
-    					$('table[role="active content table"] tbody').html( contentHtml );
-    					
-    				} else if ( type == "users" ) {
-                    	var userHtml = "";
-    					for ( var i in response) {
-                            var img_url = response[i].user.img_url;
-                            var full_name = response[i].user.full_name;
-    						if ( img_url ) {
-                                //fix this construction.
-                                var user = response[i].user.user;
+        					$('table[role="active content table"] tbody').html( contentHtml );
+        					
+        				} else if ( type == "users" ) {
+                        	var userHtml = "";
+        					for ( var i in response) {
+                                var img_url = response[i].user.img_url;
+                                var full_name = response[i].user.full_name;
+        						if ( img_url ) {
+                                    //fix this construction.
+                                    var user = response[i].user.user;
 
-    							userHtml += '<tr>'
-                                    + '<td role="user">'
-                                        + '<div class="avatar"><a href="/user/'+user.id+'" target="_blank"><img src="'+img_url+'" /></a></div>'
-                                        + '<div class="userName"><a href="/user/'+user.id+'" target="_blank">'+full_name+'</a></div>'
-                                    + '</td>'
-    								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-                                    + '<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerUser(user.id) +'</td>'
-    								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
-    								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
-    							+ '</tr>';
-    						}
-    					}
-    					$('table[role="active user table"] tbody').html( userHtml );
-    				}
-    			}
-    		});
-    	},
-    	recentlyActive: function( args ) {
-    		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-    		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
-    		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
-    		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+        							userHtml += '<tr>'
+                                        + '<td role="user">'
+                                            + '<div class="avatar"><a href="/user/'+user.id+'" target="_blank"><img src="'+img_url+'" /></a></div>'
+                                            + '<div class="userName"><a href="/user/'+user.id+'" target="_blank">'+full_name+'</a></div>'
+                                        + '</td>'
+        								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                                        + '<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerUser(user.id) +'</td>'
+        								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
+        								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
+        							+ '</tr>';
+        						}
+        					}
+        					$('table[role="active user table"] tbody').html( userHtml );
+        				}
+        			}
+        		});
+        	},
+        	recentlyActive: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
-    		var querystring = "?" +
-    			"start="+start +
-    			"&end="+end +
-    			"&max_count="+max_count;
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
 
-    		$.ajax({
-    			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/recent/'+querystring,
-    			type: "get",
-    			contentType: "application/json",
-    			dataType: "jsonp",
-    			success: function(response){
-    				var recentHtml = "";
-    				for (var i in response) {
-    					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
-    					recentHtml += '<tr><td><strong><a href="/page/'+response[0].id+'" target="_blank">'+response[0].title+'</a></strong></td></tr><tr>';
-    					// TODO make above line link to page profile
-    				}
+        		$.ajax({
+        			url: '/analytics/group/'+RB.group.short_name+'/'+type+'/recent/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				var recentHtml = "";
+        				for (var i in response) {
+        					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
+        					recentHtml += '<tr><td><strong><a href="/page/'+response[0].id+'" target="_blank">'+response[0].title+'</a></strong></td></tr><tr>';
+        					// TODO make above line link to page profile
+        				}
 
-    				$('table[role="recent pages table"] tbody').html( recentHtml );
-    			}
-    		});
-    	},
+        				$('table[role="recent pages table"] tbody').html( recentHtml );
+        			}
+        		});
+        	},
 
-        parse: {
-            repo: null,
-            collection: null,
-            loadingHTML: "loading",
-            init: function(){
+            parse: {
+                _hasInited: false,
+                repo: null,
+                collection: null,
+                loadingHTML: "loading",
+                init: function(){
 
-                var Self = RB.analytics.parse;
+                    var Self = RB.analytics.parse;
 
-                if( typeof Parse === "undefined" ){
-                    return;
-                }
-
-                var repoName = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
-                Self.repo = Parse.Object.extend(repoName);
-
-                getReactionViewCount(Self.repo, {
-                    success: function(results) {
-                        var res = $.toJSON(results);
-                        $('#interactionReadCount h1').text(res);
-                    },
-                    error: function(error) {
-                        alert("Error: " + error.code + " " + error.message);
+                    if( typeof Parse === "undefined" ){
+                        return;
                     }
-                });
+                    var repoName = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
+                    Self.repo = Parse.Object.extend(repoName);
+                    Self._hasInited = true;
+                },
+                update: function(){
 
-                //todo: do something with this data!
-                getAllData(Self.repo, {
-                    success: function(results) {
-                        // debugger;
-                        RB.analytics.mostActive({type:'users'});
-                    },
-                    error: function(error) {
-                        alert("Error: " + error.code + " " + error.message);
+                    var Self = RB.analytics.parse;
+
+                    if( typeof Parse === "undefined" ){
+                        return;
                     }
-                });
+                    if(!Self._hasInited){
+                        Self.init();
+                    }
 
-                function getAllData(Table, callbacks){
+                    Self.getReactionViewCount(Self.repo, {
+                        success: function(results) {
+                            var res = $.toJSON(results);
+                            $('#interactionReadCount h1').text(res);
+                        },
+                        error: function(error) {
+                            alert("Error: " + error.code + " " + error.message);
+                        }
+                    });
+
+                    //todo: do something with this data!
+                    Self.getAllData(Self.repo, {
+                        success: function(results) {
+                            // debugger;
+                            RB.analytics.mostActive({type:'users'});
+                        },
+                        error: function(error) {
+                            alert("Error: " + error.code + " " + error.message);
+                        }
+                    });
+                },
+
+                getAllData: function(Table, callbacks){
+                    var Self = RB.analytics.parse;
+
                     var query = new Parse.Query(Table);
                     query = Self._setQueryDefaults(query);
                     //arbitary number...  This needs to be made more efficient later.
                     query.limit(300);
                     Self.collection = query.collection();
                     Self.collection.fetch(callbacks);
-                }
+                },
 
-                function getReactionViewCount(Table, callbacks){
+                getReactionViewCount: function(Table, callbacks){
+                    var Self = RB.analytics.parse;
+
                     var query = new Parse.Query(Table);
                     query = Self._setQueryDefaults(query);
                     query.count(callbacks);
+                },
+                
+                getReactionViewsPerPage: function(pageId){
+                    var Self = RB.analytics.parse;
+                    return Self._getCountPerId(pageId, "page_id");
+                },
+
+                getReactionViewsPerUser: function(userId){
+                    var Self = RB.analytics.parse;
+                    return Self._getCountPerId(userId, "user_id");
+                },
+                _getCountPerId: function(id, fieldName){
+
+                    if(!id || !RB.analytics.parse.collection){
+                        return RB.analytics.parse.loadingHTML;
+                    }
+
+                    return RB.analytics.parse.collection.filter(function(model){
+                        return model.get(fieldName) == id;
+                    }).length;
+                },
+                _setQueryDefaults: function(query){
+                    return query
+                        .greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate)
+                        .lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate)
+                        .containedIn("action", ["rindow_shown_readmode", "rindow_shown_summarybar"])
+                        .equalTo("group_id", RB.group.id);
                 }
             },
 
-            getReactionViewsPerPage: function(pageId){
-                var Self = RB.analytics.parse;
-                return Self._getCountPerId(pageId, "page_id");
-            },
+        	interactionFrequency: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
-            getReactionViewsPerUser: function(userId){
-                var Self = RB.analytics.parse;
-                return Self._getCountPerId(userId, "user_id");
-            },
-            _getCountPerId: function(id, fieldName){
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
 
-                if(!id || !RB.analytics.parse.collection){
-                    return RB.analytics.parse.loadingHTML;
-                }
+        		$.ajax({
+        			url: '/analytics/group/'+RB.group.short_name+'/frequency/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				var tags = 0,
+        					shares = 0,
+        					comments = 0,
+        					bookmarks = 0;
 
-                return RB.analytics.parse.collection.filter(function(model){
-                    return model.get(fieldName) == id;
-                }).length;
-            },
-            _setQueryDefaults: function(query){
-                return query
-                    .greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate)
-                    .lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate)
-                    .containedIn("action", ["rindow_shown_readmode", "rindow_shown_summarybar"])
-                    .equalTo("group_id", RB.group.id);
-            }
-        },
+        				for ( var i in response ) {
+        					for ( var j in response[i]) {
+        						if ( response[i][j].tag ) tags += response[i][j].tag;
+        						if ( response[i][j].shr ) shares += response[i][j].shr;
+        						if ( response[i][j].com ) comments += response[i][j].com;
+        						if ( response[i][j].bkm ) bookmarks += response[i][j].bkm;
+        					}
+        				}
 
-    	interactionFrequency: function( args ) {
-    		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-    		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
-    		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
-    		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+        				var total = tags + shares + comments + bookmarks;
 
-    		var querystring = "?" +
-    			"start="+start +
-    			"&end="+end +
-    			"&max_count="+max_count;
+        				$('div[role="total interactions"] h1').text( total );
 
-    		$.ajax({
-    			url: '/analytics/group/'+RB.group.short_name+'/frequency/'+querystring,
-    			type: "get",
-    			contentType: "application/json",
-    			dataType: "jsonp",
-    			success: function(response){
-    				var tags = 0,
-    					shares = 0,
-    					comments = 0,
-    					bookmarks = 0;
+        				// make chart
+        				// keep this chart for now
+        				var chart;
+        				chart = new Highcharts.Chart({
+        					chart: {
+        						renderTo: 'frequency_chart',
+        						defaultSeriesType: 'bar',
+        						height:'200'
+        					},
+        					title: {
+        						text: 'Interaction Distribution'
+        					},
+        					xAxis: {
+        						labels: {enabled:false}
+        					},
+        					yAxis: {
+        						min: 0,
+        						title: {text:null}
+        					},
+        					legend: {
+        						backgroundColor: '#FFFFFF',
+        						reversed: true
+        					},
+        					tooltip: {
+        						formatter: function() {
+        							return ''+
+        							this.series.name +': '+ this.y +'';
+        						}
+        					},
+        					plotOptions: {
+        						series: {
+        							stacking: 'normal'
+        						}
+        					},
+        					series: [{
+        					// 	name: 'Bookmarks',
+        					// 	data: [bookmarks]
+        					// }, {
+        						name: 'Comments',
+        						data: [comments]
+        					}, {
+        						name: 'Shares',
+        						data: [shares]
+        					}, {
+        						name: 'Reactions',
+        						data: [tags]
+        					}]
+        				});
+        			}
+        		});
+        	}, 
+        	updateAll: function() {
+        		RB.analytics.interactionFrequency();
 
-    				for ( var i in response ) {
-    					for ( var j in response[i]) {
-    						if ( response[i][j].tag ) tags += response[i][j].tag;
-    						if ( response[i][j].shr ) shares += response[i][j].shr;
-    						if ( response[i][j].com ) comments += response[i][j].com;
-    						if ( response[i][j].bkm ) bookmarks += response[i][j].bkm;
-    					}
-    				}
+        		RB.analytics.mostPopular();
+        		RB.analytics.mostPopular( {type:'bookmarks'} );
+        		RB.analytics.mostPopular( {type:'shares'} );
 
-    				var total = tags + shares + comments + bookmarks;
+        		RB.analytics.mostActive();
+        		RB.analytics.mostActive({type:'users'});
+        		RB.analytics.mostActive({type:'content'});
 
-    				$('div[role="total interactions"] h1').text( total );
+        		RB.analytics.recentlyActive();
 
-    				// make chart
-    				// keep this chart for now
-    				var chart;
-    				chart = new Highcharts.Chart({
-    					chart: {
-    						renderTo: 'frequency_chart',
-    						defaultSeriesType: 'bar',
-    						height:'200'
-    					},
-    					title: {
-    						text: 'Interaction Distribution'
-    					},
-    					xAxis: {
-    						labels: {enabled:false}
-    					},
-    					yAxis: {
-    						min: 0,
-    						title: {text:null}
-    					},
-    					legend: {
-    						backgroundColor: '#FFFFFF',
-    						reversed: true
-    					},
-    					tooltip: {
-    						formatter: function() {
-    							return ''+
-    							this.series.name +': '+ this.y +'';
-    						}
-    					},
-    					plotOptions: {
-    						series: {
-    							stacking: 'normal'
-    						}
-    					},
-    					series: [{
-    					// 	name: 'Bookmarks',
-    					// 	data: [bookmarks]
-    					// }, {
-    						name: 'Comments',
-    						data: [comments]
-    					}, {
-    						name: 'Shares',
-    						data: [shares]
-    					}, {
-    						name: 'Reactions',
-    						data: [tags]
-    					}]
-    				});
-    			}
-    		});
-    	}, 
-    	updateAll: function() {
-    		RB.analytics.interactionFrequency();
-
-    		RB.analytics.mostPopular();
-    		RB.analytics.mostPopular( {type:'bookmarks'} );
-    		RB.analytics.mostPopular( {type:'shares'} );
-
-    		RB.analytics.mostActive();
-    		RB.analytics.mostActive({type:'users'});
-    		RB.analytics.mostActive({type:'content'});
-
-    		RB.analytics.recentlyActive();
-
-            RB.analytics.parse.init();
-    	}
-    };
+                RB.analytics.parse.update();
+        	}
+        };
 
 
-    var nowDate = moment().format("MM/DD/YY");
-    RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-    RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+        var nowDate = moment().format("MM/DD/YY");
+        RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
+        RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
 
-    RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-    RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
-
-    $('input[name="start_date"]').val( RB.analytics.startDate );
-    $('input[name="end_date"]').val( RB.analytics.endDate );
-
-    $('section[role="datepicker"] form').submit( function() {
-    	// get form values
-    	RB.analytics.startDate = $('input[name="start_date"]').val();
-    	RB.analytics.endDate = $('input[name="end_date"]').val();
-
-    	// update hash, too
-    	RB.util.setHashValue('start', RB.analytics.startDate );
-    	RB.util.setHashValue('end', RB.analytics.endDate );
-
-    	// re-execute the API calls
-    	RB.analytics.updateAll();
-        return false;
-    });
+        RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
+        RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
 
 
-    // defined in template
-    RB.group.short_name = "{{ group.short_name }}";
-    RB.group.full_name = "{{ group.name }}";
+        // defined in template
+        RB.group.short_name = "{{ group.short_name }}";
+        RB.group.full_name = "{{ group.name }}";
 
-    $(function(){
-        
         RB.analytics.updateAll();
+        
+        $(function(){
 
-    });
+            //init this once so that the destroy function doesn't error when it refreshes this.
+            $('section[role="tag cloud grid"]').isotope();
+            
+            $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
+            $('input[name="start_date"]').val( RB.analytics.startDate );
+            $('input[name="end_date"]').val( RB.analytics.endDate );
 
-    /* for links:
+            $('section[role="datepicker"] form').submit( function() {
+                // get form values
+                RB.analytics.startDate = $('input[name="start_date"]').val();
+                RB.analytics.endDate = $('input[name="end_date"]').val();
 
-    http://local.readrboard.com:8080/page/3/?s=not+sure
+                // update hash, too
+                RB.util.setHashValue('start', RB.analytics.startDate );
+                RB.util.setHashValue('end', RB.analytics.endDate );
 
-    http://local.readrboard.com:8080/group/demo/
-    http://local.readrboard.com:8080/group/demo/tags/?s=not+sure
-    http://local.readrboard.com:8080/group/demo/shares/?s=not+sure
+                // re-execute the API calls
+                RB.analytics.updateAll();
+                return false;
+            });
 
-    http://local.readrboard.com:8080/user/2/
+        });
 
-    Aanlytics links
-    Profile stream links (interactions.html)
-    Sidebar links
+        /* for links:
 
-    Ajaxify the dashboard QS.
-    */
+        http://local.readrboard.com:8080/page/3/?s=not+sure
+
+        http://local.readrboard.com:8080/group/demo/
+        http://local.readrboard.com:8080/group/demo/tags/?s=not+sure
+        http://local.readrboard.com:8080/group/demo/shares/?s=not+sure
+
+        http://local.readrboard.com:8080/user/2/
+
+        Aanlytics links
+        Profile stream links (interactions.html)
+        Sidebar links
+
+        Ajaxify the dashboard QS.
+        */
+
+    // });
 
 })();
 </script>
-
 {% endblock mainContent %}
