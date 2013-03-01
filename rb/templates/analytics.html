@@ -306,34 +306,6 @@
                             //this will send off ajax to parse and fill in the reactionViews
                             RB.analytics.parse.updateReactionViewsForPages();
 
-
-        				} else if ( type == "content" ) {
-
-        					var contentHtml = "";
-                            var contentId = null;
-
-        					for ( var i in response) {
-                                contentId = response[i].content.id;
-
-        						contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
-        						if ( response[i].content.kind == "img" ) {
-        							contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
-        						} else if ( response[i].content.kind == "txt" ) {
-        							contentHtml += '<td role="content">'+response[i].content.body+'</td>'
-        						} else if ( response[i].content.kind == "med" ) {
-        							contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
-        						}else{
-                                    //this seemed to be happedning sometimes.  And the formatting gets messed up.
-                                    contentHtml += '<td role="content"></td>';
-                                }
-        						contentHtml += 
-                                '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-        						+'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
-        						+'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
-        					}
-
-        					$('table[role="active content table"] tbody').html( contentHtml );
-        					
         				} else if ( type == "users" ) {
                         	var userHtml = "";
         					for ( var i in response) {
@@ -367,8 +339,34 @@
                             //this will send off ajax to parse and fill in the reactionViews
                             RB.analytics.parse.updateReactionViewsForUsers();
 
-        				}
-        			}
+                        } else if ( type == "content" ) {
+
+                            var contentHtml = "";
+                            var contentId = null;
+
+                            for ( var i in response) {
+                                contentId = response[i].content.id;
+
+                                contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+                                if ( response[i].content.kind == "img" ) {
+                                    contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
+                                } else if ( response[i].content.kind == "txt" ) {
+                                    contentHtml += '<td role="content">'+response[i].content.body+'</td>'
+                                } else if ( response[i].content.kind == "med" ) {
+                                    contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
+                                }else{
+                                    //this seemed to be happedning sometimes.  And the formatting gets messed up.
+                                    contentHtml += '<td role="content"></td>';
+                                }
+                                contentHtml += 
+                                '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                                +'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
+                                +'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
+                            }
+
+                            $('table[role="active content table"] tbody').html( contentHtml );
+            			}
+                    }
         		});
         	},
         	recentlyActive: function( args ) {
