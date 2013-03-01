@@ -29,9 +29,6 @@
 </section>
 <section id="analyticsReport" role="panels">
 
-            <div class="parseTest">
-            </div>
-        
 	<div class="section_content">
         
         <div id="interactionBigStats">
@@ -142,8 +139,6 @@
 
 <script>
 (function(){
-
-    // $(function(){
 
         // Radialize the colors
         Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
@@ -297,15 +292,21 @@
         						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
         						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
         						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
-        						pageHtml += '<tr><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+
+        						pageHtml += '<tr data-page_id="'+pageId+'"><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
         						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
         						+'<td role="reactions">'+tagCount+'</td>'
-                                +'<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerPage(pageId) +'</td>'
+                                +'<td role="reactionViews" class="reactionViews"></td>'
         						+'<td role="shares">'+shrCount+'</td>'
         						+'<td role="comments">'+comCount+'</td></tr>';
-        					}
+                            }
 
-        					$('table[role="active pages table"] tbody').html( pageHtml );
+                            $('table[role="active pages table"] tbody').html( pageHtml );
+
+                            //this will send off ajax to parse and fill in the reactionViews
+                            RB.analytics.parse.updateReactionViewsForPages();
+
+
         				} else if ( type == "content" ) {
 
         					var contentHtml = "";
@@ -340,21 +341,32 @@
                                 var full_name = response[i].user.full_name;
         						if ( img_url ) {
                                     //fix this construction.
-                                    var user = response[i].user.user;
 
-        							userHtml += '<tr>'
+                                    //what?  seems that the user model suddenly changed?  Look into this later.
+                                    var userId = 
+                                        (response[i].user && response[i].user.user) 
+                                        ? response[i].user.user.id 
+                                        : response[i].user.user_id;
+                                    
+        							userHtml += '<tr data-user_id="'+userId+'">'
                                         + '<td role="user">'
                                             + '<div class="avatar"><a href="/user/'+user.id+'" target="_blank"><img src="'+img_url+'" /></a></div>'
                                             + '<div class="userName"><a href="/user/'+user.id+'" target="_blank">'+full_name+'</a></div>'
                                         + '</td>'
         								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
-                                        + '<td role="reactionViews">'+ RB.analytics.parse.getReactionViewsPerUser(user.id) +'</td>'
+                                        + '<td role="reactionViews" class="reactionViews">'
+                                            + RB.analytics.parse.getReactionViewsPerUser(user.id) 
+                                        +'</td>'
         								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
         								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
         							+ '</tr>';
         						}
         					}
         					$('table[role="active user table"] tbody').html( userHtml );
+
+                            //this will send off ajax to parse and fill in the reactionViews
+                            RB.analytics.parse.updateReactionViewsForUsers();
+
         				}
         			}
         		});
@@ -387,7 +399,12 @@
         			}
         		});
         	},
-
+            debugError: function(error){
+                if(!RB.RDR_offline){
+                    return;
+                }
+                alert("Error: " + error.code + " " + error.message);
+            },
             parse: {
                 _hasInited: false,
                 repo: null,
@@ -395,6 +412,7 @@
                 loadingHTML: "loading",
                 init: function(){
 
+                    //todo: using Self convention for now. Convert this to use an actual constucter/instance pattern
                     var Self = RB.analytics.parse;
 
                     if( typeof Parse === "undefined" ){
@@ -416,27 +434,26 @@
                     }
 
                     Self.getReactionViewCount(Self.repo, {
-                        success: function(results) {
-                            var res = $.toJSON(results);
-                            $('#interactionReadCount h1').text(res);
+                        success: function(count) {
+                            $('#interactionReadCount h1').text(count);
                         },
                         error: function(error) {
-                            alert("Error: " + error.code + " " + error.message);
+                            RB.analytics.debugError(error);
                         }
                     });
 
                     //todo: do something with this data!
-                    Self.getAllData(Self.repo, {
-                        success: function(results) {
-                            // debugger;
-                            RB.analytics.mostActive({type:'users'});
-                        },
-                        error: function(error) {
-                            alert("Error: " + error.code + " " + error.message);
-                        }
-                    });
-                },
+                    // Self.getAllData(Self.repo, {
+                    //     success: function(results) {
+                    //         // debugger;
+                    //         RB.analytics.mostActive({type:'users'});
+                    //     },
+                    //     error: function(error) {
+                    //         RB.analytics.debugError(error);
+                    //     }
+                    // });
 
+                },
                 getAllData: function(Table, callbacks){
                     var Self = RB.analytics.parse;
 
@@ -456,6 +473,77 @@
                     query.count(callbacks);
                 },
                 
+                getReactionViewPerPageCount: function(pageId, callbacks){
+                    var Self = RB.analytics.parse;
+                    var options = {
+                        id: pageId,
+                        key: "page_id",
+                        callbacks: callbacks
+                    }
+                    Self._getReactionViewPerCount(Self.repo, options);
+                },
+                getReactionViewPerUserCount: function(userId, callbacks){
+                    var Self = RB.analytics.parse;
+                    var options = {
+                        id: userId,
+                        key: "user_id",
+                        callbacks: callbacks
+                    }
+                    Self._getReactionViewPerCount(Self.repo, options);
+                },
+                _getReactionViewPerCount: function(Table, options){
+                    var Self = RB.analytics.parse;
+
+                    var id = options.id;
+                    var key = options.key;
+                    var callbacks = options.callbacks;
+
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    query
+                        .equalTo(key, id)
+                        .count(callbacks);
+                },
+                //todo: not the prettiest way to do this, improve later.
+                updateReactionViewsForPages: function(){
+                    //todo: this should be optimized later.
+                    var Self = RB.analytics.parse;
+
+                    $('table[role="active pages table"] tbody tr').each(function(){
+                        var $this = $(this);
+                        var pageId = $this.data('page_id');
+
+                        Self.getReactionViewPerPageCount(pageId, {
+                            success: function(count) {
+                                $this.find('.reactionViews').html(count);
+                            },
+                            error: function(error) {
+                                RB.analytics.debugError(error);
+                            }
+                        });
+
+                    });
+                },
+                //todo: not the prettiest way to do this, improve later.
+                updateReactionViewsForUsers: function(){
+                    //todo: this should be optimized later.
+                    var Self = RB.analytics.parse;
+
+                    $('table[role="active user table"] tbody tr').each(function(){
+                        var $this = $(this);
+                        var userId = $this.data('user_id');
+
+                        Self.getReactionViewPerUserCount(userId, {
+                            success: function(count) {
+                                $this.find('.reactionViews').html(count);
+                            },
+                            error: function(error) {
+                                RB.analytics.debugError(error);
+                            }
+                        });
+
+                    });
+                },
                 getReactionViewsPerPage: function(pageId){
                     var Self = RB.analytics.parse;
                     return Self._getCountPerId(pageId, "page_id");
@@ -599,8 +687,6 @@
         // defined in template
         RB.group.short_name = "{{ group.short_name }}";
         RB.group.full_name = "{{ group.name }}";
-
-        RB.analytics.updateAll();
         
         $(function(){
 
@@ -624,6 +710,7 @@
                 RB.analytics.updateAll();
                 return false;
             });
+            RB.analytics.updateAll();
 
         });
 
@@ -643,8 +730,6 @@
 
         Ajaxify the dashboard QS.
         */
-
-    // });
 
 })();
 </script>
