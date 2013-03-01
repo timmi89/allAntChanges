@@ -657,7 +657,10 @@
         		});
         	}, 
         	updateAll: function() {
-        		RB.analytics.interactionFrequency();
+                
+                RB.analytics.setDates();
+        		
+                RB.analytics.interactionFrequency();
 
         		RB.analytics.mostPopular();
         		RB.analytics.mostPopular( {type:'bookmarks'} );
@@ -670,16 +673,18 @@
         		RB.analytics.recentlyActive();
 
                 RB.analytics.parse.update();
-        	}
+        	},
+            setDates: function(){
+
+                var nowDate = moment().format("MM/DD/YY");
+                RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
+                RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+
+                RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
+                RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+            }
+
         };
-
-
-        var nowDate = moment().format("MM/DD/YY");
-        RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-        RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
-
-        RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-        RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
 
 
         // defined in template
@@ -687,6 +692,8 @@
         RB.group.full_name = "{{ group.name }}";
         
         $(function(){
+
+            RB.analytics.setDates();
 
             //init this once so that the destroy function doesn't error when it refreshes this.
             $('section[role="tag cloud grid"]').isotope();
@@ -696,18 +703,17 @@
             $('input[name="end_date"]').val( RB.analytics.endDate );
 
             $('section[role="datepicker"] form').submit( function() {
-                // get form values
-                RB.analytics.startDate = $('input[name="start_date"]').val();
-                RB.analytics.endDate = $('input[name="end_date"]').val();
 
-                // update hash, too
-                RB.util.setHashValue('start', RB.analytics.startDate );
-                RB.util.setHashValue('end', RB.analytics.endDate );
+                var startDate = $('input[name="start_date"]').val();
+                var endDate = $('input[name="end_date"]').val();
+                
+                RB.util.setHashValue('start', startDate );
+                RB.util.setHashValue('end', endDate );
 
-                // re-execute the API calls
                 RB.analytics.updateAll();
                 return false;
             });
+
             RB.analytics.updateAll();
 
         });
