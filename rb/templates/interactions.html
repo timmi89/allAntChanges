@@ -190,7 +190,7 @@ $('#cards').addClass('user_profile');
                   "id"    :   {{ interaction.id }},
                   "kind"  :   "{{ interaction.content.kind }}",
                   "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
-                  "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+                  "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
                   "content_body"          :   '{{ interaction.content.body|escapejs }}',
                   "content_height"          :   {{ interaction.content.height }},
                   "content_width"          :   {{ interaction.content.width }},
@@ -244,7 +244,7 @@ $('#cards').addClass('user_profile');
                   "id"    :   {{ interaction.id }},
                   "kind"  :   "{{ interaction.content.kind }}",
                   "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
-                  "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+                  "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
                   "content_body"          :   '{{ interaction.content.body|escapejs }}',
                   "page_title"            :   "{{ page.grouper.title|escapejs }}",
                   "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
@@ -279,7 +279,7 @@ var metoos = {
               "id"    :   {{ interaction.id }},
               "kind"  :   "{{ interaction.content.kind }}",
               "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
-              "interaction_node_body" :   "{% if interaction.kind = 'tag' or interaction.kind = 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+              "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
               "content_body"          :   '{{ interaction.content.body|escapejs }}',
               "content_id"          :   '{{ interaction.content.id }}',
               "page_title"            :   "{{ page.grouper.title|escapejs }}",
@@ -690,22 +690,6 @@ $.each( metoos, function(interaction_id, count) {
 var $container = $('#content');
 
 function cardReset() {
-  {% if profile_user or group or board %}
-  // $('#cards, #board_listing, #board_header').width( $(window).width() - 40 );
-  // var contentWidth = $('#cards').width(),
-  //     numColumns = parseInt(contentWidth/312);
-  
-  {% if singleton %}
-  // if ( $('div.card.img').length || $('div.card.med').length ) {
-  //   $('#content').width( 305);
-  // }
-  {% endif %}
-
-  {% if not singleton %}
-  // $('#content').width( (numColumns*302) + ((numColumns-1)*12) );
-  {% endif %}
-  // $('#cards, #board_listing, #board_header').width( (numColumns*302) + ((numColumns-1)*12) + 16 );
-  {% endif %}
 
 $container.isotope({
   // options...
@@ -756,10 +740,6 @@ $(document).ready(function(){
 
 {% if query_string %}
 RB.interactions.searchBoards('{{query_string}}');
-{% endif %}
-
-{% if not query_string and not profile_user and not board and not singleton and not group %}
-// RB.interactions.searchBoards('');
 {% endif %}
 
 </script>

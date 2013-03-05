@@ -5199,7 +5199,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         if (isText) {
                             $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
                         } else {
-                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+                            var reactionLabel = (summary.counts.tags>1) ? " Reactions" : " Reaction";
+                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + reactionLabel );
                         }
                         if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
 
@@ -6904,11 +6905,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     return $blockParent;
                 }
                 function _drawActionBar ($blockParent){
-                    var hash = $blockParent.data('hash');
+                    var hash = $blockParent.data('hash'),
+                        summary = RDR.summaries[hash] || 'undefined';
 
                     if ( _writeModeOpenForThisContainer(hash) ) return false;
                     //else
 
+                    if ( summary != 'undefined') {
+                        var $indicator = summary.$indicator;
+                        RDR.actions.indicators.helpers.out($indicator);
+                    }
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
                     RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
@@ -6927,6 +6933,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         content:selected.text,
                         hash:$blockParent.data('hash')
                     });
+
                 }
                 function _writeModeOpenForThisContainer(hash){
 
