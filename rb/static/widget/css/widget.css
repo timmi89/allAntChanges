@@ -325,7 +325,7 @@ div.rdr_sandbox .rdr_tooltip_about                                  { margin:0 0
 
 /* global tag defs */
 div.rdr_sandbox div.rdr h1, 
-div.rdr_sandbox div.rdr h2  {font-family:'Helvetica',Arial,sans-serif !important; font-weight:bold !important; color:#666 !important; margin:0 !important; font-size:11px !important; padding:3px 9px 0 12px !important; border:none !important; }
+div.rdr_sandbox div.rdr h2  {font-family:'HelveticaBold',Arial,sans-serif !important; letter-spacing:-1px !important; font-weight:bold !important; color:#666 !important; margin:0 !important; font-size:11px !important; padding:3px 9px 0 12px !important; border:none !important; }
 div.rdr_sandbox div.rdr h1 span.rdr_contentNode_text {font-size:18px !important; color:#008be4 !important;}
 
 div.rdr_sandbox div.rdr li {background:none !important; padding:0 !important;}
@@ -382,6 +382,7 @@ div.rdr_sandbox div.rdr div.rdr_footer.rdr_cta {
 }
 div.rdr_sandbox div.rdr div.rdr_footer.rdr_cta span {
   font-family: 'HelveticaBold' !important;
+  letter-spacing:-1px !important;
   font-size: 14px !important;
   padding:4px !important;
   display:inline-block !important;
@@ -734,13 +735,15 @@ div.rdr_sandbox div.rdr_info {padding: 10px 10px 2px 10px !important;}
 #rdr-page-summary {position:relative !important;}
 
 div.rdr.rdr-summary {
-  margin-bottom:10px !important;
+  margin:10px 0 !important;
   float:none;;
-  cursor:pointer !important;
+  cursor:default !important;
   display:inline-block !important;
   color: #008de4 !important;
   padding: 0px 0px 0px 8px !important;
   height:30px !important;
+  /*fallback*/
+  background: #fff;
   background: -moz-linear-gradient(
     top,
     #ffffff,
@@ -768,14 +771,15 @@ div.rdr.rdr-summary {
 }
 
 div.rdr.rdr-summary:hover {
-  background: -moz-linear-gradient(
+  background:#fff !important;
+  /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
     #e5f5ff) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
     from(#ffffff),
-    to(#e5f5ff)) !important;
+    to(#e5f5ff)) !important;*/
 }
 div.rdr_shareWidget div.rdr.rdr-summary {
     border:1px solid #ccc !important;
@@ -791,16 +795,8 @@ div.rdr.rdr-summary .rdr_chevron_cta {
   padding-left: 6px !important;
   margin-left: 6px !important;
 }
-div.rdr.rdr-summary:hover .rdr_chevron_cta {
-  background: -moz-linear-gradient(
-    top,
-    #f7f7f7 100%,
-    #dddddd) !important;
-  background: -webkit-gradient(
-    linear, left top, left bottom, 
-    from(#f7f7f7),
-    to(#dddddd)) !important;
-  border-left:1px solid #eee !important;
+div.rdr.rdr-summary:hover .rdr_chevron_cta i:before {
+  content: "\f077";
 }
 div.rdr.rdr-summary .rdr_chevron_cta i {
   color:#999 !important;
@@ -818,8 +814,7 @@ div.rdr.rdr-summary #rdr-user a {
   color:#008be4 !important;
 }
 div.rdr_sandbox div.rdr div.rdr_footer.rdr_cta .rdr_what_is_it { border-left:1px solid #ccc; }
-div.rdr_sandbox div.rdr.w160 div.rdr_footer.rdr_cta .rdr_what_is_it,
-div.rdr_sandbox div.rdr.w320 div.rdr_footer.rdr_cta .rdr_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0 !important;}
+div.rdr_sandbox div.rdr.w160 div.rdr_footer.rdr_cta .rdr_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0 !important;}
 
 div.rdr.rdr-summary div.rdr-see-more {
     background: url("../images/readr_icons.png") repeat scroll -225px 0px transparent !important;
@@ -906,7 +901,8 @@ div.rdr.rdr-summary a.rdr_reactions_label {
   font-weight:bold !important;
   color:#008be4 !important;
   font-size:14px !important;
-  font-family:'Helvetica',Arial,sans-serif;
+  font-family:'HelveticaBold',Arial,sans-serif;
+  letter-spacing:-1px !important;
   padding:10px 0 0 !important;
   text-decoration:none !important;
   /*position: relative !important;
@@ -972,13 +968,13 @@ div.rdr.rdr-summary div.rdr-sum-reactions span{
 }
 
 div.rdr.rdr-summary div.rdr-sum-reactions a:hover {
-  text-decoration:none !important;
+  /*text-decoration:none !important;
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f0f0f0));
     background-image: -webkit-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -moz-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -ms-linear-gradient(top, #ffffff, #f0f0f0);
     background-image: -o-linear-gradient(top, #ffffff, #f0f0f0);
-    background-image: linear-gradient(top, #ffffff, #f0f0f0);
+    background-image: linear-gradient(top, #ffffff, #f0f0f0);*/
 }
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a,
 div.rdr.rdr-summary div.rdr-sum-reactions div.rdr-this-is-readrboard a:hover{
@@ -1042,6 +1038,7 @@ div.rdr .rdr_body.rdr_page_reactions_summary h1 {
 div.rdr .rdr_body.rdr_page_reactions_summary table {
   min-width:320px !important;
 }
+/* deprecated?  all of this using tables */
 div.rdr .rdr_body.rdr_page_reactions_summary td {
   padding:5px 0 !important;
   cursor:pointer !important;
@@ -1425,7 +1422,7 @@ div.rdr_indicator {
     z-index:11000 !important;
     text-decoration:none !important;
     border:none !important;
-    cursor:progress !important;
+    cursor:default !important;
     -webkit-user-select: none !important;
     -khtml-user-select: none !important;
     -moz-user-select: none !important;
@@ -1433,7 +1430,7 @@ div.rdr_indicator {
     user-select: none !important;
 }
 div.rdr_indicator.rdr_indicator_for_media {
-    cursor:pointer !important;
+    /*cursor:pointer !important;*/
 }
 
 div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
@@ -1588,6 +1585,8 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
   color: #008de4 !important;
   padding: 0 0 0 4px !important;
   height:24px !important;
+  /*fallback*/
+  background: #fff;
   background: -moz-linear-gradient(
     top,
     #ffffff 100%,
@@ -1615,19 +1614,19 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
 }
 
 div.rdr_indicator_for_media div.rdr_indicator_body:hover {
-  background: -moz-linear-gradient(
+  background: #fff !important;
+  /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
     #e5f5ff) !important;
   background: -webkit-gradient(
     linear, left top, left bottom, 
     from(#ffffff),
-    to(#e5f5ff)) !important;
+    to(#e5f5ff)) !important;*/
 }
 
 div.rdr_indicator_for_media .rdr_chevron_cta {
-  display: block !important;
-  float: right !important;
+  display: inline-block !important;
   border-left: 1px solid #ddd !important;
   height: 30px !important;
   width:23px !important;
@@ -1635,8 +1634,9 @@ div.rdr_indicator_for_media .rdr_chevron_cta {
   padding-left: 5px !important;
   margin-left: 6px !important;
 }
-div.rdr_indicator_for_media:hover .rdr_chevron_cta {
-  background: -moz-linear-gradient(
+div.rdr_indicator_for_media:hover .rdr_chevron_cta i:before {
+  content: "\f077";
+  /*background: -moz-linear-gradient(
     top,
     #f7f7f7 100%,
     #dddddd) !important;
@@ -1644,7 +1644,7 @@ div.rdr_indicator_for_media:hover .rdr_chevron_cta {
     linear, left top, left bottom, 
     from(#f7f7f7),
     to(#dddddd)) !important;
-  border-left:1px solid #eee !important;
+  border-left:1px solid #eee !important;*/
 }
 
 
@@ -1672,6 +1672,9 @@ div.rdr_indicator_for_media {
 
 div.rdr_indicator_for_media.rdr_live_hover {
     display:block !important;
+}
+div.rdr_indicator_for_media.rdr_live_hover.rdr_hidden {
+  display:none !important;
 }
 
 div.rdr_sandbox div.rdr_indicator_details_for_media {
@@ -1733,20 +1736,23 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list {
     background:#000 !important;
 }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { background:#000 !important; height:auto;; width:160px !important; font-family:'HelveticaBold' !important; }
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { background:#000 !important; height:auto;; width:160px !important; font-family:'HelveticaBold' !important; letter-spacing:-1px !important;}
 div.rdr_sandbox div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list { width:320px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list { width:480px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list { width:640px !important; }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box { text-align:center !important; font-family:'HelveticaBold',Helvetica,Arial !important; box-sizing: border-box !important; overflow:hidden !important; }
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box { text-align:center !important; font-family:'HelveticaBold',Helvetica,Arial !important; box-sizing: border-box !important; overflow:hidden !important; letter-spacing:-1px !important;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover { background:#fff !important; cursor:pointer !important; }
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag { position:relative !important; height:100% !important; word-spacing:0 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag { position:relative !important; height:100% !important; word-spacing:0 !important; -webkit-transition: top 0.6s ease, bottom 0.6s ease; -moz-transition: top 0.6s ease, bottom 0.6s ease; -o-transition: top 0.6s ease, bottom 0.6s ease; -ms-transition: top 0.6s ease, bottom 0.6s ease; transition: top 0.6s ease, bottom 0.6s ease;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_big div.rdr_tag { bottom:-125%;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_big div.rdr_tag.rdr_animated { bottom:0%;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium div.rdr_tag { top:-125%;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium div.rdr_tag.rdr_animated { top:0%;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag { top:-125%;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count { font-size:20px !important; }
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag.rdr_animated { top:0%;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count { font-size:20px !important; display:block !important;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px !important; display:block !important;margin-top:2px !important;}
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px !important; height:110px !important; padding:20px 15px 0 !important;}
@@ -1790,10 +1796,11 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_b
 
 div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { padding:5px 10px !important; text-align:center !important; width:320px !important; }
 /*div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag div { text-align:center !important; margin:0 auto;}*/
-div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center !important; margin:0 auto; font-family:'HelveticaBold' !important; font-size:16px !important; border:none !important; }
+div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center !important; margin:0 auto; font-family:'HelveticaBold' !important; font-size:16px !important; border:none !important; letter-spacing:-1px !important;}
 div.rdr_sandbox div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4 !important; }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { display:block !important; margin-right:-25px; font-size:10px !important; color:#fff !important; float:right !important; margin-top:-15px !important; position:relative !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { display:block !important; margin-right:-25px; font-size:10px !important; color:#fff !important; float:right !important; margin-top:-15px !important; position:relative !important; -webkit-transition: margin-right 0.6s ease; -moz-transition: margin-right 0.6s ease; -o-transition: margin-right 0.6s ease; -ms-transition: margin-right 0.6s ease; transition: margin-right 0.6s ease;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover.rdr_animated { margin-right:0px; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover i { font-size:12px !important; color:#fff !important; margin-right:2px !important; }
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover span.rdr_comment_hover i,

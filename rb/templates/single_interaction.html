@@ -1,9 +1,26 @@
 {% extends "index.html" %}
+{% block extendedHead %}
+{% regroup current_page.object_list by page as pi %}
 
-    {% block cards %}
+{% for page in pi %}
+    {% for interaction in page.list %}
+        {% if interaction.kind == 'tag' %}
+  <meta property="og:title"       content="{{interaction.interaction_node.body|escapejs }}" itemprop="name" />
+  <meta property="og:type"        content="article"/>
+  <meta property="og:url"         content="http://www.readrboard.com/i/{{ interaction.id }}"/>
+  <meta property="og:image"       content="http://s3.amazonaws.com/readrboard/images/site/periodic_logo.png" itemprop="image" />
+  <meta property="og:site_name"   content="ReadrBoard" itemprop="publisher" />
+  <meta property="og:description" content="{{ interaction.content.body|escapejs }}" />
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}
+
+{% block cards %}
 
     <div class="singleReactionHeader">
-        <span class="title">A ReadrBoard Reaction</span>
+        <span class="title">A ReadrBoard Reaction!</span>
         <a id="seeItLink" class="seeIt">See it live</a>
         <div class="clear"></div>
     </div>
@@ -16,7 +33,7 @@
 
     </div>
     <script>
-        var interactionId = $('.card').data('interactionId');
+        var interactionId = window.location.href.split('/')[4];
         $('#seeItLink').attr("href", "/i/"+interactionId);
 
         $('#content').hover(
@@ -29,7 +46,7 @@
         );
 
     </script>
-    {% endblock cards %}    
+{% endblock cards %}    
 
 {% block hasFixedBar %}{%endblock%}
 {% block fixedBar %}{%endblock%}
