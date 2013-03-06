@@ -21,9 +21,10 @@
  *  Work: Lead Product Designer @ http://kyruus.com
  */
 @font-face {
-  font-family: 'FontAwesome';
+  font-family: 'RDR_FontAwesome';
   src: url('fontawesome-webfont.eot?v=3.0.1');
-  src: url('fontawesome-webfont.eot?#iefix&v=3.0.1') format('embedded-opentype'),
+  /*src: url('fontawesome-webfont.eot?#iefix&v=3.0.1') format('embedded-opentype'),*/
+  src: local("☺"),
     url('fontawesome-webfont.woff?v=3.0.1') format('woff'),
     url('fontawesome-webfont.ttf?v=3.0.1') format('truetype');
   font-weight: normal;
@@ -33,7 +34,7 @@
     ------------------------------------------------------- */
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: FontAwesome;
+  font-family: RDR_FontAwesome;
   font-weight: normal;
   font-style: normal;
   text-decoration: inherit;
