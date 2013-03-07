@@ -5800,12 +5800,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     borderHilites: {
                         //RDR.actions.indicators.utils.borderHilites:
                         
-
+                        //hiliteDesignEdit
                         //our old blue version
-                        designVersion: 1,
+                        // designVersion: 1,
 
                         //black border and black box shadow fade
                         designVersion: 2,
+                        
 
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
@@ -5890,6 +5891,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
                             };
                             
+                            //hiliteDesignEdit
                             // var hiliteThickness = 2,
                             var hiliteThickness = 
                                 Section.designVersion === 1 ? 2 : 
