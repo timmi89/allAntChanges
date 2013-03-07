@@ -5527,7 +5527,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a different reaction, select some text</em>' );
+                                RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
