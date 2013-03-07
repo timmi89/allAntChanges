@@ -5798,6 +5798,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     },
                     borderHilites: {
                         //RDR.actions.indicators.utils.borderHilites:
+                        
+
+                        //our old blue version
+                        designVersion: 1,
+
+                        //black border and black box shadow fade
+                        designVersion: 2,
 
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
@@ -5812,6 +5819,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 
                                 if( !$mediaBorderWrap.length ){
                                     $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
+                                    $mediaBorderWrap.addClass('designVersion_' + RDR.actions.indicators.utils.borderHilites.designVersion);
                                 }
                                 $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
@@ -5841,6 +5849,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         },
                         update: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.update:
+
+                            var Section = RDR.actions.indicators.utils.borderHilites;
+
                             var $indicator = $('#rdr_indicator_'+hash),
                                 $container = $('.rdr-'+hash),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
@@ -5878,8 +5889,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 }
                             };
                             
-                            var hiliteThickness = 2,
-                                containerWidth,
+                            // var hiliteThickness = 2,
+                            var hiliteThickness = 
+                                Section.designVersion === 1 ? 2 : 
+                                Section.designVersion === 2 ? 3 : 
+                                2;
+                            
+                            var containerWidth,
                                 containerHeight;
 
                             var hasBorder = false;
@@ -5913,8 +5929,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             //use dims to make the css rules for each border side
+                            var widthCap = 2*hiliteThickness;
+
                             borders.top.css = {
-                                width: containerWidth+'px',
+                                width: containerWidth+widthCap+'px',
                                 height: 0+'px',
                                 top: -hiliteThickness+'px',
                                 left: -hiliteThickness+'px'
@@ -5926,7 +5944,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 left: containerWidth+'px'
                             };
                             borders.bottom.css = {
-                                width: containerWidth+'px',
+                                width: containerWidth+widthCap+'px',
                                 height: 0+'px',
                                 top: containerHeight+'px',
                                 left: -hiliteThickness+'px'
