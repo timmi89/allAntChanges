@@ -2452,6 +2452,7 @@ function readrBoard($R){
                     //brute force for now -
                     //if they click the X we need this;
                     $('div.rdr_indicator_for_media').hide();
+                    RDR.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
@@ -2466,9 +2467,11 @@ function readrBoard($R){
                     $container = $('.rdr-'+hash);
 
                 var kind = $container.data('kind');
+
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('rdr_shared');
                     RDR.actions.indicators.utils.updateContainerTracker(hash);
+                    RDR.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -3236,12 +3239,16 @@ function readrBoard($R){
                                     // $('#rdr_indicator_'+hash).show();
                                     if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                         $('#rdr_indicator_' + hash).show();
+                                        RDR.actions.indicators.utils.borderHilites.update(hash);
+                                        RDR.actions.indicators.utils.borderHilites.engage(hash);
                                     }
                                 }
                             });
                             //these calls are redundant to the same calls in the callback above,
                             //but this will make them show up right away,
                             //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
+                            RDR.actions.indicators.utils.borderHilites.update(hash);
+                            RDR.actions.indicators.utils.borderHilites.engage(hash);
 
                         } else {
                             var hash = $this.data('hash');
@@ -3249,6 +3256,7 @@ function readrBoard($R){
                             $this.addClass('rdr_live_hover');
                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                 $('#rdr_indicator_' + hash).show();
+                                RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
                             RDR.actions.content_nodes.init(hash, function(){});
                         }
@@ -3266,6 +3274,7 @@ function readrBoard($R){
                     // }, 250);
                         
                         $this.removeClass('rdr_live_hover');
+                        RDR.actions.indicators.utils.borderHilites.disengage(hash);
                         $('#rdr_indicator_' + hash).hide();
                 });
 
@@ -3279,6 +3288,7 @@ function readrBoard($R){
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
                 RDR.actions.containers.media.disengageAll();
+                RDR.actions.indicators.utils.borderHilites.disengageAll();
                 $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
@@ -5273,7 +5283,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 utils:{
                     //RDR.actions.indicators.utils:
-                    kindSpecificSetup:{
+                    kindSpecificSetup: {
                         img: function( hash ){
                             var summary = RDR.summaries[hash],
                                 $container = summary.$container,
@@ -5517,7 +5527,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '<em>+ To add a different reaction, select some text</em>' );
+                                RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
@@ -5783,6 +5793,208 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }else{
 
                             }
+                        }
+
+                        RDR.actions.indicators.utils.borderHilites.update(hash);
+                    },
+                    borderHilites: {
+                        //RDR.actions.indicators.utils.borderHilites:
+                        
+                        //hiliteDesignEdit
+                        //our old blue version
+                        // designVersion: 1,
+
+                        //black border and black box shadow fade
+                        designVersion: 2,
+                        
+
+                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
+                        make: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.make:
+
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
+                                                        
+                            if( !$container_tracker.hasClass('rdr_inline_video') ){
+                                
+                                if( !$mediaBorderWrap.length ){
+                                    $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
+                                    $mediaBorderWrap.addClass('designVersion_' + RDR.actions.indicators.utils.borderHilites.designVersion);
+                                }
+                                $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+
+                                var borders = {
+                                    'top': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'right': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'bottom': {
+                                        $side: null,
+                                        css: {}
+                                    },
+                                    'left': {
+                                        $side: null,
+                                        css: {}
+                                    }
+                                };
+
+                                $mediaBorderWrap.data('borders',borders);
+                                RDR.actions.indicators.utils.borderHilites.update(hash);
+                            }
+
+                        },
+                        update: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.update:
+
+                            var Section = RDR.actions.indicators.utils.borderHilites;
+
+                            var $indicator = $('#rdr_indicator_'+hash),
+                                $container = $('.rdr-'+hash),
+                                $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            
+                            if( !$mediaBorderWrap.length ){
+                                //failsafe that shouldnt be needed.
+                                if( this.makeAttempt > 1 ) return;
+                                this.makeAttempt ++;
+                                RDR.actions.indicators.utils.borderHilites.make(hash);
+                                //just return here.  the make function will call this update function again and this will be bypassed.
+                                return;
+                            }
+                            //else
+                            this.makeAttempt = 0;
+
+                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+
+                            var borders = {
+                                'top': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'right': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'bottom': {
+                                    $side: null,
+                                    css: {}
+                                },
+                                'left': {
+                                    $side: null,
+                                    css: {}
+                                }
+                            };
+                            
+                            //hiliteDesignEdit
+                            // var hiliteThickness = 2,
+                            var hiliteThickness = 
+                                Section.designVersion === 1 ? 2 : 
+                                Section.designVersion === 2 ? 3 : 
+                                2;
+                            
+                            var containerWidth,
+                                containerHeight;
+
+                            var hasBorder = false;
+                            //for checking if it has a border.
+                            //If so we'll use outerWidth and outerHeight to take it into account.
+                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+
+                            $.each( borders, function(side, data){
+                                //set the value in the object using the key's string as a helper
+                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                      
+                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                                if( !data.$side.length ){
+                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                                }
+
+                                //if any side has a border - set hasBorder to true
+                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                                    hasBorder = true;
+                                }
+
+                            });
+                            
+                            //figure out dims
+                            if(hasBorder){
+                                containerWidth = $container.outerWidth();
+                                containerHeight = $container.outerHeight();
+                            }else{
+                                containerWidth = $container.width();
+                                containerHeight = $container.height();
+                            }
+
+                            //use dims to make the css rules for each border side
+                            var widthCap = 2*hiliteThickness;
+
+                            borders.top.css = {
+                                width: containerWidth+widthCap+'px',
+                                height: 0+'px',
+                                top: -hiliteThickness+'px',
+                                left: -hiliteThickness+'px'
+                            };
+                            borders.right.css = {
+                                width:0+'px',
+                                height: containerHeight+'px',
+                                top: 0+'px',
+                                left: containerWidth+'px'
+                            };
+                            borders.bottom.css = {
+                                width: containerWidth+widthCap+'px',
+                                height: 0+'px',
+                                top: containerHeight+'px',
+                                left: -hiliteThickness+'px'
+                            };
+                            borders.left.css = {
+                                width: 0+'px',
+                                height: containerHeight+'px',
+                                top: 0+'px',
+                                left: -hiliteThickness+'px'
+                            };
+
+                            $.each( borders, function( side, data ){
+                                RDR.util.cssSuperImportant( data.$side, data.css, true );
+                            });                       
+                    
+                        },
+                        engage: function(hash, isShareLink){
+                            //RDR.actions.indicators.utils.borderHilites.engage:
+                            var $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+
+                            $mediaBorderWrap.addClass('engaged');
+                            
+                            if (isShareLink) {
+                                $mediaBorderWrap.addClass('engagedForShareLink');
+                            }
+                        },
+                        disengage: function(hash){
+                            //RDR.actions.indicators.utils.borderHilites.disengage:
+                            var $container_tracker = $('#rdr_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+
+                            $mediaBorderWrap.removeClass('engaged');
+                            $mediaBorderWrap.removeClass('engagedForShareLink');
+                            $('#rdr_indicator_' + hash).hide();
+                        },
+                        engageAll: function(){
+                            //RDR.actions.indicators.utils.borderHilites.engageAll:
+                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            $mediaBorderWrap.addClass('engaged');
+                        },
+                        disengageAll: function(){
+                            //RDR.actions.indicators.utils.borderHilites.disengageAll:
+                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            $mediaBorderWrap.removeClass('engaged');
+                            $mediaBorderWrap.removeClass('engagedForShareLink');
+                            $('div.rdr_indicator_for_media').hide();
                         }
                     }
                 }//end RDR.actions.indicators.utils
