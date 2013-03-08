@@ -74,7 +74,7 @@ class CacheUpdater(object):
     
     def __call__(self, **kwargs):
         self.hydrate()
-        logger.info("hydrated")
+        #logger.info("hydrated")
         if self.method == 'update':
             try:
                 cache.set(self.key, self.value)
@@ -129,7 +129,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
             self.key = 'page_containers' + str(self.page_id)
            
         #self.key = 'page_containers' + str(self.page_id)
-        logger.warning('hydrating using key: ' + self.key)
+        #logger.warning('hydrating using key: ' + self.key)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         
