@@ -140,11 +140,11 @@ def page(request, interaction_id = None, **kwargs):
     try:
         interaction = Interaction.objects.get(id = interaction_id)
         page = interaction.page
-        page_interactions_list = list(page.interactions().order_by('created'))
+        page_interactions_list = list(page.interactions().order_by('-created'))
         user_set = set()
         distance = 1
         for p_i in page_interactions_list:
-            if not interaction.parent or interaction.parent != p_i:
+            if interaction.user != p_i.user and (not interaction.parent or interaction.parent != p_i):
                 for threshold in page_rules:
                     if threshold.passes(count=distance, exact=True) and not p_i.user.email.startswith('tempuser') and not p_i.user in user_set:
                         logger.info("sending page notification to:" + p_i.user.email)
