@@ -5545,7 +5545,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             colorInt = 1;
 
                             // size the rindow based on # of reactions
-                            if ( bucketTotal > 6 ) {
+                            if ( bucketTotal > 6 && !isWriteMode ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                             } else if ( typeof page != "undefined" && isWriteMode ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
