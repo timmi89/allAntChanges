@@ -1,8 +1,7 @@
 <p>
     {{user.email}}, someone has commented on your <a href="{{base_url}}/interaction/{{interaction.id}}/">reaction</a>.
 </p>
-<a href="{{interaction.page.url}}">See it on the page.</a>
-
+On <a href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url }}{% else %}{{ interaction.page.url }}{% endif %}">{{interaction.page.grouper.title}}</a> at {{ page.grouper.site.group.name }}.
 <p>
 	==============================
 	<br/>
