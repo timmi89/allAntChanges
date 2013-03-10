@@ -3,11 +3,13 @@
   position:relative;
   visibility:hidden;
   min-height:400px;
+  width:920px !important;
 }
 #content .card {
   /*width:50%;*/
-  max-width:500px;
-  padding:20px 20px 30px 20px;
+  width:460px;
+  box-sizing:border-box;
+  /*padding:20px 20px 30px 20px;*/
   margin:0;
   background:#fff;
   border:1px solid #d9d9d9;
@@ -117,9 +119,6 @@ section[role="content"]{
   /*max-width:615px !important;*/
 }
 
-#cards .card {
-  width:440px !important;
-}
 .singleReactionHeader {
   text-align:center;
   color:#fff;
@@ -163,7 +162,7 @@ div.otherContent {display:none;}
 
 {% if not board %}
 {% if not query_string and not singleton %} 
-<h2 class="header">All Reactions</h2>
+<h2 class="header">Recent Reactions</h2>
 {% endif %}
 {% endif %}
 <section id="content"></section>
@@ -344,7 +343,8 @@ var metoos = {
 
 <script>
 var zIndex = 400,
-    cardWidth = Math.floor( $('#cards').width()/2 - 40 );
+    cardWidth = 460;
+    // cardWidth = Math.floor( $('#cards').width()/2 - 40 );
 function writeCard( interaction, showBlocked ) {
   
   var userCookie = $.cookie('user_id');
@@ -695,7 +695,7 @@ $container.isotope({
   // options...
   resizable: false, // disable normal resizing
   // set columnWidth to a percentage of container width
-  // masonry: { columnWidth: $container.width() / 10 },
+  masonry: { columnWidth: 460 },
   itemSelector : 'div.card'
 }, function() {
   $('#content').css('visibility','visible')
@@ -715,7 +715,7 @@ function getContentDimsStyle(dims){
     //else
 
     //this must match our .card{width:300px + margin-left:2px} css
-    var CARDWIDTH = $('.card').eq(0).width();
+    var CARDWIDTH = 460; //$('.card').eq(0).width();
     var minHeight = Math.round((height/width)*CARDWIDTH);
 
     minHeight += 3;

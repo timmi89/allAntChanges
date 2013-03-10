@@ -24,16 +24,14 @@
 }
 
 /* global for now */
-
+#page_container { width:1140px; margin: 0 auto; }
 /* fix the damn box model */
 * { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; }
 h1, 
 h2 { font-family:Helvetica,'HelveticaBold',Arial; }
 
 /* HEADER */
-header[role="banner"]	{height:36px;background:#fff;position:fixed;width:100%;z-index:12001;top:0;font-size:12px;text-align:center;
-  box-shadow:0px 0px 6px #aaa;
-}
+header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1140px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;}
 header[role="banner"] a.logo    { display:block; }
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:218px; }
 
@@ -70,14 +68,14 @@ ul.link-list li a			{ color:#fff; font-size:12px; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* sidebar */
-section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px;}
-section[role="complementary"] { width:220px; border-right:1px solid #d9d9d9; display:block; float:left; vertical-align:top;}
+section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px;background:url(../site/images/dark_left_column.png) 0 0 repeat-y;}
+section[role="complementary"] { width:220px; border-right:1px solid #fff; display:block; float:left; vertical-align:top; }
 section[role="complementary"] h1 { margin:0; }
-section[role="complementary"] h2 { height:90px; text-align:center; color:#b7b7b7; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:95px; font-size:20px; }
+section[role="complementary"] h2 { height:110px; text-align:center; color:#3c3c3c; border-top:2px solid #fff; border-bottom:2px solid #fff; line-height:110px; font-size:20px; background:#7eb2f0; }
 section[role="complementary"] h2 img { max-width:90%; }
 section[role="complementary"] h2.about_link:hover { cursor:pointer; background:#eee; color:#737373;}
 section[role="complementary"] div.component { margin-bottom:30px; width:200px; }
-section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:14px; }
+section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:14px; color:#dddddd;}
 section[role="complementary"] div.component ul { list-style-type:none; padding:0;margin:0 0 0 20px;text-align:left;}
 section[role="complementary"] div.component ul li { margin-bottom:5px;}
 section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
@@ -90,8 +88,8 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 #which_content a,
 #follow_info a { display:block; }
 
-section[role="main"] { margin-left:219px; padding-right:20px; border-left:1px solid #d9d9d9; display:block; vertical-align:top; }
-section[role="main"] h2.header { height:90px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:90px; font-size:36px; padding-left:20px; margin:0;}
+section[role="main"] { margin-left:220px; border-left:1px solid #fff; display:block; vertical-align:top; box-sizing:border-box;}
+section[role="main"] h2.header { height:110px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:110px; font-size:36px; padding:1px 0; margin:0; text-align:center; }
 
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
@@ -235,8 +233,8 @@ section[role="main"] div.card div.content .comments{
 }
 
 section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
-section[role="main"] div.card.img div.content div.content_body img			{ width:100%; margin-top:-1px; position:relative;z-index:1; box-shadow:0px 0px 10px #aaa;}
-section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; margin-top:-1px; position:relative;z-index:1; box-shadow:0px 0px 10px #aaa;}
+section[role="main"] div.card.img div.content div.content_body img			{ width:100%; position:relative;z-index:1; }
+section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; position:relative;z-index:1; }
 
 section[role="main"] div.card div.comments    { background:#f0f0f0; border:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
 section[role="main"] div.card div.comments h2 { 
