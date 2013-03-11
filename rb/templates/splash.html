@@ -11,7 +11,7 @@
 {% block mainContent %}
     <div id="splashBlurbs">
         <h1 style="font-size:3em;margin:20px auto 10px;">React to anything on the web.</h1>
-        <em style="display:block;margin:0px auto 40px;text-align:center;">Say exactly how you feel about any phrase, image, video, or page on the web.</em>
+        <em id="say_exactly" style="display:block;margin:0px auto 40px;text-align:center;">Say exactly how you feel about any phrase, image, video, or page on the web.</em>
         <hr style="margin-bottom:40px;"/>
         <div class="theSpitch">
             <div>
@@ -222,5 +222,6 @@ if (window.location.href.indexOf('publishers') != -1 ) {
     $('#readers').hide();
 }
 </script>
+<script type="text/javascript" defer src="http://www.readrboard.com/static/engage.js"></script>
 {% endblock %}
 <!-- widget for slideshow -->
