@@ -275,7 +275,7 @@ function writeCard( interaction, showBlocked ) {
         hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
         profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png",
         $header = $('<header/>').attr('title', interaction.interaction_node_body)//chain
-         .append('<div class="who_and_what color'+colorInt+'"><a href="'+interaction.user_profile_link+'" class="added_by_user"><img src="'+profilePic+'" class="user_avatar" /><h4>'+interaction.user_name +'</h4></a><h1><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></h1></div>');
+         .append('<div class="who_and_what color'+colorInt+'"><a href="'+interaction.user_profile_link+'" class="added_by_user"><img src="'+profilePic+'" class="user_avatar" /><h4>'+interaction.user_name +'</h4></a><h1><div><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></div></h1></div>');
 
 
     if ( interaction.moderator ) {
@@ -524,6 +524,7 @@ function writeCard( interaction, showBlocked ) {
     colorInt = ( colorInt < 5 ) ? colorInt+1 : 1;
 
     $('#cards #content').append( $card ); 
+    $card.find('header h1').bigtext({ maxfontsize:32 });
   }
 }
 
