@@ -146,7 +146,7 @@ $('#cards').addClass('user_profile');
                   ]
             };
             if ( interaction.user_name == "" ) {
-              interaction.user_name = "Unregistered User";
+              interaction.user_name = "Unregistered<br/>User";
             }
             interactions.push( interaction );
 
@@ -233,7 +233,7 @@ var metoos = {
               ],
         };
         if ( interaction.user_name == "" ) {
-          interaction.user_name = "Unregistered User";
+          interaction.user_name = "Unregistered<br/>User";
         }
         interactions.push( interaction );
     {% endfor %}
@@ -322,7 +322,7 @@ function writeCard( interaction, showBlocked ) {
       // });
 
       $content.append(
-        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="175" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
+        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="250" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments"></div>');
       if ( interaction.content_body.length > 30 ) {
@@ -367,11 +367,11 @@ function writeCard( interaction, showBlocked ) {
     if ( interaction.kind == "pag" ) {
       var from_text = '<span class="from">Whole page</span> at<br/>';
     } else if ( interaction.kind == "txt" ) {
-      var from_text = '<span class="from">Quote</span> from<br/>';
+      var from_text = '<span class="from">Phrase</span> from<br/>';
     } else if ( interaction.kind == "img" ) {
-      var from_text = '<span class="from">picture</span> from<br/>';
+      var from_text = '<span class="from">Image</span> from<br/>';
     } else {
-      var from_text = '<span class="from">video</span> from<br/>';
+      var from_text = '<span class="from">Video</span> from<br/>';
     }
     $metaRight.append('<img class="group_favicon" src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /><div class="group">'+from_text+'<a href=/group/' + interaction.group.short_name + ' class="group_link"> <span>'+interaction.domain+'</span></a>: <a href="{{ BASE_URL }}/i/'+interaction.id+'" class="title" target="_blank">'+interaction.page_title+' <i class="icon-external-link"></i></a></div>')
             .data({
@@ -394,7 +394,7 @@ function writeCard( interaction, showBlocked ) {
         if ( interaction.kind == "img" ) {
           var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
         } else if ( interaction.kind == "med" ) {
-          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
+          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
         } else if ( interaction.kind == "txt" ) {
           $rateContent = $('<div class="rateContent"><span>'+interaction.content_body+'</span></div>');
         }
@@ -432,7 +432,7 @@ function writeCard( interaction, showBlocked ) {
             if ( interaction.kind == "img" ) {
                 $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
             } else if ( interaction.kind == "med" ) {
-                $rateContent.append('<iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe>');
+                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe>');
             } else if ( interaction.kind == "txt" ) {
                 $rateContent.append('<span>'+interaction.content_body+'</span>')
                 .addClass('rateContentText');
@@ -475,7 +475,7 @@ function writeCard( interaction, showBlocked ) {
             if ( interaction.kind == "img" ) {
                 $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
             } else if ( interaction.kind == "med" ) {
-                $rateContent.append('<iframe width="300" height="175" frameborder="0" src="'+interaction.content_body+'"></iframe>');
+                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe>');
             } else if ( interaction.kind == "txt" ) {
                 $rateContent.append('<span>'+interaction.content_body+'</span>')
                 .addClass('rateContentText');
@@ -595,7 +595,7 @@ $.each( interactions, function(idx, interaction) {
 // });
 
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.who_and_what h4').append(' and  <span class="metoos">'+count+' more</span>')//chain
+  $('#card_'+interaction_id).find('div.who_and_what h4').append('<span class="metoos">and '+count+' more</span>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );

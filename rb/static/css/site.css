@@ -155,13 +155,13 @@ section[role="main"] div.card a.added_by_user         { display:block; position:
 section[role="main"] div.card div.who_and_what        { text-align:center; position: relative; }
 section[role="main"] div.card div.who_and_what h1     { font-size:28px; letter-spacing:-1px; line-height: 58px; margin-bottom:0; }
 section[role="main"] div.card div.who_and_what h1 a   { text-decoration:none; }
-section[role="main"] div.card div.who_and_what h4        { margin-top:4px; float:left; font-size:11px; font-family:Arial; font-weight:normal; }
+section[role="main"] div.card div.who_and_what h4        { margin-top:4px; text-align:left; float:left; font-size:11px; font-family:Arial; font-weight:normal; }
 section[role="main"] div.card div.who_and_what img       { width:32px; margin:4px; float:left; }
 /*section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
 section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
 section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
 */
-section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; font-size:11px; font-family:Arial; font-weight:normal; }
+section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; font-size:11px; font-family:Arial; font-weight:normal; display:block;}
 section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-decoration:underline; }
 
 section[role="main"] div.card div.date {
@@ -242,7 +242,7 @@ section[role="main"] div.card.img div.content div.content_body img      { width:
 section[role="main"] div.card.img:hover div.content div.content_body img			{ opacity:1;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; position:relative;z-index:1; }
 
-section[role="main"] div.card div.comments    { background:#f0f0f0; border:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
+section[role="main"] div.card div.comments    { background:#f0f0f0; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
 section[role="main"] div.card div.comments h2 { 
     font-size:12px; 
     border-bottom: 1px solid #CCC;
@@ -288,10 +288,12 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
   font-weight:normal;
   font-family:Arial;
   display:inline-block;
+  vertical-align:top;
+  max-width:300px;
 }
 #content .card .group_favicon {
   display:inline-block;
-  margin:-13px 5px 0px 1px;
+  margin:3px 5px 0px 1px;
 }
 #content .card .group a {
   color:#789abf;
