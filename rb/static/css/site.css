@@ -91,6 +91,7 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 
 section[role="main"] { margin-left:220px; display:block; vertical-align:top; box-sizing:border-box;}
 section[role="main"] h2.header { height:110px; color:#999; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:110px; font-size:36px; padding:1px 0; margin:0; text-align:center; }
+section[role="main"] #tag_cloud_container { width:920px;}
 
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
