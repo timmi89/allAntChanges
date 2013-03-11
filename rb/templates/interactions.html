@@ -300,10 +300,10 @@ function writeCard( interaction, showBlocked ) {
     } else if ( interaction.kind == "med" ) {
       
         //apply this to the content_body to serve as a spacer.
-        var styleString = getContentDimsStyle({
-            height: interaction.content_height,
-            width: interaction.content_width
-        });
+        // var styleString = getContentDimsStyle({
+        //     height: interaction.content_height,
+        //     width: interaction.content_width
+        // });
 
       var videoUrl = interaction.content_body;
       //if we want this later...
@@ -312,7 +312,7 @@ function writeCard( interaction, showBlocked ) {
       // });
 
       $content.append(
-        '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="250" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
+        '<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="250" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
     } else if ( interaction.kind == "txt" ) {
       $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments"></div>');
       if ( interaction.content_body.length > 30 ) {

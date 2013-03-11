@@ -242,7 +242,7 @@ section[role="main"] div.card.img div.content div.content_body img      { width:
 section[role="main"] div.card.img:hover div.content div.content_body img			{ opacity:1;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; position:relative;z-index:1; }
 
-section[role="main"] div.card div.comments    { background:#f0f0f0; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
+section[role="main"] div.card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
 section[role="main"] div.card div.comments h2 { 
     font-size:12px; 
     border-bottom: 1px solid #CCC;
