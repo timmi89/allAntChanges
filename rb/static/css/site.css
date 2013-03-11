@@ -24,11 +24,11 @@
 }
 
 /* global for now */
-#page_container { width:1140px; margin: 0 auto; }
+#page_container { width:1140px; margin: 0 auto; border-right:1px solid #d9d9d9;}
 /* fix the damn box model */
 * { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; }
 h1, 
-h2 { font-family:Helvetica,'HelveticaBold',Arial; }
+h2 { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal;}
 
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1140px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;}
@@ -59,7 +59,7 @@ header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; heigh
 header[role="banner"] #settings:hover nav 	{ display:block; }
 
 /* group admin footer */
-section[role="group panel header"]      { width:100%; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
+section[role="group panel header"]      { width:1140px; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
 section[role="group panel header"] h3     { float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
 section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
 ul.link-list 		{ list-style-type:none; overflow:auto; float:right; margin-left: -18px; margin-bottom:0;}
@@ -68,10 +68,10 @@ ul.link-list li a			{ color:#fff; font-size:12px; }
 ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
 
 /* sidebar */
-section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px;background:url(../site/images/dark_left_column.png) 0 0 repeat-y;}
+section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px;background:url(../site/images/dark_left_column.png) 0 0 repeat-y;border-right:1px solid #d9d9d9;}
 section[role="complementary"] { width:220px; border-right:1px solid #fff; display:block; float:left; vertical-align:top; }
 section[role="complementary"] h1 { margin:0; }
-section[role="complementary"] h2 { height:110px; text-align:center; color:#3c3c3c; border-top:2px solid #fff; border-bottom:2px solid #fff; line-height:110px; font-size:20px; background:#7eb2f0; }
+section[role="complementary"] h2 { height:110px; text-align:center; color:#3c3c3c; border-top:2px solid #fff; border-bottom:2px solid #fff; line-height:110px; font-size:20px; background:#7eb2f0; letter-spacing:-1px;}
 section[role="complementary"] h2 img { max-width:90%; }
 section[role="complementary"] h2.about_link:hover { cursor:pointer; background:#eee; color:#737373;}
 section[role="complementary"] div.component { margin-bottom:30px; width:200px; }
@@ -82,6 +82,7 @@ section[role="complementary"] div.component.active_pages ul li { margin-bottom:2
 section[role="complementary"] div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
 section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px 2px 0;}
 
+.pagination { padding:20px 10px 0 10px; }
 /* profile items */
 #which_content,
 #follow_info { padding:10px; }
@@ -89,7 +90,7 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 #follow_info a { display:block; }
 
 section[role="main"] { margin-left:220px; border-left:1px solid #fff; display:block; vertical-align:top; box-sizing:border-box;}
-section[role="main"] h2.header { height:110px; color:#737373; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:110px; font-size:36px; padding:1px 0; margin:0; text-align:center; }
+section[role="main"] h2.header { height:110px; color:#999; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:110px; font-size:36px; padding:1px 0; margin:0; text-align:center; }
 
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
@@ -126,7 +127,7 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 /* tag cloud grid */
 section[role="tag cloud grid"] { height:210px; background:#000;}
 section[role="tag cloud grid"] a { text-decoration:none;}
-.box { text-align:center; font-family:Helvetica,'HelveticaBold',Arial; font-weight:bold; box-sizing: border-box; overflow:hidden;}
+.box { text-align:center; font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
 .box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
 .box1 div.tag { position:relative; height:100%; bottom:-125%;}
 .box2 div.tag { position:relative; height:100%; top:-125%;}
@@ -136,25 +137,31 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .box1 { width:210px; height:210px; padding:90px 20px 0;}
 .box2 { width:210px; height:140px; padding:50px 20px 0;}
 .box3 { width:105px; height:70px; padding:20px 5px 0;}
-.color1 { background:#84b8ef; color:#354c65;}
-.color2 { background:#419bac; color:#454545;}
-.color3 { background:#d7f360; color:#454545;}
-.color4 { background:#9dd55e; color:#454545;}
-.color5 { background:#495564; color:#ccc;}
+.color1,
+.color1 a { background:#84b8ef; color:#354c65;}
+.color2,
+.color2 a { background:#419bac; color:#fff;}
+.color3,
+.color3 a { background:#d7f360; color:#454545;}
+.color4,
+.color4 a { background:#9dd55e; color:#454545;}
+.color5,
+.color5 a { background:#495564; color:#ccc;}
 
 
 /* cards */
-section[role="main"] div.card header      { z-index:3; overflow:auto; text-align:left; margin-bottom:20px;}
-section[role="main"] div.card a.added_by_user         { display:block; float:left; }
-section[role="main"] div.card div.who_and_what        { float:left; margin:2px 6px; color:#999; }
-section[role="main"] div.card.wide div.who_and_what   { max-width:485px; }
-section[role="main"] div.card div.who_and_what h1     { font-size:40px; font-weight:bold; margin-bottom:0;max-width:350px;}
-section[role="main"] div.card.wide div.who_and_what h1     { max-width:505px; }
-section[role="main"] div.card div.who_and_what h1 a   { color:#737373; text-decoration:none; }
-section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
+section[role="main"] div.card header      { z-index:3; overflow:auto; }
+section[role="main"] div.card a.added_by_user         { display:block; position:absolute; top:8px; left:8px; }
+section[role="main"] div.card div.who_and_what        { text-align:center; position: relative; }
+section[role="main"] div.card div.who_and_what h1     { font-size:28px; letter-spacing:-1px; line-height: 58px; margin-bottom:0; }
+section[role="main"] div.card div.who_and_what h1 a   { text-decoration:none; }
+section[role="main"] div.card div.who_and_what h4        { margin-top:4px; float:left; font-size:11px; font-family:Arial; font-weight:normal; }
+section[role="main"] div.card div.who_and_what img       { width:32px; margin:4px; float:left; }
+/*section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
 section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
 section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
-section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; }
+*/
+section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; font-size:11px; font-family:Arial; font-weight:normal; }
 section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-decoration:underline; }
 
 section[role="main"] div.card div.date {
@@ -171,7 +178,7 @@ section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
 
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
-section[role="main"] div.card div.meta            { clear:both; font-size:11px; margin:25px 5px 5px; overflow:auto; position: relative; text-align:left;}
+section[role="main"] div.card div.meta            { clear:both; font-size:11px; overflow:auto; position: relative; text-align:left; background:#f3f3f3;border-top: 1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9; padding:4px; }
 section[role="main"] div.card.pag div.meta        { margin-top:0; }
 section[role="main"] div.card div.meta div.publisher img	{ max-width:80px; max-height:30px; }
 section[role="main"] div.card div.meta div.title      { width:200px; }
@@ -186,9 +193,8 @@ section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px
 
 section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
 section[role="main"] div.metaRight { float: left; overflow:hidden;}
-section[role="main"] div.card.wide div.metaRight { width: 500px; }
 
-section[role="main"] div.metaRight em.from { display:block; color:#787878; padding:0px 4px;}
+section[role="main"] div.metaRight .from { color:#279daf; }
 section[role="main"] div.metaRight div.publisher { width: 190px;}
 
 section[role="main"] div.card.pag_container div.meta { z-index: 5; overflow: visible; margin: 8px 0;}
@@ -208,10 +214,9 @@ section[role="main"] div.card.pag_container div.meta div.date{
     top: -16px;
 }
 
-section[role="main"] div.card.txt div.content           { margin:15px 0 0; position:relative;z-index:2;}
-section[role="main"] div.card.txt div.content div.content_body    { font-size:22px; font-weight:normal; font-family:Helvetica, 'HelveticaBold', Arial, sans-serif; color:#84b8ef; line-height:30px;}
-section[role="main"] div.card.txt div.content div.content_body:hover  { color:#008be4;}
-section[role="main"] div.card.wide.txt div.content div.content_body { text-align:left; }
+section[role="main"] div.card.txt div.content           { margin:0 0; position:relative;z-index:2;}
+section[role="main"] div.card.txt div.content div.content_body    { font-size:22px; font-weight:normal; font-family:'RDR_HelveticaBold',Helvetica, 'HelveticaBold', Arial, sans-serif; color:#465366; line-height:30px; padding:20px 40px;}
+section[role="main"] div.card:hover div.content div.content_body  { color:#008be4;background:#e8f2fd;}
 section[role="main"] div.card.txt div.content a { color:#606060; text-decoration:none; }
 
 section[role="main"] div.card div.content .buttonsMsg {
@@ -233,7 +238,8 @@ section[role="main"] div.card div.content .comments{
 }
 
 section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
-section[role="main"] div.card.img div.content div.content_body img			{ width:100%; position:relative;z-index:1; }
+section[role="main"] div.card.img div.content div.content_body img      { width:100%; position:relative;z-index:1; opacity:0.33;}
+section[role="main"] div.card.img:hover div.content div.content_body img			{ opacity:1;}
 section[role="main"] div.card.med div.content div.content_body iframe		{ width:100%; position:relative;z-index:1; }
 
 section[role="main"] div.card div.comments    { background:#f0f0f0; border:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
@@ -251,9 +257,99 @@ section[role="main"] div.card div.comment_container .header .when span  {font-si
 section[role="main"] div.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
 section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
 section[role="main"] div.card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
-section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px Helvetica, 'HelveticaRegular';}
+section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px 'RDR_Helvetica',Helvetica, 'HelveticaRegular';}
 section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
 section[role="main"] div.card div.comment_container .comment .comment_body  { font-size:12px; }
+
+/* styles that used to be in interactions.html */
+#content {
+  position:relative;
+  visibility:hidden;
+  min-height:400px;
+  width:920px !important;
+}
+#content .card {
+  /*width:50%;*/
+  width:460px;
+  padding:10px; /* flush boxes or not */
+  box-sizing:border-box;
+  /*padding:20px 20px 30px 20px;*/
+  margin:0;
+  background:#fff;
+  border:1px solid #d9d9d9;
+  border-top:none;
+  border-left:none;
+  text-align:center;
+}
+
+#content .card .group {
+  font-size:11px;
+  line-height:12px;
+  font-weight:normal;
+  font-family:Arial;
+  display:inline-block;
+}
+#content .card .group_favicon {
+  display:inline-block;
+  margin:-13px 5px 0px 1px;
+}
+#content .card .group a {
+  color:#789abf;
+}
+#content .card .group span:hover,
+#content .card .group a:hover {
+  text-decoration:underline;
+  color:#008be4;
+}
+.card .group img {
+  margin-right:3px;
+}
+.card .group .group_link {
+
+}
+.card .group a:hover {text-decoration:none;}
+
+.card .buttons {
+  position:absolute;left:0px;z-index:1;display:none;
+  background:rgba(0,0,0,0.33);
+  width:100%;
+  bottom:-29px;
+  border-bottom:3px solid #333;
+}
+.card .buttons button {
+  color: #777;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 22px;
+  margin:2px 5px;
+  padding:3px 5px;
+}
+.card .buttons button.delete_from_board {
+  color:#a77;
+}
+.card.page .buttons {
+  position:absolute;right:3px;top:10px;z-index:1;display:none;left:auto;
+}
+.card:hover .buttons { display:block; }
+
+
+.fancybox-inner h3{
+    font-weight: bold;
+    font-style: italic;
+    margin: 3px 0;
+}
+.fancybox-inner button{
+    margin: 5px 0;
+}
+.fancybox-inner label{
+    display:block;
+    font-size:11px;
+    font-style:italic;
+    margin: 2px 0;
+}
+
+
 
 
 
@@ -425,7 +521,7 @@ h1.sectionBanner{
     color: #BCBCBC;
     font-size: 18px;
     font-weight: bold;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'RDR_Helvetica',Helvetica, Arial, sans-serif;
 
 
 }
@@ -618,7 +714,7 @@ div.splashQuote {
 }
 #splashBlurbs h3.sectionHeader{
 	text-align:center;
-	font-family:Helvetica,'HelveticaBold',Arial;
+	font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial;
 	font-size:30px;
 	margin:30px 0;
 }
@@ -717,7 +813,7 @@ div.splashQuote {
 }
 
 /* publisher prmo sticky footer */
-#publisher_promo { position:fixed;bottom:0;height:40px;width:100%;z-index:1000;cursor:pointer;}
+#publisher_promo { position:fixed;bottom:0;height:40px;width:1140px;z-index:1000;cursor:pointer;}
 #publisher_promo section { margin:0 auto;width:90%; color:#354c65; background:#84b8ef;text-align:center;min-width:800px;box-shadow:0 0 4px #ccc; padding-top:4px;}
 #publisher_promo h1 { font-size:28px; display:inline-block; }
 #publisher_promo p { font-size:18px; display:inline-block; margin-left:10px; margin-top:-3px;}
@@ -736,7 +832,7 @@ section[role="datepicker"] label  { display:inline; }
 #ui-datepicker-div {z-index:11 !important;}
 section[role="interaction frequency"]         { overflow:auto; text-align:center; }
 
-#interactionBigStats .bigStat h1      { font-family:Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+#interactionBigStats .bigStat h1      { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
 #interactionBigStats .bigStat h4      { margin:-10px 0 10px;}
 
 #interactionBigStats {

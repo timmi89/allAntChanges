@@ -68,7 +68,7 @@
           css.push('#' + id + ' .' + BigText.LINE_CLASS_PREFIX + j + ' {' +
             (minFontSizes[j] ? ' white-space: normal;' : '') +
             (linesFontSizes[j] ? ' font-size: ' + linesFontSizes[j] + 'px;' : '') +
-            (lineWordSpacings[j] ? ' word-spacing: ' + lineWordSpacings[j] + 'px;' : '') +
+            (lineWordSpacings[j] ? ' word-spacing: 0px;' : '') +
             '}');
         }
 
@@ -237,7 +237,7 @@
       $line.css('font-size', fontSizes[lineNumber] + 'px');
 
       for(var m=1, n=5; m<n; m+=interval) {
-        maxWordSpacing = testLineDimensions($line, maxWidth, 'word-spacing', m, interval, 'px');
+        maxWordSpacing = 0; //testLineDimensions($line, maxWidth, 'word-spacing', m, interval, 'px');
         if(maxWordSpacing !== false) {
           wordSpacing = maxWordSpacing.size;
           break;
