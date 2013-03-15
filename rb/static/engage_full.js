@@ -3400,11 +3400,20 @@ function readrBoard($R){
                     kind = $this.data('kind'),
                     HTMLkind = $this.get(0).nodeName.toLowerCase();
 
+
                     // if ( nomedia && (
                         // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
 
                     var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                     var hash = RDR.util.md5.hex_md5( hashText );
+
+                    // prevent the identical nested elements being double-hashed bug
+                    // like <blockquote><p>Some quote here</p></blockquote>
+                    // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
+                    if ( $this.parents('.rdr-'+hash).length ) {
+                        $this.parents('.rdr-'+hash).removeClass('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-'+hash);
+                    }
+
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
