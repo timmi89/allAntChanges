@@ -2488,7 +2488,7 @@ function readrBoard($R){
                 }
 
                 var targetOffset = $container.offset().top,
-                windowPadding = 350,
+                windowPadding = 130,
                 scrollTarget = targetOffset-windowPadding || 0;
 
                 $('html,body').animate({scrollTop: scrollTarget}, 1000);
