@@ -798,6 +798,7 @@ div.rdr.rdr-summary .rdr_chevron_cta {
   padding-top: 9px !important;
   padding-left: 6px !important;
   margin-left: 6px !important;
+  text-align: left !important;
 }
 div.rdr.rdr-summary:hover .rdr_chevron_cta i:before {
   content: "\f077";
