@@ -1592,7 +1592,6 @@ function readrBoard($R){
             },
             update: function(hash, diffNode){
                 //RDR.rindow.update:
-                      
                 var summary = RDR.summaries[hash],
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
@@ -1679,7 +1678,6 @@ function readrBoard($R){
                     //simplify our data structure later
                     var contentNodes = summary.content_nodes;
                     var contentNodesByContentId = contentNodes[diffNode.content_id];
-
                     var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
 
                     //filter so we get only the coms per this tagBox (tag_id and content_id)
@@ -1721,13 +1719,11 @@ function readrBoard($R){
                 }
                 function _addLinkToViewComs(diffNode, $tag, $rindow){
 
-
                     var tag = diffNode.parent_interaction_node;
                     var content_node = diffNode.content_node;
 
 
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
-
 
                     $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
 
@@ -1749,6 +1745,7 @@ function readrBoard($R){
                         .show();
 
                     $rindow.find('button.rdr_add_comment').hide();
+
                 }
 
 
@@ -3896,7 +3893,6 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
-                    
                     // po' man's throttling
                     if ( typeof RDR.inProgress == "undefined" ) { RDR.inProgress = []; }
                     if ( $.inArray( hash, RDR.inProgress) != -1 ) {
@@ -3921,9 +3917,11 @@ function readrBoard($R){
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
+
                             if ( response.status !== "success" ) {
                                 return false;
                             }
+
                             var content_nodes = response.data;
                             //todo: make this generic interactions instead of just tags
                             //summary.interactions.tags =
@@ -4157,11 +4155,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             success: function(response) {
                                 args.response = response;
 
+                                RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                                  return value != hash;
+                                });
+
                                 //this will be here for new containers only
                                 if( response.data && response.data.container ){
                                     args.container_id = response.data.container.id;
                                 }
-                                if ( response.data && response.data.num_interactions ) RDR.user.num_interactions = response.data.num_interactions;
+                                if ( response.data && response.data.num_interactions ) {
+                                    RDR.user.num_interactions = response.data.num_interactions;
+                                }
                                 if ( response.status == "success" ) {
                                     if ( args.response.data.interaction ) {
                                         RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
@@ -4176,9 +4180,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     if ( typeof args.tag.id == "undefined" ) {
                                         args.tag.id = response.data.interaction.interaction_node.id;
                                     }
-
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
-
                                 }else{
                                     if ( int_type == "react" ) {
                                         RDR.actions.interactions[int_type].onFail(args);
@@ -4238,7 +4240,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 tag = args.tag;
 
                             //clear loader
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            if ( $rindow ) {
+                                $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            }
 
                             var interaction = response.data.interaction,
                                 content_node = (response.data.content_node) ? response.data.content_node:response.content_node_data,
@@ -6085,6 +6089,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     }
                     */
+
                     if(isPage){
                         $.each( diff, function(interaction_node_type, nodes){
                             //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
@@ -6121,7 +6126,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
                         $.each(nodes, function(id,diffNode){
                             //coms or tags
-
                             update_top_interactions_cache({
                                 hash: hash,
                                 summary: summary,
