@@ -296,7 +296,7 @@ function writeCard( interaction, showBlocked ) {
         });
 
         $content.append(
-            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments"></div>');
+            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'/" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments"></div>');
     } else if ( interaction.kind == "med" ) {
       
         //apply this to the content_body to serve as a spacer.
@@ -525,6 +525,8 @@ function writeCard( interaction, showBlocked ) {
 
     $('#cards #content').append( $card ); 
     $card.find('header h1').bigtext({ maxfontsize:32 });
+
+    $('.view-at-site').attr( 'href', '/i/'+interaction.id+'/' ).text('View this at '+interaction.group.name);
   }
 }
 

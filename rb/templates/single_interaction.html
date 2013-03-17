@@ -7,7 +7,7 @@
         {% if interaction.kind == 'tag' %}
   <meta property="og:title"       content="{{interaction.interaction_node.body|escapejs }}" itemprop="name" />
   <meta property="og:type"        content="article"/>
-  <meta property="og:url"         content="http://www.readrboard.com/interaction/{{ interaction.id }}"/>
+  <meta property="og:url"         content="http://www.readrboard.com/interaction/{{ interaction.id }}/"/>
   <meta property="og:image"       content="http://s3.amazonaws.com/readrboard/images/site/periodic_logo.png" itemprop="image" />
   <meta property="og:site_name"   content="ReadrBoard" itemprop="publisher" />
   <meta property="og:description" content="{{interaction.interaction_node.body|escapejs }} &raquo; {{ interaction.content.body|escapejs }}" />
@@ -20,8 +20,7 @@
 {% block cards %}
 
     <div class="singleReactionHeader">
-        <span class="title">A ReadrBoard Reaction!</span>
-        <a id="seeItLink" class="seeIt">See it live.</a>
+        <a class="btn view-at-site" style="margin:10px auto;font-size:21px;padding:10px;">View this at the original site</a>
         <div class="clear"></div>
     </div>
 
@@ -33,9 +32,6 @@
 
     </div>
     <script>
-        var interactionId = window.location.href.split('/')[4];
-        $('#seeItLink').attr("href", "/i/"+interactionId);
-
         $('#content').hover(
             function(){
                 $('#seeItLink').addClass('hover');
