@@ -4155,10 +4155,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             success: function(response) {
                                 args.response = response;
 
-                                RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                                  return value != hash;
-                                });
-
                                 //this will be here for new containers only
                                 if( response.data && response.data.container ){
                                     args.container_id = response.data.container.id;
@@ -4204,6 +4200,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     }
                                 }
+                                RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                                  return value != hash;
+                                });
                                 RDR.util.userLoginState();
                             }
                         });
