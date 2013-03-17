@@ -72,7 +72,7 @@ section[role="content"] { display:block; vertical-align:top; overflow:auto; padd
 section[role="complementary"] { width:220px; border-right:1px solid #fff; display:block; float:left; vertical-align:top; }
 section[role="complementary"] h1 { margin:0; }
 section[role="complementary"] h2 { height:110px; text-align:center; color:#3c3c3c; border-top:2px solid #fff; border-bottom:2px solid #fff; line-height:110px; font-size:20px; background:#7eb2f0; letter-spacing:-1px;}
-section[role="complementary"] h2 img { max-width:90%; }
+section[role="complementary"] h2 img { max-width:90%; max-height:90%; }
 section[role="complementary"] h2.about_link:hover { cursor:pointer; background:#eee; color:#737373;}
 section[role="complementary"] div.component { margin-bottom:30px; width:200px; }
 section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:14px; color:#dddddd;}
@@ -81,6 +81,8 @@ section[role="complementary"] div.component ul li { margin-bottom:5px;}
 section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
 section[role="complementary"] div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
 section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px 2px 0;}
+
+#avatar h2 div { display:inline-block; max-width:150px; }
 
 .pagination { padding:20px 10px 0 10px; }
 /* profile items */
@@ -102,7 +104,7 @@ section[role="main"] #tag_cloud_container { width:920px;}
 #board_listing ul { margin-bottom:0;}
 #board_listing li { padding-left:20px; display:inline-block;margin-bottom:5px;}
 #board_listing li .user_meta { background: none repeat scroll 0% 0% rgb(255, 255, 255); padding: 3px; font-weight: normal; font-size: 13px; margin-bottom: 5px;border:1px dashed #aaa; }
-#board_listing h2 { padding-left:20px; color:#737373; padding-top:10px; }
+#board_listing h2 { padding-left:20px; color:#999; padding-top:10px; text-align:center;}
 
 /* board header */
 #board_header { margin:0 auto; padding:10px; text-align:center; margin-top:10px;}
@@ -273,6 +275,7 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
   visibility:hidden;
   min-height:400px;
   width:920px !important;
+  overflow:visible !important;
 }
 #content .card {
   /*width:50%;*/
@@ -319,10 +322,14 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
 
 .card .buttons {
   position:absolute;left:0px;z-index:1;display:none;
-  background:rgba(0,0,0,0.33);
+  background:rgba(0,0,0,1);
   width:100%;
   bottom:-29px;
   border-bottom:3px solid #333;
+  color:#fff;
+}
+.card .buttons a {
+  color:#008be4;
 }
 .card .buttons button {
   color: #777;
