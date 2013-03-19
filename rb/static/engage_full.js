@@ -3401,8 +3401,8 @@ function readrBoard($R){
                     // if ( nomedia && (
                         // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
 
-                    var hashText = "rdr-"+kind+"-"+body; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                    var hash = RDR.util.md5.hex_md5( hashText );
+                    var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                        hash = RDR.util.md5.hex_md5( hashText );
 
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
@@ -4158,6 +4158,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //this will be here for new containers only
                                 if( response.data && response.data.container ){
                                     args.container_id = response.data.container.id;
+                                    var hash = args.hash = response.data.container.hash;
                                 }
                                 if ( response.data && response.data.num_interactions ) {
                                     RDR.user.num_interactions = response.data.num_interactions;
