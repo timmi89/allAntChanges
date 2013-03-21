@@ -3388,22 +3388,30 @@ function readrBoard($R){
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) return false;
+                if( !$allNodes.data('body') ) { return false; }
                 //else
                 var hashList = {};
                 $allNodes.each(function(){
-                    var $this = $(this);
-                    var body = $this.data('body'),
-                    kind = $this.data('kind'),
-                    HTMLkind = $this.get(0).nodeName.toLowerCase();
+                    var $this = $(this),
+                        body = $this.data('body'),
+                        kind = $this.data('kind'),
+                        HTMLkind = $this.get(0).nodeName.toLowerCase();
+
                     if ( kind == "img" || kind == "media" ) {
+                        // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
+                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                            oldHash = RDR.util.md5.hex_md5( hashText );
+                            $this.data('oldHash', oldHash);
+
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
                         var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i,
                             srcArray = body.split('/');
                         // srcArray.shift(); 
                         // srcArray.shift();
                         srcArray.splice(0,2);
+                        clog(srcArray);
                         var domain = srcArray.shift();
+                        clog(domain);
                         domain = domain.split(':')[0]; // get domain, strip port
                         
                         var filename = srcArray.join('/');
@@ -3415,13 +3423,23 @@ function readrBoard($R){
                         if (match == null) {
                             return;
                         } else {
-                            body = match[0] + filename;
+                            body = match[0] + '/' + filename;
                         }
 
+                        // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
+                        if ( $this.hasClass('rdr-oldhash') ) {
+                            var hash = $this.data('hash');
+                        } else {
+                        //it didn't have oldhash, so it's an image no one has reacted to yet
+                            var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                                hash = RDR.util.md5.hex_md5( hashText );
+                        }
+clog('img hashText: '+hashText);
+clog('img hash: '+hash);
+                    } else {
+                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                            hash = RDR.util.md5.hex_md5( hashText );
                     }
-
-                    var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                        hash = RDR.util.md5.hex_md5( hashText );
 
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
@@ -3502,6 +3520,22 @@ function readrBoard($R){
                             json: $.toJSON(sendData)
                         },
                         success: function(response) {
+                            // band-aid.  bandaid.
+                            // we're going to iterate through images to see if there is an old hash
+                            $('img.rdr-node').each( function() {
+                                var $img = $(this);
+                                // now, iterate through 'known hashes', see if it's an image, and if so... 
+                                // -- see if img.rdr-HASH exists.
+                                // -- if not, see if img.rdr-OLDHASH exists.
+                                // ---- if so, modify its CSS classes and .data() attributes to use the old hash
+                                $.each( response.data.known, function(returnedHash, obj) {
+                                    if ( $img.data('oldHash') == returnedHash ) {
+                                        // remove the class with the 'new' hash, add a class with the 'old' hash, and set the current hash to the 'old' one
+                                        $img.removeClass( 'rdr-'+$img.data('hash') ).addClass('rdr-'+returnedHash).addClass('rdr-oldhash').data('hash', returnedHash);
+                                    }
+                                });
+                            });
+
                             var summaries = {},
                                 unknown_summary;
                             summaries[ page_id ] = response.data.known;
