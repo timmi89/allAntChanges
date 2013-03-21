@@ -3301,7 +3301,7 @@ function readrBoard($R){
                 //RDR.actions.hashNodes:
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" ) return;
+                if ( typeof $node==="undefined" ) { return; }
 
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
@@ -3396,10 +3396,29 @@ function readrBoard($R){
                     var body = $this.data('body'),
                     kind = $this.data('kind'),
                     HTMLkind = $this.get(0).nodeName.toLowerCase();
+                    if ( kind == "img" || kind == "media" ) {
+                        // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i,
+                            srcArray = body.split('/');
+                        // srcArray.shift(); 
+                        // srcArray.shift();
+                        srcArray.splice(0,2);
+                        var domain = srcArray.shift();
+                        domain = domain.split(':')[0]; // get domain, strip port
+                        
+                        var filename = srcArray.join('/');
+                        // test examples:
+                        // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
+                        // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                        // var match = HOSTDOMAIN.exec('media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                        var match = HOSTDOMAIN.exec( domain );
+                        if (match == null) {
+                            return;
+                        } else {
+                            body = match[0] + filename;
+                        }
 
-
-                    // if ( nomedia && (
-                        // HTMLkind == "img" || HTMLkind == "embed" || HTMLkind == "iframe" || HTMLkind == "object" || HTMLkind == "video" ) ) {
+                    }
 
                     var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                         hash = RDR.util.md5.hex_md5( hashText );
@@ -3446,13 +3465,11 @@ function readrBoard($R){
             },
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
-
                 var page_id, sendable_hashes, $hashable_node, sendData;
 
                 for (var i in hashes) {
                     page_id = i;
                     sendable_hashes = hashes[i];
-
                     if ( !page_id || typeof sendable_hashes != "object" ) {
                         break;
                     }
@@ -3488,7 +3505,6 @@ function readrBoard($R){
                             var summaries = {},
                                 unknown_summary;
                             summaries[ page_id ] = response.data.known;
-
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
                             // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
                             // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
