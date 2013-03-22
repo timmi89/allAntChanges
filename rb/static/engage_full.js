@@ -3397,7 +3397,8 @@ function readrBoard($R){
                         kind = $this.data('kind'),
                         HTMLkind = $this.get(0).nodeName.toLowerCase();
 
-                    if ( kind == "img" || kind == "media" ) {
+                    if ( (kind == "img" || kind == "media") && body ) {
+                        
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                             oldHash = RDR.util.md5.hex_md5( hashText );
@@ -3406,15 +3407,14 @@ function readrBoard($R){
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
                         var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i,
                             srcArray = body.split('/');
-                        // srcArray.shift(); 
-                        // srcArray.shift();
+
                         srcArray.splice(0,2);
-                        clog(srcArray);
-                        var domain = srcArray.shift();
-                        clog(domain);
-                        domain = domain.split(':')[0]; // get domain, strip port
+
+                        var domainWithPort = srcArray.shift();
+                        domain = domainWithPort.split(':')[0]; // get domain, strip port
                         
                         var filename = srcArray.join('/');
+
                         // test examples:
                         // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
                         // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
@@ -3434,9 +3434,6 @@ function readrBoard($R){
                             var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                                 hash = RDR.util.md5.hex_md5( hashText );
                         }
-clog('img hashText: '+hashText);
-clog('img hash: '+hash);
-clog('img oldhash: '+$this.data('oldHash') );
                     } else {
                         var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                             hash = RDR.util.md5.hex_md5( hashText );
