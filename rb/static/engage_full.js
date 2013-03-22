@@ -3436,6 +3436,7 @@ function readrBoard($R){
                         }
 clog('img hashText: '+hashText);
 clog('img hash: '+hash);
+clog('img oldhash: '+$this.data('oldHash') );
                     } else {
                         var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                             hash = RDR.util.md5.hex_md5( hashText );
