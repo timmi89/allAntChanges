@@ -3358,6 +3358,8 @@ function readrBoard($R){
                     var $group = $node.filter( group.filterParam );
 
                     // add vaild descendants of the $node
+                    // PERFORMANCE ISSUE?
+                    // LAYOUT INVALIDATED?
                     $group = $group.add( $node.find( group.whiteList ) );
 
                     //take out prev categorized nodes (text is last, so we default to that)
