@@ -7932,8 +7932,6 @@ function $RFunctions($R){
 
                         //get the latest page data
                         settings.summary = RDR.pages[settings.id].summary;
-                        clog('settings.summary');
-                        clog(settings.summary);
                         _makeSummaryWidget(settings);
                     });
                 }
