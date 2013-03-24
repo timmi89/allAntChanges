@@ -588,7 +588,6 @@ function readrBoard($R){
 
 
                                 if ( kind != "text" ) {
-                                    
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
@@ -938,6 +937,7 @@ function readrBoard($R){
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
                             } else {
+                                if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
