@@ -948,7 +948,6 @@ function readrBoard($R){
                     function createReactedContentTable($this, counts) {
                         $().selog('hilite', true, 'off');
                         $('.rdr_twtooltip').remove();
-
                         var $backButton = _makeBackButton(),
                             $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="rdr_page_reactions"></tr></tbody>');
 
@@ -1026,7 +1025,6 @@ function readrBoard($R){
                                         "media":0,
                                         "page":(tag_count=="+")?0:tag_count
                                     };
-
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
@@ -2015,18 +2013,17 @@ function readrBoard($R){
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
                 var summary = {};
-                summary[hash] = {};
-                summary[hash].hash = hash;
-                summary[hash].kind = kind;
-                summary[hash].top_interactions = {};
-                summary[hash].top_interactions.coms = {};
-                summary[hash].top_interactions.tags = {};
-                summary[hash].top_interactions.shr = {};
-
-                summary[hash].counts = {};
-                summary[hash].counts.tags = 0;
-                summary[hash].counts.interactions = 0; // TODO not sure why we have this and also "tags"
-                summary[hash].counts.coms = 0;
+                summary = {};
+                summary.hash = hash;
+                summary.kind = kind;
+                summary.top_interactions = {};
+                summary.top_interactions.coms = {};
+                summary.top_interactions.tags = {};
+                summary.top_interactions.shr = {};
+                summary.counts = {};
+                summary.counts.tags = 0;
+                summary.counts.interactions = 0; // TODO not sure why we have this and also "tags"
+                summary.counts.coms = 0;
 
                 return summary;
             },
@@ -2071,14 +2068,10 @@ function readrBoard($R){
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
                         if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
                             $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                    
                                 if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
-
                                     var this_interaction = node.top_interactions.tags[ tag_id ];
-
-                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {RDR.interaction_data[ tag_id ] = {}; }
                                     if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
@@ -3551,10 +3544,10 @@ function readrBoard($R){
                                     } else {
                                         unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
                                     }
-                                    summaries[ hash ] = unknown_summary;
+                                    // summaries[ hash ] = unknown_summary;
+                                    summaries[ page_id ][ hash ] = unknown_summary;
                                 }
                             }
-
 
                             //the callback implementation here is a litte unintuitive:
                             //it only gets passsed in when a single hash is run through here,
@@ -3570,7 +3563,6 @@ function readrBoard($R){
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                             if ( !$.isEmptyObject(summaries) ){
-
                                 //setup the summaries
                                 RDR.actions.containers.setup(summaries);
 
@@ -3649,7 +3641,6 @@ function readrBoard($R){
                 },
                 save: function(settings){
                     //RDR.actions.containers.save:
-
                     //makes a new one or returns existing one
                     //expects settings with body, kind, and hash.
                     if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
@@ -3741,6 +3732,16 @@ function readrBoard($R){
 
                                     summary.top_interactions.coms = newComs;
                                     RDR.actions.summaries.save(summary);
+
+                                    var pageContainerExists = false;
+
+                                    $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                        if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
+                                    });
+                                    if ( pageContainerExists == false ) {
+                                        RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summaries[page_id][hash].id });
+                                    } else {
+                                    }
 
                                     RDR.actions.indicators.update( hash, true);
 
@@ -3941,6 +3942,11 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
+
+                    // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
+                    //     return;
+                    // }
+
                     // po' man's throttling
                     if ( typeof RDR.inProgress == "undefined" ) { RDR.inProgress = []; }
                     if ( $.inArray( hash, RDR.inProgress) != -1 ) {
@@ -3955,7 +3961,8 @@ function readrBoard($R){
 
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "container_id":summary.id
+                        "container_id":summary.id,
+                        "hash":hash
                     };
 
                     $.ajax({
@@ -4009,7 +4016,7 @@ function readrBoard($R){
                             }
 
                             // add a class so we note that the content summary was retrieved
-                            $(RDR.containers[ hash ].HTMLkind+'.rdr-'+hash).addClass('rdr_summary_loaded');
+                            $('.rdr-'+hash).addClass('rdr_summary_loaded');
 
                             // remove from po' man's throttling array
                             // po' man's throttling
@@ -4580,12 +4587,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 interaction = response.interaction,
                                 interaction_node = response.data.interaction.interaction_node,
+                                container = response.data.container,
                                 sendData = args.sendData,
+                                content_node = sendData.content_node_data,
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
                             $('#rdr_loginPanel').remove();
+                            
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                            // remove summary loaded since we might need to call it again....
+                            $('.rdr-'+hash).removeClass('rdr_summary_loaded');
 
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
@@ -4689,6 +4702,57 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //temp tie over
                                 content_node_data.hash = content_node_data.container;
                                 content_node_data.kind = sendData.kind;
+
+                                // attempting to fix the summary widget-not-updating, and it seems to be b/c content_nodes aren't updated
+                                // update page container info, to fix the 'summary widget not updating' problem.  abstract this?
+                                // RDR.page[ PAGE ID ].containers
+
+                                //this is weird because there is only one content_node - the img
+                                //this whole thing is gross.  Fix our data structure later.
+
+                                // stolen from the success callback in RDR.actions.content_nodes.init
+                                // but wanted to not abstract that b/c this data structure is not the same.  natch.
+
+                                if (typeof summary.content_nodes == "undefined") {
+                                    summary.content_nodes = {};
+                                }
+
+                                // this content_node summary does not exist
+                                if ( typeof summary.content_nodes[ content_node.id ] == "undefined" ) {
+                                    summary.content_nodes[ content_node.id ] = {
+                                        "body":content_node.body,
+                                        "counts":{
+                                            "coms": 0, 
+                                            "tags": 1, 
+                                            "interactions": 1
+                                        },
+                                        "id":content_node.id,
+                                        "kind":content_node.kind, // use this, NOT send_data version.  we want "txt", not "text".  sigh.
+                                        "location":sendData.content_node_data.location,
+                                        "selState":false,
+                                        "top_interactions":{
+                                            "coms": {}, 
+                                            "tags": {}
+                                        }
+                                    };
+                                } else {
+                                    // just update the content_node summary
+                                    summary.content_nodes[ content_node.id ].counts.tags++;
+                                    summary.content_nodes[ content_node.id ].counts.interactions++;
+                                }
+                                
+                                if (typeof summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ] == "undefined" ) {
+                                    summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ] = {
+                                        "count":1,
+                                        "body":tag.body,
+                                        parent_id:null
+                                    }
+                                } else {
+                                    summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ].count++;
+                                }
+
+
+
 
                                 //reset this var for now
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
@@ -5329,12 +5393,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         
                         //temp hack
                         //don't fade it out if the rindow is showing
-                            var hash = $indicator.data('hash');
-                            var summary = RDR.summaries[ hash ];
-                            var $rindow = summary.$rindow_readmode;
-                            if( $rindow && $rindow.is(':visible') ){
-                                return;
-                            }
+                            // var hash = $indicator.data('hash');
+                            // var summary = RDR.summaries[ hash ];
+                            // var $rindow = (typeof summary != "undefined" && typeof summary.$rindow_readmode != "undefined") ? summary.$rindow_readmode:null;
+                            // if( $rindow && $rindow.is(':visible') ){
+                            //     // return;
+                            // }
 
                         $indicator.data('containerHover', false);
                         var hoverTimeout = $indicator.data('hoverTimeout');
@@ -6137,7 +6201,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     }
                     */
-
                     if(isPage){
                         $.each( diff, function(interaction_node_type, nodes){
                             //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
@@ -6345,7 +6408,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 updatePageSummaryTags: function(hash, diffNode){
                     //RDR.actions.summaries.updatePageSummaryTags:
-                    
+
                         //also update page
                         var tagId = diffNode.id;
                         var pageId = diffNode.page_id || RDR.util.getPageProperty('id', hash);
@@ -7869,7 +7932,8 @@ function $RFunctions($R){
 
                         //get the latest page data
                         settings.summary = RDR.pages[settings.id].summary;
-                        
+                        clog('settings.summary');
+                        clog(settings.summary);
                         _makeSummaryWidget(settings);
                     });
                 }
@@ -7951,7 +8015,7 @@ function $RFunctions($R){
                     );
             }
 
-            function getReactedContent( counts ) {
+            function getReactedContent( counts ) {            
                 // get all of the content_nodes for this page
                 // may want to limit this on back-end by a date range
                 if ( typeof RDR.interaction_data == "undefined" ) {

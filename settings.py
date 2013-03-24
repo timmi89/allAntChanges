@@ -92,7 +92,8 @@ if DEBUG:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache'
+            'LOCATION': 'readr.cache',
+            'TIMEOUT':1
         }
     }
     """
