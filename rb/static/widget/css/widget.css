@@ -772,6 +772,9 @@ div.rdr.rdr-summary {
   text-shadow:
     0px -1px 0px rgba(000,000,000,0.1),
     0px 1px 0px rgba(255,255,255,1) !important;
+  /*without this, the text was jumping down on first load before the styles are cached*/
+  min-width: 124px !important;
+
 }
 
 div.rdr.rdr-summary:hover {
