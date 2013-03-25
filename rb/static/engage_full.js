@@ -509,10 +509,11 @@ function readrBoard($R){
                 RDR.rindow.jspUpdate($rindow);
             },
             updatePageTagMessage: function(args, action) {
-
                 if(action == 'tagDeleted'){
-                    var $rindow = args.rindow;
-                    $rindow.html(
+                    var $rindow = $('div.rdr_window:eq(0)');
+                    RDR.rindow.hideFooter($rindow);
+                    $rindow.find('.rdr_header h1').text('Reaction Undone');
+                    $rindow.find('.rdr_body').css('height','auto').html(
                         '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
                             '<div class="rdr_label_icon"></div>'+
                             '<em>'+
@@ -1464,7 +1465,8 @@ function readrBoard($R){
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160"></div>');
+                    var rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page';
+                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -3255,17 +3257,18 @@ function readrBoard($R){
                     var $this = $(this),
                         hash = $this.data('hash');
 
-                    // RDR.checkIndicatorHover = setTimeout( function() {
-                    //     if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                    //         $this.removeClass('rdr_live_hover');
-                    //         $('#rdr_indicator_' + hash).hide();
-                    //     }
-                    //     clearTimeout( RDR.checkIndicatorHover );
-                    // }, 250);
+                    RDR.checkIndicatorHover = setTimeout( function() {
+                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') && !$('.rdr_for_'+hash).length ) {
+                            $this.removeClass('rdr_live_hover');
+                            RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                            $('#rdr_indicator_' + hash).hide();
+                        }
+                        clearTimeout( RDR.checkIndicatorHover );
+                    }, 250);
                         
-                        $this.removeClass('rdr_live_hover');
-                        RDR.actions.indicators.utils.borderHilites.disengage(hash);
-                        $('#rdr_indicator_' + hash).hide();
+                        // $this.removeClass('rdr_live_hover');
+                        // RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                        // $('#rdr_indicator_' + hash).hide();
                 });
 
                 $RDR.dequeue('initAjax');
@@ -5978,7 +5981,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         },
                         update: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.update:
-
                             var Section = RDR.actions.indicators.utils.borderHilites;
 
                             var $indicator = $('#rdr_indicator_'+hash),
@@ -6104,12 +6106,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         },
                         disengage: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.disengage:
-                            var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            // if ( !$('rdr_for_'+hash).length ) {
+                                var $container_tracker = $('#rdr_container_tracker_'+hash),
+                                    $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
 
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('#rdr_indicator_' + hash).hide();
+                                $mediaBorderWrap.removeClass('engaged');
+                                $mediaBorderWrap.removeClass('engagedForShareLink');
+                                $('#rdr_indicator_' + hash).hide();
+                            // }
                         },
                         engageAll: function(){
                             //RDR.actions.indicators.utils.borderHilites.engageAll:

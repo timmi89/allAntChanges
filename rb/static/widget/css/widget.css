@@ -83,6 +83,16 @@ div.rdr_sandbox div.rdr.rdr_window {
     /*overflow:hidden !important;*/
     width:160px !important;
 }
+div.rdr_sandbox div.rdr.rdr_window .rdr_reactUndoSuccess {
+  font-size:18px !important;
+  background:#fff !important;
+  padding:10px !important;
+  font-family:'RDR_Helvetica' !important;
+}
+div.rdr_sandbox div.rdr.rdr_window .rdr_reactUndoSuccess strong {
+  color:#008be4 !important;
+  font-family:'RDR_HelveticaBold' !important;
+}
 
 div.rdr_sandbox div.rdr.rdr_window.w320 { width:320px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w480 { width:480px !important; }
@@ -1766,31 +1776,31 @@ div.rdr_sandbox div.rdr_mediaHilite_left{
 }
 
 div.rdr_sandbox .rdr_media_border_wrap.designVersion_2 div.rdr_mediaHilite_top{
-    box-shadow:  0 1px 6px 1px #444 !important;
-    -moz-box-shadow:  0 1px 6px 1px #444 !important;
-    -webkit-box-shadow:  0 1px 6px 1px #444 !important;
+    box-shadow:  0 1px 6px 1px #008BE4 !important;
+    -moz-box-shadow:  0 1px 6px 1px #008BE4 !important;
+    -webkit-box-shadow:  0 1px 6px 1px #008BE4 !important;
     border:none !important;
 }
 div.rdr_sandbox .rdr_media_border_wrap.designVersion_2 div.rdr_mediaHilite_right{
-    -webkit-box-shadow: 2px 0 6px 1px #444 !important;
-    -moz-box-shadow: 2px 0 6px 1px #444 !important;
-    box-shadow: 2px 0 6px 1px #444 !important;
+    -webkit-box-shadow: 2px 0 6px 1px #008BE4 !important;
+    -moz-box-shadow: 2px 0 6px 1px #008BE4 !important;
+    box-shadow: 2px 0 6px 1px #008BE4 !important;
     border:none !important;
 }
 div.rdr_sandbox .rdr_media_border_wrap.designVersion_2 div.rdr_mediaHilite_bottom{
-    -webkit-box-shadow: 0 1px 6px 1px #444 !important;
-    -moz-box-shadow: 0 1px 6px 1px #444 !important;
-    box-shadow: 0 1px 6px 1px #444 !important;
+    -webkit-box-shadow: 0 1px 6px 1px #008BE4 !important;
+    -moz-box-shadow: 0 1px 6px 1px #008BE4 !important;
+    box-shadow: 0 1px 6px 1px #008BE4 !important;
     border:none !important;
 }
 div.rdr_sandbox .rdr_media_border_wrap.designVersion_2 div.rdr_mediaHilite_left{
-    -webkit-box-shadow: 0px 0 6px 1px #444 !important;
-    -moz-box-shadow: 0px 0 6px 1px #444 !important;
-    box-shadow: 0px 0 6px 1px #444 !important;
+    -webkit-box-shadow: 0px 0 6px 1px #008BE4 !important;
+    -moz-box-shadow: 0px 0 6px 1px #008BE4 !important;
+    box-shadow: 0px 0 6px 1px #008BE4 !important;
     border:none !important;
 }
 /* hiding the wrapper*/
-div.rdr_sandbox .rdr_media_border_wrap div {display:none !important;}
+/*div.rdr_sandbox .rdr_media_border_wrap div {display:none !important;}*/
 /*hiliteDesignEdit*/
 
 
