@@ -3408,7 +3408,7 @@ function readrBoard($R){
 
                         var domainWithPort = srcArray.shift();
                         domain = domainWithPort.split(':')[0]; // get domain, strip port
-                        
+             
                         var filename = srcArray.join('/');
 
                         // test examples:
@@ -3951,20 +3951,22 @@ function readrBoard($R){
                     // }
 
                     // po' man's throttling
-                    if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                    if ( $.inArray( hash, RDR.inProgress) != -1 ) {
-                        return false;
-                    } else {
-                        RDR.inProgress.push( hash );
-                    }
+                    // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                    // if ( $.inArray( hash, RDR.inProgress) != -1 ) {
+                    //     return false;
+                    // } else {
+                    //     RDR.inProgress.push( hash );
+                    // }
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
 
-                    var summary = RDR.summaries[hash];
+                    var summary = RDR.summaries[hash],
+                        container_id = (typeof summary != "undefined") ? summary.id:"";
+
 
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "container_id":summary.id,
+                        "container_id":container_id,
                         "hash":hash
                     };
 
@@ -4027,10 +4029,10 @@ function readrBoard($R){
                             // var y = [1, 2, 3]
                             // var removeItem = 2;
 
-                            if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                            RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                              return value != hash;
-                            });
+                            // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                            // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                            //   return value != hash;
+                            // });
 
 
                             //finally, run the success callback function
@@ -4260,10 +4262,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     }
                                 }
-                                if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                                RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                                  return value != hash;
-                                });
+                                // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                                // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                                //   return value != hash;
+                                // });
                                 RDR.util.userLoginState();
                             }
                         });
