@@ -3948,7 +3948,7 @@ function readrBoard($R){
                     // }
 
                     // po' man's throttling
-                    if ( typeof RDR.inProgress == "undefined" ) { RDR.inProgress = []; }
+                    if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
                     if ( $.inArray( hash, RDR.inProgress) != -1 ) {
                         return false;
                     } else {
@@ -4024,6 +4024,7 @@ function readrBoard($R){
                             // var y = [1, 2, 3]
                             // var removeItem = 2;
 
+                            if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
                             RDR.inProgress = $.grep(RDR.inProgress, function(value) {
                               return value != hash;
                             });
@@ -4256,6 +4257,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     }
                                 }
+                                if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
                                 RDR.inProgress = $.grep(RDR.inProgress, function(value) {
                                   return value != hash;
                                 });
