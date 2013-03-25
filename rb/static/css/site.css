@@ -115,8 +115,18 @@ section[role="main"] #tag_cloud_container { width:920px;}
 #board_header .board_meta button    { float:right; }
 
 
-
-
+/* popup / login form */
+body.popupForm.wide header[role="banner"] { width:100%; }
+body.popupForm.wide section[role="main"] { width:100%; padding-left:47px; }
+body.popupForm.wide section[role="content"] { border:none; }
+.popupForm .formBody { margin:0; width:300px; }
+.popupForm .big-form .formBody { margin:0 0 10px 0; width:500px; }
+.popupForm #page_container { width:100%; margin: 0; border:none;}
+.popupForm h1 { line-height:24px; font-size:24px;}
+.popupForm label { margin-bottom:0; }
+.popupForm input { margin-bottom:0; }
+#direct_registration a     { text-align:right; display:block; }
+.popupForm .emptyFooter { display:none; }
 
 
 /* stream */
@@ -376,6 +386,7 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
   visibility: visible;
   padding: 5px;
   font-size: 11px;
+  line-height:12px;
   opacity: 0;
   filter: alpha(opacity=0);
 }

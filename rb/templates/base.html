@@ -203,6 +203,23 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </ul>
         <div class="clearDiv"></div>
     </div>
+    {% if not cookie_user %}
+    <div id="publisher_promo" onclick="window.location.href='/publishers/'">
+      <section>
+          <h1><i class="icon-heart"></i> Publishers!</h1>
+          <p>ReadrBoard increases your engagement &amp; builds your community, for FREE.  <a href="/publishers/">Learn more.</a></p>
+      </section>
+    </div>
+    {% endif %}
+
+    {% if cookie_user and cookie_user.social_user and not cookie_user.social_user.admin_group %}
+    <div id="publisher_promo" onclick="window.location.href='/publishers/'">
+      <section>
+          <h1><i class="icon-heart"></i> Publishers!</h1>
+          <p>ReadrBoard increases your engagement &amp; builds your community, for FREE.  <a href="/publishers/">Learn more.</a></p>
+      </section>
+    </div>
+    {% endif %}
 </footer>
 {% endblock footer %}
 
@@ -297,17 +314,6 @@ RB.profile_user = {
       });
       $('#avatar h2').bigtext({maxfontsize:24});
     </script>
-
-{% block uservoice %}
-<script type="text/javascript">
-  var uvOptions = {};
-  (function() {
-    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/3DVkEqsafasAnOSpNK7J1g.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-  })();
-</script>
-{% endblock uservoice %}
 
 <script type="text/javascript">
 if(!RDR_offline){
