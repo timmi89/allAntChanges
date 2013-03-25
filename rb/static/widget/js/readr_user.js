@@ -121,7 +121,6 @@ window.RDRAuth = {
     },
 	events: {
 		track: function( data ) {
-            debugger;
 	        // RDRAuth.events.track:
 	        // mirrors the event tracker from the widget
 	        var standardData = "";
