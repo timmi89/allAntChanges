@@ -138,6 +138,7 @@ class Group(models.Model):
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     paragraph_helper = models.BooleanField(default=True)
+    media_url_ignore_query = models.BooleanField(default=True)
     
     # Customization
     call_to_action = models.CharField(max_length=255, default='', blank=True)

@@ -106,7 +106,7 @@ function readrBoard($R){
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
-
+                media_url_ignore_query: true,
                 //shareWidget Stuff//
                 //should be false by default!
                 sharebox_show: false,
