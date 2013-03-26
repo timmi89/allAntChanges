@@ -3391,23 +3391,27 @@ function readrBoard($R){
                     var $this = $(this),
                         body = $this.data('body'),
                         kind = $this.data('kind'),
-                        HTMLkind = $this.get(0).nodeName.toLowerCase();
+                        HTMLkind = $this.get(0).nodeName.toLowerCase(),
+                        hashBody = body,
+                        hash,
+                        oldHash,
+                        hashText;
 
                     if ( (kind == "img" || kind == "media") && body ) {
                         
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
-                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                            oldHash = RDR.util.md5.hex_md5( hashText );
-                            $this.data('oldHash', oldHash);
-
+                        hashText = "rdr-"+kind+"-"+hashBody; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                        oldHash = RDR.util.md5.hex_md5( hashText );
+                        $this.data('oldHash', oldHash);
+                        
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
-                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i,
-                            srcArray = body.split('/');
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                        var srcArray = hashBody.split('/');
 
                         srcArray.splice(0,2);
 
                         var domainWithPort = srcArray.shift();
-                        domain = domainWithPort.split(':')[0]; // get domain, strip port
+                        var domain = domainWithPort.split(':')[0]; // get domain, strip port
              
                         var filename = srcArray.join('/');
 
@@ -3419,20 +3423,25 @@ function readrBoard($R){
                         if (match == null) {
                             return;
                         } else {
-                            body = match[0] + '/' + filename;
+                            hashBody = match[0] + '/' + filename;
                         }
 
                         // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
                         if ( $this.hasClass('rdr-oldhash') ) {
-                            var hash = $this.data('hash');
+                            hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
-                            var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                                hash = RDR.util.md5.hex_md5( hashText );
-                        }
-                    } else {
-                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                            hashText = "rdr-"+kind+"-"+hashBody;
+                            if(RDR.group.media_url_ignore_query){
+                                hashText = hashText.split('?')[0];
+                            }
                             hash = RDR.util.md5.hex_md5( hashText );
+
+                        }
+
+                    } else {
+                        hashText = "rdr-"+kind+"-"+body;
+                        hash = RDR.util.md5.hex_md5( hashText );
                     }
 
                     // prevent the identical nested elements being double-hashed bug
