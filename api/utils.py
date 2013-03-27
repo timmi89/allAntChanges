@@ -290,10 +290,37 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         parent = None
     
     try:
+        print "***************** what is the container? **********************"
+        print container
+        print "***************** what kind is it? **********************"
+        print content.kind
+        if content.kind == "img" or content.kind == "media":
+            print "***************** YEP IT'S AN IMAGE **********************"
+            existing_container_check = interactions.get(
+                container=container
+            )
+            print "***************** container **********************"
+            print container
+            print "***************** existing_container_check **********************"
+            print existing_container_check
+
+            if existing_container_check:
+                content_node = existing_container_check.content
+            else:
+                content_node = content
+        else:
+            content_node = content
+
+        print "***************** make new interaction **********************"
+        print "***************** (original) content .. the one passed in **********************"
+        print content
+        print "***************** content_node that we found in an existing interaction **********************"
+        print content_node
+
         new_interaction = Interaction(
             page=page,
             container=container,
-            content=content,
+            content=content_node,
             user=user,
             kind=kind,
             interaction_node=interaction_node,

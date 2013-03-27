@@ -4533,29 +4533,29 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var hashBody = $container[0].src;
 
 
-                                // clean the image src in case it's a CDN w/ rotating subdomains.
-                                // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
-                                var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
-                                var srcArray = hashBody.split('/'),
-                                    srcProtocol = srcArray[0];
+                                // // clean the image src in case it's a CDN w/ rotating subdomains.
+                                // // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
+                                // var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                                // var srcArray = hashBody.split('/'),
+                                //     srcProtocol = srcArray[0];
 
-                                srcArray.splice(0,2);
+                                // srcArray.splice(0,2);
 
-                                var domainWithPort = srcArray.shift();
-                                var domain = domainWithPort.split(':')[0]; // get domain, strip port
+                                // var domainWithPort = srcArray.shift();
+                                // var domain = domainWithPort.split(':')[0]; // get domain, strip port
                      
-                                var filename = srcArray.join('/');
+                                // var filename = srcArray.join('/');
 
-                                // test examples:
-                                // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
-                                // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
-                                // var match = HOSTDOMAIN.exec('media1.ab.cd.on-the-telly.bbc.co.uk'); // success
-                                var match = HOSTDOMAIN.exec( domain );
-                                if (match == null) {
-                                    return;
-                                } else {
-                                    hashBody = match[0] + '/' + filename;
-                                }
+                                // // test examples:
+                                // // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
+                                // // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                // // var match = HOSTDOMAIN.exec('media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                // var match = HOSTDOMAIN.exec( domain );
+                                // if (match == null) {
+                                //     return;
+                                // } else {
+                                //     hashBody = match[0] + '/' + filename;
+                                // }
 
                                 if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
                                     hashBody = hashBody.split('?')[0];
@@ -4565,7 +4565,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     'container': rindow.data('container'),
                                     'body': hashBody,
                                     'kind':kind,
-                                    'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
+                                    // 'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
                                     'hash':hash
                                 };
 
