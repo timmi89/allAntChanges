@@ -296,12 +296,12 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         print content.kind
         if content.kind == "img" or content.kind == "media":
             print "***************** YEP IT'S AN IMAGE **********************"
+            print "***************** what's the container we are searching by? **********************"
+            print container
             existing_container_check = interactions.get(
                 container=container
             )
-            print "***************** container **********************"
-            print container
-            print "***************** existing_container_check **********************"
+            print "***************** existing_container_check: what's the existing interaction? **********************"
             print existing_container_check
 
             if existing_container_check:
@@ -311,12 +311,12 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         else:
             content_node = content
 
-        print "***************** make new interaction **********************"
-        print "***************** (original) content .. the one passed in **********************"
+        print "***************** which content node was passed in? **********************"
         print content
-        print "***************** content_node that we found in an existing interaction **********************"
+        print "***************** which content_node did we find in an existing interaction? **********************"
         print content_node
 
+        print "***************** try to make new interaction **********************"
         new_interaction = Interaction(
             page=page,
             container=container,
