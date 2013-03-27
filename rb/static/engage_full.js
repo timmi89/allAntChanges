@@ -3265,10 +3265,6 @@ function readrBoard($R){
                         }
                         clearTimeout( RDR.checkIndicatorHover );
                     }, 250);
-                        
-                        // $this.removeClass('rdr_live_hover');
-                        // RDR.actions.indicators.utils.borderHilites.disengage(hash);
-                        // $('#rdr_indicator_' + hash).hide();
                 });
 
                 $RDR.dequeue('initAjax');
@@ -3426,15 +3422,16 @@ function readrBoard($R){
                             hashBody = match[0] + '/' + filename;
                         }
 
+                        if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                            hashBody = hashBody.split('?')[0];
+                        }
+
                         // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
                         if ( $this.hasClass('rdr-oldhash') ) {
                             hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
                             hashText = "rdr-"+kind+"-"+hashBody;
-                            if(RDR.group.media_url_ignore_query){
-                                hashText = hashText.split('?')[0];
-                            }
                             hash = RDR.util.md5.hex_md5( hashText );
 
                         }
@@ -4533,11 +4530,42 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var content_node = args.content_node || null;
 
                             if(kind == 'img' || kind == 'media' || kind == 'med'){
-                                var body = $container[0].src;
+                                var hashBody = $container[0].src;
+
+
+                                // clean the image src in case it's a CDN w/ rotating subdomains.
+                                // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
+                                var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                                var srcArray = hashBody.split('/'),
+                                    srcProtocol = srcArray[0];
+
+                                srcArray.splice(0,2);
+
+                                var domainWithPort = srcArray.shift();
+                                var domain = domainWithPort.split(':')[0]; // get domain, strip port
+                     
+                                var filename = srcArray.join('/');
+
+                                // test examples:
+                                // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
+                                // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                // var match = HOSTDOMAIN.exec('media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                var match = HOSTDOMAIN.exec( domain );
+                                if (match == null) {
+                                    return;
+                                } else {
+                                    hashBody = match[0] + '/' + filename;
+                                }
+
+                                if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                                    hashBody = hashBody.split('?')[0];
+                                }
+
                                 content_node_data = {
                                     'container': rindow.data('container'),
-                                    'body': body,
+                                    'body': hashBody,
                                     'kind':kind,
+                                    'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
                                     'hash':hash
                                 };
 
