@@ -290,23 +290,12 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         parent = None
     
     try:
-        print "***************** what is the container? **********************"
-        print container
-        print "***************** what kind is it? **********************"
-        print content.kind
-        if content.kind == "img" or content.kind == "media":
-            print "***************** YEP IT'S AN IMAGE **********************"
-            print "***************** what's the container we are searching by? **********************"
-            print container
         
-            # generic error debugging
-            # try:
-            #     existing_interaction_w_content = Interaction.objects.filter(
-            #         container=container
-            #     )[0]
-            # except Exception as e:
-            #     print '%s (%s)' % (e.message, type(e))
-                
+        #temporaryish hack to deal with cdn subdomain prefixes for media!!!
+        #On the front end, we are stripping parts of the url out of for images and media
+        #so, to keep the content url consistent, just grab it from an existing interaction if it exists.
+        if content.kind == "img" or content.kind == "media":
+
             try:
                 existing_interaction_w_content = Interaction.objects.filter(
                     container=container
@@ -318,12 +307,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         else:
             content_node = content
 
-        print "***************** which content node was passed in? **********************"
-        print content
-        print "***************** which content_node did we find in an existing interaction? **********************"
-        print content_node
+        # print "***************** which content node was passed in? **********************"
+        # print content
+        # print "***************** which content_node did we find in an existing interaction? **********************"
+        # print content_node
 
-        print "***************** try to make new interaction **********************"
         new_interaction = Interaction(
             page=page,
             container=container,
