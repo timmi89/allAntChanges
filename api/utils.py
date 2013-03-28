@@ -310,10 +310,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             try:
                 existing_interaction_w_content = Interaction.objects.filter(
                     container=container
-                )[0]
+                )[:1].get()
                 content_node = existing_interaction_w_content.content
             except Interaction.DoesNotExist:
                 content_node = content
+
         else:
             content_node = content
 
@@ -334,7 +335,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             rank = int(time.time()*1000),
             approved = False if group.requires_approval else True
         )
-    except:
+    except Exception as e:
         raise JSONException(u"Error creating interaction object")
 
     new_interaction.save()
