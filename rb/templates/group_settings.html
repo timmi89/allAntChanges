@@ -18,7 +18,7 @@
         <section class="">
     		<h3>Group Information</h3>
     		<div class="formRow">
-    			<label for="id_name">Name </label>
+    			<label for="id_name"><span class="labelTitle">Name </span></label>
     			{{ form.name }}
     			{{ form.name.errors }}
     		</div>
@@ -152,10 +152,10 @@
                 <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
                 {{ form.custom_css }}
             </div>
-            <div class="formRow">
+            <!-- <div class="formRow">
                 <label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
                 {{ form.call_to_action }}
-            </div>
+            </div> -->
         </section>
     </div>
 {% comment %}
