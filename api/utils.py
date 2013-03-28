@@ -298,15 +298,21 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             print "***************** YEP IT'S AN IMAGE **********************"
             print "***************** what's the container we are searching by? **********************"
             print container
-            existing_container_check = interactions.get(
-                container=container
-            )
-            print "***************** existing_container_check: what's the existing interaction? **********************"
-            print existing_container_check
-
-            if existing_container_check:
-                content_node = existing_container_check.content
-            else:
+        
+            # generic error debugging
+            # try:
+            #     existing_interaction_w_content = Interaction.objects.filter(
+            #         container=container
+            #     )[0]
+            # except Exception as e:
+            #     print '%s (%s)' % (e.message, type(e))
+                
+            try:
+                existing_interaction_w_content = Interaction.objects.filter(
+                    container=container
+                )[0]
+                content_node = existing_interaction_w_content.content
+            except Interaction.DoesNotExist:
                 content_node = content
         else:
             content_node = content
