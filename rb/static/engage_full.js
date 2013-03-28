@@ -3436,7 +3436,7 @@ function readrBoard($R){
 
                         }
 
-                    } else if (body) {
+                    } else {
                         hashText = "rdr-"+kind+"-"+body;
                         hash = RDR.util.md5.hex_md5( hashText );
                     }
@@ -3966,10 +3966,8 @@ function readrBoard($R){
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
 
-                    var summary = RDR.summaries[hash];
-                    if (typeof summary != "undefined") { return; }
-                        
-                    var container_id = summary.id;
+                    var summary = RDR.summaries[hash],
+                        container_id = (typeof summary != "undefined") ? summary.id:"";
 
 
                     var sendData = {
