@@ -267,13 +267,27 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         num_interactions = checkLimit(user, group)
         tempuser = True
 
+    #temporaryish hack to deal with cdn subdomain prefixes for media!!!
+    #On the front end, we are stripping parts of the url out of for images and media
+    #so, to keep the content url consistent, just grab it from an existing interaction if it exists.
+    if content.kind == "img" or content.kind == "media":
+        try:
+            existing_interaction_w_content = Interaction.objects.filter(
+                container=container
+            )[:1].get()
+            content_node = existing_interaction_w_content.content
+        except Interaction.DoesNotExist:
+            content_node = content
+    else:
+        content_node = content
+
     interactions = Interaction.objects.filter(user=user)
     # Check unique content_id, user_id, page_id, interaction_node_id
     try:
         existing_interaction = interactions.get(
             user=user,
             page=page,
-            content=content,
+            content=content_node,
             interaction_node=interaction_node,
             kind=kind
         )
@@ -291,22 +305,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     
     try:
         
-        #temporaryish hack to deal with cdn subdomain prefixes for media!!!
-        #On the front end, we are stripping parts of the url out of for images and media
-        #so, to keep the content url consistent, just grab it from an existing interaction if it exists.
-        if content.kind == "img" or content.kind == "media":
-
-            try:
-                existing_interaction_w_content = Interaction.objects.filter(
-                    container=container
-                )[:1].get()
-                content_node = existing_interaction_w_content.content
-            except Interaction.DoesNotExist:
-                content_node = content
-
-        else:
-            content_node = content
-
         # print "***************** which content node was passed in? **********************"
         # print content
         # print "***************** which content_node did we find in an existing interaction? **********************"
