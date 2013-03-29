@@ -3354,6 +3354,11 @@ function readrBoard($R){
 
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
+                    
+                    // hack to fix text nodes taking over our media
+                    if(group.kind == "text"){
+                        $group = $group.not(RDR.group.media_selector + ", " +RDR.group.img_selector);
+                    }
 
                     //filter out blacklisted stuff and already hashed stuff
                     $group = $group.not('.rdr-hashed, .no-rdr');
