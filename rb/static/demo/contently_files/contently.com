@@ -1,0 +1,1 @@
+PARSELY.pInit({"apikey":"contently.com","customizations":null,"bundle":"/code/slim_v02.js","settings":{"debug":false,"widget":false,"tracker":true},"uuid":"C2F364B5-5F6E-460D-B66E-E92AFC63FCB0"});

@@ -3548,7 +3548,7 @@ function readrBoard($R){
                                     // get the kind
                                     if ( $('img.rdr-'+hash).length == 1 ) {
                                         unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
-                                    } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
+                                    } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text() != "What do you think?" ) { // TODO seems fragile.  the text is b/c of an indicator being there on images...
                                         unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
                                     } else {
                                         unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
