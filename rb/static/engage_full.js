@@ -3194,10 +3194,12 @@ function readrBoard($R){
                 var minImgWidth = 160;
 
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
+                    clog('mouseover 0a');
                     RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
                     // only do whitelisted iframe src domains
                     if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
+                        clog('mouseover 0b iframe');
                         var dontEngage = true;
                         $.each( RDR.group.iframe_whitelist, function(idx, domain) {
                             if ( $this.attr('src') && $this.attr('src').indexOf(domain) != -1 ) {
@@ -3206,18 +3208,23 @@ function readrBoard($R){
                         });
                         if ( dontEngage == true ) return;
                     }
-
+clog('mouseover 0c');
                     if ( $this.width() >= minImgWidth ) {
+clog('mouseover 0d');
                         var hasBeenHashed = $this.hasClass('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
-
+clog('mouseover 0e');
+clog('hasBeenHashed', hasBeenHashed);
+clog('isBlacklisted',isBlacklisted);
                         $this.addClass('rdr_live_hover');
-
+clog('mouseover 0f');
                         if(!hasBeenHashed && !isBlacklisted){
+                            clog('mouseover 1');
                             var hashListsByPageId = RDR.actions.hashNodes( $(this) );
                             //we expect just the one here, so just get that one.
                             var hash;
                             $.each( hashListsByPageId, function(page_id, hashArray) {
+                                clog('mouseover 2: '+hashArray[0]);
                                 hash = hashArray[0];
                             });
                             if(!hash){
@@ -3243,6 +3250,7 @@ function readrBoard($R){
                             RDR.actions.indicators.utils.borderHilites.engage(hash);
 
                         } else {
+clog('damnit');
                             var hash = $this.data('hash');
                             
                             $this.addClass('rdr_live_hover');
@@ -3291,10 +3299,10 @@ function readrBoard($R){
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
-
+clog('hashNodes 1');
                 // [porter]: needs a node or nodes
                 if ( typeof $node==="undefined" ) { return; }
-
+clog('hashNodes 2');
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
                 nodeGroups = [
@@ -3489,10 +3497,12 @@ function readrBoard($R){
             sendHashes: function( hashes, onSuccessCallback ) {
                 // RDR.actions.sendHashes
                 var page_id, sendable_hashes, $hashable_node, sendData;
-
+console.log('RDR.actions.sendHashes');
+clog(hashes);
                 for (var i in hashes) {
                     page_id = i;
                     sendable_hashes = hashes[i];
+clog(page_id, sendable_hashes);
                     if ( !page_id || typeof sendable_hashes != "object" ) {
                         break;
                     }
@@ -3500,6 +3510,7 @@ function readrBoard($R){
                     for ( var j in sendable_hashes ) {
                         if ( typeof sendable_hashes[j] == "string" ) {
                             if ( sendable_hashes[j] ) {
+clog('sendable_hashes[j]: '+sendable_hashes[j]);
                                 $hashable_node = $('.rdr-' + sendable_hashes[j]);
                                 if ( $hashable_node && $hashable_node.length == 1 ) {
                                     $hashable_node.addClass('rdr-hashed');
@@ -3955,6 +3966,7 @@ function readrBoard($R){
                     return content_node;
                 },
                 init: function(hash, onSuccessCallback){
+                    console.log('content_nodes.init hash: '+hash);
                     //RDR.actions.content_nodes.init:
 
                     // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
