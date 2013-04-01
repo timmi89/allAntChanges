@@ -521,15 +521,17 @@ class ContentSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
 
-        container_id = data['container_id']
-        if not container_id: 
-            container_id = data['hash']
-            # Get the container.  HACK.  Porter.  Likeocracy.
-            container = Container.objects.get_or_create(
-                hash = data['hash'],
-                defaults = {'kind': "text",}
-            )[0]
-            container_id = container.id
+        # Quick fix for now.  I'm still throwing an error, but doing it intentionally.
+        # The important thing is we're no longer get_or_creating an adhock text container which was just craziness and causing all kinds of nasty.
+        
+        # TODO: figure out why the container_id is not getting sent - 
+        # I think it might be because the cache's result of summary/container call is taking a while to send back a known result... looking into it.
+        try:
+            container_id = data['container_id']
+
+        except KeyError:
+            raise JSONException(u"container_id was expected but was not sent")
+
         page_id = data['page_id']
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
