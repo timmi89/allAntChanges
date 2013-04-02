@@ -819,6 +819,11 @@ div.rdr.rdr-summary:hover .rdr_chevron_cta i:before {
 div.rdr.rdr-summary .rdr_chevron_cta i {
   color:#999 !important;
 }
+
+div.rdr.rdr-summary a.rdr_logo {
+  display: inline-block !important;
+}
+
 /*blunt attack for now*/
 div.rdr.rdr-summary * {
     line-height:13px !important;

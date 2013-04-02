@@ -8020,7 +8020,7 @@ function $RFunctions($R){
 
                     $summary_widget.append(
                         '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
-                        '<a href="'+RDR_baseUrl+'" target="_blank">'+
+                        '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
                     );
