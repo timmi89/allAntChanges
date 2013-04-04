@@ -197,7 +197,7 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 /* cards */
 section[role="main"] div.card header      { z-index:3; overflow:auto; }
 section[role="main"] div.card a.added_by_user         { display:block; position:absolute; top:8px; left:8px; }
-section[role="main"] div.card div.who_and_what        { text-align:center; position: relative; }
+section[role="main"] div.card div.who_and_what        { text-align:center; position: relative; overflow:hidden; }
 section[role="main"] div.card div.who_and_what h1     { font-size:28px; letter-spacing:-1px; line-height: 58px; margin:0 auto; max-width:200px;}
 section[role="main"] div.card div.who_and_what h1 a   { text-decoration:none; display:block;}
 section[role="main"] div.card div.who_and_what h4        { margin-top:4px; text-align:left; float:left; font-size:11px; font-family:Arial; font-weight:normal; }
