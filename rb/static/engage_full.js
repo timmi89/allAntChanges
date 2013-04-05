@@ -876,16 +876,40 @@ function readrBoard($R){
                     // var boxSize = "rdr_box_"+ boxSize, 
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
-                      tagBody = ( tag.body ) ? tag.body:tag.tag_body;
+                      tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
+                      tagBody = "",
+                      tagIsSplitClass = "";
 
-                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'</div></div>' );
+                    //split long tag onto two lines.
+                    if ( tagBodyRaw.length < 16 ) {
+                        tagBody = tagBodyRaw;
+                    } else {
+                        tagIsSplitClass = "rdr_tag_split";
+                        // if no space, hyphenate
+                        if ( tagBodyRaw.indexOf(' ') == -1 ) {
+                            tagBody = tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag '+tagIsSplitClass+'">' + tagBodyRaw.substr(15);
+                            if ( boxSize == "rdr_box_small" ) {
+                                boxSize = "rdr_box_medium";
+                            }
+                        } else {
+                            var tagBody1 = "", tagBody2 = "";
+                            tagBodyRawSplit = tagBodyRaw.split(' ');
+                            while ( tagBody1.length < 16 ) {
+                                tagBody1 += tagBodyRawSplit.shift() + ' ';
+                            }
+                            tagBody2 = tagBodyRawSplit.join(' ');
+                            tagBody = tagBody1 +'</div><div class="rdr_tag '+tagIsSplitClass+'">' + tagBody2;
+                        }
+                    }
+
+                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'"><div class="rdr_tag '+tagIsSplitClass+' rdr_tooltip_this" title="'+message+'">'+tagBody+'</div></div>' );
                     $tagBox.find('.rdr_tag').data({
                             tag_id: tag.id,
                             tag_count: tagCount,
                             parent_id: tag.parent_id
                         });
                     if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                        $tagBox.find('.rdr_tag').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
+                        $tagBox.find('.rdr_tag:last').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
                     }
                     $tagContainer.append( $tagBox );
 
@@ -5629,10 +5653,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           midValue = ( median > avg ) ? median:avg;
 
                           $.each( tagList, function(idx, tag) {
+                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
                               if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
                                 buckets.big.push( tag );
                                 return;
                               } else if ( tag.tag_count > midValue ) {
+                                buckets.medium.push( tag );
+                                return;
+                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
                                 buckets.medium.push( tag );
                                 return;
                               } else {
