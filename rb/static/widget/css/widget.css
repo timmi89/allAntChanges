@@ -603,6 +603,7 @@ div.rdr_sandbox div.rdr div.rdr_comment textarea {
     font-size:11px !important;
     background:#fff !important;
     width:100% !important;
+    height:100px !important;
     -webkit-box-sizing : border-box !important;
     -moz-box-sizing : border-box !important;
     -o-box-sizing : border-box !important;
@@ -1569,8 +1570,9 @@ div.rdr_sandbox div.rdr_indicator_details img.rdr_pin {
     margin:0 !important;
 }
 
+.rdr_live_hover div.rdr_indicator img.rdr_pin,
 div.rdr div.rdr_indicator_stats img.rdr_pin {
-  background-position:0px -1px !important;
+  background-position:1px -1px !important;
 }
 div.rdr_sandbox div.rdr_indicator.rdr_indicator_for_media img.rdr_pin { 
     background:url("../images/readr_icons.png") no-repeat -2px -1px !important; 

@@ -3495,6 +3495,15 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
 
+                    if ( HTMLkind != 'body') {
+                        $this.on('mouseenter', function() {
+                            $(this).addClass('rdr_live_hover');
+                        })//chain
+                        .on('mouseleave', function() {
+                            $(this).removeClass('rdr_live_hover');
+                        });
+                    }
+
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
