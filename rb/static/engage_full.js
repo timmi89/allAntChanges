@@ -892,10 +892,11 @@ function readrBoard($R){
                                 boxSize = "rdr_box_medium";
                             }
                         } else {
-                            var tagBody1 = "", tagBody2 = "";
+                            var tagBody1 = "", tagBody2 = "", keepLooping = true;
                             tagBodyRawSplit = tagBodyRaw.split(' ');
-                            while ( tagBody1.length < 16 ) {
+                            while ( keepLooping ) {
                                 tagBody1 += tagBodyRawSplit.shift() + ' ';
+                                if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
                             tagBody = tagBody1 +'</div><div class="rdr_tag '+tagIsSplitClass+'">' + tagBody2;
