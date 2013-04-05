@@ -1859,7 +1859,9 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium div.rdr_tag.r
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag { top:-125%;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag.rdr_animated { top:0%;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag.rdr_tag_split .rdr_count { font-size:14px !important; display:block !important; padding-top:4px !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px !important; display:block !important;margin-top:2px !important;}
+
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count { display:block !important;margin-top:2px !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px !important; }
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px !important; height:110px !important; padding:20px 15px 0 !important;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px !important; height:110px !important; padding:35px 10px 0 !important;}
