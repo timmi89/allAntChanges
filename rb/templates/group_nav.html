@@ -1,6 +1,6 @@
 {% if cookie_user and cookie_user.social_user and cookie_user.social_user.admin_group %}
+<h3>{{ cookie_user.social_user.admin_group.name }} Admin <i class="icon-chevron-down"></i></h3>
 <section role="group panel header">
-	<h3>{{ cookie_user.social_user.admin_group.name }} Admin</h3>
 	<section role="group links">
 		<ul class="link-list">
 			<li class="{{ profile_active }}"><a href="/group/{{ cookie_user.social_user.admin_group.short_name }}/">Group Profile</a></li>
@@ -11,7 +11,4 @@
 		</ul>
 	</section>
 </section>
-<style>
-section[role="content"] {padding-bottom:30px !important;}
-</style>
 {% endif %}

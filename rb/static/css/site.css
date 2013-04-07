@@ -33,7 +33,7 @@ label { display:inline-block; }
 
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1140px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;}
-header[role="banner"] a.logo    { display:block; }
+header[role="banner"] a.logo    { display:block; float:left; }
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:218px; }
 
 header[role="banner"] #user				{ float:right;margin:2px 10px;}
@@ -56,18 +56,20 @@ header[role="banner"] #site_search			{ margin:6px 10px 0px 30px; display:block; 
 header[role="banner"] #site_search input	{ background:#eee;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;}
 header[role="banner"] #site_search button	{ width:25px; height:22px; background:url(../images/site/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:1px;}
 
-header[role="banner"] #settings				{ position:absolute; right:0; top:-4px; height:39px; border-left:1px solid #393939;display:none; }
-header[role="banner"] #settings:hover nav 	{ display:block; }
 
-/* group admin footer */
-section[role="group panel header"]      { width:1140px; background:#7f7f7f; color:#eee; overflow:auto; box-shadow:0px -10px 9px -9px #454545 inset; position:fixed; bottom:0; z-index:450; }
-section[role="group panel header"] h3     { float:left; overflow:auto; padding:5px; margin:0; font-size:12px; font-weight:bold; background: none repeat scroll 0 0 #638296; box-shadow: 0 -10px 9px -9px #454545 inset; }
-section[role="group links"] 		{ padding:4px; font-size:12px; float:left; border-left:1px solid #ddd; text-shadow:1px 1px 2px #454545;}
-ul.link-list 		{ list-style-type:none; overflow:auto; float:right; margin-left: -18px; margin-bottom:0;}
-ul.link-list li 	{ float:left; margin-right:20px; }
-ul.link-list li a			{ color:#fff; font-size:12px; }
-ul.link-list li.active a	{ color:#95c9ea; font-weight:bold; }
+/* group admin in header */
+#group_settings_menu    { display:block; float:right; padding:11px 0 0 5px; margin:0 20px;}
+#group_settings_menu:hover section[role="group panel header"] { display:block; }
+#group_settings_menu h3   { font-weight:normal; font-size:12px; }
+section[role="group panel header"]      { display:none; background:#fff; top:33px; position:absolute; padding:5px; border:1px solid #aaa; width:150px; text-align:left; right:125px; }
+section[role="group links"] 		        { }
+ul.link-list 		          { margin-bottom:0; }
+ul.link-list li 	        { list-style-type:none; font-size:12px; }
+ul.link-list li a			    { }
+ul.link-list li.active a	{ }
 
+/* wide content space */
+section[role="wide section"] { background:#fff; }
 /* sidebar */
 section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px;background:url(../site/images/dark_left_column.png) 0 0 repeat-y;border-right:1px solid #d9d9d9;}
 section[role="complementary"] { width:220px; border-right:1px solid #fff; display:block; float:left; vertical-align:top; }
@@ -130,6 +132,7 @@ body.popupForm.wide section[role="content"] { border:none; }
 .popupForm .emptyFooter { display:none; }
 
 /* settings */
+/* don't touch unless Chaves says... seems this is for Wordpress */
 #groupSettings section { margin-bottom:2em; padding-bottom:2em; border-bottom:1px solid #ccc; }
 #groupSettings label   { font-weight:normal; line-height:16px; margin-top:16px;}
 #groupSettings .column { display:block; width:45%; float:left; }
