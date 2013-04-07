@@ -218,7 +218,8 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .card .main .contentBox { display:table-cell; vertical-align:middle; padding-left:15px; }
 .card .main .contentBox iframe,
 .card .main .contentBox img { width:463px; }
-.card .main .contentBox.media a { max-height:500px; overflow:hidden; display:block; }
+.card .main .contentBox.med a,
+.card .main .contentBox.img a { max-height:500px; overflow:hidden; display:block; }
 .card .main .contentBox blockquote { border:0; margin:0; padding:20px 10px 20px 0; font-size:24px; line-height:28px; color:#868686; font-family:'RDR_HelveticaBold',Helvetica,Arial,sans-serif; }
 .card .main .contentBox blockquote.large { font-size:60px; line-height:64px; }
 .card .main .contentBox blockquote.medium { font-size:36px; line-height:40px; }
@@ -268,7 +269,7 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card .buttons i { color:#787878; }
 .card .buttons a:hover { text-decoration:none;}
 
-.card .me_too_outcome { position: relative; background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9;}
+.card .me_too_outcome { position: relative; background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9; display:none;}
 .card .me_too_outcome div.close { position:absolute; right:12px; top:5px; }
 
 /* styles that used to be in interactions.html */

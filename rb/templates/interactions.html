@@ -13,11 +13,61 @@ var board_admin = false;
 {% if profile_user %}
 $('#cards').addClass('user_profile');
 {% endif %}
+</script>
 
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
     {% for interaction in page.list %}
         {% if interaction.kind != 'com' and interaction.human_kind != 'Share' %}
+        <section class="card">
+            <div class="buttons">
+                <a rel="tooltip" title="+1 this reactions" href="#">+1</a>
+                <a rel="tooltip" title="Undo this reaction" href="#">-1</a>
+                <a rel="tooltip" title="Add new reaction" class="new_reaction"></a>
+                <a rel="tooltip" title="Add a comment" href="#"><i class="icon-comment"></i></a>
+                <a rel="tooltip" title="Save to board" href="#"><i class="icon-bookmark"></i></a>
+                <a rel="tooltip" title="Block this" href="#"><i class="icon-remove-sign"></i></a>
+            </div>
+            <div class="meta">
+                <div class="avatar">
+                    <a href="/user/{{interaction.user.id}}/">
+                        <img src="{{ interaction.user.social_user.img_url }}"/>
+                        {{ interaction.user.social_user.full_name }}
+                    </a>
+                </div>
+                <div class="date">
+                    {{ interaction.created|date:"M d, Y"|escape }}
+                </div>
+            </div>
+            <div class="me_too_outcome"></div>
+            <div class="main">
+                <div class="reactionBox color{% cycle '1' '2' '3' '4' '5' %}">
+                    <h1><a href="/s?={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}"><div>{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}</div></a></h1>
+                    <div class="via">via</div>
+                    <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/> {%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
+                    <div class="links">
+                        <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a>
+                        <a href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escape }}{% else %}{{ interaction.page.url|escape }}{% endif %}" class="external" target="_blank">Visit site <i class="icon-external-link"></i></a>
+                    </div>
+                </div>
+                <div class="contentBox {{ interaction.content.kind }}">
+                    {% if interaction.content.kind == "img" %}
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img src="{{ interaction.content.body|escape }}" /></a>
+                    {% endif %}
+
+                    {% if interaction.content.kind == "med" %}
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><iframe width="300" height="250" frameborder="0" src="{{ interaction.content.body|escape }}"></iframe></a>
+                    {% endif %}
+
+                    {% if interaction.content.kind == "txt" %}
+                    <blockquote class="medium">{{ interaction.content.body|escape }}</blockquote>
+                    {% endif %}
+
+                    <div class="comments"</div>
+                </div>
+            </div>
+        </section>
+        <script>
             var interaction = {
                   "id"    :   {{ interaction.id }},
                   "kind"  :   "{{ interaction.content.kind }}",
@@ -98,6 +148,9 @@ $('#cards').addClass('user_profile');
         {% endif %}
     {% endfor %}
 {% endfor %}
+
+
+
 var metoos = {
     {% if child_interactions %}
     {% for key, value in child_interactions.items %}
@@ -504,20 +557,17 @@ function writeComment( comment, parent, showBlocked ) {
 
 
 // $.each( interactions.content, function(idx, interaction) {
-$.each( interactions, function(idx, interaction) {
-  var showBlocked = ( window.location.href.indexOf('/not_approved/') != -1 ) ? true:false;
-  writeCard( interaction, showBlocked );
-  $.each( interaction.comments, function(idx, comment) {
-    writeComment( comment, interaction );
-  });
+// $.each( interactions, function(idx, interaction) {
+//   var showBlocked = ( window.location.href.indexOf('/not_approved/') != -1 ) ? true:false;
+//   writeCard( interaction, showBlocked );
+$.each( interaction.comments, function(idx, comment) {
+  writeComment( comment, interaction );
 });
-
-// $.each( interactions.pages, function(idx, interaction) {
-//   writePageCard( interaction );
 // });
 
+
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.who_and_what h4').append('<span class="metoos">and '+count+' more</span>')//chain
+  $('#card_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' others</a>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );
