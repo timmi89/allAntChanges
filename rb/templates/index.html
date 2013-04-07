@@ -6,6 +6,26 @@
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
+{% block wideContent %}
+{% if not profile_user and not group and not board %}
+{% if not query_string and not singleton %}
+<div style="width:1140px;height:420px;">
+    <div id="tag_cloud_container" style="position:fixed;z-index:0;width:1140px;overflow:hidden;">
+        <section role="tag cloud grid">
+            <!-- this will get dynamically populated -->
+        </section>
+        <div class="image_container" style="position:absolute;left:0;top:0;width:1140px;height:420px;">
+            <img src="{{ STATIC_URL }}site/images/homepage_masthead_lines.png" style="position:absolute;left:0;top:0;" />
+            <a href="/about/"><img src="{{ STATIC_URL }}site/images/homepage_masthead.png" style="position:absolute;left:223px;top:127px;border:0;" /></a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}
+
+
 {% block sidebarContent %}
 <div id="sidebar">
     {% if not profile_user and not group and not board %}
@@ -20,16 +40,6 @@
 {% endblock sidebarContent %}
 
 {% block mainContent %}
-
-{% if not profile_user and not group and not board %}
-{% if not query_string and not singleton %}
-<div id="tag_cloud_container">
-    <section role="tag cloud grid">
-        <!-- this will get dynamically populated -->
-    </section>
-</div>
-{% endif %}
-{% endif %}
 
 {% if board %}
 <div id="board_header">
@@ -147,11 +157,7 @@
                         currentTagBoxAnimating++;
                         if ( currentTagBoxAnimating > tagBoxesCount ) {
                             clearInterval( animationQueue );
-                            initHorizontalScrollbar();
                         }
-                    }
-                    function initHorizontalScrollbar(){
-                        $('#tag_cloud_container').jScrollPane();
                     }
                 });
 
