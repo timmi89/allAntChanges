@@ -137,7 +137,9 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       {% include "group_nav.html" %}
       </div>
 
-      {% block siteSearch %}
+    
+    <a href="/" class="logo"><h1>ReadrBoard</h1></a>
+    {% block siteSearch %}
     <div id="site_search">
       <form method="get" id="searchform" action="">
         <fieldset>
@@ -148,8 +150,6 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </div>
     {% endblock siteSearch %}
     
-    <a href="/" class="logo"><h1>ReadrBoard</h1></a>
-    
   </header>
   {% endblock header %}
   
@@ -158,16 +158,18 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       {% block wideContent %}
       {% endblock %}
     </section>
-    {% if not board %}
-    <section role="complementary">
-    {% block sidebarContent %}
-    {% endblock %}
-    </section>
-    {% endif %}
+    <section role="after wide section">
+      {% if not board %}
+      <section role="complementary">
+      {% block sidebarContent %}
+      {% endblock %}
+      </section>
+      {% endif %}
 
-    <section role="main">
-    {% block mainContent %}
-    {% endblock mainContent %}
+      <section role="main">
+      {% block mainContent %}
+      {% endblock mainContent %}
+      </section>
     </section>
   </section>
 

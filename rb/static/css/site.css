@@ -26,6 +26,7 @@
 /* fix the damn box model */
 * { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; }
 
+
 /* global for now */
 #page_container { width:1140px; margin: 0 auto; }
 
@@ -54,7 +55,7 @@ header[role="banner"] #user #logged-in #log-out-link label  { font-size:11px; }
 header[role="banner"] #user #logged-in #log-out-link h5  { color:#999; font-size:10px;text-transform:uppercase;border-top:1px solid #aaa;margin-top:5px;padding-top:5px; }
 header[role="banner"] #user	#logged-in:hover #log-out-link	{ display:block; }
 
-header[role="banner"] #site_search			{ margin:6px 10px 0px 30px; display:block; float:right; }
+header[role="banner"] #site_search			{ margin:6px 10px 0px 0px; display:block; float:left; }
 header[role="banner"] #site_search input	{ background:#eee;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;}
 header[role="banner"] #site_search button	{ width:25px; height:22px; background:url(../images/site/search_button.png) top left no-repeat;border:none;text-indent:-9999px;cursor:pointer;z-index:1; position:relative;float:right;margin-left:-26px;margin-top:1px;}
 
@@ -73,20 +74,22 @@ ul.link-list li.active a	{ }
 section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; border-left:1px solid #d9d9d9; border-right:1px solid #d9d9d9; }
 
 /* wide content space */
-section[role="wide section"] { background:#fff; position:relative; z-index:1; }
+section[role="wide section"] { background:#fff; position:relative; z-index:1; width:1140px; }
+section[role="after wide section"] { background:#fff; position:relative; z-index:2; width:1140px;}
+
 /* sidebar */
-section[role="complementary"] { width:220px; border-right:1px solid #fff; display:block; float:left; vertical-align:top; position:relative; z-index:2; }
-section[role="complementary"] h1 { margin:0; }
-section[role="complementary"] h2 { height:110px; text-align:center; color:#3c3c3c; border-top:2px solid #fff; border-bottom:2px solid #fff; line-height:110px; font-size:20px; background:#7eb2f0; letter-spacing:-1px;}
-section[role="complementary"] h2 img { max-width:90%; max-height:90%; }
-section[role="complementary"] h2.about_link:hover { cursor:pointer; background:#eee; color:#737373;}
-section[role="complementary"] div.component { margin-bottom:30px; width:200px; }
-section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:14px; color:#dddddd;}
+section[role="complementary"] { width:349px; display:block; float:left; vertical-align:top; position:relative; z-index:2; background:#f3f3f3; box-shadow:-6px 0px 8px #ccc inset;}
+section[role="complementary"] div.component { margin:33px auto 30px; width:267px; }
+section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:24px; color:#858585; border-top:1px solid #858585; }
 section[role="complementary"] div.component ul { list-style-type:none; padding:0;margin:0 0 0 20px;text-align:left;}
 section[role="complementary"] div.component ul li { margin-bottom:5px;}
 section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
 section[role="complementary"] div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
 section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px 2px 0;}
+
+/* main column */
+section[role="main"] { margin-left:349px; display:block; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}
+
 
 #avatar h2 div { display:inline-block; max-width:150px; }
 
@@ -101,8 +104,6 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 #which_content strong,
 #follow_info strong { color:#7eb2f0;}
 
-section[role="main"] { margin-left:220px; display:block; vertical-align:top; position:relative; z-index:3; }
-section[role="main"] h2.header { height:110px; color:#999; border-top:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; line-height:110px; font-size:36px; padding:1px 0; margin:0; text-align:center; }
 
 /* readrboards board listing */
 #board_listing  { margin:0 auto 20px; overflow:auto; padding:2px; }
