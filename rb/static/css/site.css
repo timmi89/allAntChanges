@@ -92,16 +92,20 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 section[role="main"] { margin-left:349px; display:table-cell; padding:33px 50px; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}
 
 
+#avatar    { text-align:center; padding-top:50px; } 
+#avatar h2 { } 
+#avatar h2 img { max-width:200px; margin:0 auto; } 
 #avatar h2 div { display:inline-block; max-width:150px; }
+#avatar button { display:inline-block; max-width:150px; }
 
 .pagination { padding:20px 10px 0 10px; }
 /* profile items */
 #which_content,
 #follow_info { padding:10px; }
 #which_content a,
-#follow_info a { display:block; color:#ddd;}
+#follow_info a { display:block; color:#787878;}
 #which_content a.btn,
-#follow_info a.btn { color:#404040; margin-top:10px;}
+#follow_info a.btn { color:#404040; margin-top: 10px; width: 200px; margin: 10px auto 0;}
 #which_content strong,
 #follow_info strong { color:#7eb2f0;}
 
