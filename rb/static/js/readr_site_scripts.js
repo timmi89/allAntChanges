@@ -580,8 +580,8 @@ RB = {
                             });
                         });
 
-                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
-                        $close.find('a').click( function() {
+                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        $close.find('i').click( function() {
                             $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
                         });
 
@@ -622,8 +622,8 @@ RB = {
                             $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
-                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
-                        $close.find('a').click( function() {
+                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        $close.find('i').click( function() {
                             $('#card_'+interaction_id).find('div.me_too_outcome').hide(333);
                         });
 

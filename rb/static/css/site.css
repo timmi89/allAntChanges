@@ -24,7 +24,7 @@
 }
 
 /* fix the damn box model */
-* { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; }
+* { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; font-family:font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif;}
 
 
 /* global for now */
@@ -71,24 +71,25 @@ ul.link-list li 	        { list-style-type:none; font-size:12px; }
 ul.link-list li a			    { }
 ul.link-list li.active a	{ }
 
-section[role="content"] { display:block; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; border-left:1px solid #d9d9d9; border-right:1px solid #d9d9d9; }
+section[role="content"] { display:table; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; border-left:1px solid #d9d9d9; border-right:1px solid #d9d9d9; }
 
 /* wide content space */
 section[role="wide section"] { background:#fff; position:relative; z-index:1; width:1140px; }
 section[role="after wide section"] { background:#fff; position:relative; z-index:2; width:1140px;}
 
 /* sidebar */
-section[role="complementary"] { width:349px; display:block; float:left; vertical-align:top; position:relative; z-index:2; background:#f3f3f3; box-shadow:-6px 0px 8px #ccc inset;}
-section[role="complementary"] div.component { margin:33px auto 30px; width:267px; }
-section[role="complementary"] div.component h3 { margin:0 0 5px 20px; font-size:24px; color:#858585; border-top:1px solid #858585; }
+section[role="complementary"] { width:349px; display:table-cell; vertical-align:top; position:relative; z-index:2; background:#f3f3f3; box-shadow:-6px 0px 8px #ccc inset;}
+section[role="complementary"] div.component { margin:33px auto 30px 25px; width:267px; }
+section[role="complementary"] div.component h3 { margin:0 0 20px 20px; font-size:24px; color:#858585; border-top:1px solid #bbb; padding-top:10px;}
 section[role="complementary"] div.component ul { list-style-type:none; padding:0;margin:0 0 0 20px;text-align:left;}
-section[role="complementary"] div.component ul li { margin-bottom:5px;}
-section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:12px;line-height:14px;}
-section[role="complementary"] div.component ul li a { font-weight:bold;color:#6598ca;text-decoration:none;}
+section[role="complementary"] div.component ul li { margin-bottom:10px;}
+section[role="complementary"] div.component.active_pages ul li { margin-bottom:20px;font-size:13px;line-height:16px;}
+section[role="complementary"] div.component ul li a { font-weight:bold;color:#858585;text-decoration:none;}
+section[role="complementary"] div.component ul li a:hover { color:#008be4;text-decoration:underline;}
 section[role="complementary"] div.component ul li a img { width:30px; display:inline-block; margin:0 5px 2px 0;}
 
 /* main column */
-section[role="main"] { margin-left:349px; display:block; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}
+section[role="main"] { margin-left:349px; display:table-cell; padding:33px 50px; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}
 
 
 #avatar h2 div { display:inline-block; max-width:150px; }
@@ -168,16 +169,17 @@ section[role="main"] div.card div.meta em { display:block; }
 ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
 ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
 ul.shareLinks img       {width:18px !important; margin:0 !important;}
+/*
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
 section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
     opacity: 0.8;
     -moz-pacity: 0.8;
     filter:alpha(opacity=8);
 }
-
+*/
 /* tag cloud grid */
 #tag_cloud_container { position:relative; }
-#tag_cloud_container div.image_container { box-shadow:0px 0px 350px 50px #000 inset; }
+div.image_container { position:absolute;left:0;top:0;width:1138px;height:420px;box-shadow:0px 0px 350px 50px #000 inset; }
 section[role="tag cloud grid"] { height:420px; background:#000;}
 section[role="tag cloud grid"] a { text-decoration:none;}
 .box { text-align:center; font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
@@ -193,43 +195,44 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .color1,
 .color1 a { background:#84b8ef; color:#354c65;}
 .color2,
-.color2 a { background:#419bac; color:#fff;}
+.color2 a { background:#419bac; color:#0e414d;}
 .color3,
-.color3 a { background:#d7f360; color:#454545;}
+.color3 a { background:#d7f360; color:#748430;}
 .color4,
-.color4 a { background:#9dd55e; color:#454545;}
+.color4 a { background:#9dd55e; color:#578326;}
 .color5,
-.color5 a { background:#495564; color:#ccc;}
+.color5 a { background:#576c87; color:#c8d6e9;}
 
 
 /* cards */
-section[role="main"] div.card header      { z-index:3; overflow:auto; }
+
+/*section[role="main"] div.card header      { z-index:3; overflow:auto; }
 section[role="main"] div.card a.added_by_user         { display:block; position:absolute; top:8px; left:8px; }
 section[role="main"] div.card div.who_and_what        { text-align:center; position: relative; overflow:hidden; }
 section[role="main"] div.card div.who_and_what h1     { font-size:28px; letter-spacing:-1px; line-height: 58px; margin:0 auto; max-width:200px;}
 section[role="main"] div.card div.who_and_what h1 a   { text-decoration:none; display:block;}
 section[role="main"] div.card div.who_and_what h4        { margin-top:4px; text-align:left; float:left; font-size:11px; font-family:Arial; font-weight:normal; }
 section[role="main"] div.card div.who_and_what img       { width:32px; margin:4px; float:left; }
-/*section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
+*//*section[role="main"] div.card div.who_and_what h4     { font-size:12px; padding-left:2px; margin-bottom:-5px;}
 section[role="main"] div.card div.who_and_what h4 a   { color:#999; text-decoration:none; }
 section[role="main"] div.card div.who_and_what h4 a:hover       { text-decoration:underline; }
 */
-section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; font-size:11px; font-family:Arial; font-weight:normal; display:block;}
+/*section[role="main"] div.card div.who_and_what h4 span.metoos   { cursor:pointer; font-size:11px; font-family:Arial; font-weight:normal; display:block;}
 section[role="main"] div.card div.who_and_what h4 span.metoos:hover   { text-decoration:underline; }
+*/
 
-section[role="main"] div.card div.date {
+/*section[role="main"] div.card div.date {
     font-size: 10px;
-    /*position: absolute;*/
-    /*right: 0;*/
     color:#bbb;
     float:right;
     margin-bottom:-17px;
 }
+*/
 
 section[role="main"] div.card div.block_content   { font-size:11px; display:none; position:absolute; right:10px; white-space:pre; top:5px;}
 section[role="main"] div.card:hover div.block_content   { display:block; }
 section[role="main"] div.card div.block_content a { color:red; }
-
+/*
 section[role="main"] div.card header h1	span 	{ font-size:20px; }
 section[role="main"] div.card div.meta            { clear:both; font-size:11px; overflow:auto; position: relative; text-align:left; background:#f3f3f3;border-top: 1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9; padding:4px; }
 section[role="main"] div.card.pag div.meta        { margin-top:0; }
@@ -242,8 +245,8 @@ section[role="main"] div.card.img div.meta div.content_type,
 section[role="main"] div.card.med div.meta div.content_type { margin:0px 8px 0 2px; }
 section[role="main"] div.card.txt div.meta div.content_type { margin:3px 0 0 5px;}
 
-
-
+*/
+/*
 section[role="main"] div.metaLeft { float: left; width: 25px; position: relative;}
 section[role="main"] div.metaRight { float: left; overflow:hidden;}
 
@@ -285,35 +288,13 @@ section[role="main"] div.card div.content .buttonsMsg a{
 section[role="main"] div.card div.content .tag_remove{
     color: #A77;
 }
-section[role="main"] div.card div.content .comments{
-    padding: 10px;
-    text-align:left;
-}
 
 section[role="main"] div.card.img div.content                               { margin:0; position:relative; z-index:2;}
 section[role="main"] div.card.img div.content div.content_body img      { width:100%; position:relative;z-index:1; opacity:0.33;}
 section[role="main"] div.card.img:hover div.content div.content_body img			{ opacity:1;}
 section[role="main"] div.card.med div.content div.content_body iframe   { width:100%; position:relative;z-index:1; opacity:0.33;}
 section[role="main"] div.card.med:hover div.content div.content_body iframe		{ opacity:1; }
-
-section[role="main"] div.card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
-section[role="main"] div.card div.comments h2 { 
-    font-size:12px; 
-    border-bottom: 1px solid #CCC;
-    padding-bottom: 5px;
-    margin-bottom: 3px;
-}
-section[role="main"] div.card div.comment_container { position:relative; border-bottom:1px solid #eee;}
-section[role="main"] div.card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
-section[role="main"] div.card div.comment_container .header   {overflow:hidden; color:#666; clear:both; padding-top:3px;}
-section[role="main"] div.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa;}
-section[role="main"] div.card div.comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
-section[role="main"] div.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
-section[role="main"] div.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
-section[role="main"] div.card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
-section[role="main"] div.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px 'RDR_Helvetica',Helvetica, 'HelveticaRegular';}
-section[role="main"] div.card div.comment_container .comment .count  {font:normal 12px Arial; }
-section[role="main"] div.card div.comment_container .comment .comment_body  { font-size:12px; }
+*/
 
 /* styles that used to be in interactions.html */
 #content {
@@ -365,7 +346,7 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
 
 }
 .card .group a:hover {text-decoration:none;}
-
+/*
 .card .buttons {
   position:absolute;left:0px;z-index:1;display:none;
   background:rgba(0,0,0,1);
@@ -394,7 +375,7 @@ section[role="main"] div.card div.comment_container .comment .comment_body  { fo
 }
 .card:hover .buttons { display:block; }
 
-
+*/
 .fancybox-inner h3{
     font-weight: bold;
     font-style: italic;
