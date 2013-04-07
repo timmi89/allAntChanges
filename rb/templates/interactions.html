@@ -1,4 +1,3 @@
-<section id="content"></section>
 <script>
 var comments = [],
     interactions = [],
@@ -42,7 +41,7 @@ $('#cards').addClass('user_profile');
             <div class="me_too_outcome"></div>
             <div class="main">
                 <div class="reactionBox color{% cycle '1' '2' '3' '4' '5' %}">
-                    <h1><a href="/s?={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}"><div>{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}</div></a></h1>
+                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}"></a></h1>
                     <div class="via">via</div>
                     <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/> {%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
                     <div class="links">
@@ -60,13 +59,45 @@ $('#cards').addClass('user_profile');
                     {% endif %}
 
                     {% if interaction.content.kind == "txt" %}
-                    <blockquote class="medium">{{ interaction.content.body|escape }}</blockquote>
+                    <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%}">{{ interaction.content.body|escape }}</blockquote>
                     {% endif %}
 
                     <div class="comments"</div>
                 </div>
             </div>
         </section>
+        <script>
+          // use JS to split the reaction up if it's long.  code is from the widget.
+          // later let's try to use django-softhyphen or do this same logic in the controller
+          // split long tag onto two lines.
+          var tagBodyRaw = "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}",
+              tagBody = "",
+              tagIsSplitClass = ""
+              $lastReaction = $('.reactionBox:last h1 a');
+
+          if ( tagBodyRaw.length > 16 ) {
+              tagIsSplitClass = "rdr_tag_split";
+              // if no space, hyphenate
+              if ( tagBodyRaw.indexOf(' ') == -1 ) {
+                  tagBody = '<div>' + tagBodyRaw.substr(0,15) + '-</div><div>' + tagBodyRaw.substr(15) + '</div>';
+                  // if ( boxSize == "rdr_box_small" ) {
+                  //     boxSize = "rdr_box_medium";
+                  // }
+              } else {
+                  var tagBody1 = "", tagBody2 = "", keepLooping = true;
+                  tagBodyRawSplit = tagBodyRaw.split(' ');
+                  while ( keepLooping ) {
+                      tagBody1 += tagBodyRawSplit.shift() + ' ';
+                      if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
+                  }
+                  tagBody2 = tagBodyRawSplit.join(' ');
+                  tagBody = '<div>' + tagBody1 +'</div><div>' + tagBody2 + '</div>';
+              }
+          } else {
+            tagBody = '<div>' + tagBodyRaw + '</div>' ;
+          }
+          $lastReaction.append( tagBody );
+        </script>
         <script>
             var interaction = {
                   "id"    :   {{ interaction.id }},
@@ -146,6 +177,7 @@ $('#cards').addClass('user_profile');
             };
             shares.push( share );
         {% endif %}
+        </script>
     {% endfor %}
 {% endfor %}
 
@@ -574,21 +606,21 @@ $.each( metoos, function(interaction_id, count) {
 });
 
 
-var $container = $('#content');
+// var $container = $('#content');
 
-function cardReset() {
-{% if not singleton %}
-$container.isotope({
-  // options...
-  resizable: false, // disable normal resizing
-  // set columnWidth to a percentage of container width
-  masonry: { columnWidth: 460 },
-  itemSelector : 'div.card'
-}, function() {
-  $('#content').css('visibility','visible')
-});
-{% endif %}
-}
+// function cardReset() {
+// {% if not singleton %}
+// $container.isotope({
+//   // options...
+//   resizable: false, // disable normal resizing
+//   // set columnWidth to a percentage of container width
+//   masonry: { columnWidth: 460 },
+//   itemSelector : 'div.card'
+// }, function() {
+//   $('#content').css('visibility','visible')
+// });
+// {% endif %}
+// }
 
 function getContentDimsStyle(dims){
     
@@ -611,9 +643,9 @@ function getContentDimsStyle(dims){
     return 'style=" min-height:'+minHeight+'px; "';
 }
 
-$(document).ready(function(){
-  cardReset();
-});
+// $(document).ready(function(){
+//   cardReset();
+// });
 
 {% if profile_user %}
   {% if not query_string %} 
