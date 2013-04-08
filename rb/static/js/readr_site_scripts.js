@@ -60,12 +60,13 @@ RB = {
                 success: function(response) {
                     if (response.status == "success") {
                         var $blockLink = $('#moderate_'+int_id);
-                        var blockText = $.trim( $blockLink.text() );
-                        if ( blockText == "Block this" ) {
-                            $blockLink.text('Unblock');
-                        } else {
-                            $blockLink.text('Block this');
-                        }
+                        $blockLink.closest('.card').hide();
+                        // var blockText = $.trim( $blockLink.text() );
+                        // if ( blockText == "Block this" ) {
+                        //     $blockLink.text('Unblock');
+                        // } else {
+                        //     $blockLink.text('Block this');
+                        // }
                     }
                 },
                 error: function(response) {

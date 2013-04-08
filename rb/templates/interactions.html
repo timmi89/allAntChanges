@@ -62,7 +62,7 @@ $('#cards').addClass('user_profile');
                       <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
                     
                     {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
-                    <a rel="tooltip" title="Block this" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="icon-remove-sign"></i></a>
+                    <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
                     {% endif %}
 
                     <!-- board add/delete ? -->
