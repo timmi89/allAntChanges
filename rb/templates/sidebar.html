@@ -24,6 +24,17 @@ $(document).ready( function() {
 </script>
 {% endif %}
 
+
+{% if page %}
+<div id="avatar">
+  <h3>{{ page.title }}</h3>
+  <a href="{{ page.canonical_url }}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
+</div>
+
+
+{% endif %}
+
+
 {% if not profile_user and not group %}
 <div id="avatar">
   <!-- <div>

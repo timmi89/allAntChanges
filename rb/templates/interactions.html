@@ -104,7 +104,7 @@ $('#cards').addClass('user_profile');
                     {% endif %}
 
                     {% if interaction.content.kind == "txt" %}
-                    <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%} contentBody">{{ interaction.content.body|escape }}</blockquote>
+                    <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%} contentBody"><a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank">{{ interaction.content.body|escape }}</a></blockquote>
                     {% endif %}
 
                     {% if interaction.comments %}
@@ -294,6 +294,7 @@ var metoos = {
 
 </script>
 
+{% if not singleton %}
 <div class="pagination">
   <span class="step-links">
     {% if current_page.has_previous %}
@@ -307,13 +308,9 @@ var metoos = {
     {% endif %}
   </span>
 </div>
+{% endif %}
 
 <script>
-
-// var zIndex = 400,
-//     colorInt = 1,
-//     cardWidth = 460;
-    // cardWidth = Math.floor( $('#cards').width()/2 - 40 );
 
 function writeCardButtons( $card ) {
   var interaction_id = $card.data('interaction-id'),
@@ -323,19 +320,6 @@ function writeCardButtons( $card ) {
 
   // var userCookie = $.cookie('user_id');
   // var userOwnsInteraction = parseInt(userCookie, 10) === interaction.user_id;
-
-  // if ( window.location.href.indexOf('/page/') != -1 ) {
-  //   // this should really be done by the back-end.
-  //   if ( !$('#sidebar div#avatar').length ) {
-  //     var $avatar = $('<div id="avatar"><a href="/group/'+interaction.group.short_name+'"><img alt="'+interaction.group.name+'" src="'+interaction.group.logo_url_lg+'"></a></div>')
-  //     $('#sidebar').prepend( $avatar );
-  //   }
-
-  //   if ( !$('#sidebar h3').length ) {
-  //     var $pageTitle = $('<h3>'+interaction.page_title+'</h3><div style="text-align:center;padding-right:20px;margin-bottom:20px"><a href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a></div>')
-  //     $('#sidebar h4').text('Activity on:').after( $pageTitle );
-  //   }
-  // }
 
     var $buttons = $('.interaction_'+interaction_id).find('.buttons');
     // if ( userCookie ) {

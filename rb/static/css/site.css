@@ -35,7 +35,7 @@ h2 { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weigh
 label { display:inline-block; }
 
 /* HEADER */
-header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1140px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;}
+header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1142px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;border-right:4px solid #fff;}
 header[role="banner"] a.logo    { display:block; float:left; }
 header[role="banner"] h1				{ text-indent:-9999px; background:url(../images/site/logo_dark.png) top center no-repeat;margin-top:4px; width:218px; }
 
@@ -71,7 +71,7 @@ ul.link-list li 	        { list-style-type:none; font-size:12px; }
 ul.link-list li a			    { }
 ul.link-list li.active a	{ }
 
-section[role="content"] { display:table; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; border-left:1px solid #d9d9d9; border-right:1px solid #d9d9d9; }
+section[role="content"] { display:table; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; border-left:1px solid #d9d9d9; border-right:1px solid #d9d9d9; box-sizing:border-box;}
 
 /* wide content space */
 section[role="wide section"] { background:#fff; position:relative; z-index:1; width:1140px; }
@@ -219,12 +219,15 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .card .main .reactionBox .groupName { font-weight:bold; font-size:18px;  }
 .card .main .reactionBox .links { margin-top:20px; }
 .card .main .reactionBox .links a   { font-size:12px; font-weight:normal; display:block; line-height:12px; background:none; margin-bottom:10px;}
-.card .main .contentBox { display:table-cell; vertical-align:middle; padding-left:15px; }
+.card .main .contentBox { display:table-cell; vertical-align:top; padding-left:15px; }
 .card .main .contentBox iframe,
 .card .main .contentBox img { width:463px; }
 .card .main .contentBox.med a,
 .card .main .contentBox.img a { max-height:500px; overflow:hidden; display:block; }
-.card .main .contentBox blockquote { border:0; margin:0; padding:20px 10px 20px 0; font-size:24px; line-height:28px; color:#868686; font-family:'RDR_HelveticaBold',Helvetica,Arial,sans-serif; }
+.card .main .contentBox blockquote { border:0; margin:0; padding:15% 10px 20px 0; font-size:24px; line-height:28px; color:#868686; font-family:'RDR_HelveticaBold',Helvetica,Arial,sans-serif; }
+.card .main .contentBox blockquote a { color:#868686; }
+.card:hover .main .contentBox blockquote a { color:#008be4; }
+.card .main .contentBox blockquote a:hover { text-decoration:none;  }
 .card .main .contentBox blockquote.large { font-size:68px; line-height:72px; min-height:220px;  display:table-cell; vertical-align:middle;}
 .card .main .contentBox blockquote.medium { font-size:42px; line-height:46px; min-height:180px; display:table-cell; vertical-align:middle;}
 
@@ -273,8 +276,8 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card .buttons i { color:#787878; }
 .card .buttons a:hover { text-decoration:none;}
 
-.card .me_too_outcome { position: relative; background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9; display:none;}
-.card .me_too_outcome div.close { position:absolute; right:12px; top:5px; cursor:pointer; }
+.card .me_too_outcome { background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9; display:none;}
+.card .me_too_outcome div.close { float:right; cursor:pointer; }
 
 /* styles that used to be in interactions.html */
 #content {
@@ -611,10 +614,11 @@ div.splashQuote {
 	width:260px;
 	display:none;
 }
+.blurb-about-the-team,
 #splashBlurbs{
 	position:relative;
     margin:0 auto;
-    width: 100%;
+    width: 88%;
     text-align:center;
 }
 #splashAnnounce #imagine {
@@ -788,9 +792,6 @@ div.splashQuote {
 #splashBlurbs .partnerLogoSection h3{
 	font-size:18px;
 	padding-left:5px;
-}
-.blurb-about-the-team {
-    text-align: center;
 }
 .teamThumbnails{
     clear: both;

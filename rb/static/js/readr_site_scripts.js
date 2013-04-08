@@ -586,7 +586,7 @@ RB = {
                             $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
                         });
 
-                        $successMessage.append( $shareLinks, $close );
+                        $successMessage.append( $close, $shareLinks );
                         $outcome.html( $successMessage );
                         $outcome.show(333);
                     }
@@ -628,7 +628,7 @@ RB = {
                             $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
                         });
 
-                        $message.append($close );
+                        $message.prepend( $close );
                         $outcome.html( $message );
                         $outcome.show(333);
                     }

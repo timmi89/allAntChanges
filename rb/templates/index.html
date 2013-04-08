@@ -7,7 +7,7 @@
 {%endblock%}
 
 {% block wideContent %}
-{% if not profile_user and not group and not board %}
+{% if not profile_user and not group and not board and not page %}
 {% if not query_string and not singleton %}
 <div style="width:1138px;height:420px;">
     <div id="tag_cloud_container" style="position:fixed;z-index:0;overflow:hidden;width:1138px;left:50%;margin-left:-569px">
@@ -28,7 +28,7 @@
 
 {% block sidebarContent %}
 <div id="sidebar">
-    {% if not profile_user and not group and not board %}
+    {% if not profile_user and not group and not board and not page %}
     {% if not query_string and not singleton %}
     <!-- homepage sidebar -->
     {% include "homepage_sidebar.html" %}
