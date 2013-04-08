@@ -99,7 +99,7 @@ $('#cards').addClass('user_profile');
                     <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/><br/>{%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
                     <div class="links">
                         <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a>
-                        <a href="{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escape }}{% else %}{{ interaction.page.url|escape }}{% endif %}" class="external" target="_blank">See it in context <i class="icon-external-link"></i></a>
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">See it in context <i class="icon-external-link"></i></a>
                     </div>
                 </div>
                 <div class="contentBox {{ interaction.content.kind }}">
