@@ -77,6 +77,8 @@ section[role="content"] { display:table; vertical-align:top; overflow:auto; padd
 section[role="wide section"] { background:#fff; position:relative; z-index:1; width:1140px; }
 section[role="after wide section"] { background:#fff; position:relative; z-index:2; width:1140px;}
 
+div.mostlyWide { width:88%; margin:20px auto; }
+
 /* sidebar */
 section[role="complementary"] { width:349px; display:table-cell; vertical-align:top; position:relative; z-index:2; background:#f3f3f3; box-shadow:-6px 0px 8px #ccc inset;}
 section[role="complementary"] div.component { margin:33px auto 30px 25px; width:267px; }

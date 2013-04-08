@@ -2,7 +2,6 @@
 
 {% block title %}{{ group.name }} Analytics{%endblock%}
 
-{% block bodyClass %}wide{% endblock %}
 
 {% block extendedHead %}
 <script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
@@ -16,7 +15,8 @@
 </style>
 {% endblock %}
 
-{% block mainContent %}
+{% block wideContent %}
+<div class="mostlyWide">
 <h1>{{ group.name }} Analytics</h1>
 <section role="datepicker" class="datepicker">
 	<form>
@@ -136,7 +136,7 @@
 
 	</section>
 </section>
-
+</div>
 <script>
 (function(){
 
@@ -737,4 +737,4 @@
 
 })();
 </script>
-{% endblock mainContent %}
+{% endblock wideContent %}
