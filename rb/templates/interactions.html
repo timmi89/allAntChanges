@@ -572,7 +572,7 @@ $('.card').each(function(idx, card) {
 });
 
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' others</a>')//chain
+  $('.interaction_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' more</a>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );
