@@ -225,8 +225,8 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .card .main .contentBox.med a,
 .card .main .contentBox.img a { max-height:500px; overflow:hidden; display:block; }
 .card .main .contentBox blockquote { border:0; margin:0; padding:20px 10px 20px 0; font-size:24px; line-height:28px; color:#868686; font-family:'RDR_HelveticaBold',Helvetica,Arial,sans-serif; }
-.card .main .contentBox blockquote.large { font-size:60px; line-height:64px; }
-.card .main .contentBox blockquote.medium { font-size:36px; line-height:40px; }
+.card .main .contentBox blockquote.large { font-size:60px; line-height:64px; min-height:220px;  display:table-cell; vertical-align:middle;}
+.card .main .contentBox blockquote.medium { font-size:36px; line-height:40px; min-height:180px; display:table-cell; vertical-align:middle;}
 
 .card .meta { margin-bottom:10px; width:100%; display:table;}
 .card .meta a { color:#989898;}
@@ -252,7 +252,7 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 
 section[role="main"] div.card div.content .comments{ padding: 10px; text-align:left; }
 
-.card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:15px 0 5px; display:none; }
+.card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:50px 0 5px; }
 .card div.comments h2 {  font-size:12px;  border-bottom: 1px solid #CCC; padding-bottom: 5px; margin-bottom: 3px; }
 .card div.comment_container { position:relative; border-bottom:1px solid #eee;}
 .card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
@@ -269,7 +269,7 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card .buttons { display:none;padding:5px;position:absolute;top:86px;width:33px;left:-33px;background:#eee;border:1px solid #aaa; border-right:0; text-align:center; box-shadow:0px 0px 8px #aaa;}
 .card:hover .buttons { display:block;}
 .card .buttons a { display:block; font-size:14px; color:#787878;}
-.card .buttons a.new_reaction { width:20px; height:20px; background:url("/static/site/images/readr_icons.png") no-repeat -176px 2px; }
+.card .buttons a.add_new_reaction { width:20px; height:20px; background:url("/static/site/images/readr_icons.png") no-repeat -176px 2px; cursor:pointer;}
 .card .buttons i { color:#787878; }
 .card .buttons a:hover { text-decoration:none;}
 
