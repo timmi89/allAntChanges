@@ -47,7 +47,7 @@ $('#cards').addClass('user_profile');
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
     {% for interaction in page.list %}
-        {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.human_kind != 'pag' %}
+        {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
         <section class="card interaction_{{ interaction.id }}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
             {% if cookie_user %}
             <div class="buttons">
