@@ -55,7 +55,7 @@ $('#cards').addClass('user_profile');
                         <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
                       {% endif %}
                       {% if interaction.user.id != cookie_user.id %}
-                        <a rel="tooltip" title="+1 this reaction" class="me_too" href="javascript:void(0);">+1</a>
+                        <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
                       {% endif %}
                       <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
                       <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
