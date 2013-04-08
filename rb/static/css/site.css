@@ -218,7 +218,7 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .card .main .reactionBox h1 a { display:block; background:none !important; width:180px;}
 .card .main .reactionBox h1 a div { }
 .card .main .reactionBox .via { font-style:italic; font-size:12px; line-height:10px; }
-.card .main .reactionBox .groupName { font-weight:bold; font-size:18px;  }
+.card .main .reactionBox .groupName { font-weight:bold; font-size:18px; word-break:break-all; }
 .card .main .reactionBox .links { margin-top:20px; }
 .card .main .reactionBox .links a   { font-size:12px; font-weight:normal; display:block; line-height:12px; background:none; margin-bottom:10px;}
 .card .main .contentBox { display:table-cell; vertical-align:top; padding-left:15px; }
