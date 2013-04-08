@@ -272,7 +272,7 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card .buttons { display:none;padding:5px;position:absolute;top:86px;width:33px;left:-33px;background:#eee;border:1px solid #aaa; border-right:0; text-align:center; box-shadow:0px 0px 8px #aaa;}
 .card:hover .buttons { display:block;}
 .card .buttons a { display:block; font-size:14px; color:#787878;}
-.card .buttons a.add_new_reaction { width:20px; height:20px; background:url("/static/site/images/readr_icons.png") no-repeat -176px 2px; cursor:pointer;}
+.card .buttons a.add_new_reaction { width:20px; height:20px; background:url("../site/images/readr_icons.png") no-repeat -176px 2px; cursor:pointer;}
 .card .buttons i { color:#787878; }
 .card .buttons a:hover { text-decoration:none;}
 
