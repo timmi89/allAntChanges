@@ -274,7 +274,7 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card .buttons a:hover { text-decoration:none;}
 
 .card .me_too_outcome { position: relative; background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9; display:none;}
-.card .me_too_outcome div.close { position:absolute; right:12px; top:5px; }
+.card .me_too_outcome div.close { position:absolute; right:12px; top:5px; cursor:pointer; }
 
 /* styles that used to be in interactions.html */
 #content {

@@ -48,9 +48,9 @@ $('#cards').addClass('user_profile');
 {% for page in pi %}
     {% for interaction in page.list %}
         {% if interaction.kind != 'com' and interaction.human_kind != 'Share' %}
-        <section class="card interaction_{{ interaction.id }}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+        <section class="card interaction_{{ interaction.id }}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+            {% if cookie_user %}
             <div class="buttons">
-              {% if cookie_user %}
                       {% if interaction.user.id == cookie_user.id %}
                         <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
                       {% endif %}
@@ -66,12 +66,12 @@ $('#cards').addClass('user_profile');
                     {% endif %}
 
                     <!-- board add/delete ? -->
-              {% endif %}
-              {% if not cookie_user %}
-                  <!-- add a not-logged-in state here -->
-              {% endif %}
-
             </div>
+            {% endif %}
+            {% if not cookie_user %}
+                <!-- add a not-logged-in state here -->
+            {% endif %}
+
             <div class="meta">
                 <div class="avatar">
                     <a href="/user/{{interaction.user.id}}/">
@@ -320,7 +320,7 @@ function writeCardButtons( $card ) {
       kind = $card.data('kind'),
       tagBody = $card.find('.reactionBox h1').text(),
       userName = $card.data('user-name');
-  
+
   // var userCookie = $.cookie('user_id');
   // var userOwnsInteraction = parseInt(userCookie, 10) === interaction.user_id;
 
@@ -351,18 +351,18 @@ function writeCardButtons( $card ) {
       $buttons.find('.add_new_reaction').click( function() {
         $('#add_new_reaction_form').remove();
         if ( kind == "img" ) {
-          var contentBody = $('.contentBody').attr('src');
+          var contentBody = $card.find('.contentBody').attr('src');
           var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+contentBody+'"></div>');
         } else if ( kind == "med" ) {
-          var contentBody = $('.contentBody').attr('src');
+          var contentBody = $card.find('.contentBody').attr('src');
           $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe></div>');
         } else if ( kind == "txt" ) {
-          var contentBody = $('.contentBody').text();
+          var contentBody = $card.find('.contentBody').text();
           $rateContent = $('<div class="rateContent"><span>'+contentBody+'</span></div>');
         }
 
         var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button btn">Add Reaction</button></div>' )//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button">Add Reaction</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           wrapCSS    : 'fancybox-custom',
@@ -372,15 +372,17 @@ function writeCardButtons( $card ) {
                 'background' : 'rgba(100,100,100,0.8)'
               }
             }
+          },
+          afterShow: function() {
+            $('#new_reaction_button').click(function() {
+              RB.interactions.add_new_reaction( interaction_id, $('#new_reaction_text').val() );
+            });
           }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
             RB.interactions.add_new_reaction( interaction_id, $(this).val() );
           }
-        });
-        $obj.find('#new_reaction_button').click(function() {
-          RB.interactions.add_new_reaction( interaction_id, $('#new_reaction_text').val() );
         });
       });
 
@@ -392,13 +394,13 @@ function writeCardButtons( $card ) {
             //consolidate these duplicate functions
             var $rateContent = $('<div class="rateContent">');
             if ( kind == "img" ) {
-                var contentBody = $('.contentBody').attr('src');
+                var contentBody = $card.find('.contentBody').attr('src');
                 $rateContent.append('<img width="300" src="'+contentBody+'">');
             } else if ( kind == "med" ) {
-                var contentBody = $('.contentBody').attr('src');
+                var contentBody = $card.find('.contentBody').attr('src');
                 $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe>');
             } else if ( kind == "txt" ) {
-                var contentBody = $('.contentBody').text();
+                var contentBody = $card.find('.contentBody').text();
                 $rateContent.append('<span>'+contentBody+'</span>')
                 .addClass('rateContentText');
             // }else {
@@ -438,13 +440,13 @@ function writeCardButtons( $card ) {
             //consolodate these duplicate functions
             var $rateContent = $('<div class="rateContent">');
             if ( kind == "img" ) {
-                var contentBody = $('.contentBody').attr('src');
+                var contentBody = $card.find('.contentBody').attr('src');
                 $rateContent.append('<img width="300" src="'+contentBody+'">');
             } else if ( kind == "med" ) {
-                var contentBody = $('.contentBody').attr('src');
+                var contentBody = $card.find('.contentBody').attr('src');
                 $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe>');
             } else if ( kind == "txt" ) {
-                var contentBody = $('.contentBody').text();
+                var contentBody = $card.find('.contentBody').text();
                 $rateContent.append('<span>'+contentBody+'</span>').addClass('rateContentText');
             // }else {
             //     $rateContent.append('<span>'+interaction.content_body+'</span>')
@@ -501,7 +503,6 @@ function writeCardButtons( $card ) {
     // colorInt = ( colorInt < 5 ) ? colorInt+1 : 1;
 
     // $('#cards #content').append( $card ); 
-    // $card.find('header h1').bigtext({ maxfontsize:32 });
 
     // $('.view-at-site').attr( 'href', '/i/'+interaction.id+'/' ).text('View this at '+interaction.group.name);
 }
@@ -615,9 +616,9 @@ $.each( metoos, function(interaction_id, count) {
 //     return 'style=" min-height:'+minHeight+'px; "';
 // }
 
-// $(document).ready(function(){
-//   cardReset();
-// });
+$(document).ready(function(){
+  $('.card h1 a').bigtext();
+});
 
 {% if profile_user %}
   {% if not query_string %} 
