@@ -1481,6 +1481,11 @@ div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
     user-select: none !important;
 }
 /*the indicator body will be moved up to compensate*/
+
+div.rdr_sandbox div.rdr_helper_rindow div.rdr_header h1{
+    font-size: 13px !important;
+}
+
 div.rdr_indicator_for_text{
     vertical-align: text-top !important;
 }

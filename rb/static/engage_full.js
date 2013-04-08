@@ -205,23 +205,24 @@ function readrBoard($R){
             makeHeader: function( _headerText ) {
                 //RDR.rindow.makeHeader:
                 var headerText = _headerText || "";
-                
-                var $headerContent = $(
-                    '<div class="rdr_indicator_stats">'+
-                        '<img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png">'+
-                        '<span class="rdr_count"></span>'+
-                    '</div>' +
-                    '<h1>' + headerText + '</h1>'
-                );
 
-                var $header = $('<div class="rdr rdr_header">');
-                var $header_arrow = $('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
-                var $loader = $('<div class="rdr_loader" />');
-                $header.append( $header_arrow, $loader, $headerContent );
-                
-                $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
-                    RDR.events.track('click_rb_icon_rindow');
+                var $header = $.mustache(
+                    '<div class="rdr rdr_header">'+
+                        '<div class="rdr_header_arrow">'+
+                            '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
+                        '</div>'+
+                        '<div class="rdr_loader"></div>'+
+                        '<div class="rdr_indicator_stats">'+
+                            '<img class="no-rdr rdr_pin" src="{{RDR_staticUrl}}widget/images/blank.png">'+
+                            '<span class="rdr_count"></span>'+
+                        '</div>' +
+                        '<h1>{{headerText}}</h1>'+
+                    '</div>'
+                ,{
+                    RDR_staticUrl: RDR_staticUrl,
+                    headerText: headerText
                 });
+
                 return $header;
             },
             makeDefaultPanelMessage: function( $rindow, _kind ) {
@@ -859,6 +860,10 @@ function readrBoard($R){
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
+                    if ( content_node_id ) {
+                        content_node.id = content_node_id;
+                    }
+
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
                         message = (isWriteMode) ? "Click to add this reaction here.":'Click to see what people reacted to';
@@ -903,21 +908,38 @@ function readrBoard($R){
                         }
                     }
 
-                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'"><div class="rdr_tag '+tagIsSplitClass+' rdr_tooltip_this" title="'+message+'">'+tagBody+'</div></div>' );
-                    $tagBox.find('.rdr_tag').data({
-                            tag_id: tag.id,
-                            tag_count: tagCount,
-                            parent_id: tag.parent_id
-                        });
-                    if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                        $tagBox.find('.rdr_tag:last').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
-                    }
+                    var tagBoxHTML = $.mustache(
+                        '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                            '<div '+
+                                'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
+                                'title="{{message}}" '+
+                                'data-tag_id="{{tag_id}}" '+
+                                'data-tag_count="{{tag_count}}" '+
+                                'data-parent_id="{{parent_id}}" '+
+                                'data-content_node_id="{{content_node_id}}" '+
+                            '>'+
+                                '<span class="rdr_tag_body">{{tagBody}}</span>'+
+                                '{{^writeMode}}'+
+                                    '<span class="rdr_count">{{tagCount}}</span>'+
+                                '{{/writeMode}}'+
+                            '</div>'+
+                        '</div>'
+                    ,{
+                        colorInt: colorInt,
+                        boxSize: boxSize,
+                        wideBox: wideBox,
+                        writeMode: writeMode,
+                        tagIsSplitClass: tagIsSplitClass,
+                        message: message,
+                        tagBody: tagBody,
+                        tag_id: tag.id,
+                        parent_id: tag.parent_id,
+                        tagCount: tagCount,
+                        content_node_id: content_node_id
+                    });
+                    
+                    var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
-
-                    if ( content_node_id ) {
-                        $tagBox.find('.rdr_tag').data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
-                        content_node.id = content_node_id;
-                    }
 
                     function renderReactedContent( $reactionsTable, tag ) {
                         if ( !$rindow.find('.rdr_view_more').length || !$rindow.find('.rdr_view_more').hasClass('rdr_visiblePanel') ) {
@@ -5354,7 +5376,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( "<span style='font-size:13px !important;'>Say what you think</span>" );
+                        var $header = RDR.rindow.makeHeader( "Say what you think" );
+                        $rindow.addClass('rdr_helper_rindow');
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
