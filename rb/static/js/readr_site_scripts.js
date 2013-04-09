@@ -60,12 +60,13 @@ RB = {
                 success: function(response) {
                     if (response.status == "success") {
                         var $blockLink = $('#moderate_'+int_id);
-                        var blockText = $.trim( $blockLink.text() );
-                        if ( blockText == "Block this" ) {
-                            $blockLink.text('Unblock');
-                        } else {
-                            $blockLink.text('Block this');
-                        }
+                        $blockLink.closest('.card').hide();
+                        // var blockText = $.trim( $blockLink.text() );
+                        // if ( blockText == "Block this" ) {
+                        //     $blockLink.text('Unblock');
+                        // } else {
+                        //     $blockLink.text('Block this');
+                        // }
                     }
                 },
                 error: function(response) {
@@ -461,13 +462,13 @@ RB = {
                             var board_id = board.id;
                             $boards.find('ul').append('<li><a style="font-size:18px;" class="btn btn-info" href="/board/'+board.id+'">'+board.title+'</a></li>');
                         });
-                        var boards_width = $('#content').width() + $('#pages').width();
-                        $boards.width( boards_width );
-                        if ( boards_width < 570 ) {
-                            $boards.find('ul').width(285);
-                        } else if ( boards_width < 855 ) {
-                            $boards.find('ul').width(570);
-                        }
+                        // var boards_width = $('#content').width() + $('#pages').width();
+                        // $boards.width( boards_width );
+                        // if ( boards_width < 570 ) {
+                        //     $boards.find('ul').width(285);
+                        // } else if ( boards_width < 855 ) {
+                        //     $boards.find('ul').width(570);
+                        // }
                         $('#cards').before( $boards );
                     }
                 }
@@ -546,7 +547,7 @@ RB = {
                 },
                 success: function(response) {
                     if (response.status == "success" ) {
-                        var $card = $('#card_'+parent_id),
+                        var $card = $('.interaction_'+parent_id),
                             $outcome = $card.find('div.me_too_outcome');
 
                         if (response.data.existing == true ) {
@@ -580,12 +581,12 @@ RB = {
                             });
                         });
 
-                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
-                        $close.find('a').click( function() {
-                            $('#card_'+parent_id).find('div.me_too_outcome').hide(333);
+                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        $close.find('i').click( function() {
+                            $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
                         });
 
-                        $successMessage.append( $shareLinks, $close );
+                        $successMessage.append( $close, $shareLinks );
                         $outcome.html( $successMessage );
                         $outcome.show(333);
                     }
@@ -611,7 +612,7 @@ RB = {
 
                         var deleteWasSuccessful = response.data == interaction_id;
                         
-                        var $card = $('#card_'+interaction_id),
+                        var $card = $('.interaction_'+interaction_id),
                             //change this name later to make this make more sense.
                             $outcome = $card.find('div.me_too_outcome'),
                             $message;
@@ -622,12 +623,12 @@ RB = {
                             $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
-                        var $close = $('<div class="close"><a href="javascript:void(0);">Close</a>');
-                        $close.find('a').click( function() {
-                            $('#card_'+interaction_id).find('div.me_too_outcome').hide(333);
+                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        $close.find('i').click( function() {
+                            $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
                         });
 
-                        $message.append($close );
+                        $message.prepend( $close );
                         $outcome.html( $message );
                         $outcome.show(333);
                     }
@@ -673,7 +674,7 @@ RB = {
                 },
                 success: function(response) {
                     if (response.status == "success" ) {
-                        $('#card_'+interaction_id).hide(333, function() {
+                        $('.interaction_'+interaction_id).hide(333, function() {
                             $(this).remove();
                             // cardReset();
                         });
@@ -696,7 +697,7 @@ RB = {
                 },
                 success: function(response) {
                     if (response.status == "success" ) {
-                        var $card = $('#card_'+parent_id),
+                        var $card = $('.interaction_'+parent_id),
                             $outcome = $('#add_new_reaction_form');
 
                         if (response.data.existing == true ) {
@@ -752,7 +753,7 @@ RB = {
                 },
                 success: function(response) {
                     if (response.status == "success" ) {
-                        var $card = $('#card_'+parent_id),
+                        var $card = $('.interaction_'+parent_id),
                             $outcome = $('#add_new_comment_form');
 
                         if (response.data.existing == true ) {

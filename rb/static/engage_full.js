@@ -3243,6 +3243,11 @@ function readrBoard($R){
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
                     RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
+
+                    if ( $this.closest('.no-rdr').length ) {
+                        return;
+                    }
+
                     // only do whitelisted iframe src domains
                     if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
                         var dontEngage = true;
@@ -3445,6 +3450,10 @@ function readrBoard($R){
                         oldHash,
                         hashText;
 
+                    if ( $this.closest('.no-rdr').length ) {
+                        return;
+                    }
+                    
                     if ( (kind == "img" || kind == "media") && body ) {
                         
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.

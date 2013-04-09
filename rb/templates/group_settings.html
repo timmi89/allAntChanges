@@ -2,9 +2,8 @@
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
 
-{% block bodyClass %}wide{% endblock %}
-
-{% block mainContent %}
+{% block wideContent %}
+<div class="mostlyWide">
 {% with group=form.instance %}
 
     {% block settingsHeader %}    
@@ -178,7 +177,8 @@
     </div> 
   </form>
 {% endwith %}
-{% endblock mainContent %}
+</div>
+{% endblock wideContent %}
 
 {% block pageJS %}
     <script>

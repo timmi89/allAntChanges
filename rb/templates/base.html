@@ -26,7 +26,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 {% endblock %}
 
 {% block topjavascript %}
-<script>httpProtocol = window.location.protocol</script>
+<script>httpProtocol = window.location.protocol;</script>
 <!-- Pulled from http://code.google.com/p/html5shiv/ -->
 <!--[if lt IE 9]>
 <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -134,7 +134,13 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         {% endblock %}
       </div>
 
-      {% block siteSearch %}
+      <div id="group_settings_menu">
+      {% include "group_nav.html" %}
+      </div>
+
+    
+    <a href="/" class="logo"><h1>ReadrBoard</h1></a>
+    {% block siteSearch %}
     <div id="site_search">
       <form method="get" id="searchform" action="">
         <fieldset>
@@ -145,81 +151,56 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
     </div>
     {% endblock siteSearch %}
     
-    <a href="/" class="logo"><h1>ReadrBoard</h1></a>
-    <div id="settings">
-      <a href="#"><img src="{{ STATIC_URL }}site/images/gear.png"/></a>
-      <nav>
-      <ul>
-          {% if cookie_user.id %}
-          <li><a href="javascript:void(0);" onclick="RDRAuth.logout();">Logout</a></li>
-          {% endif %}
-          <li><a href="/about/">About ReadrBoard</a></li>
-      </ul>
-    </nav>
-    </div>
-    
   </header>
   {% endblock header %}
-
-  {% include "group_nav.html" %}
+  
   <section role="content" class="clearfix">
-
-    {% if not board %}
-    <section role="complementary">
-    {% block sidebarContent %}
-    {% endblock %}
+    <section role="wide section">
+      {% block wideContent %}
+      {% endblock %}
     </section>
-    {% endif %}
+    <section role="after wide section">
+      {% if not board %}
+      <section role="complementary">
+      {% block sidebarContent %}
+      {% endblock %}
+      </section>
+      {% endif %}
 
-    <section role="main">
-    {% block mainContent %}
-    {% endblock mainContent %}
+      <section role="main">
+      {% block mainContent %}
+      {% endblock mainContent %}
+      </section>
     </section>
   </section>
 
-{% block footer %}
-<footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix">
-    <div class="footerLinks">
-        <ul class="footerLinksLeft">
-            <li>
-                <a href="/stream/"><strong>Home</strong></a>
-            </li>
-            <li>
-                <a href="/about/"><strong>About ReadrBoard</strong></a>
-            </li>
-            <li>
-                <a href="/about/#publishers"><strong>&raquo; Add to your publication</strong></a>
-            </li>
-            <li>
-                <a href="/react/"><strong>&raquo; Get the Reaction Button</strong></a>
-            </li>
-            <li>
-                <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                
-            </li>
-        </ul>
-        <div class="clearDiv"></div>
-    </div>
-    {% if not cookie_user %}
-    <div id="publisher_promo" onclick="window.location.href='/publishers/'">
-      <section>
-          <h1><i class="icon-heart"></i> Publishers!</h1>
-          <p>ReadrBoard increases your engagement &amp; builds your community, for FREE.  <a href="/publishers/">Learn more.</a></p>
-      </section>
-    </div>
-    {% endif %}
-
-    {% if cookie_user and cookie_user.social_user and not cookie_user.social_user.admin_group %}
-    <div id="publisher_promo" onclick="window.location.href='/publishers/'">
-      <section>
-          <h1><i class="icon-heart"></i> Publishers!</h1>
-          <p>ReadrBoard increases your engagement &amp; builds your community, for FREE.  <a href="/publishers/">Learn more.</a></p>
-      </section>
-    </div>
-    {% endif %}
-</footer>
-{% endblock footer %}
+  
+  {% block footer %}
+  <footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix">
+      <div class="footerLinks">
+          <ul class="footerLinksLeft">
+              <li>
+                  <a href="/stream/"><strong>Home</strong></a>
+              </li>
+              <li>
+                  <a href="/about/"><strong>About ReadrBoard</strong></a>
+              </li>
+              <li>
+                  <a href="/about/#publishers"><strong>&raquo; Add to your publication</strong></a>
+              </li>
+              <li>
+                  <a href="/react/"><strong>&raquo; Get the Reaction Button</strong></a>
+              </li>
+              <li>
+                  <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
+                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                  
+              </li>
+          </ul>
+          <div class="clearDiv"></div>
+      </div>
+  </footer>
+  {% endblock footer %}
 
 </div> <!-- // page_container -->
 
