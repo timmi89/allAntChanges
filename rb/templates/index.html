@@ -9,17 +9,18 @@
 {% block wideContent %}
 {% if not profile_user and not group and not board and not page %}
 {% if not query_string and not singleton %}
-<div style="width:1138px;height:420px;">
-    <div id="tag_cloud_container" style="position:fixed;z-index:0;overflow:hidden;width:1138px;left:50%;margin-left:-569px">
+<style>section[role="after wide section"] {margin-top:420px;}</style>
+<div style="width:100%;height:420px;position:fixed;z-index:0;top:36px;">
+    <div id="tag_cloud_container" style="width:1138px;height:420px;overflow:hidden;">
         <section role="tag cloud grid">
             <!-- this will get dynamically populated -->
         </section>
     </div>
+</div>
     <div class="image_container">
         <img src="{{ STATIC_URL }}site/images/homepage_masthead_lines.png" style="position:absolute;top:0;" />
         <a href="/about/"><img src="{{ STATIC_URL }}site/images/homepage_masthead.png" style="position:absolute;left:210px;top:100px;border:0;" /></a>
     </div>
-</div>
 {% endif %}
 {% endif %}
 
