@@ -553,23 +553,6 @@ function writeCardButtons( $card ) {
 //   });
 // });
 
-$('.card').each(function(idx, card) {
-  var $card = $(card);
-
-  if ( !$card.find('.comment_container').length ) {
-    $card.find('.comments').remove();
-  }
-
-  writeCardButtons( $card );
-});
-
-$.each( metoos, function(interaction_id, count) {
-  $('.interaction_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' more</a>')//chain
-  .click( function() {
-    RB.follow.agreed(interaction_id);
-  } );
-});
-
 
 // var $container = $('#content');
 
@@ -609,7 +592,25 @@ $.each( metoos, function(interaction_id, count) {
 // }
 
 $(document).ready(function(){
-  $('.card h1 a').bigtext();
+  
+  $('.card').each(function(idx, card) {
+    var $card = $(card);
+    $card.find('h1 a').bigtext();
+
+    if ( !$card.find('.comment_container').length ) {
+      $card.find('.comments').remove();
+    }
+
+    writeCardButtons( $card );
+});
+
+$.each( metoos, function(interaction_id, count) {
+  $('.interaction_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' more</a>')//chain
+  .click( function() {
+    RB.follow.agreed(interaction_id);
+  } );
+});
+
 });
 
 {% if profile_user %}
