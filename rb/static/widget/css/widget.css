@@ -1900,16 +1900,16 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 { background:#d7f
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 { background:#9dd55e !important; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 { background:#576c87 !important; }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag { color:#354c65 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag { color:#0e414d !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag { color:#748430 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag { color:#578326 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag_body { color:#354c65 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag_body { color:#0e414d !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag_body { color:#748430 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag_body { color:#578326 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag_body,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag .rdr_count { color:#c8d6e9 !important;}
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_tag,
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag,
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_tag { color:#008be4 !important; }
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_tag_body { color:#008be4 !important; }
 
 div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { padding:5px 10px !important; text-align:center !important; width:320px !important; }
 /*div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag div { text-align:center !important; margin:0 auto;}*/

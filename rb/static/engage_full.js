@@ -882,17 +882,17 @@ function readrBoard($R){
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
-                      tagBody = "",
+                      tagBodyCrazyHtml = "",
                       tagIsSplitClass = "";
 
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
-                        tagBody = tagBodyRaw;
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            tagBody = tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag '+tagIsSplitClass+'">' + tagBodyRaw.substr(15);
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBodyRaw.substr(15) + '</div>';
                             if ( boxSize == "rdr_box_small" ) {
                                 boxSize = "rdr_box_medium";
                             }
@@ -904,7 +904,7 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            tagBody = tagBody1 +'</div><div class="rdr_tag '+tagIsSplitClass+'">' + tagBody2;
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBody2 + '</div>';
                         }
                     }
 
@@ -918,7 +918,7 @@ function readrBoard($R){
                                 'data-parent_id="{{parent_id}}" '+
                                 'data-content_node_id="{{content_node_id}}" '+
                             '>'+
-                                '<span class="rdr_tag_body">{{tagBody}}</span>'+
+                                '{{{tagBodyCrazyHtml}}}'+
                                 '{{^writeMode}}'+
                                     '<span class="rdr_count">{{tagCount}}</span>'+
                                 '{{/writeMode}}'+
@@ -931,7 +931,7 @@ function readrBoard($R){
                         writeMode: writeMode,
                         tagIsSplitClass: tagIsSplitClass,
                         message: message,
-                        tagBody: tagBody,
+                        tagBodyCrazyHtml: tagBodyCrazyHtml,
                         tag_id: tag.id,
                         parent_id: tag.parent_id,
                         tagCount: tagCount,
@@ -3468,6 +3468,11 @@ function readrBoard($R){
                         srcArray.splice(0,2);
 
                         var domainWithPort = srcArray.shift();
+                        
+                        //this could be undefined if the url not valid or is something like javascript:void
+                        if(!domainWithPort){
+                            return;
+                        }
                         var domain = domainWithPort.split(':')[0]; // get domain, strip port
              
                         var filename = srcArray.join('/');
