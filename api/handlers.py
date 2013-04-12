@@ -953,7 +953,7 @@ class GlobalActivityHandler(AnonymousBaseHandler):
     @status_response
     def read(self, request, **kwargs):
 
-        makeItLean = true
+        makeItLean = True
         historyLen = 1 if makeItLean else 3
         maxInteractions = 50 if makeItLean else None
 
