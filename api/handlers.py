@@ -954,8 +954,8 @@ class GlobalActivityHandler(AnonymousBaseHandler):
     def read(self, request, **kwargs):
 
         makeItLean = True
-        historyLen = 1 if makeItLean else 3
-        maxInteractions = 50 if makeItLean else None
+        historyLen = 3 if makeItLean else 3
+        maxInteractions = 200 if makeItLean else None
 
         today = datetime.now()
         tdelta = timedelta(days = -historyLen)
