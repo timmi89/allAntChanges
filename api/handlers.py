@@ -939,12 +939,22 @@ class GlobalActivityHandler(AnonymousBaseHandler):
 
     @status_response
     def read(self, request, **kwargs):
+
+        makeItLean = true
+        historyLen = 1 if makeItLean else 3
+        maxInteractions = 50 if makeItLean else None
+
         today = datetime.now()
-        tdelta = timedelta(days = -3)
+        tdelta = timedelta(days = -historyLen)
         the_past = today + tdelta
         interactions = Interaction.objects.all()
-        interactions = interactions.filter(created__gt = the_past, kind = 'tag', 
-                                           approved=True, page__site__group__approved=True).order_by('-created')
+        interactions = interactions.filter(
+            created__gt = the_past, 
+            kind = 'tag', 
+            approved=True, 
+            page__site__group__approved=True
+        ).order_by('-created')[:maxInteractions]
+        
         users = {}
         pages = {}
         groups = {}
