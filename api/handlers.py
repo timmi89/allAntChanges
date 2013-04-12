@@ -16,11 +16,17 @@ from chronos.jobs import *
 from threading import Thread
 from itertools import chain
 from datetime import datetime, timedelta
+import math
 from rb.auto_approval import autoCreateGroup
 import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
+def isValidIntegerId(value):
+    if isinstance(value,int):
+        return True
+    else:
+        return False
 
 
 class SocialUserHandler(AnonymousBaseHandler):
@@ -494,7 +500,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             
         
         # Guard against undefined page string being passed in
-        if not isinstance(page, int): raise JSONException("Bad Page ID")
+        if not isinstance(page, int): raise JSONException("Bad Page ID ***" + str(page)+ "***")
         
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
@@ -505,7 +511,9 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             return cached_result
         else:
             # Force evaluation by making lists
+            #logger.info("knownUnknown started " + str(page))
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+            #logger.info("knownUnknown done " + str(page))
             try:
                 cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
                 
@@ -536,11 +544,16 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
         # Force queryset evaluation by making lists - reduces interaction queries to 1
+        #logger.info("C:" + str(dir(container_id)))
+        #logger.info("P:" + str(dir(page_id)))
+        if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
+            raise JSONException(u"Bad page id or container_id in content summary call")
+
         interactions = list(Interaction.objects.filter(
-            container=container_id,
-            page=page_id,
-            approved=True
-        ))
+                container=container_id,
+                page=page_id,
+                approved=True
+                ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
