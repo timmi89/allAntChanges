@@ -129,7 +129,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
             self.key = 'page_containers' + str(self.page_id)
            
         #self.key = 'page_containers' + str(self.page_id)
-        #logger.warning('hydrating using key: ' + self.key)
+        #logger.info('hydrating using key: ' + self.key)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         

@@ -115,7 +115,7 @@ else:
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    
+    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
     
     DATABASES = {
       'default': {
