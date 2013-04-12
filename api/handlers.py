@@ -955,7 +955,7 @@ class GlobalActivityHandler(AnonymousBaseHandler):
 
         makeItLean = True
         historyLen = 3 if makeItLean else 3
-        maxInteractions = 200 if makeItLean else None
+        maxInteractions = 100 if makeItLean else None
 
         today = datetime.now()
         tdelta = timedelta(days = -historyLen)
