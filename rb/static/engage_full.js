@@ -79,6 +79,11 @@ function readrBoard($R){
     $.extend(RDR, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
+        // used to store jQuery deffered objects for assets that should be loaded only once per page load.
+        assetLoaders: {
+            content_nodes:{
+            }
+        },
         content_nodes: {
             //template: keep commented out
             /*
@@ -4051,85 +4056,98 @@ function readrBoard($R){
                         "hash":hash
                     };
 
-                    $.ajax({
-                        url: RDR_baseUrl+"/api/summary/container/content/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) },
-                        success: function(response) {
+                    //use an assetLoader that returns a deferred to ensure it gets loaded only once
+                    //and callbacks will run on success - or immediately if it has already returned.
+                    var assetLoader = RDR.assetLoaders.content_nodes[container_id];                    
+                    if(!assetLoader){
 
-                            if ( response.status !== "success" ) {
-                                return false;
+                        assetLoader = $.ajax({
+                            url: RDR_baseUrl+"/api/summary/container/content/",
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: $.toJSON(sendData) }
+                        });
+
+                        RDR.assetLoaders.content_nodes[container_id] = assetLoader;
+                    }
+                    
+                    //todo: also remove redundant callbacks from the summary widget.
+                    //we still need the onSuccessCallbacks to run though.
+                    assetLoader.then(function(response) {
+
+                        if ( response.status !== "success" ) {
+                            return false;
+                        }
+
+                        var content_nodes = response.data;
+                        //todo: make this generic interactions instead of just tags
+                        //summary.interactions.tags =
+
+                        //todo: think about this more later:
+                        //make selStates for these nodes and give the nodes a reference to them
+                        $.each(content_nodes, function(key, node){
+                            var $container = $('.rdr-'+hash);
+                            try{
+                                node.selState = $container.selog('save', { 'serialRange': node.location });
+                            }
+                            catch(err){
+                                node.selState = undefined;
                             }
 
-                            var content_nodes = response.data;
-                            //todo: make this generic interactions instead of just tags
-                            //summary.interactions.tags =
+                        });
 
-                            //todo: think about this more later:
-                            //make selStates for these nodes and give the nodes a reference to them
-                            $.each(content_nodes, function(key, node){
-                                var $container = $('.rdr-'+hash);
-                                try{
-                                    node.selState = $container.selog('save', { 'serialRange': node.location });
-                                }
-                                catch(err){
-                                    node.selState = undefined;
-                                }
+                        //throw the content_nodes into the container summary
+                        RDR.content_nodes[hash] = content_nodes;
+                        summary.content_nodes = content_nodes;
+                        if(summary.kind == "text"){
+                        }else{
+
+                            //this is weird because there is only one content_node - the img
+                            //this whole thing is gross.  Fix our data structure later.
+
+                            summary.top_interactions.coms = {};
+
+                            $.each(content_nodes, function(contentNodeId, contentNodeData){
+                                var comsArr = contentNodeData.top_interactions.coms;
+
+                                $.each(comsArr, function(idx, com){
+                                    summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
+                                    summary.top_interactions.coms[ com.tag_id ].push(com);
+                                });
 
                             });
+                        }
 
-                            //throw the content_nodes into the container summary
-                            summary.content_nodes = content_nodes;
-                            if(summary.kind == "text"){
-                            }else{
+                        // add a class so we note that the content summary was retrieved
+                        $('.rdr-'+hash).addClass('rdr_summary_loaded');
 
-                                //this is weird because there is only one content_node - the img
-                                //this whole thing is gross.  Fix our data structure later.
+                        // remove from po' man's throttling array
+                        // po' man's throttling
+                        // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
+                        // var y = [1, 2, 3]
+                        // var removeItem = 2;
 
-                                summary.top_interactions.coms = {};
-
-                                $.each(content_nodes, function(contentNodeId, contentNodeData){
-                                    var comsArr = contentNodeData.top_interactions.coms;
-
-                                    $.each(comsArr, function(idx, com){
-                                        summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
-                                        summary.top_interactions.coms[ com.tag_id ].push(com);
-                                    });
-
-                                });
-                            }
-
-                            // add a class so we note that the content summary was retrieved
-                            $('.rdr-'+hash).addClass('rdr_summary_loaded');
-
-                            // remove from po' man's throttling array
-                            // po' man's throttling
-                            // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
-                            // var y = [1, 2, 3]
-                            // var removeItem = 2;
-
-                            // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                            // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                            //   return value != hash;
-                            // });
+                        // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                        // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                        //   return value != hash;
+                        // });
 
 
-                            //finally, run the success callback function
-                            if ( onSuccessCallback ) {
-                                onSuccessCallback();
-                            }
+                        //finally, run the success callback function
+                        if ( onSuccessCallback ) {
+                            onSuccessCallback();
+                        }
 
-                            //also run any callbacks that get queued up on the summarybar hover
-                            if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
-                                $.each(RDR.contentNodeQueue[hash], function(){
-                                    var func = RDR.contentNodeQueue[hash].pop();
-                                    func(hash);
-                                });
-                            }
+                        //also run any callbacks that get queued up on the summarybar hover
+                        if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                            $.each(RDR.contentNodeQueue[hash], function(){
+                                var func = RDR.contentNodeQueue[hash].pop();
+                                func(hash);
+                            });
                         }
                     });
+            
                 },
                 utils: {
                     getMediaDims: function($mediaNode){
