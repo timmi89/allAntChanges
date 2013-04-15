@@ -125,7 +125,7 @@ function readrBoard($R){
                 sharebox_readrboard: true,
                 sharebox_twitter: false,
                 sharebox_reddit: false,
-                sharebox_facebook: false,
+                // sharebox_facebook: false,
                 sharebox_google: false,
                 sharebox_digg: false,
                 sharebox_stumble: false
@@ -4031,7 +4031,7 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
-
+                    
                     // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
                     //     return;
                     // }
@@ -7530,7 +7530,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         readrboard: RDR.group.sharebox_readrboard
                     } : {
                         readrboard: RDR.group.sharebox_readrboard,
-                        facebook: RDR.group.sharebox_facebook,
+                        // facebook: RDR.group.sharebox_facebook,
                         twitter: RDR.group.sharebox_twitter,
                         reddit: RDR.group.sharebox_reddit,
                         google: RDR.group.sharebox_google,
@@ -8366,24 +8366,27 @@ function $RFunctions($R){
                         //we'll just activate our button manually because there is no script to call
                         return ret.join('');
                     },
-                    facebook: function(brand){
-                        var ret = [];
 
-                        //script needed
-                        ret.push(
-                            '<div id="fb-root"></div>'+
-                            // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
-                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
-                                ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
-                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
-                            '}) })();</script>'
-                        );
-                        ret.push(
-                            '<div class="fb-like" data-send="false" data-layout="box_count" data-show-faces="false"></div>'
-                        );
+                    // removing facebook for now until we test further.  It's causing an error due to the duplicated all.js script.
+
+                    // facebook: function(brand){
+                    //     var ret = [];
+
+                    //     //script needed
+                    //     ret.push(
+                    //         '<div id="fb-root"></div>'+
+                    //         // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
+                    //         '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
+                    //             ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
+                    //             ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
+                    //         '}) })();</script>'
+                    //     );
+                    //     ret.push(
+                    //         '<div class="fb-like" data-send="false" data-layout="box_count" data-show-faces="false"></div>'
+                    //     );
                         
-                            return ret.join('');
-                    },
+                    //         return ret.join('');
+                    // },
                     twitter: function(brand){
                         var ret = [];
                         ret.push(
