@@ -689,6 +689,9 @@ window.RDRAuth = {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
+
 $(document).ready(function(){
-    RDRAuth.init();
+    window.fb_loader.done(function(){
+        RDRAuth.init();
+    });
 });
