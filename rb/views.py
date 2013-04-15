@@ -89,6 +89,13 @@ def xdm_status(request):
         context_instance=RequestContext(request)
     )
 
+def fb_channel(request):
+    return render_to_response(
+        "fb_channel.html",
+        {'fb_client_id': FACEBOOK_APP_ID},
+        context_instance=RequestContext(request)
+    )
+
 def login(request):
     context = {}
     context['fb_client_id'] = FACEBOOK_APP_ID

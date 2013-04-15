@@ -17,6 +17,7 @@ urlpatterns = patterns('',
   url(r'^fb/$', 'rb.views.fb'),
   url(r'^fblogin/$', 'rb.views.fblogin'),
   url(r'^xdm_status/$', 'rb.views.xdm_status'),
+  url(r'^fb_channel/$', 'rb.views.fb_channel'),
   
   # For short URL expander
   url(r'^s/(?P<short>[0-9a-zA-Z]+)/$', 'rb.views.expander'),
