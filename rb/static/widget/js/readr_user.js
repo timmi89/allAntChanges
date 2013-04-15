@@ -6,44 +6,8 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
-if ( typeof qs_args.group_id == "undefined" ) qs_args.group_id = "";
-
-if ( typeof $.receiveMessage == "function") {
-
-    //wait for fb init before receiving messages
-    window.fb_loader.done(function(){
-    	$.receiveMessage(
-    		function(e){
-
-                var keys = {
-                    registerEvent: "register-event::"
-                };
-                var jsonData;
-                var data;
-
-    		    if( e.data == "getUser" ) {
-    	    		RDRAuth.getUser();
-    	    	} else if ( e.data == "reloadXDMframe" ) {
-    	    		window.location.reload();
-    	    	} else if ( e.data == "reauthUser" ) {
-    		    	RDRAuth.reauthUser();
-    		    } else if ( e.data == "returnUser" ) {
-    	    		RDRAuth.returnUser();
-    		    } else if ( e.data == "killUser" ) {
-    	    		RDRAuth.killUser();
-    		    } else if ( e.data == "TESTIT" ) {
-    		    	RDRAuth.testMessage();
-    	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
-    	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
-    	    	} else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
-                    jsonData = e.data.split(keys.registerEvent)[1];
-                    data = $.parseJSON(jsonData);
-                    RDRAuth.events.trackEventToCloud(data);
-                }
-    		},
-    		qs_args.parentHost
-    	);
-    });
+if ( typeof qs_args.group_id == "undefined" ) {
+    qs_args.group_id = "";
 }
 
 function getWindowProps(options){
@@ -696,6 +660,47 @@ window.RDRAuth = {
 }
 
 $(document).ready(function(){
+    
+
+    if ( typeof $.receiveMessage == "function") {
+
+        //wait for fb init before receiving messages
+        window.fb_loader.done(function(){
+            $.receiveMessage(
+                function(e){
+
+                    var keys = {
+                        registerEvent: "register-event::"
+                    };
+                    var jsonData;
+                    var data;
+
+                    if( e.data == "getUser" ) {
+                        RDRAuth.getUser();
+                    } else if ( e.data == "reloadXDMframe" ) {
+                        window.location.reload();
+                    } else if ( e.data == "reauthUser" ) {
+                        RDRAuth.reauthUser();
+                    } else if ( e.data == "returnUser" ) {
+                        RDRAuth.returnUser();
+                    } else if ( e.data == "killUser" ) {
+                        RDRAuth.killUser();
+                    } else if ( e.data == "TESTIT" ) {
+                        RDRAuth.testMessage();
+                    } else if ( e.data.indexOf("page_hash") != -1 ) {
+                        $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
+                    } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
+                        jsonData = e.data.split(keys.registerEvent)[1];
+                        data = $.parseJSON(jsonData);
+                        RDRAuth.events.trackEventToCloud(data);
+                    }
+                },
+                qs_args.parentHost
+            );
+        });
+    }
+
+    //wait for fb init initing RDRAuth
     window.fb_loader.done(function(){
         RDRAuth.init();
     });
