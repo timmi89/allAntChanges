@@ -7,38 +7,43 @@ for ( var i in qs ) {
 	qs_args[this_arg[0]] = this_arg[1];
 }
 if ( typeof qs_args.group_id == "undefined" ) qs_args.group_id = "";
+
 if ( typeof $.receiveMessage == "function") {
-	$.receiveMessage(
-		function(e){
 
-            var keys = {
-                registerEvent: "register-event::"
-            };
-            var jsonData;
-            var data;
+    //wait for fb init before receiving messages
+    window.fb_loader.done(function(){
+    	$.receiveMessage(
+    		function(e){
 
-		    if( e.data == "getUser" ) {
-	    		RDRAuth.getUser();
-	    	} else if ( e.data == "reloadXDMframe" ) {
-	    		window.location.reload();
-	    	} else if ( e.data == "reauthUser" ) {
-		    	RDRAuth.reauthUser();
-		    } else if ( e.data == "returnUser" ) {
-	    		RDRAuth.returnUser();
-		    } else if ( e.data == "killUser" ) {
-	    		RDRAuth.killUser();
-		    } else if ( e.data == "TESTIT" ) {
-		    	RDRAuth.testMessage();
-	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
-	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
-	    	} else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
-                jsonData = e.data.split(keys.registerEvent)[1];
-                data = $.parseJSON(jsonData);
-                RDRAuth.events.trackEventToCloud(data);
-            }
-		},
-		qs_args.parentHost
-	);
+                var keys = {
+                    registerEvent: "register-event::"
+                };
+                var jsonData;
+                var data;
+
+    		    if( e.data == "getUser" ) {
+    	    		RDRAuth.getUser();
+    	    	} else if ( e.data == "reloadXDMframe" ) {
+    	    		window.location.reload();
+    	    	} else if ( e.data == "reauthUser" ) {
+    		    	RDRAuth.reauthUser();
+    		    } else if ( e.data == "returnUser" ) {
+    	    		RDRAuth.returnUser();
+    		    } else if ( e.data == "killUser" ) {
+    	    		RDRAuth.killUser();
+    		    } else if ( e.data == "TESTIT" ) {
+    		    	RDRAuth.testMessage();
+    	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
+    	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
+    	    	} else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
+                    jsonData = e.data.split(keys.registerEvent)[1];
+                    data = $.parseJSON(jsonData);
+                    RDRAuth.events.trackEventToCloud(data);
+                }
+    		},
+    		qs_args.parentHost
+    	);
+    });
 }
 
 function getWindowProps(options){
@@ -382,7 +387,7 @@ window.RDRAuth = {
 			// readrboard user.  we don't have a reauth for RB users yet.  but widget should throw the login panel.
 		}
 	},
-	checkFBStatus : function(args) {
+	checkFBStatus: function(args) {
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
 
@@ -540,7 +545,7 @@ window.RDRAuth = {
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
 		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
 	},
-	returnUser : function() {
+	returnUser: function() {
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
@@ -636,7 +641,7 @@ window.RDRAuth = {
 	},
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
-        
+
         RDRAuth.events.helpers.trackFBLoginAttempt();
 
 		FB.login(function(response) {
