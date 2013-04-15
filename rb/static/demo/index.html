@@ -194,55 +194,6 @@
 
 
 
-
-
-
-
-<style type="text/css">
-body ul#sharebar { display: none; position: absolute; width: 65px; float: left; background: #fff; padding: 0; text-align: center; border: 1px solid #ccc; list-style: none; margin: 0; z-index: 99; }
-body ul#sharebar li { display: block; margin: 5px; padding: 0; overflow: hidden; text-align: center; }
-body ul#sharebarx { display: none; list-style: none; width: 100%; float: left; margin: 0 0 10px; padding: 0; }
-body ul#sharebarx a { line-height: 14px; text-decoration: none; }
-body ul#sharebarx li { float: left; margin-right: 20px; line-height: 18px; }
-body ul#sharebarx li .st_email  { margin: 0 15px !important; }
-.sharebar-button { font-size: 11px; font-family: Verdana, Arial; padding: 2px 4px; background: #f7f7f7; color: #444; border: 1px solid #ddd; display: block;margin: 0 0 5px; }
-.sharebar-button:hover { border-color: #aaa; }
-.credit { margin: 0; padding: 0; line-height: 9px; }
-.credit a { font-size: 8px; color: #ccc; text-transform: uppercase; text-decoration: none; font-family: Verdana; line-height: 9px; }
-.FBConnectButton_Small{background-position:-5px -232px !important;border-left:1px solid #1A356E;}
-.FBConnectButton_Text{margin-left:12px !important ;padding:2px 5px 3px !important;}
-.stButton{margin:0 0 6px !important;}
-.stButton:last-child{margin:0 !important;}
-.stButton .stFb_vbubble { width:53px !important; }
-.stButton .stFb_text { padding: 2px 5px 3px !important; margin: 1px 1px 0 14px !important; }
-
-
-#sharebar{
-    position: relative !important;
-    left: -20px !important;
-    /*margin-left: 200px !important;
-    top: 100px !important;*/
-
-    /***************************************************************/
-    /*undo this to use it for testing!!!!!!!!*/
-    display: none !important;
-}
-</style>
-
-
-<ul id="sharebar" class="no-rdr" style="width: 80px; margin-left: -100px; display: block; position: fixed; top: 10px; ">
-<li class="readrboardShareWidget"></li>
-<li><div class="pw-widget pw-vertical ra1-pw-widget-looknative ra1-pw-layout-vertical ra1-pw-counter-vertical" pw-widget="init" id="pw_post_1"><span class="ra1-pw-alone-button ra1-pw-button-small pw-widget-ln-facebook-16 ra1-pw-counter-vertical"><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b><span class="ra1-pw-originalbuttons ra1-pw-button-facebook" style="cursor: pointer; "><a class="ra1-pw-ln-facebook"><i class="ra1-pw-icon ra1-pw-icon-facebook"></i> <span class="ra1-pw-sharealone-txt">Share</span></a></span></span></div></li><li><iframe src="http://www.facebook.com/plugins/like.php?href=http://local.readrboard.com:8080/static/demo/index.html/&amp;layout=box_count&amp;show_faces=false&amp;width=60&amp;action=like&amp;colorscheme=light&amp;height=45" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:55px; height:60px;" allowtransparency="true" class="rdr-5312f3029b6993cbb4da04a4e4c7becf rdr-node"></iframe></li><li><div class="pw-widget pw-vertical ra1-pw-widget-looknative ra1-pw-layout-vertical ra1-pw-counter-vertical" pw:twitter-via="local.readrboard.com:8080" pw-widget="init" id="pw_post_2"><span class="ra1-pw-alone-button ra1-pw-button-small pw-widget-ln-twitter-16 ra1-pw-counter-vertical"><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b><span class="ra1-pw-originalbuttons ra1-pw-button-twitter" style="cursor: pointer; "><a class="ra1-pw-ln-twitter"><i class="ra1-pw-icon ra1-pw-icon-twitter"></i> <span class="ra1-pw-sharealone-txt">Tweet</span></a></span></span></div></li><li><div class="pw-widget pw-vertical ra1-pw-widget-looknative ra1-pw-layout-vertical ra1-pw-counter-vertical" pw-widget="init" id="pw_post_3"><span class="ra1-pw-alone-button ra1-pw-button-small pw-widget-ln-googleplus-16 ra1-pw-counter-vertical"><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b><span class="ra1-pw-originalbuttons ra1-pw-button-googleplus" style="cursor: pointer; "><a class="ra1-pw-ln-googleplus"><i class="ra1-pw-icon ra1-pw-icon-googleplus"></i> <span class="ra1-pw-sharealone-txt">+1</span></a></span></span></div></li><li><span style="width: 66px; " class="ra1-pw-layout-vertical" id="pw_post_4"><span class="ra1-pw-originalbuttons ra1-pw-native-post ra1-pw-vertical"><span class="ra1-pw-counter"><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b></span><span class="ra1-pw-originalbuttons ra1-pw-postshare"><a href="" class="ra1-pw-sharealone-brd ra1-pw-sharealone-brd__16"><i class="ra1-pw-icon ra1-pw-icon-post"></i><span class="ra1-pw-sharealone-txt">Share</span></a></span></span></span></li><li><span class="ra1-pw-alone-button ra1-pw-button-small ra1-pw-counter-horizontal" id="pw_post_11"><a href="#" class="ra1-pw-icon ra1-pw-icon-reddit"></a><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b></span></li><li><span class="ra1-pw-alone-button ra1-pw-button-small ra1-pw-counter-horizontal" id="pw_post_13"><a href="#" class="ra1-pw-icon ra1-pw-icon-digg"></a><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b></span></li><li><span class="ra1-pw-alone-button ra1-pw-button-small ra1-pw-counter-horizontal" id="pw_post_9"><a href="#" class="ra1-pw-icon ra1-pw-icon-stumbleupon"></a><b class="ra1-pw-count"><span>0</span><i class="ra1-pw-count-brd"></i></b></span></li></ul>
-
-
-
-
-
-
-
-
-
-
             <div class="rdr-demo-block rdr-tooltip" title="this is a tooltip">
               <blockquote>
                 "If you ask 20 different readers why they read, they will all be right." -<span>Teresa Nielsen Hayden</span>
