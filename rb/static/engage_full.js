@@ -3357,9 +3357,6 @@ function readrBoard($R){
             catchRangyErrors: function(errorMsg){
                 //RDR.actions.catchRangyErrors:
 
-                //clear the leftover hilight
-                RDR.actions.UIClearState();  
-
                 //safe throw the errror.
                 RDR.safeThrow(errorMsg);
             },
