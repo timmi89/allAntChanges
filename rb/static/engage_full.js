@@ -1730,6 +1730,14 @@ function readrBoard($R){
                     //simplify our data structure later
                     var contentNodes = summary.content_nodes;
                     var contentNodesByContentId = contentNodes[diffNode.content_id];
+                    if(!contentNodesByContentId){
+                        var err = $.mustache(
+                            'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
+                            {id: diffNode.content_id}
+                        );
+                        RDR.safeThrow(err);
+                        return;
+                    }
                     var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
 
                     //filter so we get only the coms per this tagBox (tag_id and content_id)
@@ -4406,9 +4414,31 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             var interaction = response.data.interaction,
-                                content_node = (response.data.content_node) ? response.data.content_node:response.content_node_data,
-                                content_id = (content_node&&content_node.id) ? content_node.id:"",
+                                
+                                content_node = response.data.content_node ? 
+                                    response.data.content_node :
+                                    response.content_node_data ? 
+                                        response.content_node_data : 
+                                        args.content_node_data,
+
+                                content_id = (content_node && content_node.id) ? content_node.id:"",
                                 num_interactions = response.data.num_interactions;
+
+                            //ugg - hack for existing comment on a non-text node.
+                            var isText = content_node.kind == 'text' || content_node.kind == "txt";
+                            var isExisting = response.data.existing;
+                            if (!isText && isExisting) {
+                                var content_nodes = RDR.content_nodes[hash];
+                                $.each(content_nodes, function(id, node){
+                                    //there should be only one, but sometimes there is an undefined entry - ignore that.
+                                    //seriously, the id is the string "undefined" - ug.  Find the root of that and fix.
+                                    if(id && id != "undefined"){
+                                        //override the content_node
+                                        content_node = node;
+                                        content_id = content_node.id;
+                                    }
+                                });
+                            }
 
                             //todo: examine resize
                             // RDR.rindow.updateSizes( $rindow );
@@ -6608,7 +6638,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var summary = RDR.summaries[hash];
                     summary.interaction_order = [];
 
-                    if ( !$.isEmptyObject( summary.content_nodes ) ) {
+                    var isText = summary.kind == "text" || summary.kind == "txt";
+                    //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
+                    if ( isText && !$.isEmptyObject( summary.content_nodes ) ) {
                         // text requires iterating through the possible content nodes
                         $.each( summary.content_nodes, function( node_id, node_data ) {
                             $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
