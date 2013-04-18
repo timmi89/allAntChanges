@@ -145,6 +145,7 @@ def page(request, interaction_id = None, **kwargs):
         distance = 1
         for p_i in page_interactions_list:
             if (
+                not p_i.user in user_set and
                 interaction.user != p_i.user and 
                 (not interaction.parent or interaction.parent != p_i) 
             ):
@@ -156,7 +157,6 @@ def page(request, interaction_id = None, **kwargs):
                             if (
                                 threshold.passes(count=distance, exact=True)
                                 and not p_i.user.email.startswith('tempuser')
-                                and not p_i.user in user_set
                             ):
                                 logger.info("sending page notification to:" + p_i.user.email)
                                 msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
