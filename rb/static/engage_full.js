@@ -3575,35 +3575,44 @@ function readrBoard($R){
                 RDR.actions.containers.setup(hashList);
                 return hashList;
             },
-            sendHashes: function( hashes, onSuccessCallback ) {
-                // RDR.actions.sendHashes
-                var page_id, sendable_hashes, $hashable_node, sendData;
-
-                for (var i in hashes) {
-                    page_id = i;
-                    sendable_hashes = hashes[i];
-                    if ( !page_id || typeof sendable_hashes != "object" ) {
-                        break;
+            sendHashes: function( hashesByPageId, onSuccessCallback ) {
+                // RDR.actions.sendHashes:
+                
+                $.each(hashesByPageId, function(pageId, hashList){
+                    
+                    //might not need to protect against this anymore.
+                    if(!pageId || typeof hashList != "object" ){
+                        //im guessing this will never happen - test for a while and elliminate.
+                        RDR.safeThrow("Fix your damnned hashes!!");
+                        return;
                     }
 
-                    for ( var j in sendable_hashes ) {
-                        if ( typeof sendable_hashes[j] == "string" ) {
-                            if ( sendable_hashes[j] ) {
-                                $hashable_node = $('.rdr-' + sendable_hashes[j]);
-                                if ( $hashable_node && $hashable_node.length == 1 ) {
-                                    $hashable_node.addClass('rdr-hashed');
-                                }
-                            }
+                    $.each(hashList, function(idx, hash){
+                        //might not need to protect against this anymore.
+                        if (typeof hash != "string" ){
+                            RDR.safeThrow("why is your hash not a string!?");
+                            return;
                         }
-                    }
 
-                    //build the sendData with the hashes from above
-                    sendData = {
+                        var $hashable_node = $('.rdr-' + hash);
+                        
+                        if ($hashable_node.length == 1 ) {
+                            $hashable_node.addClass('rdr-hashed');
+                        }
+                    });
+
+                    RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
-                       pageID: parseInt( page_id ),
-                       hashes: sendable_hashes
-                    };
+                       pageID: parseInt( pageId ),
+                       hashes: hashList
+                    });
+                
+                });
+            },
+            sendHashesForSinglePage: function(sendData){
+                // RDR.actions.sendHashesForSinglePage:
 
+                    var pageId = sendData.pageID;
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -3632,7 +3641,7 @@ function readrBoard($R){
 
                             var summaries = {},
                                 unknown_summary;
-                            summaries[ page_id ] = response.data.known;
+                            summaries[ pageId ] = response.data.known;
                             // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
                             // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
                             // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
@@ -3648,7 +3657,7 @@ function readrBoard($R){
                                         unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
                                     }
                                     // summaries[ hash ] = unknown_summary;
-                                    summaries[ page_id ][ hash ] = unknown_summary;
+                                    summaries[ pageId ][ hash ] = unknown_summary;
                                 }
                             }
 
@@ -3677,7 +3686,8 @@ function readrBoard($R){
                             }
                         }
                     });
-                }
+
+                
             },
             containers: {
                 media: {
@@ -7389,9 +7399,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //hasn't been hashed yet.
                     //try to submit node to server.  Draw the actionbar using an onsuccess function so we don't draw it if it fails.
                     //note: hashes in this case will just be a single hash. That's cool.
-                    var hash = RDR.actions.hashNodes( $blockParent );
-                    if(hash){
-                        RDR.actions.sendHashes( hash, function(){
+                    
+                    //todo: use our new sendHashesForSinglePage function after testing and refactoring.
+                    var hashListForPage = RDR.actions.hashNodes( $blockParent );
+                    if(hashListForPage){
+                        RDR.actions.sendHashes( hashListForPage, function(){
                             if(callback){
                                 //god this re-var-ing of hash is awful, rewrite later.
                                 var hash = $blockParent.data('hash');
@@ -7515,16 +7527,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     // hash the "page" descendant nodes
                     // RDR.actions.hashNodes( $container, "nomedia" );
+                    
+                    //todo: can't we use the hashes returned by this function instead?
                     RDR.actions.hashNodes( $container );
 
                     if ( page.containers.length > 0 ) {
-                        var hashes = [];
-                        hashes[ page.id ] = [];
-                        // for ( var i in page.containers ) {
+                        var hashesByPageId = {};
+                        hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
-                            if ( typeof container.hash != "undefined") hashes[ page.id ].push( container.hash );
+                            if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
-                        RDR.actions.sendHashes( hashes );
+                        RDR.actions.sendHashes( hashesByPageId );
                     }
 
                     //init the widgetSummary
