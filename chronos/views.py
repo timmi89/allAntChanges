@@ -44,7 +44,7 @@ def agree(request, interaction_id = None, **kwargs):
         new_rank = interaction.rank + MILLI_RANK_INC 
         interaction.rank = new_rank
         interaction.save()
-        logger.info("SEND NOTIFICATION: " + str(social_user.notification_email_option))
+        logger.info("CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
         if social_user.notification_email_option:
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
             child_count = child_interactions.count()
@@ -144,21 +144,15 @@ def page(request, interaction_id = None, **kwargs):
         user_set = set()
         distance = 1
         for p_i in page_interactions_list:
-            print "interaction!!!!!!!"
-            print p_i
             if (
                 interaction.user != p_i.user and 
                 (not interaction.parent or interaction.parent != p_i) 
             ):
                 try:
                     social_user = SocialUser.objects.get(user = p_i.user)
-                    logger.info("SEND NOTIFICATION: " + str(social_user.notification_email_option))
+                    logger.info("CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
                     if social_user.notification_email_option:
                         for threshold in page_rules:
-                            
-                            print 'distance'
-                            print distance
-
                             if (
                                 threshold.passes(count=distance, exact=True)
                                 and not p_i.user.email.startswith('tempuser')
