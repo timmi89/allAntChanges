@@ -3605,11 +3605,11 @@ function readrBoard($R){
                        short_name : RDR.group.short_name,
                        pageID: parseInt( pageId ),
                        hashes: hashList
-                    });
+                    }, onSuccessCallback);
                 
                 });
             },
-            sendHashesForSinglePage: function(sendData){
+            sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // RDR.actions.sendHashesForSinglePage:
 
                     var pageId = sendData.pageID;
