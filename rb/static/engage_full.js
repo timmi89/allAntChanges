@@ -1450,9 +1450,10 @@ function readrBoard($R){
                 //temp tie-over
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
-                    kind = options.kind;
+                    kind = options.kind,
+                    isPage = options.is_page;
 
-                if (!summary) {
+                if (!isPage && !summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
                     var summary = RDR.util.makeEmptySummary(hash);
@@ -1730,15 +1731,27 @@ function readrBoard($R){
                     //simplify our data structure later
                     var contentNodes = summary.content_nodes;
                     var contentNodesByContentId = contentNodes[diffNode.content_id];
-                    if(!contentNodesByContentId){
+                    
+                    if(contentNodesByContentId){
+                        var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    }else{
                         var err = $.mustache(
                             'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
                             {id: diffNode.content_id}
                         );
                         RDR.safeThrow(err);
-                        return;
+                        
+                        //this didn't fix the problem anyway - leave it out.
+                        //try to recover
+                        // try{
+                        //     var comsPerContentNodeId = RDR.content_nodes[hash]['undefined'].top_interactions.coms;
+                        // }
+                        // catch(e){
+                        //     RDR.safeThrow(e);
+                        //     return;
+                        // }
                     }
-                    var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    
 
                     //filter so we get only the coms per this tagBox (tag_id and content_id)
                     var comsPerContentNodeAndTagId = $.map( comsPerContentNodeId, function(node){
@@ -3572,38 +3585,46 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
-                RDR.actions.containers.setup(hashList);
                 return hashList;
             },
-            sendHashes: function( hashes, onSuccessCallback ) {
-                // RDR.actions.sendHashes
-                var page_id, sendable_hashes, $hashable_node, sendData;
-
-                for (var i in hashes) {
-                    page_id = i;
-                    sendable_hashes = hashes[i];
-                    if ( !page_id || typeof sendable_hashes != "object" ) {
-                        break;
+            sendHashes: function( hashesByPageId, onSuccessCallback ) {
+                // RDR.actions.sendHashes:
+                
+                $.each(hashesByPageId, function(pageId, hashList){
+                    
+                    //might not need to protect against this anymore.
+                    if(!pageId || typeof hashList != "object" ){
+                        //im guessing this will never happen - test for a while and elliminate.
+                        RDR.safeThrow("Fix your damnned hashes!!");
+                        return;
                     }
 
-                    for ( var j in sendable_hashes ) {
-                        if ( typeof sendable_hashes[j] == "string" ) {
-                            if ( sendable_hashes[j] ) {
-                                $hashable_node = $('.rdr-' + sendable_hashes[j]);
-                                if ( $hashable_node && $hashable_node.length == 1 ) {
-                                    $hashable_node.addClass('rdr-hashed');
-                                }
-                            }
+                    $.each(hashList, function(idx, hash){
+                        //might not need to protect against this anymore.
+                        if (typeof hash != "string" ){
+                            RDR.safeThrow("why is your hash not a string!?");
+                            return;
                         }
-                    }
 
-                    //build the sendData with the hashes from above
-                    sendData = {
+                        var $hashable_node = $('.rdr-' + hash);
+                        
+                        if ($hashable_node.length == 1 ) {
+                            $hashable_node.addClass('rdr-hashed');
+                        }
+                    });
+
+                    RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
-                       pageID: parseInt( page_id ),
-                       hashes: sendable_hashes
-                    };
+                       pageID: parseInt( pageId ),
+                       hashes: hashList
+                    }, onSuccessCallback);
+                
+                });
+            },
+            sendHashesForSinglePage: function(sendData, onSuccessCallback){
+                // RDR.actions.sendHashesForSinglePage:
 
+                    var pageId = sendData.pageID;
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -3630,39 +3651,26 @@ function readrBoard($R){
                                 });
                             });
 
-                            var summaries = {},
-                                unknown_summary;
-                            summaries[ page_id ] = response.data.known;
-                            // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
-                            // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
-                            // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
-                            for ( var i in response.data.unknown ) {
-                                var hash = response.data.unknown[i];
-                                if (typeof hash == "string") {
-                                    // get the kind
-                                    if ( $('img.rdr-'+hash).length == 1 ) {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
-                                    } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text() != "What do you think?" ) { // TODO seems fragile.  the text is b/c of an indicator being there on images...
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
-                                    } else {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
-                                    }
-                                    // summaries[ hash ] = unknown_summary;
-                                    summaries[ page_id ][ hash ] = unknown_summary;
+                            var summaries = {};
+                            summaries[ pageId ] = response.data.known;
+                            
+                            $.each(response.data.unknown, function(idx, hash){
+                                if (typeof hash != "string") {
+                                    RDR.safeThrow('why the f would this not be a string?');
+                                    return;
                                 }
-                            }
 
-                            //the callback implementation here is a litte unintuitive:
-                            //it only gets passsed in when a single hash is run through here,
-                            //so it will only get run here either on the $container that is a known summary,
-                            //or as a callback after the unknownhash is sent through the containers.send call.
+                                var unknown_summary;
+                                // get the kind
+                                var $node = $('.rdr-'+hash);
+                                var kind = $node.data('kind');
+                                if(!kind){
+                                    RDR.safeThrow('node should always have data: kind');
+                                }
+                                unknown_summary = RDR.util.makeEmptySummary( hash, kind );
 
-                            // if ( unknownList.length > 0 ) {
-
-                            //     //send the containers to the server.
-                            //     //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            //     RDR.actions.containers.send(unknownList, onSuccessCallback);
-                            // }
+                                summaries[ pageId ][ hash ] = unknown_summary;
+                            });
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                             if ( !$.isEmptyObject(summaries) ){
@@ -3677,7 +3685,8 @@ function readrBoard($R){
                             }
                         }
                     });
-                }
+
+                
             },
             containers: {
                 media: {
@@ -3761,7 +3770,7 @@ function readrBoard($R){
                     RDR.containers[settings.hash] = container;
                     return container;
                 },
-                setup: function(summaries){
+                setup: function(summariesPerPage){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
 
@@ -3797,73 +3806,71 @@ function readrBoard($R){
                     //todo: what does this do?  break this out into a function with a descriptive name.
                     var hashesToShow = []; //filled below
 
-                    for ( var i in summaries ) {
-                        var page_id = i;
+                    $.each(summariesPerPage, function(page_id, summariesByHash){
+                        
+                        if ( !summariesByHash || $.isArray(summariesByHash) ){
+                            RDR.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
+                            return;
+                        }
 
-                        for ( var j in summaries[i] ) {
+                        $.each(summariesByHash, function(hash, summary){
+                            
+                            //first do generic stuff
+                            //save the hash as a summary attr for convenience.
+                            summary.hash = hash;
 
-                            if ( typeof j == "string" && typeof summaries[i][j] == "object" ) {
+                            var containerInfo = RDR.containers[hash];
 
-                                var hash = j;
-                                var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
+                            if ( containerInfo) {
+                                var $container = containerInfo.$this;
 
-                                //first do generic stuff
-                                //save the hash as a summary attr for convenience.
-                                summary.hash = hash;
+                                //temp type conversion for top_interactions.coms;
+                                var newComs = {},
+                                    coms = summary.top_interactions.coms;
 
-                                var containerInfo = RDR.containers[hash];
+                                $.each(coms, function(arrIdx, com){
+                                    //sortby tag_id
 
-                                if ( containerInfo) {
-                                    var $container = containerInfo.$this;
-
-                                    //temp type conversion for top_interactions.coms;
-                                    var newComs = {},
-                                        coms = summary.top_interactions.coms;
-
-                                    $.each(coms, function(arrIdx, com){
-                                        //sortby tag_id
-
-                                        // [ porter ] this shouldn't be needed, but it is,
-                                        // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                        if ( summary.kind == "text" ) {
-                                            newComs[com.tag_id] = com;
-                                        } else {
-                                            if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                            newComs[com.tag_id].push(com);
-                                        }
-                                    });
-
-                                    summary.top_interactions.coms = newComs;
-                                    RDR.actions.summaries.save(summary);
-
-                                    var pageContainerExists = false;
-
-                                    $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
-                                        if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
-                                    });
-                                    if ( pageContainerExists == false ) {
-                                        RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summaries[page_id][hash].id });
+                                    // [ porter ] this shouldn't be needed, but it is,
+                                    // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                    if ( summary.kind == "text" ) {
+                                        newComs[com.tag_id] = com;
                                     } else {
+                                        if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                        newComs[com.tag_id].push(com);
                                     }
+                                });
 
-                                    RDR.actions.indicators.update( hash, true);
+                                summary.top_interactions.coms = newComs;
+                                RDR.actions.summaries.save(summary);
+
+                                var pageContainerExists = false;
+
+                                $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                    if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
+                                });
+                                if ( pageContainerExists == false ) {
+                                    RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                } else {
+                                }
+
+                                RDR.actions.indicators.update( hash, true);
 
 
-                                    //now run the type specific function with the //run the setup func above
-                                    var kind = summary.kind;
-                                    if(kind != "page"){
-                                        _setupFuncs[kind](hash, summary);
-                                    }
+                                //now run the type specific function with the //run the setup func above
+                                var kind = summary.kind;
+                                if(kind != "page"){
+                                    _setupFuncs[kind](hash, summary);
+                                }
 
-                                    //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                                    //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                                    if(summary.counts.tags > 0){
-                                        hashesToShow.push(hash);
-                                    }
+                                //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                                //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                                if(summary.counts.tags > 0){
+                                    hashesToShow.push(hash);
                                 }
                             }
-                        }
-                    }
+                        });
+                    });
 
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
@@ -6929,33 +6936,43 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
                     var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
                     $otherComments.append($header);
-                    for ( var i in comments ) {
-                        var this_comment = comments[i];
-                        if( this_comment.tag_id == tagId ){
-                            $otherComments.show();
 
-                            var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
-                                $commentBy = $('<div class="rdr_commentBy" />'),
-                                $comment = $('<div class="rdr_comment" />'),
-                                $commentReplies = $('<div class="rdr_commentReplies" />'),
-                                $commentReply = $('<div class="rdr_commentReply" />'),
-                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-
-                            var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
-
-                            var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
-                                RDR.events.track('click_user_profile');
-                            });
-                            $comment.html(
-                                // '<span class="rdr_quoteImg"></span>'+
-                                '<div class="rdr_comment_body">'+this_comment.body+'</div>'
-                            );
-
-                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
-                            $otherComments.append( $commentSet );
+                    $.each(comments, function(idx, this_comment){
+                        if( this_comment.tag_id != tagId ){
+                            return;
                         }
-                    }
+
+                        $otherComments.show();
+
+                        var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
+                            $commentBy = $('<div class="rdr_commentBy" />'),
+                            $comment = $('<div class="rdr_comment" />'),
+                            $commentReplies = $('<div class="rdr_commentReplies" />'),
+                            $commentReply = $('<div class="rdr_commentReply" />'),
+                            $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
+
+                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
+
+                        var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? 
+                            "Anonymous" : 
+                            this_comment.user.first_name + " " + this_comment.user.last_name;
+                        
+                        $commentBy.html(
+                            '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>'
+                        ).click( function() {
+                            RDR.events.track('click_user_profile');
+                        });
+
+                        $comment.html(
+                            // '<span class="rdr_quoteImg"></span>'+
+                            '<div class="rdr_comment_body">'+this_comment.body+'</div>'
+                        );
+
+                        $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
+                        $otherComments.append( $commentSet );
+
+                    });
+
                     $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
                     return $otherComments;
 
@@ -7293,50 +7310,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
             },
-            updateData: function(args) {
-                var tag_text;
-
-                if ( args.kind == "tag" ) {
-                    var rindow = args.rindow,
-                        hash = args.hash,
-                        content = args.content,
-                        tag = args.tag,
-                        range = args.range;
-
-                    if ( args.element ) {
-                        var element_text = args.element.parent().text();
-                        count = parseInt( element_text.substr(1, element_text.indexOf(')')-1), 10 ) + 1;
-                        tag_text = element_text.substr(element_text.indexOf(')')+2);
-                        args.element.text( '('+count+')' );
-                        args.element.addClass('rdr_tagged');
-                    } else {
-
-                    }
-
-                    // update the data objects too
-                    for ( var i in RDR.content_nodes[hash].info.content ) {
-                        if ( RDR.content_nodes[hash].info.content[i].body == content ) {
-                            for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
-                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.id ) {
-                                    RDR.content_nodes[hash].info.content[i].tags[j].count++;
-
-                                    // need to increment the .tags count, too
-                                    for ( var k in RDR.content_nodes[hash].info.tags ) {
-                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.id ) {
-                                            if ( RDR.content_nodes[hash].info.tags[k].content[i] ) {
-                                                RDR.content_nodes[hash].info.tags[k].count++;
-                                                RDR.content_nodes[hash].info.tags[k].content[i].count++;
-                                                RDR.content_nodes[hash].info.tag_count++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-            },
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
@@ -7389,9 +7362,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //hasn't been hashed yet.
                     //try to submit node to server.  Draw the actionbar using an onsuccess function so we don't draw it if it fails.
                     //note: hashes in this case will just be a single hash. That's cool.
-                    var hash = RDR.actions.hashNodes( $blockParent );
-                    if(hash){
-                        RDR.actions.sendHashes( hash, function(){
+                    
+                    //todo: use our new sendHashesForSinglePage function after testing and refactoring.
+                    var hashListForPage = RDR.actions.hashNodes( $blockParent );
+                    if(hashListForPage){
+                        RDR.actions.sendHashes( hashListForPage, function(){
                             if(callback){
                                 //god this re-var-ing of hash is awful, rewrite later.
                                 var hash = $blockParent.data('hash');
@@ -7515,29 +7490,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     // hash the "page" descendant nodes
                     // RDR.actions.hashNodes( $container, "nomedia" );
+                    
+                    //todo: can't we use the hashes returned by this function instead?
                     RDR.actions.hashNodes( $container );
 
                     if ( page.containers.length > 0 ) {
-                        var hashes = [];
-                        hashes[ page.id ] = [];
-                        // for ( var i in page.containers ) {
+                        var hashesByPageId = {};
+                        hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
-                            if ( typeof container.hash != "undefined") hashes[ page.id ].push( container.hash );
+                            if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
-                        RDR.actions.sendHashes( hashes );
+                        RDR.actions.sendHashes( hashesByPageId );
                     }
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
+                    widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
+                    
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                         
-                    } else {
-                        widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                        widgetSummarySettings.jqFunc = "append";
+                    } else if( $("#rdr-page-summary").length==1 ){
+                        widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
+                    }else{
+                        //use the default summaryBar instead
+                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>');
+                        widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
                     //div to hold summary tag detail "menus"
