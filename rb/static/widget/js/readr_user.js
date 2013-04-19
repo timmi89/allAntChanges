@@ -660,12 +660,16 @@ window.RDRAuth = {
 }
 
 $(document).ready(function(){
+
+    //wait for fb init initing RDRAuth
+    window.fb_loader.done(function(){
+        RDRAuth.init();
+    });
     
+    //wait for fb init before receiving messages
+    window.fb_loader.done(function(){
 
-    if ( typeof $.receiveMessage == "function") {
-
-        //wait for fb init before receiving messages
-        window.fb_loader.done(function(){
+        if ( typeof $.receiveMessage == "function") {
             $.receiveMessage(
                 function(e){
 
@@ -697,11 +701,6 @@ $(document).ready(function(){
                 },
                 qs_args.parentHost
             );
-        });
-    }
-
-    //wait for fb init initing RDRAuth
-    window.fb_loader.done(function(){
-        RDRAuth.init();
+        }
     });
 });
