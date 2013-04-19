@@ -7543,14 +7543,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
+                    widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
+                    
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                         
-                    } else {
-                        widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                        widgetSummarySettings.jqFunc = "append";
+                    } else if( $("#rdr-page-summary").length==1 ){
+                        widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
+                    }else{
+                        //use the default summaryBar instead
+                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>');
+                        widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
                     //div to hold summary tag detail "menus"
