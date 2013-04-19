@@ -1731,15 +1731,27 @@ function readrBoard($R){
                     //simplify our data structure later
                     var contentNodes = summary.content_nodes;
                     var contentNodesByContentId = contentNodes[diffNode.content_id];
-                    if(!contentNodesByContentId){
+                    
+                    if(contentNodesByContentId){
+                        var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    }else{
                         var err = $.mustache(
                             'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
                             {id: diffNode.content_id}
                         );
                         RDR.safeThrow(err);
-                        return;
+                        
+                        //this didn't fix the problem anyway - leave it out.
+                        //try to recover
+                        // try{
+                        //     var comsPerContentNodeId = RDR.content_nodes[hash]['undefined'].top_interactions.coms;
+                        // }
+                        // catch(e){
+                        //     RDR.safeThrow(e);
+                        //     return;
+                        // }
                     }
-                    var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    
 
                     //filter so we get only the coms per this tagBox (tag_id and content_id)
                     var comsPerContentNodeAndTagId = $.map( comsPerContentNodeId, function(node){
