@@ -374,9 +374,14 @@ window.RDRAuth = {
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
 							
+                            //update the login menu html
+                            if( !$('#fb-login-button a.logging-in').length ){
+                                return;
+                            }
                             // reload the window only if they had just taken the action of clicking the login button.  janky-ish.
 							if ( $('#fb-login-button a').hasClass('logging-in') ) {
 								window.location.reload();
+                                return;
 							}
 
 							// shouldn't need this.  the window reload above removes the need for it.
