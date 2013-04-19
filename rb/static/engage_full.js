@@ -3639,39 +3639,26 @@ function readrBoard($R){
                                 });
                             });
 
-                            var summaries = {},
-                                unknown_summary;
+                            var summaries = {};
                             summaries[ pageId ] = response.data.known;
-                            // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
-                            // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
-                            // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
-                            for ( var i in response.data.unknown ) {
-                                var hash = response.data.unknown[i];
-                                if (typeof hash == "string") {
-                                    // get the kind
-                                    if ( $('img.rdr-'+hash).length == 1 ) {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
-                                    } else if ( $('.rdr-'+hash).text() && $('.rdr-'+hash).text() != "What do you think?" ) { // TODO seems fragile.  the text is b/c of an indicator being there on images...
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
-                                    } else {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
-                                    }
-                                    // summaries[ hash ] = unknown_summary;
-                                    summaries[ pageId ][ hash ] = unknown_summary;
+                            
+                            $.each(response.data.unknown, function(idx, hash){
+                                if (typeof hash != "string") {
+                                    RDR.safeThrow('why the f would this not be a string?');
+                                    return;
                                 }
-                            }
 
-                            //the callback implementation here is a litte unintuitive:
-                            //it only gets passsed in when a single hash is run through here,
-                            //so it will only get run here either on the $container that is a known summary,
-                            //or as a callback after the unknownhash is sent through the containers.send call.
+                                var unknown_summary;
+                                // get the kind
+                                var $node = $('.rdr-'+hash);
+                                var kind = $node.data('kind');
+                                if(!kind){
+                                    RDR.safeThrow('node should always have data: kind');
+                                }
+                                unknown_summary = RDR.util.makeEmptySummary( hash, kind );
 
-                            // if ( unknownList.length > 0 ) {
-
-                            //     //send the containers to the server.
-                            //     //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            //     RDR.actions.containers.send(unknownList, onSuccessCallback);
-                            // }
+                                summaries[ pageId ][ hash ] = unknown_summary;
+                            });
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                             if ( !$.isEmptyObject(summaries) ){
