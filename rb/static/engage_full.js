@@ -3771,7 +3771,7 @@ function readrBoard($R){
                     RDR.containers[settings.hash] = container;
                     return container;
                 },
-                setup: function(summaries){
+                setup: function(summariesPerPage){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
 
@@ -3807,16 +3807,12 @@ function readrBoard($R){
                     //todo: what does this do?  break this out into a function with a descriptive name.
                     var hashesToShow = []; //filled below
 
-                    for ( var i in summaries ) {
-                        var page_id = i;
+                    $.each(summariesPerPage, function(page_id, summariesByHash){
+                        
+                        $.each(summariesByHash, function(hash, summary){
 
-                        for ( var j in summaries[i] ) {
-
-                            if ( typeof j == "string" && typeof summaries[i][j] == "object" ) {
-
-                                var hash = j;
-                                var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
-
+                            if ( typeof summary == "object" ) {
+                                
                                 //first do generic stuff
                                 //save the hash as a summary attr for convenience.
                                 summary.hash = hash;
@@ -3852,7 +3848,7 @@ function readrBoard($R){
                                         if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
                                     });
                                     if ( pageContainerExists == false ) {
-                                        RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summaries[page_id][hash].id });
+                                        RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
                                     } else {
                                     }
 
@@ -3872,8 +3868,8 @@ function readrBoard($R){
                                     }
                                 }
                             }
-                        }
-                    }
+                        });
+                    });
 
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
