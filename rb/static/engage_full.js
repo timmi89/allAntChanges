@@ -1450,9 +1450,10 @@ function readrBoard($R){
                 //temp tie-over
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
-                    kind = options.kind;
+                    kind = options.kind,
+                    isPage = options.is_page;
 
-                if (!summary) {
+                if (!isPage && !summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
                     var summary = RDR.util.makeEmptySummary(hash);
@@ -3572,7 +3573,6 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
-                RDR.actions.containers.setup(hashList);
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
@@ -3809,63 +3809,65 @@ function readrBoard($R){
 
                     $.each(summariesPerPage, function(page_id, summariesByHash){
                         
+                        if ( !summariesByHash || $.isArray(summariesByHash) ){
+                            RDR.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
+                            return;
+                        }
+
                         $.each(summariesByHash, function(hash, summary){
+                            
+                            //first do generic stuff
+                            //save the hash as a summary attr for convenience.
+                            summary.hash = hash;
 
-                            if ( typeof summary == "object" ) {
-                                
-                                //first do generic stuff
-                                //save the hash as a summary attr for convenience.
-                                summary.hash = hash;
+                            var containerInfo = RDR.containers[hash];
 
-                                var containerInfo = RDR.containers[hash];
+                            if ( containerInfo) {
+                                var $container = containerInfo.$this;
 
-                                if ( containerInfo) {
-                                    var $container = containerInfo.$this;
+                                //temp type conversion for top_interactions.coms;
+                                var newComs = {},
+                                    coms = summary.top_interactions.coms;
 
-                                    //temp type conversion for top_interactions.coms;
-                                    var newComs = {},
-                                        coms = summary.top_interactions.coms;
+                                $.each(coms, function(arrIdx, com){
+                                    //sortby tag_id
 
-                                    $.each(coms, function(arrIdx, com){
-                                        //sortby tag_id
-
-                                        // [ porter ] this shouldn't be needed, but it is,
-                                        // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                        if ( summary.kind == "text" ) {
-                                            newComs[com.tag_id] = com;
-                                        } else {
-                                            if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                            newComs[com.tag_id].push(com);
-                                        }
-                                    });
-
-                                    summary.top_interactions.coms = newComs;
-                                    RDR.actions.summaries.save(summary);
-
-                                    var pageContainerExists = false;
-
-                                    $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
-                                        if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
-                                    });
-                                    if ( pageContainerExists == false ) {
-                                        RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                    // [ porter ] this shouldn't be needed, but it is,
+                                    // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                    if ( summary.kind == "text" ) {
+                                        newComs[com.tag_id] = com;
                                     } else {
+                                        if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                        newComs[com.tag_id].push(com);
                                     }
+                                });
 
-                                    RDR.actions.indicators.update( hash, true);
+                                summary.top_interactions.coms = newComs;
+                                RDR.actions.summaries.save(summary);
+
+                                var pageContainerExists = false;
+
+                                $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                    if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
+                                });
+                                if ( pageContainerExists == false ) {
+                                    RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                } else {
+                                }
+
+                                RDR.actions.indicators.update( hash, true);
 
 
-                                    //now run the type specific function with the //run the setup func above
-                                    var kind = summary.kind;
-                                    if(kind != "page"){
-                                        _setupFuncs[kind](hash, summary);
-                                    }
+                                //now run the type specific function with the //run the setup func above
+                                var kind = summary.kind;
+                                if(kind != "page"){
+                                    _setupFuncs[kind](hash, summary);
+                                }
 
-                                    //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                                    //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                                    if(summary.counts.tags > 0){
-                                        hashesToShow.push(hash);
-                                    }
+                                //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                                //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                                if(summary.counts.tags > 0){
+                                    hashesToShow.push(hash);
                                 }
                             }
                         });
