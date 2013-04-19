@@ -7288,50 +7288,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
             },
-            updateData: function(args) {
-                var tag_text;
-
-                if ( args.kind == "tag" ) {
-                    var rindow = args.rindow,
-                        hash = args.hash,
-                        content = args.content,
-                        tag = args.tag,
-                        range = args.range;
-
-                    if ( args.element ) {
-                        var element_text = args.element.parent().text();
-                        count = parseInt( element_text.substr(1, element_text.indexOf(')')-1), 10 ) + 1;
-                        tag_text = element_text.substr(element_text.indexOf(')')+2);
-                        args.element.text( '('+count+')' );
-                        args.element.addClass('rdr_tagged');
-                    } else {
-
-                    }
-
-                    // update the data objects too
-                    for ( var i in RDR.content_nodes[hash].info.content ) {
-                        if ( RDR.content_nodes[hash].info.content[i].body == content ) {
-                            for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
-                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.id ) {
-                                    RDR.content_nodes[hash].info.content[i].tags[j].count++;
-
-                                    // need to increment the .tags count, too
-                                    for ( var k in RDR.content_nodes[hash].info.tags ) {
-                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.id ) {
-                                            if ( RDR.content_nodes[hash].info.tags[k].content[i] ) {
-                                                RDR.content_nodes[hash].info.tags[k].count++;
-                                                RDR.content_nodes[hash].info.tags[k].content[i].count++;
-                                                RDR.content_nodes[hash].info.tag_count++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-            },
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
