@@ -6924,33 +6924,43 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
                     var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
                     $otherComments.append($header);
-                    for ( var i in comments ) {
-                        var this_comment = comments[i];
-                        if( this_comment.tag_id == tagId ){
-                            $otherComments.show();
 
-                            var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
-                                $commentBy = $('<div class="rdr_commentBy" />'),
-                                $comment = $('<div class="rdr_comment" />'),
-                                $commentReplies = $('<div class="rdr_commentReplies" />'),
-                                $commentReply = $('<div class="rdr_commentReply" />'),
-                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-
-                            var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
-
-                            var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
-                                RDR.events.track('click_user_profile');
-                            });
-                            $comment.html(
-                                // '<span class="rdr_quoteImg"></span>'+
-                                '<div class="rdr_comment_body">'+this_comment.body+'</div>'
-                            );
-
-                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
-                            $otherComments.append( $commentSet );
+                    $.each(comments, function(idx, this_comment){
+                        if( this_comment.tag_id != tagId ){
+                            return;
                         }
-                    }
+
+                        $otherComments.show();
+
+                        var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
+                            $commentBy = $('<div class="rdr_commentBy" />'),
+                            $comment = $('<div class="rdr_comment" />'),
+                            $commentReplies = $('<div class="rdr_commentReplies" />'),
+                            $commentReply = $('<div class="rdr_commentReply" />'),
+                            $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
+
+                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
+
+                        var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? 
+                            "Anonymous" : 
+                            this_comment.user.first_name + " " + this_comment.user.last_name;
+                        
+                        $commentBy.html(
+                            '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>'
+                        ).click( function() {
+                            RDR.events.track('click_user_profile');
+                        });
+
+                        $comment.html(
+                            // '<span class="rdr_quoteImg"></span>'+
+                            '<div class="rdr_comment_body">'+this_comment.body+'</div>'
+                        );
+
+                        $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
+                        $otherComments.append( $commentSet );
+
+                    });
+
                     $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
                     return $otherComments;
 
