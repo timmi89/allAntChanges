@@ -156,3 +156,14 @@ class ViewCacheUpdater(CacheUpdater):
         if self.method == 'update':  
             self.value = getSettingsDict(self.group)
          
+
+class GlobalActivityCacheUpdater(CacheUpdater):   
+    def __init__(self, **kwargs):
+        self.view = "global_activity"
+        self.method = kwargs['method']
+        
+    def hydrate(self):
+        self.key = self.view
+        if self.method == 'update':  
+            self.value = getGlobalActivity()
+         

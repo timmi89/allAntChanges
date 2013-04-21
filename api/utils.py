@@ -348,6 +348,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         notification = AsynchPageNotification()
         t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         t.start()
+        
+        if not new_interaction.parent or new_interaction.kind == 'com':
+            global_cache_updater = GlobalActivityCacheUpdater(method="update")
+            t = Thread(target=global_cache_updater, kwargs={})
+            t.start()
 
     except Exception, e:
         logger.warning(traceback.format_exc(50))   
@@ -474,5 +479,56 @@ def getSettingsDict(group):
     settings_dict['blessed_tags'] = blessed_tags
     return settings_dict
 
+def getGlobalActivity():
+    makeItLean = True
+    historyLen = 3 if makeItLean else 3
+    maxInteractions = 100 if makeItLean else None
+
+    today = datetime.now()
+    tdelta = timedelta(days = -historyLen)
+    the_past = today + tdelta
+    interactions = Interaction.objects.all()
+    interactions = interactions.filter(
+        created__gt = the_past, 
+        kind = 'tag', 
+        approved=True, 
+        page__site__group__approved=True
+    ).order_by('-created')[:maxInteractions]
     
+    users = {}
+    pages = {}
+    groups = {}
+    nodes ={}
+    for inter in interactions:
+        if not groups.has_key(inter.page.site.group.name):
+            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
+                                                                                    fields=['id', 'short_name'])}
+        else:
+            groups[inter.page.site.group.name]['count'] +=1
+            
+        if not pages.has_key(inter.page.url):
+            pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
+        else:
+            pages[inter.page.url]['count'] +=1
+        
+        if not inter.user.email.startswith('tempuser'):    
+            if not users.has_key(inter.user.id):
+                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
+                                                               'last_login', 'date_joined', 'email',
+                                                                'is_superuser', 'is_staff', 'password', 'groups'])
+                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
+                                                                                          'gender', 'provider', 
+                                                                                          'bio', 'hometown', 'user',
+                                                                                          'follow_email_option'])
+                users[inter.user.id] = {'count': 1, "user":user_dict}
+            else:
+                users[inter.user.id]['count'] +=1
+            
+        if not nodes.has_key(inter.interaction_node.body):
+            nodes[inter.interaction_node.body] = {'count': 1}
+        else:
+            nodes[inter.interaction_node.body]['count'] +=1
+        
+            
+    return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
     

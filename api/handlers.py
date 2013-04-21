@@ -952,7 +952,24 @@ class GlobalActivityHandler(AnonymousBaseHandler):
 
     @status_response
     def read(self, request, **kwargs):
-
+        
+        cached_result = cache.get('global_activity')
+        if cached_result is not None:
+            return cached_result
+        
+        global_activity = getGlobalActivity()
+        
+        try:
+            cache_updater = GlobalActivityCacheUpdater(method="update")
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))   
+        
+        return global_activity
+    
+    
+        """
         makeItLean = True
         historyLen = 3 if makeItLean else 3
         maxInteractions = 100 if makeItLean else None
@@ -1004,6 +1021,6 @@ class GlobalActivityHandler(AnonymousBaseHandler):
             
                 
         return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
-    
+        """
 
        
