@@ -2,7 +2,7 @@ import settings
 import httplib
 from django.core.cache import cache
 import traceback
-from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict
+from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict, getGlobalActivity
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -159,7 +159,7 @@ class ViewCacheUpdater(CacheUpdater):
 
 class GlobalActivityCacheUpdater(CacheUpdater):   
     def __init__(self, **kwargs):
-        self.view = "global_activity"
+        self.view = 'global_activity'
         self.method = kwargs['method']
         
     def hydrate(self):
