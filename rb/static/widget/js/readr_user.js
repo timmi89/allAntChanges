@@ -373,36 +373,41 @@ window.RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
-							if ( $('#fb-login-button a.logging-in').length ) {
-							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
-								if ( $('#fb-login-button a').hasClass('logging-in') ) {
-									window.location.reload();
-								}
-
-								// shouldn't need this.  the window reload above removes the need for it.
-			      				var $user = $('<a/>'),
-								$avatar = $('<img/>'),
-								$name = $('<strong/>');
-
-								$user.attr('href', '/user/'+user_id );
-								$avatar.attr('src', img_url + '?type=square');
-								$name.text( response.name );
-
-								$user.append( $avatar, $name );
-
-								var user_id = $.cookie('user_id'),
-									user_name = $.cookie('full_name');
-									$user_menu = $('<div id="log-out-link" />');
-
-								$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
-						            '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
-						            '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
-						            '<h5>Settings</h5>' +
-						            '<label for="private_profile">' +
-						              '(Reload the page to edit your setttings.)' +
-						            '</label>');
-								$('#logged-in').html( $user ).append($user_menu);
+							
+                            //update the login menu html
+                            if( !$('#fb-login-button a.logging-in').length ){
+                                return;
+                            }
+                            // reload the window only if they had just taken the action of clicking the login button.  janky-ish.
+							if ( $('#fb-login-button a').hasClass('logging-in') ) {
+								window.location.reload();
+                                return;
 							}
+
+							// shouldn't need this.  the window reload above removes the need for it.
+		      				var $user = $('<a/>'),
+							$avatar = $('<img/>'),
+							$name = $('<strong/>');
+
+							$user.attr('href', '/user/'+user_id );
+							$avatar.attr('src', img_url + '?type=square');
+							$name.text( response.name );
+
+							$user.append( $avatar, $name );
+
+							var user_id = $.cookie('user_id'),
+								user_name = $.cookie('full_name');
+								$user_menu = $('<div id="log-out-link" />');
+
+							$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
+					            '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
+					            '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
+					            '<h5>Settings</h5>' +
+					            '<label for="private_profile">' +
+					              '(Reload the page to edit your setttings.)' +
+					            '</label>');
+							$('#logged-in').html( $user ).append($user_menu);
+						
 		      			});
 					} else {
 						RDRAuth.getReadrToken( response.authResponse, function() { });
@@ -660,12 +665,16 @@ window.RDRAuth = {
 }
 
 $(document).ready(function(){
+
+    //wait for fb init initing RDRAuth
+    window.fb_loader.done(function(){
+        RDRAuth.init();
+    });
     
+    //wait for fb init before receiving messages
+    window.fb_loader.done(function(){
 
-    if ( typeof $.receiveMessage == "function") {
-
-        //wait for fb init before receiving messages
-        window.fb_loader.done(function(){
+        if ( typeof $.receiveMessage == "function") {
             $.receiveMessage(
                 function(e){
 
@@ -697,11 +706,6 @@ $(document).ready(function(){
                 },
                 qs_args.parentHost
             );
-        });
-    }
-
-    //wait for fb init initing RDRAuth
-    window.fb_loader.done(function(){
-        RDRAuth.init();
+        }
     });
 });

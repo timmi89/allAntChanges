@@ -38,26 +38,34 @@ def checkToken(data):
     # Check and set auth_token for registered social user
     if len(social_user) == 1 and social_user[0].provider == 'Facebook':
         try:
+            logger.info( "fb:1 - " + str(social_user[0]))
             social_auth = SocialAuth.objects.get(social_user__user=data['user_id'])
             
         except SocialAuth.DoesNotExist:
+            logger.info( "fb:2 - SocialAuth.DoesNotExist")
             return None
 
         # Check with facebook to see if token is still valid
         # Note: this is slow -- look for a way to improve
         if social_user[0].provider == 'Facebook':
             try:
+                logger.info( "fb:3 - ")
                 graph = GraphAPI(social_auth.auth_token)
+                logger.info( "fb:4 - ")
                 graph.get_object("me")
+                logger.info( "fb:5 - ")
             except GraphAPIError as GAE:
+                logger.info( "fb:6 - ")
                 logger.info( GAE.message)
-                return None 
+                return None
                 
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
         if social_auth.expires > now:
             auth_token = social_auth.auth_token
+            logger.info( "fb:7 - " + str(auth_token))
         else:
+            logger.info( "fb:8 - ")
             return None
     
     # Set auth_token for temporary user
@@ -66,8 +74,14 @@ def checkToken(data):
     
     # Create token with passed in credentials
     readr_token = createToken(data['user_id'], auth_token)
+    logger.info( "fb:9 - " + str(readr_token))
+    logger.info( "user_id - " + str(user_id))
 
-    return user if (readr_token == data['readr_token']) else None
+    if(readr_token == data['readr_token']):
+        logger.info( "fb:10 - " + str(readr_token))
+        return user
+
+    return None
 
 def createToken(django_id, auth_token):
     """
