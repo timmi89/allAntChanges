@@ -1,34 +1,6 @@
+{% load custom_filters %}
+
 <script>
-function doTagLineSplit( tagBodyRaw ) {
-  var tagBodyRaw = tagBodyRaw,
-      tagBody = "",
-      tagIsSplitClass = ""
-      $lastReaction = $('.reactionBox:last h1 a');
-
-  if ( tagBodyRaw.length > 16 ) {
-      tagIsSplitClass = "rdr_tag_split";
-      // if no space, hyphenate
-      if ( tagBodyRaw.indexOf(' ') == -1 ) {
-          tagBody = '<div>' + tagBodyRaw.substr(0,15) + '-</div><div>' + tagBodyRaw.substr(15) + '</div>';
-          // if ( boxSize == "rdr_box_small" ) {
-          //     boxSize = "rdr_box_medium";
-          // }
-      } else {
-          var tagBody1 = "", tagBody2 = "", keepLooping = true;
-          tagBodyRawSplit = tagBodyRaw.split(' ');
-          while ( keepLooping ) {
-              tagBody1 += tagBodyRawSplit.shift() + ' ';
-              if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
-          }
-          tagBody2 = tagBodyRawSplit.join(' ');
-          tagBody = '<div>' + tagBody1 +'</div><div>' + tagBody2 + '</div>';
-      }
-  } else {
-    tagBody = '<div>' + tagBodyRaw + '</div>' ;
-  }
-  $lastReaction.append( tagBody );
-}
-
 var comments = [],
     interactions = [],
     shares = [];
@@ -94,7 +66,7 @@ $('#cards').addClass('user_profile');
             <div class="me_too_outcome"></div>
             <div class="main">
                 <div class="reactionBox color{% cycle '1' '2' '3' '4' '5' %}">
-                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}"></a></h1>
+                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|split_reaction }}{% else %}{{ interaction.human_kind|split_reaction }}{% endif %}</a></h1>
                     <div class="via">via</div>
                     <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/><br/>{%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
                     <div class="links">
@@ -142,12 +114,6 @@ $('#cards').addClass('user_profile');
                 </div>
             </div>
         </section>
-        <script>
-          // use JS to split the reaction up if it's long.  code is from the widget.
-          // later let's try to use django-softhyphen or do this same logic in the controller
-          // split long tag onto two lines.
-          doTagLineSplit("{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}");
-        </script>
 
           {% comment %}
           <script>
