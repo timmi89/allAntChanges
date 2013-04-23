@@ -192,7 +192,7 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
 .box1 div.tag { position:relative; height:100%; bottom:-125%;}
 .box2 div.tag { position:relative; height:100%; top:-125%;}
-.box3 div.tag { position:relative; height:100%; top:-125%;}
+.box3 div.tag { position:relative; height:100%; top:-125%; font-size:100%;}
 .box .count { font-size:20px !important; }
 .box3 .count { font-size:11px !important; display:block;margin-top:0px;}
 .box1 { width:210px; height:210px; padding:90px 20px 0;}
@@ -243,8 +243,8 @@ section[role="tag cloud grid"] a { text-decoration:none;}
 .charCount_1,
 .charCount_2,
 .charCount_3  { font-size:85px; }
-.charCount_4  { font-size:70px; }
-.charCount_5  { font-size:60px; }
+.charCount_4  { font-size:65px; }
+.charCount_5  { font-size:52px; }
 .charCount_6  { font-size:48px; }
 .charCount_7  { font-size:44px; }
 .charCount_8  { font-size:40px; }
