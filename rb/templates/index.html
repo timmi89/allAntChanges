@@ -121,16 +121,16 @@
                 while ( sorted_interactions.length ) {
                     if ( boxSizes[ currentBoxSize ] == "medium" ) {
                         var median = Math.floor(sorted_interactions.length/2);
-                        var thisBox_html = '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>';
+                        var thisBox_html = '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag charCount_'+sorted_interactions[ median ].body.length+'">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>';
                         tagCloud_html += thisBox_html;
                         sorted_interactions.splice( median, 1 );
                     } else if ( boxSizes[ currentBoxSize ] == "small" ) {
                         var thisTag = sorted_interactions.pop(),
-                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
+                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag charCount_'+thisTag.body.length+'">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
                         tagCloud_html += thisBox_html;
                     } else if ( boxSizes[ currentBoxSize ] == "big" ) {
                         var thisTag = sorted_interactions.shift(),
-                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
+                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag charCount_'+thisTag.body.length+'">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
                         tagCloud_html += thisBox_html;
                     }
 
