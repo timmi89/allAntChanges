@@ -480,7 +480,7 @@ def getSettingsDict(group):
     return settings_dict
 
 def getGlobalActivity():
-    makeItLean = False
+    makeItLean = True
     historyLen = 3 if makeItLean else 30
     maxInteractions = 100 if makeItLean else None
 
