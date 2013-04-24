@@ -4071,6 +4071,15 @@ function readrBoard($R){
                         container_id = (typeof summary != "undefined") ? summary.id:"";
 
 
+                    if(!container_id){
+                        //this still happens if container is an unknown container and has no reactions.
+                        //It's save to just return for now though.
+                        
+                        // RDR.safeThrow('container_id is not valid for hash: '+hash);
+                    
+                        return;
+                    }
+
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "container_id":container_id,
@@ -4168,7 +4177,7 @@ function readrBoard($R){
                             });
                         }
                     });
-            
+
                 },
                 utils: {
                     getMediaDims: function($mediaNode){
@@ -4770,6 +4779,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 container = response.data.container,
                                 sendData = args.sendData,
                                 content_node = sendData.content_node_data,
+                                //todo: verify
+                                // content_node = response.data.content_node,
+
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
                             $('#rdr_loginPanel').remove();
@@ -4830,6 +4842,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                     
+
                                     _doPageUpdates(args);
                                     
                                 }else{
@@ -4895,6 +4908,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                 if (typeof summary.content_nodes == "undefined") {
                                     summary.content_nodes = {};
+                                }
+
+                                //quick fixes for the container id too.
+                                //If the container came down eariler as an unknown container,
+                                //it will be saved but not have an id yet.
+                                var savedContainer = RDR.containers[hash];
+                                if(savedContainer && container && container.id){
+                                    savedContainer.id = container.id;
                                 }
 
                                 // this content_node summary does not exist
