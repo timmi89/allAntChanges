@@ -481,8 +481,8 @@ def getSettingsDict(group):
 
 def getGlobalActivity():
     makeItLean = True
-    historyLen = 3 if makeItLean else 30
-    maxInteractions = 100 if makeItLean else None
+    historyLen = 5 if makeItLean else 30
+    maxInteractions = 200 if makeItLean else None
 
     today = datetime.now()
     tdelta = timedelta(days = -historyLen)
