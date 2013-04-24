@@ -500,8 +500,11 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             
         
         # Guard against undefined page string being passed in
-        if not isinstance(page, int): raise JSONException("Bad Page ID ***" + str(page)+ "***")
-        
+        if not isinstance(page, int): 
+            errorStr = "Bad Page ID ***" + str(page)+ "***"
+            logger.info(errorStr)
+            raise JSONException("Bad Page ID ***" + str(page)+ "***")
+
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
@@ -538,8 +541,11 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             container_id = data['container_id']
 
         except KeyError:
+            errorStr = "container_id was expected but was not sent with data: " + str(data)
+            logger.info(errorStr)
+            
             raise JSONException(u"container_id was expected but was not sent")
-
+        
         page_id = data['page_id']
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
