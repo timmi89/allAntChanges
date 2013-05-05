@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
+from django.views.generic import RedirectView
+from django.views.generic import TemplateView
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -103,8 +105,10 @@ urlpatterns = patterns('',
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   # Extras
-  url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
-  url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
+  # 1.3.1 syntax url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
+  # 1.3.1 syntax url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
+  # url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
+  url(r'^favicon\.ico$', RedirectView.as_view(url='/static/site/images/favicon.ico')),
 
   # API
   url(r'^api/', include('readrboard.api.urls')),
@@ -116,7 +120,8 @@ urlpatterns = patterns('',
   # Group Supporting Pages
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
-  url(r'^signup/$', 'django.views.generic.simple.redirect_to', {'url': '/about/#publishers'}),
+  # 1.3.1 syntax url(r'^signup/$', 'django.views.generic.simple.redirect_to', {'url': '/about/#publishers'}),
+  url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
@@ -143,7 +148,8 @@ urlpatterns = patterns('',
 from django.conf.urls.static import static
 
 if settings.DEBUG:
-    urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
+    # 1.3.1 syntax urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
+    urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
         url(r'^static/(?P<path>.*)$', 'serve'),        

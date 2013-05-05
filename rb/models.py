@@ -269,9 +269,9 @@ class Site(models.Model):
 
 class Page(models.Model):
     site = models.ForeignKey(Site)
-    url = models.URLField(verify_exists=False)
+    url = models.URLField()
     title = models.CharField(max_length=255, blank=True)
-    canonical_url = models.URLField(verify_exists=False, blank=True)
+    canonical_url = models.URLField(blank=True)
 
     def interactions(self):
         return Interaction.objects.filter(page=self)
