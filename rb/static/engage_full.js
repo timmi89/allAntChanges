@@ -2109,8 +2109,8 @@ function readrBoard($R){
 
                 // this code is to accommodate passing in either a hash (string) or jquery element to 
                 if (typeof hashOrObject == "object") {
-                    if ( $(hashOrObject).closest('.rdr-page-container').length && $(hashOrObject).closest('.rdr-page-container').data('page_id') ) {
-                        return parseInt( $(hashOrObject).closest('.rdr-page-container').data('page_id') );
+                    if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
+                        return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
                     }
                 } else if (!hashOrObject) {
                     return false;
@@ -2119,10 +2119,10 @@ function readrBoard($R){
                     var hash = hashOrObject;
                 }
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('.rdr-page-container').data('page_id');
+                var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('[rdr-page-container]').data('page_id');
 
                 // store the page_id on this node to prevent walking-up again later
-                if ( $('.rdr-'+hash).hasClass('rdr-page-container') && !$('.rdr-'+hash).data('page_id') ) {
+                if ( $('.rdr-'+hash+'[rdr-page-container]') && !$('.rdr-'+hash).data('page_id') ) {
                     $('.rdr-'+hash).data('page_id', page_id);
                 }
                 return parseInt( page_id );
@@ -3080,10 +3080,10 @@ function readrBoard($R){
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
-                                if ( !$post.hasClass('rdr-page-container') ) {
-                                    $post.addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                                if ( !$post.hasAttr('rdr-page-container') ) {
+                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
                                 }
-                                $summary_widget.addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
+                                $summary_widget.attr('rdr-page-widget-key',key);
                             }
                         });
                 }
@@ -3109,16 +3109,16 @@ function readrBoard($R){
                     key = pagesArr.length-1;
                     pageDict[key] = thisPage;
 
-                    if ( !$( 'body' ).hasClass('rdr-page-container') ) {
-                        $( 'body' ).addClass( 'rdr-page-container' ).addClass('rdr-page-key-'+key);
+                    if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
+                        $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
 
                         if ( $('#rdr-page-summary').length == 1 ) {
-                            $('#rdr-page-summary').addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
+                            $('#rdr-page-summary').attr('rdr-page-widget-key',key);
                         } else {
                             var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
                             // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
-                            if ( !$widget_key_last.hasClass('rdr-page-widget-key-0') ) {
-                                $widget_key_last.addClass('rdr-page-widget-key-'+key).addClass('rdr-page-widget-key');
+                            if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
+                                $widget_key_last.attr('rdr-page-widget-key', key);
                             }
                         }
                     }
@@ -3276,7 +3276,7 @@ function readrBoard($R){
                     }
 
                     if ( $this.width() >= minImgWidth ) {
-                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                        var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                         $this.addClass('rdr_live_hover');
@@ -3437,7 +3437,7 @@ function readrBoard($R){
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
-                    $group = $group.not('.rdr-hashed, .no-rdr');
+                    $group = $group.not('[rdr-hashed], .no-rdr');
                     group.$nodes = $group;
 
                     //setup the group as needed
@@ -3539,7 +3539,7 @@ function readrBoard($R){
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
                     if ( $this.parents('.rdr-'+hash).length ) {
-                        $this.parents('.rdr-'+hash).removeClass('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-'+hash);
+                        $this.parents('.rdr-'+hash).removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-'+hash);
                     }
 
 
@@ -3558,7 +3558,7 @@ function readrBoard($R){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
+                    $this.addClass( 'rdr-' + hash ).attr('rdr-node', 'true');
 
                     if ( HTMLkind != 'body') {
                         $this.on('mouseenter', function() {
@@ -3610,7 +3610,7 @@ function readrBoard($R){
                         var $hashable_node = $('.rdr-' + hash);
                         
                         if ($hashable_node.length == 1 ) {
-                            $hashable_node.addClass('rdr-hashed');
+                            $hashable_node.attr('rdr-hashed','true');
                         }
                     });
 
@@ -3638,7 +3638,7 @@ function readrBoard($R){
                         success: function(response) {
                             // band-aid.  bandaid.
                             // we're going to iterate through images to see if there is an old hash
-                            $('img.rdr-node').each( function() {
+                            $('img[rdr-node]').each( function() {
                                 var $img = $(this);
                                 // now, iterate through 'known hashes', see if it's an image, and if so... 
                                 // -- see if img.rdr-HASH exists.
@@ -3703,7 +3703,7 @@ function readrBoard($R){
                             $indicator = $('#rdr_indicator_'+hash),
                             $indicator_details = $('#rdr_indicator_details_'+hash);
 
-                        var hasBeenHashed = $this.hasClass('rdr-hashed'),
+                        var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                             isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                         var containerInfo = RDR.containers[hash];
@@ -4151,7 +4151,7 @@ function readrBoard($R){
                         }
 
                         // add a class so we note that the content summary was retrieved
-                        $('.rdr-'+hash).addClass('rdr_summary_loaded');
+                        $('.rdr-'+hash).attr('rdr_summary_loaded', 'true');
 
                         // remove from po' man's throttling array
                         // po' man's throttling
@@ -4791,7 +4791,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             // remove summary loaded since we might need to call it again....
-                            $('.rdr-'+hash).removeClass('rdr_summary_loaded');
+                            $('.rdr-'+hash).removeAttr('rdr_summary_loaded');
 
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
@@ -5223,7 +5223,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             if ( typeof $message == "object" ) {
-                                $summary_box = $('.rdr-page-container.rdr-'+args.hash+' div.rdr-summary');
+                                $summary_box = $('[rdr-hash="'+args.hash+'"] [rdr-page-container] div.rdr-summary');
                                 $summary_box.find('div.rdr_info').html( $message );
                                 //todo: reconsider this method of liberally updating everything
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
@@ -5319,7 +5319,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //note: this should generally be called via RDR.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
-                    debugger;
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
@@ -5329,10 +5328,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
                     // don't insert floating pins for page-level interactions
-                    if ( $container.hasClass('rdr-page-container') ) return;
+                    if ( $container.hasAttr('rdr-page-container') ) return;
                     //else
 
-                    $container.addClass('rdr-hasIndicator');
+                    $container.attr('rdr-hasIndicator', 'true');
 
                     //check for and remove any existing indicator and indicator_details and remove for now.
                     //this shouldn't happen though.
@@ -5512,7 +5511,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     
                         if(isText){
                             //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
-                            summary.$container.closest('.rdr-node').find('.rdr_indicator').remove();
+                            summary.$container.closest('[rdr-node]').find('.rdr_indicator').remove();
                         }else{
                             // summary.$indicator.remove();
                             // $('#rdr_container_tracker_'+hash).remove();
@@ -6656,10 +6655,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         });
 
 
-                        var $page = $('.rdr-page-container-'+pageId);                        
+                        var $page = $('[rdr-page-container="'+pageId+'"]'); 
                         //update plugin widgets
                         //update rdrWidgetSummary...
-                        var $summaryWidgetAnchorNode = $page.find('.rdr-page-widget-key');
+                        var $summaryWidgetAnchorNode = $page.find('[rdr-page-widget-key]');
                         $summaryWidgetAnchorNode.rdrWidgetSummary('update');
                         
                         //update shareWidget...
@@ -7357,7 +7356,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 if( $blockParent === null ) return;
                 //else
 
-                $rdrParent = $blockParent.closest('.rdr-hashed');
+                $rdrParent = $blockParent.closest('[rdr-hashed]');
             
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
@@ -7372,7 +7371,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
 
                 // check if the blockparent is already hashed
-                if ( $rdrParent.length && $rdrParent.hasClass('rdr-hashed') && !$rdrParent.hasClass('rdr-page-container') ) {
+                if ( $rdrParent.length && $rdrParent.hasAttr('rdr-hashed') && !$rdrParent.hasAttr('rdr-page-container') ) {
                     if(callback){
             
                         var hash = $rdrParent.data('hash')
@@ -7488,16 +7487,17 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     RDR.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
+                    // RDR.actions.pages.initPageContainer
                     
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
-                    var $container = ( $(RDR.group.post_selector + '.rdr-page-key-'+key).length == 1 ) ? $(RDR.group.post_selector + '.rdr-page-key-'+key):$('body.rdr-page-key-'+key);
+                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
                     if ( $container.length !== 1 ) return;
                     //else
 
-                    $container.removeClass( 'rdr-page-key-' + key );
-                    $container.addClass( 'rdr-page-container-' + pageId );
+                    $container.removeAttr( 'rdr-page-key' );
+                    $container.attr( 'rdr-page-container' , pageId );
 
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
@@ -7533,7 +7533,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
                     
-                    if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
+                    if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector+'[rdr-page-widget-key="' + key + '"]') ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                         
@@ -7596,7 +7596,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         locateWithSummaryWidget: locateWithSummaryWidget
                     }
                     
-                    var $container = $('.rdr-page-container-'+pageId);    
+                    var $container = $('[rdr-page-container="'+pageId+'"]');    
                     $container.shareWidget( settings );    
                 }
             },
@@ -7756,6 +7756,7 @@ function $RFunctions($R){
 
         //jQuery Plugins
         plugin_jquery_log($R);
+        plugin_jquery_hasAttr($R);
         plugin_jquery_json($R);
         plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
@@ -7836,6 +7837,11 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_log
 
+        function plugin_jquery_hasAttr($){
+            $.fn.hasAttr = function(name) {  
+                return this.attr(name) !== undefined;
+            };
+        }
         function plugin_jquery_json($){
             /* jquery json v2.2 */
             /* http://code.google.com/p/jquery-json/ */
@@ -8606,7 +8612,7 @@ function $RFunctions($R){
                 }
 
                 var $summaryBarWrap = $this.find('.rdr_summaryBarWrap');
-                var $page = $this.closest('.rdr-page-container');
+                var $page = $this.closest('[rdr-page-container]');
 
                 var $summaryBar = $page.find('.rdr-summary');
                 $summaryBar.appendTo($summaryBarWrap).addClass('rdr_stayExpanded');
@@ -8631,8 +8637,8 @@ function $RFunctions($R){
 
             function _checkIfBadParentPage($this){
                 //hack to not include the outer page if it has child pages.  We need to fix that bug of having an outer page.
-                var $page = $this.closest('.rdr-page-container');
-                var hasChildPages = $page.find('.rdr-page-container').length > 0;
+                var $page = $this.closest('[rdr-page-container]');
+                var hasChildPages = $page.find('[rdr-page-container]').length > 0;
                 var pageId = $page.data('page_id');
                 if(hasChildPages && pageId){
                     return true;
