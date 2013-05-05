@@ -3153,9 +3153,10 @@ function readrBoard($R){
                         //for now this has to be outside the loop above because we have to know if there are multiple pages.
                         //todo: clean up the page stuff to make sure we can combine these.
 
-                        $.each( response.data, function(key,page){
-                            RDR.actions.pages.initShareBox(page.id);
-                        });
+                        //don't use this for now.
+                        // $.each( response.data, function(key,page){
+                        //     RDR.actions.pages.initShareBox(page.id);
+                        // });
 
 
                         $RDR.dequeue('initAjax');
@@ -3245,17 +3246,6 @@ function readrBoard($R){
                 $(document).on('keyup.rdr', function(event) {
                     if (event.keyCode == '27') { //esc
                         RDR.actions.UIClearState();
-                    }
-                });
-
-                $(document).on('scrollstop', function() {
-                    if ( $(window).scrollTop() > 150 && $('#rdr_sandbox') && !$('#rdr_sandbox').data('showingAllIndicator') ) {
-                        $('#rdr_sandbox').data('showingAllIndicator', true);
-                        if ( RDR.text_container_popularity && RDR.text_container_popularity.length > RDR.group.initial_pin_limit ) {
-                            // show the alert bar, which has a link to call RDR.actions.summaries.showLessPopularIndicators
-                            RDR.session.alertBar.make('showMorePins');
-                            $(document).unbind('scrollstop.rdr');
-                        }
                     }
                 });
                 
@@ -3474,6 +3464,10 @@ function readrBoard($R){
                 if( !$allNodes.data('body') ) { return false; }
                 //else
                 var hashList = {};
+
+                //run init outside the loop for optimization to avoid many reflows
+                var indicatorInitQueue = [];
+
                 $allNodes.each(function(){
                     var $this = $(this),
                         body = $this.data('body'),
@@ -3578,7 +3572,7 @@ function readrBoard($R){
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
-                    RDR.actions.indicators.init(hash);
+                    indicatorInitQueue.push(hash);
 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
@@ -3587,6 +3581,11 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
+    
+                $.each(indicatorInitQueue, function(idx, hash){
+                    RDR.actions.indicators.init(hash);
+                });
+
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
@@ -5320,7 +5319,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //note: this should generally be called via RDR.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
-
+                    debugger;
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
@@ -5647,6 +5646,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $(this).removeClass('rdr_live_hover');
                                 });
 
+                            //todo: move this from init
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
@@ -7488,6 +7488,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     RDR.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
+                    
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
@@ -7554,6 +7555,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 },
                 initShareBox: function(pageId){
+
                     var widgetKeyEl = RDR.group.sharebox_selector;
                     var locateWithSummaryWidget;
                     
@@ -8370,7 +8372,8 @@ function $RFunctions($R){
                         if( settings.fadeInOnLoad ){
                             //give it another second after the scripts are loaded just so the loading looks a little nicer.
                             setTimeout(function(){
-                                $widget.animate({opacity:1}, 500);
+                                // $widget.animate({opacity:1}, 500);
+                                $widget.css({opacity:1});
                             }, 1000);
                         }
                     });
