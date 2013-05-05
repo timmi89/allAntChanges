@@ -6,16 +6,14 @@
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
-{% block bodyClass %}wide{% endblock %}
-
-{% block mainContent %}
+{% block wideContent %}
     <div id="splashBlurbs">
         <h1 style="font-size:3em;margin:20px auto 10px;">React to anything on the web.</h1>
         <em id="say_exactly" style="display:block;margin:0px auto 40px;text-align:center;">Say exactly how you feel about any phrase, image, video, or page on the web.</em>
         <hr style="margin-bottom:40px;"/>
         <div class="theSpitch">
             <div>
-                <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:24px;line-height:30px;"><img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</span><em style="display:block;margin-top:15px;font-size:18px;">- Alexis Ohanian, Co-Founder <a href="http://reddit.com/">Reddit</a> </em></blockquote>
+                <blockquote class="" style="border:0;margin-top:30px;padding-left:50px;text-align:left;"><img src="{{ STATIC_URL }}site/images/alexis-portrait.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <p style="font-size:24px;line-height:30px;">"If you're like me, you've been doing varieties of this in haphazard ways for years -- ReadrBoard wins the day.</p><em style="display:block;margin-top:15px;font-size:18px;">- Alexis Ohanian, Co-Founder <a href="http://reddit.com/">Reddit</a> </em></blockquote>
             </div>
         </div>
     	<div id="readers" class="blurb blurb-for-readers selected">
@@ -65,7 +63,7 @@
             <h1 class="">Why Publishers love ReadrBoard</h1>
             <div class="theSpitch">
                 <div>
-                    <blockquote class="no-rdr" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:18px;"><img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <span>"ReadrBoard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. <br/>We use it and recommend it to our clients."</span><em style="display:block;margin-top:15px;font-size:18px;">- Shane Snow, Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></blockquote>
+                    <blockquote class="" style="border:0;margin-top:30px;padding-left:50px;text-align:left;font-size:18px;"><img src="http://m4.licdn.com/mpr/mpr/shrink_150_150/p/1/000/035/1bc/24ae74c.jpg" style="float:left;margin:5px 15px 20px -10px;width:100px;"/> <p style="font-size:24px;line-height:30px;">"ReadrBoard helps publishers increase lean-forward engagement and avoid the 'comment ghetto' problem. <br/>We use it and recommend it to our clients."</p><em style="display:block;margin-top:15px;font-size:16px;">- Shane Snow, Co-Founder &amp; CIO, <a href="http://contently.com/">Contently</a> &amp; <a href="http://contently.com/blog/">The Content Strategist</a></em></blockquote>
                 </div>
             </div>
 
@@ -112,7 +110,7 @@
                 <style>
                 .partner_logos img { margin:0 10px 10px 0; }
                 </style>
-                <div class="partner_logos">
+                <div class="partner_logos no-rdr">
                     <img src="{{STATIC_URL}}site/images/logo_dailycandy.png" />
                     <img src="{{STATIC_URL}}site/images/as-seen-on/content-strategist.png" style="height:40px;" />
                     <img src="{{STATIC_URL}}site/images/logo_civic_mit.png" style="height:60px;" />
@@ -215,6 +213,10 @@
     </div>
 {% endblock %}
 
+{% block complementarySection %}
+{% endblock %}
+
+
 
 {% block pageJS %}
 <script>
@@ -222,6 +224,6 @@ if (window.location.href.indexOf('publishers') != -1 ) {
     $('#readers').hide();
 }
 </script>
-<script type="text/javascript" defer src="http://www.readrboard.com/static/engage.js"></script>
+<script type="text/javascript" defer src="/static/engage.js"></script>
 {% endblock %}
 <!-- widget for slideshow -->

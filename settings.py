@@ -92,7 +92,8 @@ if DEBUG:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache'
+            'LOCATION': 'readr.cache',
+            'TIMEOUT':100
         }
     }
     """
@@ -114,7 +115,7 @@ else:
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    
+    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
     
     DATABASES = {
       'default': {
@@ -159,7 +160,7 @@ else:
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':600
+            'TIMEOUT':24000
         }
     }
 

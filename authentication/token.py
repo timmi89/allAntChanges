@@ -2,6 +2,7 @@ from readrboard.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
 from extras.facebook import GraphAPI, GraphAPIError
+from api.exceptions import JSONException
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -50,7 +51,7 @@ def checkToken(data):
                 graph.get_object("me")
             except GraphAPIError as GAE:
                 logger.info( GAE.message)
-                return None 
+                return None
                 
         # If facebook approves, check if expired -- could be redundant
         now = datetime.now()
@@ -66,7 +67,10 @@ def checkToken(data):
     # Create token with passed in credentials
     readr_token = createToken(data['user_id'], auth_token)
 
-    return user if (readr_token == data['readr_token']) else None
+    if(readr_token == data['readr_token']):
+        return user
+
+    return None
 
 def createToken(django_id, auth_token):
     """

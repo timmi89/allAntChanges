@@ -16,11 +16,17 @@ from chronos.jobs import *
 from threading import Thread
 from itertools import chain
 from datetime import datetime, timedelta
+import math
 from rb.auto_approval import autoCreateGroup
 import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
+def isValidIntegerId(value):
+    if isinstance(value,int):
+        return True
+    else:
+        return False
 
 
 class SocialUserHandler(AnonymousBaseHandler):
@@ -494,8 +500,11 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             
         
         # Guard against undefined page string being passed in
-        if not isinstance(page, int): raise JSONException("Bad Page ID")
-        
+        if not isinstance(page, int): 
+            errorStr = "Bad Page ID ***" + str(page)+ "***"
+            logger.info(errorStr)
+            raise JSONException("Bad Page ID ***" + str(page)+ "***")
+
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
@@ -505,7 +514,9 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             return cached_result
         else:
             # Force evaluation by making lists
+            #logger.info("knownUnknown started " + str(page))
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+            #logger.info("knownUnknown done " + str(page))
             try:
                 cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
                 
@@ -521,24 +532,34 @@ class ContentSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
 
-        container_id = data['container_id']
-        if not container_id: 
-            container_id = data['hash']
-            # Get the container.  HACK.  Porter.  Likeocracy.
-            container = Container.objects.get_or_create(
-                hash = data['hash'],
-                defaults = {'kind': "text",}
-            )[0]
-            container_id = container.id
+        # Quick fix for now.  I'm still throwing an error, but doing it intentionally.
+        # The important thing is we're no longer get_or_creating an adhock text container which was just craziness and causing all kinds of nasty.
+        
+        # TODO: figure out why the container_id is not getting sent - 
+        # I think it might be because the cache's result of summary/container call is taking a while to send back a known result... looking into it.
+        try:
+            container_id = data['container_id']
+
+        except KeyError:
+            errorStr = "container_id was expected but was not sent with data: " + str(data)
+            logger.info(errorStr)
+            
+            raise JSONException(u"container_id was expected but was not sent")
+        
         page_id = data['page_id']
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
         # Force queryset evaluation by making lists - reduces interaction queries to 1
+        #logger.info("C:" + str(dir(container_id)))
+        #logger.info("P:" + str(dir(page_id)))
+        if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
+            raise JSONException(u"Bad page id or container_id in content summary call")
+
         interactions = list(Interaction.objects.filter(
-            container=container_id,
-            page=page_id,
-            approved=True
-        ))
+                container=container_id,
+                page=page_id,
+                approved=True
+                ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
@@ -937,12 +958,39 @@ class GlobalActivityHandler(AnonymousBaseHandler):
 
     @status_response
     def read(self, request, **kwargs):
+        
+        cached_result = cache.get('global_activity')
+        if cached_result is not None:
+            return cached_result
+        
+        global_activity = getGlobalActivity()
+        
+        try:
+            cache_updater = GlobalActivityCacheUpdater(method="update")
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))   
+        
+        return global_activity
+    
+    
+        """
+        makeItLean = True
+        historyLen = 3 if makeItLean else 3
+        maxInteractions = 100 if makeItLean else None
+
         today = datetime.now()
-        tdelta = timedelta(days = -3)
+        tdelta = timedelta(days = -historyLen)
         the_past = today + tdelta
         interactions = Interaction.objects.all()
-        interactions = interactions.filter(created__gt = the_past, kind = 'tag', 
-                                           approved=True, page__site__group__approved=True).order_by('-created')
+        interactions = interactions.filter(
+            created__gt = the_past, 
+            kind = 'tag', 
+            approved=True, 
+            page__site__group__approved=True
+        ).order_by('-created')[:maxInteractions]
+        
         users = {}
         pages = {}
         groups = {}
@@ -979,6 +1027,6 @@ class GlobalActivityHandler(AnonymousBaseHandler):
             
                 
         return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
-    
+        """
 
        

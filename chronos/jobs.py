@@ -2,7 +2,7 @@ import settings
 import httplib
 from django.core.cache import cache
 import traceback
-from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict
+from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict, getGlobalActivity
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -129,7 +129,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
             self.key = 'page_containers' + str(self.page_id)
            
         #self.key = 'page_containers' + str(self.page_id)
-        #logger.warning('hydrating using key: ' + self.key)
+        #logger.info('hydrating using key: ' + self.key)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
         
@@ -155,4 +155,15 @@ class ViewCacheUpdater(CacheUpdater):
         self.key = self.view + ":" + str(self.page)
         if self.method == 'update':  
             self.value = getSettingsDict(self.group)
+         
+
+class GlobalActivityCacheUpdater(CacheUpdater):   
+    def __init__(self, **kwargs):
+        self.view = 'global_activity'
+        self.method = kwargs['method']
+        
+    def hydrate(self):
+        self.key = self.view
+        if self.method == 'update':  
+            self.value = getGlobalActivity()
          

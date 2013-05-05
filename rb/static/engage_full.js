@@ -48,7 +48,7 @@ RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
-    var debugMode = false;
+    var debugMode = true;
 
     if(RDR_offline && debugMode){
         throw msg;
@@ -79,6 +79,11 @@ function readrBoard($R){
     $.extend(RDR, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
+        // used to store jQuery deffered objects for assets that should be loaded only once per page load.
+        assetLoaders: {
+            content_nodes:{
+            }
+        },
         content_nodes: {
             //template: keep commented out
             /*
@@ -106,7 +111,7 @@ function readrBoard($R){
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
-
+                media_url_ignore_query: true,
                 //shareWidget Stuff//
                 //should be false by default!
                 sharebox_show: false,
@@ -120,7 +125,7 @@ function readrBoard($R){
                 sharebox_readrboard: true,
                 sharebox_twitter: false,
                 sharebox_reddit: false,
-                sharebox_facebook: false,
+                // sharebox_facebook: false,
                 sharebox_google: false,
                 sharebox_digg: false,
                 sharebox_stumble: false
@@ -205,23 +210,24 @@ function readrBoard($R){
             makeHeader: function( _headerText ) {
                 //RDR.rindow.makeHeader:
                 var headerText = _headerText || "";
-                
-                var $headerContent = $(
-                    '<div class="rdr_indicator_stats">'+
-                        '<img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png">'+
-                        '<span class="rdr_count"></span>'+
-                    '</div>' +
-                    '<h1>' + headerText + '</h1>'
-                );
 
-                var $header = $('<div class="rdr rdr_header">');
-                var $header_arrow = $('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
-                var $loader = $('<div class="rdr_loader" />');
-                $header.append( $header_arrow, $loader, $headerContent );
-                
-                $headerContent.find('div.rdr_indicator_stats').find('a').click( function() {
-                    RDR.events.track('click_rb_icon_rindow');
+                var $header = $.mustache(
+                    '<div class="rdr rdr_header">'+
+                        '<div class="rdr_header_arrow">'+
+                            '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
+                        '</div>'+
+                        '<div class="rdr_loader"></div>'+
+                        '<div class="rdr_indicator_stats">'+
+                            '<img class="no-rdr rdr_pin" src="{{RDR_staticUrl}}widget/images/blank.png">'+
+                            '<span class="rdr_count"></span>'+
+                        '</div>' +
+                        '<h1>{{headerText}}</h1>'+
+                    '</div>'
+                ,{
+                    RDR_staticUrl: RDR_staticUrl,
+                    headerText: headerText
                 });
+
                 return $header;
             },
             makeDefaultPanelMessage: function( $rindow, _kind ) {
@@ -509,10 +515,11 @@ function readrBoard($R){
                 RDR.rindow.jspUpdate($rindow);
             },
             updatePageTagMessage: function(args, action) {
-
                 if(action == 'tagDeleted'){
-                    var $rindow = args.rindow;
-                    $rindow.html(
+                    var $rindow = $('div.rdr_window:eq(0)');
+                    RDR.rindow.hideFooter($rindow);
+                    $rindow.find('.rdr_header h1').text('Reaction Undone');
+                    $rindow.find('.rdr_body').css('height','auto').html(
                         '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
                             '<div class="rdr_label_icon"></div>'+
                             '<em>'+
@@ -588,7 +595,6 @@ function readrBoard($R){
 
 
                                 if ( kind != "text" ) {
-                                    
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
@@ -859,6 +865,10 @@ function readrBoard($R){
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
+                    if ( content_node_id ) {
+                        content_node.id = content_node_id;
+                    }
+
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
                         message = (isWriteMode) ? "Click to add this reaction here.":'Click to see what people reacted to';
@@ -876,23 +886,65 @@ function readrBoard($R){
                     // var boxSize = "rdr_box_"+ boxSize, 
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
-                      tagBody = ( tag.body ) ? tag.body:tag.tag_body;
+                      tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
+                      tagBodyCrazyHtml = "",
+                      tagIsSplitClass = "";
 
-                    $tagBox = $( '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'"><div class="rdr_tag rdr_tooltip_this" title="'+message+'">'+tagBody+'</div></div>' );
-                    $tagBox.find('.rdr_tag').data({
-                            tag_id: tag.id,
-                            tag_count: tagCount,
-                            parent_id: tag.parent_id
-                        });
-                    if ( tag.tag_count > 0 ) { // i.e., it's not write mode.  should probably do a direct check later.
-                        $tagBox.find('.rdr_tag').append(' <span class="rdr_count">'+tag.tag_count+'</span> ');
+                    //split long tag onto two lines.
+                    if ( tagBodyRaw.length < 16 ) {
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBodyRaw+'</div>';
+                    } else {
+                        tagIsSplitClass = "rdr_tag_split";
+                        // if no space, hyphenate
+                        if ( tagBodyRaw.indexOf(' ') == -1 ) {
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBodyRaw.substr(15) + '</div>';
+                            if ( boxSize == "rdr_box_small" ) {
+                                boxSize = "rdr_box_medium";
+                            }
+                        } else {
+                            var tagBody1 = "", tagBody2 = "", keepLooping = true;
+                            tagBodyRawSplit = tagBodyRaw.split(' ');
+                            while ( keepLooping ) {
+                                tagBody1 += tagBodyRawSplit.shift() + ' ';
+                                if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
+                            }
+                            tagBody2 = tagBodyRawSplit.join(' ');
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBody2 + '</div>';
+                        }
                     }
+
+                    var tagBoxHTML = $.mustache(
+                        '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                            '<div '+
+                                'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
+                                'title="{{message}}" '+
+                                'data-tag_id="{{tag_id}}" '+
+                                'data-tag_count="{{tag_count}}" '+
+                                'data-parent_id="{{parent_id}}" '+
+                                'data-content_node_id="{{content_node_id}}" '+
+                            '>'+
+                                '{{{tagBodyCrazyHtml}}}'+
+                                '{{^writeMode}}'+
+                                    '<span class="rdr_count">{{tagCount}}</span>'+
+                                '{{/writeMode}}'+
+                            '</div>'+
+                        '</div>'
+                    ,{
+                        colorInt: colorInt,
+                        boxSize: boxSize,
+                        wideBox: wideBox,
+                        writeMode: writeMode,
+                        tagIsSplitClass: tagIsSplitClass,
+                        message: message,
+                        tagBodyCrazyHtml: tagBodyCrazyHtml,
+                        tag_id: tag.id,
+                        parent_id: tag.parent_id,
+                        tagCount: tagCount,
+                        content_node_id: content_node_id
+                    });
+                    
+                    var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
-
-                    if ( content_node_id ) {
-                        $tagBox.find('.rdr_tag').data('content_node_id',content_node_id).addClass('rdr_content_node_'+content_node_id);
-                        content_node.id = content_node_id;
-                    }
 
                     function renderReactedContent( $reactionsTable, tag ) {
                         if ( !$rindow.find('.rdr_view_more').length || !$rindow.find('.rdr_view_more').hasClass('rdr_visiblePanel') ) {
@@ -938,6 +990,7 @@ function readrBoard($R){
                                 RDR.rindow.tagBox.setWidth( $rindow, 480 );
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
                             } else {
+                                if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
                                 RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
@@ -948,7 +1001,6 @@ function readrBoard($R){
                     function createReactedContentTable($this, counts) {
                         $().selog('hilite', true, 'off');
                         $('.rdr_twtooltip').remove();
-
                         var $backButton = _makeBackButton(),
                             $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="rdr_page_reactions"></tr></tbody>');
 
@@ -1026,7 +1078,6 @@ function readrBoard($R){
                                         "media":0,
                                         "page":(tag_count=="+")?0:tag_count
                                     };
-
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
@@ -1399,9 +1450,10 @@ function readrBoard($R){
                 //temp tie-over
                 var hash = options.hash,
                     summary = RDR.summaries[hash],
-                    kind = options.kind;
+                    kind = options.kind,
+                    isPage = options.is_page;
 
-                if (!summary) {
+                if (!isPage && !summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
                     var summary = RDR.util.makeEmptySummary(hash);
@@ -1466,7 +1518,8 @@ function readrBoard($R){
                 var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
 
                 if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160"></div>');
+                    var rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page';
+                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
                     if ( settings.id ) {
                         $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
                                                      // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
@@ -1678,7 +1731,27 @@ function readrBoard($R){
                     //simplify our data structure later
                     var contentNodes = summary.content_nodes;
                     var contentNodesByContentId = contentNodes[diffNode.content_id];
-                    var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    
+                    if(contentNodesByContentId){
+                        var comsPerContentNodeId = contentNodesByContentId.top_interactions.coms;
+                    }else{
+                        var err = $.mustache(
+                            'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
+                            {id: diffNode.content_id}
+                        );
+                        RDR.safeThrow(err);
+                        
+                        //this didn't fix the problem anyway - leave it out.
+                        //try to recover
+                        // try{
+                        //     var comsPerContentNodeId = RDR.content_nodes[hash]['undefined'].top_interactions.coms;
+                        // }
+                        // catch(e){
+                        //     RDR.safeThrow(e);
+                        //     return;
+                        // }
+                    }
+                    
 
                     //filter so we get only the coms per this tagBox (tag_id and content_id)
                     var comsPerContentNodeAndTagId = $.map( comsPerContentNodeId, function(node){
@@ -2015,18 +2088,17 @@ function readrBoard($R){
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
                 var summary = {};
-                summary[hash] = {};
-                summary[hash].hash = hash;
-                summary[hash].kind = kind;
-                summary[hash].top_interactions = {};
-                summary[hash].top_interactions.coms = {};
-                summary[hash].top_interactions.tags = {};
-                summary[hash].top_interactions.shr = {};
-
-                summary[hash].counts = {};
-                summary[hash].counts.tags = 0;
-                summary[hash].counts.interactions = 0; // TODO not sure why we have this and also "tags"
-                summary[hash].counts.coms = 0;
+                summary = {};
+                summary.hash = hash;
+                summary.kind = kind;
+                summary.top_interactions = {};
+                summary.top_interactions.coms = {};
+                summary.top_interactions.tags = {};
+                summary.top_interactions.shr = {};
+                summary.counts = {};
+                summary.counts.tags = 0;
+                summary.counts.interactions = 0; // TODO not sure why we have this and also "tags"
+                summary.counts.coms = 0;
 
                 return summary;
             },
@@ -2071,14 +2143,10 @@ function readrBoard($R){
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
                         if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
                             $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
-                                    
                                 if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
-
                                     var this_interaction = node.top_interactions.tags[ tag_id ];
-
-                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) { RDR.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {RDR.interaction_data[ tag_id ] = {}; }
                                     if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
                                     RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
@@ -3201,6 +3269,11 @@ function readrBoard($R){
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
                     RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
+
+                    if ( $this.closest('.no-rdr').length ) {
+                        return;
+                    }
+
                     // only do whitelisted iframe src domains
                     if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
                         var dontEngage = true;
@@ -3262,17 +3335,14 @@ function readrBoard($R){
                     var $this = $(this),
                         hash = $this.data('hash');
 
-                    // RDR.checkIndicatorHover = setTimeout( function() {
-                    //     if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                    //         $this.removeClass('rdr_live_hover');
-                    //         $('#rdr_indicator_' + hash).hide();
-                    //     }
-                    //     clearTimeout( RDR.checkIndicatorHover );
-                    // }, 250);
-                        
-                        $this.removeClass('rdr_live_hover');
-                        RDR.actions.indicators.utils.borderHilites.disengage(hash);
-                        $('#rdr_indicator_' + hash).hide();
+                    RDR.checkIndicatorHover = setTimeout( function() {
+                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') && !$('.rdr_for_'+hash).length ) {
+                            $this.removeClass('rdr_live_hover');
+                            RDR.actions.indicators.utils.borderHilites.disengage(hash);
+                            $('#rdr_indicator_' + hash).hide();
+                        }
+                        clearTimeout( RDR.checkIndicatorHover );
+                    }, 250);
                 });
 
                 $RDR.dequeue('initAjax');
@@ -3296,6 +3366,12 @@ function readrBoard($R){
                 if( shareBoxExists ){
                     RDR.session.alertBar.close( 'fromShareLink' );
                 }
+            },
+            catchRangyErrors: function(errorMsg){
+                //RDR.actions.catchRangyErrors:
+
+                //safe throw the errror.
+                RDR.safeThrow(errorMsg);
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
@@ -3364,6 +3440,11 @@ function readrBoard($R){
 
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
+                    
+                    // hack to fix text nodes taking over our media
+                    if(group.kind == "text"){
+                        $group = $group.not(RDR.group.media_selector + ", " +RDR.group.img_selector);
+                    }
 
                     //filter out blacklisted stuff and already hashed stuff
                     $group = $group.not('.rdr-hashed, .no-rdr');
@@ -3397,24 +3478,37 @@ function readrBoard($R){
                     var $this = $(this),
                         body = $this.data('body'),
                         kind = $this.data('kind'),
-                        HTMLkind = $this.get(0).nodeName.toLowerCase();
+                        HTMLkind = $this.get(0).nodeName.toLowerCase(),
+                        hashBody = body,
+                        hash,
+                        oldHash,
+                        hashText;
 
+                    if ( $this.closest('.no-rdr').length ) {
+                        return;
+                    }
+                    
                     if ( (kind == "img" || kind == "media") && body ) {
                         
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
-                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                            oldHash = RDR.util.md5.hex_md5( hashText );
-                            $this.data('oldHash', oldHash);
-
+                        hashText = "rdr-"+kind+"-"+hashBody; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                        oldHash = RDR.util.md5.hex_md5( hashText );
+                        $this.data('oldHash', oldHash);
+                        
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
-                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i,
-                            srcArray = body.split('/');
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                        var srcArray = hashBody.split('/');
 
                         srcArray.splice(0,2);
 
                         var domainWithPort = srcArray.shift();
-                        domain = domainWithPort.split(':')[0]; // get domain, strip port
                         
+                        //this could be undefined if the url not valid or is something like javascript:void
+                        if(!domainWithPort){
+                            return;
+                        }
+                        var domain = domainWithPort.split(':')[0]; // get domain, strip port
+             
                         var filename = srcArray.join('/');
 
                         // test examples:
@@ -3425,20 +3519,26 @@ function readrBoard($R){
                         if (match == null) {
                             return;
                         } else {
-                            body = match[0] + '/' + filename;
+                            hashBody = match[0] + '/' + filename;
+                        }
+
+                        if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                            hashBody = hashBody.split('?')[0];
                         }
 
                         // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
                         if ( $this.hasClass('rdr-oldhash') ) {
-                            var hash = $this.data('hash');
+                            hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
-                            var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                                hash = RDR.util.md5.hex_md5( hashText );
-                        }
-                    } else {
-                        var hashText = "rdr-"+kind+"-"+body, //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
+                            hashText = "rdr-"+kind+"-"+hashBody;
                             hash = RDR.util.md5.hex_md5( hashText );
+
+                        }
+
+                    } else {
+                        hashText = "rdr-"+kind+"-"+body;
+                        hash = RDR.util.md5.hex_md5( hashText );
                     }
 
                     // prevent the identical nested elements being double-hashed bug
@@ -3466,6 +3566,15 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.addClass( 'rdr-' + hash ).addClass('rdr-node');
 
+                    if ( HTMLkind != 'body') {
+                        $this.on('mouseenter', function() {
+                            $(this).addClass('rdr_live_hover');
+                        })//chain
+                        .on('mouseleave', function() {
+                            $(this).removeClass('rdr_live_hover');
+                        });
+                    }
+
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
@@ -3478,38 +3587,46 @@ function readrBoard($R){
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
-                RDR.actions.containers.setup(hashList);
                 return hashList;
             },
-            sendHashes: function( hashes, onSuccessCallback ) {
-                // RDR.actions.sendHashes
-                var page_id, sendable_hashes, $hashable_node, sendData;
-
-                for (var i in hashes) {
-                    page_id = i;
-                    sendable_hashes = hashes[i];
-                    if ( !page_id || typeof sendable_hashes != "object" ) {
-                        break;
+            sendHashes: function( hashesByPageId, onSuccessCallback ) {
+                // RDR.actions.sendHashes:
+                
+                $.each(hashesByPageId, function(pageId, hashList){
+                    
+                    //might not need to protect against this anymore.
+                    if(!pageId || typeof hashList != "object" ){
+                        //im guessing this will never happen - test for a while and elliminate.
+                        RDR.safeThrow("Fix your damnned hashes!!");
+                        return;
                     }
 
-                    for ( var j in sendable_hashes ) {
-                        if ( typeof sendable_hashes[j] == "string" ) {
-                            if ( sendable_hashes[j] ) {
-                                $hashable_node = $('.rdr-' + sendable_hashes[j]);
-                                if ( $hashable_node && $hashable_node.length == 1 ) {
-                                    $hashable_node.addClass('rdr-hashed');
-                                }
-                            }
+                    $.each(hashList, function(idx, hash){
+                        //might not need to protect against this anymore.
+                        if (typeof hash != "string" ){
+                            RDR.safeThrow("why is your hash not a string!?");
+                            return;
                         }
-                    }
 
-                    //build the sendData with the hashes from above
-                    sendData = {
+                        var $hashable_node = $('.rdr-' + hash);
+                        
+                        if ($hashable_node.length == 1 ) {
+                            $hashable_node.addClass('rdr-hashed');
+                        }
+                    });
+
+                    RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
-                       pageID: parseInt( page_id ),
-                       hashes: sendable_hashes
-                    };
+                       pageID: parseInt( pageId ),
+                       hashes: hashList
+                    }, onSuccessCallback);
+                
+                });
+            },
+            sendHashesForSinglePage: function(sendData, onSuccessCallback){
+                // RDR.actions.sendHashesForSinglePage:
 
+                    var pageId = sendData.pageID;
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -3536,43 +3653,29 @@ function readrBoard($R){
                                 });
                             });
 
-                            var summaries = {},
-                                unknown_summary;
-                            summaries[ page_id ] = response.data.known;
-                            // TODO this is a hack.  we should change how we receive known and unknown to make them the same format.
-                            // this shouldn't be doing ANYTHING AT ALL (b/c we don't receive back unknown containers):
-                            // [pb: 10/30]: don't think we need the following at all anymore, b/c we don't do "unknown_hashes"
-                            for ( var i in response.data.unknown ) {
-                                var hash = response.data.unknown[i];
-                                if (typeof hash == "string") {
-                                    // get the kind
-                                    if ( $('img.rdr-'+hash).length == 1 ) {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "img" );
-                                    } else if ( $('.rdr-'+hash).text() ) { // TODO seems fragile.
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "text" );
-                                    } else {
-                                        unknown_summary = RDR.util.makeEmptySummary( hash, "media" );
-                                    }
-                                    summaries[ hash ] = unknown_summary;
+                            var summaries = {};
+                            summaries[ pageId ] = response.data.known;
+                            
+                            $.each(response.data.unknown, function(idx, hash){
+                                if (typeof hash != "string") {
+                                    RDR.safeThrow('why the f would this not be a string?');
+                                    return;
                                 }
-                            }
 
+                                var unknown_summary;
+                                // get the kind
+                                var $node = $('.rdr-'+hash);
+                                var kind = $node.data('kind');
+                                if(!kind){
+                                    RDR.safeThrow('node should always have data: kind');
+                                }
+                                unknown_summary = RDR.util.makeEmptySummary( hash, kind );
 
-                            //the callback implementation here is a litte unintuitive:
-                            //it only gets passsed in when a single hash is run through here,
-                            //so it will only get run here either on the $container that is a known summary,
-                            //or as a callback after the unknownhash is sent through the containers.send call.
-
-                            // if ( unknownList.length > 0 ) {
-
-                            //     //send the containers to the server.
-                            //     //On sucess, these unknown hashes will get passed to RDR.actions.containers.setup with dummy summaries
-                            //     RDR.actions.containers.send(unknownList, onSuccessCallback);
-                            // }
+                                summaries[ pageId ][ hash ] = unknown_summary;
+                            });
 
                             // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                             if ( !$.isEmptyObject(summaries) ){
-
                                 //setup the summaries
                                 RDR.actions.containers.setup(summaries);
 
@@ -3584,7 +3687,8 @@ function readrBoard($R){
                             }
                         }
                     });
-                }
+
+                
             },
             containers: {
                 media: {
@@ -3651,7 +3755,6 @@ function readrBoard($R){
                 },
                 save: function(settings){
                     //RDR.actions.containers.save:
-
                     //makes a new one or returns existing one
                     //expects settings with body, kind, and hash.
                     if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
@@ -3669,7 +3772,7 @@ function readrBoard($R){
                     RDR.containers[settings.hash] = container;
                     return container;
                 },
-                setup: function(summaries){
+                setup: function(summariesPerPage){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
 
@@ -3705,63 +3808,71 @@ function readrBoard($R){
                     //todo: what does this do?  break this out into a function with a descriptive name.
                     var hashesToShow = []; //filled below
 
-                    for ( var i in summaries ) {
-                        var page_id = i;
+                    $.each(summariesPerPage, function(page_id, summariesByHash){
+                        
+                        if ( !summariesByHash || $.isArray(summariesByHash) ){
+                            RDR.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
+                            return;
+                        }
 
-                        for ( var j in summaries[i] ) {
+                        $.each(summariesByHash, function(hash, summary){
+                            
+                            //first do generic stuff
+                            //save the hash as a summary attr for convenience.
+                            summary.hash = hash;
 
-                            if ( typeof j == "string" && typeof summaries[i][j] == "object" ) {
+                            var containerInfo = RDR.containers[hash];
 
-                                var hash = j;
-                                var summary = summaries[i][j]; // ( RDR.summaries[hash] ) ? RDR.summaries[hash] : RDR.util.makeEmptySummary( hash );
+                            if ( containerInfo) {
+                                var $container = containerInfo.$this;
 
-                                //first do generic stuff
-                                //save the hash as a summary attr for convenience.
-                                summary.hash = hash;
+                                //temp type conversion for top_interactions.coms;
+                                var newComs = {},
+                                    coms = summary.top_interactions.coms;
 
-                                var containerInfo = RDR.containers[hash];
+                                $.each(coms, function(arrIdx, com){
+                                    //sortby tag_id
 
-                                if ( containerInfo) {
-                                    var $container = containerInfo.$this;
-
-                                    //temp type conversion for top_interactions.coms;
-                                    var newComs = {},
-                                        coms = summary.top_interactions.coms;
-
-                                    $.each(coms, function(arrIdx, com){
-                                        //sortby tag_id
-
-                                        // [ porter ] this shouldn't be needed, but it is,
-                                        // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                        if ( summary.kind == "text" ) {
-                                            newComs[com.tag_id] = com;
-                                        } else {
-                                            if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
-                                            newComs[com.tag_id].push(com);
-                                        }
-                                    });
-
-                                    summary.top_interactions.coms = newComs;
-                                    RDR.actions.summaries.save(summary);
-
-                                    RDR.actions.indicators.update( hash, true);
-
-
-                                    //now run the type specific function with the //run the setup func above
-                                    var kind = summary.kind;
-                                    if(kind != "page"){
-                                        _setupFuncs[kind](hash, summary);
+                                    // [ porter ] this shouldn't be needed, but it is,
+                                    // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
+                                    if ( summary.kind == "text" ) {
+                                        newComs[com.tag_id] = com;
+                                    } else {
+                                        if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
+                                        newComs[com.tag_id].push(com);
                                     }
+                                });
 
-                                    //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
-                                    //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
-                                    if(summary.counts.tags > 0){
-                                        hashesToShow.push(hash);
-                                    }
+                                summary.top_interactions.coms = newComs;
+                                RDR.actions.summaries.save(summary);
+
+                                var pageContainerExists = false;
+
+                                $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                    if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
+                                });
+                                if ( pageContainerExists == false ) {
+                                    RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                } else {
+                                }
+
+                                RDR.actions.indicators.update( hash, true);
+
+
+                                //now run the type specific function with the //run the setup func above
+                                var kind = summary.kind;
+                                if(kind != "page"){
+                                    _setupFuncs[kind](hash, summary);
+                                }
+
+                                //note:all of them should have interactions, because these are fresh from the server.  But, check anyway.
+                                //if(summary.counts.interactions > 0){ //we're only showing tags for now, so use that instead.
+                                if(summary.counts.tags > 0){
+                                    hashesToShow.push(hash);
                                 }
                             }
-                        }
-                    }
+                        });
+                    });
 
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
@@ -3943,101 +4054,132 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
+                    
+                    // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
+                    //     return;
+                    // }
+
                     // po' man's throttling
-                    if ( typeof RDR.inProgress == "undefined" ) { RDR.inProgress = []; }
-                    if ( $.inArray( hash, RDR.inProgress) != -1 ) {
-                        return false;
-                    } else {
-                        RDR.inProgress.push( hash );
-                    }
+                    // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                    // if ( $.inArray( hash, RDR.inProgress) != -1 ) {
+                    //     return false;
+                    // } else {
+                    //     RDR.inProgress.push( hash );
+                    // }
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
 
-                    var summary = RDR.summaries[hash];
+                    var summary = RDR.summaries[hash],
+                        container_id = (typeof summary != "undefined") ? summary.id:"";
+
+
+                    if(!container_id){
+                        //this still happens if container is an unknown container and has no reactions.
+                        //It's save to just return for now though.
+                        
+                        // RDR.safeThrow('container_id is not valid for hash: '+hash);
+                    
+                        return;
+                    }
 
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
-                        "container_id":summary.id
+                        "container_id":container_id,
+                        "hash":hash
                     };
 
-                    $.ajax({
-                        url: RDR_baseUrl+"/api/summary/container/content/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) },
-                        success: function(response) {
+                    //use an assetLoader that returns a deferred to ensure it gets loaded only once
+                    //and callbacks will run on success - or immediately if it has already returned.
+                    var assetLoader = RDR.assetLoaders.content_nodes[container_id];                    
+                    if(!assetLoader){
 
-                            if ( response.status !== "success" ) {
-                                return false;
+                        assetLoader = $.ajax({
+                            url: RDR_baseUrl+"/api/summary/container/content/",
+                            type: "get",
+                            contentType: "application/json",
+                            dataType: "jsonp",
+                            data: { json: $.toJSON(sendData) }
+                        });
+
+                        RDR.assetLoaders.content_nodes[container_id] = assetLoader;
+                    }
+                    
+                    //todo: also remove redundant callbacks from the summary widget.
+                    //we still need the onSuccessCallbacks to run though.
+                    assetLoader.then(function(response) {
+
+                        if ( response.status !== "success" ) {
+                            return false;
+                        }
+
+                        var content_nodes = response.data;
+                        //todo: make this generic interactions instead of just tags
+                        //summary.interactions.tags =
+
+                        //todo: think about this more later:
+                        //make selStates for these nodes and give the nodes a reference to them
+                        $.each(content_nodes, function(key, node){
+                            var $container = $('.rdr-'+hash);
+                            try{
+                                node.selState = $container.selog('save', { 'serialRange': node.location });
+                            }
+                            catch(err){
+                                node.selState = undefined;
                             }
 
-                            var content_nodes = response.data;
-                            //todo: make this generic interactions instead of just tags
-                            //summary.interactions.tags =
+                        });
 
-                            //todo: think about this more later:
-                            //make selStates for these nodes and give the nodes a reference to them
-                            $.each(content_nodes, function(key, node){
-                                var $container = $('.rdr-'+hash);
-                                try{
-                                    node.selState = $container.selog('save', { 'serialRange': node.location });
-                                }
-                                catch(err){
-                                    node.selState = undefined;
-                                }
+                        //throw the content_nodes into the container summary
+                        RDR.content_nodes[hash] = content_nodes;
+                        summary.content_nodes = content_nodes;
+                        if(summary.kind == "text"){
+                        }else{
+
+                            //this is weird because there is only one content_node - the img
+                            //this whole thing is gross.  Fix our data structure later.
+
+                            summary.top_interactions.coms = {};
+
+                            $.each(content_nodes, function(contentNodeId, contentNodeData){
+                                var comsArr = contentNodeData.top_interactions.coms;
+
+                                $.each(comsArr, function(idx, com){
+                                    summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
+                                    summary.top_interactions.coms[ com.tag_id ].push(com);
+                                });
 
                             });
+                        }
 
-                            //throw the content_nodes into the container summary
-                            summary.content_nodes = content_nodes;
-                            if(summary.kind == "text"){
-                            }else{
+                        // add a class so we note that the content summary was retrieved
+                        $('.rdr-'+hash).addClass('rdr_summary_loaded');
 
-                                //this is weird because there is only one content_node - the img
-                                //this whole thing is gross.  Fix our data structure later.
+                        // remove from po' man's throttling array
+                        // po' man's throttling
+                        // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
+                        // var y = [1, 2, 3]
+                        // var removeItem = 2;
 
-                                summary.top_interactions.coms = {};
+                        // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                        // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                        //   return value != hash;
+                        // });
 
-                                $.each(content_nodes, function(contentNodeId, contentNodeData){
-                                    var comsArr = contentNodeData.top_interactions.coms;
 
-                                    $.each(comsArr, function(idx, com){
-                                        summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
-                                        summary.top_interactions.coms[ com.tag_id ].push(com);
-                                    });
+                        //finally, run the success callback function
+                        if ( onSuccessCallback ) {
+                            onSuccessCallback();
+                        }
 
-                                });
-                            }
-
-                            // add a class so we note that the content summary was retrieved
-                            $(RDR.containers[ hash ].HTMLkind+'.rdr-'+hash).addClass('rdr_summary_loaded');
-
-                            // remove from po' man's throttling array
-                            // po' man's throttling
-                            // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
-                            // var y = [1, 2, 3]
-                            // var removeItem = 2;
-
-                            RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                              return value != hash;
+                        //also run any callbacks that get queued up on the summarybar hover
+                        if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
+                            $.each(RDR.contentNodeQueue[hash], function(){
+                                var func = RDR.contentNodeQueue[hash].pop();
+                                func(hash);
                             });
-
-
-                            //finally, run the success callback function
-                            if ( onSuccessCallback ) {
-                                onSuccessCallback();
-                            }
-
-                            //also run any callbacks that get queued up on the summarybar hover
-                            if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
-                                $.each(RDR.contentNodeQueue[hash], function(){
-                                    var func = RDR.contentNodeQueue[hash].pop();
-                                    func(hash);
-                                });
-                            }
                         }
                     });
+
                 },
                 utils: {
                     getMediaDims: function($mediaNode){
@@ -4251,9 +4393,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     }
                                 }
-                                RDR.inProgress = $.grep(RDR.inProgress, function(value) {
-                                  return value != hash;
-                                });
+                                // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
+                                // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                                //   return value != hash;
+                                // });
                                 RDR.util.userLoginState();
                             }
                         });
@@ -4295,9 +4438,31 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             var interaction = response.data.interaction,
-                                content_node = (response.data.content_node) ? response.data.content_node:response.content_node_data,
-                                content_id = (content_node&&content_node.id) ? content_node.id:"",
+                                
+                                content_node = response.data.content_node ? 
+                                    response.data.content_node :
+                                    response.content_node_data ? 
+                                        response.content_node_data : 
+                                        args.content_node_data,
+
+                                content_id = (content_node && content_node.id) ? content_node.id:"",
                                 num_interactions = response.data.num_interactions;
+
+                            //ugg - hack for existing comment on a non-text node.
+                            var isText = content_node.kind == 'text' || content_node.kind == "txt";
+                            var isExisting = response.data.existing;
+                            if (!isText && isExisting) {
+                                var content_nodes = RDR.content_nodes[hash];
+                                $.each(content_nodes, function(id, node){
+                                    //there should be only one, but sometimes there is an undefined entry - ignore that.
+                                    //seriously, the id is the string "undefined" - ug.  Find the root of that and fix.
+                                    if(id && id != "undefined"){
+                                        //override the content_node
+                                        content_node = node;
+                                        content_id = content_node.id;
+                                    }
+                                });
+                            }
 
                             //todo: examine resize
                             // RDR.rindow.updateSizes( $rindow );
@@ -4512,11 +4677,42 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var content_node = args.content_node || null;
 
                             if(kind == 'img' || kind == 'media' || kind == 'med'){
-                                var body = $container[0].src;
+                                var hashBody = $container[0].src;
+
+
+                                // // clean the image src in case it's a CDN w/ rotating subdomains.
+                                // // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
+                                // var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                                // var srcArray = hashBody.split('/'),
+                                //     srcProtocol = srcArray[0];
+
+                                // srcArray.splice(0,2);
+
+                                // var domainWithPort = srcArray.shift();
+                                // var domain = domainWithPort.split(':')[0]; // get domain, strip port
+                     
+                                // var filename = srcArray.join('/');
+
+                                // // test examples:
+                                // // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk/'); // fails: trailing slash
+                                // // var match = HOSTDOMAIN.exec('http://media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                // // var match = HOSTDOMAIN.exec('media1.ab.cd.on-the-telly.bbc.co.uk'); // success
+                                // var match = HOSTDOMAIN.exec( domain );
+                                // if (match == null) {
+                                //     return;
+                                // } else {
+                                //     hashBody = match[0] + '/' + filename;
+                                // }
+
+                                if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                                    hashBody = hashBody.split('?')[0];
+                                }
+
                                 content_node_data = {
                                     'container': rindow.data('container'),
-                                    'body': body,
+                                    'body': hashBody,
                                     'kind':kind,
+                                    // 'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
                                     'hash':hash
                                 };
 
@@ -4582,12 +4778,21 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 response = args.response,
                                 interaction = response.interaction,
                                 interaction_node = response.data.interaction.interaction_node,
+                                container = response.data.container,
                                 sendData = args.sendData,
+                                content_node = sendData.content_node_data,
+                                //todo: verify
+                                // content_node = response.data.content_node,
+
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
                             $('#rdr_loginPanel').remove();
+                            
                             //clear loader
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                            // remove summary loaded since we might need to call it again....
+                            $('.rdr-'+hash).removeClass('rdr_summary_loaded');
 
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
@@ -4639,6 +4844,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                     
+
                                     _doPageUpdates(args);
                                     
                                 }else{
@@ -4691,6 +4897,65 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 //temp tie over
                                 content_node_data.hash = content_node_data.container;
                                 content_node_data.kind = sendData.kind;
+
+                                // attempting to fix the summary widget-not-updating, and it seems to be b/c content_nodes aren't updated
+                                // update page container info, to fix the 'summary widget not updating' problem.  abstract this?
+                                // RDR.page[ PAGE ID ].containers
+
+                                //this is weird because there is only one content_node - the img
+                                //this whole thing is gross.  Fix our data structure later.
+
+                                // stolen from the success callback in RDR.actions.content_nodes.init
+                                // but wanted to not abstract that b/c this data structure is not the same.  natch.
+
+                                if (typeof summary.content_nodes == "undefined") {
+                                    summary.content_nodes = {};
+                                }
+
+                                //quick fixes for the container id too.
+                                //If the container came down eariler as an unknown container,
+                                //it will be saved but not have an id yet.
+                                var savedContainer = RDR.containers[hash];
+                                if(savedContainer && container && container.id){
+                                    savedContainer.id = container.id;
+                                }
+
+                                // this content_node summary does not exist
+                                if ( typeof summary.content_nodes[ content_node.id ] == "undefined" ) {
+                                    summary.content_nodes[ content_node.id ] = {
+                                        "body":content_node.body,
+                                        "counts":{
+                                            "coms": 0, 
+                                            "tags": 1, 
+                                            "interactions": 1
+                                        },
+                                        "id":content_node.id,
+                                        "kind":content_node.kind, // use this, NOT send_data version.  we want "txt", not "text".  sigh.
+                                        "location":sendData.content_node_data.location,
+                                        "selState":false,
+                                        "top_interactions":{
+                                            "coms": {}, 
+                                            "tags": {}
+                                        }
+                                    };
+                                } else {
+                                    // just update the content_node summary
+                                    summary.content_nodes[ content_node.id ].counts.tags++;
+                                    summary.content_nodes[ content_node.id ].counts.interactions++;
+                                }
+                                
+                                if (typeof summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ] == "undefined" ) {
+                                    summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ] = {
+                                        "count":1,
+                                        "body":tag.body,
+                                        parent_id:null
+                                    }
+                                } else {
+                                    summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ].count++;
+                                }
+
+
+
 
                                 //reset this var for now
                                 content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
@@ -5209,7 +5474,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( "<span style='font-size:13px !important;'>Say what you think</span>" );
+                        var $header = RDR.rindow.makeHeader( "Say what you think" );
+                        $rindow.addClass('rdr_helper_rindow');
                         $rindow.find('.rdr_header').replaceWith($header);
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
@@ -5331,12 +5597,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         
                         //temp hack
                         //don't fade it out if the rindow is showing
-                            var hash = $indicator.data('hash');
-                            var summary = RDR.summaries[ hash ];
-                            var $rindow = summary.$rindow_readmode;
-                            if( $rindow && $rindow.is(':visible') ){
-                                return;
-                            }
+                            // var hash = $indicator.data('hash');
+                            // var summary = RDR.summaries[ hash ];
+                            // var $rindow = (typeof summary != "undefined" && typeof summary.$rindow_readmode != "undefined") ? summary.$rindow_readmode:null;
+                            // if( $rindow && $rindow.is(':visible') ){
+                            //     // return;
+                            // }
 
                         $indicator.data('containerHover', false);
                         var hoverTimeout = $indicator.data('hoverTimeout');
@@ -5518,10 +5784,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           midValue = ( median > avg ) ? median:avg;
 
                           $.each( tagList, function(idx, tag) {
+                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
                               if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
                                 buckets.big.push( tag );
                                 return;
                               } else if ( tag.tag_count > midValue ) {
+                                buckets.medium.push( tag );
+                                return;
+                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
                                 buckets.medium.push( tag );
                                 return;
                               } else {
@@ -5914,7 +6184,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         },
                         update: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.update:
-
                             var Section = RDR.actions.indicators.utils.borderHilites;
 
                             var $indicator = $('#rdr_indicator_'+hash),
@@ -6040,12 +6309,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         },
                         disengage: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.disengage:
-                            var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            // if ( !$('rdr_for_'+hash).length ) {
+                                var $container_tracker = $('#rdr_container_tracker_'+hash),
+                                    $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
 
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('#rdr_indicator_' + hash).hide();
+                                $mediaBorderWrap.removeClass('engaged');
+                                $mediaBorderWrap.removeClass('engagedForShareLink');
+                                $('#rdr_indicator_' + hash).hide();
+                            // }
                         },
                         engageAll: function(){
                             //RDR.actions.indicators.utils.borderHilites.engageAll:
@@ -6139,7 +6410,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     }
                     */
-
                     if(isPage){
                         $.each( diff, function(interaction_node_type, nodes){
                             //will usually be just one interaction_node passed in, but can acoomodate a diff with many interaction_nodes
@@ -6347,7 +6617,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 updatePageSummaryTags: function(hash, diffNode){
                     //RDR.actions.summaries.updatePageSummaryTags:
-                    
+
                         //also update page
                         var tagId = diffNode.id;
                         var pageId = diffNode.page_id || RDR.util.getPageProperty('id', hash);
@@ -6404,7 +6674,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var summary = RDR.summaries[hash];
                     summary.interaction_order = [];
 
-                    if ( !$.isEmptyObject( summary.content_nodes ) ) {
+                    var isText = summary.kind == "text" || summary.kind == "txt";
+                    //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
+                    if ( isText && !$.isEmptyObject( summary.content_nodes ) ) {
                         // text requires iterating through the possible content nodes
                         $.each( summary.content_nodes, function( node_id, node_data ) {
                             $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
@@ -6687,33 +6959,43 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
                     var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
                     $otherComments.append($header);
-                    for ( var i in comments ) {
-                        var this_comment = comments[i];
-                        if( this_comment.tag_id == tagId ){
-                            $otherComments.show();
 
-                            var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
-                                $commentBy = $('<div class="rdr_commentBy" />'),
-                                $comment = $('<div class="rdr_comment" />'),
-                                $commentReplies = $('<div class="rdr_commentReplies" />'),
-                                $commentReply = $('<div class="rdr_commentReply" />'),
-                                $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
-
-                            var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
-
-                            var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? "Anonymous" : this_comment.user.first_name + " " + this_comment.user.last_name;
-                            $commentBy.html( '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>' ).click( function() {
-                                RDR.events.track('click_user_profile');
-                            });
-                            $comment.html(
-                                // '<span class="rdr_quoteImg"></span>'+
-                                '<div class="rdr_comment_body">'+this_comment.body+'</div>'
-                            );
-
-                            $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
-                            $otherComments.append( $commentSet );
+                    $.each(comments, function(idx, this_comment){
+                        if( this_comment.tag_id != tagId ){
+                            return;
                         }
-                    }
+
+                        $otherComments.show();
+
+                        var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
+                            $commentBy = $('<div class="rdr_commentBy" />'),
+                            $comment = $('<div class="rdr_comment" />'),
+                            $commentReplies = $('<div class="rdr_commentReplies" />'),
+                            $commentReply = $('<div class="rdr_commentReply" />'),
+                            $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
+
+                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
+
+                        var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? 
+                            "Anonymous" : 
+                            this_comment.user.first_name + " " + this_comment.user.last_name;
+                        
+                        $commentBy.html(
+                            '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>'
+                        ).click( function() {
+                            RDR.events.track('click_user_profile');
+                        });
+
+                        $comment.html(
+                            // '<span class="rdr_quoteImg"></span>'+
+                            '<div class="rdr_comment_body">'+this_comment.body+'</div>'
+                        );
+
+                        $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
+                        $otherComments.append( $commentSet );
+
+                    });
+
                     $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
                     return $otherComments;
 
@@ -7051,50 +7333,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
             },
-            updateData: function(args) {
-                var tag_text;
-
-                if ( args.kind == "tag" ) {
-                    var rindow = args.rindow,
-                        hash = args.hash,
-                        content = args.content,
-                        tag = args.tag,
-                        range = args.range;
-
-                    if ( args.element ) {
-                        var element_text = args.element.parent().text();
-                        count = parseInt( element_text.substr(1, element_text.indexOf(')')-1), 10 ) + 1;
-                        tag_text = element_text.substr(element_text.indexOf(')')+2);
-                        args.element.text( '('+count+')' );
-                        args.element.addClass('rdr_tagged');
-                    } else {
-
-                    }
-
-                    // update the data objects too
-                    for ( var i in RDR.content_nodes[hash].info.content ) {
-                        if ( RDR.content_nodes[hash].info.content[i].body == content ) {
-                            for ( var j in RDR.content_nodes[hash].info.content[i].tags ) {
-                                if ( RDR.content_nodes[hash].info.content[i].tags[j].id == tag.id ) {
-                                    RDR.content_nodes[hash].info.content[i].tags[j].count++;
-
-                                    // need to increment the .tags count, too
-                                    for ( var k in RDR.content_nodes[hash].info.tags ) {
-                                        if ( RDR.content_nodes[hash].info.tags[k].id == tag.id ) {
-                                            if ( RDR.content_nodes[hash].info.tags[k].content[i] ) {
-                                                RDR.content_nodes[hash].info.tags[k].count++;
-                                                RDR.content_nodes[hash].info.tags[k].content[i].count++;
-                                                RDR.content_nodes[hash].info.tag_count++;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                }
-            },
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
@@ -7147,9 +7385,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //hasn't been hashed yet.
                     //try to submit node to server.  Draw the actionbar using an onsuccess function so we don't draw it if it fails.
                     //note: hashes in this case will just be a single hash. That's cool.
-                    var hash = RDR.actions.hashNodes( $blockParent );
-                    if(hash){
-                        RDR.actions.sendHashes( hash, function(){
+                    
+                    //todo: use our new sendHashesForSinglePage function after testing and refactoring.
+                    var hashListForPage = RDR.actions.hashNodes( $blockParent );
+                    if(hashListForPage){
+                        RDR.actions.sendHashes( hashListForPage, function(){
                             if(callback){
                                 //god this re-var-ing of hash is awful, rewrite later.
                                 var hash = $blockParent.data('hash');
@@ -7273,29 +7513,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     // hash the "page" descendant nodes
                     // RDR.actions.hashNodes( $container, "nomedia" );
+                    
+                    //todo: can't we use the hashes returned by this function instead?
                     RDR.actions.hashNodes( $container );
 
                     if ( page.containers.length > 0 ) {
-                        var hashes = [];
-                        hashes[ page.id ] = [];
-                        // for ( var i in page.containers ) {
+                        var hashesByPageId = {};
+                        hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
-                            if ( typeof container.hash != "undefined") hashes[ page.id ].push( container.hash );
+                            if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
-                        RDR.actions.sendHashes( hashes );
+                        RDR.actions.sendHashes( hashesByPageId );
                     }
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
+                    widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
+                    
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector).hasClass('rdr-page-widget-key-' + key) ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                         
-                    } else {
-                        widgetSummarySettings.$anchor = $("#rdr-page-summary"); //change to group.summaryWidgetAnchorNode or whatever
-                        widgetSummarySettings.jqFunc = "append";
+                    } else if( $("#rdr-page-summary").length==1 ){
+                        widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
+                    }else{
+                        //use the default summaryBar instead
+                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>');
+                        widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
                     //div to hold summary tag detail "menus"
@@ -7326,7 +7572,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         readrboard: RDR.group.sharebox_readrboard
                     } : {
                         readrboard: RDR.group.sharebox_readrboard,
-                        facebook: RDR.group.sharebox_facebook,
+                        // facebook: RDR.group.sharebox_facebook,
                         twitter: RDR.group.sharebox_twitter,
                         reddit: RDR.group.sharebox_reddit,
                         google: RDR.group.sharebox_google,
@@ -7511,6 +7757,7 @@ function $RFunctions($R){
         plugin_jquery_json($R);
         plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
+        plugin_jquery_mustache($R);
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_mousewheel($R);
         plugin_jquery_scrollStartAndStop($R);
@@ -7871,7 +8118,6 @@ function $RFunctions($R){
 
                         //get the latest page data
                         settings.summary = RDR.pages[settings.id].summary;
-                        
                         _makeSummaryWidget(settings);
                     });
                 }
@@ -7910,7 +8156,7 @@ function $RFunctions($R){
 
                     $summary_widget.append(
                         '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
-                        '<a href="'+RDR_baseUrl+'" target="_blank">'+
+                        '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
                             '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                         '</a>'
                     );
@@ -7953,7 +8199,7 @@ function $RFunctions($R){
                     );
             }
 
-            function getReactedContent( counts ) {
+            function getReactedContent( counts ) {            
                 // get all of the content_nodes for this page
                 // may want to limit this on back-end by a date range
                 if ( typeof RDR.interaction_data == "undefined" ) {
@@ -8162,24 +8408,27 @@ function $RFunctions($R){
                         //we'll just activate our button manually because there is no script to call
                         return ret.join('');
                     },
-                    facebook: function(brand){
-                        var ret = [];
 
-                        //script needed
-                        ret.push(
-                            '<div id="fb-root"></div>'+
-                            // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
-                            '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
-                                ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
-                                ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
-                            '}) })();</script>'
-                        );
-                        ret.push(
-                            '<div class="fb-like" data-send="false" data-layout="box_count" data-show-faces="false"></div>'
-                        );
+                    // removing facebook for now until we test further.  It's causing an error due to the duplicated all.js script.
+
+                    // facebook: function(brand){
+                    //     var ret = [];
+
+                    //     //script needed
+                    //     ret.push(
+                    //         '<div id="fb-root"></div>'+
+                    //         // '<script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)){return}; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948"; fjs.parentNode.insertBefore(js, fjs) }(document, "script", "facebook-jssdk"));</script>'
+                    //         '<script type="text/javascript">(function(){ window.READRBOARDCOM.rdr_loadScript( '+
+                    //             ' { src:"//connect.facebook.net/en_US/all.js#xfbml=1&appId=163759626987948", id:"facebook-jssdk" }, function(){'+
+                    //             ' window.READRBOARDCOM.shareWidgetBrandOnLoad("'+brand+'"); '+
+                    //         '}) })();</script>'
+                    //     );
+                    //     ret.push(
+                    //         '<div class="fb-like" data-send="false" data-layout="box_count" data-show-faces="false"></div>'
+                    //     );
                         
-                            return ret.join('');
-                    },
+                    //         return ret.join('');
+                    // },
                     twitter: function(brand){
                         var ret = [];
                         ret.push(
@@ -8427,7 +8676,6 @@ function $RFunctions($R){
                 init : function( options ) {
                     var $this = this;
                     options = options || {};
-                    _tempTesting();
 
                     //todo: make _settings an object unique to each 'this';
                     return $this.each(function(){
@@ -8967,82 +9215,6 @@ function $RFunctions($R){
                 return range;
             }
 
-            function _tempTesting(){
-                    /*
-                * testing temp function
-                */
-                //make $tempButtons output
-                //hide for now
-                var $tempButtons = $('<div id="rdr_selectionographer_tester" class="no-rdr"/>').hide(),
-                buttonInfo = [
-                    //note, remember to use $R instead of $ if calling in firebug
-                    {
-                        name:'save',
-                        func:'save',
-                        attr:undefined
-                    },
-                    {
-                        name:'clear',
-                        func:'clear',
-                        attr:undefined
-                    },
-                    {
-                        name:'activate',
-                        func:'activate',
-                        attr:undefined
-                    },
-                    {
-                        name:'modify',
-                        func:'modify',
-                        attr:undefined
-                    },
-                    {
-                        name:'hilite',
-                        func:'hilite',
-                        attr:undefined
-                    },
-                    {
-                        name:'find',
-                        func:'find',
-                        attr:undefined
-                    }
-                ];
-                $.each(buttonInfo,function(idx, val){
-                    var $button = $('<div class="rdr_tempButton rdr_tempButton_'+this.name+'"><a href=\"javascript:void(0);\">'+this.name+'</a><input class="input1" /></div>');
-
-                    $button.find('a').click(function(){
-                        var result, selState,
-                        input = $(this).parent().find('input').eq(0).val(),
-                        contextStr = $context.find('input').val();
-                        val.attr= (input === "" ) ? undefined : input;
-                        if(val.name == "find"){
-                            result = $(contextStr).selog(val.func, val.attr);
-                        }
-                        if(val.name == "hilite"){
-                            input2 = $(this).parent().find('input').eq(1).val();
-                            selState = $(contextStr).selog(val.func, val.attr, input2);
-                        }
-                        else{
-                            selState = $(contextStr).selog(val.func, val.attr);
-                        }
-                    });
-                    $tempButtons.append($button);
-                });
-
-                var $output = $('<div id="rdr_tempOutput" />').css({'font-size':'12px'}); //filled out for now with save function
-                var $context = $('<div><span style="margin-left:13px;"> in: </span><input class="input2"  /></div>');
-                $tempButtons.append($context, $output);
-
-                $tempButtons.css({'position':'fixed', 'margin-left':'5px', 'top': '75px'});
-                $tempButtons.children('.rdr_tempButton').css({'margin':'4px 0'});
-                $tempButtons.find('input').css({'left':'55px', 'width':'60px','position':'absolute'});
-
-                $tempButtons.find('input:lt(2)').remove();
-                $tempButtons.find('.rdr_tempButton_hilite')//cont
-                .append('<input class="" style="left: 100px; position: relative; width:50px;" value="toggle"/>'); /*default toggle*/
-
-                $('#rdr_sandbox').append($tempButtons);
-            }
             //end private functions
 
             //init selog on window.
@@ -9051,151 +9223,9 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_selectionographer
 
-        function plugin_jquery_textnodes($){
-            /*
-             * jQuery Plugin by eric@readrboard.com
-             * gets or sets delicious raw textnode leafs within a $() set.
-             * todo: confirm if we need anymore 'ignore' checks for other nodetypes
-             */
-
-             //this isn't being used right now - ec
-
-            $.fn.textnodes = function(injectText){
-                // If injectText is passed as a string or array of strings, replace 'this' content with corresponding textnodes.
-                // Else, return all offspring textnodes in a flattened array.
-                var $ret = $('<span/>'),
-                $this = this,
-                doc = ($this[0] && $this[0].ownerDocument || document);
-
-                if ( typeof injectText != 'undefined' ){
-                    $.each(injectText, function(idx, val){
-                        var textnode = doc.createTextNode( val );
-                        $ret.append(textnode);
-                    });
-                    $this.each(function(){
-                        $(this).empty();
-                        $(this).append($ret.contents());
-                    });
-                }
-                //else no param: find textnodes
-
-                //recursive function to look depth first for textnodes
-                //param: a parent node, returns: an array of textnodes
-                function _mineParentForText(parent){
-                    return $.map( parent.childNodes, function(child){
-                        if ( child.nodeType === 8) return;    // comment node leaf, ignore.
-                        //else
-                        if ( child.nodeType !== 3 )          // if not textnode, look deeper
-                            return _mineParentForText(child);
-                        //else
-                        if ( child.nodeType === 3 )          // eureka. A textnode leaf.
-                            return child;
-                    });
-                }
-
-                return $this.map(function(){
-                    return _mineParentForText(this);
-                });
-            };
+        function plugin_jquery_mustache(jQuery){
+            (function(a){(function(a,b){"object"==typeof exports&&exports?module.exports=b:"function"==typeof define&&define.amd?define(b):a.Mustache=b})(this,function(){function j(a,b){return h.call(a,b)}function k(a){return!j(d,a)}function m(a){return a.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g,"\\$&")}function o(a){return(a+"").replace(/[&<>"'\/]/g,function(a){return n[a]})}function p(a){this.string=a,this.tail=a,this.pos=0}function q(a,b){this.view=a,this.parent=b,this._cache={}}function r(){this.clearCache()}function s(b,c,d,e){for(var g,h,i,f="",j=0,k=b.length;k>j;++j)switch(g=b[j],h=g[1],g[0]){case"#":if(i=d.lookup(h),"object"==typeof i)if(l(i))for(var m=0,n=i.length;n>m;++m)f+=s(g[4],c,d.push(i[m]),e);else i&&(f+=s(g[4],c,d.push(i),e));else if("function"==typeof i){var o=null==e?null:e.slice(g[3],g[5]);i=i.call(d.view,o,function(a){return c.render(a,d)}),null!=i&&(f+=i)}else i&&(f+=s(g[4],c,d,e));break;case"^":i=d.lookup(h),(!i||l(i)&&0===i.length)&&(f+=s(g[4],c,d,e));break;case">":i=c.getPartial(h),"function"==typeof i&&(f+=i(d));break;case"&":i=d.lookup(h),null!=i&&(f+=i);break;case"name":i=d.lookup(h),null!=i&&(f+=a.escape(i));break;case"text":f+=h}return f}function t(a){for(var e,b=[],c=b,d=[],f=0,g=a.length;g>f;++f)switch(e=a[f],e[0]){case"#":case"^":d.push(e),c.push(e),c=e[4]=[];break;case"/":var h=d.pop();h[5]=e[2],c=d.length>0?d[d.length-1][4]:b;break;default:c.push(e)}return b}function u(a){for(var c,d,b=[],e=0,f=a.length;f>e;++e)c=a[e],c&&("text"===c[0]&&d&&"text"===d[0]?(d[1]+=c[1],d[3]=c[3]):(d=c,b.push(c)));return b}function v(a){return[RegExp(m(a[0])+"\\s*"),RegExp("\\s*"+m(a[1]))]}var a={};a.name="mustache.js",a.version="0.7.2",a.tags=["{{","}}"],a.Scanner=p,a.Context=q,a.Writer=r;var b=/\s*/,c=/\s+/,d=/\S/,e=/\s*=/,f=/\s*\}/,g=/#|\^|\/|>|\{|&|=|!/,h=RegExp.prototype.test,i=Object.prototype.toString,l=Array.isArray||function(a){return"[object Array]"===i.call(a)},n={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","/":"&#x2F;"};a.escape=o,p.prototype.eos=function(){return""===this.tail},p.prototype.scan=function(a){var b=this.tail.match(a);return b&&0===b.index?(this.tail=this.tail.substring(b[0].length),this.pos+=b[0].length,b[0]):""},p.prototype.scanUntil=function(a){var b,c=this.tail.search(a);switch(c){case-1:b=this.tail,this.pos+=this.tail.length,this.tail="";break;case 0:b="";break;default:b=this.tail.substring(0,c),this.tail=this.tail.substring(c),this.pos+=c}return b},q.make=function(a){return a instanceof q?a:new q(a)},q.prototype.push=function(a){return new q(a,this)},q.prototype.lookup=function(a){var b=this._cache[a];if(!b){if("."==a)b=this.view;else for(var c=this;c;){if(a.indexOf(".")>0){b=c.view;for(var d=a.split("."),e=0;b&&d.length>e;)b=b[d[e++]]}else b=c.view[a];if(null!=b)break;c=c.parent}this._cache[a]=b}return"function"==typeof b&&(b=b.call(this.view)),b},r.prototype.clearCache=function(){this._cache={},this._partialCache={}},r.prototype.compile=function(b,c){var d=this._cache[b];if(!d){var e=a.parse(b,c);d=this._cache[b]=this.compileTokens(e,b)}return d},r.prototype.compilePartial=function(a,b,c){var d=this.compile(b,c);return this._partialCache[a]=d,d},r.prototype.getPartial=function(a){return a in this._partialCache||!this._loadPartial||this.compilePartial(a,this._loadPartial(a)),this._partialCache[a]},r.prototype.compileTokens=function(a,b){var c=this;return function(d,e){if(e)if("function"==typeof e)c._loadPartial=e;else for(var f in e)c.compilePartial(f,e[f]);return s(a,c,q.make(d),b)}},r.prototype.render=function(a,b,c){return this.compile(a)(b,c)},a.parse=function(d,h){function s(){if(q&&!r)for(;o.length;)delete n[o.pop()];else o=[];q=!1,r=!1}if(d=d||"",h=h||a.tags,"string"==typeof h&&(h=h.split(c)),2!==h.length)throw Error("Invalid tags: "+h.join(", "));for(var w,x,y,z,A,i=v(h),j=new p(d),l=[],n=[],o=[],q=!1,r=!1;!j.eos();){if(w=j.pos,y=j.scanUntil(i[0]))for(var B=0,C=y.length;C>B;++B)z=y.charAt(B),k(z)?o.push(n.length):r=!0,n.push(["text",z,w,w+1]),w+=1,"\n"==z&&s();if(!j.scan(i[0]))break;if(q=!0,x=j.scan(g)||"name",j.scan(b),"="===x?(y=j.scanUntil(e),j.scan(e),j.scanUntil(i[1])):"{"===x?(y=j.scanUntil(RegExp("\\s*"+m("}"+h[1]))),j.scan(f),j.scanUntil(i[1]),x="&"):y=j.scanUntil(i[1]),!j.scan(i[1]))throw Error("Unclosed tag at "+j.pos);if(A=[x,y,w,j.pos],n.push(A),"#"===x||"^"===x)l.push(A);else if("/"===x){if(0===l.length)throw Error('Unopened section "'+y+'" at '+w);var D=l.pop();if(D[1]!==y)throw Error('Unclosed section "'+D[1]+'" at '+w)}else if("name"===x||"{"===x||"&"===x)r=!0;else if("="===x){if(h=y.split(c),2!==h.length)throw Error("Invalid tags at "+w+": "+h.join(", "));i=v(h)}}var D=l.pop();if(D)throw Error('Unclosed section "'+D[1]+'" at '+j.pos);return n=u(n),t(n)};var w=new r;return a.clearCache=function(){return w.clearCache()},a.compile=function(a,b){return w.compile(a,b)},a.compilePartial=function(a,b,c){return w.compilePartial(a,b,c)},a.compileTokens=function(a,b){return w.compileTokens(a,b)},a.render=function(a,b,c){return w.render(a,b,c)},a.to_html=function(b,c,d,e){var f=a.render(b,c,d);return"function"!=typeof e?f:(e(f),void 0)},a}()),a.mustache=function(a,b,c){return Mustache.render(a,b,c)},a.fn.mustache=function(b,c){return a(this).map(function(d,e){var f=a.trim(a(e).html()),g=a.mustache(f,b,c);return a(g).get()})}})(jQuery);
         }
-        //end function plugin_jquery_textnodes
-
-
-        function plugin_jquery_superRange($){
-            /*
-             *
-             *
-             */
-
-            //nothing to see here: starting to work on superRange plugin
-            //superRange or SR.
-            //this isn't being used right now - ec
-
-            $.fn.superRange = function(options){
-                var $this = this,
-                settings = options || {};
-
-                return $this.each(function(idx, val){
-                    var contextNode = this,
-                    superRange = $.extend({
-                        contextNode: contextNode,
-                        textnodes: $(contextNode).textnodes(),  //requires jquery.textnodes.js plugin
-                        start: null,
-                        end: null,
-                        startRange: null,   //set below
-                        endRange: null,     //set below
-                        text: "",           //set below
-                        hash: null          //set below
-                    }, settings);
-
-                    //complete superRange
-                    superRange = superRange._parse();
-
-                    //set text and hash
-                    //todo: fix this
-                    $.each(superRange.textnodes, function(idx, val){
-                        superRange.text += val.data; //data is textnode's string value
-                    });
-                    superRange.hash = "make hash here.."; //todo: make hash
-                });
-            };
-
-            //private functions
-            function _parse(superRangeParam){
-                // if given an explicit startRange and endRange, use those and calculate the start and end.
-                // else do the inverse,
-
-                var stepIdx = 0,
-                superRange = (typeof superRangeParam !== "undefined") ? superRangeParam : this,
-                missingSuperOffsets = ( superRange.start === null || superRange.end === null ),
-                missingRanges =  ( superRange.startRange === null || superRange.endRange === null );
-
-                if ( missingSuperOffsets && missingRanges ) return false;
-                if ( !missingSuperOffsets && !missingRanges ) return superRange;
-                if ( missingSuperOffsets && !missingRanges ){
-                    //get start and end
-                    $.each(superRange.textnodes, function(idx, textnode){
-                        if( textnode == superRange.startRange.node ){
-                            superRange.start = stepIdx + superRange.startRange.offset;
-                        }
-                        if( textnode == superRange.endRange.node ){
-                            superRange.end = stepIdx + superRange.endRange.offset;
-                        }
-                        stepIdx += textnode.length;
-                    });
-                    return superRange;
-                }
-                if ( !missingSuperOffsets && missingRanges ){
-                    //get startRange and endRange
-                    $.each(superRange.textnodes, function(idx, textnode){
-                        var a = stepIdx,
-                        start = superRange.start,
-                        end = superRange.end,
-                        b = stepIdx + textnode.length;
-
-                        if( a > start && start < b ){
-                            superRange.startRange = {
-                                node: textnode,
-                                //nodeIndex: idx,
-                                offset: stepIdx - start   //lookbehind to get rel start index for this textnode
-                            };
-                        }
-                        if( a > end && end < b ){
-                            superRange.endRange = {
-                                node: textnode,
-                                //nodeIndex: idx,
-                                offset: stepIdx - end     //lookbehind to get rel end index for this textnode
-                            };
-                        }
-                        stepIdx = b;
-                    });
-                    return superRange;
-                }
-                //else impossible
-            }
-
-        }
-        //end function plugin_jquery_superRange
 
         function plugin_jquery_improvedCSS($){
             //improvedCSS.js  http://plugins.jquery.com/node/8726/release
@@ -9637,7 +9667,7 @@ function $RFunctions($R){
             e;if(!a.collapsed){this.sc=a.startContainer;this.so=a.startOffset;this.ec=a.endContainer;this.eo=a.endOffset;var g=a.commonAncestorContainer;if(this.sc===this.ec&&l.isCharacterDataNode(this.sc)){this.isSingleCharacterDataNode=true;this._first=this._last=this._next=this.sc}else{this._first=this._next=this.sc===g&&!l.isCharacterDataNode(this.sc)?this.sc.childNodes[this.so]:l.getClosestAncestorIn(this.sc,g,true);this._last=this.ec===g&&!l.isCharacterDataNode(this.ec)?this.ec.childNodes[this.eo-1]:l.getClosestAncestorIn(this.ec,
             g,true)}}}function v(a){this.code=this[a];this.codeName=a;this.message="RangeException: "+this.codeName}function c(a,e,g){this.nodes=y(a,e,g);this._next=this.nodes[0];this._position=0}function f(a){return function(e,g){for(var q,G=g?e:e.parentNode;G;){q=G.nodeType;if(l.arrayContains(a,q))return G;G=G.parentNode}return null}}function j(a,e){if(F(a,e))throw new v("INVALID_NODE_TYPE_ERR");}function r(a){if(!a.startContainer)throw new Q("INVALID_STATE_ERR");}function M(a,e){if(!l.arrayContains(e,a.nodeType))throw new v("INVALID_NODE_TYPE_ERR");
             }function o(a,e){if(e<0||e>(l.isCharacterDataNode(a)?a.length:a.childNodes.length))throw new Q("INDEX_SIZE_ERR");}function u(a,e){if(d(a,true)!==d(e,true))throw new Q("WRONG_DOCUMENT_ERR");}function x(a){if(i(a,true))throw new Q("NO_MODIFICATION_ALLOWED_ERR");}function B(a,e){if(!a)throw new Q(e);}function D(a){r(a);if(!l.arrayContains(Y,a.startContainer.nodeType)&&!d(a.startContainer,true)||!l.arrayContains(Y,a.endContainer.nodeType)&&!d(a.endContainer,true)||!(a.startOffset<=(l.isCharacterDataNode(a.startContainer)?
-            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))throw Error("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
+            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))/*READRBOARD EDIT*//*throw Error*/RDR.actions.catchRangyErrors("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");/*end READRBOARD EDIT*/}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
             var g=this.startContainer,q=this.startOffset,G=this.commonAncestorContainer,U=new p(this,true);if(g!==G){g=l.getClosestAncestorIn(g,G,true);q=C(g);g=q.node;q=q.offset}h(U,x);U.reset();G=a(U);U.detach();e(this,g,q,g,q);return G}}function ca(a,e,g){function q(m,t){return function(w){r(this);M(w,fa);M(b(w),Y);w=(m?z:C)(w);(t?G:U)(this,w.node,w.offset)}}function G(m,t,w){var I=m.endContainer,R=m.endOffset;if(t!==m.startContainer||w!==this.startOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==1){I=t;R=
             w}e(m,t,w,I,R)}}function U(m,t,w){var I=m.startContainer,R=m.startOffset;if(t!==m.endContainer||w!==this.endOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==-1){I=t;R=w}e(m,I,R,t,w)}}function ba(m,t,w){if(t!==m.startContainer||w!==this.startOffset||t!==m.endContainer||w!==this.endOffset)e(m,t,w,t,w)}a.prototype=new W;k.util.extend(a.prototype,{setStart:function(m,t){r(this);j(m,true);o(m,t);G(this,m,t)},setEnd:function(m,t){r(this);j(m,true);o(m,t);U(this,m,t)},setStartBefore:q(true,true),setStartAfter:q(false,
             true),setEndBefore:q(true,false),setEndAfter:q(false,false),collapse:function(m){D(this);m?e(this,this.startContainer,this.startOffset,this.startContainer,this.startOffset):e(this,this.endContainer,this.endOffset,this.endContainer,this.endOffset)},selectNodeContents:function(m){r(this);j(m,true);e(this,m,0,m,l.getNodeLength(m))},selectNode:function(m){r(this);j(m,false);M(m,fa);var t=z(m);m=C(m);e(this,t.node,t.offset,m.node,m.offset)},extractContents:X(s,e),deleteContents:X(n,e),canSurroundContents:function(){D(this);

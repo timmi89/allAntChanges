@@ -1,75 +1,5 @@
-{% if singleton %}
-<style>
+{% load custom_filters %}
 
-section[role="complementary"]{ display:none; }
-section[role="main"]{
-    margin: 0 auto;
-/*    width: 960px;
-    background:#555;
-    border:0;
-    padding: 10px 0 0 0;
-*/}
-
-section[role="content"]{
-  width:1140px;
-  background:#fff;
-  /*width: 100%;
-  background:none;
-    padding-bottom: 46px !important;
-    margin: 30px 0 !important;*/
-}
-section[role="content"] { border-left:1px solid #d9d9d9;}
-#cards .card {
-  border:1px solid #d9d9d9;
-  position:relative;
-  margin:0 auto;
-}
-.singleReactionHeader {
-  text-align:center;
-  color:#333;
-  margin:20px 0;
-}
-#seeItLink {
-  color:#84b8ef;
-}
-
-.seeAllReactionsButtonWrap {
-  margin-top:-50px;
-  text-align:center;
-}
-.seeAllReactionsButtonWrap a {
-  color:#84b8ef;
-}
-footer{
-    width: 1140px;
-}
-div.otherContent {display:none;}
-#splashAnnounce { display:none !important; }
-#content {
-  float: none;
-  margin: 0 auto !important;
-  overflow:visible !important;
-  height:auto !important;
-  visibility:visible;
-}
-.sectionHeader {display:none !important;}
-.pagination{
-    display: none !important;
-}
-
-.new_reaction_text{
-    height: auto !important;
-}
-
-</style>
-{% endif %}
-
-{% if not board %}
-{% if not query_string and not singleton %} 
-<h2 class="header">Recent Reactions</h2>
-{% endif %}
-{% endif %}
-<section id="content"></section>
 <script>
 var comments = [],
     interactions = [],
@@ -84,11 +14,109 @@ var board_admin = false;
 {% if profile_user %}
 $('#cards').addClass('user_profile');
 {% endif %}
+</script>
 
 {% regroup current_page.object_list by page as pi %}
 {% for page in pi %}
     {% for interaction in page.list %}
-        {% if interaction.kind != 'com' and interaction.human_kind != 'Share' %}
+        {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
+        <section class="card interaction_{{ interaction.id }}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+            {% if cookie_user %}
+            <div class="buttons">
+                      {% if interaction.user.id == cookie_user.id %}
+                        <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
+                      {% endif %}
+                      {% if interaction.user.id != cookie_user.id %}
+                        <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
+                      {% endif %}
+                      <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
+                      <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
+                      <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
+                    
+                    {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
+                    <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
+                    {% endif %}
+
+                    <!-- board add/delete ? -->
+            </div>
+            {% endif %}
+            {% if not cookie_user %}
+                <!-- add a not-logged-in state here -->
+            {% endif %}
+
+            <div class="meta">
+                <div class="avatar">
+                    {% if interaction.user.social_user.full_name != "" %}
+                    <a href="/user/{{interaction.user.id}}/">
+                        <img src="{{ interaction.user.social_user.img_url }}"/>
+                        {{ interaction.user.social_user.full_name }}
+                    </a>
+                    {% endif %}
+                    {% if interaction.user.social_user.full_name == "" %}
+                    <a href="/user/{{interaction.user.id}}/">
+                        <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                        Unregistered User
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="date">
+                    {{ interaction.created|date:"M d, Y"|escape }}
+                </div>
+            </div>
+            <div class="me_too_outcome"></div>
+            <div class="main">
+                <div class="reactionBox color{% cycle '1' '2' '3' '4' '5' %}">
+                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|split_reaction }}{% else %}{{ interaction.human_kind|split_reaction }}{% endif %}</a></h1>
+                    <div class="via">via</div>
+                    <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/><br/>{%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
+                    <div class="links">
+                        <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a>
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">See it in context <i class="icon-external-link"></i></a>
+                    </div>
+                </div>
+                <div class="contentBox {{ interaction.content.kind }}">
+                    {% if interaction.content.kind == "img" %}
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" /></a>
+                    {% endif %}
+
+                    {% if interaction.content.kind == "med" %}
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><iframe class="contentBody" width="300" height="250" frameborder="0" src="{{ interaction.content.body|escape }}"></iframe></a>
+                    {% endif %}
+
+                    {% if interaction.content.kind == "txt" %}
+                    <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%} contentBody"><a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank">{{ interaction.content.body|escape }}</a></blockquote>
+                    {% endif %}
+
+                    {% if interaction.comments %}
+                    <div class="comments comments_for_{{ interaction.id }}">
+                      <h2>Comments</h2>
+                      {% for comment in interaction.comments %}
+                      {% if comment.approved %}
+                      <div class="comment_container clearfix">
+                        <div class="header">
+                          <div class="when">{{ comment.created|date:"M d g:ia" }}</div>
+                          <a href="/user/{{comment.user.id}}/">
+                            <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
+                            <div class="who">{{ comment.user.social_user.full_name }}</div>
+                          </a>
+                        </div>
+                        <div class="comment">
+                          <div class="comment_body">{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escape }}{% endfilter %}</div>
+                        </div>
+                        {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
+                        <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
+                        {% endif %}
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+          {% comment %}
+          <script>
             var interaction = {
                   "id"    :   {{ interaction.id }},
                   "kind"  :   "{{ interaction.content.kind }}",
@@ -139,10 +167,11 @@ $('#cards').addClass('user_profile');
               interaction.user_name = "Unregistered<br/>User";
             }
             interactions.push( interaction );
-
+          {% endcomment %}
         {%endif%}
 
         {% if interaction.human_kind == 'Share' %}
+        {% comment %}
             var share = {
                   "id"    :   {{ interaction.id }},
                   "kind"  :   "{{ interaction.content.kind }}",
@@ -166,9 +195,14 @@ $('#cards').addClass('user_profile');
                   "page_id" : {{interaction.page}}
             };
             shares.push( share );
+        {% endcomment %}
         {% endif %}
+        </script>
     {% endfor %}
 {% endfor %}
+
+
+<script>
 var metoos = {
     {% if child_interactions %}
     {% for key, value in child_interactions.items %}
@@ -178,6 +212,8 @@ var metoos = {
 };
 {% if comment_parents %}
     {% for interaction in comment_parents %}
+
+    {% comment %}
     var interaction = {
               "id"    :   {{ interaction.id }},
               "kind"  :   "{{ interaction.content.kind }}",
@@ -226,11 +262,13 @@ var metoos = {
           interaction.user_name = "Unregistered<br/>User";
         }
         interactions.push( interaction );
+    {% endcomment %}
     {% endfor %}
 {% endif %}
 
 </script>
 
+{% if not singleton %}
 <div class="pagination">
   <span class="step-links">
     {% if current_page.has_previous %}
@@ -244,153 +282,45 @@ var metoos = {
     {% endif %}
   </span>
 </div>
+{% endif %}
 
 <script>
-var zIndex = 400,
-    colorInt = 1,
-    cardWidth = 460;
-    // cardWidth = Math.floor( $('#cards').width()/2 - 40 );
-function writeCard( interaction, showBlocked ) {
-  
-  var userCookie = $.cookie('user_id');
-  var userOwnsInteraction = parseInt(userCookie, 10) === interaction.user_id;
 
-  if ( window.location.href.indexOf('/page/') != -1 ) {
-    // this should really be done by the back-end.
-    if ( !$('#sidebar div#avatar').length ) {
-      var $avatar = $('<div id="avatar"><a href="/group/'+interaction.group.short_name+'"><img alt="'+interaction.group.name+'" src="'+interaction.group.logo_url_lg+'"></a></div>')
-      $('#sidebar').prepend( $avatar );
-    }
+function writeCardButtons( $card ) {
+  var interaction_id = $card.data('interaction-id'),
+      kind = $card.data('kind'),
+      tagBody = $card.find('.reactionBox h1').text(),
+      userName = $card.data('user-name');
 
-    if ( !$('#sidebar h3').length ) {
-      var $pageTitle = $('<h3>'+interaction.page_title+'</h3><div style="text-align:center;padding-right:20px;margin-bottom:20px"><a href="'+interaction.external_url+'" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a></div>')
-      $('#sidebar h4').text('Activity on:').after( $pageTitle );
-    }
-  }
+  // var userCookie = $.cookie('user_id');
+  // var userOwnsInteraction = parseInt(userCookie, 10) === interaction.user_id;
 
-  if ( interaction.approved || ( !interaction.approved && showBlocked ) ) {
-    
-    // write the card first, then append the comment
-    var $card = $('<div class="card '+interaction.kind+'" id="card_'+interaction.id+'" style="z-index:'+zIndex+';width:'+cardWidth+'px;" />'),
-        hasProfilePic =  interaction.user_avatar != "None" && interaction.user_avatar != "",
-        profilePic = hasProfilePic ? interaction.user_avatar : "{{ STATIC_URL }}site/images/anonymous-user.png",
-        $header = $('<header/>').attr('title', interaction.interaction_node_body)//chain
-         .append('<div class="who_and_what color'+colorInt+'"><a href="'+interaction.user_profile_link+'" class="added_by_user"><img src="'+profilePic+'" class="user_avatar" /><h4>'+interaction.user_name +'</h4></a><h1><div><a href="'+window.location.pathname+'?s='+interaction.interaction_node_body+'">'+interaction.interaction_node_body+'</a></div></h1></div>');
-
-
-    if ( interaction.moderator ) {
-        $header.append('<div class="block_content">'
-          + '<a href="javascript:void(0);" onclick="RB.admin.blockContent('+interaction.id+');" id="moderate_'+interaction.id+'">'
-          + (( interaction.approved ) ? 'Block':'Unblock')
-          + '</a></div>');
-    }
-
-    var $content = $('<div class="content"/>');
-    
-    if ( interaction.kind == "img" ) {
-        
-        //apply this to the content_body to serve as a spacer.
-        var styleString = getContentDimsStyle({
-            height: interaction.content_height,
-            width: interaction.content_width
-        });
-
-        $content.append(
-            '<div class="content_body" '+styleString+'><a href="{{ BASE_URL }}/i/'+interaction.id+'/" target="_blank"><img src="'+interaction.content_body+'"></a></div><div class="comments"></div>');
-    } else if ( interaction.kind == "med" ) {
-      
-        //apply this to the content_body to serve as a spacer.
-        // var styleString = getContentDimsStyle({
-        //     height: interaction.content_height,
-        //     width: interaction.content_width
-        // });
-
-      var videoUrl = interaction.content_body;
-      //if we want this later...
-      // var videoUrl = RB.fixUrlParams(interaction.content_body, {
-      //   wmode:"transparent"
-      // });
-
-      $content.append(
-        '<div class="content_body"><a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><iframe width="300" height="250" frameborder="0" src="'+videoUrl+'"></iframe></a></div><div class="comments"></div>');
-    } else if ( interaction.kind == "txt" ) {
-      $content.append('<a href="{{ BASE_URL }}/i/'+interaction.id+'" target="_blank"><div class="content_body"><span>'+interaction.content_body+'</span></div></a><div class="comments"></div>');
-      if ( interaction.content_body.length > 30 ) {
-        $card.addClass('long');
-      }
-    }
-
-    var $buttons = $('<div class="buttons"></div>');
-    if ( userCookie ) {
-            //if this is the user's tag, give them the option to remove it -- they already added it, they can't add it any further!
-            if(userOwnsInteraction){
-                $buttons.append(
-                    '<button class="tag_remove btn">Undo this reaction</button>'
-                );
-            }else{
-                $buttons.append(
-                    '<button class="me_too btn">+1 '+interaction.interaction_node_body+'</button>'
-                );
-            }
-            $buttons.append(
-                '<button class="btn add_new_reaction">Add new reaction</button>'+
-                '<button class="btn add_new_comment">Comment</button>'+
-                '<button class="btn add_to_board">Add to board</button>'
-            );
-
-          if ( board_admin ) {
-            $buttons.append('<button class="delete_from_board btn">Delete from this board</button>');
-          }
-    } else {
-        $buttons.append(
-            '<div class="buttonsMsg">To react or comment on this, <a href="/login" onclick="RDRAuth.openGenericLoginWindow(); return false;" >log in</a>!</div>'
-        );
-    }
-
-    var $meta = $('<div class="meta"/>'),
-        $metaRight = $('<div class="metaRight"/>');
-
-    $meta.prepend('<div class="date">'+interaction.date+'</div>');
-    $meta.append($metaRight);
-    $meta.append('<div class="clear" /><div class="me_too_outcome" />');
-    
-    if ( interaction.kind == "pag" ) {
-      var from_text = '<span class="from">Whole page</span> at<br/>';
-    } else if ( interaction.kind == "txt" ) {
-      var from_text = '<span class="from">Phrase</span> from<br/>';
-    } else if ( interaction.kind == "img" ) {
-      var from_text = '<span class="from">Image</span> from<br/>';
-    } else {
-      var from_text = '<span class="from">Video</span> from<br/>';
-    }
-    $metaRight.append('<img class="group_favicon" src="http://www.google.com/s2/favicons?domain='+interaction.domain+'" /><div class="group">'+from_text+'<a href=/group/' + interaction.group.short_name + ' class="group_link"> <span>'+interaction.domain+'</span></a>: <a href="{{ BASE_URL }}/i/'+interaction.id+'" class="title" target="_blank">'+interaction.page_title+' <i class="icon-external-link"></i></a></div>')
-            .data({
-                interactionId: interaction.id,
-                groupName: interaction.group.short_name
-            });
-
-    if ( userCookie ) {
+    var $buttons = $('.interaction_'+interaction_id).find('.buttons');
+    // if ( userCookie ) {
       // ADD A NEW REACTION
-      $buttons.find('button.me_too').click( function() {
-        RB.interactions.me_too( interaction.id );
+      $buttons.find('.me_too').click( function() {
+        RB.interactions.me_too( interaction_id );
       });
-      $buttons.find('button.tag_remove').click( function() {
-        RB.interactions.delete_reaction( interaction.id );
+      $buttons.find('.tag_remove').click( function() {
+        RB.interactions.delete_reaction( interaction_id );
       });
 
       // add a new reaction
-      $buttons.find('button.add_new_reaction').click( function() {
+      $buttons.find('.add_new_reaction').click( function() {
         $('#add_new_reaction_form').remove();
-        if ( interaction.kind == "img" ) {
-          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+interaction.content_body+'"></div>');
-        } else if ( interaction.kind == "med" ) {
-          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe></div>');
-        } else if ( interaction.kind == "txt" ) {
-          $rateContent = $('<div class="rateContent"><span>'+interaction.content_body+'</span></div>');
+        if ( kind == "img" ) {
+          var contentBody = $card.find('.contentBody').attr('src');
+          var $rateContent = $('<div style="width:300px;float:left;"><img width="300" src="'+contentBody+'"></div>');
+        } else if ( kind == "med" ) {
+          var contentBody = $card.find('.contentBody').attr('src');
+          $rateContent = $('<div style="width:300px;float:left;"><iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe></div>');
+        } else if ( kind == "txt" ) {
+          var contentBody = $card.find('.contentBody').text();
+          $rateContent = $('<div class="rateContent"><span>'+contentBody+'</span></div>');
         }
 
         var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_reaction_form" />').append('<h2 style="margin-bottom:20px;">What\'s your reaction?</h2>')//chain
-                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button btn">Add Reaction</button></div>' )//chain
+                  .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;height:auto;" id="new_reaction_text" class="new_reaction_text" /><button class="btn" id="new_reaction_button">Add Reaction</button></div>' )//chain
                   .append( $rateContent );
         $.fancybox($obj ,{
           wrapCSS    : 'fancybox-custom',
@@ -400,37 +330,42 @@ function writeCard( interaction, showBlocked ) {
                 'background' : 'rgba(100,100,100,0.8)'
               }
             }
+          },
+          afterShow: function() {
+            $('#new_reaction_button').click(function() {
+              RB.interactions.add_new_reaction( interaction_id, $('#new_reaction_text').val() );
+            });
           }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
-            RB.interactions.add_new_reaction( interaction.id, $(this).val() );
+            RB.interactions.add_new_reaction( interaction_id, $(this).val() );
           }
-        });
-        $obj.find('#new_reaction_button').click(function() {
-          RB.interactions.add_new_reaction( interaction.id, $('#new_reaction_text').val() );
         });
       });
 
       // ADD A COMMENT
-      if (interaction.kind != "pag" ) {
-        $buttons.find('button.add_new_comment').click( function() {
+      if (kind != "pag" ) {
+        $buttons.find('.add_new_comment').click( function() {
           $('#add_new_comment_form').remove();
             
-            //consolodate these duplicate functions
+            //consolidate these duplicate functions
             var $rateContent = $('<div class="rateContent">');
-            if ( interaction.kind == "img" ) {
-                $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
-            } else if ( interaction.kind == "med" ) {
-                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe>');
-            } else if ( interaction.kind == "txt" ) {
-                $rateContent.append('<span>'+interaction.content_body+'</span>')
+            if ( kind == "img" ) {
+                var contentBody = $card.find('.contentBody').attr('src');
+                $rateContent.append('<img width="300" src="'+contentBody+'">');
+            } else if ( kind == "med" ) {
+                var contentBody = $card.find('.contentBody').attr('src');
+                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe>');
+            } else if ( kind == "txt" ) {
+                var contentBody = $card.find('.contentBody').text();
+                $rateContent.append('<span>'+contentBody+'</span>')
                 .addClass('rateContentText');
-            }else {
-                $rateContent.append('<span>'+interaction.content_body+'</span>')
+            // }else {
+                // $rateContent.append('<span>'+interaction.content_body+'</span>')
             }
 
-          var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3>'+interaction.interaction_node_body+'</h3>')//chain
+          var $obj = $('<div style="width:600px;overflow:auto;" id="add_new_comment_form" />').append('<h2 style="margin-bottom:20px;">Add a comment or hashtag</h2><h3>'+tagBody+'</h3>')//chain
                     .append( '<div style="width:280px;margin-left:20px;float:right;"><input type="text" style="width:100%;font-size:20px;" id="new_comment_text" /><label>e.g. <strong>Wow, I totally agree</strong>, or <strong>#london2012</strong></label><button class="btn" id="new_comment_button">Add Comment</button></div>' )//chain
                     .append( $rateContent );
           $.fancybox($obj ,{
@@ -445,40 +380,42 @@ function writeCard( interaction, showBlocked ) {
           });
           $obj.find('input').focus().keyup( function(event) {
             if (event.keyCode == '13') { //en
-              RB.interactions.add_new_comment( interaction.id, $(this).val() );
+              RB.interactions.add_new_comment( interaction_id, $(this).val() );
             }
           });
           $obj.find('#new_comment_button').click(function() {
-            RB.interactions.add_new_comment( interaction.id, $('#new_comment_text').val() );
+            RB.interactions.add_new_comment( interaction_id, $('#new_comment_text').val() );
           });
         });
       } else {
-        $buttons.find('button.add_new_comment').remove();
+        $buttons.find('.add_new_comment').remove();
       }
 
       // ADD TO BOARD
-      $buttons.find('button.add_to_board').click( function() {
+      $buttons.find('.add_to_board').click( function() {
         $('#add_to_board_form').remove();
 
             //consolodate these duplicate functions
             var $rateContent = $('<div class="rateContent">');
-            if ( interaction.kind == "img" ) {
-                $rateContent.append('<img width="300" src="'+interaction.content_body+'">');
-            } else if ( interaction.kind == "med" ) {
-                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+interaction.content_body+'"></iframe>');
-            } else if ( interaction.kind == "txt" ) {
-                $rateContent.append('<span>'+interaction.content_body+'</span>')
-                .addClass('rateContentText');
-            }else {
-                $rateContent.append('<span>'+interaction.content_body+'</span>')
+            if ( kind == "img" ) {
+                var contentBody = $card.find('.contentBody').attr('src');
+                $rateContent.append('<img width="300" src="'+contentBody+'">');
+            } else if ( kind == "med" ) {
+                var contentBody = $card.find('.contentBody').attr('src');
+                $rateContent.append('<iframe width="300" height="250" frameborder="0" src="'+contentBody+'"></iframe>');
+            } else if ( kind == "txt" ) {
+                var contentBody = $card.find('.contentBody').text();
+                $rateContent.append('<span>'+contentBody+'</span>').addClass('rateContentText');
+            // }else {
+            //     $rateContent.append('<span>'+interaction.content_body+'</span>')
             }
 
         var $reactionWrap = $('<div class="reactionWrap" style="width:280px;"></div>')
-            .append( '<h3>'+interaction.interaction_node_body+'</h3>' )
+            .append( '<h3>'+tagBody+'</h3>' )
             .append( $rateContent );
 
         var $obj = $('<div class="clearfix" style="width:600px;overflow:auto;" id="add_to_board_form" />').append('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2>')//chain
-                  .append( '<div class="boardUserInfo" style="padding-bottom:2px;border-bottom:1px dotted #ccc;margin-bottom:6px;"><img src="'+profilePic+'" class="user_avatar" style="width:25px;"/> <h4 style="font-size:16px;display:inline-block;">'+interaction.user_name+':</h4></div>' )//chain
+                  .append( '<div class="boardUserInfo" style="padding-bottom:2px;border-bottom:1px dotted #ccc;margin-bottom:6px;"><img src="" class="user_avatar" style="width:25px;"/> <h4 style="font-size:16px;display:inline-block;">'+userName+':</h4></div>' )//chain
                   .append( '<div class="yourBoards"><h4>Your Boards</h4><select style="width:95%;font-size:20px;" id="board_list"><option value="">Choose a board...</option></select></div>' )
                   .append($reactionWrap);
         
@@ -493,10 +430,10 @@ function writeCard( interaction, showBlocked ) {
         $user_boards.change( function() {
             var $this = $(this).find(':checked');
             if ( !isNaN( parseInt($this.val()) ) ) {
-              RB.interactions.add_to_board(interaction.id, parseInt($this.val()), $this.text() );
+              RB.interactions.add_to_board(interaction_id, parseInt($this.val()), $this.text() );
             } else if ( $this.val() == "create" ) {
                 // pop the board create form
-                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site&int_id='+interaction.id, 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site&int_id='+interaction_id, 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
             }
         });
 
@@ -512,128 +449,134 @@ function writeCard( interaction, showBlocked ) {
       });
 
       // REMOVE FROM BOARD (only if board admin)
-      $buttons.find('button.delete_from_board').click( function() {
-        RB.interactions.remove_from_board(interaction.id, "{{ board.id }}" );
+      $buttons.find('.delete_from_board').click( function() {
+        RB.interactions.remove_from_board(interaction_id, "{{ board.id }}" );
       });
 
 
-    }
+    // }
 
-    $card.append( $header, $content, $meta, $buttons );
-    zIndex--;
-    colorInt = ( colorInt < 5 ) ? colorInt+1 : 1;
+    // $card.append( $header, $content, $meta, $buttons );
+    // zIndex--;
+    // colorInt = ( colorInt < 5 ) ? colorInt+1 : 1;
 
-    $('#cards #content').append( $card ); 
-    $card.find('header h1').bigtext({ maxfontsize:32 });
+    // $('#cards #content').append( $card ); 
 
-    $('.view-at-site').attr( 'href', '/i/'+interaction.id+'/' ).text('View this at '+interaction.group.name);
-  }
+    // $('.view-at-site').attr( 'href', '/i/'+interaction.id+'/' ).text('View this at '+interaction.group.name);
 }
 
-function writeComment( comment, parent, showBlocked ) {
-  if ( comment.approved || ( !comment.approved && showBlocked ) ) {
-    var $card = $('#card_'+parent.id);
+// function writeComment( comment, parent, showBlocked ) {
+//   if ( comment.approved || ( !comment.approved && showBlocked ) ) {
+//     var $card = $('.interaction_'+parent.id);
 
-    // check to see if the card for the interaction exists yet
-    if ( !$card.length ) {
-      writeCard( parent );
-      var $card = $('#card_'+parent.id);
-    }
+//     // check to see if the card for the interaction exists yet
+//     if ( !$card.length ) {
+//       // writeCard( parent );
+//       // var $card = $('#card_'+parent.id);
+//       return;
+//     }
 
-    var $comments = $card.find('div.comments'),
-        $comment_container = $('<div class="comment_container clearfix"/>');
+//     var $comments = $card.find('div.comments'),
+//         $comment_container = $('<div class="comment_container clearfix"/>');
 
-    var userName = comment.user_name || "Anonymous";
+//     var userName = comment.user_name || "Anonymous";
 
-    $comment_container.html(
-        '<div class="header">' +
-            '<div class="when">'+comment.created+'</div>' +
-            '<a href="'+comment.user_profile_link+'">' +
-                '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
-                '<div class="who">'+userName+'</div>' +
-            '</a>' +
-        '</div>' +
-        '<div class="comment">' +
-            '<div class="comment_body">'+comment.comment+'</div>' +
-        '</div>'
-    );
+//     $comment_container.html(
+//         '<div class="header">' +
+//             '<div class="when">'+comment.created+'</div>' +
+//             '<a href="'+comment.user_profile_link+'">' +
+//                 '<div class="avatar"><img src="'+comment.user_avatar+'"></div>' +
+//                 '<div class="who">'+userName+'</div>' +
+//             '</a>' +
+//         '</div>' +
+//         '<div class="comment">' +
+//             '<div class="comment_body">'+comment.comment+'</div>' +
+//         '</div>'
+//     );
 
-    if ( interaction.moderator ) {
-        $comment_container.append('<div class="block_content">'
-          + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
-          + '</div>'
-        );
-    }
+//     if ( interaction.moderator ) {
+//         $comment_container.append('<div class="block_content">'
+//           + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
+//           + '</div>'
+//         );
+//     }
 
-    $comments.show();
-    if ( !$comments.find('h2').length ){
-        $comments.append('<h2>Comments</h2>');
-    }
-    $comments.find('h2').after( $comment_container );
-  }
-}
+//     $comments.show();
+//     if ( !$comments.find('h2').length ){
+//         $comments.append('<h2>Comments</h2>');
+//     }
+//     $comments.find('h2').after( $comment_container );
+//   }
+// }
 
 
 // $.each( interactions.content, function(idx, interaction) {
-$.each( interactions, function(idx, interaction) {
-  var showBlocked = ( window.location.href.indexOf('/not_approved/') != -1 ) ? true:false;
-  writeCard( interaction, showBlocked );
-  $.each( interaction.comments, function(idx, comment) {
-    writeComment( comment, interaction );
-  });
-});
-
-// $.each( interactions.pages, function(idx, interaction) {
-//   writePageCard( interaction );
+// $.each( interactions, function(idx, interaction) {
+//   var showBlocked = ( window.location.href.indexOf('/not_approved/') != -1 ) ? true:false;
+//   writeCard( interaction );
+//   $.each( interaction.comments, function(idx, comment) {
+//     writeComment( comment, interaction );
+//   });
 // });
 
+
+// var $container = $('#content');
+
+// function cardReset() {
+// {% if not singleton %}
+// $container.isotope({
+//   // options...
+//   resizable: false, // disable normal resizing
+//   // set columnWidth to a percentage of container width
+//   masonry: { columnWidth: 460 },
+//   itemSelector : 'div.card'
+// }, function() {
+//   $('#content').css('visibility','visible')
+// });
+// {% endif %}
+// }
+
+// function getContentDimsStyle(dims){
+    
+//     //these will be 0 by default from the DB.
+//     var height = dims.height;
+//     var width = dims.width;
+
+//     if(!height || !width){
+//         return "";
+//     }
+//     //else
+
+//     //this must match our .card{width:300px + margin-left:2px} css
+//     var CARDWIDTH = 458; //$('.card').eq(0).width();
+//     var minHeight = Math.round((height/width)*CARDWIDTH);
+
+//     minHeight += 3;
+//     //quick fix for now to make the styles look better
+
+//     return 'style=" min-height:'+minHeight+'px; "';
+// }
+
+$(document).ready(function(){
+  
+  $('.card').each(function(idx, card) {
+    var $card = $(card);
+    // $card.find('h1 a').bigtext();
+
+    if ( !$card.find('.comment_container').length ) {
+      $card.find('.comments').remove();
+    }
+
+    writeCardButtons( $card );
+});
+
 $.each( metoos, function(interaction_id, count) {
-  $('#card_'+interaction_id).find('div.who_and_what h4').append('<span class="metoos">and '+count+' more</span>')//chain
+  $('.interaction_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' more</a>')//chain
   .click( function() {
     RB.follow.agreed(interaction_id);
   } );
 });
 
-
-var $container = $('#content');
-
-function cardReset() {
-{% if not singleton %}
-$container.isotope({
-  // options...
-  resizable: false, // disable normal resizing
-  // set columnWidth to a percentage of container width
-  masonry: { columnWidth: 460 },
-  itemSelector : 'div.card'
-}, function() {
-  $('#content').css('visibility','visible')
-});
-{% endif %}
-}
-
-function getContentDimsStyle(dims){
-    
-    //these will be 0 by default from the DB.
-    var height = dims.height;
-    var width = dims.width;
-
-    if(!height || !width){
-        return "";
-    }
-    //else
-
-    //this must match our .card{width:300px + margin-left:2px} css
-    var CARDWIDTH = 460; //$('.card').eq(0).width();
-    var minHeight = Math.round((height/width)*CARDWIDTH);
-
-    minHeight += 3;
-    //quick fix for now to make the styles look better
-
-    return 'style=" min-height:'+minHeight+'px; "';
-}
-
-$(document).ready(function(){
-  cardReset();
 });
 
 {% if profile_user %}

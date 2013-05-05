@@ -267,13 +267,27 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         num_interactions = checkLimit(user, group)
         tempuser = True
 
+    #temporaryish hack to deal with cdn subdomain prefixes for media!!!
+    #On the front end, we are stripping parts of the url out of for images and media
+    #so, to keep the content url consistent, just grab it from an existing interaction if it exists.
+    if content.kind == "img" or content.kind == "media":
+        try:
+            existing_interaction_w_content = Interaction.objects.filter(
+                container=container
+            )[:1].get()
+            content_node = existing_interaction_w_content.content
+        except Interaction.DoesNotExist:
+            content_node = content
+    else:
+        content_node = content
+
     interactions = Interaction.objects.filter(user=user)
     # Check unique content_id, user_id, page_id, interaction_node_id
     try:
         existing_interaction = interactions.get(
             user=user,
             page=page,
-            content=content,
+            content=content_node,
             interaction_node=interaction_node,
             kind=kind
         )
@@ -290,10 +304,16 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         parent = None
     
     try:
+        
+        # print "***************** which content node was passed in? **********************"
+        # print content
+        # print "***************** which content_node did we find in an existing interaction? **********************"
+        # print content_node
+
         new_interaction = Interaction(
             page=page,
             container=container,
-            content=content,
+            content=content_node,
             user=user,
             kind=kind,
             interaction_node=interaction_node,
@@ -301,7 +321,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             rank = int(time.time()*1000),
             approved = False if group.requires_approval else True
         )
-    except:
+    except Exception as e:
         raise JSONException(u"Error creating interaction object")
 
     new_interaction.save()
@@ -321,13 +341,18 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         
-        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
-        t = Thread(target=container_cache_updater, kwargs={})
+        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
+        t = Thread(target=page_container_cache_updater, kwargs={})
         t.start()
         
         notification = AsynchPageNotification()
         t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         t.start()
+        
+        if not new_interaction.parent or new_interaction.kind == 'com':
+            global_cache_updater = GlobalActivityCacheUpdater(method="update")
+            t = Thread(target=global_cache_updater, kwargs={})
+            t.start()
 
     except Exception, e:
         logger.warning(traceback.format_exc(50))   
@@ -415,16 +440,19 @@ def getSinglePageDataDict(page_id):
     
     
 def getKnownUnknownContainerSummaries(page_id, hashes):
-    page = Page.objects.get(id=page_id)  
+    page = Page.objects.get(id=page_id)
+    logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
+    logger.info("CONTAINERS: " + str(containers))
     ids = [container[0] for container in containers]
     interactions = list(Interaction.objects.filter(
         container__in=ids,
         page=page,
         approved=True
     ).select_related('interaction_node','content','user',('social_user')))
-
+    logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
+    logger.info("K KEYS: " + str(known.keys()))
     unknown = list(set(hashes) - set(known.keys()))
     cacheable_result = dict(known=known, unknown=unknown)
     return cacheable_result
@@ -454,5 +482,56 @@ def getSettingsDict(group):
     settings_dict['blessed_tags'] = blessed_tags
     return settings_dict
 
+def getGlobalActivity():
+    makeItLean = True
+    historyLen = 5 if makeItLean else 30
+    maxInteractions = 200 if makeItLean else None
+
+    today = datetime.now()
+    tdelta = timedelta(days = -historyLen)
+    the_past = today + tdelta
+    interactions = Interaction.objects.all()
+    interactions = interactions.filter(
+        created__gt = the_past, 
+        kind = 'tag', 
+        approved=True, 
+        page__site__group__approved=True
+    ).order_by('-created')[:maxInteractions]
     
+    users = {}
+    pages = {}
+    groups = {}
+    nodes ={}
+    for inter in interactions:
+        if not groups.has_key(inter.page.site.group.name):
+            groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
+                                                                                    fields=['id', 'short_name'])}
+        else:
+            groups[inter.page.site.group.name]['count'] +=1
+            
+        if not pages.has_key(inter.page.url):
+            pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
+        else:
+            pages[inter.page.url]['count'] +=1
+        
+        if not inter.user.email.startswith('tempuser'):    
+            if not users.has_key(inter.user.id):
+                user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
+                                                               'last_login', 'date_joined', 'email',
+                                                                'is_superuser', 'is_staff', 'password', 'groups'])
+                user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
+                                                                                          'gender', 'provider', 
+                                                                                          'bio', 'hometown', 'user',
+                                                                                          'follow_email_option'])
+                users[inter.user.id] = {'count': 1, "user":user_dict}
+            else:
+                users[inter.user.id]['count'] +=1
+            
+        if not nodes.has_key(inter.interaction_node.body):
+            nodes[inter.interaction_node.body] = {'count': 1}
+        else:
+            nodes[inter.interaction_node.body]['count'] +=1
+        
+            
+    return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
     

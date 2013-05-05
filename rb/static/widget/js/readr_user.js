@@ -6,39 +6,8 @@ for ( var i in qs ) {
 	var this_arg = qs[i].split('=');
 	qs_args[this_arg[0]] = this_arg[1];
 }
-if ( typeof qs_args.group_id == "undefined" ) qs_args.group_id = "";
-if ( typeof $.receiveMessage == "function") {
-	$.receiveMessage(
-		function(e){
-
-            var keys = {
-                registerEvent: "register-event::"
-            };
-            var jsonData;
-            var data;
-
-		    if( e.data == "getUser" ) {
-	    		RDRAuth.getUser();
-	    	} else if ( e.data == "reloadXDMframe" ) {
-	    		window.location.reload();
-	    	} else if ( e.data == "reauthUser" ) {
-		    	RDRAuth.reauthUser();
-		    } else if ( e.data == "returnUser" ) {
-	    		RDRAuth.returnUser();
-		    } else if ( e.data == "killUser" ) {
-	    		RDRAuth.killUser();
-		    } else if ( e.data == "TESTIT" ) {
-		    	RDRAuth.testMessage();
-	    	} else if ( e.data.indexOf("page_hash") != -1 ) {
-	    		$.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
-	    	} else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
-                jsonData = e.data.split(keys.registerEvent)[1];
-                data = $.parseJSON(jsonData);
-                RDRAuth.events.trackEventToCloud(data);
-            }
-		},
-		qs_args.parentHost
-	);
+if ( typeof qs_args.group_id == "undefined" ) {
+    qs_args.group_id = "";
 }
 
 function getWindowProps(options){
@@ -121,7 +90,6 @@ window.RDRAuth = {
     },
 	events: {
 		track: function( data ) {
-            debugger;
 	        // RDRAuth.events.track:
 	        // mirrors the event tracker from the widget
 	        var standardData = "";
@@ -383,7 +351,7 @@ window.RDRAuth = {
 			// readrboard user.  we don't have a reauth for RB users yet.  but widget should throw the login panel.
 		}
 	},
-	checkFBStatus : function(args) {
+	checkFBStatus: function(args) {
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
 
@@ -405,36 +373,41 @@ window.RDRAuth = {
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
 						FB.api('/me', function(response) {
-							if ( $('#fb-login-button a.logging-in').length ) {
-							// 	// reload the window only if they had just taken the action of clicking the login button.  janky-ish.
-								if ( $('#fb-login-button a').hasClass('logging-in') ) {
-									window.location.reload();
-								}
-
-								// shouldn't need this.  the window reload above removes the need for it.
-			      				var $user = $('<a/>'),
-								$avatar = $('<img/>'),
-								$name = $('<strong/>');
-
-								$user.attr('href', '/user/'+user_id );
-								$avatar.attr('src', img_url + '?type=square');
-								$name.text( response.name );
-
-								$user.append( $avatar, $name );
-
-								var user_id = $.cookie('user_id'),
-									user_name = $.cookie('full_name');
-									$user_menu = $('<div id="log-out-link" />');
-
-								$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
-						            '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
-						            '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
-						            '<h5>Settings</h5>' +
-						            '<label for="private_profile">' +
-						              '(Reload the page to edit your setttings.)' +
-						            '</label>');
-								$('#logged-in').html( $user ).append($user_menu);
+							
+                            //update the login menu html
+                            if( !$('#fb-login-button a.logging-in').length ){
+                                return;
+                            }
+                            // reload the window only if they had just taken the action of clicking the login button.  janky-ish.
+							if ( $('#fb-login-button a').hasClass('logging-in') ) {
+								window.location.reload();
+                                return;
 							}
+
+							// shouldn't need this.  the window reload above removes the need for it.
+		      				var $user = $('<a/>'),
+							$avatar = $('<img/>'),
+							$name = $('<strong/>');
+
+							$user.attr('href', '/user/'+user_id );
+							$avatar.attr('src', img_url + '?type=square');
+							$name.text( response.name );
+
+							$user.append( $avatar, $name );
+
+							var user_id = $.cookie('user_id'),
+								user_name = $.cookie('full_name');
+								$user_menu = $('<div id="log-out-link" />');
+
+							$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
+					            '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
+					            '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
+					            '<h5>Settings</h5>' +
+					            '<label for="private_profile">' +
+					              '(Reload the page to edit your setttings.)' +
+					            '</label>');
+							$('#logged-in').html( $user ).append($user_menu);
+						
 		      			});
 					} else {
 						RDRAuth.getReadrToken( response.authResponse, function() { });
@@ -541,7 +514,7 @@ window.RDRAuth = {
 		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
 		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
 	},
-	returnUser : function() {
+	returnUser: function() {
 		RDRAuth.readUserCookie();
 		if (top == self) {
 			// we're on the site
@@ -637,7 +610,7 @@ window.RDRAuth = {
 	},
 	doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
-        
+
         RDRAuth.events.helpers.trackFBLoginAttempt();
 
 		FB.login(function(response) {
@@ -690,6 +663,49 @@ window.RDRAuth = {
 		if (value) return value.replace(/"/g,'').replace(/\\054/g,",").replace(/\\073/g,";");
 	}
 }
+
 $(document).ready(function(){
-    RDRAuth.init();
+
+    //wait for fb init initing RDRAuth
+    window.fb_loader.done(function(){
+        RDRAuth.init();
+    });
+    
+    //wait for fb init before receiving messages
+    window.fb_loader.done(function(){
+
+        if ( typeof $.receiveMessage == "function") {
+            $.receiveMessage(
+                function(e){
+
+                    var keys = {
+                        registerEvent: "register-event::"
+                    };
+                    var jsonData;
+                    var data;
+
+                    if( e.data == "getUser" ) {
+                        RDRAuth.getUser();
+                    } else if ( e.data == "reloadXDMframe" ) {
+                        window.location.reload();
+                    } else if ( e.data == "reauthUser" ) {
+                        RDRAuth.reauthUser();
+                    } else if ( e.data == "returnUser" ) {
+                        RDRAuth.returnUser();
+                    } else if ( e.data == "killUser" ) {
+                        RDRAuth.killUser();
+                    } else if ( e.data == "TESTIT" ) {
+                        RDRAuth.testMessage();
+                    } else if ( e.data.indexOf("page_hash") != -1 ) {
+                        $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
+                    } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
+                        jsonData = e.data.split(keys.registerEvent)[1];
+                        data = $.parseJSON(jsonData);
+                        RDRAuth.events.trackEventToCloud(data);
+                    }
+                },
+                qs_args.parentHost
+            );
+        }
+    });
 });

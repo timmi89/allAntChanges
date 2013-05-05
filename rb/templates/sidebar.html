@@ -24,6 +24,17 @@ $(document).ready( function() {
 </script>
 {% endif %}
 
+
+{% if page %}
+<div id="avatar">
+  <h3>{{ page.title }}</h3>
+  <a href="{{ page.canonical_url }}" target="_blank"><img src="{{ STATIC_URL }}site/images/external_link_icon.gif"/> See It</a>
+</div>
+
+
+{% endif %}
+
+
 {% if not profile_user and not group %}
 <div id="avatar">
   <!-- <div>
@@ -58,18 +69,20 @@ $(document).ready( function() {
 {% endif %}
 
 <script>
-$("a.fancybox").fancybox({
-  wrapCSS    : 'fancybox-custom',
-  helpers : {
-    title : {
-      type : 'inside'
-    },
-    overlay : {
-      css : {
-        'background-color' : '#eee'
+$(document).ready( function() {
+  $("a.fancybox").fancybox({
+    wrapCSS    : 'fancybox-custom',
+    helpers : {
+      title : {
+        type : 'inside'
+      },
+      overlay : {
+        css : {
+          'background-color' : '#eee'
+        }
       }
     }
-  }
+  });
 });
 </script>
 <div class="fancy_user_list" id="follower_list" style="display:none;width:500px;"></div>
