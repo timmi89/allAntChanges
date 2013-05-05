@@ -332,6 +332,7 @@ function readrBoard($R){
 
                 var animWidth = $hidePanel.width();
 
+                // reflow opportunity
                 $showPanel
                     .show()
                     .addClass('rdr-visible')
@@ -1337,11 +1338,11 @@ function readrBoard($R){
                             } else {
                                 // readMode
                                 // show readmode 
-                                var selector = ".rdr-" + hash;
+                                var selector = '[rdr-hash="' + hash + '"]';
 
                                 var $indicator = $('#rdr_indicator_'+hash),
                                 $indicator_body = $('#rdr_indicator_body_'+ hash),
-                                $container = $('.rdr-'+hash);
+                                $container = $('[rdr-hash="'+hash+'"]');
 
                                 if ( kind == "text" ) {
                                     coords = {
@@ -1986,7 +1987,7 @@ function readrBoard($R){
                     clearTimeout(timeoutCloseEvt);
                     clearTimeout(timeoutCollapseEvt);
 
-                    var $container = $('.rdr-'+hash),
+                    var $container = $('[rdr-hash="'+hash+'"]'),
                         $indicator = $('#rdr_indicator_'+hash);
 
                     $container.removeClass('rdr_engage_media');
@@ -2018,7 +2019,7 @@ function readrBoard($R){
                     var $this = $(this),
                     hash = $actionbars.data('hash'),
                     $indicator_details = $('#rdr_indicator_details_'+hash),
-                    $containerImg = $('.rdr-'+hash),
+                    $containerImg = $('[rdr-hash="'+hash+'"]'),
                     timeoutCloseEvt = $(this).data('timeoutCloseEvt');
 
                     //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
@@ -2119,11 +2120,11 @@ function readrBoard($R){
                     var hash = hashOrObject;
                 }
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                var page_id = ( $('.rdr-'+hash).data('page_id') ) ? $('.rdr-'+hash).data('page_id') : $('.rdr-'+hash).closest('[rdr-page-container]').data('page_id');
+                var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id');
 
                 // store the page_id on this node to prevent walking-up again later
-                if ( $('.rdr-'+hash+'[rdr-page-container]') && !$('.rdr-'+hash).data('page_id') ) {
-                    $('.rdr-'+hash).data('page_id', page_id);
+                if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
+                    $('[rdr-hash="'+hash+'"]').data('page_id', page_id);
                 }
                 return parseInt( page_id );
             },
@@ -2462,7 +2463,7 @@ function readrBoard($R){
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
-                        if ( $('img.rdr-'+data.container_hash).length == 1 ) {
+                        if ( $('img[rdr-hash="'+data.container_hash+'"]').length == 1 ) {
                             $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
                                 ' <a class="rdr_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
                                 ' <strong class="seeItLinkText rdr_blue">Show it on the page</strong></a></div>');
@@ -2529,7 +2530,7 @@ function readrBoard($R){
             },
             revealSharedContent: function(data){
                 var hash = data.container_hash,
-                    $container = $('.rdr-'+hash);
+                    $container = $('[rdr-hash="'+hash+'"]');
 
                 var kind = $container.data('kind');
 
@@ -3521,7 +3522,7 @@ function readrBoard($R){
                         }
 
                         // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
-                        if ( $this.hasClass('rdr-oldhash') ) {
+                        if ( $this.hasAttr('rdr-oldhash') ) {
                             hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
@@ -3538,8 +3539,8 @@ function readrBoard($R){
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
-                    if ( $this.parents('.rdr-'+hash).length ) {
-                        $this.parents('.rdr-'+hash).removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-'+hash);
+                    if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
+                        $this.parents('[rdr-hash="'+hash+'"]').removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
                     }
 
 
@@ -3558,7 +3559,7 @@ function readrBoard($R){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.addClass( 'rdr-' + hash ).attr('rdr-node', 'true');
+                    $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
                     if ( HTMLkind != 'body') {
                         $this.on('mouseenter', function() {
@@ -3607,7 +3608,7 @@ function readrBoard($R){
                             return;
                         }
 
-                        var $hashable_node = $('.rdr-' + hash);
+                        var $hashable_node = $('[rdr-hash="' + hash +'"]');
                         
                         if ($hashable_node.length == 1 ) {
                             $hashable_node.attr('rdr-hashed','true');
@@ -3647,7 +3648,7 @@ function readrBoard($R){
                                 $.each( response.data.known, function(returnedHash, obj) {
                                     if ( $img.data('oldHash') == returnedHash ) {
                                         // remove the class with the 'new' hash, add a class with the 'old' hash, and set the current hash to the 'old' one
-                                        $img.removeClass( 'rdr-'+$img.data('hash') ).addClass('rdr-'+returnedHash).addClass('rdr-oldhash').data('hash', returnedHash);
+                                        $img.attr('rdr-hash', returnedHash).attr('rdr-oldhash','true').data('hash', returnedHash);
                                     }
                                 });
                             });
@@ -3663,7 +3664,7 @@ function readrBoard($R){
 
                                 var unknown_summary;
                                 // get the kind
-                                var $node = $('.rdr-'+hash);
+                                var $node = $('[rdr-hash="'+hash+'"]');
                                 var kind = $node.data('kind');
                                 if(!kind){
                                     RDR.safeThrow('node should always have data: kind');
@@ -3699,7 +3700,7 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
-                        var $this = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                        var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
                             $indicator = $('#rdr_indicator_'+hash),
                             $indicator_details = $('#rdr_indicator_details_'+hash);
 
@@ -3724,7 +3725,7 @@ function readrBoard($R){
                         return;
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
-                        var $mediaItem = $('img.rdr-'+hash+', iframe.rdr-'+hash+',embed.rdr-'+hash+',video.rdr-'+hash+',object.rdr-'+hash+'').eq(0),
+                        var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
                             $indicator = $('#rdr_indicator_'+hash),
                             $indicator_details = $('#rdr_indicator_details_'+hash);
 
@@ -4118,7 +4119,7 @@ function readrBoard($R){
                         //todo: think about this more later:
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
-                            var $container = $('.rdr-'+hash);
+                            var $container = $('[rdr-hash="'+hash+'"]');
                             try{
                                 node.selState = $container.selog('save', { 'serialRange': node.location });
                             }
@@ -4151,7 +4152,7 @@ function readrBoard($R){
                         }
 
                         // add a class so we note that the content summary was retrieved
-                        $('.rdr-'+hash).attr('rdr_summary_loaded', 'true');
+                        $('[rdr-hash="'+hash+'"]').attr('rdr_summary_loaded', 'true');
 
                         // remove from po' man's throttling array
                         // po' man's throttling
@@ -4664,7 +4665,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             kind = summary.kind;
 
-                            var $container = $('.rdr-'+hash);
+                            var $container = $('[rdr-hash="'+hash+'"]');
 
                             var rindow = args.rindow,
                                 tag_li = args.tag;
@@ -4791,7 +4792,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
                             // remove summary loaded since we might need to call it again....
-                            $('.rdr-'+hash).removeAttr('rdr_summary_loaded');
+                            $('[rdr-hash="'+hash+'"]').removeAttr('rdr_summary_loaded');
 
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
@@ -5223,7 +5224,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
 
                             if ( typeof $message == "object" ) {
-                                $summary_box = $('[rdr-hash="'+args.hash+'"] [rdr-page-container] div.rdr-summary');
+                                $summary_box = $('[rdr-hash="'+args.hash+'"]').hasAttr('rdr-page-container').find('div.rdr-summary');
                                 $summary_box.find('div.rdr_info').html( $message );
                                 //todo: reconsider this method of liberally updating everything
                                 $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
@@ -6145,7 +6146,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //RDR.actions.indicators.utils.borderHilites.make:
 
                             var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
+                                $container = $('[rdr-hash="'+hash+'"]'),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
                                                         
@@ -6186,7 +6187,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var Section = RDR.actions.indicators.utils.borderHilites;
 
                             var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('.rdr-'+hash),
+                                $container = $('[rdr-hash="'+hash+'"]'),
                                 $container_tracker = $('#rdr_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
                             
@@ -6370,7 +6371,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
-                    summary.$container = $('.rdr-'+hash);
+                    summary.$container = $('[rdr-hash="'+hash+'"]');
 
                     // RDR.actions.summaries.sortInteractions(hash);
 
@@ -6893,7 +6894,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
                             if ($.isEmptyObject(content_node) && summary.kind=="img") {
                                 content_node = {
-                                    "body":$('img.rdr-'+summary.hash).get(0).src,
+                                    "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
