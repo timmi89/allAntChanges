@@ -131,17 +131,17 @@
                 <div id="toggle_word_blacklist_wrap">
                     <label>
                         <a href="#" id="toggle_word_blacklist">
-                            <span class="labelTitle word_blacklist_toggle_node">Edit Censored Word List</span>
-                            <span class="labelTitle word_blacklist_toggle_node hidden">Good heavens, my eyes!</span>
+                            <span class="labelTitle word_blacklist_toggle_node" style="font-size: 12px;">Show and edit the list</span>
+                            <span class="labelTitle word_blacklist_toggle_node hidden" style="font-size: 12px;">Good heavens, my eyes!</span>
                         </a>
                         <span class="floatLeft word_blacklist_toggle_node">Warning: Rated R for Raunchy</span>
-                        <span class="floatLeft word_blacklist_toggle_node hidden">Hide this list and keep censoring</span>
+                        <span class="floatLeft word_blacklist_toggle_node hidden">Hide this list, it will continue to be censored</span>
                     </label>
                 </div>
                 <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hidden">
                     {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
                 </div>
-                <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" disabled="disabled" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
+                <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" readonly="readonly" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
 
             </div>
         </section>
@@ -151,6 +151,11 @@
                 <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
                 {{ form.custom_css }}
                 <style>
+
+                #fake_hidden_word_blacklist {
+                    cursor: pointer;
+                }
+
                 textarea {
                     font-family: 'Courier', 'Courier New';
                     font-size: 12px;
@@ -159,6 +164,14 @@
                 }
                 </style>
             </div>
+            <div class="formRow">
+                <label for="id_paragraph_helper">
+                    {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
+                    <span class="labelTitle">Paragraph Tooltips</span>
+                    <span>Paragraphs with no reactions will display an icon when you hover over them.  When you hover over the icon it explains how to select text and react with ReadrBoard.</span>
+                </label>
+            </div>
+
             <!-- <div class="formRow">
                 <label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
                 {{ form.call_to_action }}
@@ -179,6 +192,9 @@
 {% endwith %}
 </div>
 {% endblock wideContent %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
 
 {% block pageJS %}
     <script>
@@ -201,7 +217,7 @@
                 $(this).closest('form').find('.successMsg').hide();
             });
 
-            $('#toggle_word_blacklist').click(function(){
+            $('#toggle_word_blacklist, #fake_hidden_word_blacklist').click(function(){
                 $('.word_blacklist_toggle_node').each(function(){
                     $(this).toggleClass('hidden');
                 });

@@ -179,19 +179,26 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       {% block wideContent %}
       {% endblock %}
     </section>
-    <section role="after wide section">
-      {% if not board %}
-      <section role="complementary">
-      {% block sidebarContent %}
-      {% endblock %}
-      </section>
-      {% endif %}
+    
+    {% block afterWideContent %}
+        <section role="after wide section">
+          {% if not board %}
+          
+          {% block complementarySection %}
+          <section role="complementary">
+              {% block sidebarContent %}
+              {% endblock %}
+          </section>
+          {% endblock %}
 
-      <section role="main">
-      {% block mainContent %}
-      {% endblock mainContent %}
-      </section>
-    </section>
+          {% endif %}
+
+          <section role="main">
+          {% block mainContent %}
+          {% endblock mainContent %}
+          </section>
+        </section>
+    {% endblock %}
   </section>
 
   
