@@ -3178,13 +3178,13 @@ function readrBoard($R){
 
 
                 //div to hold indicatorBodies for media (images and video)
-                $('<div id="rdr_container_tracker_wrap" />').appendTo($rdrSandbox);
+                $('<div id="rdr_container_tracker_wrap" /><div id="rdr_indicator_details_wrapper" /><div id="rdr_event_pixels" />').appendTo($rdrSandbox);
           
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
+                // $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
 
                 //div to hold event pixels
-                $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
+                // $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
 
                 $(document).on('mouseup.rdr', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
@@ -3541,6 +3541,7 @@ function readrBoard($R){
                         });
                     }
 
+                    clog('make a summary for '+hash);
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
@@ -3554,9 +3555,10 @@ function readrBoard($R){
 
                 });
     
-                $.each(indicatorInitQueue, function(idx, hash){
-                    RDR.actions.indicators.init(hash);
-                });
+                // perfimprove
+                // $.each(indicatorInitQueue, function(idx, hash){
+                //     RDR.actions.indicators.init(hash);
+                // });
 
                 return hashList;
             },
@@ -3622,6 +3624,12 @@ function readrBoard($R){
                                         $img.attr('rdr-hash', returnedHash).attr('rdr-oldhash','true').data('hash', returnedHash);
                                     }
                                 });
+                            });
+
+                            $.each( response.data.known, function(returnedHash, obj) {
+clog(returnedHash);
+                                // RDR.actions.indicators.update(returnedHash);
+                                RDR.actions.indicators.init(returnedHash);
                             });
 
                             var summaries = {};
@@ -3827,7 +3835,7 @@ function readrBoard($R){
                                 } else {
                                 }
 
-                                RDR.actions.indicators.update( hash, true);
+                                // RDR.actions.indicators.update( hash, true);
 
 
                                 //now run the type specific function with the //run the setup func above
@@ -5292,74 +5300,77 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
-                    var summary = RDR.summaries[hash],
-                        kind = summary.kind,
-                        $container = summary.$container,
-                        indicatorId = 'rdr_indicator_'+hash,
-                        indicatorBodyId = 'rdr_indicator_body_'+hash,
-                        indicatorDetailsId = 'rdr_indicator_details_'+hash;
+                    var summary = RDR.summaries[hash];
+                    if (typeof summary != "undefined") {
+                        var kind = summary.kind,
+                            $container = summary.$container,
+                            indicatorId = 'rdr_indicator_'+hash,
+                            indicatorBodyId = 'rdr_indicator_body_'+hash,
+                            indicatorDetailsId = 'rdr_indicator_details_'+hash;
 
-                    // don't insert floating pins for page-level interactions
-                    if ( $container.hasAttr('rdr-page-container') ) return;
-                    //else
+                        // don't insert floating pins for page-level interactions
+                        if ( $container.hasAttr('rdr-page-container') ) return;
+                        //else
 
-                    $container.attr('rdr-hasIndicator', 'true');
+                        $container.attr('rdr-hasIndicator', 'true');
 
-                    //check for and remove any existing indicator and indicator_details and remove for now.
-                    //this shouldn't happen though.
-                    //todo: solve for duplicate content that will have the same hash.
-                    $('#rdr_indicator_'+hash).remove();
-                    $('#rdr_container_tracker_'+hash).remove();
-                    $('#rdr_indicator_details_'+hash).remove();
+                        //check for and remove any existing indicator and indicator_details and remove for now.
+                        //this shouldn't happen though.
+                        //todo: solve for duplicate content that will have the same hash.
+                        $('#rdr_indicator_'+hash).remove();
+                        $('#rdr_container_tracker_'+hash).remove();
+                        $('#rdr_indicator_details_'+hash).remove();
 
-                    var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
-                    // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                    // $indicator.css('visibility','hidden');
+                        var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
+                        // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                        // $indicator.css('visibility','hidden');
 
-                    _setupIndicators();
+                        _setupIndicators();
 
-                    if(!kind){
-                        //todo: I'll look into the source of this this, but this should work fine for now.
-                        // RDR.safeThrow('indicator container has no kind attribute');
-                        return;
-                    }
-                    //run setup specific to this type
-                    RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
-
-
-                    //todo: combine this with the kindSpecificSetup above right?
-                    if (kind == 'text'){
-                        $container.unbind('.rdr_helper');
-                        $container.bind('mouseenter.rdr_helper', function() {
-                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                            if ( hasHelper) {
-                                RDR.actions.indicators.helpers.over($indicator);
-                            }
-                        });
-                        $container.bind('mouseleave.rdr_helper', function(e) {
-                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                            if ( hasHelper ) {
-                                RDR.actions.indicators.helpers.out($indicator);
-                            }
-                        });
-
-                        //This will be either a helperIndicator or a hidden indicator
-                        var isZeroCountIndicator = !( summary.counts.tags > 0 );
-
-                        $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
-                        if(isZeroCountIndicator){
-                            $indicator.addClass('rdr_helper');
-                            _setupHoverForShowRindow();
-                        }else{
-                            _setupHoverToFetchContentNodes(function(){
-                                _setupHoverForShowRindow();
-                                _showRindowAfterLoad();
-                            });
+                        if(!kind){
+                            //todo: I'll look into the source of this this, but this should work fine for now.
+                            // RDR.safeThrow('indicator container has no kind attribute');
+                            return;
                         }
-                    }
+                        //run setup specific to this type
+                        clog('RDR.actions.indicators.utils.kindSpecificSetup['+kind+']( '+hash+' );');
+                        RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
-                    //of course, don't pass true for shouldReInit here.
-                    RDR.actions.indicators.update(hash);
+
+                        //todo: combine this with the kindSpecificSetup above right?
+                        if (kind == 'text'){
+                            $container.unbind('.rdr_helper');
+                            $container.bind('mouseenter.rdr_helper', function() {
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if ( hasHelper) {
+                                    RDR.actions.indicators.helpers.over($indicator);
+                                }
+                            });
+                            $container.bind('mouseleave.rdr_helper', function(e) {
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if ( hasHelper ) {
+                                    RDR.actions.indicators.helpers.out($indicator);
+                                }
+                            });
+
+                            //This will be either a helperIndicator or a hidden indicator
+                            var isZeroCountIndicator = !( summary.counts.tags > 0 );
+
+                            $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
+                            if(isZeroCountIndicator){
+                                $indicator.addClass('rdr_helper');
+                                _setupHoverForShowRindow();
+                            }else{
+                                _setupHoverToFetchContentNodes(function(){
+                                    _setupHoverForShowRindow();
+                                    _showRindowAfterLoad();
+                                });
+                            }
+                        }
+
+                        //of course, don't pass true for shouldReInit here.
+                        RDR.actions.indicators.update(hash);
+                    }
 
                     /*helper functions */
                     function _setupIndicators(){
@@ -6454,8 +6465,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         makeSummaryWidget(RDR.page);
                     }else{
                         //only init if it's a text node, don't do it for media.
-                        var shouldReInit = (summary.kind == 'text');
-                        RDR.actions.indicators.update( hash, shouldReInit );
+                        // var shouldReInit = (summary.kind == 'text');
+                        // RDR.actions.indicators.update( hash, shouldReInit );
                     }
 
                     function update_top_interactions_cache(attrs){
