@@ -3366,7 +3366,7 @@ function readrBoard($R){
             },
             hashNodes: function( $node, nomedia ) {
                 //RDR.actions.hashNodes:
-console.log('RDR.actions.hashNodes 1');
+
                 // [porter]: needs a node or nodes
                 if ( typeof $node==="undefined" ) { return; }
 
@@ -3420,7 +3420,7 @@ console.log('RDR.actions.hashNodes 1');
 
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
                 $.each( nodeGroups, function( idx, group ){
-console.log('RDR.actions.hashNodes 2');
+
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
 
@@ -3470,7 +3470,6 @@ console.log('RDR.actions.hashNodes 2');
                 var indicatorInitQueue = [];
 
                 $allNodes.each(function(){
-console.log('RDR.actions.hashNodes 3');
                     var $this = $(this),
                         body = $this.data('body'),
                         kind = $this.data('kind'),
@@ -3583,7 +3582,7 @@ console.log('RDR.actions.hashNodes 3');
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
                 });
-    return;
+    
                 $.each(indicatorInitQueue, function(idx, hash){
                     RDR.actions.indicators.init(hash);
                 });
@@ -5318,8 +5317,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 },
                 init: function(hash){
                     //RDR.actions.indicators.init:
-console.log('RDR.actions.indicators.init 1');
-
                     //note: this should generally be called via RDR.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
@@ -5355,7 +5352,6 @@ console.log('RDR.actions.indicators.init 1');
                         // RDR.safeThrow('indicator container has no kind attribute');
                         return;
                     }
-                    
                     //run setup specific to this type
                     RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
@@ -7503,6 +7499,7 @@ console.log('RDR.actions.indicators.init 1');
 
                     $container.removeAttr( 'rdr-page-key' );
                     $container.attr( 'rdr-page-container' , pageId );
+
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
