@@ -7574,7 +7574,10 @@ RDR.rdr_loadScript = rdr_loadScript;
 //     RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
 
-RDR_scriptPaths.jqueryWithJqueryUI = RDR_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js"
+
+RDR_scriptPaths.jqueryWithJqueryUI = RDR_offline ? 
+    RDR_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
+    RDR_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
 
 RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
     RDR_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
