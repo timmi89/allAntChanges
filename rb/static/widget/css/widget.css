@@ -1575,6 +1575,12 @@ div.rdr_sandbox div.rdr_indicator_details img.rdr_pin {
     margin:0 !important;
 }
 
+.rdr_live_hover div.rdr_indicator {
+  display:inline-block !important;
+}
+.rdr_live_hover div.rdr_indicator.rdr_helper {
+  opacity:0.5 !important;
+}
 .rdr_live_hover div.rdr_indicator img.rdr_pin,
 div.rdr div.rdr_indicator_stats img.rdr_pin {
   background-position:1px -1px !important;

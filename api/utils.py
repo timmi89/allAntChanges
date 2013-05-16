@@ -396,10 +396,10 @@ def getSinglePageDataDict(page_id):
     # Retrieve containers
     containers = Container.objects.filter(id__in=iop.values('container'))
 
-    parents = iop.filter(page=current_page, parent=None)
-    par_con = []
-    for parent in parents:
-        par_con.append({parent.container.id:parent.id})
+    # parents = iop.filter(page=current_page, parent=None)
+    # par_con = []
+    # for parent in parents:
+        # par_con.append({parent.container.id:parent.id})
     # Get page interaction counts, grouped by kind
     values = iop.order_by('kind').values('kind')
     # Annotate values with count of interactions
@@ -416,24 +416,23 @@ def getSinglePageDataDict(page_id):
     toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
   
     # ---Find top 10 shares on a give page---
-    content = Content.objects.filter(interaction__page=current_page.id)
-    shares = content.filter(interaction__kind='shr')
-    sharecounts = shares.annotate(Count("id"))
-    topshares = sharecounts.values("body").order_by()[:10]
+    # content = Content.objects.filter(interaction__page=current_page.id)
+    # shares = content.filter(interaction__kind='shr')
+    # sharecounts = shares.annotate(Count("id"))
+    # topshares = sharecounts.values("body").order_by()[:10]
 
     # ---Find top 10 non-temp users on a given page---
-    socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
-
-    userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
-    topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
+    # socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
+    # userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
+    # topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
     result_dict = dict(
             id=current_page.id,
             summary=summary,
             toptags=toptags,
-            topusers=topusers,
-            topshares=topshares,
-            containers=containers,
-            parents = par_con
+            # topusers=topusers,
+            # topshares=topshares,
+            containers=containers
+            # parents = par_con
         )
     return result_dict
     

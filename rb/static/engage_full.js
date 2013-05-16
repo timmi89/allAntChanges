@@ -3534,14 +3534,18 @@ function readrBoard($R){
 
                     if ( HTMLkind != 'body') {
                         $this.on('mouseenter', function() {
+                            RDR.actions.indicators.init(hash);
                             $(this).addClass('rdr_live_hover');
                         })//chain
                         .on('mouseleave', function() {
+                            var $hash_helper = $('.rdr_helper_rindow.rdr_for_'+hash);
+                            if ( $hash_helper.length ) {
+                                $hash_helper.remove();
+                            }
                             $(this).removeClass('rdr_live_hover');
                         });
                     }
 
-                    clog('make a summary for '+hash);
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
@@ -3610,27 +3614,8 @@ function readrBoard($R){
                             json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            // band-aid.  bandaid.
-                            // we're going to iterate through images to see if there is an old hash
-                            $('img[rdr-node]').each( function() {
-                                var $img = $(this);
-                                // now, iterate through 'known hashes', see if it's an image, and if so... 
-                                // -- see if img.rdr-HASH exists.
-                                // -- if not, see if img.rdr-OLDHASH exists.
-                                // ---- if so, modify its CSS classes and .data() attributes to use the old hash
-                                $.each( response.data.known, function(returnedHash, obj) {
-                                    if ( $img.data('oldHash') == returnedHash ) {
-                                        // remove the class with the 'new' hash, add a class with the 'old' hash, and set the current hash to the 'old' one
-                                        $img.attr('rdr-hash', returnedHash).attr('rdr-oldhash','true').data('hash', returnedHash);
-                                    }
-                                });
-                            });
-
-                            $.each( response.data.known, function(returnedHash, obj) {
-clog(returnedHash);
-                                // RDR.actions.indicators.update(returnedHash);
-                                RDR.actions.indicators.init(returnedHash);
-                            });
+                            // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
+                            RDR.known_hashes = response.data.known;
 
                             var summaries = {};
                             summaries[ pageId ] = response.data.known;
@@ -3754,7 +3739,6 @@ clog(returnedHash);
                 setup: function(summariesPerPage){
                     //RDR.actions.containers.setup:
                     //then define type-specific setup functions and run them
-
                     var _setupFuncs = {
                         img: function(hash, summary){
 
@@ -3856,6 +3840,21 @@ clog(returnedHash);
                     // create the container sort to see which containers have the most activity
                     RDR.actions.summaries.sortPopularTextContainers();
                     RDR.actions.summaries.displayPopularIndicators();
+
+                    $.each( RDR.known_hashes, function(returnedHash, obj) {
+                        // band-aid.  bandaid.
+                        // we're going to iterate through images to see if there is an old hash
+                        var $hash_is_an_img = $('img[rdr-node="returnedHash"]');
+                        if ( $hash_is_an_img.length ) {
+                            if ( $hash_is_an_img.data('oldHash') == returnedHash ) {
+                                // remove the class with the 'new' hash, add a class with the 'old' hash, and set the current hash to the 'old' one
+                                $hash_is_an_img.attr('rdr-hash', returnedHash).attr('rdr-oldhash','true').data('hash', returnedHash);
+                            }
+                        }
+
+                        // now init the indicators
+                        RDR.actions.indicators.init(returnedHash);
+                    });
 
                     RDR.actions.indicators.show(hashesToShow);
                 },
@@ -5241,6 +5240,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             },
             indicators: {
                 show: function(hashes, boolDontFade){
+                    boolDontFade = true;
                     //RDR.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
@@ -5333,7 +5333,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             return;
                         }
                         //run setup specific to this type
-                        clog('RDR.actions.indicators.utils.kindSpecificSetup['+kind+']( '+hash+' );');
                         RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
 
@@ -5694,36 +5693,37 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $indicator_details = summary.$indicator_details,
                             $actionbar = $('rdr_actionbar_'+hash);
 
+                        if ( typeof $indicator != "undefined" ) {
+                            //just rebuild them
+                            $indicator_details.find('div.rdr_body_wrap').remove();
+                            // $oldDetails.remove();
 
-                        //just rebuild them
-                        var $oldDetails = $indicator_details.find('div.rdr_body_wrap');
-                        $oldDetails.remove();
-                      
-                        //update the header
-                        var headerText = RDR.rindow.makeDefaultPanelMessage($indicator_details);
-                        var $header = RDR.rindow.makeHeader( headerText );
-                        
-                        var $bodyWrap = $('<div class="rdr rdr_body_wrap rdr_clearfix" />');
+                            //update the header
+                            var headerText = RDR.rindow.makeDefaultPanelMessage($indicator_details);
+                            var $header = RDR.rindow.makeHeader( headerText );
                             
+                            var $bodyWrap = $('<div class="rdr rdr_body_wrap rdr_clearfix" />');
+                                
 
-                        var kind = summary.kind;
-                        var isMediaContainer = kind=="img" ||
-                            kind=="image" ||  // [pb] really?
-                            kind=="imgage" ||
-                            kind=="med" ||
-                            kind=="media";
+                            var kind = summary.kind;
+                            var isMediaContainer = kind=="img" ||
+                                kind=="image" ||  // [pb] really?
+                                kind=="imgage" ||
+                                kind=="med" ||
+                                kind=="media";
 
-                        //builds out the $tagsList contents
-                        if (isMediaContainer && !$indicator_details.find('div.rdr_view_success').length ){
-                            $indicator_details.data( 'initialWidth', $container.width() );
+                            //builds out the $tagsList contents
+                            if (isMediaContainer && !$indicator_details.find('div.rdr_view_success').length ){
+                                $indicator_details.data( 'initialWidth', $container.width() );
+                            }
+
+                            var $rindow = $indicator_details;
+                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+
+                            $bodyWrap.append($tagsListContainer);
+
+                            $indicator_details.empty().append( $header, $bodyWrap );
                         }
-
-                        var $rindow = $indicator_details;
-                        var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
-
-                        $bodyWrap.append($tagsListContainer);
-
-                        $indicator_details.empty().append( $header, $bodyWrap );
                     },
 
                     //move these from indicators-  they dont belong here
