@@ -291,7 +291,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             interaction_node=interaction_node,
             kind=kind
         )
-        logger.info("Found existing Interaction with id %s" % existing_interaction.id)
+        #logger.info("Found existing Interaction with id %s" % existing_interaction.id)
         return dict(interaction=existing_interaction, existing=True)
     except Interaction.DoesNotExist:
         pass
@@ -440,18 +440,18 @@ def getSinglePageDataDict(page_id):
     
 def getKnownUnknownContainerSummaries(page_id, hashes):
     page = Page.objects.get(id=page_id)
-    logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
+    #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-    logger.info("CONTAINERS: " + str(containers))
+    #logger.info("CONTAINERS: " + str(containers))
     ids = [container[0] for container in containers]
     interactions = list(Interaction.objects.filter(
         container__in=ids,
         page=page,
         approved=True
     ).select_related('interaction_node','content','user',('social_user')))
-    logger.info("K/U I: " + str(interactions))
+    #logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
-    logger.info("K KEYS: " + str(known.keys()))
+    #logger.info("K KEYS: " + str(known.keys()))
     unknown = list(set(hashes) - set(known.keys()))
     cacheable_result = dict(known=known, unknown=unknown)
     return cacheable_result
