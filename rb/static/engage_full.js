@@ -1313,8 +1313,8 @@ function readrBoard($R){
                                             var strRight = $helper.offset().right;
                                             var strBottom = $helper.offset().bottom;
                                             $helper.remove();
-                                            coords.left = strRight + 5; //with a little padding
-                                            coords.top = strBottom;
+                                            coords.left = strRight - 14; //with a little padding
+                                            coords.top = strBottom + 23;
                                         }
                                     }
                                 } else {
