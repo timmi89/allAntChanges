@@ -1237,7 +1237,7 @@ function readrBoard($R){
                             var page = settings.page,
                                 $summary_widget = $('.rdr-summary-'+page.id),
                                 coords = {
-                                    top: $summary_widget.offset().bottom+5,
+                                    top: $summary_widget.offset().top,
                                     left: $summary_widget.offset().left
                                 };
 
@@ -6094,11 +6094,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = $container.height()+modIEHeight-15;
+                            var cssTop = (summary.kind=="media") ? $container.height()+modIEHeight+36:$container.height()+modIEHeight+12;
                             $indicator.data('top', cssTop);
 
+                            if (summary.kind=="media") {
+                                $indicator.addClass('rdr_indicator_not_img');
+                            }
+
                             RDR.util.cssSuperImportant( $indicator, {
-                                left: 4+'px',
+                                left: 12+'px',
                                 top: cssTop+'px'
                             }, true);
 
