@@ -136,7 +136,9 @@ function readrBoard($R){
                 
                 var standardData = "",
                     timestamp = new Date().getTime();
-
+                
+                RDR.user = RDR.user || {};
+                
                 if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
                 if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
                 if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
@@ -151,6 +153,8 @@ function readrBoard($R){
             trackEventToCloud: function( params ) {
                 // RDR.events.trackEventToCloud
                 
+                RDR.user = RDR.user || {};
+
                 var data = $.toJSON({
                     category: params.category,
                     action: params.action,
@@ -593,6 +597,9 @@ function readrBoard($R){
 
                                 var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
                                 // boards
+
+                                RDR.user = RDR.user || {};
+                                
                                 if (typeof RDR.user.user_boards != "undefined" ) {
                                     $.each( RDR.user.user_boards, function(idx, board) {
                                         $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
@@ -2653,8 +2660,10 @@ function readrBoard($R){
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
 
+
                                 for ( var i in message.data ) {
                                     if ( i == "user_boards" ) {
+                                        RDR.user = RDR.user || {};
                                         RDR.user.user_boards = $.evalJSON( message.data[i] );
                                     } else {
                                         RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
@@ -2716,7 +2725,7 @@ function readrBoard($R){
             login: function() {},
             checkForMaxInteractions: function(args, callback){
                 //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
-
+                RDR.user = RDR.user || {};
                 if ( RDR.user.num_interactions && RDR.user.img_url !== "" ) {
                     if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
                         return false;
@@ -3574,7 +3583,7 @@ function readrBoard($R){
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
                         //im guessing this will never happen - test for a while and elliminate.
-                        RDR.safeThrow("Fix your damnned hashes!!");
+                        RDR.safeThrow("No more messy hashes allowed!!");
                         return;
                     }
 
@@ -3591,10 +3600,16 @@ function readrBoard($R){
                             $hashable_node.attr('rdr-hashed','true');
                         }
                     });
+                    
+                    var pageIdToInt = parseInt( pageId, 10);
+                    
+                    if(isNaN(pageIdToInt)){
+                        RDR.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
+                    }
 
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
-                       pageID: parseInt( pageId ),
+                       pageID: pageIdToInt,
                        hashes: hashList
                     }, onSuccessCallback);
                 
