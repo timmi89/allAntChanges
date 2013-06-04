@@ -24,7 +24,7 @@ from django.forms.models import model_to_dict
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import EmailMessage
-
+from django.views.decorators.cache import cache_page
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils import simplejson
@@ -155,6 +155,7 @@ def sites(request):
 def group(request):
     pass
 
+@cache_page(60)
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, interaction_id=None, **kwargs):
     page_num = request.GET.get('page_num', 1)
     context = main_helper(request, user_id, short_name, **kwargs)
@@ -205,7 +206,8 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
             
     #view filters
     interactions = filter_interactions(interactions, context, **kwargs)
-    
+
+    #interactions.prefetch_related("page").prefetch_related("content").prefetch_related("page__site").prefetch_related("page__site__group")    
     
     paginate_with_children(interactions, page_num, context, query_string)
     
