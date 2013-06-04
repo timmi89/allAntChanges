@@ -35,10 +35,12 @@
     </div>
     <script>
 
+    //this is a super temporary cookie just for an ajax call - omit the expries param to make it a session cookie
+    
     // now set cookie
-    $.cookie('new_board_id', '{{ board.id }}', { expires: 365, path: '/' } );
-    $.cookie('new_board_name', '{{ board.title }}', { expires: 365, path: '/' } );
-    $.cookie('user_boards', '{{ user_boards|escapejs }}', { expires: 365, path: '/' });
+    $.cookie('new_board_id', '{{ board.id }}', {path: '/'} );
+    $.cookie('new_board_name', '{{ board.title }}', {path: '/'} );
+    $.cookie('user_boards', '{{ user_boards|escapejs }}', {path: '/'} );
 
     $.postMessage(
         JSON.stringify( {"status":"board_created"} ),

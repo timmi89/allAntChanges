@@ -484,35 +484,43 @@ window.RDRAuth = {
 		// if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
 		else RDRAuth.rdr_user.temp_user = true;
-		RDRAuth.rdr_user.full_name = response.data.full_name;
-		RDRAuth.rdr_user.first_name = response.data.full_name;
-		RDRAuth.rdr_user.img_url = response.data.img_url;
-		RDRAuth.rdr_user.user_id = response.data.user_id;
-		RDRAuth.rdr_user.readr_token = response.data.readr_token;
-		RDRAuth.rdr_user.user_type = response.data.user_type;
-		RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
-		$.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: 365, path: '/' });
-		$.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: 365, path: '/' });
-		$.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: 365, path: '/' });
-		$.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: 365, path: '/' });
-		$.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: 365, path: '/' });
-		$.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: 365, path: '/' });
-		$.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: 365, path: '/' });
-		$.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: 365, path: '/' });
+
+        RDRAuth.rdr_user.readr_token = response.data.readr_token;
+        RDRAuth.rdr_user.user_id = response.data.user_id;
+        RDRAuth.rdr_user.full_name = response.data.full_name;
+        RDRAuth.rdr_user.first_name = response.data.full_name;
+        RDRAuth.rdr_user.img_url = response.data.img_url;
+        RDRAuth.rdr_user.user_type = response.data.user_type;
+        RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
-		$.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
-	},
-	readUserCookie : function() {
-		if ( $.cookie('first_name') ) RDRAuth.rdr_user.first_name = $.cookie('first_name');
-		if ( $.cookie('full_name') ) RDRAuth.rdr_user.full_name = $.cookie('full_name');
-		if ( $.cookie('img_url') ) RDRAuth.rdr_user.img_url = $.cookie('img_url');
-		if ( $.cookie('user_id') ) RDRAuth.rdr_user.user_id = $.cookie('user_id');
-		if ( $.cookie('readr_token') ) RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
-		if ( $.cookie('temp_user') ) RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
-		if ( $.cookie('user_type') ) RDRAuth.rdr_user.user_type = $.cookie('user_type');
-		if ( $.cookie('user_boards') ) RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
+        //This used to be 365 for everything except the rdr_session.
+        //making everything the same session_expiry for now - verifiy that the session will re-auth after an hour as approp.
+        // var expTime = 365;
+        var expTime = session_expiry;
+
+        $.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: expTime, path: '/' });
+        $.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: expTime, path: '/' });
+        $.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: expTime, path: '/' });
+        $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: expTime, path: '/' });
+        $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: expTime, path: '/' });
+        $.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: expTime, path: '/' });
+        $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
+        $.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: expTime, path: '/' });
+
+        $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
+    },
+    readUserCookie: function() {
+        //set everything every time - let it be null if null.  Otherwise, some old values don't get overwritten.
+        RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
+        RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
+        RDRAuth.rdr_user.user_id = $.cookie('user_id');
+        RDRAuth.rdr_user.first_name = $.cookie('first_name');
+        RDRAuth.rdr_user.full_name = $.cookie('full_name');
+        RDRAuth.rdr_user.img_url = $.cookie('img_url');
+		RDRAuth.rdr_user.user_type = $.cookie('user_type');
+		RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
 	},
 	returnUser: function() {
 		RDRAuth.readUserCookie();
@@ -576,14 +584,9 @@ window.RDRAuth = {
 					json: JSON.stringify( sendData )
 				},
 				success: function(response){
-					$.cookie('first_name', null, { path: '/' });
-					$.cookie('full_name', null, { path: '/' });
-					$.cookie('img_url', null, { path: '/' });
-					$.cookie('user_id', null, { path: '/' });
-					$.cookie('readr_token', null, { path: '/' });
-					$.cookie('user_type', null, { path: '/' });
-					$.cookie('user_boards', null, { path: '/' });
-					$.cookie('rdr_session', null);
+          
+                    RDRAuth.clearSessionCookies();
+
 					RDRAuth.rdr_user = {};
 					if (callback && this.callback_args) {
 						callback(this.callback_args);
@@ -594,21 +597,30 @@ window.RDRAuth = {
 			});
 		} else {
 			// just a temp user
-			$.cookie('img_url', null, { path: '/' });
-			$.cookie('user_id', null, { path: '/' });
-			$.cookie('readr_token', null, { path: '/' });
-			$.cookie('rdr_session', null);
-			$.cookie('temp_user', null);
-			$.cookie('user_type', null);
-			RDRAuth.rdr_user = {};
-			if (callback && callback_args) {
-				callback(callback_args);
-			} else if (callback) {
-				callback();
-			}
+            RDRAuth.clearSessionCookies();
+          
+    		if (callback && callback_args) {
+    			callback(callback_args);
+    		} else if (callback) {
+    			callback();
+    		}
 		}
 	},
-	doFBLogin: function(requesting_action) {
+
+    clearSessionCookies: function(){
+        // RDRAuth.clearSessionCookies
+        $.cookie('temp_user', null, { path: '/' });
+        $.cookie('readr_token', null, { path: '/' });
+        $.cookie('user_id', null, { path: '/' });
+        $.cookie('first_name', null, { path: '/' });
+        $.cookie('full_name', null, { path: '/' });
+        $.cookie('img_url', null, { path: '/' });
+        $.cookie('user_type', null, { path: '/' });
+        $.cookie('user_boards', null, { path: '/' });
+        $.cookie('rdr_session', null, { path: '/' });
+    },
+
+    doFBLogin: function(requesting_action) {
 		// RDRAuth.doFBLogin
 
         RDRAuth.events.helpers.trackFBLoginAttempt();
@@ -697,6 +709,7 @@ $(document).ready(function(){
                     } else if ( e.data == "TESTIT" ) {
                         RDRAuth.testMessage();
                     } else if ( e.data.indexOf("page_hash") != -1 ) {
+                        //todo: this seems touchy to set this cookie forever like this.
                         $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
                     } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
                         jsonData = e.data.split(keys.registerEvent)[1];
