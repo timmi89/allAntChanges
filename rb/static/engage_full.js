@@ -19,7 +19,7 @@ RDR.C = {
     rindowHeaderPadding: 29,
     rindowWidthForKindIsText: 200,
     rindowAnimationSpeed: 333,
-    indicatorOpacity: 1,
+    indicatorOpacity: 0.3,
     helperIndicators: {
         hoverDelay: 250,
         fadeInTime: 300,
@@ -98,6 +98,7 @@ function readrBoard($R){
             //details to be set by RDR.actions.initGroupData which extends defaults
             defaults: {
                 img_selector: "img",
+                img_container_selectors:"#primary-photo",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
                 iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],

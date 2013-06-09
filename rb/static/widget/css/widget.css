@@ -1487,6 +1487,7 @@ div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+    /*opacity:0.5;*/
 }
 /*the indicator body will be moved up to compensate*/
 
@@ -1496,6 +1497,11 @@ div.rdr_sandbox div.rdr_helper_rindow div.rdr_header h1{
 
 div.rdr_indicator_for_text{
     vertical-align: text-top !important;
+}
+.rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
+  opacity:1.0 !important;
+  -moz-opacity:1.0 !important;
+  -khtml-opacity:1.0 !important;
 }
 div.rdr_indicator_for_text.rdr_helper {
     opacity:0.6;;
@@ -1900,6 +1906,7 @@ div.rdr_sandbox div.rdr.rdr_window div.rdr_body.rdr_tags_list .rdr_contains1 .rd
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px !important; height:80px !important; padding:20px 10px 0 !important;}
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:480px !important; height:80px !important; padding:20px 10px 0 !important;}
 
+div.rdr_sandbox div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small.rdr_wide {height:55px !important; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px !important; height:55px !important; padding-top:16px !important;}
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:480px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:160px !important; }
