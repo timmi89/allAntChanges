@@ -150,8 +150,12 @@ class Group(models.Model):
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
-    blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag')
+    blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag', related_name = 'Blessed Tag')
 
+    blocked_tags = models.ManyToManyField(InteractionNode, through='BlockedTag', related_name = 'Blocked Tag')
+    all_tags = models.ManyToManyField(InteractionNode, through='AllTag', related_name = 'All Tag')
+
+    
     # black/whitelist fields
     anno_whitelist = models.CharField(max_length=255, blank=True, default=u"p,img")
     img_whitelist = models.CharField(max_length=255, blank=True)
@@ -210,6 +214,31 @@ class GroupBlessedTag(models.Model):
     
     class Meta:
         ordering = ['order']
+
+class BlockedTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+
+
+class AllTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+
+
         
 class UserDefaultTag(models.Model):
     social_user = models.ForeignKey(SocialUser)
@@ -269,9 +298,9 @@ class Site(models.Model):
 
 class Page(models.Model):
     site = models.ForeignKey(Site)
-    url = models.URLField(verify_exists=False)
+    url = models.URLField()
     title = models.CharField(max_length=255, blank=True)
-    canonical_url = models.URLField(verify_exists=False, blank=True)
+    canonical_url = models.URLField(blank=True)
 
     def interactions(self):
         return Interaction.objects.filter(page=self)

@@ -148,6 +148,15 @@ class GroupBlessedTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
 
+class BlockedTagAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'order')
+    search_fields = ['group__name', 'node__body', 'node__id']
+
+class AllTagAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'order')
+    search_fields = ['group__name', 'node__body', 'node__id']
+
+
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
             return obj.to_base62()
@@ -169,6 +178,8 @@ admin.site.register(Content, ContentAdmin)
 admin.site.register(Profile)
 admin.site.register(GroupAdmin, GroupAdminAdmin)
 admin.site.register(GroupBlessedTag, GroupBlessedTagAdmin)
+admin.site.register(BlockedTag, BlockedTagAdmin)
+admin.site.register(AllTag, AllTagAdmin)
 admin.site.register(Follow)
 admin.site.register(UserDefaultTag)
 admin.site.register(NotificationRule)
