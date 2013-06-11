@@ -19,7 +19,7 @@ RDR.C = {
     rindowHeaderPadding: 29,
     rindowWidthForKindIsText: 200,
     rindowAnimationSpeed: 333,
-    indicatorOpacity: 0.3,
+    indicatorOpacity: 0.4,
     helperIndicators: {
         hoverDelay: 250,
         fadeInTime: 300,
@@ -101,7 +101,7 @@ function readrBoard($R){
                 img_container_selectors:"#primary-photo",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
-                iframe_whitelist: ["youtube.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
+                iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
@@ -1321,8 +1321,9 @@ function readrBoard($R){
                                 } else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
+                                    var topValue = ( !$container.parents( RDR.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( RDR.group.img_container_selectors ).first().offset().bottom + 5;
                                     var coords = {
-                                        top: $container.offset().bottom+5,
+                                        top: topValue,
                                         left: $container.offset().left
                                     };
                                 }
@@ -2509,7 +2510,7 @@ function readrBoard($R){
                     //brute force for now -
                     //if they click the X we need this;
                     $('div.rdr_indicator_for_media').hide();
-                    RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    // RDR.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a cookie in the iframe saying not to show this anymore
                     $.postMessage(
@@ -2528,7 +2529,7 @@ function readrBoard($R){
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('rdr_shared');
                     RDR.actions.indicators.utils.updateContainerTracker(hash);
-                    RDR.actions.indicators.utils.borderHilites.engage(hash, true);
+                    // RDR.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -3239,8 +3240,10 @@ function readrBoard($R){
                 var minImgWidth = 160;
 
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
-                    RDR.actions.indicators.utils.updateContainerTrackers();
                     var $this = $(this);
+                    var hash = $this.data('hash');
+
+                        RDR.actions.indicators.utils.updateContainerTrackers();
 
                     if ( $this.closest('.no-rdr').length ) {
                         return;
@@ -3281,16 +3284,16 @@ function readrBoard($R){
                                     // $('#rdr_indicator_'+hash).show();
                                     if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                         $('#rdr_indicator_' + hash).show();
-                                        RDR.actions.indicators.utils.borderHilites.update(hash);
-                                        RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                        // RDR.actions.indicators.utils.borderHilites.update(hash);
+                                        // RDR.actions.indicators.utils.borderHilites.engage(hash);
                                     }
                                 }
                             });
                             //these calls are redundant to the same calls in the callback above,
                             //but this will make them show up right away,
                             //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                            RDR.actions.indicators.utils.borderHilites.update(hash);
-                            RDR.actions.indicators.utils.borderHilites.engage(hash);
+                            // RDR.actions.indicators.utils.borderHilites.update(hash);
+                            // RDR.actions.indicators.utils.borderHilites.engage(hash);
 
                         } else {
                             var hash = $this.data('hash');
@@ -3298,26 +3301,36 @@ function readrBoard($R){
                             $this.addClass('rdr_live_hover');
                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                 $('#rdr_indicator_' + hash).show();
-                                RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                // RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
                             RDR.actions.content_nodes.init(hash, function(){});
                         }
-                    }
-                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
-                    var $this = $(this),
-                        hash = $this.data('hash');
 
-                    RDR.checkIndicatorHover = setTimeout( function() {
-                        if ( !$('#rdr_indicator_'+hash).hasClass('rdr_live_hover') && !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') && !$('.rdr_for_'+hash).length ) {
-                            $this.removeClass('rdr_live_hover');
-                            RDR.actions.indicators.utils.borderHilites.disengage(hash);
-                            $('#rdr_indicator_' + hash).hide();
-                        }
-                        clearTimeout( RDR.checkIndicatorHover );
-                    }, 250);
+                    }
+
+
+
+
+                    // }
+                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
+                    var $this = $(this);
+                        // hash = $this.data('hash');
+
+                    // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
+                    if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
+                        _mediaHoverOff( $this )
+                    }
                 });
 
                 $RDR.dequeue('initAjax');
+
+                function _mediaHoverOff( obj ) {
+                    var $this = $(obj),
+                        hash = $this.data('hash');
+
+                    $this.removeClass('rdr_live_hover');
+                    $('#rdr_indicator_' + hash).hide();
+                }
             },
             UIClearState: function(){
                 //RDR.actions.UIClearState:
@@ -3327,7 +3340,7 @@ function readrBoard($R){
                 RDR.rindow.closeAll();
                 RDR.actionbar.closeAll();
                 RDR.actions.containers.media.disengageAll();
-                RDR.actions.indicators.utils.borderHilites.disengageAll();
+                // RDR.actions.indicators.utils.borderHilites.disengageAll();
                 $('div.rdr_indicator_for_media').hide();
                 $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
 
@@ -6083,6 +6096,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $container_tracker = $('#rdr_container_tracker_'+hash);
 
                         if ( $indicator_body ) {
+                            
+                            if ( $container.parents( RDR.group.img_container_selectors ).length ) {
+                                $container = $container.parents( RDR.group.img_container_selectors ).first();
+                            }
+
                             //todo: consolodate this with the other case of it
                             var containerWidth, containerHeight;
                             //this will calc to 0 if there is no border.
@@ -6130,7 +6148,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         }
 
-                        RDR.actions.indicators.utils.borderHilites.update(hash);
+                        // RDR.actions.indicators.utils.borderHilites.update(hash);
                     },
                     borderHilites: {
                         //RDR.actions.indicators.utils.borderHilites:
@@ -6180,7 +6198,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 };
 
                                 $mediaBorderWrap.data('borders',borders);
-                                RDR.actions.indicators.utils.borderHilites.update(hash);
+                                // RDR.actions.indicators.utils.borderHilites.update(hash);
                             }
 
                         },
