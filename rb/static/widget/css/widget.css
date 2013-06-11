@@ -1503,6 +1503,7 @@ div.rdr_indicator_for_text{
   -moz-opacity:1.0 !important;
   -khtml-opacity:1.0 !important;
 }
+
 div.rdr_indicator_for_text.rdr_helper {
     opacity:0.6;;
     -moz-opacity:0.6;;
