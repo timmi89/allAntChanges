@@ -495,10 +495,8 @@ window.RDRAuth = {
 
 		var session_expiry = new Date(); 
 		session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
-        //This used to be 365 for everything except the rdr_session.
-        //making everything the same session_expiry for now - verifiy that the session will re-auth after an hour as approp.
-        // var expTime = 365;
-        var expTime = session_expiry;
+        //Use 1 hour for the rdr_session.  30 days for everything else.
+        var expTime = 90;
 
         $.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: expTime, path: '/' });
         $.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: expTime, path: '/' });
