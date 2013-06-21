@@ -8,7 +8,17 @@ if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
 
 //READRBOARDCOM and readrboard will now be the only things in the global namespace
 window.READRBOARDCOM = window.readrboard = RDR;
- 
+
+//temp for testing
+// window.readrboard_extend = {
+//     blessed_tags: [
+//         "Love It",
+//         "Hate It",
+//         "Heeeeeey"
+//     ]
+// };
+
+
 RDR.hasLoaded = true;
 
 /*some constants that we need for now*/
@@ -2975,6 +2985,32 @@ function readrBoard($R){
                 //trutv demo only:
                 // $('#vpstags').after('<div class="rdr_media_details"></div>');
             },
+            translateCustomGroupSettings: function(){
+                //RDR.actions.translateCustomGroupSettings
+                //make for a nicer api.
+                
+                var group_extentions = window.readrboard_extend;
+                if(!group_extentions){
+                    return {};
+                }
+                
+                var translators = {
+                    blessed_tags: function(){
+                        return $.map(group_extentions.blessed_tags, function(val, idx){
+                            return {body: val};
+                        });
+                    }
+                };
+
+                var ret_settings = {};
+                
+                //translate
+                $.each(group_extentions, function(key, val){
+                    ret_settings[key] = !!translators[key] ? translators[key]() : val;
+                });
+
+                return ret_settings;
+            },
             initGroupData: function(groupShortName){
                 // request the RBGroup Data
 
@@ -2989,7 +3025,8 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        RDR.group = $.extend({}, RDR.group.defaults, group_settings );
+                        var custom_group_settings = RDR.actions.translateCustomGroupSettings();
+                        RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
                         $(RDR.group.no_readr).each( function() {
                             $(this).addClass('no-rdr');
