@@ -122,7 +122,10 @@ function readrBoard($R){
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
-                media_url_ignore_query: true
+                media_url_ignore_query: true,
+                //finds blocks and converts their <br> separated content into <p> wrapped innerBlocks
+                //the block will be converted to a <rt> block, so there won't be nested <p> blocks.
+                br_replace_selector: '.rdr_br_replace'
             }
         },
         user: {
@@ -2282,6 +2285,40 @@ function readrBoard($R){
                 });
                 return styleDict;
             },
+            
+            fixBrTags: function(){
+                // RDR.util.fixBrTags:
+                var $sections = $(RDR.group.br_replace_selector);
+                if(!$sections.length){
+                    return;
+                }
+                //arbitrary unique string
+                var marker = "|rdr|br|/rdr|";
+                
+                $sections.each(function(){
+                    //clone it to manipulate outside the dom
+                    var $this = $(this);
+                    var $clone = $this.clone();
+                    var $sectionWrap = $('<rt></rt>').addClass('rdr_br_replaced');
+
+                    //use jquery's parser not regex to find <br> tags (http://bit.ly/3x9sQX)
+                    $clone.find('br').each(function(){
+                        $(this).replaceWith(marker);
+                    });
+                    var sections = $clone.text().split(marker);
+                    
+                    for (var i = sections.length - 1; i >= 0; i--) {
+                        var innerText = sections[i];
+                        
+                        //use this rarely-used html5 element as a conveninent wrapper
+                        //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
+                        $sectionWrap.append('<p>'+innerText+'</p>');
+                    }
+
+                    $this.replaceWith($sectionWrap);
+                });
+            },
+
             fixBodyBorderOffsetIssue: function(){
                 //RDR.util.fixBodyBorderOffsetIssue:
                 //a fix for the rare case where the body element has a border on it.
@@ -3192,6 +3229,7 @@ function readrBoard($R){
             
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
+                RDR.util.fixBrTags();
 
                 //todo - move this stuff to a function
                     // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...

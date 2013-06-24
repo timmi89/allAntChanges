@@ -1966,4 +1966,14 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_hiddenPanel { display:none !important; 
 div.rdr_sandbox div#rdr_loginPanel {
     z-index: 12101 !important;
 }
-/*auditing cachebusting 2012/12/02/12:17*/
+
+/*rarely used html tag to wrap br-separated text when the group settings specifies*/
+rt.rdr_br_replaced{
+    /*override browser defaults*/
+    line-height: inherit;
+    text-indent: inherit;
+}
+rt.rdr_br_replaced p{
+    margin: 0;
+    padding: 0;
+}
