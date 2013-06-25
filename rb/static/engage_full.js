@@ -2305,9 +2305,9 @@ function readrBoard($R){
                     $clone.find('br').each(function(){
                         $(this).replaceWith(marker);
                     });
-                    var sections = $clone.text().split(marker);
+                    var sections = $clone.html().split(marker);
                     
-                    for (var i = sections.length - 1; i >= 0; i--) {
+                    for(var i = 0; i < sections.length; i++) {
                         var innerText = sections[i];
                         
                         //use this rarely-used html5 element as a conveninent wrapper
