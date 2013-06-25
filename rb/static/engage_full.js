@@ -1874,7 +1874,6 @@ function readrBoard($R){
                    'left':coords.left
                 }).data('hash',hash)//chain
                 .append('<ul/>');
-
                 var items = [
                     {
                         "item":"reaction",
@@ -1904,7 +1903,6 @@ function readrBoard($R){
                     }
                     */
                 ];
-
                 RDR.events.track( 'show_action_bar::'+content );
                 RDR.events.trackEventToCloud({
                     category: "actonbar",
@@ -1914,7 +1912,6 @@ function readrBoard($R){
                     container_kind: kind,
                     page_id: page_id
                 });
-
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $indicatorAnchor = $(
@@ -1931,7 +1928,6 @@ function readrBoard($R){
                     });
                     $item.addClass('rdr_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
                 });
-
                 $('#rdr_sandbox').append( $new_actionbar );
                 // $('a.rdr_tooltip_this').tooltip({});
 
@@ -3573,7 +3569,19 @@ function readrBoard($R){
                     if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
                         $this.parents('[rdr-hash="'+hash+'"]').removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
                     }
+                    
+                    // check to see if this is an IMG inside a hashed node.  if so, check this thing for siblings.
+                    // both HTML and text.
+                    if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
+                        $this.parents('[rdr-hash]').removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
+                    }
 
+                    // via http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
+                    function _getTextNodesIn(el) {
+                        return $(el).find(":not(iframe)").andSelf().contents().filter(function() {
+                            return this.nodeType == 3;
+                        });
+                    };
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -5367,7 +5375,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
                     var summary = RDR.summaries[hash];
-                    if (typeof summary != "undefined") {
+                    if (typeof summary != "undefined" && summary.$container.hasAttr('rdr-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
                             indicatorId = 'rdr_indicator_'+hash,
@@ -7400,6 +7408,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
                 if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
+
                 var $blockParent = null;
                 if( _isValid($mouse_target) ) {
                     // the node initially clicked on is the first block level container
@@ -7407,6 +7416,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 } else {
                     $blockParent = findNearestValidParent($mouse_target);
                 }
+
                 //if no valid blockParent was found, we're done here.
                 if( $blockParent === null ) return;
                 //else
@@ -7424,11 +7434,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 var kind = 'text';
                 var content = selected.text;
 
-
                 // check if the blockparent is already hashed
                 if ( $rdrParent.length && $rdrParent.hasAttr('rdr-hashed') && !$rdrParent.hasAttr('rdr-page-container') ) {
                     if(callback){
-            
                         var hash = $rdrParent.data('hash')
                         callback(hash, kind, content);
                         return;
@@ -7442,6 +7450,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     
                     //todo: use our new sendHashesForSinglePage function after testing and refactoring.
                     var hashListForPage = RDR.actions.hashNodes( $blockParent );
+
                     if(hashListForPage){
                         RDR.actions.sendHashes( hashListForPage, function(){
                             if(callback){
@@ -7461,7 +7470,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var $blockParent = null;
                     var foundClosest = false;
                     $mouse_target.parents().each( function() {
-                        if(foundClosest) return;
+                        if(foundClosest) { return; }
                         //else
 
                         var $thisNode = $(this);
@@ -7471,6 +7480,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             foundClosest = true;
                         }
                     });
+
                     return $blockParent;
                 }
                 function _drawActionBar ($blockParent){
@@ -7523,7 +7533,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
                 function _isValid($node){
                     var validity = ( ( $node.css('display') == "block" || $node.css('display') == "list-item" ) &&
-                        $node.css('float') == "none" &&
+                        // $node.css('float') == "none" &&
                         ! $node.closest('.rdr_indicator').length &&
                         ! $node.is('html, body')
                     );
