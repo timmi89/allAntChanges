@@ -123,9 +123,14 @@ function readrBoard($R){
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
                 media_url_ignore_query: true,
-                //finds blocks and converts their <br> separated content into <p> wrapped innerBlocks
-                //the block will be converted to a <rt> block, so there won't be nested <p> blocks.
-                br_replace_selector: '.rdr_br_replace'
+                //the scope in which to find parents of <br> tags.  
+                //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
+                //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
+                
+                //example:
+                // br_replace_scope_selector: ".rdr_br_replace" //e.g. "#mainsection" or "p"
+                
+                br_replace_scope_selector: null //e.g. "#mainsection" or "p"
             }
         },
         user: {
@@ -2288,7 +2293,10 @@ function readrBoard($R){
             
             fixBrTags: function(){
                 // RDR.util.fixBrTags:
-                var $sections = $(RDR.group.br_replace_selector);
+                
+                //find the $sections through br tags that are in the scoped section.
+                var $sections = $(RDR.group.br_replace_scope_selector).find('br').parent();
+
                 if(!$sections.length){
                     return;
                 }
@@ -3229,7 +3237,10 @@ function readrBoard($R){
             
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
-                RDR.util.fixBrTags();
+                
+                if(RDR.group.br_replace_scope_selector){
+                  RDR.util.fixBrTags();
+                }
 
                 //todo - move this stuff to a function
                     // this crazy-looking thing is because, if a CSS attribute like "left" is set to 50%...
