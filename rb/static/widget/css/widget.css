@@ -1968,12 +1968,9 @@ div.rdr_sandbox div#rdr_loginPanel {
 }
 
 /*rarely used html tag to wrap br-separated text when the group settings specifies*/
-rt.rdr_br_replaced{
-    /*override browser defaults*/
-    line-height: inherit;
-    text-indent: inherit;
-}
-rt.rdr_br_replaced p{
-    margin: 0;
-    padding: 0;
+.rdr_br_replaced rt{
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    line-height: inherit !important;
 }

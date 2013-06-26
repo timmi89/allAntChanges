@@ -2307,7 +2307,7 @@ function readrBoard($R){
                     //clone it to manipulate outside the dom
                     var $this = $(this);
                     var $clone = $this.clone();
-                    var $sectionWrap = $('<rt></rt>').addClass('rdr_br_replaced');
+                    var $dummySection = $('<p></p>');
 
                     //use jquery's parser not regex to find <br> tags (http://bit.ly/3x9sQX)
                     $clone.find('br').each(function(){
@@ -2320,10 +2320,12 @@ function readrBoard($R){
                         
                         //use this rarely-used html5 element as a conveninent wrapper
                         //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
-                        $sectionWrap.append('<p>'+innerText+'</p>');
+                        $dummySection.append('<rt>'+innerText+'</rt>');
                     }
 
-                    $this.replaceWith($sectionWrap);
+                    $this
+                      .addClass('rdr_br_replaced')
+                      .html($dummySection.html());
                 });
             },
 
