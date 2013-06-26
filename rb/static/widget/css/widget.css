@@ -662,6 +662,8 @@ div.rdr_sandbox div.rdr input[type="text"].rdr_inlineComment{
     margin: -10px 0px 3px 0px !important;
     font-style:italic !important;
     color:#999 !important;
+    font-size: 11px !important;
+    line-height: 11px !important;
 }
 
 div.rdr_sandbox div.rdr input[type="text"].rdr_inlineComment.rdr_adding_comment {
