@@ -2298,7 +2298,7 @@ function readrBoard($R){
                 }
                 //arbitrary unique string
                 var marker = "|rdr|br|/rdr|";
-                
+
                 $sections.each(function(){
                     //clone it to manipulate outside the dom
                     var $this = $(this);
@@ -3236,7 +3236,7 @@ function readrBoard($R){
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
                 
-                if(RDR.group.br_replace_scope_selector){
+                if(!!RDR.group.br_replace_scope_selector){
                   RDR.util.fixBrTags();
                 }
 
@@ -3502,10 +3502,17 @@ function readrBoard($R){
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
 
+
                     // add vaild descendants of the $node
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
                     $group = $group.add( $node.find( group.whiteList ) );
+                    
+                    //trick for br_replace option.
+                    //todo: prove that this approach works best across all sites and make it nicer.
+                    if(!!RDR.group.br_replace_scope_selector && (group.kind == "text")){
+                        $group = $group.add( $node.find( '.rdr_br_replaced rt' ) );
+                    }
 
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
@@ -3618,13 +3625,15 @@ function readrBoard($R){
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
                     if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
-                        $this.parents('[rdr-hash="'+hash+'"]').removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
+                        var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
+                        RDR.actions.stripRdrNode($parentNodes);
                     }
                     
                     // check to see if this is an IMG inside a hashed node.  if so, check this thing for siblings.
                     // both HTML and text.
                     if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
-                        $this.parents('[rdr-hash]').removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
+                        var $parentNodes = $this.parents('[rdr-hash]');
+                        RDR.actions.stripRdrNode($parentNodes);
                     }
 
                     // via http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
@@ -7595,6 +7604,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //RDR.actions.startSelectFromMouseUp
                 var $mouse_target = $(e.target);
                 RDR.actions.startSelect($mouse_target, e);
+            },
+            stripRdrNode: function($els) {
+                //RDR.actions.stripRdrNode
+                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
             },
             pages: {
                 //RDR.actions.pages:

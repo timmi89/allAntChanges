@@ -1974,3 +1974,8 @@ div.rdr_sandbox div#rdr_loginPanel {
     display: block !important;
     line-height: inherit !important;
 }
+
+/*hack to hide the trailing text indicator*/
+.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
+    display: none !important;
+}
