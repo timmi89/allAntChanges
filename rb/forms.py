@@ -334,6 +334,7 @@ class GroupForm(forms.ModelForm):
             'post_selector',
             'post_href_selector',
             'summary_widget_selector',
+            'br_replace_scope_selector',
             'call_to_action',
             'paragraph_helper'
         )
