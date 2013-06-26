@@ -507,7 +507,9 @@ window.RDRAuth = {
         $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
         $.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: expTime, path: '/' });
 
-        $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
+        //try out just using 90 days for everything - we're checking fb login every time anyway.
+        $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
+        // $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
     },
     readUserCookie: function() {
         //set everything every time - let it be null if null.  Otherwise, some old values don't get overwritten.
