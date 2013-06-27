@@ -771,7 +771,7 @@ def expander(request, short):
     if interaction.content.kind == 'pag':
         url = interaction.page.url
     elif interaction.parent:
-        url = BASE_URL + '/interaction/' + str(interaction.parent.id)
+        url = BASE_URL + '/i/' + str(interaction.parent.id)
     else:
         page = Page.objects.get(id=interaction.page.id)
 
