@@ -3617,6 +3617,11 @@ function readrBoard($R){
                         }
 
                     } else {
+                        
+                        if(!body){
+                          return;
+                        }
+
                         hashText = "rdr-"+kind+"-"+body;
                         hash = RDR.util.md5.hex_md5( hashText );
                     }
