@@ -2505,7 +2505,11 @@ function readrBoard($R){
 
                     //todo: finish making these changes here:, but i didnt' want to do it before the DC demo.
                     var $msg1, $msg2, $pinIcon;
+
+
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
+                        var decodedContent = unescape($.evalJSON('"'+data.content+'"'));
+                        
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img[rdr-hash="'+data.container_hash+'"]').length == 1 ) {
@@ -2515,7 +2519,7 @@ function readrBoard($R){
                         } else {
                             //put a better message here
                             $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
-                                '<strong>"</strong><em>' + data.content.substr(0,140) + '...</em><strong>"</strong>'+
+                                '<strong>"</strong><em>' + decodedContent.substr(0,140) + '...</em><strong>"</strong>'+
                                 '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
                         $msg2.find('a.rdr_showSelection').click( function() {
