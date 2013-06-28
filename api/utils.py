@@ -196,6 +196,7 @@ def createInteractionNode(node_id=None, body=None, group=None):
             pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
             body = pf.clean(body)
         
+        
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
         
@@ -261,6 +262,19 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+    if group and group.blocked_tags:
+        if interaction_node in group.blocked_tags:
+            raise JSONException("Group has blocked this tag.")
+    
+    if group and group.all_tags:
+        if interaction_node not in group.all_tags:
+            try:
+                notification = AsynchNewGroupNodeNotification()
+                t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                t.start()
+            except Exception, ex:
+                pass
+            
     # Check to see if user has reached their interaction limit
     tempuser = False
     if isTemporaryUser(user):

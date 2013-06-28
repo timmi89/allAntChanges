@@ -86,6 +86,41 @@ def agree(request, interaction_id = None, **kwargs):
     )
 
 
+def group_node(request, interaction_id = None, **kwargs):
+    context = {}
+    try:
+        interaction = Interaction.objects.get(id = interaction_id)
+        social_user = SocialUser.objects.get(user = interaction.user)
+        
+        notification, created = InteractionNotification.objects.get_or_create(interaction = interaction, 
+                                                           social_user = social_user,
+                                                           notification_type = threshold)
+        if created:
+            #SEND EMAIL!
+            msg = EmailMessage("ReadrBoard: A new reaction on your site", 
+                               generateGroupNodeEmail(interaction), 
+                               "hello@readrboard.com", 
+                               [social_user.user.email])
+            msg.content_subtype='html'
+            msg.send(False)
+            logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+        
+    except Interaction.DoesNotExist:
+        logger.info("BAD INTERACTION ID")
+    except SocialUser.DoesNotExist:
+        logger.info("NO SOCIAL USER")
+    except Exception, ex:
+        logger.info(ex)
+    
+    return render_to_response(
+        "chronos.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+
+
 def comment(request, interaction_id = None, **kwargs):
     context = {}
     
@@ -201,6 +236,24 @@ def email_agree(request, interaction_id, user_id, count):
         context,
         context_instance=RequestContext(request)
     )
+
+
+
+def email_group_node(request, interaction_id, group_id):
+    context = {}
+    interaction = Interaction.objects.get(id=interaction_id)
+    group = Group.objects.get(id=group_id)
+    
+    context['interaction'] = interaction
+    context['group'] = group
+    context['admin'] = group.admins[0]
+    context['base_url'] = settings.BASE_URL
+    return render_to_response(
+        "group_node.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 def email_comment(request, interaction_id, user_id):
     context = {}

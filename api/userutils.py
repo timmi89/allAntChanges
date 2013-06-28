@@ -190,6 +190,18 @@ def generateAgreeEmail(user, count, interaction):
                         + str(count))
     return message
 
+
+def generateGroupNodeEmail(interaction):
+    #message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
+    message = getEmailTemplateFromWeb('group_node', group_id=interaction.group.id, interaction_id=interaction.id, count=count)
+    if message is None:
+        raise Exception("None for agree email on interaction: " + str(interaction) + " to user: " 
+                        + str(user) 
+                        + " count:" 
+                        + str(count))
+    return message
+
+
 def generateCommentEmail(user, interaction):
     #message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
     message = getEmailTemplateFromWeb('comment', user_id=user.id, interaction_id=interaction.id)
@@ -272,6 +284,8 @@ def getEmailTemplateFromWeb(template_name, **kwargs):
             url = '/chronos/email/comment/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'agree':
             url = '/chronos/email/agree/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id']) + '/' + str(kwargs['count'])+ '/'
+        elif template_name == 'group_node':
+            url = '/chronos/email/group_node/' + str(kwargs['interaction_id']) + '/' + str(kwargs['group_id']) + '/'
         elif template_name == 'page':
             url = '/chronos/email/page/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'follow':
