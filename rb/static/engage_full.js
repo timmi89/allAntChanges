@@ -619,7 +619,7 @@ function readrBoard($R){
 
                                 RDR.user = RDR.user || {};
                                 
-                                if (typeof RDR.user.user_boards != "undefined" ) {
+                                if (typeof RDR.user.user_boards != "undefined" && RDR.user.user_boards!=null) {
                                     $.each( RDR.user.user_boards, function(idx, board) {
                                         $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
                                     });
@@ -661,7 +661,7 @@ function readrBoard($R){
 
                                                     // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
                                                     RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                        if ( typeof RDR.user.new_board_id != "undefined") {
+                                                        if (typeof RDR.user.new_board_id != "undefined" && RDR.user.new_board_id!=null) {
                                                             var newArgs = {
                                                                 hash: args.hash,
                                                                 board_id: RDR.user.new_board_id,
@@ -1877,11 +1877,21 @@ function readrBoard($R){
                 }
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" />').css({
+                var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" ></div>');
+                $new_actionbar.css({
                    'top':coords.top,
                    'left':coords.left
-                }).data('hash',hash)//chain
-                .append('<ul/>');
+                });
+
+                //if there is no hash here it will cause problems.  Should always be a hash.
+                if(!hash){
+                    RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                    return;
+                }
+                $new_actionbar.data('hash',hash);
+                
+                $new_actionbar.append('<ul/>');
+
                 var items = [
                     {
                         "item":"reaction",
@@ -5157,7 +5167,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 if ( RDR.user.user_type ) {
                                     var $user_boards = $('<div class="rdr_select_user_board"><strong class="rdr_save_it">Save It:</strong> <select class="rdr_user_boards"><option value="">Choose a board...</option></select></div>');
                                     // boards
-                                    if (typeof RDR.user.user_boards != "undefined" ) {
+                                    if (typeof RDR.user.user_boards != "undefined" && RDR.user.user_boards!=null) {
                                         $.each( RDR.user.user_boards, function(idx, board) {
                                             $user_boards.find('select').append('<option value="'+board.id+'">'+board.title+'</option>');
                                         });
@@ -5198,7 +5208,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                                         // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
                                                         RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                            if ( typeof RDR.user.new_board_id != "undefined") {
+                                                            if (typeof RDR.user.new_board_id != "undefined" && RDR.user.new_board_id!=null) {
                                                                 var newArgs = {
                                                                     hash: args.hash,
                                                                     board_id: RDR.user.new_board_id,
