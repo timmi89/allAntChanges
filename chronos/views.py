@@ -95,7 +95,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
         
         
         admin_index = 0
-        for admin in group.admins:
+        for admin in group.admins.all():
             #SEND EMAIL!
             msg = EmailMessage("ReadrBoard: A new reaction on your site", 
                                generateGroupNodeEmail(interaction, admin_index), 
@@ -247,7 +247,7 @@ def email_group_node(request, interaction_id, group_id, admin_index):
     
     context['interaction'] = interaction
     context['group'] = group
-    context['admin'] = group.admins[admin_index]
+    context['admin'] = group.admins.all()[int(admin_index)]
     context['base_url'] = settings.BASE_URL
     return render_to_response(
         "group_node.html",

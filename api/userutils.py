@@ -193,7 +193,7 @@ def generateAgreeEmail(user, count, interaction):
 
 def generateGroupNodeEmail(interaction, admin_index):
     #message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
-    message = getEmailTemplateFromWeb('group_node', group_id=interaction.group.id, interaction_id=interaction.id, count=admin_index)
+    message = getEmailTemplateFromWeb('group_node', group_id=interaction.page.site.group.id, interaction_id=interaction.id, count=admin_index)
     if message is None:
         raise Exception("None for group node email on interaction: " + str(interaction) + " to user: " 
                         + str(user) 

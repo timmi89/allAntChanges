@@ -12,6 +12,7 @@ import time
 from threading import Thread
 from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
+import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -263,18 +264,10 @@ def deleteInteraction(interaction, user):
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
     if group and group.blocked_tags:
-        if interaction_node in group.blocked_tags:
-            raise JSONException("Group has blocked this tag.")
-    
-    if group and group.all_tags:
-        if interaction_node not in group.all_tags:
-            try:
-                notification = AsynchNewGroupNodeNotification()
-                t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
-                t.start()
-            except Exception, ex:
-                pass
-            
+        for blocked in group.blocked_tags.all():
+            if interaction_node.body == blocked.body:
+                raise JSONException("Group has blocked this tag.")
+         
     # Check to see if user has reached their interaction limit
     tempuser = False
     if isTemporaryUser(user):
@@ -339,7 +332,27 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         raise JSONException(u"Error creating interaction object")
 
     new_interaction.save()
-    
+    try:
+        is_new_tag = True
+        for alltag in page.site.group.all_tags.all():
+            logger.info(alltag)
+            if alltag.body == new_interaction.interaction_node.body:
+                is_new_tag = False
+        if is_new_tag:
+            logger.info("Creating all tag")
+            AllTag.objects.create(group=page.site.group, 
+                                  node = new_interaction.interaction_node, 
+                                  order=len(page.site.group.all_tags.all()))
+            try:
+                notification = AsynchNewGroupNodeNotification()
+                t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                t.start()
+            except Exception, ex:
+                pass
+            
+    except Exception, ex:
+        logger.info("NO ALL TAG: " + traceback.format_exc(1500))
+        
     ret = dict(
         interaction=new_interaction,
         content_node=content,
