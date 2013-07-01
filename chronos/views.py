@@ -86,24 +86,25 @@ def agree(request, interaction_id = None, **kwargs):
     )
 
 
-def group_node(request, interaction_id = None, **kwargs):
+def group_node(request, interaction_id = None, group_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
         social_user = SocialUser.objects.get(user = interaction.user)
+        group = Group.objects.get(id = group_id)
         
-        notification, created = InteractionNotification.objects.get_or_create(interaction = interaction, 
-                                                           social_user = social_user,
-                                                           notification_type = threshold)
-        if created:
+        
+        admin_index = 0
+        for admin in group.admins:
             #SEND EMAIL!
             msg = EmailMessage("ReadrBoard: A new reaction on your site", 
-                               generateGroupNodeEmail(interaction), 
+                               generateGroupNodeEmail(interaction, admin_index), 
                                "hello@readrboard.com", 
                                [social_user.user.email])
             msg.content_subtype='html'
             msg.send(False)
             logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+            admin_index += 1
         
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
@@ -239,14 +240,14 @@ def email_agree(request, interaction_id, user_id, count):
 
 
 
-def email_group_node(request, interaction_id, group_id):
+def email_group_node(request, interaction_id, group_id, admin_index):
     context = {}
     interaction = Interaction.objects.get(id=interaction_id)
     group = Group.objects.get(id=group_id)
     
     context['interaction'] = interaction
     context['group'] = group
-    context['admin'] = group.admins[0]
+    context['admin'] = group.admins[admin_index]
     context['base_url'] = settings.BASE_URL
     return render_to_response(
         "group_node.html",
