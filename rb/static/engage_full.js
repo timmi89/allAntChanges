@@ -2792,15 +2792,13 @@ function readrBoard($R){
                 );
             },
             login: function() {},
-            checkForMaxInteractions: function(args, callback){
-                //later get rid of args if we don't need it for showLoginPanel - if we can use rindow instead.
+            checkForMaxInteractions: function(){
                 RDR.user = RDR.user || {};
-                if ( RDR.user.num_interactions && RDR.user.img_url !== "" ) {
-                    if ( RDR.user.num_interactions < RDR.group.temp_interact ) {
-                        return false;
-                    }
+                var isTempUser = !RDR.user.user_type
+                if ( isTempUser && RDR.user.num_interactions && RDR.user.num_interactions >= RDR.group.temp_interact ) {
+                  return true;
                 }
-                return true;
+                return false;
             },
             showLoginPanel: function(args, callback) {
              // RDR.session.showLoginPanel
@@ -4467,7 +4465,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var url = RDR_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
                     var hitMax = RDR.session.checkForMaxInteractions(args);
 
-                    if (hitMax) {
+                    if (!hitMax) {
                         // send the data!
                         $.ajax({
                             url: url,
@@ -5208,7 +5206,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                                                         // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
                                                         RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                            if (typeof RDR.user.new_board_id != "undefined" && RDR.user.new_board_id!=null) {
+                                                            if (typeof RDR.user.new_board_id != "undefined" && !RDR.user.new_board_id) {
                                                                 var newArgs = {
                                                                     hash: args.hash,
                                                                     board_id: RDR.user.new_board_id,
