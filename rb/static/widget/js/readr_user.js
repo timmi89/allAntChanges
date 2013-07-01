@@ -481,7 +481,8 @@ window.RDRAuth = {
 	},
 	setUser : function(response) {
 		RDRAuth.rdr_user = {};
-		// if no first_name attribute is in the response, this is a temporary user.
+		response.data = response.data || {};
+        // if no first_name attribute is in the response, this is a temporary user.
 		if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
 		else RDRAuth.rdr_user.temp_user = true;
 
