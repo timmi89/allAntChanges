@@ -351,6 +351,17 @@ window.RDRAuth = {
 			// readrboard user.  we don't have a reauth for RB users yet.  but widget should throw the login panel.
 		}
 	},
+    quickFixAjaxLogout: function(){
+        // RDRAuth.quickFixAjaxLogout:
+        //this will at least give more of an appearance of an ajax log out when the login token expires.
+        //it assumes the user will still do a login that will trigger a page refresh to fix it for real.
+        $('#group_settings_menu').hide();
+        $('#logged-in').hide();
+        $('#logged-out').css({
+            display: "block",
+            visibility: 'visible'
+        });
+    },
 	checkFBStatus: function(args) {
 		FB.getLoginStatus( function(response) {
 			if (response.status && response.status == "connected" ) {
@@ -662,14 +673,17 @@ window.RDRAuth = {
 		}
 	},
 	init : function() {
-		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" && !$.cookie('rdr_session' ) ) {
-			FB.getLoginStatus( function(response) {
-				if ( response.status && response.status == "connected" ) {
-					RDRAuth.getReadrToken( response.authResponse, function() {});
-				}
+		if ( $.cookie('user_type') && $.cookie('user_type') == "facebook") {
+            FB.getLoginStatus( function(response) {
+                if ( response.status && response.status == "connected" ) {
+                    RDRAuth.getReadrToken( response.authResponse, function() {});
+			    }else{        
+                    RDRAuth.killUser( function() {
+                    });
+                }
 			});
 		} else {
-			RDRAuth.returnUser();
+		  RDRAuth.returnUser();
 		}
 	},
 	decodeDjangoCookie : function(value) {
