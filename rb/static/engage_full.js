@@ -8239,75 +8239,88 @@ function $RFunctions($R){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-                    
-                    var page = settings;
-                    
-                    var widgetClass = 'rdr-summary-key-'+page.key;
+                
+                var page = settings;
+                
+                var widgetClass = 'rdr-summary-key-'+page.key;
 
-                    //first kill any existing instances; we're going to recreate them.
-                    $('.'+widgetClass).remove();
+                //first kill any existing instances; we're going to recreate them.
+                $('.'+widgetClass).remove();
 
-                    var $summary_widget_parent = $(page.parentContainer),
-                        $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"></div>').addClass(widgetClass);
+                var $summary_widget_parent = $(page.parentContainer),
+                    $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"></div>').addClass(widgetClass);
 
-                    if ( RDR.engageScriptParams.bookmarklet == "true" ) {
-                        $summary_widget.addClass('rdr_bookmarklet');
+                if ( RDR.engageScriptParams.bookmarklet == "true" ) {
+                    $summary_widget.addClass('rdr_bookmarklet');
+                }
+                $summary_widget.data({
+                    page_id:page.id,
+                    page_key:page.key
+                });
+
+                //page.jqFunc would be something like 'append' or 'after',
+                //so this would read $summary_widget_parent.append($summary_widget);
+                $summary_widget_parent[page.jqFunc]($summary_widget);
+
+                var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
+                $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
+
+                $summary_widget.append(
+                    '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
+                    '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
+                        '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
+                    '</a>'
+                );
+
+                $summary_widget.find('.rdr-logo').click( function() {
+                    RDR.events.track('click_rb_icon_summ');
+                });
+
+                $summary_widget.find('.rdr-logo').tooltip({});
+
+                $summary_widget.hover(
+                    function() {
+                        // let's get the reaction summaries for the page here.
+                        getReactedContent();
+                        var page_id = $(this).data('page_id');
+
+                        var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+                        RDR.events.track( 'view_summary::'+page_id );
+                        RDR.events.trackEventToCloud({
+                            category: "summarybar",
+                            action: "rindow_shown_summarybar",
+                            opt_label: "page: "+page_id,
+                            page_id: page_id
+                        });
+
+                    },
+                    function() {
                     }
-                    $summary_widget.data({
-                        page_id:page.id,
-                        page_key:page.key
-                    });
+                );
 
-                    //page.jqFunc would be something like 'append' or 'after',
-                    //so this would read $summary_widget_parent.append($summary_widget);
-                    $summary_widget_parent[page.jqFunc]($summary_widget);
-
-                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
-                    $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
-
-                    $summary_widget.append(
-                        '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
-                        '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
-                            '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
-                        '</a>'
-                    );
-
-                    $summary_widget.find('.rdr-logo').click( function() {
-                        RDR.events.track('click_rb_icon_summ');
-                    });
-
-                    $summary_widget.find('.rdr-logo').tooltip({});
-
-                    $summary_widget.hover(
-                        function() {
-                            // let's get the reaction summaries for the page here.
-                            getReactedContent();
-                            var page_id = $(this).data('page_id');
-
-                            var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                            RDR.events.track( 'view_summary::'+page_id );
-                            RDR.events.trackEventToCloud({
-                                category: "summarybar",
-                                action: "rindow_shown_summarybar",
-                                opt_label: "page: "+page_id,
-                                page_id: page_id
-                            });
-
-                        },
-                        function() {
+                //quick fix - I don't know if settings.summary.where(kind =="tag").count is reliable.
+                var trueTotal;
+                if(settings.summary){
+                    $.each(settings.summary, function(){
+                        if(this.kind == "tag"){
+                            trueTotal = this.count;
                         }
-                    );
+                    });
+                }
 
-                    var total_reactions = 0,
-                        total_reactions_label = "";
+                var total_reactions = 0;
+                if(trueTotal){
+                    total_reactions = trueTotal;
+                }else{
                     $.each( page.toptags, function(idx, tag) {
                         total_reactions +=  tag.tag_count;
                     });
-                    if ( total_reactions > 0 ) total_reactions_label = total_reactions+" ";
+                }
 
-                    $summary_widget.append(
-                        '<a class="rdr_reactions_label">'+total_reactions_label+'Reactions</a>'
-                    );
+                var total_reactions_label = ( total_reactions > 0 ) ? total_reactions+" Reactions" : "Reactions";
+                $summary_widget.append(
+                    '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
+                );
             }
 
             function getReactedContent( counts ) {            
