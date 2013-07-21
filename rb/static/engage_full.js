@@ -1518,8 +1518,8 @@ function readrBoard($R){
                 }
                 */
 
-                //at least for now, always close all other rindows and actionbars.
-                RDR.actions.UIClearState();
+                //at least for now, always close all other rindows.
+                RDR.rindow.closeAll();
 
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
