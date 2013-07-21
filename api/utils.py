@@ -263,10 +263,11 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
-    if group and group.blocked_tags:
-        for blocked in group.blocked_tags.all():
-            if interaction_node.body == blocked.body:
-                raise JSONException("Group has blocked this tag.")
+    if kind and kind == 'tag':
+        if group and group.blocked_tags:
+            for blocked in group.blocked_tags.all():
+                if interaction_node.body == blocked.body:
+                    raise JSONException("Group has blocked this tag.")
          
     # Check to see if user has reached their interaction limit
     tempuser = False
@@ -303,12 +304,18 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     except Interaction.DoesNotExist:
         pass
 
-    if parent:
-        pass
-        #print "Creating Interaction with parent node"
-    else:
-        #print "Creating Interaction without parent node"
-        parent = None
+
+    if group and group.signin_organic_required:
+        if not tempuser:
+            pass
+        elif parent:
+            pass
+        else:
+            if interaction_node in group.blessed_tags.all():
+                pass
+            else:
+                raise JSONException(u"sign in required for organic reactions")
+            
     
     try:
         
@@ -334,21 +341,21 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     new_interaction.save()
     try:
         is_new_tag = True
-        for alltag in page.site.group.all_tags.all():
-            logger.info(alltag)
-            if alltag.body == new_interaction.interaction_node.body:
-                is_new_tag = False
-        if is_new_tag:
-            logger.info("Creating all tag")
-            AllTag.objects.create(group=page.site.group, 
-                                  node = new_interaction.interaction_node, 
-                                  order=len(page.site.group.all_tags.all()))
-            try:
-                notification = AsynchNewGroupNodeNotification()
-                t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
-                t.start()
-            except Exception, ex:
-                pass
+        if new_interaction.kind == 'tag':
+            for alltag in page.site.group.all_tags.all():
+                if alltag.body == new_interaction.interaction_node.body:
+                    is_new_tag = False
+            if is_new_tag:
+                logger.info("Creating all tag")
+                AllTag.objects.create(group=page.site.group, 
+                                      node = new_interaction.interaction_node, 
+                                      order=len(page.site.group.all_tags.all()))
+                try:
+                    notification = AsynchNewGroupNodeNotification()
+                    t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                    t.start()
+                except Exception, ex:
+                    pass
             
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
@@ -368,7 +375,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         
-        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
+        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
         t = Thread(target=page_container_cache_updater, kwargs={})
         t.start()
         

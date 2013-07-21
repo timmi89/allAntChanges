@@ -357,5 +357,13 @@ def getUserBoardsDict(cookie_user, visible=True):
             user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
     return user_boards
         
-        
-         
+def isGroupAdmin(group, cookie_user):
+    try:
+        social_user = SocialUser.objects.filter(user=cookie_user)[0]
+        admin_groups = social_user.admin_groups()
+        if group in admin_groups:
+            return True
+        return False
+    except SocialUser.DoesNotExist:
+        return False
+    

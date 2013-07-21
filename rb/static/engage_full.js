@@ -2787,7 +2787,10 @@ function readrBoard($R){
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
                         $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
-                    
+                        
+                    if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
+                        h1_text = "Signing in is required for custom reactions";
+                    }
                     var $header = RDR.rindow.makeHeader( h1_text );
                     $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.hideFooter($rindow);
@@ -2850,6 +2853,7 @@ function readrBoard($R){
                             case "existingInteraction":
                                 userMsg = "You have already given that reaction for this.";
                                 break;
+                                
 
                             case "interactionSuccess":
 
@@ -4370,12 +4374,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     RDR.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
-                                        RDR.actions.interactions[int_type].onFail(args);
+                                        if ( response.message == "sign in required for organic reactions" ) {
+                                            RDR.session.showLoginPanel( args );
+                                        }
+                                        else {
+                                            RDR.actions.interactions[int_type].onFail(args);
+                                        }
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
                                             RDR.events.track( 'temp_limit_hit_r' );
                                             RDR.session.showLoginPanel( args );
-                                        } if ( response.message == "existing interaction" ) {
+                                        } 
+                                        if ( response.message == "existing interaction" ) {
                                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
                                             //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
                                                 //with a message param.

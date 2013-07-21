@@ -36,10 +36,10 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
 class RBGroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval')
+    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required')
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name', 'demo_group', 'approved')
+            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required')
         }),
         ('Advanced', {
             'fields': ('custom_css', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')

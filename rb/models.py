@@ -135,6 +135,7 @@ class Group(models.Model):
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
+    signin_organic_required = models.BooleanField(default=False)
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     paragraph_helper = models.BooleanField(default=True)
@@ -225,7 +226,7 @@ class BlockedTag(models.Model):
     
     class Meta:
         ordering = ['order']
-
+        unique_together = ('group', 'node')
 
 class AllTag(models.Model):
     group = models.ForeignKey(Group)
@@ -237,7 +238,7 @@ class AllTag(models.Model):
     
     class Meta:
         ordering = ['order']
-
+        unique_together = ('group', 'node')
 
         
 class UserDefaultTag(models.Model):

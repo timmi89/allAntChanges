@@ -37,7 +37,7 @@ UserBoards = Resource(handler=UserBoardsHandler)
 BoardSearch = Resource(handler=BoardSearchHandler)
 FollowsBoards = Resource(handler=FollowedBoardsHandler)
 GlobalActivity = Resource(handler=GlobalActivityHandler)
-
+BlockedTag = Resource(handler=BlockedTagHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -71,6 +71,7 @@ urlpatterns = patterns('',
     url(r'^summary/container/content', Content),
     url(r'^metoo', MeToo),
     url(r'^tagremove', TagRemove),
+    url(r'^tag/block/(?P<group_id>\d+)/(?P<node_id>\d+)', BlockedTag),
     url(r'^tag/create/', Tag, kwargs={'action':'create'}),
     url(r'^tag/remove/', Tag, kwargs={'action':'delete'}),
     url(r'^bookmark/create/', Bookmark, kwargs={'action':'create'}),

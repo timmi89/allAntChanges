@@ -100,10 +100,10 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
             msg = EmailMessage("ReadrBoard: A new reaction on your site", 
                                generateGroupNodeEmail(interaction, admin_index), 
                                "hello@readrboard.com", 
-                               [social_user.user.email])
+                               [admin.user.email])
             msg.content_subtype='html'
             msg.send(False)
-            logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+            logger.info("SHOULD SEND NOTIFICATION: group_node " )
             admin_index += 1
         
     except Interaction.DoesNotExist:
