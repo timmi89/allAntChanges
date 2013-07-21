@@ -343,7 +343,7 @@ function readrBoard($R){
                     .show()
                     .addClass('rdr-visible')
                     .css({
-                        position: 'absolute',
+                        position: 'relative',
                         top: 0,
                         left: animWidth
                     });
@@ -563,7 +563,6 @@ function readrBoard($R){
                     RDR.rindow.tagBox.setWidth( $rindow, 320 );
 
                     if ( args.scenario != "tagDeleted" ) {
-
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                                 var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
@@ -815,6 +814,7 @@ function readrBoard($R){
 
                         RDR.actions.containers.media.onEngage( hash );
                     } else {
+                        
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
                         var $header = RDR.rindow.makeHeader( headerText );
                         $rindow.find('.rdr_header').replaceWith($header);
@@ -1513,6 +1513,9 @@ function readrBoard($R){
                 }
                 */
 
+                //at least for now, always close all other rindows and actionbars.
+                RDR.actions.UIClearState();
+
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
                 }
@@ -1524,32 +1527,26 @@ function readrBoard($R){
                 var minHeight = (settings.minHeight<60)?60:settings.minHeight,
                     maxHeight = settings.maxHeight;
                     minWidth = settings.minWidth,
-                    maxWidth = settings.maxWidth;
-
-                var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
-
-                if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-                    var rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page';
+                    maxWidth = settings.maxWidth,
+                    rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page',
                     $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
-                    if ( settings.id ) {
-                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
-                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
-                                                     // logs in, the login rindow knows what function to then call
-                        $new_rindow.attr('id',settings.id);
-                    }
-
-                    //this is instead of the if / else below
-                    $('#rdr_sandbox').append( $new_rindow );
-                }
-                if ( settings.rewritable != true ) {
-                    $new_rindow.removeClass('rdr_rewritable');
+                            
+                if ( settings.id ) {
+                    $('#'+settings.id).remove(); 
+                    // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                    // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+                    // logs in, the login rindow knows what function to then call
+                    $new_rindow.attr('id',settings.id);
                 }
 
+                //this is instead of the if / else below
+                $('#rdr_sandbox').append( $new_rindow );
+                
                 if ( settings.kind == "page" ) {
                     $new_rindow.addClass('rdr_page_key_' + options.container.data('page_key') ).addClass('rdr_page_summary');
                 }
 
-                $new_rindow.data(settings);// jquery obj of the rewritable window
+                $new_rindow.data(settings);
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
                     $new_rindow.html('');
@@ -3304,6 +3301,7 @@ function readrBoard($R){
                 });
 
                 $(document).on('click.rdr',function(event) {
+
                     var $mouse_target = $(event.target);
 
                     if ( !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length ) {
@@ -6108,8 +6106,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.on( 'mouseleave', function(e) {
 
                                 var $this = $(this),
-                                    timeoutCloseEvt = setTimeout(function(){
+                                    timeoutCloseEvt;
 
+                                timeoutCloseEvt = setTimeout(function(){
                                     if ( $this.hasClass('rdr_rewritable') ) {
                                         $this.remove();
                                     }
@@ -8802,7 +8801,16 @@ function $RFunctions($R){
                     return $(range.endContainer).closest('.'+hiliter['class']);
                 };
                 hiliter['isActive'] = function(){
-                    return hiliter['isAppliedToRange'](range);
+                    var isActive = false;
+                    try{
+                        isActive = hiliter['isAppliedToRange'](range);
+                    }
+                    catch(e){
+                        //to signal there was an error;
+                        isActive = null;
+                    }
+
+                    return isActive;
                 };
 
                 return hiliter;
@@ -8817,6 +8825,10 @@ function $RFunctions($R){
                 styleClass = selState.styleName,
                 hiliter = selState.hiliter,
                 isActive = hiliter['isActive']();
+                if(isActive == null){
+                    //null signals an error- range was no longer valid for some reason.  Just return.
+                    return;
+                }
                 //methods.clear();
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
