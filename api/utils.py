@@ -248,7 +248,7 @@ def deleteInteraction(interaction, user):
                 t = Thread(target=container_cache_updater, kwargs={})
                 t.start()
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + interaction.container.hash)
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + [interaction.container.hash])
                 t = Thread(target=container_cache_updater, kwargs={})
                 t.start()
                 
