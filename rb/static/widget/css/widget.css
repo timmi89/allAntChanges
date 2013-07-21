@@ -1964,7 +1964,6 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_b
 
 /*div.rdr_sandbox div.rdr .rdr_hiddenPanel { visibility:hidden !important; }*/
 div.rdr_sandbox div.rdr div.rdr_body.rdr_hiddenPanel { display:none !important; }
-/*div.rdr_sandbox div.rdr div.rdr_body.rdr_visiblePanel { position: relative !important; }*/
 
 div.rdr_sandbox div#rdr_loginPanel {
     z-index: 12101 !important;

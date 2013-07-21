@@ -343,7 +343,7 @@ function readrBoard($R){
                     .show()
                     .addClass('rdr-visible')
                     .css({
-                        position: 'relative',
+                        position: 'absolute',
                         top: 0,
                         left: animWidth
                     });
@@ -563,6 +563,7 @@ function readrBoard($R){
                     RDR.rindow.tagBox.setWidth( $rindow, 320 );
 
                     if ( args.scenario != "tagDeleted" ) {
+
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                                 var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
@@ -814,7 +815,6 @@ function readrBoard($R){
 
                         RDR.actions.containers.media.onEngage( hash );
                     } else {
-                        
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
                         var $header = RDR.rindow.makeHeader( headerText );
                         $rindow.find('.rdr_header').replaceWith($header);
@@ -1167,7 +1167,7 @@ function readrBoard($R){
                     if ( !$.isEmptyObject( comments ) ) {
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments about this"></span>');
 
-                        $commentHover.append( '<i class="rdr-fa-icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="icon-comment"></i> '+num_comments );
                         $commentHover.click( function() {
                             // replacewith bug
                             $(this).tooltip('hide');
@@ -1513,9 +1513,6 @@ function readrBoard($R){
                 }
                 */
 
-                //at least for now, always close all other rindows.
-                RDR.rindow.closeAll();
-
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
                 }
@@ -1527,26 +1524,32 @@ function readrBoard($R){
                 var minHeight = (settings.minHeight<60)?60:settings.minHeight,
                     maxHeight = settings.maxHeight;
                     minWidth = settings.minWidth,
-                    maxWidth = settings.maxWidth,
-                    rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page',
+                    maxWidth = settings.maxWidth;
+
+                var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
+
+                if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
+                    var rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page';
                     $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
-                            
-                if ( settings.id ) {
-                    $('#'+settings.id).remove(); 
-                    // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
-                    // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
-                    // logs in, the login rindow knows what function to then call
-                    $new_rindow.attr('id',settings.id);
+                    if ( settings.id ) {
+                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+                                                     // logs in, the login rindow knows what function to then call
+                        $new_rindow.attr('id',settings.id);
+                    }
+
+                    //this is instead of the if / else below
+                    $('#rdr_sandbox').append( $new_rindow );
+                }
+                if ( settings.rewritable != true ) {
+                    $new_rindow.removeClass('rdr_rewritable');
                 }
 
-                //this is instead of the if / else below
-                $('#rdr_sandbox').append( $new_rindow );
-                
                 if ( settings.kind == "page" ) {
                     $new_rindow.addClass('rdr_page_key_' + options.container.data('page_key') ).addClass('rdr_page_summary');
                 }
 
-                $new_rindow.data(settings);
+                $new_rindow.data(settings);// jquery obj of the rewritable window
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
                     $new_rindow.html('');
@@ -1809,15 +1812,13 @@ function readrBoard($R){
                     $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
 
                     $linkToComment.click( function() {
-                        
-                        var selState = content_node.selState || $rindow.data('selState');
 
                         RDR.actions.viewCommentContent({
                             tag:tag,
                             hash:hash,
                             rindow:$rindow,
                             content_node:content_node,
-                            selState:selState
+                            selState:content_node.selState
                         });
                         return false;
                     });
@@ -3303,7 +3304,6 @@ function readrBoard($R){
                 });
 
                 $(document).on('click.rdr',function(event) {
-
                     var $mouse_target = $(event.target);
 
                     if ( !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length ) {
@@ -5811,7 +5811,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr-fa-icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
                                 
                             }
 
@@ -6108,9 +6108,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $rindow.on( 'mouseleave', function(e) {
 
                                 var $this = $(this),
-                                    timeoutCloseEvt;
+                                    timeoutCloseEvt = setTimeout(function(){
 
-                                timeoutCloseEvt = setTimeout(function(){
                                     if ( $this.hasClass('rdr_rewritable') ) {
                                         $this.remove();
                                     }
@@ -6943,8 +6942,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
-                var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
-                
+                if ( args.selState ) {
+                    var selState = args.selState;
+                }
+
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( tag.tag_body );
                 $rindow.find('.rdr_header').replaceWith($header);
@@ -6971,6 +6972,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // RDR.rindow.updateSizes( $rindow );
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" ){
+                        var selState = summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
                         $rindow.data('selState', selState);
                     }
@@ -8264,7 +8266,7 @@ function $RFunctions($R){
                 $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="rdr_chevron_cta"><i class="rdr-fa-icon-chevron-down"></i></div>' +
+                    '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
                     '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
                         '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
@@ -8800,16 +8802,7 @@ function $RFunctions($R){
                     return $(range.endContainer).closest('.'+hiliter['class']);
                 };
                 hiliter['isActive'] = function(){
-                    var isActive = false;
-                    try{
-                        isActive = hiliter['isAppliedToRange'](range);
-                    }
-                    catch(e){
-                        //to signal there was an error;
-                        isActive = null;
-                    }
-
-                    return isActive;
+                    return hiliter['isAppliedToRange'](range);
                 };
 
                 return hiliter;
@@ -8824,10 +8817,6 @@ function $RFunctions($R){
                 styleClass = selState.styleName,
                 hiliter = selState.hiliter,
                 isActive = hiliter['isActive']();
-                if(isActive == null){
-                    //null signals an error- range was no longer valid for some reason.  Just return.
-                    return;
-                }
                 //methods.clear();
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){
