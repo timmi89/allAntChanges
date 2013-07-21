@@ -1809,13 +1809,15 @@ function readrBoard($R){
                     $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
 
                     $linkToComment.click( function() {
+                        
+                        var selState = content_node.selState || $rindow.data('selState');
 
                         RDR.actions.viewCommentContent({
                             tag:tag,
                             hash:hash,
                             rindow:$rindow,
                             content_node:content_node,
-                            selState:content_node.selState
+                            selState:selState
                         });
                         return false;
                     });
@@ -6941,10 +6943,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
-                if ( args.selState ) {
-                    var selState = args.selState;
-                }
-
+                var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
+                
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( tag.tag_body );
                 $rindow.find('.rdr_header').replaceWith($header);
@@ -6971,7 +6971,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // RDR.rindow.updateSizes( $rindow );
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" ){
-                        var selState = summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
                         $rindow.data('selState', selState);
                     }
