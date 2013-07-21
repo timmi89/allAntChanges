@@ -1167,7 +1167,7 @@ function readrBoard($R){
                     if ( !$.isEmptyObject( comments ) ) {
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments about this"></span>');
 
-                        $commentHover.append( '<i class="icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="rdr-fa-icon-comment"></i> '+num_comments );
                         $commentHover.click( function() {
                             // replacewith bug
                             $(this).tooltip('hide');
@@ -5811,7 +5811,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr-fa-icon-chevron-down"></i></div>');
                                 
                             }
 
@@ -8266,7 +8266,7 @@ function $RFunctions($R){
                 $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
+                    '<div class="rdr_chevron_cta"><i class="rdr-fa-icon-chevron-down"></i></div>' +
                     '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
                         '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
