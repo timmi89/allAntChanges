@@ -3008,12 +3008,98 @@ function readrBoard($R){
                 //RDR.actions.crossPageContainer:
                 react: function(hash) {
                     //RDR.actions.crossPageContainer.react:
+                    
+                    //todo: remove test
                     var testHash = 'a211dd67c7758d4df00dd8fe7951678e';
                     hash = hash || testHash;
                     var selector = '[rdr-hash="' + hash + '"]';
                     var el = $(selector)[0];                
                     $('document').selog('selectEl', el);
                     RDR.util.checkForSelectedTextAndLaunchRindow();
+
+                },
+                fetchPage: function(pageUrl) {
+                    //RDR.actions.crossPageContainer.fetchPage:
+                    var canonical_url = pageUrl;
+                    var title = $('meta[property="og:title"]').attr('content');
+
+                    var pagesArr = [{
+                        group_id: parseInt(RDR.group.id, 10),
+                        url: pageUrl,
+                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
+                        title: title
+                    }];
+
+                    var sendData = {
+                        pages: pagesArr
+                    };
+
+                    return $.ajax({
+                        url: RDR_baseUrl+"/api/page/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: $.toJSON(sendData) }
+                    });
+                },
+                fetchContainer: function(hash, pageId){
+                    var hashList = [hash];
+
+                    var sendData = {
+                       short_name: RDR.group.short_name,
+                       pageID: pageId,
+                       hashes: hashList
+                    };
+
+                    return $.ajax({
+                        url: RDR_baseUrl+"/api/summary/containers/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: $.toJSON(sendData)
+                        }
+                    });
+                },
+                fetch: function(url){
+                    
+                    var testUrl = "http://local.readrboard.com:8080/static/demo/index.html";
+                    var pageUrl = url || testUrl;
+                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
+                    fetchPage.pipe(function(response){
+                        var page = response.data[0];
+                        // {
+                        //     containers: Array[26]
+                        //     id: 11
+                        //     summary: Array[3]
+                        //     toptags: Array[10]
+                        // }
+
+                        //todo: for testing this is just arbitrarily picking the first container.
+                        var testContainer = page.containers[0];
+
+                        var hash = testContainer.hash;
+
+                        var fetchContainer = RDR.actions.crossPageContainer.fetchContainer(hash, page.id);
+                        return fetchContainer;
+                    }).pipe(function(response){
+                        var known = response.data.known;
+                        //todo: do we need to deal with unknown?
+
+                        //there will be only one.
+                        var theSummary;
+                        $.each(known, function(hash, summary){
+                            theSummary = summary;
+                        });
+
+                        var tags = theSummary.top_interactions.tags;
+                        
+                        $.each(tags, function(id, tag){
+                            console.log( id +": "+ tag.body);
+                        });
+
+
+                    });
 
                 }
             },
