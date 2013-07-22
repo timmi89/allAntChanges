@@ -1897,7 +1897,6 @@ function readrBoard($R){
                         "item":"reaction",
                         "tipText":"What do you think?",
                         "onclick":function(){
-                            debugger;
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
@@ -3006,11 +3005,12 @@ function readrBoard($R){
             //RDR.actions:
             crossPageContainer: {
                 //RDR.actions.crossPageContainer:
+                testHash: '14d0119a50690344eb1fe15ae4a16287',
                 react: function(hash) {
                     //RDR.actions.crossPageContainer.react:
                     
                     //todo: remove test
-                    var testHash = 'a211dd67c7758d4df00dd8fe7951678e';
+                    var testHash = RDR.actions.crossPageContainer.testHash;
                     hash = hash || testHash;
                     var selector = '[rdr-hash="' + hash + '"]';
                     var el = $(selector)[0];                
@@ -3061,13 +3061,37 @@ function readrBoard($R){
                         }
                     });
                 },
+                fetchContent: function(hash, pageId, containerId){
+
+                     var sendData = {
+                        "page_id": pageId,
+                        "container_id":containerId,
+                        "hash":hash
+                    };
+
+                    return $.ajax({
+                        url: RDR_baseUrl+"/api/summary/container/content/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: $.toJSON(sendData) }
+                    });
+                },
                 fetch: function(url){
                     
                     var testUrl = "http://local.readrboard.com:8080/static/demo/index.html";
                     var pageUrl = url || testUrl;
                     var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
+                    var pageId;
+                    var targetHash = RDR.actions.crossPageContainer.testHash;
+
                     fetchPage.pipe(function(response){
+                        
+                        //there will be just one page.
                         var page = response.data[0];
+                        
+                        pageId = page.id;
+
                         // {
                         //     containers: Array[26]
                         //     id: 11
@@ -3075,14 +3099,22 @@ function readrBoard($R){
                         //     toptags: Array[10]
                         // }
 
-                        //todo: for testing this is just arbitrarily picking the first container.
-                        var testContainer = page.containers[0];
+                        
+                        // var testContainer;
+                        //oh, ha, we we don't even need this.
+                        // $.each(page.containers, function(container, idx){
+                        //     if(container.hash == targetHash){
+                        //         testContainer = container;
+                        //     }
+                        // });
+                        // if(!testContainer){
+                        //     throw "a container should always be found."
+                        // }
 
-                        var hash = testContainer.hash;
-
-                        var fetchContainer = RDR.actions.crossPageContainer.fetchContainer(hash, page.id);
+                        var fetchContainer = RDR.actions.crossPageContainer.fetchContainer(targetHash, pageId);
                         return fetchContainer;
                     }).pipe(function(response){
+                        
                         var known = response.data.known;
                         //todo: do we need to deal with unknown?
 
@@ -3092,13 +3124,28 @@ function readrBoard($R){
                             theSummary = summary;
                         });
 
+                            
                         var tags = theSummary.top_interactions.tags;
-                        
+                        //just to test data
+                        $.clog("------all the Tags-------");
                         $.each(tags, function(id, tag){
-                            console.log( id +": "+ tag.body);
+                            $.clog( id +": "+ tag.body);
                         });
 
 
+                        //I'm not totally sure we even need this call...
+                        var fetchContent = RDR.actions.crossPageContainer.fetchContent(targetHash, pageId, theSummary.id);
+                        return fetchContent;
+                    }).pipe(function(response){
+                        
+                        var contentNodes = response.data;
+
+                        //just to test data
+                        $.clog("------all the contentNode Data (we'll only have one) -------");
+                        $.each(contentNodes, function(id, contentNode){
+                            $.clog( id +": "+ contentNode.body);
+                        });
+                        
                     });
 
                 }
