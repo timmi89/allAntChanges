@@ -1897,6 +1897,7 @@ function readrBoard($R){
                         "item":"reaction",
                         "tipText":"What do you think?",
                         "onclick":function(){
+                            debugger;
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
@@ -3003,6 +3004,19 @@ function readrBoard($R){
         },
         actions: {
             //RDR.actions:
+            crossPageContainer: {
+                //RDR.actions.crossPageContainer:
+                react: function(hash) {
+                    //RDR.actions.crossPageContainer.react:
+                    var testHash = 'a211dd67c7758d4df00dd8fe7951678e';
+                    hash = hash || testHash;
+                    var selector = '[rdr-hash="' + hash + '"]';
+                    var el = $(selector)[0];                
+                    $('document').selog('selectEl', el);
+                    RDR.util.checkForSelectedTextAndLaunchRindow();
+
+                }
+            },
             aboutReadrBoard: function() {
             },
             init: function(){
@@ -8413,6 +8427,12 @@ function $RFunctions($R){
                     selStateStack[selState.idx] = selState;
 
                     return selState;
+                },
+                selectEl: function(el){
+                    var range = rangy.createRange();
+                    range.selectNodeContents(el);
+                    var sel = rangy.getSelection();
+                    sel.setSingleRange(range);
                 },
                 activate: function(idxOrSelState){
                     var selState = _fetchselState(idxOrSelState);
