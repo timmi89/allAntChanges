@@ -3009,6 +3009,11 @@ function readrBoard($R){
                 instructions: function(){
                     //RDR.actions.crossPageContainer.instructions:
                     /*
+
+                        Important note!
+                        For this to work, although it _doesn't_ matter what the group's "Media url ignore query" is set to,
+                        It _does_ matter that the site has Querystring content set to true.
+
                         I've added these test pages 
                         http://local.readrboard.com:8080/static/demo/index-a.html
                         http://local.readrboard.com:8080/static/demo/index-b.html
