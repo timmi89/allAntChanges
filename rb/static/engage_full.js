@@ -3006,14 +3006,89 @@ function readrBoard($R){
             crossPageContainer: {
                 //RDR.actions.crossPageContainer:
                 testHash: '14d0119a50690344eb1fe15ae4a16287',
+                instructions: function(){
+                    //RDR.actions.crossPageContainer.instructions:
+                    /*
+                        I've added these test pages 
+                        http://local.readrboard.com:8080/static/demo/index-a.html
+                        http://local.readrboard.com:8080/static/demo/index-b.html
+
+                        Page a has a paragraph
+                            with an attr: rdr-crossPageContainer=true
+                            and which hashes to: fcd4547dcaf3699886587ab47cb2ab5e
+
+                        Page b has a paragraph
+                            with an attr: rdr-crossPageContainer=true
+                            and which hashes to: 96ea23506ce725fbf1e226daae2d2466
+
+                        To test write mode on either page:
+                            RDR.actions.crossPageContainer.react()
+                            - a rindow will open, react as normal.
+    
+                        To test read mode:
+                            RDR.actions.crossPageContainer.fetch() //with the url.
+                            so from page b, to get the crossPageContainer from page a...
+                            RDR.actions.crossPageContainer.fetch('http://local.readrboard.com:8080/static/demo/index-a.html?crossPageContainer=true&container=fcd4547dcaf3699886587ab47cb2ab5e')
+
+                            // note that the final solution will not require the hash - I know that will require too much of the publisher.
+                            // with a quick modification the final solution could just call the page url... so
+                                RDR.actions.crossPageContainer.fetch('http://local.readrboard.com:8080/static/demo/index-a.html') 
+
+                    */
+                },
+                detect: function(hash) {
+                    //RDR.actions.crossPageContainer.detect:
+                    var selector = '[rdr-crossPageContainer="' + true + '"]';
+                    var $crossPageContainers = $(selector);
+                    return $crossPageContainers;
+                },
+                init: function(hash) {
+                    //try to find a crossPageContainer
+                    var $foundContainer = RDR.actions.crossPageContainer.detect().eq(0);
+                    if(!$foundContainer.length){
+                        RDR.actions.crossPageContainer.hasInitiated = true;
+                        return;
+                    }
+                    
+                    var hash = $foundContainer.attr('rdr-hash');
+
+                    var thisUrl = window.location.href;
+                    var pageUrl = thisUrl + "?crossPageContainer=true&container="+hash;
+
+                    var pageId;
+                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
+                    fetchPage.done(function(response){
+                        //there will be just one page.
+                        var page = response.data[0];
+                        pageId = page.id;
+
+                        //todo: break this out for clarity.
+                        $foundContainer.attr('rdr-crossPageId', pageId);
+                    });
+
+                    RDR.actions.crossPageContainer.hasInitiated = true;
+                },
                 react: function(hash) {
                     //RDR.actions.crossPageContainer.react:
                     
+                    if(!RDR.actions.crossPageContainer.hasInitiated){
+                        RDR.actions.crossPageContainer.init();
+                    }
+
                     //todo: remove test
                     var testHash = RDR.actions.crossPageContainer.testHash;
-                    hash = hash || testHash;
-                    var selector = '[rdr-hash="' + hash + '"]';
-                    var el = $(selector)[0];                
+                    var el;
+
+                    //try to find a crossPageContainer
+                    var $foundContainers = RDR.actions.crossPageContainer.detect()
+                    if($foundContainers.length){
+                        el = $foundContainers[0];
+                    }else{
+                        hash = hash || testHash;
+                        var selector = '[rdr-hash="' + hash + '"]';
+                        el = $(selector)[0];
+                    }
+
                     $('document').selog('selectEl', el);
                     RDR.util.checkForSelectedTextAndLaunchRindow();
 
@@ -3081,10 +3156,20 @@ function readrBoard($R){
                     
                     var testUrl = "http://local.readrboard.com:8080/static/demo/index.html";
                     var pageUrl = url || testUrl;
-                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
                     var pageId;
+                    
                     var targetHash = RDR.actions.crossPageContainer.testHash;
-
+                    
+                    try{
+                        //quick pass
+                        var query = RDR.util.getQueryStrFromUrl(pageUrl);
+                        var params = RDR.util.getQueryParams(query);
+                        targetHash = params.container;
+                    }catch(e){
+                        // just let it fail and default to the testHash
+                    }
+                    
+                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
                     fetchPage.pipe(function(response){
                         
                         //there will be just one page.
@@ -3119,13 +3204,17 @@ function readrBoard($R){
                         //todo: do we need to deal with unknown?
 
                         //there will be only one.
-                        var theSummary;
+                        var knownSummary;
                         $.each(known, function(hash, summary){
-                            theSummary = summary;
+                            knownSummary = summary;
                         });
 
+                        if(!knownSummary){
+                            $.clog("------looks like there are no tags yet-------");
+                            return false;
+                        }
                             
-                        var tags = theSummary.top_interactions.tags;
+                        var tags = knownSummary.top_interactions.tags;
                         //just to test data
                         $.clog("------all the Tags-------");
                         $.each(tags, function(id, tag){
@@ -3134,12 +3223,14 @@ function readrBoard($R){
 
 
                         //I'm not totally sure we even need this call...
-                        var fetchContent = RDR.actions.crossPageContainer.fetchContent(targetHash, pageId, theSummary.id);
+                        var fetchContent = RDR.actions.crossPageContainer.fetchContent(targetHash, pageId, knownSummary.id);
                         return fetchContent;
                     }).pipe(function(response){
-                        
-                        var contentNodes = response.data;
+                        if(!response){
+                            return;
+                        }
 
+                        var contentNodes = response.data;
                         //just to test data
                         $.clog("------all the contentNode Data (we'll only have one) -------");
                         $.each(contentNodes, function(id, contentNode){
@@ -4542,18 +4633,32 @@ function readrBoard($R){
                         summary = RDR.summaries[hash],
                         kind = (summary) ? summary.kind:"";
 
+
                     if ( !action_type ) action_type = "create";
 
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
+
+
+                    //TEST - TODO - VERIFY
+                    //hack for rdr-crossPageContainer.
+                    var crossPageSendData = {};
+                    var $container = $('[rdr-hash="' + hash + '"]');
+                    var crossPageId = $container.attr('rdr-crossPageId');
+                    if(crossPageId){
+                        crossPageSendData.page_id = parseInt(crossPageId, 10);
+                    }
+                    //end test
+
+
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
                     //get user and only procceed on success of that.
                     RDR.session.getUser( args, function(newArgs){
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
-                            sendData = $.extend( {}, defaultSendData, customSendData );
+                            sendData = $.extend( {}, defaultSendData, customSendData, crossPageSendData );
                         newArgs.sendData = sendData;
 
                         //fix hash
