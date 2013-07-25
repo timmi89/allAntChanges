@@ -190,6 +190,18 @@ def generateAgreeEmail(user, count, interaction):
                         + str(count))
     return message
 
+
+def generateGroupNodeEmail(interaction, admin_index):
+    #message = getEmailTemplate('agree_email.html') % (user.username, count, settings.BASE_URL, interaction.id)
+    message = getEmailTemplateFromWeb('group_node', group_id=interaction.page.site.group.id, interaction_id=interaction.id, count=admin_index)
+    if message is None:
+        raise Exception("None for group node email on interaction: " + str(interaction) + " to user: " 
+                        + str(user) 
+                        + " admin_index:" 
+                        + str(admin_index))
+    return message
+
+
 def generateCommentEmail(user, interaction):
     #message = getEmailTemplate('comment_email.html') % (user.username, settings.BASE_URL, interaction.id)
     message = getEmailTemplateFromWeb('comment', user_id=user.id, interaction_id=interaction.id)
@@ -272,6 +284,8 @@ def getEmailTemplateFromWeb(template_name, **kwargs):
             url = '/chronos/email/comment/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'agree':
             url = '/chronos/email/agree/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id']) + '/' + str(kwargs['count'])+ '/'
+        elif template_name == 'group_node':
+            url = '/chronos/email/group_node/' + str(kwargs['interaction_id']) + '/' + str(kwargs['group_id']) + '/' + str(kwargs['count'])+ '/'
         elif template_name == 'page':
             url = '/chronos/email/page/' + str(kwargs['interaction_id']) + '/' + str(kwargs['user_id'])+ '/'
         elif template_name == 'follow':
@@ -343,5 +357,13 @@ def getUserBoardsDict(cookie_user, visible=True):
             user_boards.append(model_to_dict(b_a.board, exclude = ['interactions','owner','admins','description','active','visible']))
     return user_boards
         
-        
-         
+def isGroupAdmin(group, cookie_user):
+    try:
+        social_user = SocialUser.objects.filter(user=cookie_user)[0]
+        admin_groups = social_user.admin_groups()
+        if group in admin_groups:
+            return True
+        return False
+    except SocialUser.DoesNotExist:
+        return False
+    

@@ -3,6 +3,9 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 # Uncomment the next two lines to enable the admin:
+from django.views.generic import RedirectView
+from django.views.generic import TemplateView
+
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
@@ -105,9 +108,8 @@ urlpatterns = patterns('',
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   # Extras
-  # 1.3.1 syntax url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
-  # 1.3.1 syntax url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
-  # url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
+  #url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
+  #url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
   url(r'^favicon\.ico$', RedirectView.as_view(url='/static/site/images/favicon.ico')),
 
   # API
@@ -123,6 +125,7 @@ urlpatterns = patterns('',
   # 1.3.1 syntax url(r'^signup/$', 'django.views.generic.simple.redirect_to', {'url': '/about/#publishers'}),
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
+
   url(r'^analytics/', include('readrboard.analytics.urls')),
   url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
   url(r'^admin_approve/$', 'rb.views.admin_approve'),
@@ -149,6 +152,7 @@ from django.conf.urls.static import static
 
 if settings.DEBUG:
     # 1.3.1 syntax urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
+    #urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
