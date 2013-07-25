@@ -6313,8 +6313,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           }
 
                           // is it the last thing?  i.e. should it be wide?
-                          if ( tagList.length > 1 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
-                            $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last().addClass('rdr_wide').find('.rdr_box_small').addClass('rdr_wide');
+                          if ( tagList.length > 2 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
+                            var $lastContainer = $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last();
+                            if ( $lastContainer.find('.rdr_box_small').length != 2 ) {
+                                $lastContainer.addClass('rdr_wide');
+                                $lastContainer.find('.rdr_box_small').addClass('rdr_wide');
+                            }
                           }
 
                           function isotopeTags( $tagsListContainer ) {
