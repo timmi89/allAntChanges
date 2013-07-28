@@ -172,6 +172,14 @@
                 </label>
             </div>
 
+            <div class="formRow">
+                <label for="id_signin_organic_required">
+                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
+                    <span class="labelTitle">Require login for custom reactions</span>
+                    <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
+                </label>
+            </div>
+
             <!-- <div class="formRow">
                 <label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
                 {{ form.call_to_action }}

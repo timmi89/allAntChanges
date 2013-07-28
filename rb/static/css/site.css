@@ -147,7 +147,10 @@ body.popupForm.wide section[role="content"] { border:none; }
 #groupSettings label   { font-weight:normal; line-height:16px; margin-top:16px;}
 #groupSettings .column { display:block; width:45%; float:left; }
 #groupSettings .column.rightColumn { xpadding-left:50%; margin-left:5%; }
-
+#groupSettings .formRow input[type=checkbox]{
+    margin:2px 5px 0px 0;
+    float:left;
+}
 form.big-form         { padding:10px 20px; }
 form.big-form label     { display:block; margin: 5px 0;}
 form.big-form label span    { display:block; font-style:italic; font-size:12px; }
@@ -157,10 +160,7 @@ form.big-form .configuarationSection h4     {
     font-size: 14px;
     margin-bottom: 10px;
 }
-#id_requires_approval,
-#id_paragraph_helper {
-    margin:2px 5px 0px 0;float:left;
-}
+
 .word_blacklist_row .hidden{
     display: none;
 }
