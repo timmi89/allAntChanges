@@ -3003,249 +3003,6 @@ function readrBoard($R){
         },
         actions: {
             //RDR.actions:
-            crossPageContainer: {
-                //RDR.actions.crossPageContainer:
-                testHash: '14d0119a50690344eb1fe15ae4a16287',
-                instructions: function(){
-                    //RDR.actions.crossPageContainer.instructions:
-                    /*
-
-                        Important note!
-                        For this to work, although it _doesn't_ matter what the group's "Media url ignore query" is set to,
-                        It _does_ matter that the site has Querystring content set to true.
-
-                        I've added these test pages 
-                        http://local.readrboard.com:8080/static/demo/index-a.html
-                        http://local.readrboard.com:8080/static/demo/index-b.html
-
-                        Page a has a paragraph
-                            with an attr: rdr-crossPageContainer=true
-                            and which hashes to: fcd4547dcaf3699886587ab47cb2ab5e
-
-                        Page b has a paragraph
-                            with an attr: rdr-crossPageContainer=true
-                            and which hashes to: 96ea23506ce725fbf1e226daae2d2466
-
-                        To test write mode on either page:
-                            RDR.actions.crossPageContainer.react()
-                            - a rindow will open, react as normal.
-    
-                        To test read mode:
-                            RDR.actions.crossPageContainer.fetch() //with the url.
-                            so from page b, to get the crossPageContainer from page a...
-                            RDR.actions.crossPageContainer.fetch('http://local.readrboard.com:8080/static/demo/index-a.html?crossPageContainer=true&container=fcd4547dcaf3699886587ab47cb2ab5e')
-
-                            // note that the final solution will not require the hash - I know that will require too much of the publisher.
-                            // with a quick modification the final solution could just call the page url... so
-                                RDR.actions.crossPageContainer.fetch('http://local.readrboard.com:8080/static/demo/index-a.html') 
-
-                    */
-                },
-                detect: function(hash) {
-                    //RDR.actions.crossPageContainer.detect:
-                    var selector = '[rdr-crossPageContainer="' + true + '"]';
-                    var $crossPageContainers = $(selector);
-                    return $crossPageContainers;
-                },
-                init: function(hash) {
-                    //try to find a crossPageContainer
-                    var $foundContainer = RDR.actions.crossPageContainer.detect().eq(0);
-                    if(!$foundContainer.length){
-                        RDR.actions.crossPageContainer.hasInitiated = true;
-                        return;
-                    }
-                    
-                    var hash = $foundContainer.attr('rdr-hash');
-
-                    var thisUrl = window.location.href;
-                    var pageUrl = thisUrl + "?crossPageContainer=true&container="+hash;
-
-                    var pageId;
-                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
-                    fetchPage.done(function(response){
-                        //there will be just one page.
-                        var page = response.data[0];
-                        pageId = page.id;
-
-                        //todo: break this out for clarity.
-                        $foundContainer.attr('rdr-crossPageId', pageId);
-                    });
-
-                    RDR.actions.crossPageContainer.hasInitiated = true;
-                },
-                react: function(hash) {
-                    //RDR.actions.crossPageContainer.react:
-                    
-                    if(!RDR.actions.crossPageContainer.hasInitiated){
-                        RDR.actions.crossPageContainer.init();
-                    }
-
-                    //todo: remove test
-                    var testHash = RDR.actions.crossPageContainer.testHash;
-                    var el;
-
-                    //try to find a crossPageContainer
-                    var $foundContainers = RDR.actions.crossPageContainer.detect()
-                    if($foundContainers.length){
-                        el = $foundContainers[0];
-                    }else{
-                        hash = hash || testHash;
-                        var selector = '[rdr-hash="' + hash + '"]';
-                        el = $(selector)[0];
-                    }
-
-                    $('document').selog('selectEl', el);
-                    RDR.util.checkForSelectedTextAndLaunchRindow();
-
-                },
-                fetchPage: function(pageUrl) {
-                    //RDR.actions.crossPageContainer.fetchPage:
-                    var canonical_url = pageUrl;
-                    var title = $('meta[property="og:title"]').attr('content');
-
-                    var pagesArr = [{
-                        group_id: parseInt(RDR.group.id, 10),
-                        url: pageUrl,
-                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
-                        title: title
-                    }];
-
-                    var sendData = {
-                        pages: pagesArr
-                    };
-
-                    return $.ajax({
-                        url: RDR_baseUrl+"/api/page/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) }
-                    });
-                },
-                fetchContainer: function(hash, pageId){
-                    var hashList = [hash];
-
-                    var sendData = {
-                       short_name: RDR.group.short_name,
-                       pageID: pageId,
-                       hashes: hashList
-                    };
-
-                    return $.ajax({
-                        url: RDR_baseUrl+"/api/summary/containers/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: {
-                            json: $.toJSON(sendData)
-                        }
-                    });
-                },
-                fetchContent: function(hash, pageId, containerId){
-
-                     var sendData = {
-                        "page_id": pageId,
-                        "container_id":containerId,
-                        "hash":hash
-                    };
-
-                    return $.ajax({
-                        url: RDR_baseUrl+"/api/summary/container/content/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) }
-                    });
-                },
-                fetch: function(url){
-                    
-                    var testUrl = "http://local.readrboard.com:8080/static/demo/index.html";
-                    var pageUrl = url || testUrl;
-                    var pageId;
-                    
-                    var targetHash = RDR.actions.crossPageContainer.testHash;
-                    
-                    try{
-                        //quick pass
-                        var query = RDR.util.getQueryStrFromUrl(pageUrl);
-                        var params = RDR.util.getQueryParams(query);
-                        targetHash = params.container;
-                    }catch(e){
-                        // just let it fail and default to the testHash
-                    }
-                    
-                    var fetchPage = RDR.actions.crossPageContainer.fetchPage(pageUrl);
-                    fetchPage.pipe(function(response){
-                        
-                        //there will be just one page.
-                        var page = response.data[0];
-                        
-                        pageId = page.id;
-
-                        // {
-                        //     containers: Array[26]
-                        //     id: 11
-                        //     summary: Array[3]
-                        //     toptags: Array[10]
-                        // }
-
-                        
-                        // var testContainer;
-                        //oh, ha, we we don't even need this.
-                        // $.each(page.containers, function(container, idx){
-                        //     if(container.hash == targetHash){
-                        //         testContainer = container;
-                        //     }
-                        // });
-                        // if(!testContainer){
-                        //     throw "a container should always be found."
-                        // }
-
-                        var fetchContainer = RDR.actions.crossPageContainer.fetchContainer(targetHash, pageId);
-                        return fetchContainer;
-                    }).pipe(function(response){
-                        
-                        var known = response.data.known;
-                        //todo: do we need to deal with unknown?
-
-                        //there will be only one.
-                        var knownSummary;
-                        $.each(known, function(hash, summary){
-                            knownSummary = summary;
-                        });
-
-                        if(!knownSummary){
-                            $.clog("------looks like there are no tags yet-------");
-                            return false;
-                        }
-                            
-                        var tags = knownSummary.top_interactions.tags;
-                        //just to test data
-                        $.clog("------all the Tags-------");
-                        $.each(tags, function(id, tag){
-                            $.clog( id +": "+ tag.body);
-                        });
-
-
-                        //I'm not totally sure we even need this call...
-                        var fetchContent = RDR.actions.crossPageContainer.fetchContent(targetHash, pageId, knownSummary.id);
-                        return fetchContent;
-                    }).pipe(function(response){
-                        if(!response){
-                            return;
-                        }
-
-                        var contentNodes = response.data;
-                        //just to test data
-                        $.clog("------all the contentNode Data (we'll only have one) -------");
-                        $.each(contentNodes, function(id, contentNode){
-                            $.clog( id +": "+ contentNode.body);
-                        });
-                        
-                    });
-
-                }
-            },
             aboutReadrBoard: function() {
             },
             init: function(){
@@ -3986,10 +3743,13 @@ function readrBoard($R){
                         RDR.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
                     }
 
+
+                    var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
                        pageID: pageIdToInt,
-                       hashes: hashList
+                       hashes: hashList,
+                       crossPageHashes:crossPageHashes
                     }, onSuccessCallback);
                 
                 });
@@ -4010,6 +3770,11 @@ function readrBoard($R){
                         success: function(response) {
                             // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
                             RDR.known_hashes = response.data.known;
+
+                            // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
+                            if ( response.data.crossPageKnown ) {
+                                RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
+                            }
 
                             var summaries = {};
                             summaries[ pageId ] = response.data.known;
@@ -4644,17 +4409,22 @@ function readrBoard($R){
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
+console.log('making a call!!!!!!!!!!!');
+                    // porter cross-page handler
+                    var crossPageSendData = {};
 
 
+                    // REMOVE
                     //TEST - TODO - VERIFY
                     //hack for rdr-crossPageContainer.
-                    var crossPageSendData = {};
-                    var $container = $('[rdr-hash="' + hash + '"]');
-                    var crossPageId = $container.attr('rdr-crossPageId');
-                    if(crossPageId){
-                        crossPageSendData.page_id = parseInt(crossPageId, 10);
-                    }
+                    // var crossPageSendData = {};
+                    // var $container = $('[rdr-hash="' + hash + '"]');
+                    // var crossPageId = $container.attr('rdr-crossPageId');
+                    // if(crossPageId){
+                    //     crossPageSendData.page_id = parseInt(crossPageId, 10);
+                    // }
                     //end test
+
 
 
                     // take care of pre-ajax stuff, mostly UI stuff

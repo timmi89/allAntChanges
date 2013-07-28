@@ -438,7 +438,7 @@ def getSinglePageDataDict(page_id):
     
     
     
-def getKnownUnknownContainerSummaries(page_id, hashes):
+def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
@@ -451,9 +451,35 @@ def getKnownUnknownContainerSummaries(page_id, hashes):
     ).select_related('interaction_node','content','user',('social_user')))
     #logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
+
+    # crossPageHashes
+    if len(crossPageHashes) > 0:
+        crossPageContainers = list(Container.objects.filter(hash__in=crossPageHashes).values_list('id','hash','kind'))
+        crossPageIds = [container[0] for container in crossPageContainers]
+        # MIKE: verify / do?
+        # this interaction request should filter by group
+        # to do so, we think we need a django query or queries that does this:
+            # 1. takes the page_id to find the site its on
+            # 2. uses the site_id to find the group_id
+            # 3. gets a list of page_ids associated with the group_id (group > site > page)... lets call this group_page_ids
+            # ...then that is used in the commented-out part of this query:
+        crossPageInteractions = list(Interaction.objects.filter(
+            container__in=crossPageIds,
+            # page__in=group_page_ids,
+            approved=True
+        ).select_related('interaction_node','content','user',('social_user')))
+
+        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers)
+
+        
     #logger.info("K KEYS: " + str(known.keys()))
+    # MIKE: verify / do?
+        # does my solution here correctly handle cache for when there is, and isn't, a crossPageKnown list?
     unknown = list(set(hashes) - set(known.keys()))
-    cacheable_result = dict(known=known, unknown=unknown)
+    if 'crossPageKnown' in locals():
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
+    else:
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
     return cacheable_result
 
 def getSettingsDict(group):

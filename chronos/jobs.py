@@ -131,7 +131,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         #self.key = 'page_containers' + str(self.page_id)
         #logger.info('hydrating using key: ' + self.key)
         if self.method == 'update':  
-            self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
+            self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes, "")
         
 class GroupSettingsDataCacheUpdater(CacheUpdater):        
     def __init__(self, **kwargs):

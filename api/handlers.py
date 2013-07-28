@@ -493,6 +493,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
+        crossPageHashes = data.get('crossPageHashes', [])
         try:
             page = data['pageID']
         except KeyError:
@@ -515,7 +516,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         else:
             # Force evaluation by making lists
             #logger.info("knownUnknown started " + str(page))
-            cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+            cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
             #logger.info("knownUnknown done " + str(page))
             try:
                 cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
