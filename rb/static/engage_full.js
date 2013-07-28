@@ -1219,7 +1219,12 @@ function readrBoard($R){
                         //note that hash is a $(dom) element, not a hash.  Fix this later.
 
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            tag.body = $input.val();
+                            var val = $input.val();
+                            if(val === ""){
+                                return;
+                            }
+                            tag.body = val;
+
                             $input.parent().addClass('rdr_tagged');
 
                             // args = { tag:tag, hash:hash, kind:"page" };
