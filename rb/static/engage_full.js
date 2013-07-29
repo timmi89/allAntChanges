@@ -3744,7 +3744,12 @@ function readrBoard($R){
                     }
 
 
-                    var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
+                    // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
+                    var crossPageHashes = [];
+                    $.each( $('[rdr-crossPageContent]'), function( idx, node ) {
+                        crossPageHashes.push($(node).attr('rdr-hash'));
+                    });
+
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
                        pageID: pageIdToInt,
