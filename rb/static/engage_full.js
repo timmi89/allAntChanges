@@ -1613,7 +1613,7 @@ function readrBoard($R){
                 });
             },
             closeAll: function() {
-                var $allRindows = $('div.rdr.rdr_window');
+                var $allRindows = $('div.rdr.rdr_window').not('.rdr_no_clear');
                 RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
             },
@@ -5509,6 +5509,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     _showRindowAfterLoad();
                                 });
                             }
+                            if ( $grid.length ) {
+                                // var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                            }
                             RDR.actions.indicators.update(hash);
 
                         } else {
@@ -5769,6 +5772,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                             if ( $cta.length ) {
                             }
+                            if ( $grid.length ) {
+                                $grid.data('hash', hash).addClass('w640').html('<div class="rdr rdr_window rdr_widget w640 rdr_no_clear"><div class="rdr rdr_body_wrap rdr_clearfix"><div class="rdr_body rdr_tags_list"></div></div></div>');
+                                RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                            }
                     } else {
 
                         //re-init if we want a 'hard reset'
@@ -6011,12 +6018,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     //move these from indicators-  they dont belong here
                     makeTagsListForInline: function( $rindow, isWriteMode, page ){
+                        console.log('makeTagsListForInline');
                         //RDR.actions.indicators.utils.makeTagsListForInline:
                         // page is the page object, not a boolean
 
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
-
 
                         // For IE8 and earlier version.
                         if (!Date.now) {
