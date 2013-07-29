@@ -3634,7 +3634,6 @@ function readrBoard($R){
                         if(!body){
                           return;
                         }
-
                         hashText = "rdr-"+kind+"-"+body;
                         hash = RDR.util.md5.hex_md5( hashText );
                     }
@@ -3690,6 +3689,7 @@ function readrBoard($R){
                             }
                             $(this).removeClass('rdr_live_hover');
                         });
+
                     }
 
                     var summary = RDR.actions.summaries.init(hash);
@@ -3702,6 +3702,12 @@ function readrBoard($R){
 
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
+
+
+                    if ( $this.hasAttr('rdr-custom-display') ) {
+                        RDR.actions.content_nodes.init(hash);
+                        RDR.actions.indicators.init(hash);
+                    }
 
                 });
     
@@ -5485,11 +5491,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $container.attr('rdr-hasIndicator', 'true');
 
                         if ( $container.hasAttr('rdr-custom-display') ) {
-                            var customDisplayName = $container.attr('rdr-custom-display');
-                            var $indicator = summary.$indicator = $container; // might work?  $indicator is storing important data...
-                            var $counter = $('[rdr-counter-for="'+customDisplayName+'"]');
-                            var $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
-                            var $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
+                            var customDisplayName = $container.attr('rdr-custom-display'),
+                                $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
+                                $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
+                                $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                                $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
                             
                             // some init.  does this make sense here?
 
@@ -5503,6 +5509,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     _showRindowAfterLoad();
                                 });
                             }
+                            RDR.actions.indicators.update(hash);
 
                         } else {
                             //check for and remove any existing indicator and indicator_details and remove for now.
@@ -5740,57 +5747,77 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 update: function(hash, shouldReInit){
                     //RDR.actions.indicators.update:
                     var scope = this;
-                    var summary = RDR.summaries[hash];
+                    var summary = RDR.summaries[hash],
+                        kind = summary.kind,
+                        $container = summary.$container,
+                        isText = summary.kind === 'text';
+    
+                    // for now, separately handle the "custom display" elements
+                    if ( $container.hasAttr('rdr-custom-display') ) {
 
-                    var isText = summary.kind === 'text';
-
-                    //re-init if we want a 'hard reset'
-                    if(shouldReInit){
-                    
-                        if(isText){
-                            //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
-                            summary.$container.closest('[rdr-node]').find('.rdr_indicator').remove();
-                        }else{
-                            // summary.$indicator.remove();
-                            // $('#rdr_container_tracker_'+hash).remove();
-                        }
-
-                        RDR.actions.indicators.init(hash);
-                        //this will loop back from the .init, which does not pass true for shouldReInit - so no infinite loop.
-                        return;
-                    }
-                    
-                    var $container = summary.$container,
-                        $indicator = summary.$indicator,
-                        $indicator_body = summary.$indicator_body,
-                        $indicator_details = summary.$indicator_details;
-
-                    //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
-                    var $count = $indicator_body.find('.rdr_count'),
-                        $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
-                        hasReactions = summary.counts.tags > 0;
-
-                    if ( hasReactions ) {
-                        if (isText) {
-                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
-                        } else {
-                            var reactionLabel = (summary.counts.tags>1) ? " Reactions" : " Reaction";
-                            $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + reactionLabel );
-                        }
-                        if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
-
-                        RDR.actions.indicators.show(hash);
+                            var customDisplayName = $container.attr('rdr-custom-display'),
+                            $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
+                            $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
+                            $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                            $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
                         
+                        // some init.  does this make sense here?
+
+                            // if there is a counter on the page
+                            if ( $counter.length ) {
+                                $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                            }
+                            if ( $cta.length ) {
+                            }
                     } else {
-                        $count.html( '<span class="rdr_react_label">What do you think?</span>' );
+
+                        //re-init if we want a 'hard reset'
+                        if(shouldReInit){
                         
-                        if(isText){
-                            if(RDR.group.paragraph_helper){
-                                RDR.actions.indicators.show(hash);
-                                $indicator.addClass('rdr_helper');
+                            if(isText){
+                                //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
+                                $container.closest('[rdr-node]').find('.rdr_indicator').remove();
                             }else{
-                                RDR.actions.indicators.hide(hash);
-                            }                                                        
+                                // summary.$indicator.remove();
+                                // $('#rdr_container_tracker_'+hash).remove();
+                            }
+
+                            RDR.actions.indicators.init(hash);
+                            //this will loop back from the .init, which does not pass true for shouldReInit - so no infinite loop.
+                            return;
+                        }
+                        
+                        var $indicator = summary.$indicator,
+                            $indicator_body = summary.$indicator_body,
+                            $indicator_details = summary.$indicator_details;
+
+                        //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
+                        var $count = $indicator_body.find('.rdr_count'),
+                            $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
+                            hasReactions = summary.counts.tags > 0;
+
+                        if ( hasReactions ) {
+                            if (isText) {
+                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                            } else {
+                                var reactionLabel = (summary.counts.tags>1) ? " Reactions" : " Reaction";
+                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + reactionLabel );
+                            }
+                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+
+                            RDR.actions.indicators.show(hash);
+                            
+                        } else {
+                            $count.html( '<span class="rdr_react_label">What do you think?</span>' );
+                            
+                            if(isText){
+                                if(RDR.group.paragraph_helper){
+                                    RDR.actions.indicators.show(hash);
+                                    $indicator.addClass('rdr_helper');
+                                }else{
+                                    RDR.actions.indicators.hide(hash);
+                                }                                                        
+                            }
                         }
                     }
 
