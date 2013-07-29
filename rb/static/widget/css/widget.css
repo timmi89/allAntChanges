@@ -1868,10 +1868,10 @@ div.rdr_sandbox span.rdr_indicator_categoryTitle{
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { 
     display:block !important;
     text-decoration:none !important;
-    background:#5a5a5a !important;
+    background:#fff !important;
 }
 
-div.rdr div.rdr_body.rdr_tags_list { background:#5a5a5a !important; height:auto;; width:160px !important; font-family:'RDR_HelveticaBold' !important; letter-spacing:0px !important;}
+div.rdr div.rdr_body.rdr_tags_list { background:#fff !important; height:auto;; width:160px !important; font-family:'RDR_HelveticaBold' !important; letter-spacing:0px !important;}
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list { width:320px !important; }
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list { width:480px !important; }
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list { width:640px !important; }
