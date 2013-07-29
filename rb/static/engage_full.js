@@ -1258,7 +1258,6 @@ function readrBoard($R){
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
-
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.rdr-summary-'+page.id),
@@ -1334,6 +1333,12 @@ function readrBoard($R){
                                             $helper.remove();
                                             coords.left = strRight - 14; //with a little padding
                                             coords.top = strBottom + 23;
+                                        }
+
+                                        // if there is a custom CTA element, override the coordinates with its location
+                                        if ( typeof settings.$custom_cta != "undefined" ) {
+                                            coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
+                                            coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
                                         }
                                     }
                                 } else {
@@ -3006,6 +3011,7 @@ function readrBoard($R){
             aboutReadrBoard: function() {
             },
             init: function(){
+                //RDR.actions.init:
                 var that = this;
                 $RDR = $(RDR);
                 $RDR.queue('initAjax', function(next){
@@ -3034,11 +3040,6 @@ function readrBoard($R){
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
 
-                //dailycandy demo only:
-                $('#flipbook').after('<div class="rdr_media_details"></div>');
-
-                //trutv demo only:
-                // $('#vpstags').after('<div class="rdr_media_details"></div>');
             },
             translateCustomGroupSettings: function(){
                 //RDR.actions.translateCustomGroupSettings
@@ -3743,12 +3744,12 @@ function readrBoard($R){
                         RDR.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
                     }
 
-
-                    // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
                     var crossPageHashes = [];
-                    $.each( $('[rdr-crossPageContent]'), function( idx, node ) {
+                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
                         crossPageHashes.push($(node).attr('rdr-hash'));
                     });
+                    // debug:
+                    // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
 
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
@@ -4414,23 +4415,9 @@ function readrBoard($R){
                     if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
-console.log('making a call!!!!!!!!!!!');
+
                     // porter cross-page handler
                     var crossPageSendData = {};
-
-
-                    // REMOVE
-                    //TEST - TODO - VERIFY
-                    //hack for rdr-crossPageContainer.
-                    // var crossPageSendData = {};
-                    // var $container = $('[rdr-hash="' + hash + '"]');
-                    // var crossPageId = $container.attr('rdr-crossPageId');
-                    // if(crossPageId){
-                    //     crossPageSendData.page_id = parseInt(crossPageId, 10);
-                    // }
-                    //end test
-
-
 
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
@@ -5497,61 +5484,84 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         $container.attr('rdr-hasIndicator', 'true');
 
-                        //check for and remove any existing indicator and indicator_details and remove for now.
-                        //this shouldn't happen though.
-                        //todo: solve for duplicate content that will have the same hash.
-                        $('#rdr_indicator_'+hash).remove();
-                        $('#rdr_container_tracker_'+hash).remove();
-                        $('#rdr_indicator_details_'+hash).remove();
+                        if ( $container.hasAttr('rdr-custom-display') ) {
+                            var customDisplayName = $container.attr('rdr-custom-display');
+                            var $indicator = summary.$indicator = $container; // might work?  $indicator is storing important data...
+                            var $counter = $('[rdr-counter-for="'+customDisplayName+'"]');
+                            var $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                            var $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
+                            
+                            // some init.  does this make sense here?
 
-                        var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
-                        // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
-                        // $indicator.css('visibility','hidden');
-
-                        _setupIndicators();
-
-                        if(!kind){
-                            //todo: I'll look into the source of this this, but this should work fine for now.
-                            // RDR.safeThrow('indicator container has no kind attribute');
-                            return;
-                        }
-                        //run setup specific to this type
-                        RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
-
-
-                        //todo: combine this with the kindSpecificSetup above right?
-                        if (kind == 'text'){
-                            $container.unbind('.rdr_helper');
-                            $container.bind('mouseenter.rdr_helper', function() {
-                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                if ( hasHelper) {
-                                    RDR.actions.indicators.helpers.over($indicator);
-                                }
-                            });
-                            $container.bind('mouseleave.rdr_helper', function(e) {
-                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                if ( hasHelper ) {
-                                    RDR.actions.indicators.helpers.out($indicator);
-                                }
-                            });
-
-                            //This will be either a helperIndicator or a hidden indicator
-                            var isZeroCountIndicator = !( summary.counts.tags > 0 );
-
-                            $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
-                            if(isZeroCountIndicator){
-                                $indicator.addClass('rdr_helper');
-                                _setupHoverForShowRindow();
-                            }else{
+                            // if there is a counter on the page
+                            if ( $counter.length ) {
+                                $counter.addClass('rdr_count');
+                            }
+                            if ( $cta.length ) {
                                 _setupHoverToFetchContentNodes(function(){
-                                    _setupHoverForShowRindow();
+                                    _customDisplaySetupHoverForShowRindow($cta);
                                     _showRindowAfterLoad();
                                 });
                             }
-                        }
 
-                        //of course, don't pass true for shouldReInit here.
-                        RDR.actions.indicators.update(hash);
+                        } else {
+                            //check for and remove any existing indicator and indicator_details and remove for now.
+                            //this shouldn't happen though.
+                            //todo: solve for duplicate content that will have the same hash.
+                            $('#rdr_indicator_'+hash).remove();
+                            $('#rdr_container_tracker_'+hash).remove();
+                            $('#rdr_indicator_details_'+hash).remove();
+
+                            var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
+                            // $indicator.css('visibility','hidden');
+
+                            _setupIndicators();
+
+                            if(!kind){
+                                //todo: I'll look into the source of this this, but this should work fine for now.
+                                // RDR.safeThrow('indicator container has no kind attribute');
+                                return;
+                            }
+                            //run setup specific to this type
+                            RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+
+
+                            //todo: combine this with the kindSpecificSetup above right?
+                            if (kind == 'text'){
+                                $container.unbind('.rdr_helper');
+                                $container.bind('mouseenter.rdr_helper', function() {
+                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                    if ( hasHelper) {
+                                        RDR.actions.indicators.helpers.over($indicator);
+                                    }
+                                });
+                                $container.bind('mouseleave.rdr_helper', function(e) {
+                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                    if ( hasHelper ) {
+                                        RDR.actions.indicators.helpers.out($indicator);
+                                    }
+                                });
+
+                                //This will be either a helperIndicator or a hidden indicator
+                                var isZeroCountIndicator = !( summary.counts.tags > 0 );
+
+                                $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
+                                if(isZeroCountIndicator){
+                                    $indicator.addClass('rdr_helper');
+                                    _setupHoverForShowRindow();
+                                }else{
+                                    _setupHoverToFetchContentNodes(function(){
+                                        _setupHoverForShowRindow();
+                                        _showRindowAfterLoad();
+                                    });
+                                }
+                            }
+
+                            //of course, don't pass true for shouldReInit here.
+                            RDR.actions.indicators.update(hash);
+
+                        } // /else of if (rdr-custom-display) conditional
                     }
 
                     /*helper functions */
@@ -5662,6 +5672,69 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     function _showRindowAfterLoad(){
                         $indicator.unbind('mouseover.contentNodeInit');
                         $indicator.triggerHandler('mouseover.showRindow');
+                    }
+
+                    function _customDisplaySetupHoverForShowRindow($cta){
+                        $cta.on('mouseover.showRindow', function(){
+                            _customDisplayMakeRindow($cta);
+                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                            if( hasHelper ){
+                                RDR.events.track('paragraph_helper_engage');
+                            }
+                        });
+                    }
+                    function _customDisplayMakeRindow($cta) {
+                        //only allow one indicator rindow.
+                        
+                        //todo - replace this with the code below - but need to deal with selstate hilites first
+                        if($indicator.$rindow){
+                            // dont rewrite the window if it already exists...
+                            // adding to prevent tagBox text animation.  if this is problematic, just go prevent the animation but let this redraw.
+                            if ( $indicator.$rindow.data('container') == hash ) { return; }
+                            $indicator.$rindow.remove();
+                        }
+                        // if(summary.$rindow){
+                        //     summary.$rindow.remove();
+                        // }
+                        // if(summary.$rindow_readmode){
+                        //     summary.$rindow_readmode.remove();
+                        // }
+                        //end - todo
+
+                        var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
+                        if (mode=="writeMode") {
+                            if($container.length){
+                                el = $container[0];
+                            }else{
+                                // hash = hash || testHash;
+                                var selector = '[rdr-hash="' + hash + '"]';
+                                el = $(selector)[0];
+                            }
+
+                            $('document').selog('selectEl', el);
+                        }
+                        var $rindow = RDR.rindow.make( mode, {hash:hash, '$custom_cta':$cta } );
+                        var page_id = RDR.util.getPageProperty('id', hash );
+
+                        //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
+                        //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
+                        if(!$rindow){
+                            return;
+                        }
+
+                        $indicator.$rindow = $rindow;
+                        
+                        // RDR.events.track( 'view_node::'+hash, hash );
+                        RDR.events.track('start_react_text');
+                        RDR.events.trackEventToCloud({
+                            category: "engage",
+                            action: "rindow_shown_writemode",
+                            opt_label: "kind: text, hash: " + hash,
+                            container_hash: hash,
+                            container_kind: "text",
+                            page_id: page_id
+                        });
+
                     }
                 },
                 update: function(hash, shouldReInit){
@@ -9574,10 +9647,5 @@ function $RFunctions($R){
     }
 }
 //end $RFunctions()
-
-// DEMO remove!!
-// function DAILYCANDYCYCLE(slide) {
-//     if ( jQuery('#module-flipbook').length == 1 ) jQuery('#module-flipbook').cycle( slide );
-// }
 
 })();
