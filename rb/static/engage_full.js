@@ -367,7 +367,7 @@ function readrBoard($R){
                 
                 // panelEvent - panelhide
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
-
+console.log('make tags 4');
                 var isWriteMode = $rindow.hasClass('rdr_writemode'),
                     $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
                 
@@ -869,7 +869,7 @@ function readrBoard($R){
                         colorInt = ( params.colorInt ) ? params.colorInt:1,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $rindow.data('kind'),
-                        hash = $rindow.data('container'),
+                        hash = ($rindow.data('hash')) ? $rindow.data('hash'):$rindow.data('container'),
                         summary = RDR.summaries[hash],
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
@@ -3400,6 +3400,7 @@ function readrBoard($R){
                                 $('#rdr_indicator_' + hash).show();
                                 // RDR.actions.indicators.utils.borderHilites.engage(hash);
                             }
+                            console.log('RDR.actions.content_nodes.init 1');
                             RDR.actions.content_nodes.init(hash, function(){});
                         }
 
@@ -3703,12 +3704,6 @@ function readrBoard($R){
                     hashList[ page_id ].push(hash);
                     $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
 
-
-                    if ( $this.hasAttr('rdr-custom-display') ) {
-                        RDR.actions.content_nodes.init(hash);
-                        RDR.actions.indicators.init(hash);
-                    }
-
                 });
     
                 // perfimprove
@@ -3826,6 +3821,15 @@ function readrBoard($R){
                                     onSuccessCallback();
                                 }
                             }
+
+                            // go ahead and initialize the content nodes for cross-page containers
+                            // we might want to do this different with an HTML attribute, or something.  
+                            // basically, this has to be done if the TAG GRID is open on load.
+                            $.each( response.data.crossPageKnown, function(idx, crosspage_known) {
+                                var hash = crosspage_known.hash;
+                                RDR.actions.indicators.init(hash);
+                                RDR.actions.content_nodes.init(hash);
+                            });
                         }
                     });
 
@@ -4223,11 +4227,11 @@ function readrBoard($R){
                     // }
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
-
+console.log('content nodes init for '+hash);
                     var summary = RDR.summaries[hash],
                         container_id = (typeof summary != "undefined") ? summary.id:"";
 
-
+console.log(summary);
                     if(!container_id){
                         //this still happens if container is an unknown container and has no reactions.
                         //It's save to just return for now though.
@@ -4240,14 +4244,16 @@ function readrBoard($R){
                     var sendData = {
                         "page_id" : RDR.util.getPageProperty('id', hash),
                         "container_id":container_id,
-                        "hash":hash
+                        "hash":hash,
+                        "cross_page": ( summary.$container.hasAttr('rdr-crossPageContent') ) ? true:false
                     };
 
                     //use an assetLoader that returns a deferred to ensure it gets loaded only once
                     //and callbacks will run on success - or immediately if it has already returned.
-                    var assetLoader = RDR.assetLoaders.content_nodes[container_id];                    
+                    var assetLoader = RDR.assetLoaders.content_nodes[container_id];
                     if(!assetLoader){
-
+console.log('= = = = = = = = = = = = = = = =')
+console.log('lets get the content nfo!!!!!!!')
                         assetLoader = $.ajax({
                             url: RDR_baseUrl+"/api/summary/container/content/",
                             type: "get",
@@ -4674,6 +4680,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //for now, just pull all the content_nodes down and
                             //(this will automatically) update the summary object
                             //run the rest of our comment update on the callback
+                            console.log('RDR.actions.content_nodes.init 3');
                             RDR.actions.content_nodes.init(hash, function(){
                                 RDR.actions.summaries.update(hash, diff);
                             });
@@ -5511,9 +5518,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                             if ( $cta.length ) {
                                 _setupHoverToFetchContentNodes(function(){
+                                });
                                     _customDisplaySetupHoverForShowRindow($cta);
                                     _showRindowAfterLoad();
-                                });
                             }
                             if ( $grid.length ) {
                             }
@@ -5598,6 +5605,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     function _setupHoverForShowRindow(){
                         $indicator.on('mouseover.showRindow', function(){
+                            console.log(111111);
                             _makeRindow();
                             var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                             if( hasHelper ){
@@ -5681,7 +5689,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //Setup callback for a successful fetch of the content_nodes for this container
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
                         $indicator.on('mouseover.contentNodeInit', function(){
-                            RDR.actions.content_nodes.init(hash, callback);
+                            console.log(222222);
+                            // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
+                            if ( !$indicator.hasAttr('rdr-custom-display') ) {
+                                console.log('RDR.actions.content_nodes.init 4');
+                                RDR.actions.content_nodes.init(hash, callback);
+                            }
                         });
                     }
                     function _showRindowAfterLoad(){
@@ -5691,6 +5704,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     function _customDisplaySetupHoverForShowRindow($cta){
                         $cta.on('mouseover.showRindow', function(){
+                            console.log(1111111111);
                             _customDisplayMakeRindow($cta);
                             var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                             if( hasHelper ){
@@ -5761,7 +5775,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         isText = summary.kind === 'text';
                     // for now, separately handle the "custom display" elements
                     if ( $container.hasAttr('rdr-custom-display') ) {
-console.log('HAS A CONTAINER YO');
+
                             var customDisplayName = $container.attr('rdr-custom-display'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
@@ -5777,8 +5791,11 @@ console.log('HAS A CONTAINER YO');
                             if ( $cta.length ) {
                             }
                             if ( $grid.length ) {
-                                $grid.data('hash', hash).addClass('w640').html('<div class="rdr rdr_window rdr_widget w640 rdr_no_clear"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                                // if ( !$grid.data('hash') ) {
+                                    $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_widget w640 rdr_no_clear"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                    console.log('make tags 1');
+                                    RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                                // }
                             }
                     } else {
 
@@ -6012,6 +6029,7 @@ console.log('HAS A CONTAINER YO');
                             }
 
                             var $rindow = $indicator_details;
+                            console.log('make tags 2');
                             var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                             $bodyWrap.append($tagsListContainer);
@@ -6273,6 +6291,9 @@ console.log('HAS A CONTAINER YO');
                                 $rindow.find('div.rdr_box').each( function() {
                                     $(this).hover(
                                         function() {
+                                            console.log(summary);
+                                            console.log(summary.content_nodes);
+                                            console.log($(this).find('div.rdr_tag').data('content_node_id'));
                                             var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
                                             //make sure it's not already transitiontion into a success state
                                             //hacky because sometimes it doesnt have the data for 1 yet
@@ -7057,7 +7078,7 @@ console.log('HAS A CONTAINER YO');
                         var selState = args.selState;
                         $().selog('hilite', selState, 'on');
                     }
-
+console.log('make tags 3');
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
@@ -8483,6 +8504,7 @@ function $RFunctions($R){
                             if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
                                 RDR.util.buildInteractionData();
                             } else {
+                                console.log('RDR.actions.content_nodes.init 5');
                                 RDR.actions.content_nodes.init( hash, function() {
                                     RDR.util.buildInteractionData();
                                 });

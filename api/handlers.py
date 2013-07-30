@@ -556,11 +556,17 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
             raise JSONException(u"Bad page id or container_id in content summary call")
 
-        interactions = list(Interaction.objects.filter(
-                container=container_id,
-                page=page_id,
-                approved=True
-                ))
+        if data['cross_page'] == True:
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    approved=True
+                    ))
+        else:
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    page=page_id,
+                    approved=True
+                    ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
