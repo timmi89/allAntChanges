@@ -3752,8 +3752,14 @@ function readrBoard($R){
 
                     var crossPageHashes = [];
                     $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
-                        crossPageHashes.push($(node).attr('rdr-hash'));
+                        var thisHash = $(node).attr('rdr-hash');
+                        crossPageHashes.push( thisHash );
+
+                        hashList = $.grep(hashList, function(value) {
+                          return value != thisHash;
+                        });
                     });
+
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
 
@@ -5510,7 +5516,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 });
                             }
                             if ( $grid.length ) {
-                                // var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
                             }
                             RDR.actions.indicators.update(hash);
 
@@ -5754,10 +5759,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
-    
                     // for now, separately handle the "custom display" elements
                     if ( $container.hasAttr('rdr-custom-display') ) {
-
+console.log('HAS A CONTAINER YO');
                             var customDisplayName = $container.attr('rdr-custom-display'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
@@ -5773,7 +5777,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( $cta.length ) {
                             }
                             if ( $grid.length ) {
-                                $grid.data('hash', hash).addClass('w640').html('<div class="rdr rdr_window rdr_widget w640 rdr_no_clear"><div class="rdr rdr_body_wrap rdr_clearfix"><div class="rdr_body rdr_tags_list"></div></div></div>');
+                                $grid.data('hash', hash).addClass('w640').html('<div class="rdr rdr_window rdr_widget w640 rdr_no_clear"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                                 RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
                             }
                     } else {
