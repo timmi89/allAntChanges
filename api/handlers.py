@@ -519,7 +519,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
             #logger.info("knownUnknown done " + str(page))
             try:
-                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
+                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes, crossPageHashes=crossPageHashes)
                 
                 t = Thread(target=cache_updater, kwargs={})
                 t.start()
@@ -557,8 +557,10 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             raise JSONException(u"Bad page id or container_id in content summary call")
 
         if data['cross_page'] == True:
+            page = Page.objects.get(id=page_id)
             interactions = list(Interaction.objects.filter(
                     container=container_id,
+                    page__site__group = page.site.group,
                     approved=True
                     ))
         else:

@@ -465,6 +465,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
             # ...then that is used in the commented-out part of this query:
         crossPageInteractions = list(Interaction.objects.filter(
             container__in=crossPageIds,
+            page__site__group = page.site.group,
             # page__in=group_page_ids,
             approved=True
         ).select_related('interaction_node','content','user',('social_user')))
