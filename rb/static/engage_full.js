@@ -5742,6 +5742,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                 },
                 utils:{
+                    checkTrailingWhiteSpace: function($container){
+                        //RDR.actions.indicators.utils.checkTrailingWhiteSpace:
+
+                        var reversedNodes = $container.children().get().reverse();
+
+                        var startOfTrailingWhiteSpace = null;
+                        var isConsecutive = true;
+                        $.each(reversedNodes, function(idx) {
+                            if(!isConsecutive){
+                                return;
+                            }
+                            var isWhiteSpace = $(this).text() == "";
+                            if(isWhiteSpace){
+                                startOfTrailingWhiteSpace = this;
+                            }else{
+                                isConsecutive = false;
+                            }
+                        });
+                        return startOfTrailingWhiteSpace;
+                    },
                     //RDR.actions.indicators.utils:
                     kindSpecificSetup: {
                         img: function( hash ){
@@ -5829,9 +5849,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
 
+                            var startOfTrailingWhiteSpace = RDR.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
-                            $indicator.appendTo($container);
-
+                            if(startOfTrailingWhiteSpace){
+                                $(startOfTrailingWhiteSpace).before($indicator);
+                            }else{
+                                $indicator.appendTo($container);
+                            }
                         }
                     },
                     makeDetailsContent: function( hash ){
