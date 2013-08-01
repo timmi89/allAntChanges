@@ -8339,7 +8339,11 @@ function $RFunctions($R){
                     });
                 }
 
-                var total_reactions_label = ( total_reactions > 0 ) ? total_reactions+" Reactions" : "Reactions";
+                var total_reactions_label = ( total_reactions > 1 ) ?
+                    total_reactions+" Reactions" :
+                        ( total_reactions > 0 ) ? 
+                            total_reactions+" Reaction" :
+                            "Reactions";
                 $summary_widget.append(
                     '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
                 );
