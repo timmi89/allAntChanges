@@ -468,6 +468,11 @@ div.rdr div.rdr_view_more {
 }
 div.rdr_window div.rdr_view_more {
   min-width: 300px !important;
+  max-height:300px !important;
+}
+div.rdr_window.rdr_inline div.rdr_view_more {
+  min-width: 300px !important;
+  max-height:300px !important;
 }
 div.rdr div.rdr_view_success .rdr_subheader{
     padding: 8px 0 !important;
@@ -586,9 +591,10 @@ div.rdr div.rdr_info        {font:italic 11px Arial !important;color:#767676 !im
 div.rdr div.rdr_shareBox                       { background:#edf6ff !important; border:1px solid #b6d3ee !important; -webkit-border-radius:6px !important; -moz-border-radius:6px !important; border-radius:6px !important; margin:0 0 0 10px !important; text-align: center !important; width: 120px !important; display:inline-block !important; padding:3px 0 !important; }
 div.rdr div.rdr_share_social                   { overflow:visible !important; position: relative !important; top: 4px !important; min-width:90px !important;}
 div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
-div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; padding-top:5px !important; text-align:left !important;}
+div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; padding-top:5px !important; text-align:left !important; margin-bottom:20px !important;}
 
-div.rdr div.rdr_back { position:relative !important; z-index:1 !important; background:#aaa !important; font-size:9px !important; text-transform:uppercase !important; color:#fff !important; cursor:pointer !important; padding: 5px 12px 2px 12px !important; margin-bottom:4px !important;text-align:left !important;}
+div.rdr div.rdr_back { position:relative !important; z-index:1 !important; background:#bbb !important; font-size:11px !important; text-transform:uppercase !important; color:#fff !important; cursor:pointer !important; padding: 5px 12px 2px 12px !important; margin-bottom:4px !important;text-align:left !important;}
+div.rdr div.rdr_back:hover { background:#999 !important; }
 div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { }
 div.rdr div.rdr_back.rdr_hide { margin-top:-10px !important; }
 

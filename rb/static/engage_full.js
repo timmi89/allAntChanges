@@ -4603,7 +4603,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         //RDR.actions.interactions.comment.onSuccess:
                         create: function(args){
                             //RDR.actions.interactions.comment.onSuccess.create:
-                        
                             var $rindow = args.rindow,
                                 hash = args.hash,
                                 response = args.response,
@@ -7119,9 +7118,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 var $commentsWrap = $('<div class="rdr_commentsWrap"></div>');
                 var $backButton = _makeBackButton();
+                var $backButton2 = _makeBackButton();
                 var $otherComments = _makeOtherComments();
                 var $commentBox = _makeCommentBox();
-                $commentsWrap.append($backButton, $otherComments, $commentBox);
+                $commentsWrap.append($backButton, $otherComments, $commentBox, $backButton2);
 
                 $newPanel.append($commentsWrap);
 
