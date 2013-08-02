@@ -563,7 +563,6 @@ function readrBoard($R){
                     RDR.rindow.tagBox.setWidth( $rindow, 320 );
 
                     if ( args.scenario != "tagDeleted" ) {
-
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
                                 var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
@@ -600,8 +599,7 @@ function readrBoard($R){
                                         '</div>'
                                     ).appendTo( $options );
 
-
-                                if ( kind != "text" ) {
+                                // if ( kind != "text" ) {
                                     var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
@@ -610,7 +608,7 @@ function readrBoard($R){
                                         RDR.rindow.updateTagPanel( $rindow );
 
                                     });
-                                }
+                                // }
                                 var shouldAppendNotReplace = true;
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, shouldAppendNotReplace);
 
@@ -707,7 +705,8 @@ function readrBoard($R){
                             $success.find('.rdr_comment_input').append(
                                 '<div class="rdr_commentBox rdr_inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
-                                    '<input type="text" class="rdr_add_comment_field rdr_inlineComment" value="Add a comment or #hashtag"/>'+
+                                    // '<input type="text" class="rdr_add_comment_field rdr_inlineComment" value="Add a comment or #hashtag"/>'+
+                                    '<textarea class="rdr_add_comment_field rdr_inlineComment">Add a comment or #hashtag</textarea>'+
                                     '<div class="rdr_clear"></div>'+
                                 '</div>'
                             );
@@ -715,7 +714,7 @@ function readrBoard($R){
 
 
                             // // comment functionality
-                            var $commentInput = $success.find('input.rdr_add_comment_field');
+                            var $commentInput = $success.find('.rdr_add_comment_field');
                             $commentInput.focus(function(){
                                 RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
                                 $(this).addClass('rdr_adding_comment');
@@ -1665,8 +1664,6 @@ function readrBoard($R){
                     $rindow_readmode = summary.$rindow_readmode,
                     $rindow_writemode = summary.$rindow_writemode;
 
-                // var settings = _settings || {};
-
                 if( diffNode){
                     if( diffNode.int_type == "coms" ){
                         if($rindow_writemode){
@@ -1807,7 +1804,6 @@ function readrBoard($R){
 
                 }
                 function _addLinkToViewComs(diffNode, $tag, $rindow){
-
                     var tag = diffNode.parent_interaction_node;
                     var content_node = diffNode.content_node;
 
@@ -5115,9 +5111,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         }
                                     };
                                 } else {
-                                    // just update the content_node summary
-                                    summary.content_nodes[ content_node.id ].counts.tags++;
-                                    summary.content_nodes[ content_node.id ].counts.interactions++;
+                                    if (args.scenario != "reactionExists" ) {
+                                        // just update the content_node summary
+                                        summary.content_nodes[ content_node.id ].counts.tags++;
+                                        summary.content_nodes[ content_node.id ].counts.interactions++;
+                                    }
                                 }
                                 
                                 if (typeof summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ] == "undefined" ) {
@@ -5127,7 +5125,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         parent_id:null
                                     }
                                 } else {
-                                    summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ].count++;
+                                    if (args.scenario != "reactionExists" ) {
+                                        summary.content_nodes[ content_node.id ].top_interactions.tags[ tag.id ].count++;
+                                    }
                                 }
 
 
@@ -6049,8 +6049,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             return new Date().valueOf();
                           }
                         }
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        
 
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         // sort a list of tags into their buckets
@@ -7049,7 +7050,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     kind = summary.kind; // text, img, media
 
                 var headerText = ( args.scenario == "reactionSuccess" ) ? "Success!":"You've already done that";
-                
+
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( headerText );
                 $rindow.find('.rdr_header').replaceWith($header);
