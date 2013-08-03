@@ -123,9 +123,11 @@ urlpatterns = patterns('',
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
 
+  url(r'^manage/', 'rb.views.manage_groups'),
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
-
+  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_all_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cookie_user }} Management{%endblock%}
+
+{% block wideContent %}
+<div class="mostlyWide">
+
+    {% for blocked in group.blocked_tags.all %}
+        {{blocked}}
+    {% endfor %}  
+  
+
+</div>
+{% endblock wideContent %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block pageJS %}
+    
+{% endblock %}
