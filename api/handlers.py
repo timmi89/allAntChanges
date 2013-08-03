@@ -987,7 +987,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
         blocked = BlockedTag.objects.create(group=group, node = i_node)
-        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node, order=0)
         existing_interactions.update(approved = False)
         return {"created":True}    
     
@@ -1007,7 +1007,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
         blocked, existed = BlockedTag.objects.get_or_create(group=group, node = i_node)
-        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node, order=0)
         existing_interactions.update(approved = False)
         return {"updated":True}
     
