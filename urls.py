@@ -43,7 +43,9 @@ urlpatterns = patterns('',
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^register/$', 'rb.views.group'),
   url(r'^sites/$', 'rb.views.sites'),
-  url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
+  # url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
+  # url(r'^(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
   url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings_wordpress'),
 
 
@@ -124,10 +126,11 @@ urlpatterns = patterns('',
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
 
-  url(r'^analytics/', include('readrboard.analytics.urls')),
-  url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
-  url(r'^admin_approve/$', 'rb.views.admin_approve'),
-  url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
