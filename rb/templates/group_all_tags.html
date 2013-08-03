@@ -34,7 +34,7 @@ $('table[role="block_tags"] button').click( function() {
     $.ajax({
         url: "/api/tag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
         type: "post",
-        contentType: "application/json",
+        // contentType: "application/json",
         // dataType: "jsonp",
         // data: { json: JSON.stringify(sendData) },
         success: function(response) {
