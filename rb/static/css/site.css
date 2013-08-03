@@ -34,6 +34,8 @@ h1,
 h2 { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal;}
 label { display:inline-block; }
 
+a { color:#008be4; }
+
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1142px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;border-right:4px solid #fff;}
 header[role="banner"] a.logo    { display:block; float:left; }
@@ -980,4 +982,20 @@ table[role="active user table"] .userName      {
     margin: 10px 0 0 15px;
 }
 table[role="active user table"] .avatar         { width:35px; text-align:left;}
+
+/* info boxes and notifications and such */
+
+div.notice {
+  padding:10px;
+  border:1px dotted;
+}
+
+div.breadcrumb {
+  font-size:11px;
+  background:#e3f3fc;
+  padding:5px;
+  margin-bottom:20px;
+}
+
+
 

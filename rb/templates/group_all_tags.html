@@ -4,7 +4,11 @@
 
 {% block wideContent %}
 <div class="mostlyWide">
-
+	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
+	<h1>Allowed Reactions</h1>
+	<div class="notice">
+		This is a notice.
+	</div>
     <table role="block_tags">
 		<thead>
 			<tr>
@@ -26,10 +30,10 @@
 </div>
 
 <script>
+// bind a "block" event to each button
+// this will block the reaction on the site
 $('table[role="block_tags"] button').click( function() {
 	var $button = $(this);
-	console.log( $button.data('groupId') );
-	console.log( $button.data('nodeId') );
 	// send the data!
     $.ajax({
         url: "/api/tag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
@@ -40,6 +44,7 @@ $('table[role="block_tags"] button').click( function() {
         success: function(response) {
         	console.log('successs!!!!!');
         	console.log(response);
+        	$button.closest('tr').html('<td colspan="2">This reaction has been blocked!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/blocked_reactions/">list of blocked reactions</a> to unblock it.</td>');
         },
         error: function(response) {
         	console.log('FUCK -- error');
@@ -47,14 +52,6 @@ $('table[role="block_tags"] button').click( function() {
         }
     });
 });
-/*
-tag/block/(?P<group_id>\d+)/(?P<node_id>\d+)
-
-/api/tag/block/{{ group.id }}/{{ blocked.id }}
-	POST/PUT:  create block
-	DELETE:  remove block
-
-*/
 </script>
 
 {% endblock wideContent %}
