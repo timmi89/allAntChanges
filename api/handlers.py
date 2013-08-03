@@ -986,7 +986,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
     def create(self, request, group_id = None, node_id = None, **kwargs):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
-        blocked = BlockedTag.create(group=group, node = i_node)
+        blocked = BlockedTag.objects.create(group=group, node = i_node)
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
         return {"created":True}    
@@ -1006,7 +1006,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
     def update(self, request, group_id = None, node_id = None, **kwargs):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
-        blocked, existed = BlockedTag.get_or_create(group=group, node = i_node)
+        blocked, existed = BlockedTag.objects.get_or_create(group=group, node = i_node)
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
         return {"updated":True}
