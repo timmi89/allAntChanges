@@ -34,6 +34,8 @@ h1,
 h2 { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal;}
 label { display:inline-block; }
 
+a { color:#008be4; }
+
 /* HEADER */
 header[role="banner"]	{height:36px;background:#fff;position:fixed;width:1142px;z-index:12001;top:0;font-size:12px;text-align:center;margin:0 auto;border-bottom:1px solid #d9d9d9;border-right:4px solid #fff;}
 header[role="banner"] a.logo    { display:block; float:left; }
@@ -147,7 +149,10 @@ body.popupForm.wide section[role="content"] { border:none; }
 #groupSettings label   { font-weight:normal; line-height:16px; margin-top:16px;}
 #groupSettings .column { display:block; width:45%; float:left; }
 #groupSettings .column.rightColumn { xpadding-left:50%; margin-left:5%; }
-
+#groupSettings .formRow input[type=checkbox]{
+    margin:2px 5px 0px 0;
+    float:left;
+}
 form.big-form         { padding:10px 20px; }
 form.big-form label     { display:block; margin: 5px 0;}
 form.big-form label span    { display:block; font-style:italic; font-size:12px; }
@@ -157,10 +162,7 @@ form.big-form .configuarationSection h4     {
     font-size: 14px;
     margin-bottom: 10px;
 }
-#id_requires_approval,
-#id_paragraph_helper {
-    margin:2px 5px 0px 0;float:left;
-}
+
 .word_blacklist_row .hidden{
     display: none;
 }
@@ -980,4 +982,28 @@ table[role="active user table"] .userName      {
     margin: 10px 0 0 15px;
 }
 table[role="active user table"] .avatar         { width:35px; text-align:left;}
+
+/* info boxes and notifications and such */
+
+div.notice {
+  padding:10px;
+  border-left:5px solid #ccc;
+  background:#fafafa;
+  margin-bottom:20px;
+}
+div.notice.info {
+  border-color:#f1e7bc;
+  background-color:#fefbed;
+}
+
+button { cursor:pointer; }
+
+div.breadcrumb {
+  font-size:11px;
+  background:#e3f3fc;
+  padding:5px;
+  margin-bottom:20px;
+}
+
+
 

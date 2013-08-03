@@ -496,6 +496,8 @@ def getSettingsDict(group):
          exclude=[
              'admins',
              'word_blacklist',
+             'blocked_tags',
+             'all_tags',
              'approved',
              'requires_approval',
              'share',

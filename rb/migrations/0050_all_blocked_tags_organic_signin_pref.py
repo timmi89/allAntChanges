@@ -17,6 +17,9 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'rb', ['AllTag'])
 
+        # Adding unique constraint on 'AllTag', fields ['group', 'node']
+        db.create_unique(u'rb_alltag', ['group_id', 'node_id'])
+
         # Adding model 'BlockedTag'
         db.create_table(u'rb_blockedtag', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -26,13 +29,30 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'rb', ['BlockedTag'])
 
+        # Adding unique constraint on 'BlockedTag', fields ['group', 'node']
+        db.create_unique(u'rb_blockedtag', ['group_id', 'node_id'])
+
+        # Adding field 'Group.signin_organic_required'
+        db.add_column(u'rb_group', 'signin_organic_required',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
+
 
     def backwards(self, orm):
+        # Removing unique constraint on 'BlockedTag', fields ['group', 'node']
+        db.delete_unique(u'rb_blockedtag', ['group_id', 'node_id'])
+
+        # Removing unique constraint on 'AllTag', fields ['group', 'node']
+        db.delete_unique(u'rb_alltag', ['group_id', 'node_id'])
+
         # Deleting model 'AllTag'
         db.delete_table(u'rb_alltag')
 
         # Deleting model 'BlockedTag'
         db.delete_table(u'rb_blockedtag')
+
+        # Deleting field 'Group.signin_organic_required'
+        db.delete_column(u'rb_group', 'signin_organic_required')
 
 
     models = {
@@ -73,14 +93,14 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
         u'rb.alltag': {
-            'Meta': {'ordering': "['order']", 'object_name': 'AllTag'},
+            'Meta': {'ordering': "['order']", 'unique_together': "(('group', 'node'),)", 'object_name': 'AllTag'},
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['rb.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'node': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['rb.InteractionNode']"}),
             'order': ('django.db.models.fields.IntegerField', [], {})
         },
         u'rb.blockedtag': {
-            'Meta': {'ordering': "['order']", 'object_name': 'BlockedTag'},
+            'Meta': {'ordering': "['order']", 'unique_together': "(('group', 'node'),)", 'object_name': 'BlockedTag'},
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['rb.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'node': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['rb.InteractionNode']"}),
@@ -157,6 +177,7 @@ class Migration(SchemaMigration):
             'blessed_tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'Blessed Tag'", 'symmetrical': 'False', 'through': u"orm['rb.GroupBlessedTag']", 'to': u"orm['rb.InteractionNode']"}),
             'blocked_tags': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'Blocked Tag'", 'symmetrical': 'False', 'through': u"orm['rb.BlockedTag']", 'to': u"orm['rb.InteractionNode']"}),
             'bookmark': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'related_name': "'Bookmark Feature'", 'to': u"orm['rb.Feature']"}),
+            'br_replace_scope_selector': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'call_to_action': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'comment': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'related_name': "'Comment Feature'", 'to': u"orm['rb.Feature']"}),
             'custom_css': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
@@ -192,6 +213,7 @@ class Migration(SchemaMigration):
             'sharebox_stumble': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'sharebox_twitter': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'short_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '50'}),
+            'signin_organic_required': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'summary_widget_selector': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'temp_interact': ('django.db.models.fields.IntegerField', [], {'default': '5'}),
             'twitter': ('django.db.models.fields.CharField', [], {'max_length': '64', 'blank': 'True'}),

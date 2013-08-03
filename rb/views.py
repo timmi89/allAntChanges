@@ -868,5 +868,55 @@ def follow_interactions(request, user_id):
     return render_to_response("index.html", context, context_instance=RequestContext(request))
 
 
+@requires_admin
+def group_blocked_tags(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    return render_to_response(
+        "group_blocked_tags.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
+@requires_admin
+def group_all_tags(request, **kwargs):
+    context = kwargs.get('context', {})
+    group = Group.objects.get(short_name=kwargs['short_name'])
+    context['group'] = group
+    
+    all_set = set(group.all_tags.all())
+    blocked_set = set(group.blocked_tags.all())
+    all_unblocked = all_set - blocked_set
+    
+    
+    context['all_unblocked'] = all_unblocked
+    
+    return render_to_response(
+        "group_all_tags.html",
+        context,
+        context_instance=RequestContext(request)
+    )
  
+ 
+
+def manage_groups(request, **kwargs):
+    context = kwargs.get('context', {})
+    cookie_user = checkCookieToken(request)
+    if cookie_user:
+        if len(SocialUser.objects.filter(user=cookie_user)) == 1:
+            admin_groups = cookie_user.social_user.admin_groups()
+            if not len(admin_groups) > 0:
+                return HttpResponseRedirect('/')
+            context['admin_groups'] = admin_groups
+            context['cookie_user'] = cookie_user
+        else:
+            return HttpResponseRedirect('/')
+        
+    return render_to_response(
+        "group_manage.html",
+        context,
+        context_instance=RequestContext(request)
+    )
 

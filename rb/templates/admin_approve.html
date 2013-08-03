@@ -11,7 +11,7 @@
       Admin Requests for {{ group.grouper.name }}
       <ul>
         {% for request in group.list %}
-          <li>{{ request.social_user.full_name }}<a href="/admin_approve/{{ request.id }}">Approve</a></li>
+          <li>{{ request.social_user.full_name }} <a href="/group/{{ group.grouper.short_name }}/admin_approve/{{ request.id }}"><button>Approve</button></a></li>
         {% endfor %}
       </ul>
     {% empty %}

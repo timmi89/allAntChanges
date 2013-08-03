@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cookie_user }} Management{%endblock%}
+
+{% block wideContent %}
+<div class="mostlyWide">
+
+    {% for group in admin_groups %}
+        {% block settingsHeader %}    
+          <h1>{{group.name}} Settings</h1>
+          <h2><a href="/group/{{group.short_name}}/blocked_reactions">{{group.name}} Blocked Reactions</a></h2>
+          <h2><a href="/group/{{group.short_name}}/all_reactions">{{group.name}} All Reactions</a></h2>
+          
+          <h2><a href="/group/{{group.short_name}}/">{{group.name}} on RB</a></h2>
+          <h2><a href="/group/{{group.short_name}}/settings/">{{group.name}} Settings</a></h2>
+          <h2><a href="/group/{{group.short_name}}/analytics/">{{group.name}} Analytics</a></h2>
+          <h2><a href="/group/{{group.short_name}}/not_approved/">{{group.name}} Unapproved Reactions</a></h2>
+          <h2><a href="/group/{{group.short_name}}/admin_request/">{{group.name}} Administrative Requests</a></h2>
+          <h2><a href="/group/{{group.short_name}}/admin_approve/">{{group.name}} Administrative Request Approval</a></h2>
+          
+        {% endblock settingsHeader %}  
+    {% endfor %}  
+  
+
+</div>
+{% endblock wideContent %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block pageJS %}
+    
+{% endblock %}
