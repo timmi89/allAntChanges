@@ -30,11 +30,11 @@ $('#cards').addClass('user_profile');
                         <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
                       {% endif %}
                       <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
-                      <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
-                      <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
+                      <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="rdr-fa-icon-comment"></i></a>
+                      <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="rdr-fa-icon-bookmark"></i></a>
                     
                     {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
-                    <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
+                    <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}rdr-fa-icon-remove-sign{% else %}rdr-fa-icon-ok{% endif %}"></i></a>
                     {% endif %}
 
                     <!-- board add/delete ? -->
@@ -71,7 +71,7 @@ $('#cards').addClass('user_profile');
                     <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/><br/>{%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
                     <div class="links">
                         <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a>
-                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">See it in context <i class="icon-external-link"></i></a>
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">See it in context <i class="rdr-fa-icon-external-link"></i></a>
                     </div>
                 </div>
                 <div class="contentBox {{ interaction.content.kind }}">
@@ -101,7 +101,7 @@ $('#cards').addClass('user_profile');
                           </a>
                         </div>
                         <div class="comment">
-                          <div class="comment_body">{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escape }}{% endfilter %}</div>
+                          <div class="comment_body">{{ comment.interaction_node.body|linebreaksbr|escape }}</div>
                         </div>
                         {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
                         <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
@@ -210,7 +210,9 @@ var metoos = {
     {% endfor %}
     {% endif %}
 };
+
 {% if comment_parents %}
+// Is this ever used?
     {% for interaction in comment_parents %}
 
     {% comment %}

@@ -107,6 +107,7 @@ if DEBUG:
     
 
 else:
+    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com"]
     URL_NO_PROTO = 'www.readrboard.com'
     BASE_URL = 'http://www.readrboard.com'
     BASE_URL_SECURE = 'https://www.readrboard.com'
@@ -382,6 +383,7 @@ LOGGING = {
         },
         'mail_admins': {
             'level': 'ERROR',
+            'filters': [],
             'class': 'django.utils.log.AdminEmailHandler',
         }
     },

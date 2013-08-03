@@ -108,7 +108,15 @@
                 </label>
                 {{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
             </div>
-
+            <!-- this is too confusing still to expose to the user. -->
+            <div class="formRow" style="display:none;">
+                <label for="id_br_replace_scope_selector">
+                    <span class="labelTitle">BR Replace Scope Selector (jQuery selector)</span>
+                    <span>An optional scope in which to look for BR tags and replace them with wrapped sections.</span>
+                </label>
+                {{ form.br_replace_scope_selector }}{{ form.br_replace_scope_selector.errors }}
+            </div>
+            
             {% if hostplatform %}
                 <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />
             {% endif %}

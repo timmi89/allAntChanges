@@ -548,12 +548,20 @@ RB = {
                 success: function(response) {
                     if (response.status == "success" ) {
                         var $card = $('.interaction_'+parent_id),
-                            $outcome = $card.find('div.me_too_outcome');
+                            $outcome = $card.find('div.me_too_outcome'),
+                            $message;
 
-                        if (response.data.existing == true ) {
-                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                        var needToLogin = (response.data.message && response.data.message == "not_logged_in");
+
+                        if (needToLogin) {
+                            RDRAuth.killUser( function() {
+                                RDRAuth.quickFixAjaxLogout();
+                            });
+                            $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
+                        } else if (response.data.existing == true ) {
+                            $message = $('<div><em>You have already added this to your profile.</em></div>');
                         } else {
-                            var $successMessage = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                            $message = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
 
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
@@ -581,13 +589,13 @@ RB = {
                             });
                         });
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        var $close = $('<div class="close"><i class="rdr-fa-icon-remove"></i></div>');
                         $close.find('i').click( function() {
                             $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
                         });
 
-                        $successMessage.append( $close, $shareLinks );
-                        $outcome.html( $successMessage );
+                        $message.append( $close, $shareLinks );
+                        $outcome.html( $message );
                         $outcome.show(333);
                     }
                 }
@@ -610,20 +618,27 @@ RB = {
 
                     if (response.status == "success" ) {
 
+                        var needToLogin = (response.data.message && response.data.message == "not_logged_in");
                         var deleteWasSuccessful = response.data == interaction_id;
-                        
+
                         var $card = $('.interaction_'+interaction_id),
                             //change this name later to make this make more sense.
                             $outcome = $card.find('div.me_too_outcome'),
                             $message;
                         
-                        if( deleteWasSuccessful ){
+                        if( needToLogin ){
+                            RDRAuth.killUser( function() {
+                                RDRAuth.quickFixAjaxLogout();
+                            });
+                            $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
+                        }
+                        else if( deleteWasSuccessful ){
                             $message = $('<div><em>This reaction was removed from <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }else{
                             $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        var $close = $('<div class="close"><i class="rdr-fa-icon-remove"></i></div>');
                         $close.find('i').click( function() {
                             $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
                         });
@@ -698,12 +713,20 @@ RB = {
                 success: function(response) {
                     if (response.status == "success" ) {
                         var $card = $('.interaction_'+parent_id),
-                            $outcome = $('#add_new_reaction_form');
+                            $outcome = $('#add_new_reaction_form'),
+                            $message;
 
-                        if (response.data.existing == true ) {
-                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                        var needToLogin = (response.data.message && response.data.message == "not_logged_in");
+
+                        if (needToLogin) {
+                            RDRAuth.killUser( function() {
+                                RDRAuth.quickFixAjaxLogout();
+                            });
+                            $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
+                        } else if (response.data.existing == true ) {
+                            var $message = $('<div><em>You have already added this to your profile.</em></div>');
                         } else {
-                            var $successMessage = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                            var $message = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
 
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
@@ -731,8 +754,8 @@ RB = {
                             });
                         });
 
-                        $successMessage.append( $shareLinks );
-                        $outcome.html( $successMessage );
+                        $message.append( $shareLinks );
+                        $outcome.html( $message );
                         $outcome.show(333);
                     }
                 }

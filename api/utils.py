@@ -299,7 +299,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             interaction_node=interaction_node,
             kind=kind
         )
-        logger.info("Found existing Interaction with id %s" % existing_interaction.id)
+        #logger.info("Found existing Interaction with id %s" % existing_interaction.id)
         return dict(interaction=existing_interaction, existing=True)
     except Interaction.DoesNotExist:
         pass
@@ -430,10 +430,10 @@ def getSinglePageDataDict(page_id):
     # Retrieve containers
     containers = Container.objects.filter(id__in=iop.values('container'))
 
-    parents = iop.filter(page=current_page, parent=None)
-    par_con = []
-    for parent in parents:
-        par_con.append({parent.container.id:parent.id})
+    # parents = iop.filter(page=current_page, parent=None)
+    # par_con = []
+    # for parent in parents:
+        # par_con.append({parent.container.id:parent.id})
     # Get page interaction counts, grouped by kind
     values = iop.order_by('kind').values('kind')
     # Annotate values with count of interactions
@@ -450,24 +450,23 @@ def getSinglePageDataDict(page_id):
     toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
   
     # ---Find top 10 shares on a give page---
-    content = Content.objects.filter(interaction__page=current_page.id)
-    shares = content.filter(interaction__kind='shr')
-    sharecounts = shares.annotate(Count("id"))
-    topshares = sharecounts.values("body").order_by()[:10]
+    # content = Content.objects.filter(interaction__page=current_page.id)
+    # shares = content.filter(interaction__kind='shr')
+    # sharecounts = shares.annotate(Count("id"))
+    # topshares = sharecounts.values("body").order_by()[:10]
 
     # ---Find top 10 non-temp users on a given page---
-    socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
-
-    userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
-    topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
+    # socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
+    # userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
+    # topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
     result_dict = dict(
             id=current_page.id,
             summary=summary,
             toptags=toptags,
-            topusers=topusers,
-            topshares=topshares,
-            containers=containers,
-            parents = par_con
+            # topusers=topusers,
+            # topshares=topshares,
+            containers=containers
+            # parents = par_con
         )
     return result_dict
     
@@ -475,18 +474,18 @@ def getSinglePageDataDict(page_id):
     
 def getKnownUnknownContainerSummaries(page_id, hashes):
     page = Page.objects.get(id=page_id)
-    logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
+    #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-    logger.info("CONTAINERS: " + str(containers))
+    #logger.info("CONTAINERS: " + str(containers))
     ids = [container[0] for container in containers]
     interactions = list(Interaction.objects.filter(
         container__in=ids,
         page=page,
         approved=True
     ).select_related('interaction_node','content','user',('social_user')))
-    logger.info("K/U I: " + str(interactions))
+    #logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
-    logger.info("K KEYS: " + str(known.keys()))
+    #logger.info("K KEYS: " + str(known.keys()))
     unknown = list(set(hashes) - set(known.keys()))
     cacheable_result = dict(known=known, unknown=unknown)
     return cacheable_result

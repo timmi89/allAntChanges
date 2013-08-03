@@ -342,14 +342,14 @@ div.rdr_sandbox div.rdr li {background:none !important; padding:0 !important;}
 
 div.rdr strong {font-weight:bold !important;}
 
-div.rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute !important; margin:3px 0 0 5px !important; cursor: move !important; }
+div.rdr_sandbox div.rdr_header div.rdr_indicator_stats         { position:absolute !important; margin:4px 0 0 4px !important; cursor: move !important; }
 
 div.rdr_sandbox div.rdr div.rdr_header                         { 
     background:#fff !important;
     position:relative !important;
     height:32px !important;
     z-index:5 !important;
-    border-top:3px solid #989898 !important;
+    /*border-top:3px solid #989898 !important;*/
     border-bottom: 1px solid #f0f0f0 !important;
     /*todo: revisit the better way to do this*/
     -webkit-box-sizing : border-box !important;
@@ -358,10 +358,14 @@ div.rdr_sandbox div.rdr div.rdr_header                         {
     box-sizing : border-box !important;
 }
 div.rdr_sandbox div.rdr div.rdr_header div.rdr_header_arrow    { 
-  top: -12px;
+  top: -10px;
   left: 6px;
   position:absolute;
 }
+div.rdr_sandbox div.rdr.rdr_page_summary div.rdr_header div.rdr_header_arrow {
+  display:none !important;
+}
+
 div.rdr_sandbox div.rdr div.rdr_header h1                      { font-size:15px !important; color:#5999dc !important;}
 
 div.rdr_sandbox div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:4px 0 !important; }
@@ -430,7 +434,7 @@ div.rdr_sandbox div.rdr div.rdr_body div.jspHorizontalBar  { display:none;; }
 div.rdr_sandbox div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001 !important; right:1px !important; opacity: .5 !important;}
 div.rdr_sandbox div.rdr div.rdr_body div.jspDrag    { cursor: default !important; }
 
-div.rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;padding-top: 4px !important;}
+div.rdr_sandbox div.rdr div.rdr_header h1                   { margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;padding-top: 6px !important;}
 
 div.rdr_sandbox div.rdr button {
     border:1px solid #aaa !important; 
@@ -658,6 +662,8 @@ div.rdr_sandbox div.rdr input[type="text"].rdr_inlineComment{
     margin: -10px 0px 3px 0px !important;
     font-style:italic !important;
     color:#999 !important;
+    font-size: 11px !important;
+    line-height: 11px !important;
 }
 
 div.rdr_sandbox div.rdr input[type="text"].rdr_inlineComment.rdr_adding_comment {
@@ -754,11 +760,14 @@ div.rdr.rdr-summary {
   float:none;;
   cursor:default !important;
   display:inline-block !important;
-  color: #008de4 !important;
+  color: #eee !important;
   padding: 0px 0px 0px 8px !important;
   height:30px !important;
   /*fallback*/
   background: #fff;
+  /*border-top:3px solid #989898 !important;*/
+  /*border-bottom:3px solid #989898 !important;*/
+  /*
   background: -moz-linear-gradient(
     top,
     #ffffff,
@@ -771,25 +780,26 @@ div.rdr.rdr-summary {
   -webkit-border-radius: 3px !important;
   border-radius: 3px !important;
   border: 0px solid #c9c9c9 !important;
+    */
   -moz-box-shadow:
-    0px 1px 3px rgba(000,000,000,0.3),
+    0px 0px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1) !important;
   -webkit-box-shadow:
-    0px 1px 3px rgba(000,000,000,0.3),
+    0px 0px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1) !important;
   box-shadow:
-    0px 1px 3px rgba(000,000,000,0.3),
+    0px 0px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1) !important;
-  text-shadow:
+  /*text-shadow:
     0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1) !important;
+    0px 1px 0px rgba(255,255,255,1) !important;*/
   /*without this, the text was jumping down on first load before the styles are cached*/
   min-width: 124px !important;
 
 }
 
 div.rdr.rdr-summary:hover {
-  background:#fff !important;
+  /*background:#fff !important;*/
   /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
@@ -806,7 +816,7 @@ div.rdr_shareWidget div.rdr.rdr-summary {
 div.rdr.rdr-summary .rdr_chevron_cta {
   display: block !important;
   float: right !important;
-  border-left: 1px solid #ddd !important;
+  /*border-left: 1px solid #ddd !important;*/
   height: 30px !important;
   width:26px !important;
   padding-top: 9px !important;
@@ -837,7 +847,7 @@ div.rdr.rdr-summary #rdr-user a {
   font-style:normal !important;
   color:#008be4 !important;
 }
-div.rdr_sandbox div.rdr div.rdr_footer.rdr_cta .rdr_what_is_it { border-left:1px solid #ccc; }
+div.rdr_sandbox div.rdr div.rdr_footer.rdr_cta .rdr_what_is_it { border-left:1px solid #ddd; }
 div.rdr_sandbox div.rdr.w160 div.rdr_footer.rdr_cta .rdr_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0 !important;}
 
 div.rdr.rdr-summary div.rdr-see-more {
@@ -923,7 +933,7 @@ div.rdr.rdr-summary a.rdr_reactions_label {
   display:inline-block !important;
   font-style:normal !important;
   font-weight:normal !important;
-  color:#008be4 !important;
+  color:#5999dc !important;
   font-size:14px !important;
   font-family:'RDR_HelveticaBold',Arial,sans-serif;
   letter-spacing:0px !important;
@@ -1216,9 +1226,9 @@ div#rdr-page-summary.defaultSummaryBar .rdr-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 div.rdr_sandbox .rdr_widget{
-    -moz-box-shadow:0 0 5px #ccc !important;
-    -webkit-box-shadow:0 0 5px #ccc !important;
-    box-shadow:0 0 5px #ccc !important;
+    -moz-box-shadow:0 0 20px #bbb !important;
+    -webkit-box-shadow:0 0 20px #bbb !important;
+    box-shadow:0 0 20px #bbb !important;
 }
 
 /*shareWidget*/
@@ -1464,7 +1474,11 @@ div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
 /*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
 /*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
 /*todo: should all these things really be in the * part (the all children part) ?  */
-div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
+div.rdr_indicator_for_text{
+    display: inline !important;
+    position: relative !important;
+}
+div.rdr_indicator_for_text * {
     display:inline !important;
     position: relative !important;
     margin: 0 !important;
@@ -1479,6 +1493,7 @@ div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
     -moz-user-select: none !important;
     -o-user-select: none !important;
     user-select: none !important;
+    /*opacity:0.5;*/
 }
 /*the indicator body will be moved up to compensate*/
 
@@ -1489,6 +1504,12 @@ div.rdr_sandbox div.rdr_helper_rindow div.rdr_header h1{
 div.rdr_indicator_for_text{
     vertical-align: text-top !important;
 }
+.rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
+  opacity:1.0 !important;
+  -moz-opacity:1.0 !important;
+  -khtml-opacity:1.0 !important;
+}
+
 div.rdr_indicator_for_text.rdr_helper {
     opacity:0.6;;
     -moz-opacity:0.6;;
@@ -1575,6 +1596,12 @@ div.rdr_sandbox div.rdr_indicator_details img.rdr_pin {
     margin:0 !important;
 }
 
+.rdr_live_hover div.rdr_indicator {
+  display:inline-block !important;
+}
+.rdr_live_hover div.rdr_indicator.rdr_helper {
+  opacity:0.5 !important;
+}
 .rdr_live_hover div.rdr_indicator img.rdr_pin,
 div.rdr div.rdr_indicator_stats img.rdr_pin {
   background-position:1px -1px !important;
@@ -1615,19 +1642,24 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
   padding: 0 0 0 4px !important;
   height:24px !important;
   /*fallback*/
-  background: #fff;
-  background: -moz-linear-gradient(
+  background: rgba(255,255,255,0.9);
+  /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
-    #eeeeee) !important;
-  background: -webkit-gradient(
+    #eeeeee) !important;*/
+  /*background: -webkit-gradient(
     linear, left top, left bottom, 
     from(#ffffff),
-    to(#eeeeee)) !important;
+    to(#eeeeee)) !important;*/
   /*-moz-border-radius: 3px !important;
   -webkit-border-radius: 3px !important;
   border-radius: 3px !important;*/
   border: 0px solid #c9c9c9 !important;
+  text-shadow:
+    0px -1px 0px rgba(000,000,000,0.1),
+    0px 1px 0px rgba(255,255,255,1) !important;
+}
+div.rdr_indicator_for_media.rdr_indicator_not_img div.rdr_indicator_body{
   -moz-box-shadow:
     0px 1px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1) !important;
@@ -1637,9 +1669,6 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
   box-shadow:
     0px 1px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1) !important;
-  text-shadow:
-    0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1) !important;
 }
 
 div.rdr_indicator_for_media div.rdr_indicator_body:hover {
@@ -1656,7 +1685,7 @@ div.rdr_indicator_for_media div.rdr_indicator_body:hover {
 
 div.rdr_indicator_for_media .rdr_chevron_cta {
   display: inline-block !important;
-  border-left: 1px solid #ddd !important;
+  /*border-left: 1px solid #ddd !important;*/
   height: 30px !important;
   width:23px !important;
   padding-top: 6px !important;
@@ -1744,11 +1773,12 @@ div.rdr_sandbox div.rdr_media_border_wrap div{
 
 div.rdr_sandbox div.rdr_media_border_wrap.engaged{
     /*uncomment to turn on media hilites*/    
-    display: block !important;
+    /*hiding....*/
+    display: none !important;
 }
 
 div.rdr_sandbox div.rdr_media_border_wrap.engaged.engagedForShareLink{
-    display: block !important;
+    display: none !important;
 }
 
 
@@ -1842,10 +1872,10 @@ div.rdr_sandbox span.rdr_indicator_categoryTitle{
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { 
     display:block !important;
     text-decoration:none !important;
-    background:#000 !important;
+    background:#5a5a5a !important;
 }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { background:#000 !important; height:auto;; width:160px !important; font-family:'RDR_HelveticaBold' !important; letter-spacing:0px !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list { background:#5a5a5a !important; height:auto;; width:160px !important; font-family:'RDR_HelveticaBold' !important; letter-spacing:0px !important;}
 div.rdr_sandbox div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list { width:320px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list { width:480px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list { width:640px !important; }
@@ -1883,6 +1913,7 @@ div.rdr_sandbox div.rdr.rdr_window div.rdr_body.rdr_tags_list .rdr_contains1 .rd
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px !important; height:80px !important; padding:20px 10px 0 !important;}
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:480px !important; height:80px !important; padding:20px 10px 0 !important;}
 
+div.rdr_sandbox div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small.rdr_wide {height:55px !important; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px !important; height:55px !important; padding-top:16px !important;}
 div.rdr_sandbox div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:480px !important; }
 div.rdr_sandbox div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:160px !important; }
@@ -1898,17 +1929,24 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 { background:#84b
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 { background:#419bac !important; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 { background:#d7f360 !important; }
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 { background:#9dd55e !important; }
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 { background:#576c87 !important; }
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 { background:#6fa4be !important; }
 
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag_body { color:#354c65 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag_body { color:#0e414d !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag_body { color:#748430 !important;}
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag_body { color:#578326 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag .rdr_count { color:#446483 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag .rdr_count { color:#2f5e69 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag .rdr_count { color:#8d9742 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag .rdr_count { color:#779547 !important;}
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag_body,
-div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag .rdr_count { color:#c8d6e9 !important;}
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag .rdr_count { color:#3c6c84 !important;}
 
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_count,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag_body,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_count,
+div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_count,
 div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_tag_body { color:#008be4 !important; }
 
 div.rdr_sandbox div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { padding:5px 10px !important; text-align:center !important; width:320px !important; }
@@ -1930,8 +1968,21 @@ div.rdr_sandbox div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_b
 
 /*div.rdr_sandbox div.rdr .rdr_hiddenPanel { visibility:hidden !important; }*/
 div.rdr_sandbox div.rdr div.rdr_body.rdr_hiddenPanel { display:none !important; }
+/*div.rdr_sandbox div.rdr div.rdr_body.rdr_visiblePanel { position: relative !important; }*/
 
 div.rdr_sandbox div#rdr_loginPanel {
     z-index: 12101 !important;
 }
-/*auditing cachebusting 2012/12/02/12:17*/
+
+/*rarely used html tag to wrap br-separated text when the group settings specifies*/
+.rdr_br_replaced rt{
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    line-height: inherit !important;
+}
+
+/*hack to hide the trailing text indicator*/
+.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
+    display: none !important;
+}
