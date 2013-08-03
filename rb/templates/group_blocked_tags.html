@@ -17,7 +17,7 @@
 			</tr>
 		</thead>
 		<tbody>
-    {% for blocked in group.blocked_tags.all %}
+    {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
     		<tr>
     			<td width="300">{{blocked.body}}</td>
     			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>

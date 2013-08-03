@@ -18,7 +18,7 @@
 			</tr>
 		</thead>
 		<tbody>
-    {% for tag in all_unblocked %}
+    {% for tag in all_unblocked|dictsortreversed:"id" %}
     		<tr>
     			<td width="300">{{tag.body}}</td>
     			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
