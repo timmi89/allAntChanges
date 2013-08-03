@@ -9,7 +9,7 @@
   {% if requested %}
     <h2>Administrative access for {{ group.name }} has been requested!</h2>
   {% else %}
-    <form action="/admin_request/{{ group.short_name }}/" method="post">
+    <form action="/group/{{ group.short_name }}/admin_request/" method="post">
       {% csrf_token %}
       <button type="submit btn">Request Access</button>
     </form>

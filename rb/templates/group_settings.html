@@ -10,7 +10,7 @@
       <h1>{{group.name}} Settings</h1>
     {% endblock settingsHeader %}    
   
-  <form id="groupSettings" action="{% block settingsUrl %}/settings/{{ short_name }}/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
+  <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<div class="leftColumn column">
