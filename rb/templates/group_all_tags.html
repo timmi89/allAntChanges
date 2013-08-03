@@ -5,12 +5,58 @@
 {% block wideContent %}
 <div class="mostlyWide">
 
+    <table role="block_tags">
+		<thead>
+			<tr>
+				<th>Reaction</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
     {% for tag in group.all_tags.all %}
-        {{tag}}
+    		<tr>
+    			<td width="300">{{tag.body}}</td>
+    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
+    		</tr>
     {% endfor %}  
+		</tbody>
+	</table>
   
 
 </div>
+
+<script>
+$('table[role="block_tags"] button').click( function() {
+	var $button = $(this);
+	console.log( $button.data('groupId') );
+	console.log( $button.data('nodeId') );
+	// send the data!
+    $.ajax({
+        url: "/api/tag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
+        type: "post",
+        contentType: "application/json",
+        // dataType: "jsonp",
+        // data: { json: JSON.stringify(sendData) },
+        success: function(response) {
+        	console.log('successs!!!!!');
+        	console.log(response);
+        },
+        error: function(response) {
+        	console.log('FUCK -- error');
+        	console.log(response);
+        }
+    });
+});
+/*
+tag/block/(?P<group_id>\d+)/(?P<node_id>\d+)
+
+/api/tag/block/{{ group.id }}/{{ blocked.id }}
+	POST/PUT:  create block
+	DELETE:  remove block
+
+*/
+</script>
+
 {% endblock wideContent %}
  
     {% block afterWideContent %}

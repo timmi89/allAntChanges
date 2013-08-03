@@ -5,12 +5,37 @@
 {% block wideContent %}
 <div class="mostlyWide">
 
+	<table role="unblock_tags">
+		<thead>
+			<tr>
+				<th>Reaction</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
     {% for blocked in group.blocked_tags.all %}
-        {{blocked}}
+    		<tr>
+    			<td width="300">{{blocked.body}}</td>
+    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
+    		</tr>
     {% endfor %}  
+		</tbody>
+	</table>
   
-
 </div>
+
+<script>
+/*
+tag/block/(?P<group_id>\d+)/(?P<node_id>\d+)
+
+/api/tag/block/{{ group.id }}/{{ blocked.id }}
+	POST/PUT:  create block
+	DELETE:  remove block
+
+*/
+</script>
+
+
 {% endblock wideContent %}
  
     {% block afterWideContent %}
