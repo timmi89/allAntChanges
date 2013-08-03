@@ -986,7 +986,10 @@ class BlockedTagHandler(AnonymousBaseHandler):
     def create(self, request, group_id = None, node_id = None, **kwargs):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
-        blocked = BlockedTag.create(group=group, node = i_node)        
+        blocked = BlockedTag.create(group=group, node = i_node)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interaactions.update(approved = False)
+               
     
         
     @requires_admin_rest
@@ -1001,11 +1004,12 @@ class BlockedTagHandler(AnonymousBaseHandler):
         
     @requires_admin_rest
     def update(self, request, group_id = None, node_id = None, **kwargs):
-    
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
         blocked, existed = BlockedTag.get_or_create(group=group, node = i_node)
-    
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = False)
+        
     
     @requires_admin_rest
     def delete(self, request, group_id = None, node_id = None, **kwargs):
