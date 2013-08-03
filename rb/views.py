@@ -885,7 +885,14 @@ def group_all_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
-
+    
+    all_set = set(group.all_tags.all())
+    blocked_set = set(group.blocked_tags.all())
+    all_unblocked = all_set - blocked_set
+    
+    
+    context['all_unblocked'] = all_unblocked
+    
     return render_to_response(
         "group_all_tags.html",
         context,
