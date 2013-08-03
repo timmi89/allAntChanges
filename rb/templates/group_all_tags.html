@@ -17,7 +17,7 @@
 			</tr>
 		</thead>
 		<tbody>
-    {% for tag in group.all_tags.all %}
+    {% for tag in all_unblocked %}
     		<tr>
     			<td width="300">{{tag.body}}</td>
     			<td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block</button></td>
