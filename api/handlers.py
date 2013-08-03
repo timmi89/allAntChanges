@@ -989,6 +989,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
         blocked = BlockedTag.objects.create(group=group, node = i_node, order=0)
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
+        self.clear_caches(existing_interactions)
         return {"created":True}    
     
         
@@ -1009,6 +1010,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
         blocked, existed = BlockedTag.objects.get_or_create(group=group, node = i_node, order=0)
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
+        self.clear_caches(existing_interactions)
         return {"updated":True}
     
     @requires_admin_rest
@@ -1017,6 +1019,34 @@ class BlockedTagHandler(AnonymousBaseHandler):
         i_node = InteractionNode.objects.get(id=int(node_id))
         blocked = BlockedTag.objects.get(group=group, node = i_node)
         blocked.delete()
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = True)
+        self.clear_caches(existing_interactions)
         return {"deleted":True}
        
-    
+    def clear_caches(self, interactions):
+        for interaction in interactions:
+            page = interaction.page
+            container = interaction.container
+            
+            try:
+                cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+                page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
+                t = Thread(target=page_container_cache_updater, kwargs={})
+                t.start()
+ 
+                if not interaction.parent or interaction.kind == 'com':
+                    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                    t = Thread(target=global_cache_updater, kwargs={})
+                    t.start()
+        
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+            
