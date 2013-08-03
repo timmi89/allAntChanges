@@ -1015,7 +1015,7 @@ class BlockedTagHandler(AnonymousBaseHandler):
     def delete(self, request, group_id = None, node_id = None, **kwargs):
         group = Group.objects.get(id=int(group_id))
         i_node = InteractionNode.objects.get(id=int(node_id))
-        blocked = BlockedTag.get(group=group, node = i_node)
+        blocked = BlockedTag.objects.get(group=group, node = i_node)
         blocked.delete()
         return {"deleted":True}
        
