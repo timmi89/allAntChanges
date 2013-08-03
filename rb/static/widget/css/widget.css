@@ -1474,7 +1474,11 @@ div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
 /*for the text ones reset it with !important because it will be inline to the doc, so it won't be in the the sandbox,*/
 /*this should stay above the rest of the indicator stuff so it can get overwridden as needed. */
 /*todo: should all these things really be in the * part (the all children part) ?  */
-div.rdr_indicator_for_text, div.rdr_indicator_for_text * {
+div.rdr_indicator_for_text{
+    display: inline !important;
+    position: relative !important;
+}
+div.rdr_indicator_for_text * {
     display:inline !important;
     position: relative !important;
     margin: 0 !important;

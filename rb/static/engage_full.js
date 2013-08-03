@@ -6009,6 +6009,26 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                 },
                 utils:{
+                    checkTrailingWhiteSpace: function($container){
+                        //RDR.actions.indicators.utils.checkTrailingWhiteSpace:
+
+                        var reversedNodes = $container.children().get().reverse();
+
+                        var startOfTrailingWhiteSpace = null;
+                        var isConsecutive = true;
+                        $.each(reversedNodes, function(idx) {
+                            if(!isConsecutive){
+                                return;
+                            }
+                            var isWhiteSpace = $(this).text() == "";
+                            if(isWhiteSpace){
+                                startOfTrailingWhiteSpace = this;
+                            }else{
+                                isConsecutive = false;
+                            }
+                        });
+                        return startOfTrailingWhiteSpace;
+                    },
                     //RDR.actions.indicators.utils:
                     kindSpecificSetup: {
                         img: function( hash ){
@@ -6096,9 +6116,13 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
 
+                            var startOfTrailingWhiteSpace = RDR.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
-                            $indicator.appendTo($container);
-
+                            if(startOfTrailingWhiteSpace){
+                                $(startOfTrailingWhiteSpace).before($indicator);
+                            }else{
+                                $indicator.appendTo($container);
+                            }
                         }
                     },
                     makeDetailsContent: function( hash ){
@@ -8584,7 +8608,11 @@ function $RFunctions($R){
                     });
                 }
 
-                var total_reactions_label = ( total_reactions > 0 ) ? total_reactions+" Reactions" : "Reactions";
+                var total_reactions_label = ( total_reactions > 1 ) ?
+                    total_reactions+" Reactions" :
+                        ( total_reactions > 0 ) ? 
+                            total_reactions+" Reaction" :
+                            "Reactions";
                 $summary_widget.append(
                     '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
                 );
