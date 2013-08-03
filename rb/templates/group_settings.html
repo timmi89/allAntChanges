@@ -10,7 +10,7 @@
       <h1>{{group.name}} Settings</h1>
     {% endblock settingsHeader %}    
   
-  <form id="groupSettings" action="{% block settingsUrl %}/settings/{{ short_name }}/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
+  <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
 	<div class="leftColumn column">
@@ -177,6 +177,14 @@
                     {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
                     <span class="labelTitle">Paragraph Tooltips</span>
                     <span>Paragraphs with no reactions will display an icon when you hover over them.  When you hover over the icon it explains how to select text and react with ReadrBoard.</span>
+                </label>
+            </div>
+
+            <div class="formRow">
+                <label for="id_signin_organic_required">
+                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
+                    <span class="labelTitle">Require login for custom reactions</span>
+                    <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
                 </label>
             </div>
 

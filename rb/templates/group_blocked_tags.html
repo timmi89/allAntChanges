@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cookie_user }} Management{%endblock%}
+
+{% block wideContent %}
+<div class="mostlyWide">
+	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
+	<h1>Blocked Reactions</h1>
+	<div class="notice info">
+		<p>These are the reactions on your site that you have <strong>blocked</strong>.  This means if anyone tries to react using an exact much of the reactions listed below, ReadrBoard won't let the react get created on your site.</p>
+	</div>
+	<table role="unblock_tags">
+		<thead>
+			<tr>
+				<th>Reaction</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+    {% for blocked in group.blocked_tags.all|dictsortreversed:"id" %}
+    		<tr>
+    			<td width="300">{{blocked.body}}</td>
+    			<td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
+    		</tr>
+    {% endfor %}  
+		</tbody>
+	</table>
+  
+</div>
+
+<script>
+// bind an "unblock" event to each button
+// this will unblock the reaction on the site, allowing people to again use it
+$('table[role="unblock_tags"] button').click( function() {
+	var $button = $(this);
+	// send the data!
+    $.ajax({
+        url: "/api/tag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
+        type: "delete",
+        success: function(response) {
+        	console.log('successs!!!!!');
+        	console.log(response);
+        	$button.closest('tr').html('<td colspan="2">This reaction has been unblocked!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/all_reactions/">list of allowed reactions</a> to re-block it.</td>');
+        },
+        error: function(response) {
+        	console.log('FUCK -- error');
+        	console.log(response);
+        }
+    });
+});
+</script>
+
+{% endblock wideContent %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block pageJS %}
+    
+{% endblock %}

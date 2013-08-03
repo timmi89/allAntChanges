@@ -329,6 +329,7 @@ class GroupForm(forms.ModelForm):
             #'logo_lg',
             'logo_url_lg',  
             'requires_approval',
+            'signin_organic_required',
             'word_blacklist',
             'custom_css',
             'post_selector',

@@ -101,7 +101,7 @@ $('#cards').addClass('user_profile');
                           </a>
                         </div>
                         <div class="comment">
-                          <div class="comment_body">{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escape }}{% endfilter %}</div>
+                          <div class="comment_body">{{ comment.interaction_node.body|linebreaksbr|escape }}</div>
                         </div>
                         {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
                         <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
@@ -210,7 +210,9 @@ var metoos = {
     {% endfor %}
     {% endif %}
 };
+
 {% if comment_parents %}
+// Is this ever used?
     {% for interaction in comment_parents %}
 
     {% comment %}

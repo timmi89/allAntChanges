@@ -45,6 +45,15 @@ class AsynchPageNotification(AbstractAsynchronousNotification):
         logger.info('page url ' + str(self.url))
         return self.url
  
+
+class AsynchNewGroupNodeNotification(AbstractAsynchronousNotification):
+    def generate_url(self, **kwargs):
+        self.url = '/chronos/group_node/' + str(kwargs['interaction_id']) + '/' + str(kwargs['group_id']) + '/'
+        logger.info('page url ' + str(self.url))
+        return self.url
+ 
+
+
   
 class AbstractNotificationRuleImpl(object):
     args = None
