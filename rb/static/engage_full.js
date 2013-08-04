@@ -1338,12 +1338,6 @@ function readrBoard($R){
                                             coords.left = strRight - 14; //with a little padding
                                             coords.top = strBottom + 23;
                                         }
-
-                                        // if there is a custom CTA element, override the coordinates with its location
-                                        if ( typeof settings.$custom_cta != "undefined" ) {
-                                            coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
-                                            coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
-                                        }
                                     }
                                 } else {
                                     // draw the window over the actionbar
@@ -1388,6 +1382,12 @@ function readrBoard($R){
                                 }
 
                                 // $indicatorDetails.hide();
+                            }
+
+                            // if there is a custom CTA element, override the coordinates with its location
+                            if ( typeof settings.$custom_cta != "undefined" ) {
+                                coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
+                                coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
                             }
 
                             var $rindow = RDR.rindow.draw({
