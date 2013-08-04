@@ -3846,7 +3846,7 @@ function readrBoard($R){
                                         if ( $grid.hasAttr('rdr-grid-width') ) {
                                             var statedWidthDividedBy160 = parseInt( parseInt( $grid.attr('rdr-grid-width') ) / 160 );
                                             gridWidth = statedWidthDividedBy160 * 160;
-                                            if ( gridWidth > 800 ) { gridWidth=800; }
+                                            if ( gridWidth > 960 ) { gridWidth=960; }
                                         }
 
                                         $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');

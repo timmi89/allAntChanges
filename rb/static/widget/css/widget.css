@@ -98,6 +98,7 @@ div.rdr.rdr_window.w320 { width:320px !important; }
 div.rdr.rdr_window.w480 { width:480px !important; }
 div.rdr.rdr_window.w640 { width:640px !important; }
 div.rdr.rdr_window.w800 { width:800px !important; }
+div.rdr.rdr_window.w960 { width:960px !important; }
 
 /* the action bar */
 div.rdr_actionbar {
@@ -1887,6 +1888,7 @@ div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list { width:320px !important; }
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list { width:480px !important; }
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list { width:640px !important; }
 div.rdr.rdr_window.w800 div.rdr_body.rdr_tags_list { width:800px !important; }
+div.rdr.rdr_window.w960 div.rdr_body.rdr_tags_list { width:960px !important; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box { text-align:center !important; font-family:'RDR_HelveticaBold',Helvetica,Arial !important; box-sizing: border-box !important; overflow:hidden !important; letter-spacing:-1px !important;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover,
@@ -1912,7 +1914,8 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px !important; heig
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
-div.rdr.rdr_window.w800 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small { height:110px !important; padding:35px 10px 0 !important;}
+div.rdr.rdr_window.w800 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
+div.rdr.rdr_window.w960 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small { height:110px !important; padding:35px 10px 0 !important;}
 div.rdr.rdr_window div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small.rdr_wide { padding:18px 10px 0 !important; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px !important; height:80px !important; padding:20px 10px 0 !important;}
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:480px !important; height:80px !important; padding:20px 10px 0 !important;}
