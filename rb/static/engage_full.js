@@ -3842,7 +3842,7 @@ function readrBoard($R){
                                     $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
 
                                     if ($grid.length) {
-                                        $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w640 rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w800 rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                                         RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);
