@@ -4239,7 +4239,7 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
-                    
+
                     // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
                     //     return;
                     // }
