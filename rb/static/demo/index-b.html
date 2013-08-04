@@ -193,9 +193,11 @@
             <div id="rdr-summary-wrap" class="rdr"></div>
 
 
-
-            <p rdr-crossPageContainer=true>Here is some different crossPageContainer test content.</p>
-
+            <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
+            <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"><span rdr-counter-for="question1"></span> Reactions</div>
+            <div rdr-grid-for="question1"></div>
+            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
+            
             <br>
             <br>
             <span>(below this is an empty element with attr 'rdr-crossPageContainer-for')</span>
