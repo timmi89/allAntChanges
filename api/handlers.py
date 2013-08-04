@@ -578,7 +578,8 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
-        content_summaries = getContentSummaries(interactions, content)
+        isCrossPage = (data['cross_page'] == True)
+        content_summaries = getContentSummaries(interactions, content, isCrossPage=isCrossPage)
 
         return content_summaries
 
