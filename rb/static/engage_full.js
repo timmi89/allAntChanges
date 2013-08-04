@@ -3719,7 +3719,6 @@ function readrBoard($R){
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
                 // RDR.actions.sendHashes:
-                
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -7872,6 +7871,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $.each( page.containers, function(idx, container) {
                             if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
+                        RDR.actions.sendHashes( hashesByPageId );
+                    } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
+                        // if no reactions on this page, but there is a cross-page container... force a call.  
+                        // just grab the first crosspage hash.. we get them all later.  
+                        // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
+                        // known_hash list, to prevent some duplication.
+                        var hashesByPageId = {};
+                        hashesByPageId[ page.id ] = [];
+                        hashesByPageId[ page.id ].push( $('[rdr-crossPageContent="true"]:eq(0)').attr('rdr-hash') );
                         RDR.actions.sendHashes( hashesByPageId );
                     }
 
