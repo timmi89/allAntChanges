@@ -494,6 +494,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
+        crossPageHashes = data.get('crossPageHashes', [])
         try:
             page = data['pageID']
         except KeyError:
@@ -518,11 +519,13 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         else:
             # Force evaluation by making lists
             #logger.info("knownUnknown started " + str(page))
-            cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+
+            cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
             logger.info(cacheable_result)
+
             #logger.info("knownUnknown done " + str(page))
             try:
-                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
+                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes, crossPageHashes=crossPageHashes)
                 
                 t = Thread(target=cache_updater, kwargs={})
                 t.start()
@@ -559,11 +562,19 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
             raise JSONException(u"Bad page id or container_id in content summary call")
 
-        interactions = list(Interaction.objects.filter(
-                container=container_id,
-                page=page_id,
-                approved=True
-                ))
+        if data['cross_page'] == True:
+            page = Page.objects.get(id=page_id)
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    page__site__group = page.site.group,
+                    approved=True
+                    ))
+        else:
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    page=page_id,
+                    approved=True
+                    ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
