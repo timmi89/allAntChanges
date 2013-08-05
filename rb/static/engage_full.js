@@ -3829,6 +3829,7 @@ function readrBoard($R){
                             // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
                             if ( response.data.crossPageKnown ) {
                                 RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
+                                RDR.crosspage_hashes = response.data.crossPageKnown;
                             }
 
                             var summaries = {};
@@ -3870,6 +3871,8 @@ function readrBoard($R){
                             $.each( response.data.crossPageKnown, function(idx, crosspage_known) {
                                 var hash = crosspage_known.hash;
                                 RDR.actions.indicators.init(hash);
+
+                                RDR.summaries[hash].crossPage=true;
 
                                 // init a tag grid for an open custom display thing.
                                 // i know, this should be abstracted.  it's too ProPublica specific.  
@@ -6218,7 +6221,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                if ( !summary.crossPage ) {
+                                    RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                }
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
