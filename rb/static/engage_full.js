@@ -343,7 +343,7 @@ function readrBoard($R){
                     .show()
                     .addClass('rdr-visible')
                     .css({
-                        position: 'absolute',
+                        position: 'relative',
                         top: 0,
                         left: animWidth
                     });
@@ -814,6 +814,7 @@ function readrBoard($R){
 
                         RDR.actions.containers.media.onEngage( hash );
                     } else {
+                        
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
                         var $header = RDR.rindow.makeHeader( headerText );
                         $rindow.find('.rdr_header').replaceWith($header);
@@ -1551,6 +1552,9 @@ function readrBoard($R){
                 }
                 */
 
+                //at least for now, always close all other rindows.
+                RDR.rindow.closeAll();
+
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
                 }
@@ -1562,32 +1566,26 @@ function readrBoard($R){
                 var minHeight = (settings.minHeight<60)?60:settings.minHeight,
                     maxHeight = settings.maxHeight;
                     minWidth = settings.minWidth,
-                    maxWidth = settings.maxWidth;
-
-                var $new_rindow = $('div.rdr.rdr_window.rdr_rewritable'); // jquery obj of the rewritable window
-
-                if ( $new_rindow.length === 0 ) { // there's no rewritable window available, so make one
-                    var rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page';
+                    maxWidth = settings.maxWidth,
+                    rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page',
                     $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
-                    if ( settings.id ) {
-                        $('#'+settings.id).remove(); // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
-                                                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
-                                                     // logs in, the login rindow knows what function to then call
-                        $new_rindow.attr('id',settings.id);
-                    }
-
-                    //this is instead of the if / else below
-                    $('#rdr_sandbox').append( $new_rindow );
-                }
-                if ( settings.rewritable != true ) {
-                    $new_rindow.removeClass('rdr_rewritable');
+                            
+                if ( settings.id ) {
+                    $('#'+settings.id).remove(); 
+                    // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                    // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
+                    // logs in, the login rindow knows what function to then call
+                    $new_rindow.attr('id',settings.id);
                 }
 
+                //this is instead of the if / else below
+                $('#rdr_sandbox').append( $new_rindow );
+                
                 if ( settings.kind == "page" ) {
                     $new_rindow.addClass('rdr_page_key_' + options.container.data('page_key') ).addClass('rdr_page_summary');
                 }
 
-                $new_rindow.data(settings);// jquery obj of the rewritable window
+                $new_rindow.data(settings);
                 
                 if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
                     $new_rindow.html('');
@@ -1846,15 +1844,16 @@ function readrBoard($R){
                     $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Go back</a></span> ');
                     
 
+
                     //this broke - for now, just use the quick fix below
                     // $linkToComment.click( function() {
-
+                    //     var selState = content_node.selState || $rindow.data('selState');
                     //     RDR.actions.viewCommentContent({
                     //         tag:tag,
                     //         hash:hash,
                     //         rindow:$rindow,
                     //         content_node:content_node,
-                    //         selState:content_node.selState
+                    //         selState:selState
                     //     });
                     //     return false;
                     // });
@@ -1862,7 +1861,7 @@ function readrBoard($R){
                     //silly quick way to just trigger the back button
                     $linkToComment.click( function(e) {
                         e.preventDefault();
-                        $rindow.find('.rdr_back').eq(0).click();
+                        $rindow.find('.rdr_back').eq(0).click(); 
                     });
 
                     $rindow.find('div.rdr_commentBox')
@@ -3346,6 +3345,7 @@ function readrBoard($R){
                 });
 
                 $(document).on('click.rdr',function(event) {
+
                     var $mouse_target = $(event.target);
 
                     if ( !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length ) {
@@ -6248,64 +6248,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         }
 
-                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        if ( typeof page == "undefined" && isWriteMode ) {
-                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
-                        }
-
-                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
-                            $rindow.on( 'mouseleave', function(e) {
-
-                                var $this = $(this),
-                                    timeoutCloseEvt = setTimeout(function(){
-
-                                    if ( $this.hasClass('rdr_rewritable') ) {
-                                        $this.remove();
-                                    }
-                                },300);
-
-                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-
-                            }).on('mouseenter', function() {
-                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
-                                clearTimeout(timeoutCloseEvt);
-                            });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
-                                $rindow.find('div.rdr_box').each( function() {
-                                    $(this).hover(
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $rindow.data('selState', selState);
-                                            }
-                                        },
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
-                                            }
-                                        }
-                                    );
-                                });
-                            }
-                        }
-
-                        // $tagsListContainer.append($tag_table);
-                        // RDR.rindow.jspUpdate($rindow);
-                        return $tagsListContainer;
-
+                        
                         // sort a list of tags into their buckets
                         // private function, but could be a RDR.util or RDR.tagBox function
                         function createTagBuckets( tagList ) {
@@ -6436,6 +6379,66 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                           isotopeTags( $tagsListContainer );
                         } // writeTagBoxes
+
+                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        if ( typeof page == "undefined" && isWriteMode ) {
+                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
+                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
+                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                                $rindow.removeClass('rdr_rewritable');
+                        }
+
+
+                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                        if ( !isWriteMode ) {
+                            $rindow.on( 'mouseleave', function(e) {
+
+                                var $this = $(this),
+                                    timeoutCloseEvt;
+
+                                timeoutCloseEvt = setTimeout(function(){
+                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                        $this.remove();
+                                    }
+                                },300);
+
+                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
+
+                            }).on('mouseenter', function() {
+                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                                clearTimeout(timeoutCloseEvt);
+                            });
+
+                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
+                                $rindow.find('div.rdr_box').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'on');
+                                                $rindow.data('selState', selState);
+                                            }
+                                        },
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'off');                                        
+                                            }
+                                        }
+                                    );
+                                });
+                            }
+                        }
+
+                        // $tagsListContainer.append($tag_table);
+                        // RDR.rindow.jspUpdate($rindow);
+                        return $tagsListContainer;
 
                     },
                     updateContainerTrackers: function(){
@@ -7227,10 +7230,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
-                if ( args.selState ) {
-                    var selState = args.selState;
-                }
-
+                var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
+                
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( tag.tag_body );
                 $rindow.find('.rdr_header').replaceWith($header);
@@ -7258,7 +7259,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // RDR.rindow.updateSizes( $rindow );
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" ){
-                        var selState = summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
                         $rindow.data('selState', selState);
                     }
@@ -9107,7 +9107,16 @@ function $RFunctions($R){
                     return $(range.endContainer).closest('.'+hiliter['class']);
                 };
                 hiliter['isActive'] = function(){
-                    return hiliter['isAppliedToRange'](range);
+                    var isActive = false;
+                    try{
+                        isActive = hiliter['isAppliedToRange'](range);
+                    }
+                    catch(e){
+                        //to signal there was an error;
+                        isActive = null;
+                    }
+
+                    return isActive;
                 };
 
                 return hiliter;
@@ -9122,6 +9131,10 @@ function $RFunctions($R){
                 styleClass = selState.styleName,
                 hiliter = selState.hiliter,
                 isActive = hiliter['isActive']();
+                if(isActive == null){
+                    //null signals an error- range was no longer valid for some reason.  Just return.
+                    return;
+                }
                 //methods.clear();
 
                 if( !isActive && (switchOnOffToggle === "on" || switchOnOffToggle === "toggle" )){

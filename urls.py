@@ -122,7 +122,6 @@ urlpatterns = patterns('',
   # Group Supporting Pages
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
-
   url(r'^manage/', 'rb.views.manage_groups'),
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
@@ -154,7 +153,6 @@ urlpatterns = patterns('',
 from django.conf.urls.static import static
 
 if settings.DEBUG:
-
     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',
