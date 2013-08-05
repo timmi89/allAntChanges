@@ -832,18 +832,20 @@ function readrBoard($R){
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
-                // return;
-                $rindow.find('div.rdr_body').each( function() {
-                    var $this = $(this);
 
-                    if( !$this.hasClass('jspScrollable') ){
-                        // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        $(this).jScrollPane({ showArrows:true });
-                    }else{
-                        var API = $(this).data('jsp');
-                        API.reinitialise();
-                    }
-                });
+                if ( !$rindow.closest('.jspContainer').length && !$rindow.hasClass('jspScrollable') ) {
+                    $rindow.find('div.rdr_body').each( function() {
+                        var $this = $(this);
+
+                        if( !$this.hasClass('jspScrollable') ){
+                            // IE.  for some reason, THIS fires the scrollstop event.  WTF:
+                            $(this).jScrollPane({ showArrows:true });
+                        }else{
+                            var API = $(this).data('jsp');
+                            API.reinitialise();
+                        }
+                    });
+                }
             },
             tagBox: {
                 setWidth: function( $rindow, width ) {
@@ -3843,6 +3845,8 @@ function readrBoard($R){
 
                                     // if the grid has no height specified, give it one
                                     if ( $grid.height() < 200 ) { $grid.height(200); }
+
+                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
 
                                     if ($grid.length) {
                                         // since currently, our grid needs to have a width that's a factor of 160... force that:
