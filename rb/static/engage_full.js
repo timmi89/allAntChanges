@@ -360,6 +360,12 @@ function readrBoard($R){
                 RDR.C.rindowAnimationSpeed,
                 function() {
                     if (callback) callback();
+                    if ( $rindow.hasClass('jspScrollable') ) {
+                        var API = $rindow.data('jsp');
+                        
+                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        API.reinitialise();
+                    }
                 });
             },
             panelHide: function( $rindow, callback ) {
@@ -846,9 +852,6 @@ function readrBoard($R){
                             API.reinitialise();
                         }
                     });
-                } else if ( $rindow.hasClass('jspScrollable') ) {
-                    // var API = $rindow.data('jsp');
-                    // API.reinitialise();
                 }
             },
             tagBox: {
@@ -3875,21 +3878,25 @@ function readrBoard($R){
                                     customDisplayName = $container.attr('rdr-custom-display'),
                                     // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                     // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                    $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                                    $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                                    gridWidth = $grid.width(),
+                                    gridHeight = $grid.height();
 
                                     // if the grid has no height specified, give it one
-                                    if ( $grid.height() < 200 ) { $grid.height(200); }
+                                    if ( gridHeight < 200 ) { gridHeight = 200; $grid.height(gridHeight); }
 
-                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
+                                    RDR.util.cssSuperImportant( $grid, { height:gridHeight+"px" });
 
                                     if ($grid.length) {
                                         // since currently, our grid needs to have a width that's a factor of 160... force that:
-                                        var gridWidth = $grid.width(),
-                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                                        var statedWidthDividedBy160 = parseInt( gridWidth / 160 );
                                         
                                         gridWidth = statedWidthDividedBy160 * 160;
                                         if ( gridWidth > 960 ) { gridWidth=960; }
-                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+
+                                        // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
+
+                                        $grid.data('hash', hash).data('container', hash).wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>').addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                                         RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);
@@ -6179,7 +6186,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                         
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now()),
+                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         if ( typeof page != "undefined" ) {
@@ -6192,34 +6200,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
-                                // $rindow.find('span.rdr_what_is_it').click( function() {
-
-                                    // var coords = [];
-                                    // coords.left = ( $(window).width() / 2 ) - 200;
-                                    // coords.top = 150 + $(window).scrollTop();
-
-
-                                    // var $what_is_this_rindow = RDR.rindow.draw({
-                                    //     coords:coords,
-                                    //     id: "rdr_what_is_this",
-                                    //     pnls:1,
-                                    //     height:275,
-                                    //     ignoreWindowEdges:"bt"
-                                    // });
-
-                                    // RDR.rindow.tagBox.setWidth( $what_is_this_rindow, 320 );
-                                    // $what_is_this_rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( '<h1>hello word</h1>' );
-
-                                    // var $header = RDR.rindow.makeHeader( 'header text' );
-                                    // $what_is_this_rindow.find('.rdr_header').replaceWith($header);
-                                    // store the arguments and callback function that were in progress when this Login panel was called
-                                    // if ( args ) $rindow.data( 'args', args );
-                                    // if ( callback ) $rindow.data( 'callback', callback );
-
-                                    // RDR.events.track( 'show_login' );
-
-                                    // return false;
-                                // });
                             } else {
                                 // write page-level tags: writemode
                                 var $header = RDR.rindow.makeHeader( 'What do you think?' ),
@@ -6247,6 +6227,68 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 });
                             }
                         }
+
+                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        if ( typeof page == "undefined" && isWriteMode ) {
+                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
+                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
+                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                                $rindow.removeClass('rdr_rewritable');
+                        }
+
+
+                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                        if ( !isWriteMode ) {
+                            $rindow.on( 'mouseleave', function(e) {
+
+                                var $this = $(this),
+                                    timeoutCloseEvt;
+
+                                timeoutCloseEvt = setTimeout(function(){
+                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                        $this.remove();
+                                    }
+                                },300);
+
+                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
+
+                            }).on('mouseenter', function() {
+                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                                clearTimeout(timeoutCloseEvt);
+                            });
+
+                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
+                                $rindow.find('div.rdr_box').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'on');
+                                                $rindow.data('selState', selState);
+                                            }
+                                        },
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'off');                                        
+                                            }
+                                        }
+                                    );
+                                });
+                            }
+                        }
+
+                        // $tagsListContainer.append($tag_table);
+                        // RDR.rindow.jspUpdate($rindow);
+                        $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        isotopeTags( $tagsListContainer );
+                        return $tagsListContainer;
 
                         
                         // sort a list of tags into their buckets
@@ -6350,95 +6392,34 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                           }
 
-                          function isotopeTags( $tagsListContainer ) {
-                            $tagsListContainer.isotope({
-                              masonry: {
-                                columnWidth: 160
-                              }
-                            }, function() {
-                                $('.rdr_box_big').bigtext({ maxfontsize:48 });
-                                $('.rdr_box_medium').bigtext({ maxfontsize:28 });
-                                $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
-                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
-
-                                var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
-                                    currentTagBoxAnimating = 0;
-                                var animationQueue = setInterval( animateNextBox, 50 );
-
-                                function animateNextBox() {
-                                    var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                    $thisBox.find('div.rdr_tag').addClass('rdr_animated');
-                                    $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
-                                    currentTagBoxAnimating++;
-                                    if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                        clearInterval( animationQueue );
-                                    }
-                                }
-                            });
-                          } // isotopeTags
-
-                          isotopeTags( $tagsListContainer );
                         } // writeTagBoxes
 
-                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        if ( typeof page == "undefined" && isWriteMode ) {
-                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
-                        }
+                        function isotopeTags( $tagsListContainer ) {
+                        $tagsListContainer.isotope({
+                          masonry: {
+                            columnWidth: 160
+                          }
+                        }, function() {
+                            $('.rdr_box_big').bigtext({ maxfontsize:48 });
+                            $('.rdr_box_medium').bigtext({ maxfontsize:28 });
+                            $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
+                            $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
 
+                            var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
+                                currentTagBoxAnimating = 0;
+                            var animationQueue = setInterval( animateNextBox, 50 );
 
-                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
-                            $rindow.on( 'mouseleave', function(e) {
-
-                                var $this = $(this),
-                                    timeoutCloseEvt;
-
-                                timeoutCloseEvt = setTimeout(function(){
-                                    if ( $this.hasClass('rdr_rewritable') ) {
-                                        $this.remove();
-                                    }
-                                },300);
-
-                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-
-                            }).on('mouseenter', function() {
-                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
-                                clearTimeout(timeoutCloseEvt);
-                            });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
-                                $rindow.find('div.rdr_box').each( function() {
-                                    $(this).hover(
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $rindow.data('selState', selState);
-                                            }
-                                        },
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
-                                            }
-                                        }
-                                    );
-                                });
+                            function animateNextBox() {
+                                var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
+                                $thisBox.find('div.rdr_tag').addClass('rdr_animated');
+                                $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
+                                currentTagBoxAnimating++;
+                                if ( currentTagBoxAnimating > tagBoxesCount ) {
+                                    clearInterval( animationQueue );
+                                }
                             }
-                        }
-
-                        // $tagsListContainer.append($tag_table);
-                        // RDR.rindow.jspUpdate($rindow);
-                        return $tagsListContainer;
+                        });
+                      } // isotopeTags
 
                     },
                     updateContainerTrackers: function(){
