@@ -845,6 +845,9 @@ function readrBoard($R){
                             API.reinitialise();
                         }
                     });
+                } else if ( $rindow.hasClass('jspScrollable') ) {
+                    // var API = $rindow.data('jsp');
+                    // API.reinitialise();
                 }
             },
             tagBox: {
