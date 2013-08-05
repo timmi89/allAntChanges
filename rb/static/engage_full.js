@@ -832,18 +832,20 @@ function readrBoard($R){
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
-                // return;
-                $rindow.find('div.rdr_body').each( function() {
-                    var $this = $(this);
 
-                    if( !$this.hasClass('jspScrollable') ){
-                        // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        $(this).jScrollPane({ showArrows:true });
-                    }else{
-                        var API = $(this).data('jsp');
-                        API.reinitialise();
-                    }
-                });
+                if ( !$rindow.closest('.jspContainer').length && !$rindow.hasClass('jspScrollable') ) {
+                    $rindow.find('div.rdr_body').each( function() {
+                        var $this = $(this);
+
+                        if( !$this.hasClass('jspScrollable') ){
+                            // IE.  for some reason, THIS fires the scrollstop event.  WTF:
+                            $(this).jScrollPane({ showArrows:true });
+                        }else{
+                            var API = $(this).data('jsp');
+                            API.reinitialise();
+                        }
+                    });
+                }
             },
             tagBox: {
                 setWidth: function( $rindow, width ) {
@@ -3850,16 +3852,20 @@ function readrBoard($R){
                                     // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
                                     $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
 
-                                    if ($grid.length) {
-                                        var gridWidth = 640;
-                                        if ( $grid.hasAttr('rdr-grid-width') ) {
-                                            var statedWidthDividedBy160 = parseInt( parseInt( $grid.attr('rdr-grid-width') ) / 160 );
-                                            gridWidth = statedWidthDividedBy160 * 160;
-                                            if ( gridWidth > 800 ) { gridWidth=800; }
-                                        }
+                                    // if the grid has no height specified, give it one
+                                    if ( $grid.height() < 200 ) { $grid.height(200); }
 
-                                        $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); } );
+                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
+
+                                    if ($grid.length) {
+                                        // since currently, our grid needs to have a width that's a factor of 160... force that:
+                                        var gridWidth = $grid.width(),
+                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                                        
+                                        gridWidth = statedWidthDividedBy160 * 160;
+                                        if ( gridWidth > 960 ) { gridWidth=960; }
+                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);
                                     }
@@ -4263,7 +4269,7 @@ function readrBoard($R){
                 },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
-                    
+
                     // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
                     //     return;
                     // }
@@ -6151,47 +6157,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
-                        // sort a list of tags into their buckets
-                        // private function, but could be a RDR.util or RDR.tagBox function
-                        function createTagBuckets( tagList ) {
-
-                          // would rather this property was .count, not .tag_count.  #rewrite.
-                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
-
-                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
-                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
-                          var buckets = {
-                            big: [],
-                            medium: [],
-                            small: []
-                          },
-                          max = tagList[0].tag_count,
-                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
-                          min = tagList[ tagList.length-1 ].tag_count,
-                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
-                          midValue = ( median > avg ) ? median:avg;
-
-                          $.each( tagList, function(idx, tag) {
-                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
-                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
-                                buckets.big.push( tag );
-                                return;
-                              } else if ( tag.tag_count > midValue ) {
-                                buckets.medium.push( tag );
-                                return;
-                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
-                                buckets.medium.push( tag );
-                                return;
-                              } else {
-                                buckets.small.push( tag );
-                                return;
-                              }
-
-                          });
-
-                          return buckets;
-                        }
-
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
@@ -6258,12 +6223,110 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         }
 
+                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        if ( typeof page == "undefined" && isWriteMode ) {
+                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
+                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
+                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                                $rindow.removeClass('rdr_rewritable');
+                        }
+
+                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                        if ( !isWriteMode ) {
+                            $rindow.on( 'mouseleave', function(e) {
+
+                                var $this = $(this),
+                                    timeoutCloseEvt = setTimeout(function(){
+
+                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                        $this.remove();
+                                    }
+                                },300);
+
+                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
+
+                            }).on('mouseenter', function() {
+                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                                clearTimeout(timeoutCloseEvt);
+                            });
+
+                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
+                                $rindow.find('div.rdr_box').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'on');
+                                                $rindow.data('selState', selState);
+                                            }
+                                        },
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'off');                                        
+                                            }
+                                        }
+                                    );
+                                });
+                            }
+                        }
+
+                        // $tagsListContainer.append($tag_table);
+                        // RDR.rindow.jspUpdate($rindow);
+                        return $tagsListContainer;
+
+                        // sort a list of tags into their buckets
+                        // private function, but could be a RDR.util or RDR.tagBox function
+                        function createTagBuckets( tagList ) {
+
+                          // would rather this property was .count, not .tag_count.  #rewrite.
+                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
+
+                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
+                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
+                          var buckets = {
+                            big: [],
+                            medium: [],
+                            small: []
+                          },
+                          max = tagList[0].tag_count,
+                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
+                          min = tagList[ tagList.length-1 ].tag_count,
+                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
+                          midValue = ( median > avg ) ? median:avg;
+
+                          $.each( tagList, function(idx, tag) {
+                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
+                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                buckets.big.push( tag );
+                                return;
+                              } else if ( tag.tag_count > midValue ) {
+                                buckets.medium.push( tag );
+                                return;
+                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
+                                buckets.medium.push( tag );
+                                return;
+                              } else {
+                                buckets.small.push( tag );
+                                return;
+                              }
+
+                          });
+
+                          return buckets;
+                        }
 
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
-                        var buckets = createTagBuckets( tagList ),
-                            bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                            colorInt = 1;
+                            var buckets = createTagBuckets( tagList ),
+                                bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
+                                colorInt = 1;
 
                             // size the rindow based on # of reactions
                             if ( bucketTotal > 6 && !isWriteMode ) {
@@ -6347,70 +6410,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           } // isotopeTags
 
                           isotopeTags( $tagsListContainer );
-                      } // writeTagBoxes
+                        } // writeTagBoxes
 
-
-                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        if ( typeof page == "undefined" && isWriteMode ) {
-                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
-                        }
-
-
-                        
-
-
-                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
-                            $rindow.on( 'mouseleave', function(e) {
-
-                                var $this = $(this),
-                                    timeoutCloseEvt = setTimeout(function(){
-
-                                    if ( $this.hasClass('rdr_rewritable') ) {
-                                        $this.remove();
-                                    }
-                                },300);
-
-                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-
-                            }).on('mouseenter', function() {
-                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
-                                clearTimeout(timeoutCloseEvt);
-                            });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
-                                $rindow.find('div.rdr_box').each( function() {
-                                    $(this).hover(
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $rindow.data('selState', selState);
-                                            }
-                                        },
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
-                                            }
-                                        }
-                                    );
-                                });
-                            }
-                        }
-
-                        // $tagsListContainer.append($tag_table);
-                        // RDR.rindow.jspUpdate($rindow);
-                        return $tagsListContainer;
                     },
                     updateContainerTrackers: function(){
                         $.each( RDR.containers, function(idx, container) {
