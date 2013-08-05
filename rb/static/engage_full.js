@@ -3841,16 +3841,18 @@ function readrBoard($R){
                                     // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
                                     $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
 
-                                    if ($grid.length) {
-                                        var gridWidth = 640;
-                                        if ( $grid.hasAttr('rdr-grid-width') ) {
-                                            var statedWidthDividedBy160 = parseInt( parseInt( $grid.attr('rdr-grid-width') ) / 160 );
-                                            gridWidth = statedWidthDividedBy160 * 160;
-                                            if ( gridWidth > 960 ) { gridWidth=960; }
-                                        }
+                                    // if the grid has no height specified, give it one
+                                    if ( $grid.height() < 200 ) { $grid.height(200); }
 
-                                        $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); } );
+                                    if ($grid.length) {
+                                        // since currently, our grid needs to have a width that's a factor of 160... force that:
+                                        var gridWidth = $grid.width(),
+                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                                        
+                                        gridWidth = statedWidthDividedBy160 * 160;
+                                        if ( gridWidth > 960 ) { gridWidth=960; }
+                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);
                                     }

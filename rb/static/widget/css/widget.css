@@ -1982,3 +1982,9 @@ div#rdr_loginPanel {
 .rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
     display: none !important;
 }
+
+[rdr-grid-for] .jspPane { z-index:100; }
+[rdr-grid-for] .jspVerticalBar { z-index:101; }
+
+
+
