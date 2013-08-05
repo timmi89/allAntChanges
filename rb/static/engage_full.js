@@ -1159,7 +1159,9 @@ function readrBoard($R){
 
                     if (crazyCheckForDataTieOver) {
                         comments = summary.top_interactions.coms[tag.id];
-                        if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
+                        if ( !$.isEmptyObject( comments ) ){
+                          num_comments = comments.length;
+                        } 
                     }
 
                     // add the comment indicator + comment hover... if we should!
@@ -1671,7 +1673,7 @@ function readrBoard($R){
 
                 if( diffNode){
                     if( diffNode.int_type == "coms" ){
-                        if($rindow_writemode){
+                        if($rindow_writemode && $rindow_writemode.length){
 
                             //add the content_id class to the tags
                             $tags = $rindow_writemode.find('.rdr_tags').find('.rdr_tag');
@@ -1679,7 +1681,7 @@ function readrBoard($R){
 
                             _addComIndicator($rindow_writemode, diffNode);
                         }
-                        if($rindow_readmode){
+                        if($rindow_readmode && $rindow_readmode.length){
                             _addComIndicator($rindow_readmode, diffNode);
                         }else{
                             //image container.
@@ -1811,22 +1813,29 @@ function readrBoard($R){
                 function _addLinkToViewComs(diffNode, $tag, $rindow){
                     var tag = diffNode.parent_interaction_node;
                     var content_node = diffNode.content_node;
-
-
+                    
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Go back</a></span> ');
+                    
 
-                    $linkToComment.click( function() {
+                    //this broke - for now, just use the quick fix below
+                    // $linkToComment.click( function() {
 
-                        RDR.actions.viewCommentContent({
-                            tag:tag,
-                            hash:hash,
-                            rindow:$rindow,
-                            content_node:content_node,
-                            selState:content_node.selState
-                        });
-                        return false;
+                    //     RDR.actions.viewCommentContent({
+                    //         tag:tag,
+                    //         hash:hash,
+                    //         rindow:$rindow,
+                    //         content_node:content_node,
+                    //         selState:content_node.selState
+                    //     });
+                    //     return false;
+                    // });
+
+                    //silly quick way to just trigger the back button
+                    $linkToComment.click( function(e) {
+                        e.preventDefault();
+                        $rindow.find('.rdr_back').eq(0).click();
                     });
 
                     $rindow.find('div.rdr_commentBox')
@@ -4237,6 +4246,21 @@ function readrBoard($R){
 
                     return content_node;
                 },
+                quickFixReset: function(hash){
+                    //RDR.actions.content_nodes.quickFixReset;
+
+                    //A quick hack to re-make the server call to update the comment count.  
+                    //It's silly to make a server call to do this, but we need it to just work for now.
+                    var summary = RDR.summaries[hash],
+                        container_id = (typeof summary != "undefined") ? summary.id:"";
+                    
+                    if(container_id){
+                        //clear the assetLoader flag which normally prevents it from loading twice.
+                        delete RDR.assetLoaders.content_nodes[container_id];
+                        RDR.actions.content_nodes.init(hash);
+                    }
+                    
+                },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
                     
@@ -4627,7 +4651,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             //clear loader
                             if ( $rindow ) {
-                                $rindow.find('div.rdr_loader').css('visibility','hidden');
+                                $rindow.find('div.rdr_loader').css('visibility','hidden');                                
+
+                                //messy fixes for success responses in crossPageHash containers.
+                                    RDR.actions.content_nodes.quickFixReset(hash);
+
+                                    var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
+                                    if(isInlineRindow){
+                                        
+                                        var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
+                                        var $doneButton = $('<a class="rdr_doneButton" href="#">Go back</a>')
+                                            .click(function(e){
+                                                e.preventDefault();
+                                                $rindow.find('.rdr_back').eq(0).click();
+                                            });
+
+                                        var isPostTagComment = $('.rdr_subheader').length;
+                                        if(isPostTagComment){
+
+                                            $('.rdr_nextActions').remove();
+                                            $rindow.find('.rdr_subheader')
+                                                .empty().append($responseMsg).append($doneButton);
+
+                                        }else{
+                                            $rindow.find('.rdr_commentBox')
+                                                .empty().append($responseMsg).append($doneButton);
+                                        }
+                                            
+                                    }
+
                             }
 
                             var interaction = response.data.interaction,
@@ -6879,12 +6931,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
 
                             }else{
+
                                 var user = diffNode.user;
 
-
                                 summary_nodes[diffNode.tag_id] = {
-                                        //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
-                                        //count: diffNode.delta, //this should always be 1.
+                                    //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
+                                    //count: diffNode.delta, //this should always be 1.
                                     body: diffNode.body,
                                     content_node: diffNode.content_node,
                                     content_id: diffNode.content_id,
@@ -6894,7 +6946,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     user: diffNode.user,
                                     parent_id: diffNode.parent_id,
                                     parent_interaction_node: diffNode.parent_interaction_node
-                                }
+                                };
                             }
 
                         }
