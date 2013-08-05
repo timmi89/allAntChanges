@@ -924,35 +924,57 @@ function readrBoard($R){
                         }
                     }
 
-                    var tagBoxHTML = $.mustache(
-                        '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                    var tag_id = tag.id;
+                    var parent_id = tag.parent_id;
+                    var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
+                    var tagCount = tagCount || 0;
+                    var notWriteModeStr = !writeMode ? '<span class="rdr_count">'+tagCount+'</span>' : "";
+
+                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
                             '<div '+
-                                'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
-                                'title="{{message}}" '+
-                                'data-tag_id="{{tag_id}}" '+
-                                'data-tag_count="{{tag_count}}" '+
-                                'data-parent_id="{{parent_id}}" '+
-                                'data-content_node_id="{{content_node_id}}" '+
+                                'class="rdr_tag '+tagIsSplitClass+' rdr_tooltip_this '+content_node_str+'" '+
+                                'title="'+message+'" '+
+                                'data-tag_id="'+tag_id+'" '+
+                                'data-tag_count="'+tagCount+'" '+
+                                'data-parent_id="'+parent_id+'" '+
+                                'data-content_node_id="'+content_node_id+'" '+
                             '>'+
-                                '{{{tagBodyCrazyHtml}}}'+
-                                '{{^writeMode}}'+
-                                    '<span class="rdr_count">{{tagCount}}</span>'+
-                                '{{/writeMode}}'+
+                                tagBodyCrazyHtml+
+                                notWriteModeStr+
                             '</div>'+
-                        '</div>'
-                    ,{
-                        colorInt: colorInt,
-                        boxSize: boxSize,
-                        wideBox: wideBox,
-                        writeMode: writeMode,
-                        tagIsSplitClass: tagIsSplitClass,
-                        message: message,
-                        tagBodyCrazyHtml: tagBodyCrazyHtml,
-                        tag_id: tag.id,
-                        parent_id: tag.parent_id,
-                        tagCount: tagCount,
-                        content_node_id: content_node_id
-                    });
+                        '</div>';
+
+                    //don't use mustache for now - just in case it was causing perf issues, though i dont think it should be.
+
+                    // var tagBoxHTML = $.mustache(
+                    //     '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                    //         '<div '+
+                    //             'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
+                    //             'title="{{message}}" '+
+                    //             'data-tag_id="{{tag_id}}" '+
+                    //             'data-tag_count="{{tagCount}}" '+
+                    //             'data-parent_id="{{parent_id}}" '+
+                    //             'data-content_node_id="{{content_node_id}}" '+
+                    //         '>'+
+                    //             '{{{tagBodyCrazyHtml}}}'+
+                    //             '{{^writeMode}}'+
+                    //                 '<span class="rdr_count">{{tagCount}}</span>'+
+                    //             '{{/writeMode}}'+
+                    //         '</div>'+
+                    //     '</div>'
+                    // ,{
+                    //     colorInt: colorInt,
+                    //     boxSize: boxSize,
+                    //     wideBox: wideBox,
+                    //     writeMode: writeMode,
+                    //     tagIsSplitClass: tagIsSplitClass,
+                    //     message: message,
+                    //     tagBodyCrazyHtml: tagBodyCrazyHtml,
+                    //     tag_id: tag.id,
+                    //     parent_id: tag.parent_id,
+                    //     tagCount: tagCount,
+                    //     content_node_id: content_node_id
+                    // });
                     
                     var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
