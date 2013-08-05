@@ -62,7 +62,7 @@ def agree(request, interaction_id = None, **kwargs):
                                                                        notification_type = threshold)
                     if created:
                         #SEND EMAIL!
-                        msg = EmailMessage("ReadrBoard: Someone agreed with you!", 
+                        msg = EmailMessage("[ReadrBoard] Someone agreed with you!", 
                                            generateAgreeEmail(social_user.user, child_count, interaction), 
                                            "hello@readrboard.com", 
                                            [social_user.user.email])
@@ -97,7 +97,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
         admin_index = 0
         for admin in group.admins.all():
             #SEND EMAIL!
-            msg = EmailMessage("ReadrBoard: A new reaction on your site", 
+            msg = EmailMessage("[ReadrBoard] A new reaction just appeared on your site", 
                                generateGroupNodeEmail(interaction, admin_index), 
                                "hello@readrboard.com", 
                                [admin.user.email])
@@ -149,7 +149,7 @@ def comment(request, interaction_id = None, **kwargs):
                     
                    # if created:
                     logger.info("sending comment notification")
-                    msg = EmailMessage("ReadrBoard: Someone commented on your reaction!", 
+                    msg = EmailMessage("[ReadrBoard] Someone commented on your reaction!", 
                                            generateCommentEmail(social_user.user, interaction), 
                                            "hello@readrboard.com", 
                                            [interaction.user.email])
@@ -195,7 +195,7 @@ def page(request, interaction_id = None, **kwargs):
                                 and not p_i.user.email.startswith('tempuser')
                             ):
                                 logger.info("sending page notification to:" + p_i.user.email)
-                                msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
+                                msg = EmailMessage("[ReadrBoard] Someone reacted to the same page as you!", 
                                                        generatePageEmail(p_i.user, interaction), 
                                                        "hello@readrboard.com", 
                                                        [p_i.user.email])

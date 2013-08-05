@@ -833,18 +833,20 @@ function readrBoard($R){
             jspUpdate: function( $rindow ) {
                 //RDR.rindow.jspUpdate:
                 //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
-                // return;
-                $rindow.find('div.rdr_body').each( function() {
-                    var $this = $(this);
 
-                    if( !$this.hasClass('jspScrollable') ){
-                        // IE.  for some reason, THIS fires the scrollstop event.  WTF:
-                        $(this).jScrollPane({ showArrows:true });
-                    }else{
-                        var API = $(this).data('jsp');
-                        API.reinitialise();
-                    }
-                });
+                if ( !$rindow.closest('.jspContainer').length && !$rindow.hasClass('jspScrollable') ) {
+                    $rindow.find('div.rdr_body').each( function() {
+                        var $this = $(this);
+
+                        if( !$this.hasClass('jspScrollable') ){
+                            // IE.  for some reason, THIS fires the scrollstop event.  WTF:
+                            $(this).jScrollPane({ showArrows:true });
+                        }else{
+                            var API = $(this).data('jsp');
+                            API.reinitialise();
+                        }
+                    });
+                }
             },
             tagBox: {
                 setWidth: function( $rindow, width ) {
@@ -923,35 +925,57 @@ function readrBoard($R){
                         }
                     }
 
-                    var tagBoxHTML = $.mustache(
-                        '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                    var tag_id = tag.id;
+                    var parent_id = tag.parent_id;
+                    var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
+                    var tagCount = tagCount || 0;
+                    var notWriteModeStr = !writeMode ? '<span class="rdr_count">'+tagCount+'</span>' : "";
+
+                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
                             '<div '+
-                                'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
-                                'title="{{message}}" '+
-                                'data-tag_id="{{tag_id}}" '+
-                                'data-tag_count="{{tag_count}}" '+
-                                'data-parent_id="{{parent_id}}" '+
-                                'data-content_node_id="{{content_node_id}}" '+
+                                'class="rdr_tag '+tagIsSplitClass+' rdr_tooltip_this '+content_node_str+'" '+
+                                'title="'+message+'" '+
+                                'data-tag_id="'+tag_id+'" '+
+                                'data-tag_count="'+tagCount+'" '+
+                                'data-parent_id="'+parent_id+'" '+
+                                'data-content_node_id="'+content_node_id+'" '+
                             '>'+
-                                '{{{tagBodyCrazyHtml}}}'+
-                                '{{^writeMode}}'+
-                                    '<span class="rdr_count">{{tagCount}}</span>'+
-                                '{{/writeMode}}'+
+                                tagBodyCrazyHtml+
+                                notWriteModeStr+
                             '</div>'+
-                        '</div>'
-                    ,{
-                        colorInt: colorInt,
-                        boxSize: boxSize,
-                        wideBox: wideBox,
-                        writeMode: writeMode,
-                        tagIsSplitClass: tagIsSplitClass,
-                        message: message,
-                        tagBodyCrazyHtml: tagBodyCrazyHtml,
-                        tag_id: tag.id,
-                        parent_id: tag.parent_id,
-                        tagCount: tagCount,
-                        content_node_id: content_node_id
-                    });
+                        '</div>';
+
+                    //don't use mustache for now - just in case it was causing perf issues, though i dont think it should be.
+
+                    // var tagBoxHTML = $.mustache(
+                    //     '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
+                    //         '<div '+
+                    //             'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
+                    //             'title="{{message}}" '+
+                    //             'data-tag_id="{{tag_id}}" '+
+                    //             'data-tag_count="{{tagCount}}" '+
+                    //             'data-parent_id="{{parent_id}}" '+
+                    //             'data-content_node_id="{{content_node_id}}" '+
+                    //         '>'+
+                    //             '{{{tagBodyCrazyHtml}}}'+
+                    //             '{{^writeMode}}'+
+                    //                 '<span class="rdr_count">{{tagCount}}</span>'+
+                    //             '{{/writeMode}}'+
+                    //         '</div>'+
+                    //     '</div>'
+                    // ,{
+                    //     colorInt: colorInt,
+                    //     boxSize: boxSize,
+                    //     wideBox: wideBox,
+                    //     writeMode: writeMode,
+                    //     tagIsSplitClass: tagIsSplitClass,
+                    //     message: message,
+                    //     tagBodyCrazyHtml: tagBodyCrazyHtml,
+                    //     tag_id: tag.id,
+                    //     parent_id: tag.parent_id,
+                    //     tagCount: tagCount,
+                    //     content_node_id: content_node_id
+                    // });
                     
                     var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
@@ -1160,7 +1184,9 @@ function readrBoard($R){
 
                     if (crazyCheckForDataTieOver) {
                         comments = summary.top_interactions.coms[tag.id];
-                        if ( !$.isEmptyObject( comments ) ) num_comments = comments.length;
+                        if ( !$.isEmptyObject( comments ) ){
+                          num_comments = comments.length;
+                        } 
                     }
 
                     // add the comment indicator + comment hover... if we should!
@@ -1339,12 +1365,6 @@ function readrBoard($R){
                                             coords.left = strRight - 14; //with a little padding
                                             coords.top = strBottom + 23;
                                         }
-
-                                        // if there is a custom CTA element, override the coordinates with its location
-                                        if ( typeof settings.$custom_cta != "undefined" ) {
-                                            coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
-                                            coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
-                                        }
                                     }
                                 } else {
                                     // draw the window over the actionbar
@@ -1389,6 +1409,12 @@ function readrBoard($R){
                                 }
 
                                 // $indicatorDetails.hide();
+                            }
+
+                            // if there is a custom CTA element, override the coordinates with its location
+                            if ( typeof settings.$custom_cta != "undefined" ) {
+                                coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
+                                coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
                             }
 
                             var $rindow = RDR.rindow.draw({
@@ -1669,7 +1695,7 @@ function readrBoard($R){
 
                 if( diffNode){
                     if( diffNode.int_type == "coms" ){
-                        if($rindow_writemode){
+                        if($rindow_writemode && $rindow_writemode.length){
 
                             //add the content_id class to the tags
                             $tags = $rindow_writemode.find('.rdr_tags').find('.rdr_tag');
@@ -1677,7 +1703,7 @@ function readrBoard($R){
 
                             _addComIndicator($rindow_writemode, diffNode);
                         }
-                        if($rindow_readmode){
+                        if($rindow_readmode && $rindow_readmode.length){
                             _addComIndicator($rindow_readmode, diffNode);
                         }else{
                             //image container.
@@ -1809,24 +1835,30 @@ function readrBoard($R){
                 function _addLinkToViewComs(diffNode, $tag, $rindow){
                     var tag = diffNode.parent_interaction_node;
                     var content_node = diffNode.content_node;
-
-
+                    
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">Thanks! <a href="javascript:void(0);">See your comment</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Go back</a></span> ');
+                    
 
-                    $linkToComment.click( function() {
-                        
-                        var selState = content_node.selState || $rindow.data('selState');
 
-                        RDR.actions.viewCommentContent({
-                            tag:tag,
-                            hash:hash,
-                            rindow:$rindow,
-                            content_node:content_node,
-                            selState:selState
-                        });
-                        return false;
+                    //this broke - for now, just use the quick fix below
+                    // $linkToComment.click( function() {
+                    //     var selState = content_node.selState || $rindow.data('selState');
+                    //     RDR.actions.viewCommentContent({
+                    //         tag:tag,
+                    //         hash:hash,
+                    //         rindow:$rindow,
+                    //         content_node:content_node,
+                    //         selState:selState
+                    //     });
+                    //     return false;
+                    // });
+
+                    //silly quick way to just trigger the back button
+                    $linkToComment.click( function(e) {
+                        e.preventDefault();
+                        $rindow.find('.rdr_back').eq(0).click(); 
                     });
 
                     $rindow.find('div.rdr_commentBox')
@@ -3720,7 +3752,6 @@ function readrBoard($R){
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
                 // RDR.actions.sendHashes:
-                
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -3843,9 +3874,20 @@ function readrBoard($R){
                                     // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
                                     $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
 
+                                    // if the grid has no height specified, give it one
+                                    if ( $grid.height() < 200 ) { $grid.height(200); }
+
+                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
+
                                     if ($grid.length) {
-                                        $grid.data('hash', hash).data('container', hash).addClass('w640').html('<div class="rdr rdr_window rdr_inline w640 rdr_no_clear" style="position:relative !important;max-height:200px !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); } );
+                                        // since currently, our grid needs to have a width that's a factor of 160... force that:
+                                        var gridWidth = $grid.width(),
+                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                                        
+                                        gridWidth = statedWidthDividedBy160 * 160;
+                                        if ( gridWidth > 960 ) { gridWidth=960; }
+                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);
                                     }
@@ -4232,9 +4274,24 @@ function readrBoard($R){
 
                     return content_node;
                 },
+                quickFixReset: function(hash){
+                    //RDR.actions.content_nodes.quickFixReset;
+
+                    //A quick hack to re-make the server call to update the comment count.  
+                    //It's silly to make a server call to do this, but we need it to just work for now.
+                    var summary = RDR.summaries[hash],
+                        container_id = (typeof summary != "undefined") ? summary.id:"";
+                    
+                    if(container_id){
+                        //clear the assetLoader flag which normally prevents it from loading twice.
+                        delete RDR.assetLoaders.content_nodes[container_id];
+                        RDR.actions.content_nodes.init(hash);
+                    }
+                    
+                },
                 init: function(hash, onSuccessCallback){
                     //RDR.actions.content_nodes.init:
-                    
+
                     // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
                     //     return;
                     // }
@@ -4622,7 +4679,35 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             //clear loader
                             if ( $rindow ) {
-                                $rindow.find('div.rdr_loader').css('visibility','hidden');
+                                $rindow.find('div.rdr_loader').css('visibility','hidden');                                
+
+                                //messy fixes for success responses in crossPageHash containers.
+                                    RDR.actions.content_nodes.quickFixReset(hash);
+
+                                    var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
+                                    if(isInlineRindow){
+                                        
+                                        var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
+                                        var $doneButton = $('<a class="rdr_doneButton" href="#">Go back</a>')
+                                            .click(function(e){
+                                                e.preventDefault();
+                                                $rindow.find('.rdr_back').eq(0).click();
+                                            });
+
+                                        var isPostTagComment = $('.rdr_subheader').length;
+                                        if(isPostTagComment){
+
+                                            $('.rdr_nextActions').remove();
+                                            $rindow.find('.rdr_subheader')
+                                                .empty().append($responseMsg).append($doneButton);
+
+                                        }else{
+                                            $rindow.find('.rdr_commentBox')
+                                                .empty().append($responseMsg).append($doneButton);
+                                        }
+                                            
+                                    }
+
                             }
 
                             var interaction = response.data.interaction,
@@ -6094,47 +6179,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
-                        // sort a list of tags into their buckets
-                        // private function, but could be a RDR.util or RDR.tagBox function
-                        function createTagBuckets( tagList ) {
-
-                          // would rather this property was .count, not .tag_count.  #rewrite.
-                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
-
-                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
-                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
-                          var buckets = {
-                            big: [],
-                            medium: [],
-                            small: []
-                          },
-                          max = tagList[0].tag_count,
-                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
-                          min = tagList[ tagList.length-1 ].tag_count,
-                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
-                          midValue = ( median > avg ) ? median:avg;
-
-                          $.each( tagList, function(idx, tag) {
-                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
-                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
-                                buckets.big.push( tag );
-                                return;
-                              } else if ( tag.tag_count > midValue ) {
-                                buckets.medium.push( tag );
-                                return;
-                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
-                                buckets.medium.push( tag );
-                                return;
-                              } else {
-                                buckets.small.push( tag );
-                                return;
-                              }
-
-                          });
-
-                          return buckets;
-                        }
-
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
@@ -6201,12 +6245,53 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         }
 
+                        
+                        // sort a list of tags into their buckets
+                        // private function, but could be a RDR.util or RDR.tagBox function
+                        function createTagBuckets( tagList ) {
+
+                          // would rather this property was .count, not .tag_count.  #rewrite.
+                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
+
+                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
+                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
+                          var buckets = {
+                            big: [],
+                            medium: [],
+                            small: []
+                          },
+                          max = tagList[0].tag_count,
+                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
+                          min = tagList[ tagList.length-1 ].tag_count,
+                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
+                          midValue = ( median > avg ) ? median:avg;
+
+                          $.each( tagList, function(idx, tag) {
+                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
+                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                buckets.big.push( tag );
+                                return;
+                              } else if ( tag.tag_count > midValue ) {
+                                buckets.medium.push( tag );
+                                return;
+                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
+                                buckets.medium.push( tag );
+                                return;
+                              } else {
+                                buckets.small.push( tag );
+                                return;
+                              }
+
+                          });
+
+                          return buckets;
+                        }
 
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
-                        var buckets = createTagBuckets( tagList ),
-                            bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                            colorInt = 1;
+                            var buckets = createTagBuckets( tagList ),
+                                bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
+                                colorInt = 1;
 
                             // size the rindow based on # of reactions
                             if ( bucketTotal > 6 && !isWriteMode ) {
@@ -6290,8 +6375,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                           } // isotopeTags
 
                           isotopeTags( $tagsListContainer );
-                      } // writeTagBoxes
-
+                        } // writeTagBoxes
 
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
                         if ( typeof page == "undefined" && isWriteMode ) {
@@ -6300,9 +6384,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                         }
-
-
-                        
 
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
@@ -6355,6 +6436,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // $tagsListContainer.append($tag_table);
                         // RDR.rindow.jspUpdate($rindow);
                         return $tagsListContainer;
+
                     },
                     updateContainerTrackers: function(){
                         $.each( RDR.containers, function(idx, container) {
@@ -6875,12 +6957,12 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
 
                             }else{
+
                                 var user = diffNode.user;
 
-
                                 summary_nodes[diffNode.tag_id] = {
-                                        //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
-                                        //count: diffNode.delta, //this should always be 1.
+                                    //I don't think it makes sense to save a count, because unlike tags, each comment should be unique
+                                    //count: diffNode.delta, //this should always be 1.
                                     body: diffNode.body,
                                     content_node: diffNode.content_node,
                                     content_id: diffNode.content_id,
@@ -6890,7 +6972,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     user: diffNode.user,
                                     parent_id: diffNode.parent_id,
                                     parent_interaction_node: diffNode.parent_interaction_node
-                                }
+                                };
                             }
 
                         }
@@ -7871,6 +7953,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $.each( page.containers, function(idx, container) {
                             if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
+                        RDR.actions.sendHashes( hashesByPageId );
+                    } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
+                        // if no reactions on this page, but there is a cross-page container... force a call.  
+                        // just grab the first crosspage hash.. we get them all later.  
+                        // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
+                        // known_hash list, to prevent some duplication.
+                        var hashesByPageId = {};
+                        hashesByPageId[ page.id ] = [];
+                        hashesByPageId[ page.id ].push( $('[rdr-crossPageContent="true"]:eq(0)').attr('rdr-hash') );
                         RDR.actions.sendHashes( hashesByPageId );
                     }
 

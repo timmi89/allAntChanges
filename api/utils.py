@@ -37,7 +37,7 @@ def getTagSummary(tag, tags):
             break
     return data
 
-def getSummary(interactions, container=None, content=None, page=None, data=None):
+def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
     if not data: data = {}
     counts = {}
     if container:
@@ -71,8 +71,10 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
         (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
     ))
     sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+
+    tag_limit = 500 if isCrossPage else 10
     top_tags = dict((
-        tag for tag in sorted_counts[:10]
+        tag for tag in sorted_counts[:tag_limit]
     ))
 
     top_interactions = {}
@@ -88,15 +90,15 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
 
     return data
 
-def getContainerSummaries(interactions, containers):
+def getContainerSummaries(interactions, containers, isCrossPage=False):
     data = dict((
-        (container[1], getSummary(interactions, container=container)) for container in containers    
+        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
     ))
     return data
 
-def getContentSummaries(interactions, content):
+def getContentSummaries(interactions, content, isCrossPage=False):
     data = dict((
-        (content_item[0], getSummary(interactions, content=content_item)) for content_item in content    
+        (content_item[0], getSummary(interactions, content=content_item, isCrossPage=isCrossPage)) for content_item in content
     ))
     return data
 
@@ -504,7 +506,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
             approved=True
         ).select_related('interaction_node','content','user',('social_user')))
 
-        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers)
+        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
 
         
     #logger.info("K KEYS: " + str(known.keys()))
