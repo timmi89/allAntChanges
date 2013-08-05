@@ -1600,7 +1600,7 @@ function readrBoard($R){
                         '<div class="rdr rdr_footer"></div>'
                     );
 
-                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
+                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();  // haha.  let's manipulate the DOM twice.  (Add then remove.)
 
                     $new_rindow.draggable({
                         handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
@@ -3889,7 +3889,7 @@ function readrBoard($R){
                                         
                                         gridWidth = statedWidthDividedBy160 * 160;
                                         if ( gridWidth > 960 ) { gridWidth=960; }
-                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                                         RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                                     } else {
                                         RDR.actions.content_nodes.init(hash);

@@ -368,8 +368,6 @@ div.rdr.rdr_page_summary div.rdr_header div.rdr_header_arrow {
   display:none !important;
 }
 
-div.rdr div.rdr_header h1                      { font-size:15px !important; color:#5999dc !important;}
-
 div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:4px 0 !important; }
 div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !important; }
 /*div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none;;}*/
@@ -436,7 +434,8 @@ div.rdr div.rdr_body div.jspHorizontalBar  { display:none;; }
 div.rdr div.rdr_body div.jspVerticalBar    { z-index:10001 !important; right:1px !important; opacity: .5 !important;}
 div.rdr div.rdr_body div.jspDrag    { cursor: default !important; }
 
-div.rdr div.rdr_header h1                   { margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;padding-top: 6px !important;}
+div.rdr div.rdr_header h1                   { font-size:15px !important; color:#5999dc !important; margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;padding-top: 6px !important;}
+div.rdr.rdr_inline div.rdr_header h1    { padding-top:0 !important; margin-top:-4px !important; }
 
 div.rdr button {
     border:1px solid #aaa !important; 
@@ -598,6 +597,7 @@ div.rdr div.rdr_shareBox                       { background:#edf6ff !important; 
 div.rdr div.rdr_share_social                   { overflow:visible !important; position: relative !important; top: 4px !important; min-width:90px !important;}
 div.rdr div.rdr_share_social strong            { display:block !important; float:left !important; margin:5px 5px 0 24px !important; }
 div.rdr div.rdr_commentBox                     { clear:both !important; display:block !important; text-align:left !important; }
+div.rdr div.rdr_commentBox.rdr_innerWrap       { padding-bottom:25px !important; }
 
 div.rdr div.rdr_back { position:relative !important; z-index:1 !important; background:#bbb !important; font-size:11px !important; text-transform:uppercase !important; color:#fff !important; cursor:pointer !important; padding: 5px 12px 2px 12px !important; margin-bottom:4px !important;text-align:left !important;}
 div.rdr div.rdr_back:hover { background:#999 !important; }
@@ -1988,7 +1988,7 @@ div#rdr_loginPanel {
     display: none !important;
 }
 
-[rdr-grid-for] .jspPane { z-index:100; }
+[rdr-grid-for] .jspPane { z-index:100; margin-left:0 !important; }
 [rdr-grid-for] .jspVerticalBar { z-index:101; }
 
 
