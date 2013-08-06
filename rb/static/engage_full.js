@@ -3795,10 +3795,15 @@ function readrBoard($R){
                         hashList = $.grep(hashList, function(value) {
                           return value != thisHash;
                         });
+                        
+                        //init the cross page containers so even the ones that come back with 0 reactions will
+                        //have write mode enabled
+                        RDR.actions.indicators.init(thisHash);
                     });
 
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
+
 
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
@@ -3887,7 +3892,7 @@ function readrBoard($R){
                     RDR.actions.containers.initCrossPageHashes(mockCrossPageObj);                    
                 },
                 initCrossPageHashes: function(crossPageHashes){
-                    
+
                     // go ahead and initialize the content nodes for cross-page containers
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
