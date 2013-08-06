@@ -3797,10 +3797,15 @@ function readrBoard($R){
                         hashList = $.grep(hashList, function(value) {
                           return value != thisHash;
                         });
+                        
+                        //init the cross page containers so even the ones that come back with 0 reactions will
+                        //have write mode enabled
+                        RDR.actions.indicators.init(thisHash);
                     });
 
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
+
 
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
@@ -3902,12 +3907,19 @@ function readrBoard($R){
                         return;
                     }
 
-                    var mockCrossPageObj = {
-                        hash: {
-                            hash: hash
-                        }
-                    };
-                    RDR.actions.containers.initCrossPageHashes(mockCrossPageObj);                    
+                    //changing this to copy out and just call only parts of the initCrossPageHashes call below
+                    RDR.actions.indicators.init(hash);
+
+                    var $container = $('[rdr-hash="'+hash+'"]'),
+                        customDisplayName = $container.attr('rdr-custom-display'),
+                        $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                        
+                    if ($grid.length) {
+                        RDR.actions.content_nodes.init(hash, function() {
+                            RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                            $grid.jScrollPane({ showArrows:true });
+                        });
+                    }
                 },
                 initCrossPageHashes: function(crossPageHashes){
                     // go ahead and initialize the content nodes for cross-page containers
@@ -5536,6 +5548,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }else{
                                 RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
                             }
+
                         }
                     },
                     onFail: function(args){
@@ -6237,7 +6250,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now()),
                             $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        
+                        var $existingTagslist = $rindow.find('.rdr_tags_list');
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        $existingTagslist.remove();
 
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
@@ -6947,9 +6963,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // var shouldReInit = (summary.kind == 'text');
                         // RDR.actions.indicators.update( hash, shouldReInit );
                     }
-
-                    // for crossPageHashes only - will do nothing if it's not a crosspagehash
-                    RDR.actions.containers.updateCrossPageHash(hash);
                                 
                     function update_top_interactions_cache(attrs){
                         var hash = attrs.hash;
@@ -7234,12 +7247,19 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                    // for crossPageHashes only - will do nothing if it's not a crosspagehash
+                    RDR.actions.containers.updateCrossPageHash(hash);
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
                     RDR.rindow.hideFooter($rindow);
                     RDR.rindow.panelUpdate($rindow, className, $tagsListContainer);
-                    RDR.rindow.panelEnsureFloatWidths($rindow);
+                    
+                    var isCrossPageContainer = $('[rdr-hash="'+hash+'"]').length > 0;
+                    if(!isCrossPageContainer){
+                        //dont do this for crossPageContainers - it was messing shit up.
+                        RDR.rindow.panelEnsureFloatWidths($rindow);
+                    }
 
                 } );
                 
