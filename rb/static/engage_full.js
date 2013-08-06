@@ -360,6 +360,12 @@ function readrBoard($R){
                 RDR.C.rindowAnimationSpeed,
                 function() {
                     if (callback) callback();
+                    if ( $rindow.hasClass('jspScrollable') ) {
+                        var API = $rindow.data('jsp');
+                        
+                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        API.reinitialise();
+                    }
                 });
             },
             panelHide: function( $rindow, callback ) {
@@ -904,12 +910,12 @@ function readrBoard($R){
 
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBodyRaw.length+'">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBodyRaw.substr(15) + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount15">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBodyRaw.substr(15).length+'">' + tagBodyRaw.substr(15) + '</div>';
                             if ( boxSize == "rdr_box_small" ) {
                                 boxSize = "rdr_box_medium";
                             }
@@ -921,7 +927,7 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBody1.length+'">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBody2.length+'">' + tagBody2 + '</div>';
                         }
                     }
 
@@ -1595,7 +1601,7 @@ function readrBoard($R){
                         '<div class="rdr rdr_footer"></div>'
                     );
 
-                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();
+                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();  // haha.  let's manipulate the DOM twice.  (Add then remove.)
 
                     $new_rindow.draggable({
                         handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
@@ -3823,6 +3829,7 @@ function readrBoard($R){
                             // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
                             if ( response.data.crossPageKnown ) {
                                 RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
+                                RDR.crosspage_hashes = response.data.crossPageKnown;
                             }
 
                             var summaries = {};
@@ -3889,34 +3896,40 @@ function readrBoard($R){
                         var hash = crosspage_known.hash;
                         RDR.actions.indicators.init(hash);
 
-                        // init a tag grid for an open custom display thing.
-                        // i know, this should be abstracted.  it's too ProPublica specific.  
-                        // needs abstraction, and conditionals to determine what to do based on the display properties.
-                        var $container = $('[rdr-hash="'+hash+'"]'),
-                            customDisplayName = $container.attr('rdr-custom-display'),
-                            // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
-                            // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                            $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                                // init a tag grid for an open custom display thing.
+                                // i know, this should be abstracted.  it's too ProPublica specific.  
+                                // needs abstraction, and conditionals to determine what to do based on the display properties.
+                                var $container = $('[rdr-hash="'+hash+'"]'),
+                                    customDisplayName = $container.attr('rdr-custom-display'),
+                                    // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
+                                    // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
+                                    $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
 
-                          // if the grid has no height specified, give it one
-                          if ( $grid.height() < 200 ) { $grid.height(200); }
+                                    // if the grid has no height specified, give it one
+                                    if ( $grid.height() < 200 ) { $grid.height(200); }
 
-                          RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
+                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
 
-                          if ($grid.length) {
-                              // since currently, our grid needs to have a width that's a factor of 160... force that:
-                              var gridWidth = $grid.width(),
-                                  statedWidthDividedBy160 = parseInt( gridWidth / 160 );
-                              
-                              gridWidth = statedWidthDividedBy160 * 160;
-                              if ( gridWidth > 960 ) { gridWidth=960; }
-                              $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                              RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
-                          } else {
-                              RDR.actions.content_nodes.init(hash);
-                          }
+                                    if ($grid.length) {
+                                        // since currently, our grid needs to have a width that's a factor of 160... force that:
+                                        var gridWidth = $grid.width(),
+                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                                        
+                                        gridWidth = statedWidthDividedBy160 * 160;
+                                        if ( gridWidth > 960 ) { gridWidth=960; }
+                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
+                                    } else {
+                                        RDR.actions.content_nodes.init(hash);
+                                    }
+
+                            });
+                        }
                     });
-                },
+
+                
+            },
+            containers: {
                 media: {
                     //RDR.actions.containers.media:
                     //actions for the special cases of media containers
@@ -6194,47 +6207,20 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                         
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now()),
+                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
-                                // write page-level tags: readmode
+                                // write page-level tags: readmode`
                                 writeTagBoxes( page.toptags );
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
-                                // $rindow.find('span.rdr_what_is_it').click( function() {
-
-                                    // var coords = [];
-                                    // coords.left = ( $(window).width() / 2 ) - 200;
-                                    // coords.top = 150 + $(window).scrollTop();
-
-
-                                    // var $what_is_this_rindow = RDR.rindow.draw({
-                                    //     coords:coords,
-                                    //     id: "rdr_what_is_this",
-                                    //     pnls:1,
-                                    //     height:275,
-                                    //     ignoreWindowEdges:"bt"
-                                    // });
-
-                                    // RDR.rindow.tagBox.setWidth( $what_is_this_rindow, 320 );
-                                    // $what_is_this_rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( '<h1>hello word</h1>' );
-
-                                    // var $header = RDR.rindow.makeHeader( 'header text' );
-                                    // $what_is_this_rindow.find('.rdr_header').replaceWith($header);
-                                    // store the arguments and callback function that were in progress when this Login panel was called
-                                    // if ( args ) $rindow.data( 'args', args );
-                                    // if ( callback ) $rindow.data( 'callback', callback );
-
-                                    // RDR.events.track( 'show_login' );
-
-                                    // return false;
-                                // });
                             } else {
                                 // write page-level tags: writemode
                                 var $header = RDR.rindow.makeHeader( 'What do you think?' ),
@@ -6253,7 +6239,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             RDR.actions.summaries.sortInteractions(hash);
                             writeTagBoxes( summary.interaction_order );
                             if ( summary.kind =="text" ) {
-                                RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                if ( !summary.crossPage ) {
+                                    RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                }
                             } else {
                                 RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
@@ -6262,6 +6250,68 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 });
                             }
                         }
+
+                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        if ( typeof page == "undefined" && isWriteMode ) {
+                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
+                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
+                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
+                                $rindow.removeClass('rdr_rewritable');
+                        }
+
+
+                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                        if ( !isWriteMode ) {
+                            $rindow.on( 'mouseleave', function(e) {
+
+                                var $this = $(this),
+                                    timeoutCloseEvt;
+
+                                timeoutCloseEvt = setTimeout(function(){
+                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                        $this.remove();
+                                    }
+                                },300);
+
+                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
+
+                            }).on('mouseenter', function() {
+                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
+                                clearTimeout(timeoutCloseEvt);
+                            });
+
+                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
+                                $rindow.find('div.rdr_box').each( function() {
+                                    $(this).hover(
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'on');
+                                                $rindow.data('selState', selState);
+                                            }
+                                        },
+                                        function() {
+                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            //make sure it's not already transitiontion into a success state
+                                            //hacky because sometimes it doesnt have the data for 1 yet
+                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            if( isPanelState1 ){
+                                                $().selog('hilite', selState, 'off');                                        
+                                            }
+                                        }
+                                    );
+                                });
+                            }
+                        }
+
+                        // $tagsListContainer.append($tag_table);
+                        // RDR.rindow.jspUpdate($rindow);
+                        // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        isotopeTags( $tagsListContainer );
+                        return $tagsListContainer;
 
                         
                         // sort a list of tags into their buckets
@@ -6365,95 +6415,29 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                           }
 
-                          function isotopeTags( $tagsListContainer ) {
-                            $tagsListContainer.isotope({
-                              masonry: {
-                                columnWidth: 160
-                              }
-                            }, function() {
-                                $('.rdr_box_big').bigtext({ maxfontsize:48 });
-                                $('.rdr_box_medium').bigtext({ maxfontsize:28 });
-                                $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
-                                $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
-
-                                var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
-                                    currentTagBoxAnimating = 0;
-                                var animationQueue = setInterval( animateNextBox, 50 );
-
-                                function animateNextBox() {
-                                    var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                    $thisBox.find('div.rdr_tag').addClass('rdr_animated');
-                                    $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
-                                    currentTagBoxAnimating++;
-                                    if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                        clearInterval( animationQueue );
-                                    }
-                                }
-                            });
-                          } // isotopeTags
-
-                          isotopeTags( $tagsListContainer );
                         } // writeTagBoxes
 
-                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
-                        if ( typeof page == "undefined" && isWriteMode ) {
-                            // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
-                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
-                        }
+                        function isotopeTags( $tagsListContainer ) {
+                        $tagsListContainer.isotope({
+                          masonry: {
+                            columnWidth: 160
+                          }
+                        }, function() {
+                            var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
+                                currentTagBoxAnimating = 0;
+                            var animationQueue = setInterval( animateNextBox, 10 );
 
-
-                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
-                            $rindow.on( 'mouseleave', function(e) {
-
-                                var $this = $(this),
-                                    timeoutCloseEvt;
-
-                                timeoutCloseEvt = setTimeout(function(){
-                                    if ( $this.hasClass('rdr_rewritable') ) {
-                                        $this.remove();
-                                    }
-                                },300);
-
-                                $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-
-                            }).on('mouseenter', function() {
-                                var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
-                                clearTimeout(timeoutCloseEvt);
-                            });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
-                                $rindow.find('div.rdr_box').each( function() {
-                                    $(this).hover(
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $rindow.data('selState', selState);
-                                            }
-                                        },
-                                        function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
-                                            }
-                                        }
-                                    );
-                                });
+                            function animateNextBox() {
+                                var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
+                                $thisBox.find('div.rdr_tag').addClass('rdr_animated');
+                                $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
+                                currentTagBoxAnimating++;
+                                if ( currentTagBoxAnimating > tagBoxesCount ) {
+                                    clearInterval( animationQueue );
+                                }
                             }
-                        }
-
-                        // $tagsListContainer.append($tag_table);
-                        // RDR.rindow.jspUpdate($rindow);
-                        return $tagsListContainer;
+                        });
+                      } // isotopeTags
 
                     },
                     updateContainerTrackers: function(){
@@ -8183,7 +8167,6 @@ function $RFunctions($R){
         plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_isotope($R);
         plugin_jquery_jScrollPane($R);
-        plugin_jquery_bigText($R);
         plugin_jquery_twitterTip($R);
         plugin_jquery_rdrWidgetSummary($R);
         plugin_jquery_selectionographer($R, rangy);
@@ -9386,11 +9369,6 @@ function $RFunctions($R){
             return aP==aa&&aO==I}).bind("touchend.jsp",function(aO){s=false}).bind("click.jsp-touchclick",function(aO){if(aN){aN=false;return false}})}function g(){var s=aB(),aJ=aD();D.removeClass("jspScrollable").unbind(".jsp");D.replaceWith(ap.append(Y.children()));ap.scrollTop(s);ap.scrollLeft(aJ)}b.extend(Q,{reinitialise:function(aJ){aJ=b.extend({},az,aJ);at(aJ)},scrollToElement:function(aK,aJ,s){ab(aK,aJ,s)},scrollTo:function(aK,s,aJ){N(aK,aJ);M(s,aJ)},scrollToX:function(aJ,s){N(aJ,s)},scrollToY:function(s,aJ){M(s,aJ)},scrollToPercentX:function(aJ,s){N(aJ*(T-ak),s)},scrollToPercentY:function(aJ,s){M(aJ*(Z-v),s)},scrollBy:function(aJ,s,aK){Q.scrollByX(aJ,aK);Q.scrollByY(s,aK)},scrollByX:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aD()+s,aL=aJ/(T-ak);W(aL*j,aK)},scrollByY:function(s,aK){s=(s>=0)?Math.max(s,1):Math.min(s,-1);var aJ=aB()+s,aL=aJ/(Z-v);V(aL*i,aK)},positionDragX:function(s,aJ){W(s,aJ)},positionDragY:function(aJ,s){V(aJ,s)},animate:function(aJ,aM,s,aL){var aK={};aK[aM]=s;aJ.animate(aK,{duration:az.animateDuration,ease:az.animateEase,queue:false,step:aL})},getContentPositionX:function(){return aD()},getContentPositionY:function(){return aB()},getContentWidth:function(){return T},getContentHeight:function(){return Z},getPercentScrolledX:function(){return aD()/(T-ak)},getPercentScrolledY:function(){return aB()/(Z-v)},getIsScrollableH:function(){return aF},getIsScrollableV:function(){return aA},getContentPane:function(){return Y},scrollToBottom:function(s){V(i,s)},hijackInternalLinks:function(){m()},destroy:function(){g()}});at(O)}e=b.extend({},b.fn.jScrollPane.defaults,e);b.each(["mouseWheelSpeed","arrowButtonSpeed","trackClickSpeed","keyboardSpeed"],function(){e[this]=e[this]||e.speed});return this.each(function(){var f=b(this),g=f.data("jsp");if(g){g.reinitialise(e)}else{g=new d(f,e);f.data("jsp",g)}})};b.fn.jScrollPane.defaults={showArrows:false,maintainPosition:true,stickToBottom:false,stickToRight:false,clickOnTrack:true,autoReinitialise:false,autoReinitialiseDelay:500,verticalDragMinHeight:0,verticalDragMaxHeight:99999,horizontalDragMinWidth:0,horizontalDragMaxWidth:99999,contentWidth:c,animateScroll:false,animateDuration:300,animateEase:"linear",hijackInternalLinks:false,verticalGutter:4,horizontalGutter:4,mouseWheelSpeed:0,arrowButtonSpeed:0,arrowRepeatFreq:50,arrowScrollOnHover:false,trackClickSpeed:0,trackClickRepeatFreq:70,verticalArrowPositions:"split",horizontalArrowPositions:"split",enableKeyboardNavigation:true,hideFocus:false,keyboardSpeed:0,initialDelay:300,speed:30,scrollPagePercent:0.8}
         }
         //end function plugin_jquery_jScrollPane
-
-        //function plugin_jquery_bigText
-        function plugin_jquery_bigText($){
-            function testLineDimensions(a,b,c,d,e,f){var g;return a.css(c,d+f),g=a.width(),g>=b?(a.css(c,""),g==b?{match:"exact",size:parseFloat((parseFloat(d)-.1).toFixed(3))}:{match:"estimate",size:parseFloat((parseFloat(d)-e).toFixed(3))}):!1}function calculateSizes(a,b,c,d,e){var f=a.clone(!0).addClass("bigtext-cloned").css({fontFamily:a.css("font-family"),"min-width":parseInt(c,10),width:"auto",position:"absolute",left:-9999,top:-9999}).appendTo(document.body),g=[],h=[],i=[],j=[];return f.find(b).css({"float":"left",clear:"left"}).each(function(){var h,b=$(this),f=[4,1,.4,.1];if(b.hasClass(BigText.EXEMPT_CLASS))return g.push(null),j.push(null),i.push(!1),void 0;var k=20,l=parseFloat(b.css("font-size")),m=b.width(),n=(m/l).toFixed(6),o=parseFloat(((c-k)/n).toFixed(3));a:for(var p=0,q=f.length;q>p;p++)b:for(var r=1,s=4;s>=r;r++){if(o+r*f[p]>d){o=d;break a}if(h=testLineDimensions(b,c,"font-size",o+r*f[p],f[p],"px"),h!==!1){if(o=h.size,"exact"==h.match)break a;break b}}j.push(c/o),o>d?(g.push(d),i.push(!1)):e&&e>o?(g.push(e),i.push(!0)):(g.push(o),i.push(!1))}).each(function(a){var f,b=$(this),d=0,e=1;if(b.hasClass(BigText.EXEMPT_CLASS))return h.push(null),void 0;b.css("font-size",g[a]+"px");for(var i=1,j=5;j>i;i+=e)if(f=testLineDimensions(b,c,"word-spacing",i,e,"px"),f!==!1){d=f.size;break}b.css("font-size",""),h.push(d)}).removeAttr("style"),f.remove(),{fontSizes:g,wordSpacings:h,ratios:j,minFontSizes:i}}var counter=0,$headCache=$("head"),oldBigText=window.BigText,oldjQueryMethod=$.fn.bigtext,BigText={DEFAULT_MIN_FONT_SIZE_PX:null,DEFAULT_MAX_FONT_SIZE_PX:528,GLOBAL_STYLE_ID:"bigtext-style",STYLE_ID:"bigtext-id",LINE_CLASS_PREFIX:"bigtext-line",EXEMPT_CLASS:"bigtext-exempt",DEFAULT_CHILD_SELECTOR:"> div",childSelectors:{div:"> div",ol:"> li",ul:"> li"},noConflict:function(a){return a&&($.fn.bigtext=oldjQueryMethod,window.BigText=oldBigText),BigText},init:function(){$("#"+BigText.GLOBAL_STYLE_ID).length||$headCache.append(BigText.generateStyleTag(BigText.GLOBAL_STYLE_ID,[".bigtext * { white-space: nowrap; }",".bigtext ."+BigText.EXEMPT_CLASS+", .bigtext ."+BigText.EXEMPT_CLASS+" * { white-space: normal; }"]))},bindResize:function(a,b){$.throttle?$(window).unbind(a).bind(a,$.throttle(100,b)):($.fn.smartresize&&(a="smartresize."+a),$(window).unbind(a).bind(a,b))},getStyleId:function(a){return BigText.STYLE_ID+"-"+a},generateStyleTag:function(a,b){return $("<style>"+b.join("\n")+"</style>").attr("id",a)},clearCss:function(a){var b=BigText.getStyleId(a);$("#"+b).remove()},generateCss:function(a,b,c,d){var e=[];BigText.clearCss(a);for(var f=0,g=b.length;g>f;f++)e.push("#"+a+" ."+BigText.LINE_CLASS_PREFIX+f+" {"+(d[f]?" white-space: normal;":"")+(b[f]?" font-size: "+b[f]+"px;":"")+(c[f]?" word-spacing: "+c[f]+"px;":"")+"}");return BigText.generateStyleTag(BigText.getStyleId(a),e)},jQueryMethod:function(a){return BigText.init(),a=$.extend({minfontsize:BigText.DEFAULT_MIN_FONT_SIZE_PX,maxfontsize:BigText.DEFAULT_MAX_FONT_SIZE_PX,childSelector:"",resize:!0},a||{}),this.each(function(){var b=$(this).addClass("bigtext"),c=a.childSelector||BigText.childSelectors[this.tagName.toLowerCase()]||BigText.DEFAULT_CHILD_SELECTOR,d=b.width(),e=b.attr("id");e||(e="bigtext-id"+counter++,b.attr("id",e)),a.resize&&BigText.bindResize("resize.bigtext-event-"+e,function(){BigText.jQueryMethod.call($("#"+e),a)}),BigText.clearCss(e),b.find(c).addClass(function(a,b){return[b.replace(RegExp("\\b"+BigText.LINE_CLASS_PREFIX+"\\d+\\b"),""),BigText.LINE_CLASS_PREFIX+a].join(" ")});var f=calculateSizes(b,c,d,a.maxfontsize,a.minfontsize);$headCache.append(BigText.generateCss(e,f.fontSizes,f.wordSpacings,f.minFontSizes))})}};$.fn.bigtext=BigText.jQueryMethod,window.BigText=BigText;
-        }
 
         //function plugin_jquery_twitterTip
         function plugin_jquery_twitterTip($){
