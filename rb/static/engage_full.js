@@ -360,7 +360,7 @@ function readrBoard($R){
                 RDR.C.rindowAnimationSpeed,
                 function() {
                     if (callback) callback();
-                    if ( $rindow.hasClass('jspScrollable') ) {
+                    if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
                         
                         // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
@@ -3924,8 +3924,10 @@ function readrBoard($R){
                             if ( gridWidth > 960 ) { gridWidth=960; }
 
                             // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
-
-                            $grid.data('hash', hash).data('container', hash).wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>').addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                            if ( !$grid.closest('.rdr_grid_wrapper').length ) {
+                                $grid.wrap('<div class="rdr_grid_wrapper" style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
+                            }
+                            $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                             RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                         } else {
                             RDR.actions.content_nodes.init(hash);
