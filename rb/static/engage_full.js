@@ -3834,6 +3834,27 @@ function readrBoard($R){
                                 RDR.crosspage_hashes = response.data.crossPageKnown;
                             }
 
+                            // is a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
+                            // but we still want to do an init of the node... so we make dummy objects
+                            // this is so we can init the nodes down below when we call
+                            // RDR.actions.containers.initCrossPageHashes(response.data.crossPageKnown);
+                            $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                                var thisHash = $(node).attr('rdr-hash');
+                                var dummySummaryObject = {
+                                        "hash":thisHash,
+                                        "counts": {
+                                            "coms": 0, 
+                                            "tags": 0, 
+                                            "interactions": 0
+                                        }, 
+                                        "top_interactions": {
+                                            "coms": [], 
+                                            "tags": {}
+                                        }
+                                    }
+                                RDR.crosspage_hashes[thisHash] = dummySummaryObject;
+                            });
+
                             var summaries = {};
                             summaries[ pageId ] = response.data.known;
                             
@@ -3889,7 +3910,6 @@ function readrBoard($R){
                     RDR.actions.containers.initCrossPageHashes(mockCrossPageObj);                    
                 },
                 initCrossPageHashes: function(crossPageHashes){
-                    
                     // go ahead and initialize the content nodes for cross-page containers
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
@@ -3897,7 +3917,6 @@ function readrBoard($R){
 
                         var hash = crosspage_known.hash;
                         RDR.actions.indicators.init(hash);
-
                         RDR.summaries[hash].crossPage=true;
 
                         // init a tag grid for an open custom display thing.
@@ -5926,7 +5945,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // if there is a counter on the page
                             if ( $counter.length ) {
-                                $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                if ( summary.counts.tags > 0 ) {
+                                    $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                } else {
+                                    $counter.html('No');
+                                }
                             }
                             if ( $cta.length ) {
                             }
@@ -6240,19 +6263,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
                         } else {
-                            // write inline tags: readmode, for all content types (kind)
-                            RDR.actions.summaries.sortInteractions(hash);
-                            writeTagBoxes( summary.interaction_order );
-                            if ( summary.kind =="text" ) {
-                                if ( !summary.crossPage ) {
-                                    RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                            if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+                                // write inline tags: readmode, for all content types (kind)
+                                RDR.actions.summaries.sortInteractions(hash);
+                                writeTagBoxes( summary.interaction_order );
+                                if ( summary.kind =="text" ) {
+                                    if ( !summary.crossPage ) {
+                                        RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                    }
+                                } else {
+                                    RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
+                                    $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
+                                        $rindow.remove();
+                                        $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                    });
                                 }
                             } else {
-                                RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
-                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
-                                    $rindow.remove();
-                                    $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
-                                });
+                                RDR.rindow.updateFooter( $rindow, '<span>No reactions yet!</span>' );
                             }
                         }
 
