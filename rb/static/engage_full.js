@@ -360,7 +360,7 @@ function readrBoard($R){
                 RDR.C.rindowAnimationSpeed,
                 function() {
                     if (callback) callback();
-                    if ( $rindow.hasClass('jspScrollable') ) {
+                    if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
                         
                         // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
@@ -3839,6 +3839,27 @@ function readrBoard($R){
                                 RDR.crosspage_hashes = response.data.crossPageKnown;
                             }
 
+                            // is a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
+                            // but we still want to do an init of the node... so we make dummy objects
+                            // this is so we can init the nodes down below when we call
+                            // RDR.actions.containers.initCrossPageHashes(response.data.crossPageKnown);
+                            $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                                var thisHash = $(node).attr('rdr-hash');
+                                var dummySummaryObject = {
+                                        "hash":thisHash,
+                                        "counts": {
+                                            "coms": 0, 
+                                            "tags": 0, 
+                                            "interactions": 0
+                                        }, 
+                                        "top_interactions": {
+                                            "coms": [], 
+                                            "tags": {}
+                                        }
+                                    }
+                                RDR.crosspage_hashes[thisHash] = dummySummaryObject;
+                            });
+
                             var summaries = {};
                             summaries[ pageId ] = response.data.known;
                             
@@ -3901,7 +3922,7 @@ function readrBoard($R){
                     }
                 },
                 initCrossPageHashes: function(crossPageHashes){
-
+                    
                     // go ahead and initialize the content nodes for cross-page containers
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
@@ -3909,7 +3930,6 @@ function readrBoard($R){
 
                         var hash = crosspage_known.hash;
                         RDR.actions.indicators.init(hash);
-
                         RDR.summaries[hash].crossPage=true;
 
                         // init a tag grid for an open custom display thing.
@@ -3937,17 +3957,8 @@ function readrBoard($R){
 
                             // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
 
-                            $grid
-                                .data('hash', hash)
-                                .data('container', hash)
-                                .wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
-                                .addClass('w'+gridWidth)
-                                .html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                            
-                            RDR.actions.content_nodes.init(hash, function() {
-                                RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
-                                $grid.jScrollPane({ showArrows:true });
-                            });
+                            $grid.data('hash', hash).data('container', hash).wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>').addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                            RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                         } else {
                             RDR.actions.content_nodes.init(hash);
                         }
@@ -5946,7 +5957,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             // if there is a counter on the page
                             if ( $counter.length ) {
-                                $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                if ( summary.counts.tags > 0 ) {
+                                    $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                } else {
+                                    $counter.html('No');
+                                }
                             }
                             if ( $cta.length ) {
                             }
@@ -6263,19 +6278,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             // write inline tags: writemode
                             writeTagBoxes( RDR.group.blessed_tags );
                         } else {
-                            // write inline tags: readmode, for all content types (kind)
-                            RDR.actions.summaries.sortInteractions(hash);
-                            writeTagBoxes( summary.interaction_order );
-                            if ( summary.kind =="text" ) {
-                                if ( !summary.crossPage ) {
-                                    RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                            if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+                                // write inline tags: readmode, for all content types (kind)
+                                RDR.actions.summaries.sortInteractions(hash);
+                                writeTagBoxes( summary.interaction_order );
+                                if ( summary.kind =="text" ) {
+                                    if ( !summary.crossPage ) {
+                                        RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                    }
+                                } else {
+                                    RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
+                                    $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
+                                        $rindow.remove();
+                                        $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                    });
                                 }
                             } else {
-                                RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
-                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
-                                    $rindow.remove();
-                                    $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
-                                });
+                                RDR.rindow.updateFooter( $rindow, '<span>No reactions yet!</span>' );
                             }
                         }
 
