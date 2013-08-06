@@ -8,15 +8,60 @@
     {% for group in admin_groups %}
         {% block settingsHeader %}    
           <h1>{{group.name}} Settings</h1>
-          <h2><a href="/group/{{group.short_name}}/blocked_reactions">{{group.name}} Blocked Reactions</a></h2>
-          <h2><a href="/group/{{group.short_name}}/all_reactions">{{group.name}} All Reactions</a></h2>
-          
-          <h2><a href="/group/{{group.short_name}}/">{{group.name}} on RB</a></h2>
-          <h2><a href="/group/{{group.short_name}}/settings/">{{group.name}} Settings</a></h2>
-          <h2><a href="/group/{{group.short_name}}/analytics/">{{group.name}} Analytics</a></h2>
-          <h2><a href="/group/{{group.short_name}}/not_approved/">{{group.name}} Unapproved Reactions</a></h2>
-          <h2><a href="/group/{{group.short_name}}/admin_request/">{{group.name}} Administrative Requests</a></h2>
-          <h2><a href="/group/{{group.short_name}}/admin_approve/">{{group.name}} Administrative Request Approval</a></h2>
+
+          <style>
+          .manage_section { display:inline-block; padding:25px; margin:0 25px 25px 0; background:#f0f0f0; width:300px;}
+          .manage_section em { font-size:12px; color:#777; }
+          </style>
+
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/">Public Profile</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/settings/">Settings</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/analytics/">Analytics</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/all_reactions">All Reactions</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/blocked_reactions">Blocked Reactions</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/not_approved/">Not Approved Reactions</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/admin_request/">Admin Requests</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/admin_approve/">Request Admin Access</a></h3>
+              <em class="">
+                Here is a notice for this box
+              </em>
+            </div>
           
         {% endblock settingsHeader %}  
     {% endfor %}  
