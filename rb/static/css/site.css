@@ -992,6 +992,10 @@ div.notice {
   margin-bottom:20px;
   line-height: 14px;
 }
+div.notice:hover {
+  background:#e3f3fc;
+  border-color:#008be4;
+}
 div.notice.info {
   border-color:#f1e7bc;
   background-color:#fefbed;
