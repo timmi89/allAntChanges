@@ -910,12 +910,12 @@ function readrBoard($R){
 
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBodyRaw.length+'">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBodyRaw.substr(15) + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount15">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBodyRaw.substr(15).length+'">' + tagBodyRaw.substr(15) + '</div>';
                             if ( boxSize == "rdr_box_small" ) {
                                 boxSize = "rdr_box_medium";
                             }
@@ -927,7 +927,7 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+'">' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBody1.length+'">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBody2.length+'">' + tagBody2 + '</div>';
                         }
                     }
 
@@ -6196,7 +6196,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
-                                // write page-level tags: readmode
+                                // write page-level tags: readmode`
                                 writeTagBoxes( page.toptags );
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
@@ -6291,7 +6291,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         // $tagsListContainer.append($tag_table);
                         // RDR.rindow.jspUpdate($rindow);
-                        $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
                         isotopeTags( $tagsListContainer );
                         return $tagsListContainer;
 
@@ -6405,14 +6405,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             columnWidth: 160
                           }
                         }, function() {
-                            $('.rdr_box_big').bigtext({ maxfontsize:48 });
-                            $('.rdr_box_medium').bigtext({ maxfontsize:28 });
-                            $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
-                            $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
+                            // $('.rdr_box_big').bigtext({ maxfontsize:48 });
+                            // $('.rdr_box_medium').bigtext({ maxfontsize:28 });
+                            // $('.rdr_box_small:not(.rdr_writeMode)').bigtext({ maxfontsize:18 });
+                            // $('.rdr_box_small.rdr_writeMode').bigtext({ maxfontsize:24 });
 
                             var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                 currentTagBoxAnimating = 0;
-                            var animationQueue = setInterval( animateNextBox, 50 );
+                            var animationQueue = setInterval( animateNextBox, 10 );
 
                             function animateNextBox() {
                                 var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
