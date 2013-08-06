@@ -3887,49 +3887,50 @@ function readrBoard($R){
                     RDR.actions.containers.initCrossPageHashes(mockCrossPageObj);                    
                 },
                 initCrossPageHashes: function(crossPageHashes){
-                    //RDR.actions.containers.initCrossPageHashes:
-
+                    
                     // go ahead and initialize the content nodes for cross-page containers
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
                     $.each( crossPageHashes, function(idx, crosspage_known) {
+
                         var hash = crosspage_known.hash;
                         RDR.actions.indicators.init(hash);
 
-                                // init a tag grid for an open custom display thing.
-                                // i know, this should be abstracted.  it's too ProPublica specific.  
-                                // needs abstraction, and conditionals to determine what to do based on the display properties.
-                                var $container = $('[rdr-hash="'+hash+'"]'),
-                                    customDisplayName = $container.attr('rdr-custom-display'),
-                                    // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
-                                    // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                    $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                        RDR.summaries[hash].crossPage=true;
 
-                                    // if the grid has no height specified, give it one
-                                    if ( $grid.height() < 200 ) { $grid.height(200); }
+                        // init a tag grid for an open custom display thing.
+                        // i know, this should be abstracted.  it's too ProPublica specific.  
+                        // needs abstraction, and conditionals to determine what to do based on the display properties.
+                        var $container = $('[rdr-hash="'+hash+'"]'),
+                            customDisplayName = $container.attr('rdr-custom-display'),
+                            // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
+                            // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
+                            $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                            gridWidth = $grid.width(),
+                            gridHeight = $grid.height();
 
-                                    RDR.util.cssSuperImportant( $grid, { height:$grid.height()+"px" });
+                        // if the grid has no height specified, give it one
+                        if ( gridHeight < 200 ) { gridHeight = 200; $grid.height(gridHeight); }
 
-                                    if ($grid.length) {
-                                        // since currently, our grid needs to have a width that's a factor of 160... force that:
-                                        var gridWidth = $grid.width(),
-                                            statedWidthDividedBy160 = parseInt( gridWidth / 160 );
-                                        
-                                        gridWidth = statedWidthDividedBy160 * 160;
-                                        if ( gridWidth > 960 ) { gridWidth=960; }
-                                        $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                        RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
-                                    } else {
-                                        RDR.actions.content_nodes.init(hash);
-                                    }
+                        RDR.util.cssSuperImportant( $grid, { height:gridHeight+"px" });
 
-                            });
+                        if ($grid.length) {
+                            // since currently, our grid needs to have a width that's a factor of 160... force that:
+                            var statedWidthDividedBy160 = parseInt( gridWidth / 160 );
+                            
+                            gridWidth = statedWidthDividedBy160 * 160;
+                            if ( gridWidth > 960 ) { gridWidth=960; }
+
+                            // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
+
+                            $grid.data('hash', hash).data('container', hash).wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>').addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                            RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
+                        } else {
+                            RDR.actions.content_nodes.init(hash);
                         }
-                    });
 
-                
-            },
-            containers: {
+                    });
+                },
                 media: {
                     //RDR.actions.containers.media:
                     //actions for the special cases of media containers
