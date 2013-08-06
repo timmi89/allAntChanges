@@ -189,12 +189,65 @@
 
 <div class="mainQuestion">
 
+              <!-- PROPUBLICA -->
+              <!-- 
+                Below shows an example set of HTML that can be placed anywhere you want your question, and its reactions, to appear.
+                To make this work, an HTML element simply needs to relevant, custom ReadrBoard attributes.
+                The HTML tag you use shouldn't matter -- we only care about the attributes.
+
+                rdr-custom-display="NAME"
+                  Required.
+                  This attribute specifies an arbitrary name that identifies where your question itself appears.
+                  The name is used to associate this question with the other key elements on the page.
+                  We don't store this name in our servers, so it can change at any time.
+                  The content of this element (i.e., the text of your question) needs to be identical on all pages, and not change.  
+                    We store an MD5 hash of the text, so if the text changes, the hash changes, and the reactions would be "lost".
+                    The HTML should not matter, only the text.  So, for example, ReadrBoard should generate the same hash for both of these elements:
+                      <h1 rdr-custom-display="example_question">What is the meaning of life?</h1>
+                      <div rdr-custom-display="example_question"><a href="/example_question_URL">What is the meaning of life?</a></div>
+                
+                rdr-crossPageContent="true"
+                  Required.
+                  This tells ReadrBoard that it should look for all reactions to this content from your site, not just the ones that originated from this page.
+
+                rdr-counter-for="NAME"
+                  ReadrBoard will insert the reaction count (i.e. "7") into this element.  We format it to look pretty (so, "7,204").
+                  "NAME" is used to associate this counter with the correct question, 
+                    so the value of this attribute needs to match the value in rdr-custom-display.
+
+                rdr-grid-for="NAME"
+                  If you want the grid of reactions to appear when the page loads... define this element on the page.
+                    IMPORTANT NOTE:  For now, ReadrBoard's grid must be one of these widths:  160px, 320px, 480px, 640px, 800px, or 960px.
+                    If this element has no width defined, ReadrBoard will calculate the width in the DOM, then find the closest matching allowed width, and set it.
+                    If you don't want a grid, simply leave this element
+
+                rdr-cta-for="NAME"
+                  Associate an element to your question that will trigger a "call to action" (CTA)
+                  The CTA will open a ReadrBoard element (a "ReadrBoard window" -- but it's not a popup window) on the page that shows either:
+                    1) "write mode" -- show the list of defined reactions and invite people to react
+                        to trigger write mode, set rdr-mode="write"
+                    2) "read mode" -- show the list of existing reactions and comments (the same ones that would show in the grid, above).
+                        to trigger read mode, set rdr-mode="read"
+
+                  We recommend that you use write mode on each question's individual page -- where you have the grid with "read" mode also visible.
+                  And we recommend using "read mode" for the places where you want to insert a small instance of the question with a link back to  
+
+                rdr-offset-x, rdr-offset-y
+                  Adjust the position of the ReadrBoard window relative to the HTML element that has the rdr-cta-for attribute.
+
+              -->
+              <!-- start PROPUBLICA question with custom ReadrBoard display -->
               <p rdr-custom-display="rbQuestion1" rdr-crossPageContent="true">Question: Does the Queen really have a Jet Ski?</p>
+              <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;margin-bottom:10px;"><span rdr-counter-for="rbQuestion1"></span> Reactions</div>
+              <div rdr-grid-for="rbQuestion1"></div>
+              <div rdr-cta-for="rbQuestion1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
+              <!-- end PROPUBLICA question with custom ReadrBoard display -->
               
-              <div class="crossPageReactionsLabel"><span rdr-counter-for="rbQuestion1"></span> Reactions</div>
-              <div rdr-grid-for="rbQuestion1" class="crossPageGridFor"></div>
-              <div class="crossPageReactionButton" rdr-cta-for="rbQuestion1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
-              
+
+
+              <style>
+              [rdr-cta-for="rbQuestion1"] {padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;}
+              </style>
             </div>
 
 
