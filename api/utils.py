@@ -384,7 +384,29 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         notification = AsynchPageNotification()
         t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         t.start()
+
+        other_interactions = list(Interaction.objects.filter(
+                    container=container,
+                    page__site__group = page.site.group,
+                    approved=True
+                    ))
+
+        other_pages = set()
+        for other in other_interactions:
+            other_pages.add(other.page)
+        for other_page in other_pages:
+            cache_updater = PageDataCacheUpdater(method="delete", page_id=other_page.id)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
         
+            container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=other_page.id)
+            t = Thread(target=container_cache_updater, kwargs={})
+            t.start()
+        
+            page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(other_page.id),hashes=[container.hash])
+            t = Thread(target=page_container_cache_updater, kwargs={})
+            t.start()
+
         if not new_interaction.parent or new_interaction.kind == 'com':
             global_cache_updater = GlobalActivityCacheUpdater(method="update")
             t = Thread(target=global_cache_updater, kwargs={})
