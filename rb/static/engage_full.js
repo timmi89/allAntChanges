@@ -3886,12 +3886,19 @@ function readrBoard($R){
                         return;
                     }
 
-                    var mockCrossPageObj = {
-                        hash: {
-                            hash: hash
-                        }
-                    };
-                    RDR.actions.containers.initCrossPageHashes(mockCrossPageObj);                    
+                    //changing this to copy out and just call only parts of the initCrossPageHashes call below
+                    RDR.actions.indicators.init(hash);
+
+                    var $container = $('[rdr-hash="'+hash+'"]'),
+                        customDisplayName = $container.attr('rdr-custom-display'),
+                        $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                        
+                    if ($grid.length) {
+                        RDR.actions.content_nodes.init(hash, function() {
+                            RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                            $grid.jScrollPane({ showArrows:true });
+                        });
+                    }
                 },
                 initCrossPageHashes: function(crossPageHashes){
 
@@ -3930,8 +3937,17 @@ function readrBoard($R){
 
                             // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
 
-                            $grid.data('hash', hash).data('container', hash).wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>').addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                            RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
+                            $grid
+                                .data('hash', hash)
+                                .data('container', hash)
+                                .wrap('<div style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
+                                .addClass('w'+gridWidth)
+                                .html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                            
+                            RDR.actions.content_nodes.init(hash, function() {
+                                RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                                $grid.jScrollPane({ showArrows:true });
+                            });
                         } else {
                             RDR.actions.content_nodes.init(hash);
                         }
