@@ -365,6 +365,8 @@ function readrBoard($R){
                         
                         // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
+                    } else {
+                        $rindow.jScrollPane({ showArrows:true });
                     }
                 });
             },
