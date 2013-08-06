@@ -566,7 +566,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             page = Page.objects.get(id=page_id)
             interactions = list(Interaction.objects.filter(
                     container=container_id,
-                    page__site__group = page.site.group,
+                    # page__site__group = page.site.group,
                     approved=True
                     ))
         else:
