@@ -37,12 +37,10 @@
   height:150px;
 }
 
+#contentright{
+  padding: 10px;
+}
+
 #contentright h4{
 
-}
-#contentright ul{
-  list-style: none;
-}
-#contentright li{
-  list-style-position: inside;
 }
