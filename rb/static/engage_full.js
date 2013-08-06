@@ -362,7 +362,6 @@ function readrBoard($R){
                     if (callback) callback();
                     if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
-                        
                         // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
@@ -402,6 +401,15 @@ function readrBoard($R){
                 function() {
                     if (callback) callback();
                     $rindow.data('panelState', 1);
+                    
+                    if ( $rindow.data('jsp') ) {
+                        var API = $rindow.data('jsp');
+                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        API.reinitialise();
+                    } else {
+                        $rindow.jScrollPane({ showArrows:true });
+                    }
+
                 });
             },
             panelEnsureFloatWidths: function( $rindow ) {
