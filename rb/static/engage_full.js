@@ -362,7 +362,6 @@ function readrBoard($R){
                     if (callback) callback();
                     if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
-                        
                         // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
@@ -402,6 +401,15 @@ function readrBoard($R){
                 function() {
                     if (callback) callback();
                     $rindow.data('panelState', 1);
+                    
+                    if ( $rindow.data('jsp') ) {
+                        var API = $rindow.data('jsp');
+                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        API.reinitialise();
+                    } else {
+                        $rindow.jScrollPane({ showArrows:true });
+                    }
+
                 });
             },
             panelEnsureFloatWidths: function( $rindow ) {
@@ -7841,6 +7849,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 
+                // if this is a node with its own, separate call-to-action, don't do a custom new selection.
+                if ( $mouse_target.hasAttr('rdr-custom-display') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-custom-display')+'"]').length ) { 
+                    return; 
+                }
+
                 //destroy all other actionbars
                 RDR.actionbar.closeAll();
                 var maxChars = 800;
@@ -8061,7 +8074,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
                     }else{
                         //use the default summaryBar instead
-                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>');
+                        var displayDefaultBar = ( typeof RDR.engageScriptParams.bookmarklet == "undefined" ) ? "bottom:-1000px !important":"";
+                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar" style="'+displayDefaultBar+'"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
