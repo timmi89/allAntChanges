@@ -1476,6 +1476,7 @@ div.rdr_indicator {
     -o-user-select: none !important;
     user-select: none !important;
 }
+
 div.rdr_indicator.rdr_indicator_for_media {
     /*cursor:pointer !important;*/
 }
@@ -1522,7 +1523,6 @@ div.rdr_indicator_for_text{
   -moz-opacity:1.0 !important;
   -khtml-opacity:1.0 !important;
 }
-
 div.rdr_indicator_for_text.rdr_helper {
     opacity:0.6;;
     -moz-opacity:0.6;;
@@ -1615,6 +1615,15 @@ div.rdr_indicator_details img.rdr_pin {
 .rdr_live_hover div.rdr_indicator.rdr_helper {
   opacity:0.5 !important;
 }
+
+.no-rdr div.rdr_indicator,
+.no-rdr.rdr_live_hover div.rdr_indicator,
+.no-rdr .rdr_live_hover div.rdr_indicator,
+.no-rdr .rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
+  display:none !important;
+}
+
+
 .rdr_live_hover div.rdr_indicator img.rdr_pin,
 div.rdr div.rdr_indicator_stats img.rdr_pin {
   background-position:1px -1px !important;
