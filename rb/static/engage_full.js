@@ -3316,7 +3316,7 @@ function readrBoard($R){
             initEnvironment: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
             
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr no-rdr rdr_sandbox"/>').appendTo('body');
+                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr rdr_sandbox"/>').appendTo('body');
                 RDR.util.fixBodyBorderOffsetIssue();
                 
                 if(!!RDR.group.br_replace_scope_selector){
@@ -3607,7 +3607,7 @@ function readrBoard($R){
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
-                    $group = $group.not('[rdr-hashed], .no-rdr');
+                    $group = $group.not('[rdr-hashed], .no-rdr, #rdr_sandbox');
                     group.$nodes = $group;
 
                     //setup the group as needed
@@ -7861,7 +7861,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // make sure it's not selecting inside the RDR windows.
                 // todo: (the rdr_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
-                if ( $mouse_target.closest('.rdr, .no-rdr').length && !$mouse_target.closest('.rdr_indicator').length ) return;
+                if ( $mouse_target.closest('.rdr, .no-rdr, #rdr_sandbox').length && !$mouse_target.closest('.rdr_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
