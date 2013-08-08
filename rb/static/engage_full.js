@@ -608,9 +608,17 @@ function readrBoard($R){
                                     ).appendTo( $options );
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                                    var $backButton = $('<div class="rdr_back">Close X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
+
+                                        //temp fix because the rindow scrollpane re-init isnt working
+                                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
+                                        if(!isGridForRindow){
+                                            RDR.rindow.close($rindow);
+                                            return;
+                                        }
+
                                         var $header = RDR.rindow.makeHeader( 'Reactions' );
                                         $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.updateTagPanel( $rindow );
@@ -703,6 +711,7 @@ function readrBoard($R){
                                         tag: args.tag,
                                         rindow: $rindow
                                     };
+
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
                                 });
@@ -1011,8 +1020,16 @@ function readrBoard($R){
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                        var $backButton = $('<div class="rdr_back">Close X</div>');
                         $backButton.click( function() {
+
+                            //temp fix because the rindow scrollpane re-init isnt working
+                            var isGridForRindow = !!$rindow.attr('rdr-grid-for');
+                            if(!isGridForRindow){
+                                RDR.rindow.close($rindow);
+                                return;
+                            }
+
                             var $header = RDR.rindow.makeHeader( 'Reactions' );
                             $rindow.find('.rdr_header').replaceWith($header)
                             RDR.rindow.updateFooter( $rindow );
@@ -7398,8 +7415,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">&lt;&lt; Back</div>');
+                    var $backButton = $('<div class="rdr_back">Close X</div>');
                     $backButton.click( function() {
+
+                        //temp fix because the rindow scrollpane re-init isnt working
+                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
+                        if(!isGridForRindow){
+                            RDR.rindow.close($rindow);
+                            return;
+                        }
+
                         var $header = RDR.rindow.makeHeader( 'Reactions' );
                         $rindow.find('.rdr_header').replaceWith($header)
                         RDR.rindow.updateTagPanel( $rindow );
