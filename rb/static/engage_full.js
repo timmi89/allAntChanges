@@ -1871,7 +1871,7 @@ function readrBoard($R){
                     
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Go back</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Close</a></span> ');
                     
 
 
@@ -4780,7 +4780,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     if(isInlineRindow){
                                         
                                         var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
-                                        var $doneButton = $('<a class="rdr_doneButton" href="#">Go back</a>')
+                                        var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
                                             .click(function(e){
                                                 e.preventDefault();
                                                 $rindow.find('.rdr_back').eq(0).click();
