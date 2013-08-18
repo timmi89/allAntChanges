@@ -169,6 +169,14 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
         </fieldset>
       </form>
     </div>
+    <script>
+    $('#searchform').on('mouseenter', function() { $(this).find('input').focus() })//chain
+    .on('mouseleave', function() {
+      if ( !$(this).find('input').val().length ) {
+        $(this).find('input').blur();
+      }
+    });
+    </script>
     {% endblock siteSearch %}
     
   </header>

@@ -20,7 +20,7 @@ $('#cards').addClass('user_profile');
 {% for page in pi %}
     {% for interaction in page.list %}
         {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
-        <section class="card interaction_{{ interaction.id }}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+        <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
             {% if cookie_user %}
             <div class="buttons">
                       {% if interaction.user.id == cookie_user.id %}
@@ -48,32 +48,24 @@ $('#cards').addClass('user_profile');
                 <div class="avatar">
                     {% if interaction.user.social_user.full_name != "" %}
                     <a href="/user/{{interaction.user.id}}/">
-                        <img src="{{ interaction.user.social_user.img_url }}"/>
                         {{ interaction.user.social_user.full_name }}
+                        <img src="{{ interaction.user.social_user.img_url }}"/>
                     </a>
                     {% endif %}
                     {% if interaction.user.social_user.full_name == "" %}
                     <a href="/user/{{interaction.user.id}}/">
-                        <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
                         Unregistered User
+                        <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
                     </a>
                     {% endif %}
                 </div>
-                <div class="date">
+                <!-- <div class="date">
                     {{ interaction.created|date:"M d, Y"|escape }}
-                </div>
+                </div> -->
             </div>
             <div class="me_too_outcome"></div>
             <div class="main">
-                <div class="reactionBox color{% cycle '1' '2' '3' '4' '5' %}">
-                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|split_reaction }}{% else %}{{ interaction.human_kind|split_reaction }}{% endif %}</a></h1>
-                    <div class="via">via</div>
-                    <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{% if page.grouper.site.group.logo_url_sm %}<img src="{{ page.grouper.site.group.logo_url_sm }}"/><br/>{%endif%}{{ page.grouper.site.group.name|escape }}</a></div>
-                    <div class="links">
-                        <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a>
-                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">See it in context <i class="icon-external-link"></i></a>
-                    </div>
-                </div>
+                <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
                 <div class="contentBox {{ interaction.content.kind }}">
                     {% if interaction.content.kind == "img" %}
                     <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" /></a>
@@ -111,6 +103,14 @@ $('#cards').addClass('user_profile');
                       {% endfor %}
                     </div>
                     {% endif %}
+                </div>
+                <div class="reactionBox">
+                    <div class="via">via</div>
+                    <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{{ page.grouper.site.group.name|escape }}</a>: </div>
+                    <div class="links">
+                        <!-- <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a> -->
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">{{ page.grouper.title|escape }} <i class="icon-external-link"></i></a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -572,12 +572,12 @@ $(document).ready(function(){
     writeCardButtons( $card );
 });
 
-$.each( metoos, function(interaction_id, count) {
-  $('.interaction_'+interaction_id).find('.meta .avatar').append('and <a href="javascript:void(0);">'+count+' more</a>')//chain
-  .click( function() {
-    RB.follow.agreed(interaction_id);
-  } );
-});
+// $.each( metoos, function(interaction_id, count) {
+//   $('.interaction_'+interaction_id).find('.meta .avatar img').before('and <a href="javascript:void(0);">'+count+' more</a>')//chain
+//   .click( function() {
+//     RB.follow.agreed(interaction_id);
+//   } );
+// });
 
 });
 
