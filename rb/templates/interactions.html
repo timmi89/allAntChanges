@@ -68,7 +68,15 @@ $('#cards').addClass('user_profile');
                 <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
                 <div class="contentBox {{ interaction.content.kind }}">
                     {% if interaction.content.kind == "img" %}
-                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" /></a>
+                    <!--
+                    if image > 463
+                      width = 463
+                      height = ( interaction.content.height / interaction.content.width ) * 463
+                    else 
+                      width = interaction.content.width
+                      height = interaction.content.height
+                    -->
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" width="463" height="{{ interaction.content|calculate_image_height }}" /></a>
                     {% endif %}
 
                     {% if interaction.content.kind == "med" %}

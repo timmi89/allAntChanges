@@ -10,6 +10,10 @@ def get_interaction_count(interaction_node, page=None, content=None):
     return interaction_node.tag_count(page=page, content=content)
 
 @register.filter
+def calculate_image_height(content):
+    return int(content.height) / int(content.width) * 463
+
+@register.filter
 def split_reaction(tagBodyRaw):
 	tagBodyRaw = tagBodyRaw
 	tagBody = ""
