@@ -19,7 +19,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 {% block css %}
 <link rel="stylesheet" href="{{ STATIC_URL }}css/fonts/helvetica.css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/fonts/fontawesome.css">
+<!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/fonts/fontawesome.css"> -->
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v={{ timestamp|date:"U" }}">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/site.css?v={{ timestamp|date:"U" }}">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
@@ -63,8 +64,7 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
 </head>
 
-<body class="clearfix {% block bodyClass %}{% endblock %}">    
-
+<body class="clearfix {% block bodyClass %}{% endblock %} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
     <div id="fb-root"></div>
 
     <script>
@@ -185,10 +185,8 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
           {% if not board %}
           
           {% block complementarySection %}
-          <section role="complementary">
               {% block sidebarContent %}
               {% endblock %}
-          </section>
           {% endblock %}
 
           {% endif %}
