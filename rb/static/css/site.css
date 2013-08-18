@@ -115,21 +115,8 @@ background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparen
 #searchFor h2 { line-height:24px;padding:20px 0; }
 #searchFor em { font-weight:normal;font-size:18px;color:#999; }
 #searchFor strong { font-size:32px;color:454545; }
-#avatar    { text-align:center; padding-top:50px; height:180px; position:relative; 
-background-size: 50px 50px;
-background-color: rgba(0, 188, 204, 0.54);
-background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
-                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
-                  transparent 75%, transparent);
-background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
-                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
-                  transparent 75%, transparent);
-background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
-                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
-                  transparent 75%, transparent);
--pie-background: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
-                 transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
-                 transparent 75%, transparent) 0 0 / 50px 50px #ac0;
+#avatar    { text-align:center; padding-top:50px; height:180px; position:relative;
+background:url(../images/site/msathead_bg_generic.png)
 
 }
 #avatar .name_and_info { position:absolute;left:50px;top:50px;} 
@@ -234,35 +221,35 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 .homepage .masthead .message h2 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:48px; margin:0 0 40px 0; padding:0; }
 .homepage .masthead .message h3 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:24px; margin:0; padding:0; }
 .homepage .masthead.secondary { text-align:center; padding:40px; }
-.homepage .masthead.secondary h4 { font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:18px; color:#555; letter-spacing:-1px; margin:0; }
+.homepage .masthead.secondary h4 { font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:18px; color:#555; letter-spacing:-1px; margin:0; font-weight:normal;}
 .homepage .masthead.secondary h4 a { text-decoration:underline; }
 .homepage .masthead.secondary h4 i { font-size:21px; }
 
 /* tag cloud grid */
-/*#tag_cloud_container { position:relative; }
-div.image_container { position:absolute;left:0;top:0;width:1138px;height:420px;box-shadow:0px 0px 350px 50px #000 inset; }
-section[role="tag cloud grid"] { height:420px; background:#000;}
-section[role="tag cloud grid"] a { text-decoration:none;}
-.box { text-align:center; font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
-.box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
-.box1 div.tag { position:relative; height:100%; bottom:-125%;}
-.box2 div.tag { position:relative; height:100%; top:-125%;}
-.box3 div.tag { position:relative; height:100%; top:-125%; font-size:100%;}
-.box .count { font-size:20px !important; }
-.box3 .count { font-size:11px !important; display:block;margin-top:0px;}
-.box1 { width:210px; height:210px; padding:90px 20px 0;}
-.box2 { width:210px; height:140px; padding:50px 20px 0;}
-.box3 { width:105px; height:70px; padding:20px 5px 0;}
-.color1,
-.color1 a { background:#84b8ef; color:#354c65;}
-.color2,
-.color2 a { background:#419bac; color:#0e414d;}
-.color3,
-.color3 a { background:#d7f360; color:#748430;}
-.color4,
-.color4 a { background:#9dd55e; color:#578326;}
-.color5,
-.color5 a { background:#576c87; color:#c8d6e9;}*/
+#tag_cloud_container { position:relative; }
+#tag_cloud_container div.image_container { position:absolute;left:0;top:0;width:1138px;height:420px;box-shadow:0px 0px 350px 50px #000 inset; }
+#tag_cloud_container section[role="tag cloud grid"] { height:420px; background:#000;}
+#tag_cloud_container section[role="tag cloud grid"] a { text-decoration:none;}
+#tag_cloud_container .box { text-align:center; font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
+#tag_cloud_container .box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
+#tag_cloud_container .box1 div.tag { position:relative; height:100%; bottom:-125%;}
+#tag_cloud_container .box2 div.tag { position:relative; height:100%; top:-125%;}
+#tag_cloud_container .box3 div.tag { position:relative; height:100%; top:-125%; font-size:100%;}
+#tag_cloud_container .box .count { font-size:20px !important; }
+#tag_cloud_container .box3 .count { font-size:11px !important; display:block;margin-top:0px;}
+#tag_cloud_container .box1 { width:210px; height:210px; padding:90px 20px 0;}
+#tag_cloud_container .box2 { width:210px; height:140px; padding:50px 20px 0;}
+#tag_cloud_container .box3 { width:105px; height:70px; padding:20px 5px 0;}
+#tag_cloud_container .color1,
+#tag_cloud_container .color1 a { background:#84b8ef; color:#354c65;}
+#tag_cloud_container .color2,
+#tag_cloud_container .color2 a { background:#419bac; color:#0e414d;}
+#tag_cloud_container .color3,
+#tag_cloud_container .color3 a { background:#d7f360; color:#748430;}
+#tag_cloud_container .color4,
+#tag_cloud_container .color4 a { background:#9dd55e; color:#578326;}
+#tag_cloud_container .color5,
+#tag_cloud_container .color5 a { background:#576c87; color:#c8d6e9;}
 
 
 /* cards */
