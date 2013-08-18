@@ -95,8 +95,27 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 /* main column */
 /*section[role="main"] { margin-left:349px; display:table-cell; padding:33px 50px; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}*/
 section[role="main"] { padding:20px 0; position:relative; }
-
-#avatar    { text-align:center; padding-top:50px; height:180px; 
+#searchFor {
+  width:100%;padding:20px;
+  background-size: 50px 50px;
+background-color: rgba(200,200,200, 0.54);
+background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+-pie-background: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                 transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                 transparent 75%, transparent) 0 0 / 50px 50px #ac0;
+}
+#searchFor h2 { line-height:24px;padding:20px 0; }
+#searchFor em { font-weight:normal;font-size:18px;color:#999; }
+#searchFor strong { font-size:32px;color:454545; }
+#avatar    { text-align:center; padding-top:50px; height:180px; position:relative; 
 background-size: 50px 50px;
 background-color: rgba(0, 188, 204, 0.54);
 background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
@@ -123,7 +142,7 @@ background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparen
 /* profile items */
 #follow_info { text-align:left; }
 #follow_info a { display:inline-block; margin-right:30px; color:#454545}
-#follow_info a.btn { color:#404040; margin-top: 10px; margin: 10px auto 0;}
+#follow_info a.btn { color:#404040; margin: 0px auto 0;}
 
 
 #which_content { margin-bottom:20px; }

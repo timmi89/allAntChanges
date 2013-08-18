@@ -1,19 +1,21 @@
 {% load static %}
 
 {% if query_string %}
-<div id="avatar">
-  <h2 style="line-height:24px;height:auto;padding:20px 0;">
-    <em style="font-weight:normal;font-size:18px;">Search for <br/></em>
-    <div style="max-width:200px;display:block;text-align:center;margin:0 auto;"><strong style="color:454545;">{{ query_string }}</strong></div>
+<div id="searchFor">
+  <h2>
+    <em>Search for <br/></em>
+    <div><strong>{{ query_string }}</strong></div>
   </h2>
 </div>
 {% endif %}
 {% if group %}
 <div id="avatar">
-	<h2><div>{{ group.name }}</div></h2>
-  <div id="follow_info">
-    <a id="follower_count" href="#follower_list" class="fancybox"></a>
-    <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+  <div class="name_and_info">
+  	<h2><div>{{ group.name }}</div></h2>
+    <div id="follow_info">
+      <a id="follower_count" href="#follower_list" class="fancybox"></a>
+      <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+    </div>
   </div>
 </div>
 <script>
