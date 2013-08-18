@@ -96,22 +96,40 @@ section[role="complementary"] div.component ul li a img { width:30px; display:in
 /*section[role="main"] { margin-left:349px; display:table-cell; padding:33px 50px; vertical-align:top; position:relative; z-index:3; width:789px; background:#fff;}*/
 section[role="main"] { padding:20px 0; position:relative; }
 
-#avatar    { text-align:center; padding-top:50px; } 
-#avatar h2 { } 
+#avatar    { text-align:center; padding-top:50px; height:180px; 
+background-size: 50px 50px;
+background-color: rgba(0, 188, 204, 0.54);
+background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+background-image: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                  transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                  transparent 75%, transparent);
+-pie-background: linear-gradient(45deg, rgba(255, 255, 255, .2) 25%, transparent 25%,
+                 transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%,
+                 transparent 75%, transparent) 0 0 / 50px 50px #ac0;
+
+}
+#avatar .name_and_info { position:absolute;left:50px;top:50px;} 
+#avatar h2 { font-size:54px; color:#333; } 
 #avatar h2 img { max-width:200px; margin:0 auto; } 
-#avatar h2 div { display:inline-block; max-width:150px; }
-#avatar button { display:inline-block; max-width:150px; }
+#avatar h2 div { display:inline-block;  }
+#avatar button { display:inline-block;  }
 
 .pagination { padding:20px 10px 0 10px; }
 /* profile items */
-#which_content,
-#follow_info { padding:10px; }
-#which_content a,
-#follow_info a { display:block; color:#787878;}
-#which_content a.btn,
-#follow_info a.btn { color:#404040; margin-top: 10px; width: 200px; margin: 10px auto 0;}
-#which_content strong,
-#follow_info strong { color:#7eb2f0;}
+#follow_info { text-align:left; }
+#follow_info a { display:inline-block; margin-right:30px; color:#454545}
+#follow_info a.btn { color:#404040; margin-top: 10px; margin: 10px auto 0;}
+
+
+#which_content { margin-bottom:20px; }
+#which_content strong { color:#454545; display:inline-block; background:#ddd; padding:10px 20px;}
+#which_content a { color:#454545; display:inline-block; padding:10px 20px;}
+#which_content a:hover { background:rgba(0, 188, 204, 0.54);}
 
 
 /* readrboards board listing */

@@ -446,6 +446,7 @@ RB = {
     },
     interactions : {
         displayUserBoards : function(user_id) {
+            return; // disabling for now
             // RB.interactions.displayUserBoards
 
             $.ajax({
