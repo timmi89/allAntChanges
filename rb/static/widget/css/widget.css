@@ -437,24 +437,6 @@ div.rdr div.rdr_body div.jspDrag    { cursor: default !important; }
 div.rdr div.rdr_header h1                   { font-size:15px !important; color:#5999dc !important; margin-left:12px !important; white-space: nowrap !important; text-align:left !important; text-transform:none !important; font-style:normal !important;padding-top: 6px !important;}
 div.rdr.rdr_inline div.rdr_header h1    { padding-top:0 !important; margin-top:-4px !important; }
 
-div.rdr button {
-    border:1px solid #aaa !important; 
-    -moz-border-radius:3px 3px 3px 3px !important; 
-    -webkit-border-radius:3px 3px 3px 3px !important; 
-    border-radius:3px 3px 3px 3px !important; 
-    -moz-box-shadow:0 -6px 11px -6px #ccc inset !important; 
-    -webkit-box-shadow:0 -6px 11px -6px #ccc inset !important; 
-    box-shadow:0 -6px 11px -6px #ccc inset !important; 
-    color:#454545 !important; 
-    font-family:Arial !important; 
-    font-size:11px !important; 
-    padding:2px 5px !important; 
-    width:auto !important; 
-    cursor:pointer !important; 
-    float:right !important;
-    margin-bottom:20px !important;
-}
-
 div.rdr div.rdr_view_success {
   width:100% !important;
   min-height:120px !important;
