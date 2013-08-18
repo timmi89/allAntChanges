@@ -2571,6 +2571,9 @@ function readrBoard($R){
             window.$RDR = $RDR;
             window.$R = $R;
         },
+        toggle: function(){
+            $R('body').toggle('no-rdr');
+        },
         session: {
             alertBar: {
                 make: function( whichAlert, data) {
