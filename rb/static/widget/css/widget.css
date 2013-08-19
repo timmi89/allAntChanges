@@ -370,12 +370,39 @@ div.rdr.rdr_page_summary div.rdr_header div.rdr_header_arrow {
 
 div.rdr.rdr_window div.rdr_header              { cursor:move !important; padding:4px 0 !important; }
 div.rdr.rdr_window div.rindowMenu {
-    float: right !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    cursor: default !important;
 }
 div.rdr.rdr_window div.rindowMenu .menuDropDown {
     padding: 10px !important;
+    cursor: pointer !important;
 }
-
+div.rdr.rdr_window div.rindowMenu .rdr_linkWrap {
+    position: absolute;
+    box-shadow: 0 0px 4px #ccc !important;
+    -moz-box-shadow: 0 0px 4px #ccc !important;
+    -webkit-box-shadow: 0 0px 4px #ccc !important;
+    background: #fff !important;
+    padding: 10px;
+    display: none;
+}
+div.rdr.rdr_window div.rindowMenu:hover .rdr_linkWrap {
+    display: block;
+    right: 0;
+}
+div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link{
+    margin: 10px 0;
+    display: block;
+    clear: both;
+}
+div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a{
+    text-decoration: none !important;
+}
+div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a:hover{
+    text-decoration: underline !important;
+}
 
 div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0 !important; }
 /*div.rdr div.rdr_footer                         { background:#f0f0f0 !important; position:absolute !important; height:18px !important; padding:3px 6px 6px !important; bottom:0 !important; width:95% !important; display:none;;}*/
