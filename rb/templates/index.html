@@ -9,36 +9,22 @@
 {% block wideContent %}
 {% if not profile_user and not group and not board and not page %}
 {% if not query_string and not singleton %}
-<style>section[role="after wide section"] {margin-top:420px;}</style>
-<div style="width:100%;height:420px;position:fixed;z-index:0;top:36px;">
-    <div id="tag_cloud_container" style="width:1138px;height:420px;overflow:hidden;">
-        <section role="tag cloud grid">
-            <!-- this will get dynamically populated -->
-        </section>
+
+<div class="masthead main">
+    <div class="message">
+        <h2>React to anything on the web.</h2>
+        <h3>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h3>
     </div>
 </div>
-    <div class="image_container">
-        <img src="{{ STATIC_URL }}site/images/homepage_masthead_lines.png" style="position:absolute;top:0;" />
-        <a href="/about/"><img src="{{ STATIC_URL }}site/images/homepage_masthead.png" style="position:absolute;left:210px;top:100px;border:0;" /></a>
-    </div>
+<div class="masthead secondary">
+    <h4><i class="icon-dashboard"></i> Publishers: ReadrBoard will increase your KPIs up to 15%.  And it’s free.  <a href="/about/">Learn more</a>.</h4>
+</div>
 {% endif %}
 {% endif %}
-
-{% endblock %}
-
-
-{% block sidebarContent %}
-<div id="sidebar">
-    {% if not profile_user and not group and not board and not page %}
-    {% if not query_string and not singleton %}
-    <!-- homepage sidebar -->
-    {% include "homepage_sidebar.html" %}
-    {% endif %}
-    {% endif %}
     
-    {% include "sidebar.html" %}
-</div>
-{% endblock sidebarContent %}
+{% include "sidebar.html" %}
+
+{% endblock wideContent %}
 
 {% block mainContent %}
 
@@ -67,12 +53,12 @@
     {% block cards %}
     <div id="cards">
         {% include "interactions.html" %}
-        <script>
-        $('a[rel="tooltip"]').tooltip({
-            placement:"left"
-        });
-        </script>
     </div>
+    <script>
+    $('a[rel="tooltip"]').tooltip({
+        placement:"bottom"
+    });
+    </script>
     {% endblock cards %}    
 
 {% if not profile_user and not group and not board and not query_string %}
@@ -84,116 +70,19 @@
 
 {% block pageJS %}
 <script>
+    $('#cards').isotope({
+      itemSelector:'.card',
+      masonry: {
+        columnWidth: 530
+      }
+    });
+
+
     {% if board %}
     $('#board_follow_button').click( function() {
         RB.follow.add({{ board.id }},'brd');
     });
     RB.follow.followers({{ board.id }},'brd')
-    {% endif %}
-
-    {% if not profile_user and not group and not board and not query_string %}
-    $(function () {
-        $.ajax({
-            beforeSend: function( xhr ) {
-                xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
-            },
-            url: "/api/global/activity/",
-            type: "get",
-            success: function(response) {
-
-                function SortByTagCount(a,b) { return b.count - a.count; }
-                var sorted_interactions = [];
-
-                $.each( response.data.nodes, function(reaction_body, reaction_data) {
-                    sorted_interactions.push( { body:reaction_body, count:reaction_data.count } );
-                });
-
-                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
-
-                // do tag cloud logic
-                // render the tag cloud
-                // medium, small, small, big
-                var boxSizes = [ "medium", "small", "small", "big" ],
-                    currentBoxSize = 0,
-                    colorInt = 1,
-                    $tagCloud = $('section[role="tag cloud grid"]'),
-                    tagCloud_html = '';
-                while ( sorted_interactions.length ) {
-                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
-                        var median = Math.floor(sorted_interactions.length/2);
-                        var thisBox_html = '<a href="/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag charCount_'+sorted_interactions[ median ].body.length+'">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>';
-                        tagCloud_html += thisBox_html;
-                        sorted_interactions.splice( median, 1 );
-                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
-                        var thisTag = sorted_interactions.pop(),
-                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag charCount_'+thisTag.body.length+'">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
-                        tagCloud_html += thisBox_html;
-                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
-                        var thisTag = sorted_interactions.shift(),
-                            thisBox_html = '<a href="/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag charCount_'+thisTag.body.length+'">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>';
-                        tagCloud_html += thisBox_html;
-                    }
-
-                    $tagCloud.html(tagCloud_html);
-                    
-                    // set next color and box size
-                    colorInt++;
-                    currentBoxSize++;
-                    if ( colorInt == 6 ) colorInt = 1;
-                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
-                }
-
-                // isotope and bigtext the cloud
-                $('section[role="tag cloud grid"]').isotope({
-                  layoutMode: 'masonryHorizontal',
-                  masonryHorizontal: {
-                    rowHeight: 70
-                  }
-                }, function() {
-                    // $('.box').bigtext();
-                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
-                        currentTagBoxAnimating = 0;
-                    var animationQueue = setInterval( animateNextBox, 67 );
-
-                    function animateNextBox() {
-                        var $thisBox = $('a:eq('+currentTagBoxAnimating+') .box');
-                        if ( $thisBox.hasClass('box1') ) {
-                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 1000 } );
-                        } else {
-                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 1000 } );
-                        }
-                        currentTagBoxAnimating++;
-                        if ( currentTagBoxAnimating > tagBoxesCount ) {
-                            clearInterval( animationQueue );
-                        }
-                    }
-
-                    // do sidebar after isotope
-                    var active_people_html = '',
-                        active_sites_html = '',
-                        active_pages_html = '';
-
-                    // groups
-                    $.each( response.data.groups, function(group_name, group_data) {
-                        active_sites_html += '<li><a href="/group/'+group_data.group.short_name+'">'+group_name+'</a></li>';
-                    });
-                    $('div.active_sites ul').html(active_sites_html);
-                    
-                    // people
-                    $.each( response.data.users, function(user_id, user_data) {
-                        active_people_html += '<li><a href="/user/'+user_id+'"><img src="'+user_data.user.social_user.img_url+'" border="0" />'+user_data.user.social_user.full_name+'</a></li>';
-                    });
-                    $('div.people ul').html(active_people_html);
-
-                    // pages
-                    $.each( response.data.pages, function(page_url, page_data) {
-                        active_pages_html += '<li><a href="'+page_url+'" target="_blank">'+page_data.page.title+'</a></li>';
-                    });
-                    $('div.active_pages ul').html(active_pages_html);
-                });
-            }
-        });
-    });
     {% endif %}
 
 </script>

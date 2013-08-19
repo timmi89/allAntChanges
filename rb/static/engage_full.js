@@ -2571,6 +2571,9 @@ function readrBoard($R){
             window.$RDR = $RDR;
             window.$R = $R;
         },
+        toggle: function(){
+            $R('body').toggle('no-rdr');
+        },
         session: {
             alertBar: {
                 make: function( whichAlert, data) {
@@ -8188,7 +8191,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv19" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv=1" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
