@@ -213,11 +213,11 @@ function readrBoard($R){
                 forceHeight: false,
                 rewritable: true
             },
-            makeHeader: function( _headerText ) {
+            makeHeader: function( _headerText, interactionId ) {
                 //RDR.rindow.makeHeader:
                 var headerText = _headerText || "";
 
-                var $header = $.mustache(
+                var headerTml = $.mustache(
                     '<div class="rdr rdr_header">'+
                         '<div class="rdr_header_arrow">'+
                             '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
@@ -233,6 +233,36 @@ function readrBoard($R){
                     RDR_staticUrl: RDR_staticUrl,
                     headerText: headerText
                 });
+
+                var $header = $(headerTml);
+                
+                if(!!interactionId){
+                    var $menuDropdown = $(
+                        '<div class="menuDropDown">'+
+                            '<span class="icon-chevron-down"></span>'+
+                        '</div>'
+                    );
+                    var $menulist = makeRindowLinks();
+                    $menuDropdown.append($menulist);
+                    var $menu = $('<div class="rindowMenu"></div>').append($menuDropdown);
+                    $menu.append($menulist);
+                    
+                    $header.append($menu);
+                }
+
+                function makeRindowLinks(){
+                    var $links = $(
+                        '<div class="rdr_linkWrap">'+
+                            '<span class="rdr_link">'+
+                                '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">See it.</a>'+
+                            '</span>'+
+                            '<span class="rdr_link">'+
+                                '<a href="javascript:void(0);" class="rdr_undo_link">delete reaction</a>'+
+                            '</span>'+
+                        '</div>'
+                    );
+                    return $links;
+                }
 
                 return $header;
             },
@@ -580,20 +610,11 @@ function readrBoard($R){
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
+
                                 var $success = $('<div class="rdr_view_success"></div>'),
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
-                                    $h1 = $('<h1><span>You reacted:</span> ' + tagBody + '</h1></div>').appendTo( $subheader ),
-                                    undoLinkText = ( args.scenario == "reactionSuccess" ) ? "Undo?":"Delete?",
-                                    $links = $(
-                                        '<div class="rdr_linkWrap">'+
-                                            '<span class="rdr_link">'+
-                                                '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a>'+
-                                            '</span>'+
-                                            '<span class="rdr_link">'+
-                                            '<a href="javascript:void(0);" class="rdr_undo_link">'+undoLinkText+'</a></span>'+
-                                        '</div>'
-                                    ).appendTo( $subheader ),
+                                    $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
                                     $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
                                     $sayMore = $(  
                                         '<div class="rdr_sectionWrap rdr_commentsSection rdr_clearfix">'+
@@ -616,23 +637,22 @@ function readrBoard($R){
                                     ).appendTo( $options );
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                                    var $backButton = $('<div class="rdr_back">Close 3</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
-                                        //temp fix because the rindow scrollpane re-init isnt working
-                                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                                        if(!isGridForRindow){
-                                            RDR.rindow.close($rindow);
+                                        var doClose = RDR.rindow.safeClose($rindow);
+                                        if(!doClose){
                                             return;
                                         }
 
-                                        var $header = RDR.rindow.makeHeader( 'Reactions' );
+                                        var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
                                         $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.updateTagPanel( $rindow );
 
                                     });
                                 // }
+
                                 var shouldAppendNotReplace = true;
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, shouldAppendNotReplace);
 
@@ -708,7 +728,7 @@ function readrBoard($R){
                                     }
                                 });
 
-                                $success.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
                                     // panelEvent - undo1
@@ -841,7 +861,7 @@ function readrBoard($R){
                     } else {
                         
                         var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
-                        var $header = RDR.rindow.makeHeader( headerText );
+                        var $header = RDR.rindow.makeHeader( headerText);
                         $rindow.find('.rdr_header').replaceWith($header);
 
                         $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
@@ -1028,13 +1048,11 @@ function readrBoard($R){
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">Close X</div>');
+                        var $backButton = $('<div class="rdr_back">Close 1</div>');
                         $backButton.click( function() {
 
-                            //temp fix because the rindow scrollpane re-init isnt working
-                            var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                            if(!isGridForRindow){
-                                RDR.rindow.close($rindow);
+                            var doClose = RDR.rindow.safeClose($rindow);
+                            if(!doClose){
                                 return;
                             }
 
@@ -1659,6 +1677,17 @@ function readrBoard($R){
                 });
 
                 return $new_rindow;
+            },
+            safeClose: function( $rindow ) {
+              //RDR.rindow.safeClose:
+
+              var shouldKeepOpen = !!$rindow.attr('rdr-grid-for');
+              if(shouldKeepOpen){
+                return false;
+              }
+
+              RDR.rindow.close($rindow);
+              return true;
             },
             close: function( $rindows ) {
                 //RDR.rindow.close:
@@ -7250,10 +7279,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     summary = RDR.summaries[hash],
                     kind = summary.kind; // text, img, media
 
-                var headerText = ( args.scenario == "reactionSuccess" ) ? "Success!":"You've already done that";
+                var headerText = ( args.scenario == "reactionSuccess" ) ? "Thanks for your reaction!":"You've already reacted to this";
 
                 // do stuff, populate the rindow.
-                var $header = RDR.rindow.makeHeader( headerText );
+                var $header = RDR.rindow.makeHeader( headerText, args.response.data.interaction.id);
                 $rindow.find('.rdr_header').replaceWith($header);
 
                 var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
@@ -7426,13 +7455,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                    var $backButton = $('<div class="rdr_back">Close 2</div>');
                     $backButton.click( function() {
-
-                        //temp fix because the rindow scrollpane re-init isnt working
-                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                        if(!isGridForRindow){
-                            RDR.rindow.close($rindow);
+    
+                        var doClose = RDR.rindow.safeClose($rindow);
+                        if(!doClose){
                             return;
                         }
 
