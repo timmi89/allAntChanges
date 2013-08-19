@@ -76,7 +76,7 @@ $('#cards').addClass('user_profile');
                       width = interaction.content.width
                       height = interaction.content.height
                     -->
-                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" width="463" height="{{ interaction.content|calculate_image_height }}" /></a>
+                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" width="500" height="{{ interaction.content|calculate_image_height }}" /></a>
                     {% endif %}
 
                     {% if interaction.content.kind == "med" %}

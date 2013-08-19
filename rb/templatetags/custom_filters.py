@@ -12,7 +12,7 @@ def get_interaction_count(interaction_node, page=None, content=None):
 
 @register.filter
 def calculate_image_height(content):
-    return int((content.height * 463)/content.width)
+    return int((content.height * 500)/content.width)
 
 @register.filter
 def split_reaction(tagBodyRaw):
