@@ -276,7 +276,7 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 .card .main .contentBox iframe,
 .card .main .contentBox.med a,
 .card .main .contentBox.img a { max-height:500px; overflow:hidden; display:block; }
-.card .main .contentBox blockquote { border:0; margin:0; padding:0 24px; font-size:28px; line-height:30px; color:#868686; font-family:'RDR_HelveticaBold',Helvetica,Arial,sans-serif; }
+.card .main .contentBox blockquote { border:0; margin:0; padding:0 24px; font-size:28px; line-height:30px; color:#868686; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; }
 .card .main .contentBox blockquote a { color:#868686; }
 .card:hover .main .contentBox blockquote a { color:#008be4; }
 .card .main .contentBox blockquote a:hover { text-decoration:none;  }
