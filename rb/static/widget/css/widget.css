@@ -1925,10 +1925,10 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_wide { heigh
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_wide.rdr_contains2,
 div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_contains2 { height:auto !important; min-height:110px !important; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_color1 { background:#84b8ef !important; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_color2 { background:#419bac !important; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_color3 { background:#d7f360 !important; }
+div.rdr div.rdr_body.rdr_tags_list .rdr_color2 { background-color:rgba(52, 140, 156, 0.66) !important; }
+div.rdr div.rdr_body.rdr_tags_list .rdr_color3 { background-color:rgba(215, 243, 96, 0.89) !important; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_color4 { background:#9dd55e !important; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_color5 { background:#6fa4be !important; }
+div.rdr div.rdr_body.rdr_tags_list .rdr_color5 { background-color:rgba(82, 149, 182, 0.83) !important }
 div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag_body,
 div.rdr div.rdr_body.rdr_tags_list .rdr_color1 .rdr_tag .rdr_count { color:#446483 !important;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag_body,
@@ -1936,9 +1936,9 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_color2 .rdr_tag .rdr_count { color:#2f5e
 div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag_body,
 div.rdr div.rdr_body.rdr_tags_list .rdr_color3 .rdr_tag .rdr_count { color:#8d9742 !important;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag_body,
-div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag .rdr_count { color:#779547 !important;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_color4 .rdr_tag .rdr_count { color:#6e8f3b !important;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag_body,
-div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag .rdr_count { color:#3c6c84 !important;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_color5 .rdr_tag .rdr_count { color:#415d6b !important;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_tag_body,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big:hover .rdr_count,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag_body,
