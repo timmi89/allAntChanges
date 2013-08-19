@@ -2,6 +2,7 @@ from django import template
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 import collections
+import math
 
 register = template.Library()
 
@@ -11,7 +12,7 @@ def get_interaction_count(interaction_node, page=None, content=None):
 
 @register.filter
 def calculate_image_height(content):
-    return int(content.height) / int(content.width) * 463
+    return int((content.height * 463)/content.width)
 
 @register.filter
 def split_reaction(tagBodyRaw):
