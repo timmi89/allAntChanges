@@ -254,7 +254,7 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 
 /* cards */
 #cards { margin:0 0 0 60px; width:1060px; }
-.card   { width:500px; margin-bottom:20px; padding-bottom:20px; position:relative; border-top:10px solid;}
+.card   { width:500px; margin-bottom:20px; position:relative; border-top:10px solid;}
 .card:hover   { background:#f7f7f7; }
 .card.color1 { border-color:#84b8ef !important; }
 .card.color2 { border-color:#419bac !important; }
@@ -309,12 +309,24 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card div.comment_container .comment .count  {font:normal 12px Arial; }
 .card div.comment_container .comment .comment_body  { font-size:12px; }
 
-.card .buttons { display:none;padding:5px;position:absolute;bottom:0px;xwidth:133px;right:0px;background:#eee;border:1px solid #aaa; border-bottom:0; text-align:center; box-shadow:0px 0px 8px #aaa;}
+.card .buttons { display:none;padding:5px;position:absolute;bottom:1px;right:0px;background:#eee;border:1px solid #aaa; border-bottom: 1px solid #f0f0f0; text-align:center; box-shadow:0px 0px 8px #aaa;}
 .card:hover .buttons { display:block;}
 .card .buttons a { display:inline-block; font-size:14px; color:#787878; margin:0 10px;}
-.card .buttons a.add_new_reaction { width:20px; height:20px; background:url("../site/images/readr_icons.png") no-repeat -176px 2px; cursor:pointer;}
+.card .buttons a.add_new_reaction { 
+    position: relative;
+    width: 16px;
+    height: 16px;
+    top: 3px;
+    background: url("../site/images/readr_icons.png") no-repeat -179px 0;
+    cursor: pointer;
+}
+/*hide this for now*/
+.card .buttons a.add_to_board {
+    display: none;
+}
 .card .buttons i { color:#787878; }
 .card .buttons a:hover { text-decoration:none;}
+
 
 .card .me_too_outcome { background: #efe; padding: 5px 10px; margin-bottom: 10px; color:#9a9; display:none;}
 .card .me_too_outcome div.close { float:right; cursor:pointer; }
