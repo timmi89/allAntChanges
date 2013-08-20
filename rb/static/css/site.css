@@ -313,14 +313,14 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 section[role="main"] div.card div.content .comments{ padding: 10px; text-align:left; }
 
 .card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:10px 0 5px; }
-.card div.comments h2 {  font-size:12px;  border-bottom: 1px solid #CCC; padding-bottom: 5px; margin-bottom: 3px; }
+.card div.comments h2 {  font-size:12px;  border-bottom: 1px solid #CCC; padding-bottom: 5px; margin-bottom: 0;}
 .card div.comment_container { position:relative; border-bottom:1px solid #eee;}
 .card div.comment_container .block_content   { position:absolute; right:5px; bottom: 3px; font-size:11px; color:red; }
-.card div.comment_container .header   {overflow:hidden; color:#666; clear:both; padding-top:3px;}
-.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa;}
+.card div.comment_container .header   {overflow:hidden; color:#666; clear:both;}
+.card div.comment_container .header .when       {float:right; font:normal 11px Arial; color:#aaa; padding-top: 4px;}
 .card div.comment_container .header .when span  {font-size:8px; text-transform:uppercase; }
-.card div.comment_container .header .avatar     {float:left; height:20px; width:20px;}
-.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; }
+.card div.comment_container .header .avatar     {float:left;}
+.card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; display: block;}
 .card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
 .card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px 'RDR_Helvetica',Helvetica, 'HelveticaRegular';}
 .card div.comment_container .comment .count  {font:normal 12px Arial; }

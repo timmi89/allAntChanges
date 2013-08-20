@@ -101,9 +101,21 @@ $('#cards').addClass('user_profile');
                           <div class="comment_container clearfix">
                             <div class="header">
                               <div class="when">{{ comment.created|date:"M d g:ia" }}</div>
-                              <a href="/user/{{comment.user.id}}/">
-                                <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
-                                <div class="who">{{ comment.user.social_user.full_name }}</div>
+                              <a class="user_info" href="/user/{{comment.user.id}}/">
+                                <div class="avatar">
+                                    {% if comment.user.social_user.img_url %}
+                                        <img src="{{ comment.user.social_user.img_url }}">
+                                    {% else %}
+                                        <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                                    {% endif %}
+                                </div>
+                                <div class="who">
+                                    {% if comment.user.social_user.full_name %}
+                                        {{ comment.user.social_user.full_name }}
+                                    {% else %}
+                                        Anonymous
+                                    {% endif %}
+                                </div>
                               </a>
                             </div>
                             <div class="comment">
