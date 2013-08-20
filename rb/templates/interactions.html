@@ -1,5 +1,6 @@
 {% load custom_filters %}
 
+
 <script>
 var comments = [],
     interactions = [],
@@ -16,198 +17,223 @@ $('#cards').addClass('user_profile');
 {% endif %}
 </script>
 
-{% regroup current_page.object_list by page as pi %}
-{% for page in pi %}
-    {% for interaction in page.list %}
-        {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
-        <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
-            {% if cookie_user %}
-            <div class="buttons">
-                      {% if interaction.user.id == cookie_user.id %}
-                        <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
-                      {% endif %}
-                      {% if interaction.user.id != cookie_user.id %}
-                        <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
-                      {% endif %}
-                      <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
-                      <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
-                      <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
-                    
-                    {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
-                    <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
-                    {% endif %}
-
-                    <!-- board add/delete ? -->
-            </div>
-            {% endif %}
-            {% if not cookie_user %}
-                <!-- add a not-logged-in state here -->
-            {% endif %}
-
-            <div class="meta">
-                <div class="avatar">
-                    {% if interaction.user.social_user.full_name != "" %}
-                    <a href="/user/{{interaction.user.id}}/">
-                        {{ interaction.user.social_user.full_name }}
-                        <img src="{{ interaction.user.social_user.img_url }}"/>
-                    </a>
-                    {% endif %}
-                    {% if interaction.user.social_user.full_name == "" %}
-                    <a href="/user/{{interaction.user.id}}/">
-                        Unregistered User
-                        <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
-                    </a>
-                    {% endif %}
-                </div>
-                <!-- <div class="date">
-                    {{ interaction.created|date:"M d, Y"|escape }}
-                </div> -->
-            </div>
-            <div class="me_too_outcome"></div>
-            <div class="main">
-                <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
-                <div class="contentBox {{ interaction.content.kind }}">
-                    {% if interaction.content.kind == "img" %}
-                    <!--
-                    if image > 463
-                      width = 463
-                      height = ( interaction.content.height / interaction.content.width ) * 463
-                    else 
-                      width = interaction.content.width
-                      height = interaction.content.height
-                    -->
-                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><img class="contentBody" src="{{ interaction.content.body|escape }}" width="500" height="{{ interaction.content|calculate_image_height }}" /></a>
-                    {% endif %}
-
-                    {% if interaction.content.kind == "med" %}
-                    <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><iframe class="contentBody" width="300" height="250" frameborder="0" src="{{ interaction.content.body|escape }}"></iframe></a>
-                    {% endif %}
-
-                    {% if interaction.content.kind == "txt" %}
-                    <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%} contentBody"><a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank">{{ interaction.content.body|escape }}</a></blockquote>
-                    {% endif %}
-
-                    {% if interaction.comments %}
-                    <div class="comments comments_for_{{ interaction.id }}">
-                      <h2>Comments</h2>
-                      {% for comment in interaction.comments %}
-                      {% if comment.approved %}
-                      <div class="comment_container clearfix">
-                        <div class="header">
-                          <div class="when">{{ comment.created|date:"M d g:ia" }}</div>
-                          <a href="/user/{{comment.user.id}}/">
-                            <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
-                            <div class="who">{{ comment.user.social_user.full_name }}</div>
-                          </a>
-                        </div>
-                        <div class="comment">
-                          <div class="comment_body">{{ comment.interaction_node.body|linebreaksbr|escape }}</div>
-                        </div>
-                        {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
-                        <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
+<div class="cardsWrap">
+    <div id="cards">
+    {% regroup current_page.object_list by page as pi %}
+    {% for page in pi %}
+        {% for interaction in page.list %}
+            {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
+            
+            <div class="cardWrap">
+            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+                {% if cookie_user %}
+                <div class="buttons">
+                          {% if interaction.user.id == cookie_user.id %}
+                            <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
+                          {% endif %}
+                          {% if interaction.user.id != cookie_user.id %}
+                            <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
+                          {% endif %}
+                          <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
+                          <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
+                          <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
+                        
+                        {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
+                        <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
                         {% endif %}
-                      </div>
-                      {% endif %}
-                      {% endfor %}
-                    </div>
-                    {% endif %}
+
+                        <!-- board add/delete ? -->
                 </div>
-                <div class="reactionBox">
-                    <div class="via">via</div>
-                    <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{{ page.grouper.site.group.name|escape }}</a>: </div>
-                    <div class="links">
-                        <!-- <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a> -->
-                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">{{ page.grouper.title|escape }} <i class="icon-external-link"></i></a>
+                {% endif %}
+                {% if not cookie_user %}
+                    <!-- add a not-logged-in state here -->
+                {% endif %}
+
+                <div class="meta">
+                    <div class="avatar">
+                        {% if interaction.user.social_user.full_name != "" %}
+                        <a href="/user/{{interaction.user.id}}/">
+                            {{ interaction.user.social_user.full_name }}
+                            <img src="{{ interaction.user.social_user.img_url }}"/>
+                        </a>
+                        {% endif %}
+                        {% if interaction.user.social_user.full_name == "" %}
+                        <a href="/user/{{interaction.user.id}}/">
+                            Unregistered User
+                            <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <!-- <div class="date">
+                        {{ interaction.created|date:"M d, Y"|escape }}
+                    </div> -->
+                </div>
+                <div class="me_too_outcome"></div>
+                <div class="main">
+                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
+                    <div class="contentBox {{ interaction.content.kind }}">
+                        {% if interaction.content.kind == "img" %}
+                        <!--
+                        if image > 463
+                          width = 463
+                          height = ( interaction.content.height / interaction.content.width ) * 463
+                        else 
+                          width = interaction.content.width
+                          height = interaction.content.height
+                        -->
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank">
+                            <img class="contentBody" src="{{ interaction.content.body|escape }}" width="500" height="{{ interaction.content|calculate_image_height }}" /></a>
+                        {% endif %}
+
+                        {% if interaction.content.kind == "med" %}
+                        <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank"><iframe class="contentBody" width="300" height="250" frameborder="0" src="{{ interaction.content.body|escape }}"></iframe></a>
+                        {% endif %}
+
+                        {% if interaction.content.kind == "txt" %}
+                        <blockquote class="{%if interaction.content.body|length <= 30 %}large{%endif%}{%if interaction.content.body|length > 30 and interaction.content.body|length <= 100 %}medium{%endif%} contentBody"><a href="{{ BASE_URL }}/i/{{ interaction.id }}/" target="_blank">{{ interaction.content.body|escape }}</a></blockquote>
+                        {% endif %}
+
+                        {% if interaction.comments %}
+                        <div class="comments comments_for_{{ interaction.id }}">
+                          <h2>Comments</h2>
+                          {% for comment in interaction.comments %}
+                          {% if comment.approved %}
+                          <div class="comment_container clearfix">
+                            <div class="header">
+                              <div class="when">{{ comment.created|date:"M d g:ia" }}</div>
+                              <a href="/user/{{comment.user.id}}/">
+                                <div class="avatar"><img src="{{ comment.user.social_user.img_url }}"></div>
+                                <div class="who">{{ comment.user.social_user.full_name }}</div>
+                              </a>
+                            </div>
+                            <div class="comment">
+                              <div class="comment_body">{{ comment.interaction_node.body|linebreaksbr|escape }}</div>
+                            </div>
+                            {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
+                            <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
+                            {% endif %}
+                          </div>
+                          {% endif %}
+                          {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="reactionBox">
+                        <div class="via">via</div>
+                        <div class="groupName"><a href="/group/{{ page.grouper.site.group.short_name }}/">{{ page.grouper.site.group.name|escape }}</a>: </div>
+                        <div class="links">
+                            <!-- <a href="/page/{{interaction.page.id}}/">{{ page.grouper.title|escape }}</a> -->
+                            <a href="{{ BASE_URL }}/i/{{ interaction.id }}/" class="external" target="_blank">{{ page.grouper.title|escape }} <i class="icon-external-link"></i></a>
+                        </div>
                     </div>
                 </div>
+            </section>
             </div>
-        </section>
 
-          {% comment %}
-          <script>
-            var interaction = {
-                  "id"    :   {{ interaction.id }},
-                  "kind"  :   "{{ interaction.content.kind }}",
-                  "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
-                  "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
-                  "content_body"          :   '{{ interaction.content.body|escapejs }}',
-                  "content_height"          :   {{ interaction.content.height }},
-                  "content_width"          :   {{ interaction.content.width }},
-                  "content_id"          :   '{{ interaction.content.id }}',
-                  "page_title"            :   "{{ page.grouper.title|escapejs }}",
-                  "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
-                  "domain"              : "{{page.grouper.site.domain}}",
-                  "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
-                  "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
-                  "group" : {
-                    "short_name"  :   "{{ page.grouper.site.group.short_name }}",
-                    "id"          :   "{{ page.grouper.site.id }}",
-                    "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
-                    "logo_url_lg" :   "{{ page.grouper.site.group.logo_url_lg }}",
-                    "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
-                    "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
-                  },
-                  "user_id"           :   {{interaction.user.id}},
-                  "user_profile_link" :   "/user/{{interaction.user.id}}",
-                  "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
-                  "user_name"         :   "{{ interaction.user.social_user.full_name }}",
-                  "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
-                  "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
-                  "page" : {{interaction.page}},
-                  "page_id" : {{interaction.page}},
-                  "comments" : [
-                  {% for comment in interaction.comments %}
-                      {
-                      "id": {{comment.id}},
-                      "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
-                      "created"           :   "{{ comment.created|date:"M d g:ia" }}",
-                      "user_id"           :   {{comment.user.id}},
-                      "user_profile_link" :   "/user/{{comment.user.id}}",
-                      "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
-                      "user_name"         :   "{{ comment.user.social_user.full_name }}",
-                      "comment"           :   "{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
-                      "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
-                      }{% if not forloop.last %},{% endif %}
-                  {% endfor %}
-                  ]
-            };
-            if ( interaction.user_name == "" ) {
-              interaction.user_name = "Unregistered<br/>User";
-            }
-            interactions.push( interaction );
-          {% endcomment %}
-        {%endif%}
+              {% comment %}
+              <script>
+                var interaction = {
+                      "id"    :   {{ interaction.id }},
+                      "kind"  :   "{{ interaction.content.kind }}",
+                      "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
+                      "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+                      "content_body"          :   '{{ interaction.content.body|escapejs }}',
+                      "content_height"          :   {{ interaction.content.height }},
+                      "content_width"          :   {{ interaction.content.width }},
+                      "content_id"          :   '{{ interaction.content.id }}',
+                      "page_title"            :   "{{ page.grouper.title|escapejs }}",
+                      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+                      "domain"              : "{{page.grouper.site.domain}}",
+                      "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+                      "singleton"              :   {% if singleton %}true{% else %}false{% endif %},
+                      "group" : {
+                        "short_name"  :   "{{ page.grouper.site.group.short_name }}",
+                        "id"          :   "{{ page.grouper.site.id }}",
+                        "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
+                        "logo_url_lg" :   "{{ page.grouper.site.group.logo_url_lg }}",
+                        "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
+                        "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
+                      },
+                      "user_id"           :   {{interaction.user.id}},
+                      "user_profile_link" :   "/user/{{interaction.user.id}}",
+                      "user_avatar"       :   "{{ interaction.user.social_user.img_url }}",
+                      "user_name"         :   "{{ interaction.user.social_user.full_name }}",
+                      "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
+                      "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
+                      "page" : {{interaction.page}},
+                      "page_id" : {{interaction.page}},
+                      "comments" : [
+                      {% for comment in interaction.comments %}
+                          {
+                          "id": {{comment.id}},
+                          "approved"          :   {% if comment.approved %}true{% else %}false{% endif %},
+                          "created"           :   "{{ comment.created|date:"M d g:ia" }}",
+                          "user_id"           :   {{comment.user.id}},
+                          "user_profile_link" :   "/user/{{comment.user.id}}",
+                          "user_avatar"       :   "{{ comment.user.social_user.img_url }}",
+                          "user_name"         :   "{{ comment.user.social_user.full_name }}",
+                          "comment"           :   "{% filter force_escape %}{{ comment.interaction_node.body|linebreaksbr|escapejs }}{% endfilter %}",
+                          "moderator"         :   {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}true{% else %}false{% endif %}
+                          }{% if not forloop.last %},{% endif %}
+                      {% endfor %}
+                      ]
+                };
+                if ( interaction.user_name == "" ) {
+                  interaction.user_name = "Unregistered<br/>User";
+                }
+                interactions.push( interaction );
+              {% endcomment %}
+            {%endif%}
 
-        {% if interaction.human_kind == 'Share' %}
-        {% comment %}
-            var share = {
-                  "id"    :   {{ interaction.id }},
-                  "kind"  :   "{{ interaction.content.kind }}",
-                  "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
-                  "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
-                  "content_body"          :   '{{ interaction.content.body|escapejs }}',
-                  "page_title"            :   "{{ page.grouper.title|escapejs }}",
-                  "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
-                  "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
-                  "group" : {
-                    "short_name"  :   "{{ page.grouper.site.group.short_name }}",
-                    "id"          :   "{{ page.grouper.site.id }}",
-                    "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
-                    "logo_url_lg" :   "{{ page.grouper.site.group.logo_url_lg }}",
-                    "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
-                    "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
-                  },
-                  "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
-                  "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
-                  "page" : {{interaction.page}},
-                  "page_id" : {{interaction.page}}
-            };
-            shares.push( share );
-        {% endcomment %}
-        {% endif %}
-        </script>
+            {% if interaction.human_kind == 'Share' %}
+            {% comment %}
+                var share = {
+                      "id"    :   {{ interaction.id }},
+                      "kind"  :   "{{ interaction.content.kind }}",
+                      "date"  :   "{{ interaction.created|date:"M d, Y"|escapejs }}",
+                      "interaction_node_body" :   "{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escapejs }}{% else %}{{ interaction.human_kind|escapejs }}{% endif %}",
+                      "content_body"          :   '{{ interaction.content.body|escapejs }}',
+                      "page_title"            :   "{{ page.grouper.title|escapejs }}",
+                      "external_url"          :   "{% if interaction.page.canonical_url %}{{ interaction.page.canonical_url|escapejs }}{% else %}{{ interaction.page.url|escapejs }}{% endif %}",
+                      "approved"              :   {% if interaction.approved %}true{% else %}false{% endif %},
+                      "group" : {
+                        "short_name"  :   "{{ page.grouper.site.group.short_name }}",
+                        "id"          :   "{{ page.grouper.site.id }}",
+                        "logo_url"    :   "{{ page.grouper.site.group.logo_url_sm }}",
+                        "logo_url_lg" :   "{{ page.grouper.site.group.logo_url_lg }}",
+                        "name"        :   "{{ page.grouper.site.group.name|escapejs }}",
+                        "title"       :   "{{ page.grouper.site.group.title|escapejs }}"
+                      },
+                      "created"           :   "{{ interaction.created|date:"M d g:ia" }}",
+                      "moderator"         :   {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}true{% else %}false{% endif %},
+                      "page" : {{interaction.page}},
+                      "page_id" : {{interaction.page}}
+                };
+                shares.push( share );
+            {% endcomment %}
+            {% endif %}
+            </script>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
+    </div>
+    
+    {% if not singleton %}
+    <div class="pagination">
+      <span class="step-links">
+        {% if current_page.has_previous %}
+          <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.previous_page_number }}">prev</a>
+        {% endif %}
+        <span class="current">
+          Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
+        </span>
+        {% if current_page.has_next %}
+          <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.next_page_number }}">next</a>
+        {% endif %}
+      </span>
+    </div>
+    {% endif %}
+
+</div><!-- end #cards -->
 
 
 <script>
@@ -277,23 +303,6 @@ var metoos = {
 {% endif %}
 
 </script>
-
-{% if not singleton %}
-<div class="pagination">
-  <span class="step-links">
-    {% if current_page.has_previous %}
-      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.previous_page_number }}">prev</a>
-    {% endif %}
-    <span class="current">
-      Page {{ current_page.number }} of {{ current_page.paginator.num_pages }}
-    </span>
-    {% if current_page.has_next %}
-      <a href="?{% if query_string %}s={{ query_string }}{% endif %}&page_num={{ current_page.next_page_number }}">next</a>
-    {% endif %}
-  </span>
-</div>
-{% endif %}
-
 <script>
 
 function writeCardButtons( $card ) {
