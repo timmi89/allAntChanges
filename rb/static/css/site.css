@@ -280,7 +280,7 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 .card .main h1 { font-size:54px; line-height:50px; padding:20px 100px 20px  0px; margin:0; }
 .card .main h1 a { display:block; color:#343434; }
 .card .main h1 a div { }
-.card .main .reactionBox { padding:5px; vertical-align:top; font-size:12px; font-weight:bold; background:#f0f0f0; margin-top:20px;  }
+.card .main .reactionBox { padding:5px; vertical-align:top; font-size:12px; font-weight:bold; margin-top:20px;  }
 .card .main .reactionBox .via { display:inline-block; }
 .card .main .reactionBox .groupName { display:inline-block; word-break:break-all; }
 .card .main .reactionBox .links { display:inline-block; }
