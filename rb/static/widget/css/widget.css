@@ -649,6 +649,7 @@ div.rdr select  { font-family: Arial; color:#666; font-size:11px; }
 div.rdr div.rdr_commentBox .rdr_inlineComment {
     max-width: none;
     width:100%;
+    max-height: 100px;
 }
 div.rdr input[type="text"].rdr_inlineComment{
     width: 149px;
