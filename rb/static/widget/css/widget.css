@@ -1066,7 +1066,7 @@ div.rdr .rdr_body.rdr_page_reactions_summary h1 {
   margin-bottom:0px;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary table {
-  min-width:320px;
+  /*min-width:320px;*/
 }
 /* deprecated?  all of this using tables */
 div.rdr .rdr_body.rdr_page_reactions_summary td {
