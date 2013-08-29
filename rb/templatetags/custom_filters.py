@@ -2,12 +2,23 @@ from django import template
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 import collections
+import logging
+logger = logging.getLogger('rb.standard')
 
 register = template.Library()
 
 @register.filter
 def get_interaction_count(interaction_node, page=None, content=None):
     return interaction_node.tag_count(page=page, content=content)
+
+@register.filter
+def calculate_image_height(content):
+    try:
+        return int((content.height * 500)/content.width)
+    except ZeroDivisionError:
+        logger.info("An image had a width of 0: "+str(content))
+        # let it fill the html height attribute with an empty string.
+        return ""
 
 @register.filter
 def split_reaction(tagBodyRaw):
