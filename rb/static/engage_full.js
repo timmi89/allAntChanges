@@ -623,12 +623,6 @@ function readrBoard($R){
                                             '<div class="rdr_last_column"><button class="rdr_add_comment">Add</button></div>'+
                                         '</div>'
                                     ).appendTo( $options ),
-                                    $save = $(
-                                        '<div class="rdr_sectionWrap rdr_boardsSection rdr_clearfix">'+
-                                            '<div class="rdr_first_column"><strong>Add To:</strong></div>'+
-                                            '<div class="rdr_second_column rdr_select_user_board"></div>'+
-                                        '</div>'
-                                    ).appendTo( $options ),
                                     $share = $(
                                         '<div class="rdr_sectionWrap rdr_shareSection rdr_clearfix">'+
                                             '<div class="rdr_first_column"><strong>Share:</strong></div>'+
@@ -656,78 +650,8 @@ function readrBoard($R){
                                 var shouldAppendNotReplace = true;
                                 RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, shouldAppendNotReplace);
 
-                                var $user_boards = $('<select class="rdr_user_boards"><option value="">Choose a board...</option></select>');
-                                // boards
-
                                 RDR.user = RDR.user || {};
                                 
-                                if (typeof RDR.user.user_boards != "undefined" && RDR.user.user_boards!=null) {
-                                    $.each( RDR.user.user_boards, function(idx, board) {
-                                        $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
-                                    });
-                                }
-                                $user_boards.append('<option value="" class="">----------</option>');
-                                $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
-                                $success.find('.rdr_select_user_board').append($user_boards);
-
-                                $user_boards.change( function() {
-                                    var $this = $(this).find(':checked');
-                                    if ( !isNaN( parseInt($this.val()) ) ) {
-                                        var newArgs = {
-                                            hash: args.hash,
-                                            board_id: parseInt($this.val()),
-                                            board_name: $this.text(),
-                                            int_id: args.response.data.interaction.id,
-                                            tag: args.tag,
-                                            rindow: args.rindow
-                                        };
-                                        RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                                    } else if ( $this.val() == "create" ) {
-                                        // pop the board create iframe
-                                        var iframeUrl = RDR_baseUrl + "/board_create/?popup=widget",
-                                            parentUrl = window.location.href,
-                                            parentHost = window.location.protocol + "//" + window.location.host,
-                                            bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
-                                            $boardIframe = $('<div class="rdr_window rdr-board-create-div rdr_widget"><iframe id="rdr-board-create" name="rdr-board-create" src="' + iframeUrl + '&parentUrl=' + parentUrl + '&parentHost=' + parentHost + '" width="625" height="335" frameborder="0" /></div>');
-                                        $('#rdr_sandbox').append( $boardIframe );
-
-                                        var intervalArgs = args;
-
-                                        if ( $('div.rdr-board-create-div').length ) {
-                                            RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
-
-                                                if ( !$('div.rdr-board-create-div').length ) {
-                                                    //clear loader
-                                                    var $rindow = args.rindow;
-                                                    if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                                                    // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
-                                                    RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                        if (typeof RDR.user.new_board_id != "undefined" && RDR.user.new_board_id!=null) {
-                                                            var newArgs = {
-                                                                hash: args.hash,
-                                                                board_id: RDR.user.new_board_id,
-                                                                board_name: RDR.user.new_board_name,
-                                                                int_id: args.response.data.interaction.id,
-                                                                tag: args.tag,
-                                                                rindow: args.rindow
-                                                            };
-                                                            RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                                                        }
-                                                    });
-
-                                                    $.postMessage(
-                                                        "reloadXDMframe",
-                                                        RDR_baseUrl + "/static/xdm.html",
-                                                        window.frames['rdr-xdm-hidden']
-                                                    );
-                                                    clearInterval( RDR.checkingBoardWindow );
-                                                }
-                                            }, 250 );
-                                        }
-                                    }
-                                });
-
                                 $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                     var args = event.data.args;
 
@@ -990,37 +914,6 @@ function readrBoard($R){
                             '</div>'+
                         '</div>';
 
-                    //don't use mustache for now - just in case it was causing perf issues, though i dont think it should be.
-
-                    // var tagBoxHTML = $.mustache(
-                    //     '<div class="rdr_color{{colorInt}} {{boxSize}} rdr_box {{wideBox}} {{writeMode}}">'+
-                    //         '<div '+
-                    //             'class="rdr_tag {{tagIsSplitClass}} rdr_tooltip_this {{#content_node_id}}rdr_content_node_{{content_node_id}}{{/content_node_id}}" '+
-                    //             'title="{{message}}" '+
-                    //             'data-tag_id="{{tag_id}}" '+
-                    //             'data-tag_count="{{tagCount}}" '+
-                    //             'data-parent_id="{{parent_id}}" '+
-                    //             'data-content_node_id="{{content_node_id}}" '+
-                    //         '>'+
-                    //             '{{{tagBodyCrazyHtml}}}'+
-                    //             '{{^writeMode}}'+
-                    //                 '<span class="rdr_count">{{tagCount}}</span>'+
-                    //             '{{/writeMode}}'+
-                    //         '</div>'+
-                    //     '</div>'
-                    // ,{
-                    //     colorInt: colorInt,
-                    //     boxSize: boxSize,
-                    //     wideBox: wideBox,
-                    //     writeMode: writeMode,
-                    //     tagIsSplitClass: tagIsSplitClass,
-                    //     message: message,
-                    //     tagBodyCrazyHtml: tagBodyCrazyHtml,
-                    //     tag_id: tag.id,
-                    //     parent_id: tag.parent_id,
-                    //     tagCount: tagCount,
-                    //     content_node_id: content_node_id
-                    // });
                     
                     var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
@@ -5012,12 +4905,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             var $rindow = args.rindow;
                             if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
 
-                            $rindow.find('.rdr_select_user_board').find('select').show();
-                            $rindow.find('.rdr_select_user_board').find('div.rdr_success').remove();
-                            
-                            //reset the select el.
-                            var $boardSelect = $rindow.find('.rdr_select_user_board select');
-                            $boardSelect.val(0);
                         }
                     }
                 },
@@ -5212,7 +5099,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
                                 var $summary_box = $rindow.find('.rdr_tags_list');
                                 var $pageTagResponse = $('<div class="rdr_info"></div>');
-                                var $saveToBoard = _makeBoardList(args);
+                                
                                 var $shareIcons = _makeShareIcons(args);
 
                                 var existing = args.response.data.existing;
@@ -5236,7 +5123,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     });
 
                                     $pageTagResponse.append($feedbackMsg);
-                                    $pageTagResponse.append($saveToBoard);
                                     $pageTagResponse.append($shareIcons);
                                     
                                     $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
@@ -5265,7 +5151,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     });
 
                                     $pageTagResponse.append($feedbackMsg);
-                                    $pageTagResponse.append($saveToBoard);
+
                                     $pageTagResponse.append($shareIcons);
                                     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                 }
@@ -5434,80 +5320,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 // }
                             }
 
-                            function _makeBoardList(args){
-                                if ( RDR.user.user_type ) {
-                                    var $user_boards = $('<div class="rdr_select_user_board"><strong class="rdr_save_it">Save It:</strong> <select class="rdr_user_boards"><option value="">Choose a board...</option></select></div>');
-                                    // boards
-                                    if (typeof RDR.user.user_boards != "undefined" && RDR.user.user_boards!=null) {
-                                        $.each( RDR.user.user_boards, function(idx, board) {
-                                            $user_boards.find('select').append('<option value="'+board.id+'">'+board.title+'</option>');
-                                        });
-                                    }
-                                    $user_boards.find('select').append('<option value="" class="">----------</option>');
-                                    $user_boards.find('select').append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
-                                    $user_boards.find('select').change( function() {
-                                        var $this = $(this).find(':checked');
-                                        if ( !isNaN( parseInt($this.val()) ) ) {
-                                            var newArgs = {
-                                                hash: args.hash,
-                                                board_id: parseInt($this.val()),
-                                                board_name: $this.text(),
-                                                int_id: args.response.data.interaction.id,
-                                                tag: args.tag,
-                                                rindow: args.rindow
-                                            };
-                                            RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                                        } else if ( $this.val() == "create" ) {
-                                            // pop the board create iframe
-                                            // THIS IS DUPLICATED CODE.  :)
-                                            var iframeUrl = RDR_baseUrl + "/board_create/?popup=widget",
-                                                parentUrl = window.location.href,
-                                                parentHost = window.location.protocol + "//" + window.location.host,
-                                                bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
-                                                $boardIframe = $('<div class="rdr_window rdr-board-create-div rdr_widget"><iframe id="rdr-board-create" name="rdr-board-create" src="' + iframeUrl + '&parentUrl=' + parentUrl + '&parentHost=' + parentHost + '" width="625" height="335" frameborder="0" /></div>');
-                                            $('#rdr_sandbox').append( $boardIframe );
-
-                                            var intervalArgs = args;
-
-                                            if ( $('div.rdr-board-create-div').length ) {
-                                                RDR.checkingBoardWindow = setInterval( function(intervalArgs) {
-
-                                                    if ( !$('div.rdr-board-create-div').length ) {
-                                                        //clear loader
-                                                        var $rindow = args.rindow;
-                                                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                                                        // set a receiveMessage callback that would take the cookie-stored, newly-made board ID and allow adding to that board.
-                                                        RDR.session.receiveMessage({}, function(intervalArgs) {
-                                                            if (typeof RDR.user.new_board_id != "undefined" && !RDR.user.new_board_id) {
-                                                                var newArgs = {
-                                                                    hash: args.hash,
-                                                                    board_id: RDR.user.new_board_id,
-                                                                    board_name: RDR.user.new_board_name,
-                                                                    int_id: args.response.data.interaction.id,
-                                                                    tag: args.tag,
-                                                                    rindow: args.rindow
-                                                                };
-                                                                RDR.actions.interactions.ajax( newArgs, 'boardadd', 'create' );
-                                                            }
-                                                        });
-
-                                                        $.postMessage(
-                                                            "reloadXDMframe",
-                                                            RDR_baseUrl + "/static/xdm.html",
-                                                            window.frames['rdr-xdm-hidden']
-                                                        );
-                                                        clearInterval( RDR.checkingBoardWindow );
-                                                    }
-                                                }, 250 );
-                                            }
-                                        }
-                                    });
-                                    return $user_boards;
-                                } else {
-                                    return "";
-                                }
-                            }
 
                             function _makeShareIcons(args){
                                 // embed icons/links for diff SNS
@@ -8219,7 +8031,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv19" );
+    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv20" );
     css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
