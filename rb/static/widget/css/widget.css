@@ -649,6 +649,7 @@ div.rdr select  { font-family: Arial; color:#666; font-size:11px; }
 div.rdr div.rdr_commentBox .rdr_inlineComment {
     max-width: none;
     width:100%;
+    max-height: 100px;
 }
 div.rdr input[type="text"].rdr_inlineComment{
     width: 149px;
@@ -1065,7 +1066,7 @@ div.rdr .rdr_body.rdr_page_reactions_summary h1 {
   margin-bottom:0px;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary table {
-  min-width:320px;
+  /*min-width:320px;*/
 }
 /* deprecated?  all of this using tables */
 div.rdr .rdr_body.rdr_page_reactions_summary td {

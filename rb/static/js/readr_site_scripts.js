@@ -18,33 +18,33 @@ RB = {
         return qs_args[ key ];
     },
     admin: {
-		requestAccess: function(fb_response, group_id) {
-			if ( fb_response ) {
-		        var fb_session = (fb_response.session) ? fb_response.session:fb_response
-				var sendData = {
-					fb: fb_session,
-					group_id: group_id
-				};
+        requestAccess: function(fb_response, group_id) {
+            if ( fb_response ) {
+                var fb_session = (fb_response.session) ? fb_response.session:fb_response
+                var sendData = {
+                    fb: fb_session,
+                    group_id: group_id
+                };
 
-				$.ajax({
-					url: "/api/admin_request/",
-					type: "get",
-					contentType: "application/json",
-					dataType: "jsonp",
-					data: {
-						json: JSON.stringify( sendData )
-					},
-					success: function(response){
-						
-					},
-					error: function(response) {
+                $.ajax({
+                    url: "/api/admin_request/",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        json: JSON.stringify( sendData )
+                    },
+                    success: function(response){
+                        
+                    },
+                    error: function(response) {
 
-					}
-				});
-			}
-		},
-		blockContent: function(int_id) {
-			var sendData = {
+                    }
+                });
+            }
+        },
+        blockContent: function(int_id) {
+            var sendData = {
                 "int_id": int_id,
                 "user_id": RDRAuth.rdr_user.user_id,
                 "readr_token": RDRAuth.rdr_user.readr_token
@@ -73,10 +73,10 @@ RB = {
 
                 }
             });
-		}
-	},
-	util: {
-		getHashValue: function( key ) {
+        }
+    },
+    util: {
+        getHashValue: function( key ) {
             var hash = window.location.hash;
             if ( hash.length > 0 ) {
                 var pairs = hash.split('#');
@@ -111,10 +111,10 @@ RB = {
                 var pairs = hash.split('#');
                 for ( var i in pairs ) {
                     if ( key == pairs[i].split('=')[0] ) {
-                    	newHash += "#" + key + "=" + value;
+                        newHash += "#" + key + "=" + value;
                         foundKey = true;
                     } else if (pairs[i].length > 0 ) {
-                    	newHash += "#" + pairs[i];
+                        newHash += "#" + pairs[i];
                     }
                 }
 
@@ -124,8 +124,8 @@ RB = {
 
                 window.location.hash = newHash;
             } else {
-            	newHash = "#" + key + "=" + value;
-            	window.location.hash = newHash;
+                newHash = "#" + key + "=" + value;
+                window.location.hash = newHash;
             }
         },
         
@@ -156,7 +156,7 @@ RB = {
                 oHead.appendChild(oScript);
             }
         }
-	},
+    },
 
     fixUrlParams: function (urlOrNull, newQParams, replaceNotMerge) {
         //given a url (or defaulting to the window url if null),

@@ -17,7 +17,7 @@
     </div>
 </div>
 <div class="masthead secondary">
-    <h4><i class="icon-dashboard"></i> Publishers: ReadrBoard will increase your KPIs up to 15%.  And it’s free.  <a href="/about/">Learn more</a>.</h4>
+    <h4><i class="icon-dashboard"></i> Publishers: &nbsp;ReadrBoard will increase your KPIs up to 15%. &nbsp;And it’s free.  &nbsp;<a href="/about/">Learn more</a>.</h4>
 </div>
 {% endif %}
 {% endif %}
@@ -51,14 +51,12 @@
 {% endif %}
 
     {% block cards %}
-    <div id="cards">
         {% include "interactions.html" %}
-    </div>
-    <script>
-    $('a[rel="tooltip"]').tooltip({
-        placement:"bottom"
-    });
-    </script>
+        <script>
+        $('a[rel="tooltip"]').tooltip({
+            placement:"bottom"
+        });
+        </script>
     {% endblock cards %}    
 
 {% if not profile_user and not group and not board and not query_string %}
@@ -71,7 +69,7 @@
 {% block pageJS %}
 <script>
     $('#cards').isotope({
-      itemSelector:'.card',
+      itemSelector:'.cardWrap',
       masonry: {
         columnWidth: 530
       }
