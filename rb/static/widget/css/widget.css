@@ -410,13 +410,11 @@ div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
 div.rdr div.rdr_footer                         { 
     background:#fff;
     position:relative;
-    min-height:32px;
     text-align:center;
     z-index:5;
     font-size:11px;
     font-family:'RDR_HelveticaBold',Helvetica,Arial;
     font-size:12px;
-    padding:10px;
     /*todo: revisit the better way to do this*/
     -webkit-box-sizing : border-box;
     -moz-box-sizing : border-box;
@@ -441,6 +439,29 @@ div.rdr div.rdr_footer.rdr_cta span {
   padding:4px;
   display:inline-block;
 }
+div.rdr div.rdr_footer.rdr_cta .rdr_cta_msg{
+  position: relative;
+  font-size: 12px;
+  left: -3px;
+}
+div.rdr div.rdr_footer.rdr_cta .rdr_cta_msg:after{
+    position: absolute;
+    display: block;
+    content: "";
+    width: 0;
+    height: 0;
+    right: -8px;
+    top: 8px;
+    border-top: 4px solid #666;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    z-index: 101;
+}
+div.rdr div.rdr_footer.rdr_cta .rdr_cta_msg:hover:after{
+    border-top-color: #008be4;
+}
+
 div.rdr div.rdr_footer.rdr_cta span:hover {
   color:#008be4;
 }
@@ -1970,7 +1991,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium .rdr_count { font-size:14px; 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px; height:110px; padding:20px 15px 0;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px; height:110px; padding:35px 10px 0;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:18px 7px 0;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:15px 7px 0;}
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
@@ -2011,9 +2032,36 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag_body,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_count,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_count,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_tag_body { color:#008be4; }
-div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { padding:5px 10px; text-align:center; width:320px; }
-div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px;}
+div.rdr div.rdr_footer .rdr_box { padding: 5px 0;}
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { text-align:center;}
+div.rdr div.rdr_footer .rdr_click_overlay{
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: none;
+}
+
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 4px;}
 div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4; }
+
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
+  position: absolute;
+  background: #5999dc;
+  border: none;
+  margin: 0;
+  width: 29px;
+  /*height: 29px;*/
+  top: 4px;
+  bottom: 4px;
+  right: 20px;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+}
+
 div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { display:block; margin-right:-25px; font-size:10px; color:#fff; float:right; margin-top:-15px; position:relative; -webkit-transition: margin-right 0.6s ease; -moz-transition: margin-right 0.6s ease; -o-transition: margin-right 0.6s ease; -ms-transition: margin-right 0.6s ease; transition: margin-right 0.6s ease;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover.rdr_animated { margin-right:0px; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover i { font-size:12px; color:#fff; margin-right:2px; }

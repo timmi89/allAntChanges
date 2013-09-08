@@ -1170,47 +1170,51 @@ function readrBoard($R){
                         helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
 
                     // add custom tag
-                    // var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><div contenteditable="true">'+helpText+'</div></div>');
-                    var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><input value="'+helpText+'" /></div>');
+                    var $clickOverlay = $('<div class="rdr_click_overlay"></div>').appendTo($container);
+                    var $custom = $('<div class="rdr_tag rdr_custom_tag"></div>');
+                    var $customInput = $('<input value="'+helpText+'" />').appendTo($custom);
+                    var $customSubmit = $('<button class="rdr_custom_tag_submit" name="rdr_custom_tag_submit">ok</button>').appendTo($custom);
+                    $customSubmit.click(function(){
+                        submitCustomTag($custom, $customInput);
+                    });
                     
-
-                    $custom.find('input').focus( function() {
+                    $clickOverlay.click(function(){
+                        $customInput.focus();
+                    });
+                                        
+                    $customInput.focus( function() {
                         // RDR.events.track('start_custom_reaction_rindow');
                         var $input = $(this);
                         $input.removeClass('rdr_default');
                         if ( $input.val() == helpText ) {
                             $input.val('');
                         }
+
+                        $clickOverlay.hide();
+                        $customSubmit.show();
+
                     }).blur( function() {
                         var $input = $(this);
                         if ( $input.val() === "" ) {
                             $input.val( helpText );
+                            $customSubmit.hide();
+                            setInterval(function(){
+                                $clickOverlay.show();
+                            }, 20);
                         }
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
+                            $customSubmit.hide();
+                            setInterval(function(){
+                                $clickOverlay.show();
+                            }, 20);                            
                         }
                         $input.closest('div.rdr_tag').removeClass('rdr_hover');
-
+                        
                     }).keyup( function(event) {
-                        var $input = $(this),
-                            tag = {},
-                            hash = $rindow.data('container');
-
-                        //note that hash is a $(dom) element, not a hash.  Fix this later.
 
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
-                            var val = $input.val();
-                            if(val === ""){
-                                return;
-                            }
-                            tag.body = val;
-
-                            $input.parent().addClass('rdr_tagged');
-
-                            // args = { tag:tag, hash:hash, kind:"page" };
-                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
-                            RDR.actions.interactions.ajax( args, actionType, 'create' );
-                            $input.blur();
+                            submitCustomTag($custom, $customInput);
                         }
                         else if (event.keyCode == '27') { //esc
                             //return false;
@@ -1222,7 +1226,25 @@ function readrBoard($R){
                     });
 
                     $container.find('.rdr_box').append( $custom, " " );
-                    $custom.tooltip();
+                }
+
+                function submitCustomTag($custom, $customInput){
+                    var tag = {},
+                        hash = $rindow.data('container');
+                        //note that hash is a $(dom) element, not a hash.  Fix this later.
+                    
+                    var val = $customInput.val();
+                    if(val === ""){
+                        return;
+                    }
+                    tag.body = val;
+
+                    $custom.parent().addClass('rdr_tagged');
+
+                    // args = { tag:tag, hash:hash, kind:"page" };
+                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
+                    RDR.actions.interactions.ajax( args, actionType, 'create' );
+                    $customInput.blur();
                 }
             },
             _rindowTypes: {
@@ -3679,10 +3701,10 @@ function readrBoard($R){
                             $(this).addClass('rdr_live_hover');
                         })//chain
                         .on('mouseleave', function() {
-                            var $hash_helper = $('.rdr_helper_rindow.rdr_for_'+hash);
-                            if ( $hash_helper.length ) {
-                                $hash_helper.remove();
-                            }
+                            // var $hash_helper = $('.rdr_helper_rindow.rdr_for_'+hash);
+                            // if ( $hash_helper.length ) {
+                            //     $hash_helper.remove();
+                            // }
                             $(this).removeClass('rdr_live_hover');
                         });
 
@@ -5716,17 +5738,27 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( "Say what you think" );
+                        var $header = RDR.rindow.makeHeader("What do you think?");
                         $rindow.addClass('rdr_helper_rindow');
                         $rindow.find('.rdr_header').replaceWith($header);
+                        $header.append('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
-                        $rindowBody.html('<div class="rdr_helper_text">Select some text and click <strong>What do you think?</strong></div>');
+                        $rindowBody.html('');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
-                        RDR.rindow.updateSizes(
-                            $rindow, {
-                                noAnimate:true
-                            }
-                        );
+                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Respond to this</span>' );
+                        $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
+                            $rindow.remove();
+                            var $container = $('[rdr-hash="'+hash+'"]');
+                            var el = $container[0]
+                            $('document').selog('selectEl', el);
+                            $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                        });
+
+                        // RDR.rindow.updateSizes(
+                        //     $rindow, {
+                        //         noAnimate:true
+                        //     }
+                        // );
                     }
 
                     function _setupHoverToFetchContentNodes(callback){                        
@@ -6125,13 +6157,16 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
                         $existingTagslist.remove();
 
+
+                        // <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>
+
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
                                 // write page-level tags: readmode`
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_add_page_reaction">+ To add a reaction, click here.</span> <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>' );
-                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_add_page_reaction').click( function() {
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_cta_msg').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
@@ -6155,11 +6190,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
                                     if ( !summary.crossPage ) {
-                                        RDR.rindow.updateFooter( $rindow, '+ To add a new reaction, select some text' );
+                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                        $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
+                                            $rindow.remove();
+                                            var $container = $('[rdr-hash="'+hash+'"]');
+                                            var el = $container[0]
+                                            $('document').selog('selectEl', el);
+                                            $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                        });
                                     }
                                 } else {
-                                    RDR.rindow.updateFooter( $rindow, '<span>+ To add a reaction, click here.</span>' );
-                                    $rindow.find('.rdr_footer').addClass('rdr_cta').find('span').click( function() {
+                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                    $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                         $rindow.remove();
                                         $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     });
