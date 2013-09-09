@@ -850,18 +850,6 @@ function readrBoard($R){
                         content_node.id = content_node_id;
                     }
 
-                    // abstract this when we abstract the same thing in the previous function.
-                    if ( kind == "page" ) {
-                        message = (isWriteMode) ? "Click to add this reaction here.":'Click to see what people reacted to';
-                    } else if ( tagCount == "" ) {
-                        message = '';
-                    } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
-                        message = "Click to add this reaction here.";
-                    } else {
-                        var peoples = ( tagCount == 1 ) ? "person":"people",
-                            message = tagCount+' '+peoples+' had this reaction.<br/>Click if you agree.';
-                    }
-                    
                     // this can go away if we change CSS class names
                     var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
                     // var boxSize = "rdr_box_"+ boxSize, 
@@ -870,6 +858,20 @@ function readrBoard($R){
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
                       tagBodyCrazyHtml = "",
                       tagIsSplitClass = "";
+
+                    // abstract this when we abstract the same thing in the previous function.
+                    if ( kind == "page" ) {
+                        message = (isWriteMode) ? '+1 '+tagBodyRaw :'Click to see what people reacted to';
+                    } else if ( tagCount == "" ) {
+                        message = '';
+                    } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
+                        message = '+1 '+tagBodyRaw;
+                    } else {
+                        // var reactText = ( tagCount == 1 ) ? "reaction":"reactions",
+                        //     message = tagCount+' '+reactText+'.  Click to agree.';
+                        var message = '+1 '+tagBodyRaw;
+                    }
+                    
 
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
@@ -1212,13 +1214,14 @@ function readrBoard($R){
                         $input.closest('div.rdr_tag').removeClass('rdr_hover');
                         
                     }).keyup( function(event) {
-
+                        var $input = $customInput;
                         if (event.keyCode == '13') { //enter.  removed comma...  || event.keyCode == '188'
                             submitCustomTag($custom, $customInput);
                         }
                         else if (event.keyCode == '27') { //esc
-                            //return false;
                             $input.blur();
+                            // return false so the rindow doesn't close.
+                            return false;
                         } else if ( $input.val().length > 25 ) {
                             var customTag = $input.val();
                             $input.val( customTag.substr(0, 25) );

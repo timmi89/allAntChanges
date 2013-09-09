@@ -1991,7 +1991,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium .rdr_count { font-size:14px; 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px; height:110px; padding:20px 15px 0;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px; height:110px; padding:35px 10px 0;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:15px 7px 0;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:16px 7px 0;}
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
@@ -2032,7 +2032,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_tag_body,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_medium:hover .rdr_count,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_count,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_box_small:hover .rdr_tag_body { color:#008be4; }
-div.rdr div.rdr_footer .rdr_box { padding: 5px 0;}
+div.rdr div.rdr_footer .rdr_box { padding: 7px 0;}
 div.rdr div.rdr_footer .rdr_box .rdr_custom_tag { text-align:center;}
 div.rdr div.rdr_footer .rdr_click_overlay{
     cursor: pointer;
@@ -2043,7 +2043,7 @@ div.rdr div.rdr_footer .rdr_click_overlay{
     background: none;
 }
 
-div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 4px;}
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 3px;}
 div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4; }
 
 div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
@@ -2051,11 +2051,10 @@ div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
   background: #5999dc;
   border: none;
   margin: 0;
-  width: 29px;
-  /*height: 29px;*/
-  top: 4px;
-  bottom: 4px;
-  right: 20px;
+  width: 27px;
+  height: 27px;
+  top: 6px;
+  right: 27px;
   color: white;
   text-align: center;
   cursor: pointer;
