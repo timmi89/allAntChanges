@@ -1200,16 +1200,12 @@ function readrBoard($R){
                         if ( $input.val() === "" ) {
                             $input.val( helpText );
                             $customSubmit.hide();
-                            setInterval(function(){
-                                $clickOverlay.show();
-                            }, 20);
+                            $clickOverlay.show();
                         }
                         if ( $input.val() == helpText ) {
                             $input.addClass('rdr_default');
                             $customSubmit.hide();
-                            setInterval(function(){
-                                $clickOverlay.show();
-                            }, 20);                            
+                            $clickOverlay.show();              
                         }
                         $input.closest('div.rdr_tag').removeClass('rdr_hover');
                         
