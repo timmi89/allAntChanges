@@ -616,13 +616,14 @@ function readrBoard($R){
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
                                     $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
-                                    $sayMore = $(  
-                                        '<div class="rdr_sectionWrap rdr_commentsSection rdr_clearfix">'+
-                                            '<div class="rdr_first_column"><strong>Say More:</strong></div>'+
-                                            '<div class="rdr_second_column rdr_comment_input"></div>'+
-                                            '<div class="rdr_last_column"><button class="rdr_add_comment">Add</button></div>'+
-                                        '</div>'
-                                    ).appendTo( $options ),
+                                    $sayMore = RDR.actions.comments.makeCommentBox({
+                                        content_node: content_node,
+                                        summary: summary,
+                                        hash: hash,
+                                        tag: tag,
+                                        $rindow: $rindow,
+                                        selState: content_node.selState || null
+                                    }).appendTo( $options ),
                                     $share = $(
                                         '<div class="rdr_sectionWrap rdr_shareSection rdr_clearfix">'+
                                             '<div class="rdr_first_column"><strong>Share:</strong></div>'+
@@ -1834,7 +1835,9 @@ function readrBoard($R){
                     //silly quick way to just trigger the back button
                     $linkToComment.click( function(e) {
                         e.preventDefault();
-                        $rindow.find('.rdr_back').eq(0).click(); 
+                        //there's a bug, just close the rindow for now. 
+                        RDR.rindow.close( $rindow );
+                        // $rindow.find('.rdr_back').eq(0).click();
                     });
 
                     $rindow.find('div.rdr_commentBox')
@@ -3870,6 +3873,113 @@ function readrBoard($R){
 
                 
             },
+            comments: {
+                makeCommentBox: function(settings, options){
+                    // RDR.actions.comments.makeCommentBox
+                    var content_node = settings.content_node,
+                        tag = settings.tag,
+                        summary = settings.summary,
+                        hash = settings.hash,
+                        $rindow = settings.$rindow,
+                        selState = settings.selState;
+
+                    options = options || {};
+
+                    //todo: combine this with the tooltip for the tags
+                    // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
+                    var $commentBox = $('<div class="rdr_commentBox"></div>').html(
+                        '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
+                    );
+                    //todo: combine this with the other make comments code
+                    var helpText = options.helpText || "because...",
+                        $commentDiv =  $('<div class="rdr_comment">'),
+                        $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                        $submitButton =  $('<button id="rdr_comment_on_'+''+'">Comment</button>'); // TODO once I have interaction ID from Tyler.
+
+                    $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+
+                    $commentTextarea.focus(function(){
+                        RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        if( $(this).val() == helpText ){
+                            $(this).val('');
+                        }
+                    }).blur(function(){
+                        if( $(this).val() === "" ){
+                            $(this).val( helpText );
+                        }
+                    }).keyup(function(event) {
+                        var commentText = $commentTextarea.val();
+                        if (event.keyCode == '27') { //esc
+                            //return false;
+                        } else if ( commentText.length > RDR.group.comment_length ) {
+                            commentText = commentText.substr(0, RDR.group.comment_length);
+                            $commentTextarea.val( commentText );
+                        }
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                    });
+
+                    $submitButton.click(function(e) {
+                        //add what we need to settings:
+                        $.extend(settings, {
+                            $commentTextarea: $commentTextarea,
+                            helpText: helpText
+                        });
+
+                        RDR.actions.comments.submitComment(settings);
+                    });
+
+                    $commentBox.append( $commentDiv );
+                    return $commentBox;
+                
+                },
+                submitComment: function(settings){
+                    // RDR.actions.comments.submitComment
+                    var $commentTextarea = settings.$commentTextarea,
+                        helpText = settings.helpText,
+                        content_node = settings.content_node,
+                        summary = settings.summary,
+                        hash = settings.hash,
+                        tag  = settings.tag ,
+                        $rindow = settings.$rindow,
+                        selState = settings.selState;
+
+
+                    var commentText = $commentTextarea.val();
+
+                    //keyup doesn't guarentee this, so check again (they could paste in for example);
+                    if ( commentText.length > RDR.group.comment_length ) {
+                        commentText = commentText.substr(0, RDR.group.comment_length);
+                        $commentTextarea.val( commentText );
+                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                    }
+
+                    if ( commentText != helpText ) {
+                        //temp translations..
+                        //quick fix.  images don't get the data all passed through to here correctly.
+                        //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
+                        if ($.isEmptyObject(content_node) && summary.kind=="img") {
+                            content_node = {
+                                "body":$('img.rdr-'+summary.hash).get(0).src,
+                                "kind":summary.kind,
+                                "hash":summary.hash
+                            };
+                        } else {
+                            // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
+                            content_node.kind = "text";
+                        }
+                        var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
+
+                        //leave parent_id undefined for now - backend will find it.
+                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+
+                    } else{
+                        $commentTextarea.focus();
+                    }
+                    return false; //so the page won't reload
+                
+                }
+            },
             containers: {
                 updateCrossPageHash: function(hash){
                     //RDR.actions.containers.updateCrossPageHash:
@@ -4730,7 +4840,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
                                             .click(function(e){
                                                 e.preventDefault();
-                                                $rindow.find('.rdr_back').eq(0).click();
+
+                                                //there's a bug, just close the rindow for now. 
+                                                RDR.rindow.close( $rindow );
+                                                // $rindow.find('.rdr_back').eq(0).click();
                                             });
 
                                         var isPostTagComment = $('.rdr_subheader').length;
