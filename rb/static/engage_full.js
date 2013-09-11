@@ -936,7 +936,7 @@ function readrBoard($R){
 
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
-                        message = (isWriteMode) ? '+1 '+tagBodyRaw :'Click to see what people reacted to';
+                        message = (isWriteMode) ? '+1 '+tagBodyRaw :'';
                     } else if ( tagCount == "" ) {
                         message = '';
                     } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
@@ -975,7 +975,10 @@ function readrBoard($R){
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
-                    var notWriteModeStr = !writeMode ? '<span class="rdr_count">'+tagCount+'</span>' : "";
+                    var notWriteModeHtml = !writeMode ? 
+                        '<span class="rdr_count">'+tagCount+'</span>' +
+                        '<i class="icon-search rdr_tag_read_icon"></i>'
+                        : "";
 
                     var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
                             '<div '+
@@ -987,7 +990,7 @@ function readrBoard($R){
                                 'data-content_node_id="'+content_node_id+'" '+
                             '>'+
                                 tagBodyCrazyHtml+
-                                notWriteModeStr+
+                                notWriteModeHtml+
                             '</div>'+
                         '</div>';
 
@@ -1212,7 +1215,7 @@ function readrBoard($R){
 
                     // add the comment indicator + comment hover... if we should!
                     if ( !$.isEmptyObject( comments ) ) {
-                        var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments about this"></span>');
+                        var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="view comments"></span>');
 
                         $commentHover.append( '<i class="icon-comment"></i> '+num_comments );
                         $commentHover.click( function() {
@@ -6554,7 +6557,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             function animateNextBox() {
                                 var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
                                 $thisBox.find('div.rdr_tag').addClass('rdr_animated');
-                                $thisBox.find('.rdr_comment_hover').addClass('rdr_animated');
                                 currentTagBoxAnimating++;
                                 if ( currentTagBoxAnimating > tagBoxesCount ) {
                                     clearInterval( animationQueue );
