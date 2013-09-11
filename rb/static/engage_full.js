@@ -9,16 +9,6 @@ if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
 //READRBOARDCOM and readrboard will now be the only things in the global namespace
 window.READRBOARDCOM = window.readrboard = RDR;
 
-//temp for testing
-// window.readrboard_extend = {
-//     blessed_tags: [
-//         "Love It",
-//         "Hate It",
-//         "Heeeeeey"
-//     ]
-// };
-
-
 RDR.hasLoaded = true;
 
 /*some constants that we need for now*/
@@ -54,6 +44,7 @@ RDR_offline = !!(
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
@@ -63,7 +54,41 @@ RDR.safeThrow = function(msg){
     if(RDR_offline && debugMode){
         throw msg;
     }
+};
+
+//temp for testing
+function test_readrboard_extend(){
+    //for saftey
+    if(!RDR_offline){
+        return;
+    }
+    window.readrboard_extend = {
+        blessed_tags: [
+            "Love It",
+            "Hate It",
+            "Heeeeeey"
+        ]
+    };
+    window.readrboard_extend_per_container = {
+        "question1": {
+            blessed_tags: [
+                "tag1",
+                "tag2",
+                "tag3"
+            ]
+        },
+        "question2": {
+            blessed_tags: [
+                "tag3",
+                "tag4",
+                "tag5",
+                "tag6"
+            ]
+        }
+    };
 }
+//keep this commented out when not testing.
+// test_readrboard_extend();
 
 //this doesn't need to run if we have an id on the script
 function findEngageScript(){
@@ -196,6 +221,52 @@ function readrBoard($R){
                     window.frames['rdr-xdm-hidden']
                 );
             }    
+        },
+        groupSettings: {
+            getCustomSettings: function(){
+                //RDR.groupSettings.getCustomSettings:
+                var group_extentions = window.readrboard_extend || {};
+                //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
+                return RDR.groupSettings._translate(group_extentions);
+            },
+            translators: {
+                blessed_tags: function(tagsList){
+                    // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
+                    return $.map(tagsList, function(val, idx){
+                        return {body: val};
+                    });
+                }
+            },
+            _translate: function(settings){
+                //RDR.groupSettings._translate:
+
+                var ret_settings = {};
+                var translators = RDR.groupSettings.translators;
+                $.each(settings, function(key, val){
+                    ret_settings[key] = !!translators[key] ? translators[key](val) : val;
+                });
+                return ret_settings;
+            },
+            getBlessedTags: function(hash){
+                //RDR.groupSettings.getBlessedTags:
+                var perContainerSettings = window.readrboard_extend_per_container;
+                if(hash && perContainerSettings){
+                    var name = getCrossPageName(hash);
+                    var perContainerExtentions = perContainerSettings[name];
+                    if(perContainerExtentions && perContainerExtentions.blessed_tags){
+                        var settings = RDR.groupSettings._translate(perContainerExtentions);
+                        return settings.blessed_tags;
+                    }
+                }
+
+                function getCrossPageName(hash){
+                    var $el = $('[rdr-hash="' + hash + '"]');
+                    var name = $el.attr('rdr-custom-display');
+                    return name;
+                }
+
+                return RDR.group.blessed_tags;
+            }
         },
         rindow: {
             defaults:{
@@ -3114,32 +3185,6 @@ function readrBoard($R){
                 $RDR.dequeue('initAjax');
 
             },
-            translateCustomGroupSettings: function(){
-                //RDR.actions.translateCustomGroupSettings
-                //make for a nicer api.
-                
-                var group_extentions = window.readrboard_extend;
-                if(!group_extentions){
-                    return {};
-                }
-                
-                var translators = {
-                    blessed_tags: function(){
-                        return $.map(group_extentions.blessed_tags, function(val, idx){
-                            return {body: val};
-                        });
-                    }
-                };
-
-                var ret_settings = {};
-                
-                //translate
-                $.each(group_extentions, function(key, val){
-                    ret_settings[key] = !!translators[key] ? translators[key]() : val;
-                });
-
-                return ret_settings;
-            },
             initGroupData: function(groupShortName){
                 // request the RBGroup Data
 
@@ -3154,7 +3199,7 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = RDR.actions.translateCustomGroupSettings();
+                        var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
                         $(RDR.group.no_readr).each( function() {
@@ -6268,6 +6313,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
+                        var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
 
                         // For IE8 and earlier version.
                         if (!Date.now) {
@@ -6284,6 +6330,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
                         $existingTagslist.remove();
 
+
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
@@ -6299,14 +6346,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var $header = RDR.rindow.makeHeader( 'What do you think?' ),
                                     isWriteMode = true;
                                 $rindow.find('.rdr_header').replaceWith($header);
-                                writeTagBoxes( RDR.group.blessed_tags );
+                                writeTagBoxes(blessed_tags);
                                 var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
-                            writeTagBoxes( RDR.group.blessed_tags );
+                            writeTagBoxes(blessed_tags);
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
                                 // write inline tags: readmode, for all content types (kind)
