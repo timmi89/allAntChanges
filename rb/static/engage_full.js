@@ -304,7 +304,7 @@ function readrBoard($R){
                
                 var $menuDropdownActions = $(
                     '<div class="rdr_menuDropDown rdr_menu_actions">'+
-                        '<span class="icon-chevron-down"></span>'+
+                        '<span class="icon-chevron-down rdr_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
@@ -312,7 +312,7 @@ function readrBoard($R){
 
                 var $menuDropdownShare = $(
                     '<div class="rdr_menuDropDown rdr_menu_share">'+
-                        '<span class="icon-chevron-down"></span>'+
+                        '<span class="icon-share icon-share-override rdr_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuShares = makeShareList();
@@ -326,12 +326,14 @@ function readrBoard($R){
                 function makeActionList(){
                     var $links = $(
                         '<div class="rdr_linkWrap">'+
-                            '<span class="rdr_link">'+
-                                '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">See it.</a>'+
-                            '</span>'+
-                            '<span class="rdr_link">'+
-                                '<a href="javascript:void(0);" class="rdr_undo_link">delete reaction</a>'+
-                            '</span>'+
+                            '<ul>'+
+                                '<li class="rdr_link">'+
+                                    '<a href="javascript:void(0);" class="rdr_undo_link">Remove reaction</a>'+
+                                '</li>'+
+                                '<li class="rdr_link">'+
+                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">View at ReadrBoard</a>'+
+                                '</li>'+
+                            '</ul>'+
                         '</div>'
                     );
                     return $links;
@@ -340,12 +342,6 @@ function readrBoard($R){
                 function makeShareList(){
                     var $links = $(
                         '<div class="rdr_linkWrap">'+
-                            '<span class="rdr_link">'+
-                                '<a href="javascript:void(0);" class="">test1</a>'+
-                            '</span>'+
-                            '<span class="rdr_link">'+
-                                '<a href="javascript:void(0);" class="">test2</a>'+
-                            '</span>'+
                         '</div>'
                     );
                     return $links;
@@ -703,12 +699,6 @@ function readrBoard($R){
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
                                     $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
-                                    $share = $(
-                                        '<div class="rdr_shareSection rdr_clearfix">'+
-                                            '<div class="rdr_first_column"><strong>Share:</strong></div>'+
-                                            '<div class="rdr_second_column rdr_share_buttons"></div>'+
-                                        '</div>'
-                                    ).appendTo( $options ),
                                     $sayMore = RDR.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
@@ -829,7 +819,7 @@ function readrBoard($R){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<ul class="shareLinks"></ul>'),
+                                var $shareLinks = $('<ul class="rdr_shareLinks"></ul>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
 
@@ -862,13 +852,8 @@ function readrBoard($R){
                                 return $shareLinks;
                             }
 
-                            var $shareSocial = $(
-                                '<div class="rdr_share_social">'+
-                                    '<div class="rdr_label_icon"></div>'+
-                                '</div>'
-                            );
-                            $shareSocial.append( makeShareLinks() );
-                            $success.find('.rdr_share_buttons').append($shareSocial);
+                            var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
+                            $shareSocialWrap.append( makeShareLinks() );
                         }
 
                         RDR.actions.containers.media.onEngage( hash );
