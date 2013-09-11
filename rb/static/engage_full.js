@@ -297,22 +297,33 @@ function readrBoard($R){
                 });
 
                 var $header = $(headerTml);
-                
-                if(!!interactionId){
-                    var $menuDropdown = $(
-                        '<div class="menuDropDown">'+
-                            '<span class="icon-chevron-down"></span>'+
-                        '</div>'
-                    );
-                    var $menulist = makeRindowLinks();
-                    $menuDropdown.append($menulist);
-                    var $menu = $('<div class="rindowMenu"></div>').append($menuDropdown);
-                    $menu.append($menulist);
-                    
-                    $header.append($menu);
+                if(!interactionId){
+                    return $header;
                 }
 
-                function makeRindowLinks(){
+               
+                var $menuDropdownActions = $(
+                    '<div class="rdr_menuDropDown rdr_menu_actions">'+
+                        '<span class="icon-chevron-down"></span>'+
+                    '</div>'
+                );
+                var $menuActions = makeActionList();
+                $menuDropdownActions.append($menuActions);
+
+                var $menuDropdownShare = $(
+                    '<div class="rdr_menuDropDown rdr_menu_share">'+
+                        '<span class="icon-chevron-down"></span>'+
+                    '</div>'
+                );
+                var $menuShares = makeShareList();
+                $menuDropdownShare.append($menuShares);
+
+                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
+                // $menu.append($menuActions);
+                
+                $header.append($menu);
+    
+                function makeActionList(){
                     var $links = $(
                         '<div class="rdr_linkWrap">'+
                             '<span class="rdr_link">'+
@@ -320,6 +331,20 @@ function readrBoard($R){
                             '</span>'+
                             '<span class="rdr_link">'+
                                 '<a href="javascript:void(0);" class="rdr_undo_link">delete reaction</a>'+
+                            '</span>'+
+                        '</div>'
+                    );
+                    return $links;
+                }
+
+                function makeShareList(){
+                    var $links = $(
+                        '<div class="rdr_linkWrap">'+
+                            '<span class="rdr_link">'+
+                                '<a href="javascript:void(0);" class="">test1</a>'+
+                            '</span>'+
+                            '<span class="rdr_link">'+
+                                '<a href="javascript:void(0);" class="">test2</a>'+
                             '</span>'+
                         '</div>'
                     );
@@ -802,44 +827,47 @@ function readrBoard($R){
                                 }
                             }
 
+                            function makeShareLinks(){
+
+                                var $shareLinks = $('<ul class="shareLinks"></ul>'),
+                                // sns sharing links
+                                socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+
+                                // embed icons/links for diff SNS
+                                $.each(socialNetworks, function(idx, val){
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                                    $shareLinks.append($link);
+                                    $link.click( function() {
+                                        
+                                        var tag_body = args.tag.tag_body;
+
+                                        RDR.events.trackEventToCloud({
+                                            category: "share",
+                                            action: "share_open_attempt",
+                                            opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
+                                            container_hash: hash,
+                                            container_kind: args.kind,
+                                            page_id: args.page_id,
+                                            tag_body: tag_body
+                                        });
+
+                                        var summary = RDR.summaries[hash];
+                                        //hack to get the kind
+                                        var kind = summary.kind;
+                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                        RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                        return false;
+                                    });
+                                });
+                                return $shareLinks;
+                            }
+
                             var $shareSocial = $(
                                 '<div class="rdr_share_social">'+
                                     '<div class="rdr_label_icon"></div>'+
                                 '</div>'
                             );
-                            var $shareLinks = $('<ul class="shareLinks"></ul>'),
-                            // sns sharing links
-                            socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
-
-                            // embed icons/links for diff SNS
-                            var shareHash = hash;
-                            $.each(socialNetworks, function(idx, val){
-                                var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                                $shareLinks.append($link);
-                                $link.click( function() {
-                                    
-                                    var tag_body = args.tag.tag_body;
-
-                                    RDR.events.trackEventToCloud({
-                                        category: "share",
-                                        action: "share_open_attempt",
-                                        opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
-                                        container_hash: hash,
-                                        container_kind: args.kind,
-                                        page_id: args.page_id,
-                                        tag_body: tag_body
-                                    });
-
-                                    var summary = RDR.summaries[hash];
-                                    //hack to get the kind
-                                    var kind = summary.kind;
-                                    RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                    RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
-                                    return false;
-                                });
-                            });
-                            $shareSocial.append( $shareLinks );
-
+                            $shareSocial.append( makeShareLinks() );
                             $success.find('.rdr_share_buttons').append($shareSocial);
                         }
 

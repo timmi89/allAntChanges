@@ -370,42 +370,44 @@ div.rdr.rdr_page_summary div.rdr_header div.rdr_header_arrow {
 
 
 div.rdr.rdr_window div.rdr_header              { cursor:move; padding:4px 0; }
-div.rdr.rdr_window div.rindowMenu {
+div.rdr.rdr_window div.rdr_rindowMenu {
     position: absolute;
     top: 0;
     right: 0;
     cursor: default;
 }
-div.rdr.rdr_window div.rindowMenu .menuDropDown {
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown {
     padding: 10px;
     cursor: pointer;
+    float: right;
 }
-div.rdr.rdr_window div.rindowMenu .rdr_linkWrap {
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap {
     position: absolute;
+    right: 0;
+    top: 32px
     box-shadow: 0 0px 4px #ccc;
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;
     background: #fff;
     display: none;
 }
-div.rdr.rdr_window div.rindowMenu:hover .menuDropDown span{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_menuDropDown span{
     color:#008be4;
 }
-div.rdr.rdr_window div.rindowMenu:hover .rdr_linkWrap {
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_linkWrap {
     display: block;
-    right: 0;
 }
-div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link{
     display: block;
     clear: both;
 }
-div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link a{
     text-decoration: none;
     display: block;
     width: 100%;
     padding: 7px;
 }
-div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a:hover{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link a:hover{
     background: #f3f3f3;
 }
 
