@@ -386,23 +386,27 @@ div.rdr.rdr_window div.rindowMenu .rdr_linkWrap {
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;
     background: #fff;
-    padding: 10px;
     display: none;
+}
+div.rdr.rdr_window div.rindowMenu:hover .menuDropDown span{
+    color:#008be4;
 }
 div.rdr.rdr_window div.rindowMenu:hover .rdr_linkWrap {
     display: block;
     right: 0;
 }
 div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link{
-    margin: 10px 0;
     display: block;
     clear: both;
 }
 div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a{
     text-decoration: none;
+    display: block;
+    width: 100%;
+    padding: 7px;
 }
 div.rdr.rdr_window div.rindowMenu .rdr_linkWrap .rdr_link a:hover{
-    text-decoration: underline;
+    background: #f3f3f3;
 }
 
 div.rdr.rdr_indicator_details div.rdr_header   { padding:3px 0; }
@@ -564,7 +568,7 @@ div.rdr div.rdr_view_success .rdr_link a {
 }
 
 div.rdr div.rdr_view_success .rdr_nextActions{
-    margin: 8px 12px;
+    margin: 12px;
 }
 
 div.rdr div.rdr_view_success button {
@@ -580,9 +584,9 @@ div.rdr div.rdr_view_success td {
   padding:5px 7px;
   vertical-align:middle;
 }
-div.rdr div.rdr_view_success .rdr_sectionWrap {
-    clear: both;
-    padding: 6px 0;
+
+div.rdr div.rdr_view_success .rdr_shareSection{
+    margin-bottom: 10px;
 }
 
 div.rdr div.rdr_view_success .rdr_commentsSection .rdr_first_column{
@@ -659,7 +663,6 @@ div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px 
 div.rdr div.rdr_share_social                   { overflow:visible; position: relative; top: 4px; min-width:90px;}
 div.rdr div.rdr_share_social strong            { display:block; float:left; margin:5px 5px 0 24px; }
 div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; }
-div.rdr div.rdr_commentBox.rdr_innerWrap       { padding-bottom:25px; }
 
 div.rdr div.rdr_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.rdr div.rdr_back:hover { background:#999; }
@@ -678,21 +681,41 @@ div.rdr.rdr_indicator_details_for_media div.rdr_otherCommentsBox { max-width:non
 
 div.rdr div.rdr_comment_header { display:block; text-align:left;}
 div.rdr div.rdr_comment textarea {
-    margin:5px 0;
+    margin:5px 0 1px 0;
     resize:none;
     padding:5px;
     font-family:"lucida grande",tahoma,verdana,arial,sans-serif;
-    font-size:11px;
     background:#fff;
     width:100%;
-    height:100px;
     -webkit-box-sizing : border-box;
     -moz-box-sizing : border-box;
     -o-box-sizing : border-box;
     box-sizing : border-box;
+    height:50px;
+    font-size:11px;
+    line-height: 16px;
+    color: #666;
+    border: 1px solid #ccc;
+}
+div.rdr div.rdr_comment textarea.rdr_default_msg{
+    color: #bbb;
 }
 
-div.rdr div.rdr_comment div.rdr_charCount          {font-size:10px; font-style:italic; color:#999; float:left;}
+div.rdr div.rdr_comment .rdr_commentSubmit{
+    padding: 5px;
+    float: right;
+    border: none;
+    background: #5999dc;
+    color: white;
+}
+
+div.rdr div.rdr_comment div.rdr_charCount {
+    font-size:10px; 
+    font-style:italic;
+    color:#999;
+    float:left;
+    margin-top: 6px;
+}
 
 div.rdr div.rdr_comment .rdr_quoteImg{
     background: url("../images/quote-icon.png") top left no-repeat;
@@ -819,7 +842,7 @@ div.rdr_tag_details div.rdr_counts.rdr_text img {
 
 .rdr_comment_feedback{
     position: relative;
-    top: -3px;
+    top: 5px;
 }
 
 div.rdr.rdr-summary div.rdr_info            { clear: both; margin: 5px; padding: 10px; border: 1px solid #ccc; background:#fff; display:none;; }
@@ -2049,13 +2072,13 @@ div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4; }
 div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
   position: absolute;
   background: #5999dc;
-  border: none;
+  color: white;
+  border: 1px solid;
   margin: 0;
   width: 27px;
   height: 27px;
   top: 6px;
   right: 27px;
-  color: white;
   text-align: center;
   cursor: pointer;
   display: none;

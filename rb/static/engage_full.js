@@ -616,6 +616,12 @@ function readrBoard($R){
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
                                     $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
+                                    $share = $(
+                                        '<div class="rdr_shareSection rdr_clearfix">'+
+                                            '<div class="rdr_first_column"><strong>Share:</strong></div>'+
+                                            '<div class="rdr_second_column rdr_share_buttons"></div>'+
+                                        '</div>'
+                                    ).appendTo( $options ),
                                     $sayMore = RDR.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
@@ -623,13 +629,7 @@ function readrBoard($R){
                                         tag: tag,
                                         $rindow: $rindow,
                                         selState: content_node.selState || null
-                                    }).appendTo( $options ),
-                                    $share = $(
-                                        '<div class="rdr_sectionWrap rdr_shareSection rdr_clearfix">'+
-                                            '<div class="rdr_first_column"><strong>Share:</strong></div>'+
-                                            '<div class="rdr_second_column rdr_share_buttons"></div>'+
-                                        '</div>'
-                                    ).appendTo( $options );
+                                    }).appendTo( $options );
 
                                 // if ( kind != "text" ) {
                                     var $backButton = $('<div class="rdr_back">Close 3</div>');
@@ -675,7 +675,6 @@ function readrBoard($R){
                             $success.find('.rdr_comment_input').append(
                                 '<div class="rdr_commentBox rdr_inlineCommentBox">'+
                                     '<div class="rdr_label_icon"></div>'+
-                                    // '<input type="text" class="rdr_add_comment_field rdr_inlineComment" value="Add a comment or #hashtag"/>'+
                                     '<textarea class="rdr_add_comment_field rdr_inlineComment">Add a comment or #hashtag</textarea>'+
                                     '<div class="rdr_clear"></div>'+
                                 '</div>'
@@ -3885,33 +3884,39 @@ function readrBoard($R){
 
                     options = options || {};
 
-                    //todo: combine this with the tooltip for the tags
-                    // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
-                    var $commentBox = $('<div class="rdr_commentBox"></div>').html(
-                        '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
-                    );
+                    var helpText = options.helpText || "Add comments or #hashtags";
+                    
+                    //not used any more
+                    var cta = options.cta || "Leave a comment";
+
+                    var $commentBox = $('<div class="rdr_commentBox rdr_clearfix"></div>');
+
                     //todo: combine this with the other make comments code
-                    var helpText = options.helpText || "because...",
-                        $commentDiv =  $('<div class="rdr_comment">'),
-                        $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                    var $commentDiv =  $('<div class="rdr_comment">'),
+                        $commentTextarea = $('<textarea class="rdr_default_msg">' +helpText+ '</textarea>'),
                         $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button id="rdr_comment_on_'+''+'">Comment</button>'); // TODO once I have interaction ID from Tyler.
+                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
                         RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        $(this).removeClass('rdr_default_msg');
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
                     }).blur(function(){
-                        if( $(this).val() === "" ){
+                        var val = $(this).val();
+                        if( val === "" || val === helpText ){
+                            $(this).addClass('rdr_default_msg');
                             $(this).val( helpText );
                         }
                     }).keyup(function(event) {
                         var commentText = $commentTextarea.val();
                         if (event.keyCode == '27') { //esc
-                            //return false;
+                            $(this).blur();
+                            // return false so the rindow doesn't close.
+                            return false;
                         } else if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
@@ -7347,17 +7352,15 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //helper functions
                 function _makeCommentBox() {
 
-                    //todo: combine this with the tooltip for the tags
-                    // var $commentDiv =  $('<div class="rdr_comment"><textarea class="leaveComment">' + helpText+ '</textarea><button id="rdr_comment_on_'+tag.id+'">Comment</button></div>');
                     var $commentBox = $('<div class="rdr_commentBox rdr_innerWrap"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
                    //todo: combine this with the other make comments code
-                    var helpText = "because...",
-                        $commentDiv =  $('<div class="rdr_comment">'),
+                    var helpText = "Add a comment or #hashtag",
+                        $commentDiv =  $('<div class="rdr_comment rdr_clearfix">'),
                         $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
                         $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button id="rdr_comment_on_'+''+'">Comment</button>'); // TODO once I have interaction ID from Tyler.
+                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
