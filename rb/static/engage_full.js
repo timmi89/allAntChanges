@@ -9,31 +9,6 @@ if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
 //READRBOARDCOM and readrboard will now be the only things in the global namespace
 window.READRBOARDCOM = window.readrboard = RDR;
 
-//temp for testing
-// window.readrboard_extend = {
-//     blessed_tags: [
-//         "Love It",
-//         "Hate It",
-//         "Heeeeeey"
-//     ],
-//     crossPageContentSettings: {
-//         "question1": {
-//             blessed_tags: [
-//                 "tag1",
-//                 "tag2",
-//                 "tag3"
-//             ]
-//         },
-//         "question2": {
-//             blessed_tags: [
-//                 "tag3",
-//                 "tag4",
-//                 "tag5"
-//             ]
-//         }
-//     }
-// };
-
 RDR.hasLoaded = true;
 
 /*some constants that we need for now*/
@@ -69,6 +44,7 @@ RDR_offline = !!(
 RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
@@ -78,7 +54,41 @@ RDR.safeThrow = function(msg){
     if(RDR_offline && debugMode){
         throw msg;
     }
+};
+
+//temp for testing
+function test_readrboard_extend(){
+    //for saftey
+    if(!RDR_offline){
+        return;
+    }
+    window.readrboard_extend = {
+        blessed_tags: [
+            "Love It",
+            "Hate It",
+            "Heeeeeey"
+        ]
+    };
+    window.readrboard_extend_per_container = {
+        "question1": {
+            blessed_tags: [
+                "tag1",
+                "tag2",
+                "tag3"
+            ]
+        },
+        "question2": {
+            blessed_tags: [
+                "tag3",
+                "tag4",
+                "tag5",
+                "tag6"
+            ]
+        }
+    };
 }
+//keep this commented out when not testing.
+// test_readrboard_extend();
 
 //this doesn't need to run if we have an id on the script
 function findEngageScript(){
@@ -239,21 +249,20 @@ function readrBoard($R){
             },
             getBlessedTags: function(hash){
                 //RDR.groupSettings.getBlessedTags:
-                var group_extentions = window.readrboard_extend;
-                var hasCrossPageSettings = !!(hash && group_extentions && group_extentions.crossPageContentSettings);
-
-                function getCrossPageSettings(hash){
-                    var $el = $('[rdr-hash="' + hash + '"]');
-                    var name = $el.attr('rdr-custom-display');
-                    return group_extentions.crossPageContentSettings[name];
-                }
-
-                if(hasCrossPageSettings){
-                    var extentions = getCrossPageSettings(hash);
-                    if(extentions && extentions.blessed_tags){
-                        var settings = RDR.groupSettings._translate(extentions);
+                var perContainerSettings = window.readrboard_extend_per_container;
+                if(hash && perContainerSettings){
+                    var name = getCrossPageName(hash);
+                    var perContainerExtentions = perContainerSettings[name];
+                    if(perContainerExtentions && perContainerExtentions.blessed_tags){
+                        var settings = RDR.groupSettings._translate(perContainerExtentions);
                         return settings.blessed_tags;
                     }
+                }
+
+                function getCrossPageName(hash){
+                    var $el = $('[rdr-hash="' + hash + '"]');
+                    var name = $el.attr('rdr-custom-display');
+                    return name;
                 }
 
                 return RDR.group.blessed_tags;
