@@ -14,7 +14,7 @@
             <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>
             <!-- <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p> -->
         </div>
-        <div class="masthead_column" style="float:left;width:45%;">
+        <div class="masthead_column headlines" style="float:left;width:45%;">
             <h1>The future of content engagement</h1>
             <p>ReadrBoard captures reader reactions to any phrase, image, video, or whole page.  <strong>With just a click.</strong></p>
         </div>
@@ -53,7 +53,7 @@
 
     <style>
     .readrboard_is_better { padding:20px; background:#9dd55e; clear:both; color:#446024; width:1140px; }
-    .readrboard_is_better.stuck { position:fixed; top:41px; }
+    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:100;}
     .readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
     .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
     .readrboard_is_better p strong { font-family: 'RDR_HelveticaBold'; font-size:24px; font-weight:100; display:block;}
@@ -131,8 +131,47 @@
         </div>
     </div>
 
+    <h3 class="new_section">Try it out!</h3>
+    <div>
+        <h4 style="margin:0 0 10px 0;">Engage the page</h4>
+        <div id="rdr-page-summary" style="padding-left:5px;display:inline-block;"></div>
+        <div id="rdr-page-summary-explanation" style="margin-left:15px;display:inline-block;background:#f0f0f0;padding:4px 8px;font-size:12px;">
+            <i class="icon-arrow-left"></i>
+            This is the "summary button" -- it displays a summary of all reactions on the page.  <strong>Also</strong>, it lets you cast a reaction to this entire page.
+        </div>
+        <h4 style="margin:40px 0 10px 0;">Engage text</h4>
+        <em>Select some text in this paragraph, and react.  After reacting, you can also share or leave a longer, in-line comment.</em>
+        <div class="try-on-text" style="font-family:Georgia;width:600px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+            <p>
+                New York is the most populous city in the United States and the center of the New York Metropolitan Area, one of the most populous urban agglomerations in the world. The city is referred to as New York City or the City of New York to distinguish it from the State of New York, of which it is a part. A global power city, New York exerts a significant impact upon commerce, finance, media, art, fashion, research, technology, education, and entertainment. The home of the United Nations Headquarters, New York is an important center for international diplomacy and has been described as the cultural capital of the world.
+                <span style="background: #f0f0f0;padding: 2px 4px;font-size: 12px;margin-right: 67px;display: inline-block;float: right;margin-left: 125px;margin-top: -25px;">
+                    <i class="icon-arrow-left"></i>
+                    <em>This icon appears when there are reactions in this paragraph. You can limit how often it appears.</em>
+                </span>
+            </p>
+            <p><em>via <a href="http://en.wikipedia.org/wiki/New_York_City" target="_blank">Wikipedia.org</a></em></p>
+        </div>
+        <h4 style="margin:40px 0 10px 0;">Engage images and video</h4>
+        <em>Roll your mouse over this image, and look in the lower left hand corner. (And do the same on the video at the top of this page!)</em>
+        <div class="try-on-image" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+            <p>
+                <img src="{{STATIC_URL}}images/site/tryit_puppy.jpg" />
+            </p>
+            <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
+        </div>
+        <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
+        <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
+        <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+            <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;"  rdr-crossPageContent="true" />
+            <!-- <div style="display:inline-block;background:#fff;margin-right:20px;padding:10px;">Number of reactions: <span rdr-counter-for="unsplash2"></span></div> -->
+            <div rdr-grid-for="unsplash2" style="width:640px;height:200px;background:white;"></div>
+            <div style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2">Your reaction to this picture?</div>
+            <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
+        </div>
+    </div>
     <h3 class="new_section">A few of our favorite publishing partners</h3>
     <style>
+    div.rdr.rdr_inline div.rdr_header h1 {margin-top:5px !important;}
     .new_section { font-size:34px; margin-top:60px; padding-top:20px; border-top:1px solid #343434; }
     .partner_logos img { margin:0 10px 10px 0; }
     p { font-size:18px; }
@@ -418,5 +457,6 @@ if (window.location.href.indexOf('publishers') != -1 ) {
     $('#readers').hide();
 }
 </script>
+<script src="/static/engage.js" defer></script>
 {% endblock %}
 <!-- widget for slideshow -->

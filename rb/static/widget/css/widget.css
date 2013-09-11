@@ -838,6 +838,7 @@ div.rdr.rdr-summary * {
 div.rdr.rdr-summary #rdr-user {
   float:right;
   margin:9px 25px 0 15px;
+  display:none !important; /* hiding for now */
 }
 div.rdr.rdr-summary #rdr-user a {
   font-style:normal;
@@ -1905,9 +1906,9 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count { display:block;margin-to
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_big .rdr_count { font-size:24px; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium .rdr_count { font-size:14px; }
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_small .rdr_count { font-size:11px; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px; height:110px; padding:20px 15px 0;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px; height:110px; padding:35px 10px 0;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:18px 7px 0;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px; height:110px; padding:15px 15px 0;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px; height:110px; padding:30px 10px 0;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding:13px 7px 0;}
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
 div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
