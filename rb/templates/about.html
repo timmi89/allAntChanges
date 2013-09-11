@@ -7,19 +7,186 @@
 {%endblock%}
 
 {% block wideContent %}
-    <style>
-    section[role="wide section"] {overflow:auto;box-sizing:border-box;padding:30px 0;color:#343434;}
-    .masthead {letter-spacing:-1px;}
-    .masthead strong {display: block;}
-    </style>
-    <div class="masthead" style="float:right;width:55%;padding-top:30px;">
-        <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>
-    </div>
-    <div class="masthead" style="float:left;width:45%;">
-        <h1 style="font-family:'Helvetica','RDR_Helvetica';font-size:46px;font-weight:bold;margin:40px 0;">The future of content engagement</h1>
-        <p style="font-family:'Helvetica','RDR_Helvetica';font-size:28px;">ReadrBoard captures reader reactions to any phrase, image, video, or whole page.  <strong>With just a click.</strong></p>
+    
+
+    <div class="masthead">
+        <div class="masthead_column" style="float:right;width:55%;padding-top:30px;">
+            <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p>
+            <!-- <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></p> -->
+        </div>
+        <div class="masthead_column" style="float:left;width:45%;">
+            <h1>The future of content engagement</h1>
+            <p>ReadrBoard captures reader reactions to any phrase, image, video, or whole page.  <strong>With just a click.</strong></p>
+        </div>
     </div>
 
+    <style>
+    section[role="wide section"] {overflow:auto;box-sizing:border-box;padding:30px 0;color:#343434;}
+    h1, h2 { color:#343434; }
+    .masthead {letter-spacing:-1px; overflow:auto;}
+    .masthead h1 { font-family:'RDR_HelveticaBold'; font-size:48px; margin:40px 0; }
+    .masthead p  { font-family:'Helvetica','RDR_Helvetica'; font-size:28px; }
+    .masthead strong {display: block;}
+    .engagement_today { padding:20px; background:#dfdfdf; clear:both; margin-top:40px;}
+    .engagement_today h2 { font-family:'RDR_HelveticaBold'; font-size:28px; margin-bottom:20px; }
+    .engagement_today .engagement_column { display:inline-block; width:30%; margin-right:3%; }
+    .engagement_today .engagement_column:last-child { margin-right:0; }
+    .engagement_today .engagement_column i { font-size: 40px; display: block; float: left; margin-right: 10px; }
+    .engagement_today .engagement_column p { font-family: 'Helvetica','RDR_Helvetica'; font-size:18px;  }
+    </style>
+    <div class="engagement_today">
+        <h2>Content engagement today falls short.</h2>
+        <div class="engagement_column">
+            <i class="icon-twitter"></i>
+            <p>When people discuss on Twitter, your readers don’t see it.</p>
+        </div>
+        <div class="engagement_column">
+            <i class="icon-facebook-sign"></i>
+            <p>What does a Like on a page tell you?  Not enough.</p>
+        </div>
+        <div class="engagement_column">
+            <i class="icon-comments-alt"></i>
+            <p>Comments can be great, but they are too much work to read &amp; write.</p>
+        </div>
+    </div>
+
+
+    <style>
+    .readrboard_is_better { padding:20px; background:#9dd55e; clear:both; color:#446024; width:1140px; }
+    .readrboard_is_better.stuck { position:fixed; top:41px; }
+    .readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
+    .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
+    .readrboard_is_better p strong { font-family: 'RDR_HelveticaBold'; font-size:24px; font-weight:100; display:block;}
+    .readrboard_is_better p a { color:#446024; text-decoration: underline; }
+    .get_readrboard_form { xheight:0; overflow:hidden; display:none; }
+    </style>
+    <div class="readrboard_is_better">
+        <i class="icon-check-sign"></i>
+        <p>
+            <strong>ReadrBoard is a smarter, more satisfying way to engage, discuss, &amp; share.</strong>
+            <!-- <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Add ReadrBoard to your site or blog now.</a>  For free. -->
+            <a href="javascript:void(0);" class="get_readrboard">Add ReadrBoard to your site or blog now.</a>  For free.
+        </p>
+        <div class="get_readrboard_form">
+            <iframe src="/static/wufoo/index.html" width="1000" height="125" scrolling="no" wmode="transparent" style="background:none;" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <style>
+    .use_it { text-align:center; padding:100px; }
+    .use_it h2 { font-family: 'RDR_HelveticaBold'; font-size:28px; font-weight:100;  }
+    .use_it h1 { font-family: 'RDR_HelveticaBold'; font-size:78px; font-weight:100;  }
+    </style>
+    <div class="use_it">
+        <h2>Do people use it?</h2>
+        <h1>Yep.</h1>
+    </div>
+
+    <style>
+    @font-face {
+    /* this is just 3kb... */
+    font-family: 'moreicons';
+        src: url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAAPcAAsAAAAABawAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAABCAAAALUAAADTkz0AgkZGVE0AAAHAAAAAGgAAABxmJf4qR0RFRgAAAdwAAAAdAAAAIAAwAARPUy8yAAAB/AAAAEsAAABgL+3cAGNtYXAAAAJIAAAAOgAAAVLgI/LNaGVhZAAAAoQAAAAuAAAANv27z7VoaGVhAAACtAAAAB4AAAAkBBD/5GhtdHgAAALUAAAADAAAAAwDwAAAbWF4cAAAAuAAAAAGAAAABgADUABuYW1lAAAC6AAAAOYAAAGbItSRiXBvc3QAAAPQAAAADAAAACAAAwAAeJxFjc0JwkAUhOeZlYQQo4YNKKwBO4hnQU/agHYgHoJoQGMJorjX7WorsQHzIAF/UPQ038xhPoIQICJ/m+/X2SrfHUANECY8aHDicE/owNGBSHz0F9FD6x8Ert6w4aKpcGoroKNw7Sp4CjaCeH94aKOH4XGXzdM0fcUsHY1+nr8QoDNd4BCJ1richlyI2rBxwztLLuLa2FeplpWMa2lZfrAytvyulbSldEMty1usA/8JMzpEIQAAAHicY2BgYGQAgpOd+YYg+pyfew2MBgA+cwWyAAB4nGNgZGBg4ANiCQYQYGJgBEIQyQLmMQAABGAANQAAAHicY2BmPMA4gYGVgYPRhzGNgYHBHUp/ZZBkaGFgYGJgZWaAAwEEkyEgzTWFweGB4AcGxgf/HzDoMT5gUGhgYGCEK1AAQkYAV7MM7wB4nGNgYGBmgGAZBkYGEPAB8hjBfBYGAyDNAYRMIIkHgh8Y/v9HZsl/FGCE6gIDRjYGZO6IBADvVgm+AAB4nGNgZGBgAOKvZobr4vltvjJwMzGAwDk/9xoE/f8BEwPjAyCXgwEsDQAiKgpDAAB4nGNgZGBgfPD/AYMeEwMDwz8GIAkUQQHMAG3nA/YAAAIAAAAAAAAAAcAAAAAAUAAAAwAAeJyFj0FKw0AUhr+0aaUoLkRcyizcJiSRCu0Biusuui9lCIE2A9N231P0Bh7CtcfwAB7CjX/iw42gA4/38b9//nkDXHEmoTsJE26NB1yQGw954GScyvNqPOKSd+Ox9E85k3Qi5aa/1fGAa+6NhzzzZJzK82I84o4347H0D3YEIp6GjahlD7sQfbMJrXCpSc2RLWu5WPr6uF0LFr330Pcoh8dR6ReF+lz1O/Vbn5IxU1VyljwqKLSHRYi1d1VeuLn7eVs8zWZZVZRy/b3kSpMorelnTsHdIqx83DehdWVe/JPwBXz8QN4AAHicY2BmwAsAAH0ABA==) format('woff'),
+             url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAANAIAAAwBQRkZUTWYl/ioAAAWAAAAAHEdERUYAMgAGAAAFYAAAACBPUy8yL8vb3wAAAVgAAABWY21hcOAl89QAAAHEAAABUmdhc3D//wADAAAFWAAAAAhnbHlm1fEjVAAAAyQAAABcaGVhZP27z7UAAADcAAAANmhoZWEEEP/mAAABFAAAACRobXR4BGoAAAAAAbAAAAAUbG9jYQAOAC4AAAMYAAAADG1heHAASwATAAABOAAAACBuYW1lItSRiQAAA4AAAAGbcG9zdJtVPzgAAAUcAAAAPAABAAAAAQAAjsJQjV8PPPUACwIAAAAAAM5OR3wAAAAAzk5HfAAA/+ACAAHgAAAACAACAAAAAAAAAAEAAAHg/+AALgIAAAD+AAIAAAEAAAAAAAAAAAAAAAAAAAAFAAEAAAAFABAABAAAAAAAAgAAAAEAAQAAAEAAAAAAAAAAAQHAAZAABQAIAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAIABQMAAAAAAAAAAAAAEAAAAAAAAAAAAAAAUGZFZABA4BHwAAHg/+AALgHgACCAAAABAAAAAAAAAgAAAAAAAAAAqgAAAAAAAAHAAAAAAAADAAAAAwAAABwAAQAAAAAATAADAAEAAAAcAAQAMAAAAAgACAACAAAAAOAR8AD//wAAAADgEfAA//8AAB/zEAMAAQAAAAAAAAAAAAABBgAAAQAAAAAAAAABAgAAAAIAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAuAAEAAP/gAgAB4AACAAARASECAP4AAeD+AAAAAAAEAAD/4AHAAeAAAwAHAAsADwAAATMRIwMzESMDMxEjJzMVIwGAQECAQECAQECAQEAB4P4AAYD+gAEA/wCAgAAAAAAMAJYAAQAAAAAAAQAJABQAAQAAAAAAAgAHAC4AAQAAAAAAAwAkAIAAAQAAAAAABAAJALkAAQAAAAAABQALANsAAQAAAAAABgAJAPsAAwABBAkAAQASAAAAAwABBAkAAgAOAB4AAwABBAkAAwBIADYAAwABBAkABAASAKUAAwABBAkABQAWAMMAAwABBAkABgASAOcAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAUgBlAGcAdQBsAGEAcgAAUmVndWxhcgAARgBvAG4AdABGAG8AcgBnAGUAIAAyAC4AMAAgADoAIABtAG8AcgBlAGkAYwBvAG4AcwAgADoAIAA1AC0AOQAtADIAMAAxADMAAEZvbnRGb3JnZSAyLjAgOiBtb3JlaWNvbnMgOiA1LTktMjAxMwAAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAVgBlAHIAcwBpAG8AbgAgADEALgAwAABWZXJzaW9uIDEuMAAAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAEAAgECAQMHdW5pRjAwMAd1bmlFMDExAAAAAf//AAIAAQAAAA4AAAAYAAAAAAACAAEAAwAEAAEABAAAAAIAAAAAAAEAAAAAyYlvMQAAAADOTkd8AAAAAM5OR3w=) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    .icon-bars-alt {
+        font-family: 'moreicons';
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+    }
+    .icon-bars-alt:before {
+        content: "\e011";
+    }
+
+    .stats { background:url(/static/site/images/stats_bg.jpg) center center no-repeat; padding:55px 0 0; color:#fff; height:262px;}
+    .stats .column { display: inline-block;  }
+    .stats .column.one { width:35%; margin:0 5%; text-align: center; }
+    .stats .column.one i { font-size: 70px; font-weight: bold; display: block; float: left; margin-top: 46px; }
+    .stats .column.one p { font-family: 'Helvetica','RDR_Helvetica'; font-size:24px;  }
+    .stats .column.one h1 { font-family: 'RDR_HelveticaBold'; font-size: 150px; font-weight: 100; color: #fff; display: inline-block; margin: 0px 0px 0px 0px; line-height: 130px;  }
+    .stats .column.two { width:50%; font-size:22px; font-weight:200;  }
+    </style>
+    <div class="stats">
+        <div class="column one">
+            <div>
+                <i class="icon-bars-alt"></i>
+                <h1>15%</h1>
+            </div>
+            <div>
+                <p>Engagement Rate</p>
+            </div>
+        </div>
+        <div class="column two">
+            <div>1 out of every 100 readers react to content.</div>
+            <div>14 out of 100 readers actively view others' reactions.</div>
+            <div style="margin-top:40px;">That’s the <strong>average</strong>.</div>
+            <div>And it will go up as more readers discover ReadrBoard.</div>
+        </div>
+    </div>
+
+    <h3 class="new_section">A few of our favorite publishing partners</h3>
+    <style>
+    .new_section { font-size:34px; margin-top:60px; padding-top:20px; border-top:1px solid #343434; }
+    .partner_logos img { margin:0 10px 10px 0; }
+    p { font-size:18px; }
+    </style>
+    <div class="partner_logos no-rdr">
+        <img src="{{STATIC_URL}}site/images/propublica.png" />
+        <img src="{{STATIC_URL}}site/images/logo_dailycandy.png" />
+        <img src="{{STATIC_URL}}site/images/logo_chronicle.png" />
+        <img src="{{STATIC_URL}}site/images/logo_thedp.png" />
+        <img src="{{STATIC_URL}}site/images/as-seen-on/content-strategist.png" style="height:40px;" />
+        <img src="{{STATIC_URL}}site/images/logo_civic_mit.png" style="height:60px;" />
+        <img src="{{STATIC_URL}}site/images/logo_racialicious.png" />
+        <!-- <img src="{{STATIC_URL}}site/images/logo_bridal_guide.png" /> -->
+        <img src="{{STATIC_URL}}site/images/logo_gazette.png" />
+        <img src="{{STATIC_URL}}site/images/logo_altweeklies.png" style="height:60px;" />
+        <img src="{{STATIC_URL}}site/images/logo_college_media.png" />
+        <img src="{{STATIC_URL}}site/images/logos_modern_nomad.png" />
+    </div>
+    
+
+    <h3 class="new_section">The future web will be an annotated web.</h3>
+    <p>
+        Readers want to say something specific, about something specific -- whether citing sources 
+        in a policy debate or reacting “LOL!” to a cat pic.  That’s why forwarding-thinking sites like
+        <a href="http://medium.com" target="_blank">Medium</a>, <a href="http://qz.com" target="_blank">Quartz</a>, and <a href="http://rapgenius.com" target="_blank">RapGenius</a> are experimenting with inline comments.
+    </p>
+
+    <p>
+        But it’s more than just annotation.  ReadrBoard enables understanding how different people
+        and communities feel about the same content on the web.  Our goal is to be THE tool
+        people use to react to everything.
+    </p>
+    <h3 class="new_section">ReadrBoard is the best annotation platform ever made.</h3>
+    <p>OK, that sounds ridiculous.  We said it to ourselves as a joke.  But then we remembered:  
+    no annotation platform has actually caught on outside of a single community.</p>
+
+    <p>ReadrBoard is different from others in two key ways.</p>
+
+    <p><strong>First</strong>, reacting is simply easier than commenting.  Sure, we let readers also leave a full, in-line 
+    comment if they want, but over 98% of people find a reaction does the trick.</p>
+
+    <p><strong>Second</strong>, we enable responding to images and video, too!</p>
+
+    <p>Oh, and a third thing:  <strong>we’re a platform</strong>.  A free one.  You can <a href="javascript:void(0);" class="get_readrboard">install ReadrBoard right now</a>.</p>
+
+    <p>Since ReadrBoard’s getting used on 15% of pageviews for our partners -- and sometimes over 200% -- 
+    we think that’s starting to “catch on”.  Maybe it is the best annotation platform ever made?</p>
+
+    <p>Try it out, and give us your feedback.  This a process, and we want you to be a part of it.  
+    With your help, we can make the web more dynamic, and more aware of how people
+    think and feel about great content.</p>
+
+
+    <br/><br/><br/>
 
 
 
@@ -229,6 +396,15 @@
         </div>
     </div>
     {% endcomment %}
+
+    <script>
+    $('.get_readrboard').click( function() {
+        $('.get_readrboard_form').toggle(200);
+    });
+    $('.readrboard_is_better').waypoint('sticky', { offset: 41 });
+    </script>
+
+
 {% endblock %}
 
 {% block complementarySection %}

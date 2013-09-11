@@ -31,7 +31,8 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^publishers/$','rb.views.splash'),
-  url(r'^about/$','rb.views.splash'),
+  # url(r'^about/$','rb.views.splash'),
+  url(r'^about/$','rb.views.about'),
   url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),

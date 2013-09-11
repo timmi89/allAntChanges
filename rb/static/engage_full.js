@@ -15,9 +15,24 @@ window.READRBOARDCOM = window.readrboard = RDR;
 //         "Love It",
 //         "Hate It",
 //         "Heeeeeey"
-//     ]
+//     ],
+//     crossPageContentSettings: {
+//         "question1": {
+//             blessed_tags: [
+//                 "tag1",
+//                 "tag2",
+//                 "tag3"
+//             ]
+//         },
+//         "question2": {
+//             blessed_tags: [
+//                 "tag3",
+//                 "tag4",
+//                 "tag5"
+//             ]
+//         }
+//     }
 // };
-
 
 RDR.hasLoaded = true;
 
@@ -196,6 +211,53 @@ function readrBoard($R){
                     window.frames['rdr-xdm-hidden']
                 );
             }    
+        },
+        groupSettings: {
+            getCustomSettings: function(){
+                //RDR.groupSettings.getCustomSettings:
+                var group_extentions = window.readrboard_extend || {};
+                //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
+                return RDR.groupSettings._translate(group_extentions);
+            },
+            translators: {
+                blessed_tags: function(tagsList){
+                    // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
+                    return $.map(tagsList, function(val, idx){
+                        return {body: val};
+                    });
+                }
+            },
+            _translate: function(settings){
+                //RDR.groupSettings._translate:
+
+                var ret_settings = {};
+                var translators = RDR.groupSettings.translators;
+                $.each(settings, function(key, val){
+                    ret_settings[key] = !!translators[key] ? translators[key](val) : val;
+                });
+                return ret_settings;
+            },
+            getBlessedTags: function(hash){
+                //RDR.groupSettings.getBlessedTags:
+                var group_extentions = window.readrboard_extend;
+                var hasCrossPageSettings = !!(hash && group_extentions && group_extentions.crossPageContentSettings);
+
+                function getCrossPageSettings(hash){
+                    var $el = $('[rdr-hash="' + hash + '"]');
+                    var name = $el.attr('rdr-custom-display');
+                    return group_extentions.crossPageContentSettings[name];
+                }
+
+                if(hasCrossPageSettings){
+                    var extentions = getCrossPageSettings(hash);
+                    if(extentions && extentions.blessed_tags){
+                        var settings = RDR.groupSettings._translate(extentions);
+                        return settings.blessed_tags;
+                    }
+                }
+
+                return RDR.group.blessed_tags;
+            }
         },
         rindow: {
             defaults:{
@@ -3059,32 +3121,6 @@ function readrBoard($R){
                 $RDR.dequeue('initAjax');
 
             },
-            translateCustomGroupSettings: function(){
-                //RDR.actions.translateCustomGroupSettings
-                //make for a nicer api.
-                
-                var group_extentions = window.readrboard_extend;
-                if(!group_extentions){
-                    return {};
-                }
-                
-                var translators = {
-                    blessed_tags: function(){
-                        return $.map(group_extentions.blessed_tags, function(val, idx){
-                            return {body: val};
-                        });
-                    }
-                };
-
-                var ret_settings = {};
-                
-                //translate
-                $.each(group_extentions, function(key, val){
-                    ret_settings[key] = !!translators[key] ? translators[key]() : val;
-                });
-
-                return ret_settings;
-            },
             initGroupData: function(groupShortName){
                 // request the RBGroup Data
 
@@ -3099,7 +3135,7 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = RDR.actions.translateCustomGroupSettings();
+                        var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
                         $(RDR.group.no_readr).each( function() {
@@ -6258,6 +6294,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                         var hash = $rindow.data('hash');
                         var summary = RDR.summaries[hash];
+                        var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
 
                         // For IE8 and earlier version.
                         if (!Date.now) {
@@ -6274,9 +6311,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
                         $existingTagslist.remove();
 
-
-                        // <span class="rdr_what_is_it"><a target="_blank" href="'+RDR_baseUrl+'/about/">What is this?</a></span>
-
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
@@ -6292,14 +6326,14 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 var $header = RDR.rindow.makeHeader( 'What do you think?' ),
                                     isWriteMode = true;
                                 $rindow.find('.rdr_header').replaceWith($header);
-                                writeTagBoxes( RDR.group.blessed_tags );
+                                writeTagBoxes(blessed_tags);
                                 var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
-                            writeTagBoxes( RDR.group.blessed_tags );
+                            writeTagBoxes(blessed_tags);
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
                                 // write inline tags: readmode, for all content types (kind)
