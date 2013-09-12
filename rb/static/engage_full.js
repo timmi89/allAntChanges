@@ -1294,7 +1294,7 @@ function readrBoard($R){
                     }
 
                     // add the comment indicator + comment hover... if we should!
-                    if ( !$.isEmptyObject( comments ) ) {
+                    if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments about this"></span>');
 
                         $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
