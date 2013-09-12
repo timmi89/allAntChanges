@@ -63,7 +63,7 @@ def faq(request):
 
 def learn(request):
     return render_to_response(
-      "about.html",
+      "learn.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )

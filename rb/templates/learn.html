@@ -53,7 +53,7 @@
 
     <style>
     .readrboard_is_better { padding:20px; background:#9dd55e; clear:both; color:#446024; width:1140px; }
-    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:1000;}
+    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:100000;}
     .readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
     .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
     .readrboard_is_better p strong { font-family: 'RDR_HelveticaBold'; font-size:24px; font-weight:100; display:block;}
@@ -162,12 +162,21 @@
         <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
         <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
         <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
-            <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;"  rdr-crossPageContent="true" />
-            <!-- <div style="display:inline-block;background:#fff;margin-right:20px;padding:10px;">Number of reactions: <span rdr-counter-for="unsplash2"></span></div> -->
+            <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;" rdr-crossPageContent="true" />
             <div rdr-grid-for="unsplash2" style="width:640px;height:200px;background:white;"></div>
-            <div style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2">Your reaction to this picture?</div>
+            <div rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2" style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;">Your reaction to this picture?</div>
             <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
         </div>
+        <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
+        <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
+        <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+            <h1 rdr-custom-display="test" rdr-crossPageContent="true">this is a test this is a test this is a test this is a test this is a test this is a test this is a test this is a test </h1>
+            <!-- <div style="display:inline-block;background:#fff;margin-right:20px;padding:10px;">Number of reactions: <span rdr-counter-for="test"></span></div> -->
+            <div rdr-grid-for="test" style="width:640px;height:200px;background:white;"></div>
+            <div rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="test" style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;">Your reaction to this TEST TEXT?</div>
+            <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
+        </div>
+
     </div>
     <h3 class="new_section">A few of our favorite publishing partners</h3>
     <style>

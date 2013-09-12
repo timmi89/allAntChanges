@@ -1297,7 +1297,7 @@ function readrBoard($R){
                     if ( !$.isEmptyObject( comments ) ) {
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="Click to view comments about this"></span>');
 
-                        $commentHover.append( '<i class="icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
                         $commentHover.click( function() {
                             // replacewith bug
                             $(this).tooltip('hide');
@@ -4017,6 +4017,7 @@ function readrBoard($R){
                                 gridHeight = $grid.height();
 
                             // if the grid has no height specified, give it one
+                            // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
                             if ( gridHeight < 200 ) { gridHeight = 200; $grid.height(gridHeight); }
 
                             RDR.util.cssSuperImportant( $grid, { height:gridHeight+"px" });
@@ -4510,7 +4511,6 @@ function readrBoard($R){
                         summary.content_nodes = content_nodes;
                         if(summary.kind == "text"){
                         }else{
-
                             //this is weird because there is only one content_node - the img
                             //this whole thing is gross.  Fix our data structure later.
 
@@ -6236,7 +6236,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
                                 
                             }
 
@@ -7235,8 +7235,9 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         });
                     } else if ( !$.isEmptyObject( summary.top_interactions ) ) {
                         // images+media are their own content nodes (for now.  video will split out later.)
+                        var node_id = $.map( summary.content_nodes, function(value, key) {return key;})[0];
                         $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
-                            summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, parent_id:tag_data.parent_id } );
+                            summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
                         });
                     }
                     summary.interaction_order.sort( SortByTagCount );
@@ -8704,7 +8705,7 @@ function $RFunctions($R){
                 $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="rdr_chevron_cta"><i class="icon-chevron-down"></i></div>' +
+                    '<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>' +
                     '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
                         '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
