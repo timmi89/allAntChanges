@@ -52,12 +52,17 @@
 
 
     <style>
-    .readrboard_is_better { padding:20px; background:#9dd55e; clear:both; color:#446024; width:1140px; }
-    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:100000;}
+    .readrboard_is_better { padding:20px; background:#a9d169; clear:both; color:#59752c; width:1140px; }
     .readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
-    .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
+    .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#59752c; margin:0; }
     .readrboard_is_better p strong { font-family: 'RDR_HelveticaBold'; font-size:24px; font-weight:100; display:block;}
-    .readrboard_is_better p a { color:#446024; text-decoration: underline; }
+    .readrboard_is_better p a { color:#59752c; text-decoration: underline; }
+
+    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:100000; padding:10px; }
+    .readrboard_is_better.stuck i { font-size:30px; }
+    .readrboard_is_better.stuck p { font-size:16px; }
+    .readrboard_is_better.stuck p strong { font-size:20px; }
+
     .get_readrboard_form { xheight:0; overflow:hidden; display:none; }
     </style>
     <div class="readrboard_is_better">
@@ -130,6 +135,48 @@
             <div>And it will go up as more readers discover ReadrBoard.</div>
         </div>
     </div>
+    <style>
+    .stats-part-two {}
+    .stats-part-two .stats_box { width:277px;box-sizing:border-box; background:#a9d169; margin-right:6px;display:inline-block; padding:20px; overflow:auto;}
+    .stats-part-two .stats_box:last-child { margin-right:0; float:right; }
+    .stats-part-two em { display:block; margin-bottom:20px; }
+    .stats-part-two .stats_box i { color:#59752c; font-size:45px; margin:5px 10px 0 0; float:left; }
+    .stats-part-two .stats_box h2 { color:#fff; font-size:45px; margin:0; }
+    .stats-part-two .stats_box label { color:#fff; font-family:'Helvetica','RDR_Helvetica'; font-size:22px; font-weight:100;}
+    .stats-part-two .stats_box div { display:inline-block; float:left; }
+    </style>
+    <div class="stats-part-two">
+        <h3 class="new_section">30 Days Before/After</h3>
+        <em><a href="http://dukechronicle.com" target="_blank">The Duke Chronicle</a>, an independent university paper widely read by Duke students, alumni, and the Durham community, compared their website KPIs during the 30 days before and after installing ReadrBoard.  Here is what they found:</em>
+        <div class="stats_box">
+            <i class="rdr_icon-circle-arrow-up"></i>
+            <div>
+                <h2>13.97%</h2>
+                <label>Avg. Visit Duration</label>
+            </div>
+        </div>
+        <div class="stats_box">
+            <i class="rdr_icon-circle-arrow-up"></i>
+            <div>
+                <h2>7.46%</h2>
+                <label>Pages / Visit</label>
+            </div>
+        </div>
+        <div class="stats_box">
+            <i class="rdr_icon-circle-arrow-down"></i>
+            <div>
+                <h2>3.57%</h2>
+                <label>Bounce Rate</label>
+            </div>
+        </div>
+        <div class="stats_box">
+            <i class="rdr_icon-circle-arrow-down"></i>
+            <div>
+                <h2>6.94%</h2>
+                <label>Exit Rate</label>
+            </div>
+        </div>
+    </div>
 
     <h3 class="new_section">Try it out!</h3>
     <div>
@@ -141,7 +188,7 @@
         </div>
         <h4 style="margin:40px 0 10px 0;">Engage text</h4>
         <em>Select some text in this paragraph, and react.  After reacting, you can also share or leave a longer, in-line comment.</em>
-        <div class="try-on-text" style="font-family:Georgia;width:600px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+        <div class="try-on-text" style="font-family:Georgia;width:600px;background:#f0f4f9;margin:20px auto;padding:20px;">
             <p>
                 New York is the most populous city in the United States and the center of the New York Metropolitan Area, one of the most populous urban agglomerations in the world. The city is referred to as New York City or the City of New York to distinguish it from the State of New York, of which it is a part. A global power city, New York exerts a significant impact upon commerce, finance, media, art, fashion, research, technology, education, and entertainment. The home of the United Nations Headquarters, New York is an important center for international diplomacy and has been described as the cultural capital of the world.
                 <span style="background: #f0f0f0;padding: 2px 4px;font-size: 12px;margin-right: 55px;display: inline-block;float: right;margin-left: 140px;margin-top: -25px;">
@@ -153,7 +200,7 @@
         </div>
         <h4 style="margin:40px 0 10px 0;">Engage images and video</h4>
         <em>Roll your mouse over this image, and look in the lower left hand corner. (And do the same on the video at the top of this page!)</em>
-        <div class="try-on-image" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+        <div class="try-on-image" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
             <p>
                 <img src="{{STATIC_URL}}images/site/tryit_puppy.jpg" />
             </p>
@@ -161,7 +208,7 @@
         </div>
         <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
         <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
-        <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px 80px;padding:20px;">
+        <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
             <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;" rdr-crossPageContent="true" />
             <div rdr-grid-for="unsplash2" style="width:640px;height:200px;background:white;"></div>
             <div rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2" style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;">Your reaction to this picture?</div>
