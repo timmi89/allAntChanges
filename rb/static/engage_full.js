@@ -950,12 +950,14 @@ function readrBoard($R){
 
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBodyRaw.length+'">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body  rdr_tag_lineone rdr_charCount'+tagBodyRaw.length+'">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount15">' + tagBodyRaw.substr(0,15) + '-</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBodyRaw.substr(15).length+'">' + tagBodyRaw.substr(15) + '</div>';
+                            tagBodyCrazyHtml = 
+                            '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount15">' + 
+                            tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
                             if ( boxSize == "rdr_box_small" ) {
                                 boxSize = "rdr_box_medium";
                             }
@@ -967,7 +969,7 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBody1.length+'">'+tagBody1 +'</div><div class="rdr_tag_body '+tagIsSplitClass+' rdr_tag_linetwo rdr_charCount'+tagBody2.length+'">' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBody1.length+'">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 

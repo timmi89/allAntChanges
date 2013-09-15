@@ -33,3 +33,8 @@ li.sfHover > a > .sf-sub-indicator{background-position:-10px -100px;}.ot-menu ul
 #sidebar_left .widget_twitter .tweets li,
 .homewidgets .widget_twitter .tweets li,
 .homewidgets .widget_twitter .tweets li{display:block;padding-bottom:10px;}#homepagetop .homewidgets ul.tweets li a{display:inline;}#flickr_badge_uber_wrapper img{margin:0 -20px;}#sidebar_left #flickr_badge_uber_wrapper img{max-width:180px;}#sidebar_right #flickr_badge_uber_wrapper img{max-width:280px;}#footertop .widget-area #flickr_badge_uber_wrapper img{max-width:170px;}#footertop .footertopright #flickr_badge_uber_wrapper img{max-width:350px;}#flickr_badge_wrapper{border:0 none !important;background-color:transparent !important;}.widget_recent_comments td{padding-bottom:6px !important;vertical-align:bottom;}.widget_recent_comments .avatar{padding-bottom:4px;}.widget input#s{}.widget #searchsubmit{padding:6px 6px 4px 6px;margin-top:-1px;}img#wpstats{position:absolute;right:10px;bottom:10px;}
+
+/*undo demo styles that are messing with our stuff*/
+#content textarea{
+    background: white;
+}
