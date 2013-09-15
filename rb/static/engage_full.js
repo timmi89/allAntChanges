@@ -2014,7 +2014,7 @@ function readrBoard($R){
                     img:  _getMediaCoords, //function below (yeah this is a little weird, make nicer later)
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
-                        top: coords.top - 33,
+                        top: coords.top + 8,  // text actionbar offset.  used to be -33.  tried moving down per CM's feedback at FastCo
                         left: coords.left + 3
                     }
                 };
