@@ -1327,7 +1327,7 @@ function readrBoard($R){
 
                 if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
+                        helpText =  ( actionType=="react" ) ? "+ Start typing to add your own" : "+ Add tag...";
 
                     // add custom tag
                     // var $custom = $('<div class="rdr_tag rdr_custom_tag rdr_tooltip_this" title="Add your own reaction. Type it in, then press Enter."><div contenteditable="true">'+helpText+'</div></div>');
@@ -1383,6 +1383,14 @@ function readrBoard($R){
 
                     $container.find('.rdr_box').append( $custom, " " );
                     $custom.tooltip();
+
+                    $(document).on('keydown.rdr', function(event) {
+                        // this won't be international-friendly:
+                        keyCodes = [16, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48];
+                        if ( $.inArray(event.keyCode, keyCodes) != -1 ) {
+                            $container.find('input').focus();
+                        }
+                    });
                 }
             },
             _rindowTypes: {
@@ -1748,6 +1756,7 @@ function readrBoard($R){
                 var $allRindows = $('div.rdr.rdr_window').not('.rdr_no_clear');
                 RDR.rindow.close( $allRindows );
                 $('.rdr_shared').removeClass('rdr_shared');
+                $(document).unbind('keydown.rdr'); // remove the "start typing to immediately add a custom tag" feature
             },
             clearHilites: function( $rindows ){
                 var selStates = [];
