@@ -78,7 +78,7 @@ div.rdr {
 div.rdr.rdr_window {
     padding:0px;
     position:absolute;
-    z-index:12000;
+    z-index:12000 !important;
     background:#fff;
     /*overflow:hidden;*/
     width:160px;
@@ -2056,16 +2056,32 @@ div.rdr .rdr_window.rdr_page_summary div.rdr_body.rdr_tags_list .rdr_box:not(.rd
 
 
 
-div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag { position:relative; height:100%; word-spacing:0; -webkit-transition: top 0.6s ease, bottom 0.6s ease; -moz-transition: top 0.6s ease, bottom 0.6s ease; -o-transition: top 0.6s ease, bottom 0.6s ease; -ms-transition: top 0.6s ease, bottom 0.6s ease; transition: top 0.6s ease, bottom 0.6s ease;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag {
+    position:relative;
+    height:100%;
+    word-spacing:0;
+    -webkit-transition: margin-top 0.6s ease;
+    -moz-transition: margin-top 0.6s ease;
+    -o-transition: margin-top 0.6s ease;
+    -ms-transition: margin-top 0.6s ease;
+    transition: margin-top 0.6s ease;
+}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_comment_hover {
+    -webkit-transition: margin-right 0.8s ease;
+    -moz-transition: margin-right 0.8s ease;
+    -o-transition: margin-right 0.8s ease;
+    -ms-transition: margin-right 0.8s ease;
+    transition: margin-right 0.8s ease;
+}
+div.rdr div.rdr_body.rdr_tags_list .rdr_comment_hover { margin-right:-100%;}
+div.rdr div.rdr_body.rdr_tags_list div.rdr_box.rdr_animated .rdr_comment_hover { margin-right:0%;}
+
+div.rdr div.rdr_body.rdr_tags_list div.rdr_tag { margin-top:-125%;}
+div.rdr div.rdr_body.rdr_tags_list div.rdr_box.rdr_animated div.rdr_tag { margin-top:0%;}
+
 div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag.rdr_tag_split {font-size:18px;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_big div.rdr_tag.rdr_tag_split { font-size:28px;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_big div.rdr_tag { bottom:-125%;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_big div.rdr_tag.rdr_animated { bottom:0%;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium div.rdr_tag { top:-125%;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium div.rdr_tag.rdr_animated { top:0%;}
 
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag { top:-125%;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small div.rdr_tag.rdr_animated { top:0%;}
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count {
     display: block;
@@ -2098,24 +2114,38 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box_big { width:320px; height:110px; pad
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium { width:160px; height:110px; padding: 0;}
 div.rdr div.rdr_body.rdr_tags_list .rdr_box_small { width:160px; height:55px; padding: 0;}
 
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px;}
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px; }
 
-div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
-div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
-div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
-div.rdr.rdr_window.w800 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small,
-div.rdr.rdr_window.w960 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small { height:110px;}
 
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_medium.rdr_wide { width:320px; height:80px;}
-div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list .rdr_contains1 .rdr_box_small.rdr_wide {height:55px; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:320px; height:55px; }
-div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:480px; }
 div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:160px; }
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container { height:110px;}
+div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:480px; }
 
-div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container,
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_wide { height:55px;}
-div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_wide.rdr_contains2,
-div.rdr.rdr_window.w160 div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_contains2 { height:auto; min-height:110px; }
+div.rdr.rdr_window.w480 div.rdr_body.rdr_tags_list .rdr_contains1,
+div.rdr.rdr_window.w640 div.rdr_body.rdr_tags_list .rdr_contains1,
+div.rdr.rdr_window.w800 div.rdr_body.rdr_tags_list .rdr_contains1,
+div.rdr.rdr_window.w960 div.rdr_body.rdr_tags_list .rdr_contains1{
+    height:110px;
+    width: 160px;
+}
+
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_wide { width:100%; }
+
+div.rdr div.rdr_body.rdr_tags_list .rdr_box_small.rdr_container.rdr_contains2 {
+    height:110px;
+}
+
+div.rdr div.rdr_body.rdr_tags_list .rdr_container.rdr_contains1 .rdr_box{
+    height: 100%;
+}
+div.rdr div.rdr_body.rdr_tags_list .rdr_container.rdr_contains2 .rdr_box{
+    height: 50%;
+}
+/*a box within a box should always take the width of the parent*/
+div.rdr div.rdr_body.rdr_tags_list .rdr_container .rdr_box{
+    width: 100%;
+}
+
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body{
     position: absolute !important;
@@ -2282,3 +2312,11 @@ div#rdr_loginPanel {
 
 [rdr-grid-for] .jspPane { z-index:100; margin-left:0; }
 [rdr-grid-for] .jspVerticalBar { z-index:101; }
+
+.rdr_clear_transform{
+    -webkit-transform:  translate(0px, 0px) !important;
+    -moz-transform:  translate(0px, 0px) !important;
+    -o-transform:  translate(0px, 0px) !important;
+    -ms-transform:  translate(0px, 0px) !important;
+    transform:  translate(0px, 0px) !important;  
+}

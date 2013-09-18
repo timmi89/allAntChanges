@@ -6454,7 +6454,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // $tagsListContainer.append($tag_table);
                         // RDR.rindow.jspUpdate($rindow);
                         // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+
                         isotopeTags( $tagsListContainer );
+                        isotopeFillGap($tagsListContainer);
+
                         return $tagsListContainer;
 
                         
@@ -6462,23 +6465,23 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // private function, but could be a RDR.util or RDR.tagBox function
                         function createTagBuckets( tagList ) {
 
-                          // would rather this property was .count, not .tag_count.  #rewrite.
-                          function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
+                            // would rather this property was .count, not .tag_count.  #rewrite.
+                            function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
-                          $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
-                          tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
-                          var buckets = {
+                            $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
+                            tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
+                            var buckets = {
                             big: [],
                             medium: [],
                             small: []
-                          },
-                          max = tagList[0].tag_count,
-                          median = tagList[ Math.floor(tagList.length/2) ].tag_count,
-                          min = tagList[ tagList.length-1 ].tag_count,
-                          avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
-                          midValue = ( median > avg ) ? median:avg;
+                            },
+                            max = tagList[0].tag_count,
+                            median = tagList[ Math.floor(tagList.length/2) ].tag_count,
+                            min = tagList[ tagList.length-1 ].tag_count,
+                            avg = (function(arr) { var total=0; $.each(arr, function(idx, tag) {total+= tag.tag_count }); return Math.floor(total/arr.length); })(tagList),
+                            midValue = ( median > avg ) ? median:avg;
 
-                          $.each( tagList, function(idx, tag) {
+                            $.each( tagList, function(idx, tag) {
                             var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
                               if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
                                 buckets.big.push( tag );
@@ -6494,10 +6497,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 return;
                               }
 
-                          });
+                            });
 
-                          return buckets;
+                            return buckets;
                         }
+
 
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
@@ -6516,48 +6520,47 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                             } 
 
-                          while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+                              while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
 
-                            if ( buckets.big.length ) {
-                              var thisTag = buckets.big.shift();
-                              RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
-                                // set next color 
-                                colorInt++;
-                                if ( colorInt == 6 ) colorInt = 1;
-                            } else {
-                              
-                              if ( buckets.medium.length ) {
-                                var thisTag = buckets.medium.shift();
-                                RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "medium", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
-                                // set next color 
-                                colorInt++;
-                                if ( colorInt == 6 ) colorInt = 1;
-                              }  
-                              if ( buckets.small.length ) {
-                                var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1,
-                                    $smContainer = $('<div class="rdr_box rdr_box_small rdr_container rdr_contains'+numSmallTags+'"></div>').appendTo( $tagsListContainer );
+                                if ( buckets.big.length ) {
+                                  var thisTag = buckets.big.shift();
+                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    // set next color 
+                                    colorInt++;
+                                    if ( colorInt == 6 ) colorInt = 1;
+                                } else {
+                                  
+                                  if ( buckets.medium.length ) {
+                                    var thisTag = buckets.medium.shift();
+                                    RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "medium", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    // set next color 
+                                    colorInt++;
+                                    if ( colorInt == 6 ) colorInt = 1;
+                                  }  
+                                  if ( buckets.small.length ) {
+                                    var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1;
 
-                                for ( i=0; i < numSmallTags; i++ ) {
-                                  var thisTag = buckets.small.shift();
-                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $tagContainer:$smContainer, $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
-                                  // set next color 
-                                colorInt++;
-                                if ( colorInt == 6 ) colorInt = 1;
+                                    for ( i=0; i < numSmallTags; i++ ) {
+                                      var thisTag = buckets.small.shift();
+                                      RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                      // set next color 
+                                    colorInt++;
+                                    if ( colorInt == 6 ) colorInt = 1;
+                                    }
+
+                                  }
                                 }
 
                               }
-                            }
 
-                          }
-
-                          // is it the last thing?  i.e. should it be wide?
-                          if ( tagList.length > 2 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
-                            var $lastContainer = $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last();
-                            if ( $lastContainer.find('.rdr_box_small').length != 2 ) {
-                                $lastContainer.addClass('rdr_wide');
-                                $lastContainer.find('.rdr_box_small').addClass('rdr_wide');
-                            }
-                          }
+                          // // is it the last thing?  i.e. should it be wide?
+                          // if ( tagList.length > 2 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
+                          //   var $lastContainer = $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last();
+                          //   if ( $lastContainer.find('.rdr_box_small').length != 2 ) {
+                          //       $lastContainer.addClass('rdr_wide');
+                          //       $lastContainer.find('.rdr_box_small').addClass('rdr_wide');
+                          //   }
+                          // }
 
                         } // writeTagBoxes
 
@@ -6573,7 +6576,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function animateNextBox() {
                                 var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.find('div.rdr_tag').addClass('rdr_animated');
+                                $thisBox.addClass('rdr_animated');
                                 currentTagBoxAnimating++;
                                 if ( currentTagBoxAnimating > tagBoxesCount ) {
                                     clearInterval( animationQueue );
@@ -6581,6 +6584,28 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             }
                         });
                       } // isotopeTags
+
+                      function isotopeFillGap($tagsListContainer){
+                        var $lastTag = $tagsListContainer.find('.rdr_box').eq(-1);
+                        
+                        if(!$lastTag.length){
+                            return;
+                        }
+
+                        var lastTagDims = $lastTag.position();
+                        
+                        //force the position to fill the space.
+                        $lastTag
+                            .addClass('rdr_clear_transform')
+                            .css({
+                                height: 'auto',
+                                width: 'auto',
+                                top: lastTagDims.top,
+                                left: lastTagDims.left,
+                                bottom: 0,
+                                right: 0
+                            });
+                      }
 
                     },
                     updateContainerTrackers: function(){
