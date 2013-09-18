@@ -947,16 +947,18 @@ function readrBoard($R){
                         var message = '+1 '+tagBodyRaw;
                     }
                     
-
+                    var charCountText = ""
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body  rdr_tag_lineone rdr_charCount'+tagBodyRaw.length+'">'+tagBodyRaw+'</div>';
+                        charCountText = 'rdr_charCount'+tagBodyRaw.length;
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body  rdr_tag_lineone '+charCountText+'">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
+                            charCountText = 'rdr_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount15">' + 
+                            '<div class="rdr_tag_body rdr_tag_lineone '+charCountText+'">' + 
                             tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
                             if ( boxSize == "rdr_box_small" ) {
                                 boxSize = "rdr_box_medium";
@@ -969,7 +971,8 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone rdr_charCount'+tagBody1.length+'">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            charCountText = 'rdr_charCount'+tagBody1.length;
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone '+charCountText+'">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
@@ -978,7 +981,7 @@ function readrBoard($R){
                     var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
                     var notWriteModeHtml = !writeMode ? 
-                        '<span class="rdr_count">'+tagCount+'</span>' +
+                        '<span class="rdr_count '+charCountText+'">'+tagCount+'</span>' +
                         '<i class="icon-search rdr_tag_read_icon"></i>'
                         : "";
 
