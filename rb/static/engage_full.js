@@ -5277,6 +5277,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             $('.rdr_twtooltip').remove();
 
                             if (args.kind && args.kind == "page") {
+
+                                RDR.actions.viewReactionSuccess( args );
+                                return;
+
+
                                 // init vars
                                 /*
                                 var $rindow = args.rindow,
@@ -6311,7 +6316,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // page is the page object, not a boolean
 
                         var hash = $rindow.data('hash');
-                        var summary = RDR.summaries[hash];
+                        
+                        var isPage = !hash || hash == "page";
+
+                        var summary = !isPage ? RDR.summaries[hash] : {};
+                        
                         var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
 
                         // For IE8 and earlier version.
@@ -6352,6 +6361,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
                             writeTagBoxes(blessed_tags);
+                        } else if(isPage){
+                            //do nothing
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
                                 // write inline tags: readmode, for all content types (kind)
@@ -6434,6 +6445,10 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     );
                                 });
                             }
+                        }
+
+                        if(isPage){
+                            
                         }
 
                         // $tagsListContainer.append($tag_table);
@@ -7298,11 +7313,18 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more').find('.rdr_footer').hide();
                 //temp tie-over
-                var hash = args.hash,
-                    summary = RDR.summaries[hash],
-                    kind = summary.kind; // text, img, media
-
                 var headerText = ( args.scenario == "reactionSuccess" ) ? "Thanks for your reaction!":"You've already reacted to this";
+
+                var isPage = args.kind == "page";
+                if(isPage){
+                    var hash = null,
+                        kind = "page";
+                }else{
+                    var hash = args.hash,
+                        summary = RDR.summaries[hash],
+                        kind = summary.kind; // text, img, media
+                }
+
 
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( headerText, args.response.data.interaction.id);
@@ -7314,11 +7336,11 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                 RDR.rindow.updateTagMessage( args );
 
-                var isMediaContainer = kind=="img" ||
-                    kind=="image" ||  // [pb] really?
-                    kind=="imgage" ||
-                    kind=="med" ||
-                    kind=="media";
+                // var isMediaContainer = kind=="img" ||
+                //     kind=="image" ||  // [pb] really?
+                //     kind=="imgage" ||
+                //     kind=="med" ||
+                //     kind=="media";
 
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" && args.selState ){
@@ -7327,6 +7349,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                    
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
                     RDR.actions.containers.updateCrossPageHash(hash);
 
