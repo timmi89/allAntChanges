@@ -528,6 +528,8 @@ div.rdr div.rdr_view_success .rdr_first_column {
 
 div.rdr div.rdr_view_success .rdr_second_column {
   float: left;
+  /*needed for now to fix the add button from wrapping on some browsers*/
+  max-width: 164px;
 }
 div.rdr div.rdr_view_success .rdr_last_column{
   float: left;
