@@ -982,7 +982,7 @@ function readrBoard($R){
                     var tagCount = tagCount || 0;
                     var notWriteModeHtml = !writeMode ? 
                         '<span class="rdr_count '+charCountText+'">'+tagCount+'</span>' +
-                        '<i class="icon-search rdr_tag_read_icon"></i>'
+                        '<i class="icon-search rdr_tag_read_icon '+charCountText+'"></i>'
                         : "";
 
                     var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
