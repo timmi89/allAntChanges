@@ -1021,7 +1021,12 @@ function readrBoard($R){
                             RDR.rindow.jspUpdate( $rindow );
                         }
 
-                        var $header = RDR.rindow.makeHeader( tag.tag_count + ' \'' + tag.body + '\' reactions' );
+                        var HeaderTxt = (tag.tag_count <= 0) ? 
+                            "no reactions" :
+                                (tag.tag_count == 1) ?
+                                "1 reaction" :
+                                tag.tag_count + " reactions";
+                        var $header = RDR.rindow.makeHeader( HeaderTxt );
                             $rindow.find('.rdr_header').replaceWith($header)
                     } // renderReactedContent
 
@@ -1068,9 +1073,13 @@ function readrBoard($R){
                             $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="rdr_page_reactions"></tr></tbody>');
 
                         // add count of page-level reactions
-                        if ( counts && counts.page ) {
-                            var page_reaction_word = (counts.page>1) ? "reactions":"reaction";
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>('+counts.page+') '+tag.body+'</strong> '+page_reaction_word+' to this <strong>page</strong></td>');
+                        if ( counts && counts.page && counts.page > 0 ) {
+                            var page_reaction_text =
+                                (counts.page == 1 ) ?
+                                "1 reaction" :
+                                counts.page + " reactions";
+
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> to this <strong>page</strong></td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
@@ -6588,27 +6597,59 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         });
                       } // isotopeTags
 
-                      function isotopeFillGap($tagsListContainer){
-                        var $lastTag = $tagsListContainer.find('.rdr_box').eq(-1);
-                        
-                        if(!$lastTag.length){
-                            return;
-                        }
+                        function isotopeFillGap($tagsListContainer){
+                            
+                            var $boxes = $tagsListContainer.find('.rdr_box');
+                            var $lastTag = $boxes.eq(-1);
+                                
+                            if(!$lastTag.length){
+                                return;
+                            }
 
-                        var lastTagDims = $lastTag.position();
-                        
-                        //force the position to fill the space.
-                        $lastTag
-                            .addClass('rdr_clear_transform')
-                            .css({
-                                height: 'auto',
-                                width: 'auto',
-                                top: lastTagDims.top,
-                                left: lastTagDims.left,
-                                bottom: 0,
-                                right: 0
+                            var lastTagDims = $lastTag.position();
+                            var doBreak = false;
+
+                            //force the position to fill the space.
+                            $($boxes.get().reverse()).each(function(){
+                                if(doBreak){
+                                   return; 
+                                }
+                                
+                                var $thisTag = $(this);
+                                var thisTagDims = $thisTag.position();
+                                    
+                                var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
+                                var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
+                                
+                                if(!isAdjacentRow && !isAdjacentCol){
+                                    doBreak = true;
+                                    return;
+                                }
+                                
+                                if(isAdjacentRow){
+                                    $thisTag
+                                        .addClass('rdr_clear_transform')
+                                        .css({
+                                            height: 'auto',
+                                            top: thisTagDims.top,
+                                            left: thisTagDims.left,
+                                            bottom: 0
+                                        });   
+                                }
+                                if(isAdjacentCol){
+                                    $thisTag
+                                        .addClass('rdr_clear_transform')
+                                        .css({
+                                            width: 'auto',
+                                            top: thisTagDims.top,
+                                            left: thisTagDims.left,
+                                            right: 0
+                                        });   
+                                }
+
                             });
-                      }
+                            
+                        }
 
                     },
                     updateContainerTrackers: function(){
