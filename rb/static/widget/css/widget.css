@@ -2093,6 +2093,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count {
     margin: 0;
     */
 }
+div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_tag_read_icon,
 div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_count {
   margin-top: 1em;
 }

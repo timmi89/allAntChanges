@@ -468,19 +468,20 @@ function readrBoard($R){
                 //update the size at the same time so the animations run in parallel
                 RDR.rindow.updateSizes( $rindow );
                 $panelWrap.animate({
-                    left: -animWidth
-                },
-                RDR.C.rindowAnimationSpeed,
-                function() {
-                    if (callback) callback();
-                    if ( $rindow.data('jsp') ) {
-                        var API = $rindow.data('jsp');
-                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
-                        API.reinitialise();
-                    } else {
-                        $rindow.jScrollPane({ showArrows:true });
-                    }
-                });
+                      left: -animWidth
+                  },
+                  RDR.C.rindowAnimationSpeed,
+                  function() {
+                      if (callback) callback();
+                      if ( $rindow.data('jsp') ) {
+                          var API = $rindow.data('jsp');
+                          // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                          API.reinitialise();
+                      } else {
+                          $rindow.jScrollPane({ showArrows:true });
+                      }
+                  }
+                );
             },
             panelHide: function( $rindow, callback ) {
                 //RDR.rindow.panelHide:
@@ -527,6 +528,11 @@ function readrBoard($R){
             },
             panelEnsureFloatWidths: function( $rindow ) {
                 //RDR.rindow.panelEnsureFloatWidths:
+
+                //this function keeps messing stuff up and causing the rindow panel to jump.
+                //we shouldn't need it anyway while the success state just has a close button instead of a back button
+                return;
+
                 //this is needed becuase after the tagList updates, the width of panel1 can change.
                 var $panelWrap = $rindow.find('.rdr_body_wrap');
                 var $showPanel = $rindow.find('.rdr_visiblePanel');
@@ -829,7 +835,12 @@ function readrBoard($R){
                                     $shareLinks.append($link);
                                     $link.click( function() {
                                         
-                                        var tag_body = args.tag.tag_body;
+                                        var tag_body = args.tag.tag_body || args.tag.body;
+                                        // goddamnit this hack.
+                                        if(args.hash.jquery){
+                                            content_node.hash = "page";
+                                            hash = args.hash = "page";
+                                        }
 
                                         RDR.events.trackEventToCloud({
                                             category: "share",
@@ -843,9 +854,18 @@ function readrBoard($R){
 
                                         var summary = RDR.summaries[hash];
                                         //hack to get the kind
-                                        var kind = summary.kind;
+                                        var kind = args.kind || summary.kind;
                                         RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                        RDR.actions.share_getLink({ referring_int_id:args.response.data.interaction.id, hash:args.hash, kind:kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                        
+                                        RDR.actions.share_getLink({
+                                            referring_int_id:args.response.data.interaction.id,
+                                            hash:args.hash,
+                                            kind:kind,
+                                            sns:val,
+                                            rindow:$rindow,
+                                            tag:tag,
+                                            content_node:content_node
+                                        }); // ugh, lots of weird data nesting
                                         return false;
                                     });
                                 });
@@ -1014,7 +1034,7 @@ function readrBoard($R){
                             RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             RDR.rindow.panelShow( $rindow, $newPanel, function() {
                                 RDR.rindow.hideFooter($rindow);
-                                RDR.rindow.panelEnsureFloatWidths($rindow);
+                                // RDR.rindow.panelEnsureFloatWidths($rindow);
                             });
                         } else {
                             $rindow.find('.rdr_body').html( $reactionsTable );
@@ -1067,6 +1087,7 @@ function readrBoard($R){
                     }
 
                     function createReactedContentTable($this, counts) {
+
                         $().selog('hilite', true, 'off');
                         $('.rdr_twtooltip').remove();
                         var $backButton = _makeBackButton(),
@@ -1214,11 +1235,17 @@ function readrBoard($R){
                             }
                         });
                     }
+                    
                     // //New Check 
                     var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
                         (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
                         !$.isEmptyObject(summary.top_interactions) &&
                         !$.isEmptyObject(summary.top_interactions.coms)
+
+                    //really?
+                    if(!tag.id){
+                        tag.id = tag.tag_id;
+                    }
 
                     if (crazyCheckForDataTieOver) {
                         comments = summary.top_interactions.coms[tag.id];
@@ -1228,6 +1255,7 @@ function readrBoard($R){
                     }
 
                     // add the comment indicator + comment hover... if we should!
+
                     if ( !$.isEmptyObject( comments ) ) {
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="view comments"></span>');
 
@@ -2230,7 +2258,17 @@ function readrBoard($R){
             getPageProperty: function( prop, hashOrObject ) {
             //RDR.util.getPageProperty
             // goal is, generally, to get the Page ID integer.
-                if (!prop) prop = "id";
+                if (!prop) {
+                    prop = "id";
+                }
+                var page_id;
+
+                //hack to accomodate the dirty - hash=="page"
+                if(hashOrObject == "page"){
+                    // hack salvage data
+                    page_id = $('.rdr_window').data('container').attr('rdr-page-id');
+                    return parseInt(page_id, 10);
+                }
 
                 // this code is to accommodate passing in either a hash (string) or jquery element to 
                 if (typeof hashOrObject == "object") {
@@ -2851,6 +2889,11 @@ function readrBoard($R){
                                 }
 
                                 if ( callbackFunction && args ) {
+                                    
+                                    //quick fix for page level data
+                                    if(!args.kind && args.rindow){
+                                        args.kind = $(args.rindow).data('kind');
+                                    }
                                     args.user = RDR.user;
                                     callbackFunction(args);
                                     callbackFunction = null;
@@ -4746,7 +4789,6 @@ function readrBoard($R){
 
                         //run the send function for the appropriate interaction type
                         //RDR.actions.interactions[int_type].send(args);
-
                         RDR.actions.interactions.send(newArgs, int_type, action_type);
                     });
                 },
@@ -4787,9 +4829,10 @@ if ( typeof sendData.tag != "undefined" ) {
 // and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
 // also: this is stupid.
-if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page" ) {
+if ( sendData.kind=="page" ) {
  sendData.hash = "page";
  sendData.container_kind = "text";
+ sendData.page_id = sendData.page_id || RDR.util.getPageProperty('id', "page");
  delete sendData.content_node_data.hash; //this was happening for delete calls.
 }
                     //todo: consider making a generic url router
@@ -4905,31 +4948,30 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                     RDR.actions.content_nodes.quickFixReset(hash);
 
                                     var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
-                                    if(isInlineRindow){
-                                        
-                                        var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
-                                        var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
-                                            .click(function(e){
-                                                e.preventDefault();
+                                    
+                                    var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
+                                    var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
+                                        .click(function(e){
+                                            e.preventDefault();
 
-                                                //there's a bug, just close the rindow for now. 
-                                                RDR.rindow.close( $rindow );
-                                                // $rindow.find('.rdr_back').eq(0).click();
-                                            });
+                                            //there's a bug, just close the rindow for now. 
+                                            RDR.rindow.close( $rindow );
+                                            // $rindow.find('.rdr_back').eq(0).click();
+                                        });
 
-                                        var isPostTagComment = $('.rdr_subheader').length;
-                                        if(isPostTagComment){
+                                    var isPostTagComment = $('.rdr_subheader').length;
+                                    if(isPostTagComment){
 
-                                            $('.rdr_nextActions').remove();
-                                            $rindow.find('.rdr_subheader')
-                                                .empty().append($responseMsg).append($doneButton);
+                                        $('.rdr_nextActions').remove();
+                                        $rindow.find('.rdr_subheader')
+                                            .empty().append($responseMsg).append($doneButton);
 
-                                        }else{
-                                            $rindow.find('.rdr_commentBox')
-                                                .empty().append($responseMsg).append($doneButton);
-                                        }
-                                            
+                                    }else{
+                                        $rindow.find('.rdr_commentBox')
+                                            .empty().append($responseMsg).append($doneButton);
                                     }
+                                        
+                                
 
                             }
 
@@ -5128,7 +5170,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             tag,
                             sendData;
 
-                        if (args.kind && args.kind == "page") {
+                        var isPage = (hash == "page") || (args.kind && args.kind == "page");
+                        if (isPage) {
                             kind = "page";
                             tag = args.tag;
 
@@ -5288,90 +5331,74 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             //quick fix for tooltip that is still hanging out after custom reaction
                             $('.rdr_twtooltip').remove();
 
+
                             if (args.kind && args.kind == "page") {
+                                // RDR.actions.viewReactionSuccess( args );
 
-                                RDR.actions.viewReactionSuccess( args );
-                                return;
-
-
-                                // init vars
-                                /*
-                                var $rindow = args.rindow,
-                                    // $tag_table = $rindow.find('table.rdr_tags'),
-                                    uiMode = $rindow.data('mode') || 'writeMode',
-                                    response = args.response,
-                                    interaction = response.interaction,
-                                    interaction_node = response.data.interaction.interaction_node,
-                                    sendData = args.sendData,
-                                    tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
-                                    int_id = response.data.interaction.id;
-*/
-                                // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
-                                var $summary_box = $rindow.find('.rdr_tags_list');
-                                var $pageTagResponse = $('<div class="rdr_info"></div>');
+                                // // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
+                                // var $summary_box = $rindow.find('.rdr_tags_list');
+                                // var $pageTagResponse = $('<div class="rdr_info"></div>');
                                 
-                                var $shareIcons = _makeShareIcons(args);
+                                // var $shareIcons = _makeShareIcons(args);
 
                                 var existing = args.response.data.existing;
 
                                 if(!existing){
-                                    var $rdr_reactionMessage = $('<div class="rdr_reactSuccess rdr_reactionMessage"></div>');
-                                    var $feedbackMsg = $(
-                                        '<div class="feedbackMsg">'+
-                                            '<div class="rdr_label_icon"></div>'+
-                                            '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
-                                            '<span class="pipe"> | </span>'+
-                                            // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
-                                        '</div>'
-                                    );
-                                    $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
-                                        // panelEvent - undo2
-                                        var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_tag_details');
-                                        _undoPageReaction(args);
-                                    });
+                                //     var $rdr_reactionMessage = $('<div class="rdr_reactSuccess rdr_reactionMessage"></div>');
+                                //     var $feedbackMsg = $(
+                                //         '<div class="feedbackMsg">'+
+                                //             '<div class="rdr_label_icon"></div>'+
+                                //             '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
+                                //             '<span class="pipe"> | </span>'+
+                                //             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                //             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                //         '</div>'
+                                //     );
+                                //     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                //         // panelEvent - undo2
+                                //         var args = event.data.args;
+                                //         args.rindow = $(this).closest('.rdr_tag_details');
+                                //         _undoPageReaction(args);
+                                //     });
 
-                                    $pageTagResponse.append($feedbackMsg);
-                                    $pageTagResponse.append($shareIcons);
+                                //     $pageTagResponse.append($feedbackMsg);
+                                //     $pageTagResponse.append($shareIcons);
                                     
-                                    $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
-                                    $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                //     $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
+                                //     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                     
 
                                     _doPageUpdates(args);
                                     
                                 }else{
-                                    var $rdr_reactionMessage = $('<div class="rdr_reactionMessage"></div>');
-                                    var $feedbackMsg = $(
-                                        '<div class="feedbackMsg">'+
-                                            '<em><strong>You have already given that reaction.</em></strong>'+
-                                            '<span class="pipe"> | </span>'+
-                                            // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                            '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
-                                        '</div>'
-                                    );
-                                    $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                //     var $rdr_reactionMessage = $('<div class="rdr_reactionMessage"></div>');
+                                //     var $feedbackMsg = $(
+                                //         '<div class="feedbackMsg">'+
+                                //             '<em><strong>You have already given that reaction.</em></strong>'+
+                                //             '<span class="pipe"> | </span>'+
+                                //             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
+                                //             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                //         '</div>'
+                                //     );
+                                //     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
                                         
-                                        // panelEvent - undo3
+                                //         // panelEvent - undo3
 
-                                        var args = event.data.args;
-                                        args.rindow = $(this).closest('.rdr_tag_details');
-                                        _undoPageReaction(args);
-                                    });
+                                //         var args = event.data.args;
+                                //         args.rindow = $(this).closest('.rdr_tag_details');
+                                //         _undoPageReaction(args);
+                                //     });
 
-                                    $pageTagResponse.append($feedbackMsg);
+                                //     $pageTagResponse.append($feedbackMsg);
 
-                                    $pageTagResponse.append($shareIcons);
-                                    $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                //     $pageTagResponse.append($shareIcons);
+                                //     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
                                 }
-                                RDR.rindow.updateSizes(
-                                    $summary_box, {
-                                        noAnimate:true,
-                                        setHeight:95
-                                    }
-                                );
-                                RDR.rindow.updateFooter( $rindow, '' );
+                                
+                                // RDR.rindow.updateFooter( $rindow, '' );
+
+
+                                RDR.actions.viewReactionSuccess( args );
 
                             } else {
                                 // not a page-level reaction
@@ -5533,6 +5560,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                             function _makeShareIcons(args){
                                 // embed icons/links for diff SNS
+
                                 var socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
                                 var shareHash = args.hash;
                                 var $shareWrapper = $('<div class="shareWrapper" ></div>');
@@ -5600,7 +5628,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             };
                             diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
-                            var isPage = (args.kind == 'page');
+                            var isPage = (args.kind == 'page' || hash=="page");
                             if(isPage){
                                 //a bit hacky
                                 RDR.actions.summaries.update(hash, diff, isPage, args.page_id);
@@ -5623,7 +5651,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 RDR.session.rindowUserMessage.show( usrMsgArgs );
                             });
                             
-                            if(args.kind == 'page'){
+                            if(isPage){
                                 RDR.rindow.updatePageTagMessage( args, 'tagDeleted' );
                             }else{
                                 RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
@@ -5632,7 +5660,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         }
                     },
                     onFail: function(args){
-                        if (args.kind && args.kind == "page") {
+                        var isPage = (args.kind == 'page' || args.hash=="page");
+                        if (isPage) {
                             var $message = '<div style="position:absolute;right:13px;">X</div>';
                             if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
                                 $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
@@ -7375,6 +7404,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
                 //RDR.actions.viewReactionSuccess
+
                 var tag = args.tag,
                     $rindow = args.rindow,
                     interaction = args.response.data.interaction,
@@ -7412,6 +7442,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 //     kind=="media";
 
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
+                  
                     if ( kind == "text" && args.selState ){
                         var selState = args.selState;
                         $().selog('hilite', selState, 'on');
@@ -7430,7 +7461,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     var isCrossPageContainer = $('[rdr-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                        RDR.rindow.panelEnsureFloatWidths($rindow);
+                        // RDR.rindow.panelEnsureFloatWidths($rindow);
                     }
 
                 } );
@@ -7456,8 +7487,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
-                var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
-                
                 // do stuff, populate the rindow.
                 var $header = RDR.rindow.makeHeader( tag.tag_body );
                 $rindow.find('.rdr_header').replaceWith($header);
@@ -7485,6 +7514,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                 // RDR.rindow.updateSizes( $rindow );
                 RDR.rindow.panelShow( $rindow, $newPanel, function() {
                     if ( kind == "text" ){
+                        var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
                         $rindow.data('selState', selState);
                     }
@@ -7551,6 +7581,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
                                 content_node.kind = "text";
                             }
+                            var selState = selState || null;
                             var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
 
                             //leave parent_id undefined for now - backend will find it.
@@ -7678,7 +7709,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     var rindow = params.rindow,
                         tag = params.tag;
-
+                    
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
 
                     // translations.  TODO clean and remove
@@ -7749,7 +7780,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                         short_url: response.data.short_url,
                                         reaction: tag.body,
                                         //the content_node_info kind was un-reliable. - use this instead
-                                        container_kind: RDR.summaries[hash].kind
+                                        container_kind: (hash == "page") ? "page" : RDR.summaries[hash].kind
                                     });
                                 }
                             },
@@ -8778,7 +8809,7 @@ function $RFunctions($R){
                 $('.'+widgetClass).remove();
 
                 var $summary_widget_parent = $(page.parentContainer),
-                    $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box"></div>').addClass(widgetClass);
+                    $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box" rdr-page-id="'+page.id+'"></div>').addClass(widgetClass);
 
                 if ( RDR.engageScriptParams.bookmarklet == "true" ) {
                     $summary_widget.addClass('rdr_bookmarklet');
