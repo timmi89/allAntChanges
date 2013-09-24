@@ -980,9 +980,9 @@ function readrBoard($R){
                             tagBodyCrazyHtml = 
                             '<div class="rdr_tag_body rdr_tag_lineone '+charCountText+'">' + 
                             tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
-                            if ( boxSize == "rdr_box_small" ) {
-                                boxSize = "rdr_box_medium";
-                            }
+                            // if ( boxSize == "rdr_box_small" ) {
+                            //     boxSize = "rdr_box_medium";
+                            // }
                         } else {
                             var tagBody1 = "", tagBody2 = "", keepLooping = true;
                             tagBodyRawSplit = tagBodyRaw.split(' ');
@@ -1235,7 +1235,7 @@ function readrBoard($R){
                             }
                         });
                     }
-                    
+
                     // //New Check 
                     var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
                         (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
@@ -6530,9 +6530,6 @@ if ( sendData.kind=="page" ) {
                               } else if ( tag.tag_count > midValue ) {
                                 buckets.medium.push( tag );
                                 return;
-                              } else if ( tagBody.length > 15 ) { // long tags can't be a small box, so at this point we prevent it from going into small bucket
-                                buckets.medium.push( tag );
-                                return;
                               } else {
                                 buckets.small.push( tag );
                                 return;
@@ -6638,6 +6635,17 @@ if ( sendData.kind=="page" ) {
                             var lastTagDims = $lastTag.position();
                             var doBreak = false;
 
+                            $lastTag
+                                .addClass('rdr_clear_transform')
+                                .css({
+                                    height: 'auto',
+                                    width: 'auto',
+                                    top: lastTagDims.top,
+                                    left: lastTagDims.left,
+                                    bottom: 0,
+                                    right: 0
+                                });  
+
                             //force the position to fill the space.
                             $($boxes.get().reverse()).each(function(){
                                 if(doBreak){
@@ -6647,6 +6655,7 @@ if ( sendData.kind=="page" ) {
                                 var $thisTag = $(this);
                                 var thisTagDims = $thisTag.position();
                                     
+                                var isLastTag = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
                                 
@@ -6663,18 +6672,19 @@ if ( sendData.kind=="page" ) {
                                             top: thisTagDims.top,
                                             left: thisTagDims.left,
                                             bottom: 0
-                                        });   
+                                        });  
                                 }
-                                if(isAdjacentCol){
-                                    $thisTag
-                                        .addClass('rdr_clear_transform')
-                                        .css({
-                                            width: 'auto',
-                                            top: thisTagDims.top,
-                                            left: thisTagDims.left,
-                                            right: 0
-                                        });   
-                                }
+                                //don't do this for now.
+                                // if(isAdjacentCol){
+                                //     $thisTag
+                                //         .addClass('rdr_clear_transform')
+                                //         .css({
+                                //             width: 'auto',
+                                //             top: thisTagDims.top,
+                                //             left: thisTagDims.left,
+                                //             right: 0
+                                //         });   
+                                // }
 
                             });
                             
