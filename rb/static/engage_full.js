@@ -2395,7 +2395,9 @@ function readrBoard($R){
                 var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
 
                 if( body && typeof body == "string" && body !== "" ) {
-                    return body.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+                    var firstpass = body.replace(/[\n\r\t]+/gi,' ').replace().replace(/\s{2,}/g,' ');
+                    // seeing if this helps the propub issue - to trim again.  When i run this line above it looks like there is still white space.
+                    return $.trim(firstpass);
                 }
             },
             trimToLastWord: function(str){
