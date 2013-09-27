@@ -949,7 +949,8 @@ function readrBoard($R){
                     // RDR.rindow.tagBox.setWidth
                     // should probably just be RDR.rindow.setWidth ??
                     // width must be 320, 480, or 640
-                    $rindow.removeClass('w160 w320 w480 w640').addClass('w'+width);
+                    var rindowWidth = (RDR.group.max_rindow_width) ? RDR.group.max_rindow_width:width;
+                    $rindow.removeClass('w160 w320 w480 w640').addClass('w'+rindowWidth);
                 },
                 setHeight: function( $rindow, height ) {
                     // RDR.rindow.tagBox.setHeight
@@ -1678,7 +1679,7 @@ function readrBoard($R){
                     maxWidth = settings.maxWidth,
                     rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page',
                     $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
-                            
+
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
                     // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
@@ -3872,14 +3873,14 @@ function readrBoard($R){
                     }
 
                     var crossPageHashes = [];
-                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
                         var thisHash = $(node).attr('rdr-hash');
                         crossPageHashes.push( thisHash );
 
                         hashList = $.grep(hashList, function(value) {
                           return value != thisHash;
                         });
-                        
+
                         //init the cross page containers so even the ones that come back with 0 reactions will
                         //have write mode enabled
                         RDR.actions.indicators.init(thisHash);
@@ -3925,7 +3926,7 @@ function readrBoard($R){
                             // but we still want to do an init of the node... so we make dummy objects
                             // this is so we can init the nodes down below when we call
                             // RDR.actions.containers.initCrossPageHashes(response.data.crossPageKnown);
-                            $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                            $.each( $('[rdr-custom-display]'), function( idx, node ) {
                                 var thisHash = $(node).attr('rdr-hash');
                                 var dummySummaryObject = {
                                         "hash":thisHash,
@@ -5960,17 +5961,28 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                     }
 
                     function _customDisplaySetupHoverForShowRindow($cta){
-                        $cta.on('mouseover.showRindow', function(){
-                            _customDisplayMakeRindow($cta);
-                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                            if( hasHelper ){
-                                // RDR.events.track('paragraph_helper_engage');
-                            }
+                        // SUPPORTS ONE:
+                        // $cta.on('mouseover.showRindow', function(){
+                        //     _customDisplayMakeRindow($cta);
+                        //     var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                        //     if( hasHelper ){
+                        //         // RDR.events.track('paragraph_helper_engage');
+                        //     }
+                        // });
+                        
+                        // SUPPORTS TWO:
+                        $cta.each( function() {
+                            var $thisCTA = $(this);
+                            $thisCTA.on('mouseover.showRindow', function(){
+                                _customDisplayMakeRindow($thisCTA);
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if( hasHelper ){
+                                    // RDR.events.track('paragraph_helper_engage');
+                                }
+                            });
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
-                        //only allow one indicator rindow.
-                        
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow){
                             // dont rewrite the window if it already exists...
@@ -5978,6 +5990,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                             if ( $indicator.$rindow.data('container') == hash ) { return; }
                             $indicator.$rindow.remove();
                         }
+
                         // if(summary.$rindow){
                         //     summary.$rindow.remove();
                         // }
@@ -6013,7 +6026,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         // RDR.events.track('start_react_text');
                         RDR.events.trackEventToCloud({
                             category: "engage",
-                            action: "rindow_shown_writemode",
+                            action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
                             opt_label: "kind: text, hash: " + hash,
                             container_hash: hash,
                             container_kind: "text",
@@ -6413,7 +6426,7 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                                 clearTimeout(timeoutCloseEvt);
                             });
 
-                            if ( typeof summary !="undefined" && summary.kind == "text" ) {
+                            if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes ) ) {
                                 $rindow.find('div.rdr_box').each( function() {
                                     $(this).hover(
                                         function() {
@@ -7235,14 +7248,22 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
 
                     var isText = summary.kind == "text" || summary.kind == "txt";
                     //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
-                    if ( isText && !$.isEmptyObject( summary.content_nodes ) ) {
+                    if ( isText ) {
                         // text requires iterating through the possible content nodes
-                        $.each( summary.content_nodes, function( node_id, node_data ) {
-                            $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
+                        // has a freaking content node obj?  i.e. is text that can be arbitrarily selected?
+                        if (!$.isEmptyObject( summary.content_nodes )) {
+                            $.each( summary.content_nodes, function( node_id, node_data ) {
+                                $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
+                                    summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                                });
+                            });
+                        // has no content node obj?  i.e. is text that is probably a rdr-custom-display.
+                        } else {
+                            $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
                             });
-                        });
-                    } else if ( !$.isEmptyObject( summary.top_interactions ) ) {
+                        }
+                    } else if ( !$.isEmptyObject( summary.top_interactions ) && !$.isEmptyObject( summary.content_nodes) ) {
                         // images+media are their own content nodes (for now.  video will split out later.)
                         var node_id = $.map( summary.content_nodes, function(value, key) {return key;})[0];
                         $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
@@ -7909,7 +7930,6 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
-                
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
                 if ( $mouse_target.hasAttr('rdr-custom-display') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-custom-display')+'"]').length ) { 
                     return; 
@@ -8111,6 +8131,8 @@ if ( int_type_for_url=="tag" && action_type == "create" && sendData.kind=="page"
                         });
                         RDR.actions.sendHashes( hashesByPageId );
                     } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
+                        // should this be $('[rdr-custom-display]') instead of crossPageContent??
+
                         // if no reactions on this page, but there is a cross-page container... force a call.  
                         // just grab the first crosspage hash.. we get them all later.  
                         // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
