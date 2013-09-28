@@ -31,7 +31,7 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^publishers/$','rb.views.splash'),
-  # url(r'^about/$','rb.views.splash'),
+  url(r'^about/$','rb.views.about'),
   url(r'^learn/$','rb.views.learn'),
   url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
@@ -93,6 +93,8 @@ urlpatterns = patterns('',
   # Main Site Supporting Pages
   url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
+  url(r'^terms/$', 'rb.views.terms'),
+  url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^splash/$', 'rb.views.splash'),
   
