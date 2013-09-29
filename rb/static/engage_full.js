@@ -981,14 +981,14 @@ function readrBoard($R){
                     //split long tag onto two lines.
                     if ( tagBodyRaw.length < 16 ) {
                         charCountText = 'rdr_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body  rdr_tag_lineone '+charCountText+'">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "rdr_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
                             charCountText = 'rdr_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="rdr_tag_body rdr_tag_lineone '+charCountText+'">' + 
+                            '<div class="rdr_tag_body rdr_tag_lineone">' + 
                             tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "rdr_box_small" ) {
                             //     boxSize = "rdr_box_medium";
@@ -1002,7 +1002,7 @@ function readrBoard($R){
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
                             charCountText = 'rdr_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone '+charCountText+'">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
@@ -1010,15 +1010,19 @@ function readrBoard($R){
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
-                    var notWriteModeHtml = !writeMode ? 
-                        '<span class="rdr_count '+charCountText+'">'+tagCount+'</span>' +
-                        '<i class="rdr_icon-search rdr_tag_read_icon '+charCountText+'"></i>'
-                        : "";
+                    var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
+                        "" : 
+                        '<span class="rdr_plusOne">+1</span>';
+
+                    var notWriteModeHtml = isWriteMode ?
+                        "" : 
+                        '<span class="rdr_count">'+tagCount+'</span>' +
+                        '<i class="rdr_icon-search rdr_tag_read_icon"></i>';
 
                     var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
                             '<div '+
-                                'class="rdr_tag '+tagIsSplitClass+' rdr_tooltip_this '+content_node_str+'" '+
-                                'title="'+message+'" '+
+                                'class="rdr_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
+                                // 'title="'+message+'" '+
                                 'data-tag_id="'+tag_id+'" '+
                                 'data-tag_count="'+tagCount+'" '+
                                 'data-parent_id="'+parent_id+'" '+
@@ -1026,6 +1030,7 @@ function readrBoard($R){
                             '>'+
                                 tagBodyCrazyHtml+
                                 notWriteModeHtml+
+                                plusOneCTA+
                             '</div>'+
                         '</div>';
 
@@ -1231,8 +1236,7 @@ function readrBoard($R){
                     });
 
                     // $container.append( $tagBox, " " );
-                    $('div.rdr_tooltip_this').tooltip({  });
-
+                    
                     // figure out if we should add a comment indicator + comment hover
                     var comments = {},
                         num_comments = 0;
@@ -1299,7 +1303,7 @@ function readrBoard($R){
 
                 if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText =  ( actionType=="react" ) ? "+ Start typing to add your own" : "+ Add tag...";
+                        helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
 
                     // add custom tag
                     var $clickOverlay = $('<div class="rdr_click_overlay"></div>').appendTo($container);
@@ -1373,17 +1377,16 @@ function readrBoard($R){
                         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
                         RDR.actions.interactions.ajax( args, actionType, 'create' );
                         $customInput.blur();
-
                         // $custom.tooltip();
-
-                        $(document).on('keydown.rdr', function(event) {
-                            // this won't be international-friendly -- it's a list of letters, numbers, punctuation, plus SHIFT
-                            keyCodes = [16, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 219, 221, 220, 186, 222, 188, 190, 191, 192];
-                            if ( $.inArray(event.keyCode, keyCodes) != -1 ) {
-                                $container.find('input').focus();
-                            }
-                        });
                     }
+
+                    $(document).on('keydown.rdr', function(event) {
+                        // this won't be international-friendly -- it's a list of letters, numbers, punctuation, plus SHIFT
+                        keyCodes = [16, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 219, 221, 220, 186, 222, 188, 190, 191, 192];
+                        if ( $.inArray(event.keyCode, keyCodes) != -1 ) {
+                            $container.find('input').focus();
+                        }
+                    });
                 }
             },
             _rindowTypes: {
@@ -7584,7 +7587,7 @@ if ( sendData.kind=="page" ) {
                    //todo: combine this with the other make comments code
                     var helpText = "Add a comment or #hashtag",
                         $commentDiv =  $('<div class="rdr_comment rdr_clearfix">'),
-                        $commentTextarea = $('<textarea class="commentTextArea">' +helpText+ '</textarea>'),
+                        $commentTextarea = $('<textarea class="commentTextArea rdr_default_msg">' +helpText+ '</textarea>'),
                         $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
                         $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
 
@@ -7595,14 +7598,20 @@ if ( sendData.kind=="page" ) {
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
+
+                    // todo: consolodate with similar functions.
                     }).blur(function(){
-                        if( $(this).val() === "" ){
+                        var val = $(this).val();
+                        if( val === "" || val === helpText ){
+                            $(this).addClass('rdr_default_msg');
                             $(this).val( helpText );
                         }
                     }).keyup(function(event) {
                         var commentText = $commentTextarea.val();
                         if (event.keyCode == '27') { //esc
-                            //return false;
+                            $(this).blur();
+                            // return false so the rindow doesn't close.
+                            return false;
                         } else if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
