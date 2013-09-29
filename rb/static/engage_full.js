@@ -4945,7 +4945,7 @@ if ( sendData.kind=="page" ) {
                                 $rindow.find('div.rdr_loader').css('visibility','hidden');                                
 
                                 //messy fixes for success responses in crossPageHash containers.
-                                    RDR.actions.content_nodes.quickFixReset(hash);
+                                    RDR.actions.content_nodes.quickuickFixReset(hash);
 
                                     var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
                                     
@@ -6382,7 +6382,11 @@ if ( sendData.kind=="page" ) {
                         if ( typeof page != "undefined" ) {
                             // page-level / summary bar
                             if ( !isWriteMode && page.toptags.length ) {
-                                // write page-level tags: readmode`
+                                // write page-level tags: readmode
+
+                                // actually, these should always be sorted already - dont think we need this.
+                                // RDR.actions.summaries.sortByTags(page.toptags);
+
                                 writeTagBoxes( page.toptags );
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_cta_msg').click( function() {
@@ -6509,12 +6513,15 @@ if ( sendData.kind=="page" ) {
                             // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
-                            $.each( tagList, function(idx,tag){ if ( !tag.tag_count ) tag.tag_count = -101; }); // in write mode, all tags are "-101"
+                            $.each( tagList, function(idx,tag){
+                                if ( !tag.tag_count ) tag.tag_count = -101; 
+                            }); // in write mode, all tags are "-101"
+
                             tagList.sort( SortByTagCount ); // each as a .body and a .tag_count
                             var buckets = {
-                            big: [],
-                            medium: [],
-                            small: []
+                                big: [],
+                                medium: [],
+                                small: []
                             },
                             max = tagList[0].tag_count,
                             median = tagList[ Math.floor(tagList.length/2) ].tag_count,
@@ -6523,18 +6530,17 @@ if ( sendData.kind=="page" ) {
                             midValue = ( median > avg ) ? median:avg;
 
                             $.each( tagList, function(idx, tag) {
-                            var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
-                              if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
-                                buckets.big.push( tag );
-                                return;
-                              } else if ( tag.tag_count > midValue ) {
-                                buckets.medium.push( tag );
-                                return;
-                              } else {
-                                buckets.small.push( tag );
-                                return;
-                              }
-
+                                var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
+                                if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                    buckets.big.push( tag );
+                                    return;
+                                } else if ( tag.tag_count > midValue ) {
+                                    buckets.medium.push( tag );
+                                    return;
+                                } else {
+                                    buckets.small.push( tag );
+                                    return;
+                                }
                             });
 
                             return buckets;
@@ -6558,7 +6564,7 @@ if ( sendData.kind=="page" ) {
                                 if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                             } 
 
-                              while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+                            while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
 
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
@@ -6566,39 +6572,22 @@ if ( sendData.kind=="page" ) {
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
-                                } else {
-                                  
-                                  if ( buckets.medium.length ) {
+                                } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
                                     RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "medium", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
-                                  }  
-                                  if ( buckets.small.length ) {
-                                    var numSmallTags = ( ( buckets.small.length >= 2 ) ) ? 2:1;
-
-                                    for ( i=0; i < numSmallTags; i++ ) {
-                                      var thisTag = buckets.small.shift();
-                                      RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
-                                      // set next color 
-                                    colorInt++;
-                                    if ( colorInt == 6 ) colorInt = 1;
-                                    }
-
-                                  }
+    
+                                } else if ( buckets.small.length ) {
+                                  var thisTag = buckets.small.shift();
+                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  // set next color 
+                                  colorInt++;
+                                  if ( colorInt == 6 ) colorInt = 1;
                                 }
 
-                              }
-
-                          // // is it the last thing?  i.e. should it be wide?
-                          // if ( tagList.length > 2 && $tagsListContainer.children('.rdr_box').not('.rdr_box_big').length % 2 != 0 ) {
-                          //   var $lastContainer = $tagsListContainer.children('.rdr_box').not('.rdr_box_big').last();
-                          //   if ( $lastContainer.find('.rdr_box_small').length != 2 ) {
-                          //       $lastContainer.addClass('rdr_wide');
-                          //       $lastContainer.find('.rdr_box_small').addClass('rdr_wide');
-                          //   }
-                          // }
+                            }
 
                         } // writeTagBoxes
 
@@ -7343,6 +7332,16 @@ if ( sendData.kind=="page" ) {
                         $summaryWidgetAnchorNode.rdrWidgetSummary('update');
                     
                 },
+
+                sortByTags: function(tags) {
+                  // RDR.actions.summaries.sortByTags
+                  
+                  //redundant with below.  
+                  //I need to use this for page summaries and dont want to mess with the below func.
+                  function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
+                  return tags.sort( SortByTagCount );
+                },
+
                 sortInteractions: function(hash) {
                     // RDR.actions.summaries.sortInteractions
 
