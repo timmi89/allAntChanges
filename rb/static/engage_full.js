@@ -313,7 +313,7 @@ function readrBoard($R){
                
                 var $menuDropdownActions = $(
                     '<div class="rdr_menuDropDown rdr_menu_actions">'+
-                        '<span class="icon-chevron-down rdr_menuTrigger"></span>'+
+                        '<span class="rdr_icon-chevron-down rdr_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
@@ -321,7 +321,7 @@ function readrBoard($R){
 
                 var $menuDropdownShare = $(
                     '<div class="rdr_menuDropDown rdr_menu_share">'+
-                        '<span class="icon-share icon-share-override rdr_menuTrigger"></span>'+
+                        '<span class="rdr_icon-share rdr_icon-share-override rdr_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuShares = makeShareList();
@@ -1012,7 +1012,7 @@ function readrBoard($R){
                     var tagCount = tagCount || 0;
                     var notWriteModeHtml = !writeMode ? 
                         '<span class="rdr_count '+charCountText+'">'+tagCount+'</span>' +
-                        '<i class="icon-search rdr_tag_read_icon '+charCountText+'"></i>'
+                        '<i class="rdr_icon-search rdr_tag_read_icon '+charCountText+'"></i>'
                         : "";
 
                     var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
@@ -4968,31 +4968,31 @@ if ( sendData.kind=="page" ) {
                                 $rindow.find('div.rdr_loader').css('visibility','hidden');                                
 
                                 //messy fixes for success responses in crossPageHash containers.
-                                    RDR.actions.content_nodes.quickuickFixReset(hash);
+                                RDR.actions.content_nodes.quickFixReset(hash);
 
-                                    var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
-                                    
-                                    var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
-                                    var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
-                                        .click(function(e){
-                                            e.preventDefault();
+                                var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
+                                
+                                var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
+                                var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
+                                    .click(function(e){
+                                        e.preventDefault();
 
-                                            //there's a bug, just close the rindow for now. 
-                                            RDR.rindow.close( $rindow );
-                                            // $rindow.find('.rdr_back').eq(0).click();
-                                        });
+                                        //there's a bug, just close the rindow for now. 
+                                        RDR.rindow.close( $rindow );
+                                        // $rindow.find('.rdr_back').eq(0).click();
+                                    });
 
-                                    var isPostTagComment = $('.rdr_subheader').length;
-                                    if(isPostTagComment){
+                                var isPostTagComment = $('.rdr_subheader').length;
+                                if(isPostTagComment){
 
-                                        $('.rdr_nextActions').remove();
-                                        $rindow.find('.rdr_subheader')
-                                            .empty().append($responseMsg).append($doneButton);
+                                    $('.rdr_nextActions').remove();
+                                    $rindow.find('.rdr_subheader')
+                                        .empty().append($responseMsg).append($doneButton);
 
-                                    }else{
-                                        $rindow.find('.rdr_commentBox')
-                                            .empty().append($responseMsg).append($doneButton);
-                                    }
+                                }else{
+                                    $rindow.find('.rdr_commentBox')
+                                        .empty().append($responseMsg).append($doneButton);
+                                }
                                         
                                 
 

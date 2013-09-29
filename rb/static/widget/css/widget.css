@@ -382,16 +382,24 @@ div.rdr.rdr_window div.rdr_rindowMenu {
     cursor: default;
 }
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown {
-    padding: 10px 12px;
+    padding: 10px 8px;
     cursor: pointer;
     float: right;
     font-size: 13px;
 }
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown.rdr_menu_actions{
+    /*
+    bias this off the right edge a little.  
+    Don't use margin though, because we want the hover to extend to the end.
+    */
+    padding-right: 10px;
+}
 
-div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown .icon-share-override:before{
+
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown .rdr_icon-share-override:before{
     content: none;
 }
-div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown .icon-share-override{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown .rdr_icon-share-override{
     background: url("../images/readr_icons_grey.png") no-repeat -50px 0px transparent;
     display: block;
     height: 16px;
@@ -399,7 +407,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown .icon-share-override{
     top: -2px;
     position: relative;
 }
-div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .icon-share-override{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_icon-share-override{
     background: url("../images/readr_icons.png") no-repeat -50px 0px transparent;
 }
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap {
