@@ -2,7 +2,7 @@
 from models import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core import serializers
 from settings import FACEBOOK_APP_ID, BASE_URL
 from baseconv import base62_decode
@@ -61,12 +61,30 @@ def faq(request):
       context_instance=RequestContext(request)
     )
 
-def about(request):
+def terms(request):
     return render_to_response(
-      "about.html",
+      "terms.html",
       {'fb_client_id': FACEBOOK_APP_ID},
       context_instance=RequestContext(request)
     )
+
+def privacy(request):
+    return render_to_response(
+      "privacy.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
+
+
+def learn(request):
+    return render_to_response(
+      "learn.html",
+      {'fb_client_id': FACEBOOK_APP_ID},
+      context_instance=RequestContext(request)
+    )
+
+def about(request):
+    return redirect('/learn/', permanent=True)
 
 def splash(request):
     return render_to_response(
