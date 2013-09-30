@@ -702,7 +702,8 @@ div.rdr div.rdr_back:hover { background:#999; }
 div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { }
 
 div.rdr div.rdr_back.rdr_hide { margin-top:-10px;}
-div.rdr div.rdr_back { display: none;}
+/*for now, just hide this button*/
+div.rdr .rdr_view_success div.rdr_back { display: none;}
 div[rdr-grid-for] div.rdr_back { display: block;}
 
 
@@ -1000,6 +1001,10 @@ div.rdr.rdr-summary div.rdr-see-more {
 }
 div.rdr.rdr-summary.rdr-too-many-reactions div.rdr-see-more {
     display:block;
+}
+span.rdr_no_reactions_msg{
+    display: block;
+    padding: 10px 0;
 }
 
 div.rdr.rdr-summary table { border:0;padding:0; margin:0; width:auto; }
@@ -2109,7 +2114,8 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_plusOne{
 }
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_tag_read_icon,
-div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_count {
+div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_count,
+div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_tag_split .rdr_plusOne {
   margin-top: 1em;
 }
 

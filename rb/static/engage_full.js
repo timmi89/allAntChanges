@@ -724,7 +724,7 @@ function readrBoard($R){
                                     }).appendTo( $options );
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">Close 3</div>');
+                                    var $backButton = $('<div class="rdr_back">Close X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
@@ -1066,11 +1066,14 @@ function readrBoard($R){
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">Close 1</div>');
+                        var $backButton = $('<div class="rdr_back">Close X</div>');
                         $backButton.click( function() {
 
-                            var doClose = RDR.rindow.safeClose($rindow);
-                            if(!doClose){
+
+                            //temp fix because the rindow scrollpane re-init isnt working
+                            var isGridForRindow = !!$rindow.attr('rdr-grid-for');
+                            if(!isGridForRindow){
+                                RDR.rindow.close($rindow);
                                 return;
                             }
 
@@ -6470,7 +6473,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 }
                             } else {
-                                RDR.rindow.updateFooter( $rindow, '<span>No reactions yet!</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_no_reactions_msg rdr_clearfix">No reactions yet!</span>' );
                             }
                         }
 
@@ -7661,11 +7664,13 @@ if ( sendData.kind=="page" ) {
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">Close 2</div>');
+                    var $backButton = $('<div class="rdr_back">Close X</div>');
                     $backButton.click( function() {
     
-                        var doClose = RDR.rindow.safeClose($rindow);
-                        if(!doClose){
+                        //temp fix because the rindow scrollpane re-init isnt working
+                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
+                        if(!isGridForRindow){
+                            RDR.rindow.close($rindow);
                             return;
                         }
 
