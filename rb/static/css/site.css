@@ -615,6 +615,21 @@ section.introBlurb{
 .clearDiv{
   clear:both;
 }
+
+/* For modern browsers */
+.clearfix:before,
+.clearfix:after {
+    content:"";
+    display:table;
+}
+.clearfix:after {
+    clear:both;
+}
+/* For IE 6/7 (trigger hasLayout) */
+.clearfix {
+    zoom:1;
+}
+
 h1.sectionBanner{
     
     border-bottom: 1px solid #E9E9E9;
@@ -1059,4 +1074,9 @@ div.breadcrumb {
 }
 
 
-
+.fancy_user_list li{
+    margin: 10px 0;
+}
+.fancy_user_list li span{
+    margin-left: 10px;
+}

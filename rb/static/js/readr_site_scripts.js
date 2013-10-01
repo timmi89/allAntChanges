@@ -17,6 +17,7 @@ RB = {
         }
         return qs_args[ key ];
     },
+    anonUserImg: RDR_staticUrl+"/site/images/anonymous-user.png",
     admin: {
         requestAccess: function(fb_response, group_id) {
             if ( fb_response ) {
@@ -327,20 +328,27 @@ RB = {
                         $('#cards').before( $boards );
 
                     } else {
+                        
                         if ( typeof response.data.follows_count != "undefined" ) {
                             $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                         }
 
                         var $following_html = $('<div><h2>'+$('#avatar h2').text().trim()+' is following:</h2></div>'),
                             $ul = $('<ul/>');
-                        $.each( response.data.paginated_follows, function(idx, following) {
+                        
+                        var followerList = response.data.paginated_follows;
+                        $.each(followerList, function(idx, following) {
                             if ( typeof following.social_usr != "undefined" ) {
-                                $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                                var userImg = following.social_usr.img_url||RB.anonUserImg;
+                                $ul.append('<li><a href="/user/'+following.social_usr.user+'/" class="clearfix"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                             } else if ( typeof following.grp != "undefined" ) {
-                                $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
+                                $ul.append('<li><a href="/group/'+following.grp.short_name+'/" class="clearfix">'+following.grp.short_name+'</a></li>');
                             }
                         });
                         $('#following_list').html( $following_html.append($ul) );
+                        if(!followerList.length){
+                            $('#following_list').append('No follows yet')
+                        }
                     }
                 }
             });
@@ -389,12 +397,20 @@ RB = {
                             });
                         }
 
-                        var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
+                        var followerList = response.data.paginated_follows,
+                            $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
                             $ul = $('<ul/>');
-                        $.each( response.data.paginated_follows, function(idx, following) {
-                            $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        
+                        $.each(followerList, function(idx, following) {
+                            var userImg = following.social_usr.img_url||RB.anonUserImg;
+                            $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                         });
                         $('#follower_list').html( $follower_html.append($ul) );
+                        
+                        if(!followerList.length){
+                            $('#follower_list').append('<span>no followers yet</span>');
+                        }
+
                     }
                 }
             });
@@ -422,7 +438,7 @@ RB = {
                         $ul = $('<ul class="fancy_user_list"/>');
                     $.each( response.data, function(idx, user) {
                         if ( user.social_user.full_name != "undefined" ) {
-                            $ul.append('<li><a href="/user/'+user.id+'/"><img style="margin-bottom:-7px;" src="'+user.social_user.img_url+'" /> '+user.social_user.full_name+'</a></li>');
+                            $ul.append('<li><a href="/user/'+user.id+'/"><img src="'+user.social_user.img_url||RB.anonUserImg+'" /> '+user.social_user.full_name+'</a></li>');
                         // } else if ( typeof following.grp != "undefined" ) {
                             // $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
                         }

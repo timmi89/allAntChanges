@@ -53,8 +53,10 @@ $(document).ready( function() {
 
         <div id="follow_info">
           <a id="follower_count" href="#follower_list" class="fancybox"></a>
-          <a id="following_count" href="#following_list" class="fancybox"></a> {% if cookie_user and profile_user.id != cookie_user.id %}
-          <a id="follow_action" class="btn" href="javascript:void(0);"></a>{% endif %}
+          <a id="following_count" href="#following_list" class="fancybox"></a>
+          {% if cookie_user and profile_user.id != cookie_user.id %}
+            <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+          {% endif %}
         </div>
       </div>
 
