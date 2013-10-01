@@ -62,24 +62,50 @@ def faq(request):
     )
 
 def terms(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
       "terms.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+      context,
       context_instance=RequestContext(request)
     )
 
 def privacy(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
       "privacy.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+      context,
       context_instance=RequestContext(request)
     )
 
-
 def learn(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
       "learn.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+      context,
       context_instance=RequestContext(request)
     )
 
