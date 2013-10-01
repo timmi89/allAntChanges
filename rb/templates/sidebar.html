@@ -53,8 +53,10 @@ $(document).ready( function() {
 
         <div id="follow_info">
           <a id="follower_count" href="#follower_list" class="fancybox"></a>
-          <a id="following_count" href="#following_list" class="fancybox"></a> {% if cookie_user and profile_user.id != cookie_user.id %}
-          <a id="follow_action" class="btn" href="javascript:void(0);"></a>{% endif %}
+          <a id="following_count" href="#following_list" class="fancybox"></a>
+          {% if cookie_user and profile_user.id != cookie_user.id %}
+            <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+          {% endif %}
         </div>
       </div>
 
@@ -67,8 +69,32 @@ $(document).ready( function() {
 
     </div>
     <div id="which_content">
-      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} 
-      {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I'm Following</a>{% else %}<strong>Activity I'm Following</strong>{% endif %}
+        {% if cookie_user and profile_user.id == cookie_user.id %}
+            {% if on_follow_page %}
+                <a href="/user/{{profile_user.id}}">My Activity</a>
+            {% else %}
+                <strong>My Activity</strong>
+            {% endif %} 
+
+            {% if not on_follow_page %}
+                <a href="/follows/{{profile_user.id}}">Activity that I Follow</a>
+            {% else %}
+                <strong>Activity that I Follow</strong>
+            {% endif %}
+        {% else %}
+            {% if on_follow_page %}
+                <a href="/user/{{profile_user.id}}">Activity for {{profile_user.social_user.full_name}}</a>
+            {% else %}
+                <strong>Activity for {{profile_user.social_user.full_name}}</strong>
+            {% endif %} 
+
+            {% if not on_follow_page %}
+                <a href="/follows/{{profile_user.id}}">Activity that {{profile_user.social_user.full_name}} follows</a>
+            {% else %}
+                <strong>Activity that {{profile_user.social_user.full_name}} follows</strong>
+            {% endif %}
+        {% endif %} 
+
     </div>
 {% endif %}
 

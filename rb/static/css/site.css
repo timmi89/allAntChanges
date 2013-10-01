@@ -73,11 +73,11 @@ ul.link-list li           { list-style-type:none; font-size:12px; }
 ul.link-list li a         { }
 ul.link-list li.active a  { }
 
-section[role="content"] { display:table; vertical-align:top; overflow:auto; padding-top:36px; width:1140px; box-sizing:border-box;}
+section[role="content"] { display:table; vertical-align:top; overflow:auto; padding-top:36px; width:100%; box-sizing:border-box;}
 
 /* wide content space */
-section[role="wide section"] { background:#fff; position:relative; z-index:1; width:1140px; }
-section[role="after wide section"] { background:#fff; position:relative; z-index:2; width:1140px;}
+section[role="wide section"] { background:#fff; position:relative; z-index:1; width:100%; }
+section[role="after wide section"] { background:#fff; position:relative; z-index:2; width:100%;}
 
 div.mostlyWide { width:88%; margin:20px auto; }
 
@@ -153,6 +153,11 @@ background:url(../images/site/msathead_bg_generic.png)
 #board_header .board_meta h3        { font-size:16px; float:left; line-height:30px; font-weight:bold; margin:0;}
 #board_header .board_meta button    { float:right; }
 
+#board_listing,
+#board_header{
+    display: none;
+}
+
 
 /* popup / login form */
 body.popupForm.wide header[role="banner"] { width:100%; }
@@ -162,6 +167,9 @@ body.popupForm.wide section[role="content"] { border:none; }
 .popupForm .big-form .formBody { margin:0 0 10px 0; width:500px; }
 .popupForm #page_container { width:100%; margin: 0; border:none;}
 .popupForm h1 { line-height:24px; font-size:24px;}
+.popupForm section[role="main"] h1 {
+    margin-top: 20px;
+}
 .popupForm label { margin-bottom:0; }
 .popupForm input { margin-bottom:0; }
 #direct_registration a     { text-align:right; display:block; }
@@ -201,9 +209,9 @@ form.big-form .configuarationSection h4     {
 
 /* stream */
 section[role="main"] div.card div.meta em { display:block; }
-ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+ul.shareLinks { display: block !important; margin: 4px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
 ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
-ul.shareLinks img       {width:18px !important; margin:0 !important;}
+ul.shareLinks img       {width:24px !important; margin:0 !important;}
 /*
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
 section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
@@ -216,7 +224,11 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 /* masthead */
 .masthead {}
 .masthead .message {}
-.homepage .masthead.main { background:url(../images/site/masthead.jpg) center center; height:353px; position:relative; }
+.homepage .masthead.main { 
+    background-color: #333;
+    background-image:url(../images/site/masthead.jpg);
+    height:353px; position:relative; 
+}
 .homepage .masthead .message { background:rgba(0,139,228,0.75); width:85%; height:60%; margin:auto; padding:20px 40px; position:absolute; top:0; left:0; right:0; bottom:0; }
 .homepage .masthead .message h2 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:48px; margin:0 0 40px 0; padding:0; }
 .homepage .masthead .message h3 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:24px; margin:0; padding:0; }
@@ -603,6 +615,21 @@ section.introBlurb{
 .clearDiv{
   clear:both;
 }
+
+/* For modern browsers */
+.clearfix:before,
+.clearfix:after {
+    content:"";
+    display:table;
+}
+.clearfix:after {
+    clear:both;
+}
+/* For IE 6/7 (trigger hasLayout) */
+.clearfix {
+    zoom:1;
+}
+
 h1.sectionBanner{
     
     border-bottom: 1px solid #E9E9E9;
@@ -908,7 +935,7 @@ div.splashQuote {
 }
 
 /* publisher prmo sticky footer */
-#publisher_promo { position:fixed;bottom:0;height:40px;width:1140px;z-index:1000;cursor:pointer;}
+#publisher_promo { position:fixed;bottom:0;height:40px;width:100%;z-index:1000;cursor:pointer;}
 #publisher_promo section { margin:0 auto;width:90%; color:#354c65; background:#84b8ef;text-align:center;min-width:800px;box-shadow:0 0 4px #ccc; padding-top:4px;}
 #publisher_promo h1 { font-size:28px; display:inline-block; }
 #publisher_promo p { font-size:18px; display:inline-block; margin-left:10px; margin-top:-3px;}
@@ -1047,4 +1074,9 @@ div.breadcrumb {
 }
 
 
-
+.fancy_user_list li{
+    margin: 10px 0;
+}
+.fancy_user_list li span{
+    margin-left: 10px;
+}

@@ -17,6 +17,7 @@ RB = {
         }
         return qs_args[ key ];
     },
+    anonUserImg: RDR_staticUrl+"/site/images/anonymous-user.png",
     admin: {
         requestAccess: function(fb_response, group_id) {
             if ( fb_response ) {
@@ -327,20 +328,27 @@ RB = {
                         $('#cards').before( $boards );
 
                     } else {
+                        
                         if ( typeof response.data.follows_count != "undefined" ) {
                             $('#following_count').html( "<strong>"+response.data.follows_count + "</strong> following" );
                         }
 
                         var $following_html = $('<div><h2>'+$('#avatar h2').text().trim()+' is following:</h2></div>'),
                             $ul = $('<ul/>');
-                        $.each( response.data.paginated_follows, function(idx, following) {
+                        
+                        var followerList = response.data.paginated_follows;
+                        $.each(followerList, function(idx, following) {
                             if ( typeof following.social_usr != "undefined" ) {
-                                $ul.append('<li><div class="follow_type">Person</div><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                                var userImg = following.social_usr.img_url||RB.anonUserImg;
+                                $ul.append('<li><a href="/user/'+following.social_usr.user+'/" class="clearfix"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                             } else if ( typeof following.grp != "undefined" ) {
-                                $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
+                                $ul.append('<li><a href="/group/'+following.grp.short_name+'/" class="clearfix">'+following.grp.short_name+'</a></li>');
                             }
                         });
                         $('#following_list').html( $following_html.append($ul) );
+                        if(!followerList.length){
+                            $('#following_list').append('No follows yet')
+                        }
                     }
                 }
             });
@@ -389,12 +397,20 @@ RB = {
                             });
                         }
 
-                        var $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
+                        var followerList = response.data.paginated_follows,
+                            $follower_html = $('<div><h2>Following '+$('#avatar h2').text().trim()+':</h2></div>'),
                             $ul = $('<ul/>');
-                        $.each( response.data.paginated_follows, function(idx, following) {
-                            $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img style="margin-bottom:-7px;" src="'+following.social_usr.img_url+'" /> '+following.social_usr.full_name+'</a></li>');
+                        
+                        $.each(followerList, function(idx, following) {
+                            var userImg = following.social_usr.img_url||RB.anonUserImg;
+                            $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                         });
                         $('#follower_list').html( $follower_html.append($ul) );
+                        
+                        if(!followerList.length){
+                            $('#follower_list').append('<span>no followers yet</span>');
+                        }
+
                     }
                 }
             });
@@ -422,7 +438,7 @@ RB = {
                         $ul = $('<ul class="fancy_user_list"/>');
                     $.each( response.data, function(idx, user) {
                         if ( user.social_user.full_name != "undefined" ) {
-                            $ul.append('<li><a href="/user/'+user.id+'/"><img style="margin-bottom:-7px;" src="'+user.social_user.img_url+'" /> '+user.social_user.full_name+'</a></li>');
+                            $ul.append('<li><a href="/user/'+user.id+'/"><img src="'+user.social_user.img_url||RB.anonUserImg+'" /> '+user.social_user.full_name+'</a></li>');
                         // } else if ( typeof following.grp != "undefined" ) {
                             // $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
                         }
@@ -434,7 +450,7 @@ RB = {
                       helpers : {
                         overlay : {
                           css : {
-                            'background-color' : '#eee'
+                            'background' : 'rgba(100,100,100,0.8)'
                           }
                         }
                       }
@@ -566,38 +582,55 @@ RB = {
                         }
 
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
-                            socialNetworks = ["facebook","twitter", "tumblr"],
-                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            socialNetworks = ["facebook","twitter", "tumblr"];
+
+                        var cardData = $card.data();
+                        var kind = cardData.kind,
+                            interaction_id = cardData.interactionId,
+                            interaction_body = cardData.interactionBody,
+                            groupName = cardData.groupName,
                             content = "";
 
                         if ( kind=="txt") {
-                            content = $card.find('div.content_body').text();
+                            content = $card.find('.contentBody').text();
                         } else if ( kind=="img") {
-                            content = $card.find('div.content_body img').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         } else if ( kind=="med") {
-                            content = $card.find('div.content_body iframe').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         }
 
-                        var groupName = $card.data('groupName');
-
                         $.each(socialNetworks, function(idx, val){
-                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                            $shareLinks.find('li:last').click( function(e) {
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $li.find('a').click( function(e) {
+                                e.preventDefault();
                                 RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
-                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
+                            $shareLinks.find('ul').append($li);
                         });
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
-                        $close.find('i').click( function() {
-                            $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
-                        });
 
-                        $message.append( $close, $shareLinks );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                        $message.append( $shareLinks );
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+                        
+                        // $message.append( $close, $shareLinks );
+                        // var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        // $close.find('i').click( function() {
+                        //     $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
+                        // });
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -639,14 +672,29 @@ RB = {
                             $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
-                        $close.find('i').click( function() {
-                            $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
+
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          },
+                          afterClose: function(){
+                            window.location.reload();
+                          }
                         });
 
-                        $message.prepend( $close );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                        // var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        // $close.find('i').click( function() {
+                        //     $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
+                        // });
+                    
+                        // $message.prepend( $close );
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -668,9 +716,21 @@ RB = {
 
                     if (response.status == "success" ) {
                         var $outcome = $('#add_to_board_form'),
-                            $successMessage = $('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2><div><em>Success! You have added this to your board, <a href="/board/'+board_id+'/'+board_title+'">'+board_title+'</a>.</em></div>');
-                        $outcome.html( $successMessage );
-                        $outcome.show(333);
+                            $message = $('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2><div><em>Success! You have added this to your board, <a href="/board/'+board_id+'/'+board_title+'">'+board_title+'</a>.</em></div>');
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -730,34 +790,53 @@ RB = {
                             var $message = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
 
+                        var cardData = $card.data();
+                        var kind = cardData.kind,
+                            interaction_id = cardData.interactionId,
+                            interaction_body = cardData.interactionBody,
+                            groupName = cardData.groupName,
+                            content = "";
+
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
                             socialNetworks = ["facebook","twitter", "tumblr"],
-                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            kind = cardData.kind,
+                            groupName = cardData.groupName,
                             content = "";
 
                         if ( kind=="txt") {
-                            content = $card.find('div.content_body').text();
+                            content = $card.find('.contentBody').text();
                         } else if ( kind=="img") {
-                            content = $card.find('div.content_body img').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         } else if ( kind=="med") {
-                            content = $card.find('div.content_body iframe').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         }
 
-                        var groupName = ($card.find('div.publisher img').length ) ? $card.find('div.publisher img').attr('alt'):$card.find('div.publisher a').text()
-
                         $.each(socialNetworks, function(idx, val){
-                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                            $shareLinks.find('li:last').click( function() {
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $li.find('a').click( function(e) {
+                                e.preventDefault();
                                 RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
-                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
+                            $shareLinks.find('ul').append($li);
                         });
 
                         $message.append( $shareLinks );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                     
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -781,12 +860,24 @@ RB = {
                             $outcome = $('#add_new_comment_form');
 
                         if (response.data.existing == true ) {
-                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                            var $message = $('<div><em>You have already added this to your profile.</em></div>');
                         } else {
-                            var $successMessage = $('<div><em>Success! You have added this comment.<br/><br/>Reload the page or check it out on <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                            var $message = $('<div><em>Success! You have added this comment.<br/><br/>Reload the page or check it out on <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
-                        $outcome.html( $successMessage );
-                        $outcome.show(333);
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
