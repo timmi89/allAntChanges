@@ -60,7 +60,11 @@ $('#cards').addClass('user_profile');
                         {% if interaction.user.social_user.full_name != "" %}
                         <a href="/user/{{interaction.user.id}}/">
                             {{ interaction.user.social_user.full_name }}
-                            <img src="{{ interaction.user.social_user.img_url }}"/>
+                            {% if interaction.user.social_user.img_url %}
+                                <img src="{{ interaction.user.social_user.img_url }}"/>
+                            {% else %}
+                                <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                            {% endif %}
                         </a>
                         {% endif %}
                         {% if interaction.user.social_user.full_name == "" %}

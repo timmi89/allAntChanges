@@ -681,6 +681,9 @@ RB = {
                                 'background' : 'rgba(100,100,100,0.8)'
                               }
                             }
+                          },
+                          afterClose: function(){
+                            window.location.reload();
                           }
                         });
 
