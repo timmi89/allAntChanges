@@ -25,7 +25,13 @@ $('#cards').addClass('user_profile');
             {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
             
             <div class="cardWrap">
-            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" 
+                data-interaction-id="{{ interaction.id }}" 
+                data-interaction-body="{{ interaction.interaction_node.body }}" 
+                data-kind="{{ interaction.content.kind }}"
+                data-user-name="{{ interaction.user.social_user.full_name }}"
+                data-group-name="{{ page.grouper.site.group.short_name }}"
+            >
                 {% if cookie_user %}
                 <div class="buttons">
                           {% if interaction.user.id == cookie_user.id %}

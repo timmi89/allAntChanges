@@ -450,7 +450,7 @@ RB = {
                       helpers : {
                         overlay : {
                           css : {
-                            'background-color' : '#eee'
+                            'background' : 'rgba(100,100,100,0.8)'
                           }
                         }
                       }
@@ -582,38 +582,55 @@ RB = {
                         }
 
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
-                            socialNetworks = ["facebook","twitter", "tumblr"],
-                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            socialNetworks = ["facebook","twitter", "tumblr"];
+
+                        var cardData = $card.data();
+                        var kind = cardData.kind,
+                            interaction_id = cardData.interactionId,
+                            interaction_body = cardData.interactionBody,
+                            groupName = cardData.groupName,
                             content = "";
 
                         if ( kind=="txt") {
-                            content = $card.find('div.content_body').text();
+                            content = $card.find('.contentBody').text();
                         } else if ( kind=="img") {
-                            content = $card.find('div.content_body img').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         } else if ( kind=="med") {
-                            content = $card.find('div.content_body iframe').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         }
 
-                        var groupName = $card.data('groupName');
-
                         $.each(socialNetworks, function(idx, val){
-                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                            $shareLinks.find('li:last').click( function(e) {
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $li.find('a').click( function(e) {
+                                e.preventDefault();
                                 RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
-                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
+                            $shareLinks.find('ul').append($li);
                         });
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
-                        $close.find('i').click( function() {
-                            $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
-                        });
 
-                        $message.append( $close, $shareLinks );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                        $message.append( $shareLinks );
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+                        
+                        // $message.append( $close, $shareLinks );
+                        // var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        // $close.find('i').click( function() {
+                        //     $('.interaction_'+parent_id).find('div.me_too_outcome').hide(333);
+                        // });
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -655,14 +672,26 @@ RB = {
                             $message = $('<div><em>This reaction is already removed.</em></div>');
                         }
 
-                        var $close = $('<div class="close"><i class="icon-remove"></i></div>');
-                        $close.find('i').click( function() {
-                            $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
+
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
                         });
 
-                        $message.prepend( $close );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                        // var $close = $('<div class="close"><i class="icon-remove"></i></div>');
+                        // $close.find('i').click( function() {
+                        //     $('.interaction_'+interaction_id).find('div.me_too_outcome').hide(333);
+                        // });
+                    
+                        // $message.prepend( $close );
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -684,9 +713,21 @@ RB = {
 
                     if (response.status == "success" ) {
                         var $outcome = $('#add_to_board_form'),
-                            $successMessage = $('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2><div><em>Success! You have added this to your board, <a href="/board/'+board_id+'/'+board_title+'">'+board_title+'</a>.</em></div>');
-                        $outcome.html( $successMessage );
-                        $outcome.show(333);
+                            $message = $('<h2 style="margin-bottom:15px;border-bottom:1px solid #999;padding-bottom:7px;">Add to Board</h2><div><em>Success! You have added this to your board, <a href="/board/'+board_id+'/'+board_title+'">'+board_title+'</a>.</em></div>');
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -746,34 +787,53 @@ RB = {
                             var $message = $('<div><em>Success! You have added this to <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
 
+                        var cardData = $card.data();
+                        var kind = cardData.kind,
+                            interaction_id = cardData.interactionId,
+                            interaction_body = cardData.interactionBody,
+                            groupName = cardData.groupName,
+                            content = "";
+
                         var $shareLinks = $('<div style="overflow:auto;"><strong style="display:block;float:left;margin:5px 5px 0 0;">Share It:</strong> <ul class="shareLinks"></ul>'),
                             socialNetworks = ["facebook","twitter", "tumblr"],
-                            kind = ( $card.hasClass('txt') ) ? "txt":($card.hasClass('img')) ? "img":"med",
+                            kind = cardData.kind,
+                            groupName = cardData.groupName,
                             content = "";
 
                         if ( kind=="txt") {
-                            content = $card.find('div.content_body').text();
+                            content = $card.find('.contentBody').text();
                         } else if ( kind=="img") {
-                            content = $card.find('div.content_body img').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         } else if ( kind=="med") {
-                            content = $card.find('div.content_body iframe').attr('src');
+                            content = $card.find('img.contentBody').attr('src');
                         }
 
-                        var groupName = ($card.find('div.publisher img').length ) ? $card.find('div.publisher img').attr('alt'):$card.find('div.publisher a').text()
-
                         $.each(socialNetworks, function(idx, val){
-                            $shareLinks.find('ul').append('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                            $shareLinks.find('li:last').click( function() {
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            $li.find('a').click( function(e) {
+                                e.preventDefault();
                                 RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, $card.find('header').attr('title'), groupName, content)
-                                // RDR.actions.share_getLink({ hash:args.hash, kind:args.kind, sns:val, rindow:$rindow, tag:tag, content_node:content_node }); // ugh, lots of weird data nesting
+                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
+                            $shareLinks.find('ul').append($li);
                         });
 
                         $message.append( $shareLinks );
-                        $outcome.html( $message );
-                        $outcome.show(333);
+                     
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });
@@ -797,12 +857,24 @@ RB = {
                             $outcome = $('#add_new_comment_form');
 
                         if (response.data.existing == true ) {
-                            var $successMessage = $('<div><em>You have already added this to your profile.</em></div>');
+                            var $message = $('<div><em>You have already added this to your profile.</em></div>');
                         } else {
-                            var $successMessage = $('<div><em>Success! You have added this comment.<br/><br/>Reload the page or check it out on <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
+                            var $message = $('<div><em>Success! You have added this comment.<br/><br/>Reload the page or check it out on <a href="/user/'+$.cookie('user_id')+'">your profile</a>.</em></div>');
                         }
-                        $outcome.html( $successMessage );
-                        $outcome.show(333);
+                        
+                        $.fancybox($message ,{
+                          wrapCSS    : 'fancybox-custom',
+                          helpers : {
+                            overlay : {
+                              css : {
+                                'background' : 'rgba(100,100,100,0.8)'
+                              }
+                            }
+                          }
+                        });
+
+                        // $outcome.html( $message );
+                        // $outcome.show(333);
                     }
                 }
             });

@@ -209,9 +209,9 @@ form.big-form .configuarationSection h4     {
 
 /* stream */
 section[role="main"] div.card div.meta em { display:block; }
-ul.shareLinks { display: block !important; margin: 2px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
+ul.shareLinks { display: block !important; margin: 4px 0 0 !important; top: 0 !important; padding: 0 !important; float:left !important; }
 ul.shareLinks li        {padding:0px 2px !important; display:inline-block !important; list-style:none !important;}
-ul.shareLinks img       {width:18px !important; margin:0 !important;}
+ul.shareLinks img       {width:24px !important; margin:0 !important;}
 /*
 section[role="main"] div.card div.meta div.me_too_outcome { display:none;border-top:1px solid #aaa;padding:3px;margin-top:6px;}
 section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:11px;text-align:right;
