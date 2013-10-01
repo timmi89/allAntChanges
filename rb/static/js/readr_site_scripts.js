@@ -17,7 +17,7 @@ RB = {
         }
         return qs_args[ key ];
     },
-    anonUserImg: RDR_staticUrl+"/site/images/anonymous-user.png",
+    anonUserImg: RDR_staticUrl+"site/images/anonymous-user.png",
     admin: {
         requestAccess: function(fb_response, group_id) {
             if ( fb_response ) {
@@ -438,7 +438,8 @@ RB = {
                         $ul = $('<ul class="fancy_user_list"/>');
                     $.each( response.data, function(idx, user) {
                         if ( user.social_user.full_name != "undefined" ) {
-                            $ul.append('<li><a href="/user/'+user.id+'/"><img src="'+user.social_user.img_url||RB.anonUserImg+'" /> '+user.social_user.full_name+'</a></li>');
+                            var userImg = user.social_user.img_url||RB.anonUserImg;
+                            $ul.append('<li><a href="/user/'+user.id+'/"><img src="'+userImg+'" /> '+user.social_user.full_name+'</a></li>');
                         // } else if ( typeof following.grp != "undefined" ) {
                             // $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
                         }
