@@ -13,7 +13,7 @@ if ( typeof qs_args.group_id == "undefined" ) {
 function getWindowProps(options){
     options = options || {};
     var w = options.width || 400;
-    var h = options.height || 300;
+    var h = options.height || 350;
     var l = (window.screen.width/2)-(w/2);
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
