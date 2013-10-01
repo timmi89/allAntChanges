@@ -69,20 +69,24 @@
 
 {% block pageJS %}
 <script>
-    $('#cards').isotope({
-      itemSelector:'.cardWrap',
-      masonry: {
-        columnWidth: 530
-      }
+(function($){
+    $(function(){
+
+        $('#cards').isotope({
+          itemSelector:'.cardWrap',
+          masonry: {
+            columnWidth: 530
+          }
+        });
+
+        {% if board %}
+        $('#board_follow_button').click( function() {
+            RB.follow.add({{ board.id }},'brd');
+        });
+        RB.follow.followers({{ board.id }},'brd')
+        {% endif %}
+
     });
-
-
-    {% if board %}
-    $('#board_follow_button').click( function() {
-        RB.follow.add({{ board.id }},'brd');
-    });
-    RB.follow.followers({{ board.id }},'brd')
-    {% endif %}
-
+})(jQuery);
 </script>
 {% endblock %}
