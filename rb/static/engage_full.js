@@ -136,7 +136,7 @@ function readrBoard($R){
                 img_container_selectors:"#primary-photo",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
-                iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
+                // iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
@@ -3504,15 +3504,17 @@ function readrBoard($R){
                     }
 
                     // only do whitelisted iframe src domains
-                    if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
-                        var dontEngage = true;
-                        $.each( RDR.group.iframe_whitelist, function(idx, domain) {
-                            if ( $this.attr('src') && $this.attr('src').indexOf(domain) != -1 ) {
-                                dontEngage = false; // DO engage, it's a safe domain
-                            }
-                        });
-                        if ( dontEngage == true ) return;
-                    }
+                    // [pb] killing this.  it holds us back.  iframes, like with ads, can be disable through standard no-rdr methods (.no-rdr or the Inactive Sections spot in Admin)
+                    // 10-03-2013
+                    // if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
+                    //     var dontEngage = true;
+                    //     $.each( RDR.group.iframe_whitelist, function(idx, domain) {
+                    //         if ( $this.attr('src') && $this.attr('src').indexOf(domain) != -1 ) {
+                    //             dontEngage = false; // DO engage, it's a safe domain
+                    //         }
+                    //     });
+                    //     if ( dontEngage == true ) return;
+                    // }
 
                     if ( $this.width() >= minImgWidth ) {
                         var hasBeenHashed = $this.hasAttr('rdr-hashed'),
