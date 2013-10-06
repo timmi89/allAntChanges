@@ -170,12 +170,24 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
       </form>
     </div>
     <script>
-    $('#searchform').on('mouseenter', function() { $(this).find('input').focus() })//chain
-    .on('mouseleave', function() {
-      if ( !$(this).find('input').val().length ) {
-        $(this).find('input').blur();
-      }
-    });
+    $('#searchform')
+        .on('mouseenter', function() { $(this).find('input').focus() })//chain
+        .on('mouseleave', function() {
+          if ( !$(this).find('input').val().length ) {
+            $(this).find('input').blur();
+          }
+        })
+        .on('submit', function(e) {
+            debugger;
+            var validPaths = /^\/(stream|group|user|site|page).*$/;
+            var defaultPath = "/stream/";
+            var curPath = window.location.pathname;
+            var isValidPath = validPaths.test(curPath);
+            var action = isValidPath ? curPath : defaultPath;
+          
+            $(e.target).attr('action', action);
+
+        })
     </script>
     {% endblock siteSearch %}
     
@@ -209,14 +221,19 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
 
   
   {% block footer %}
-  <footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix">
+  <footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
       <div class="footerLinks">
           <ul class="footerLinksLeft">
               <li>
                   <a href="/"><strong>Home</strong></a>
               </li>
+              <!-- 
               <li>
                   <a href="/learn/"><strong>About ReadrBoard</strong></a>
+              </li> 
+              -->
+              <li>
+                  <a href="/stream/"><strong>Live Stream</strong></a>
               </li>
               <li>
                   <a href="/privacy/"><strong>Privacy</strong></a>

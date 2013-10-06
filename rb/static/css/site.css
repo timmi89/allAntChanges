@@ -255,6 +255,17 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 .homepage .masthead.secondary h4 a { text-decoration:underline; }
 .homepage .masthead.secondary h4 i { font-size:21px; }
 
+.masthead {letter-spacing:-1px; overflow:auto;}
+.masthead h1 { font-family:'RDR_HelveticaBold'; font-size:48px; margin:40px 0; }
+.masthead p  { font-family:'Helvetica','RDR_Helvetica'; font-size:28px; }
+.masthead strong {display: block;}
+.engagement_today { padding:20px; background:#dfdfdf; clear:both; margin-top:40px;}
+.engagement_today h2 { font-family:'RDR_HelveticaBold'; font-size:28px; margin-bottom:20px; }
+.engagement_today .engagement_column { display:inline-block; width:30%; margin-right:3%; }
+.engagement_today .engagement_column:last-child { margin-right:0; }
+.engagement_today .engagement_column i { font-size: 40px; display: block; float: left; margin-right: 10px; }
+.engagement_today .engagement_column p { font-family: 'Helvetica','RDR_Helvetica'; font-size:18px;  }
+
 /* tag cloud grid */
 #tag_cloud_container { position:relative; }
 #tag_cloud_container div.image_container { position:absolute;left:0;top:0;width:1138px;height:420px;box-shadow:0px 0px 350px 50px #000 inset; }

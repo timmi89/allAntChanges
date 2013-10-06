@@ -80,7 +80,7 @@ $('#cards').addClass('user_profile');
                 </div>
                 <div class="me_too_outcome"></div>
                 <div class="main">
-                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
+                    <h1><a href="/stream/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
                     <div class="contentBox {{ interaction.content.kind }}">
                         {% if interaction.content.kind == "img" %}
                         <!--
