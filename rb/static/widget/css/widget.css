@@ -67,6 +67,7 @@ div.rdr_sandbox{
     top:0;
     left:0;
     width: 100%;
+    height: 100%;
 }
 div.rdr button {
   padding: 5px;
@@ -82,7 +83,8 @@ div.rdr {
 div.rdr.rdr_window {
     padding:0px;
     position:absolute;
-    z-index:12000 !important;
+    /*z-index:12000 !important;*/
+    z-index:100000001 !important;
     background:#fff;
     /*overflow:hidden;*/
     width:160px;
@@ -1318,14 +1320,14 @@ div.rdr.rdr_window div.rdr_tags_list .rdr_info .pipe{
 
 div#rdr-page-summary.defaultSummaryBar{
     position: fixed;
-    bottom:0;
-    left:0;
+    top:0;
     right:0;
-    width: 100%;
     z-index: 95000;
+    text-align: right;
 }
 div#rdr-page-summary.defaultSummaryBar div.rdr.rdr-summary {
-  margin-bottom:-1px;
+  margin: 10px;
+  text-align: left;
 }
 div#rdr-page-summary.defaultSummaryBar .rdr-summary{
   -moz-box-shadow:0px 1px 4px #ccc;
@@ -2427,7 +2429,17 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_charCount16 { fon
 
 div#rdr_loginPanel {
     z-index: 12101;
+    left: 50% !important;
+    margin-left: -240px !important;
+    top: 50% !important;
+    margin-top: -100px !important;
+    position: relative;
 }
+
+div#rdr_loginPanel .rdr_header_arrow{
+    display: none !important;
+}
+
 
 /*rarely used html tag to wrap br-separated text when the group settings specifies*/
 .rdr_br_replaced rt{
