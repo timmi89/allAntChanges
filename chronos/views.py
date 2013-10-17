@@ -62,7 +62,7 @@ def agree(request, interaction_id = None, **kwargs):
                                                                        notification_type = threshold)
                     if created:
                         #SEND EMAIL!
-                        msg = EmailMessage("ReadrBoard: Someone agreed with you!", 
+                        msg = EmailMessage("[ReadrBoard] Someone agreed with you!", 
                                            generateAgreeEmail(social_user.user, child_count, interaction), 
                                            "hello@readrboard.com", 
                                            [social_user.user.email])
@@ -84,6 +84,42 @@ def agree(request, interaction_id = None, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
+
+
+def group_node(request, interaction_id = None, group_id = None, **kwargs):
+    context = {}
+    try:
+        interaction = Interaction.objects.get(id = interaction_id)
+        social_user = SocialUser.objects.get(user = interaction.user)
+        group = Group.objects.get(id = group_id)
+        
+        
+        admin_index = 0
+        for admin in group.admins.all():
+            #SEND EMAIL!
+            msg = EmailMessage("[ReadrBoard] A new reaction just appeared on your site", 
+                               generateGroupNodeEmail(interaction, admin_index), 
+                               "hello@readrboard.com", 
+                               [admin.user.email])
+            msg.content_subtype='html'
+            msg.send(False)
+            logger.info("SHOULD SEND NOTIFICATION: group_node " )
+            admin_index += 1
+        
+    except Interaction.DoesNotExist:
+        logger.info("BAD INTERACTION ID")
+    except SocialUser.DoesNotExist:
+        logger.info("NO SOCIAL USER")
+    except Exception, ex:
+        logger.info(ex)
+    
+    return render_to_response(
+        "chronos.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+
 
 
 def comment(request, interaction_id = None, **kwargs):
@@ -113,7 +149,7 @@ def comment(request, interaction_id = None, **kwargs):
                     
                    # if created:
                     logger.info("sending comment notification")
-                    msg = EmailMessage("ReadrBoard: Someone commented on your reaction!", 
+                    msg = EmailMessage("[ReadrBoard] Someone commented on your reaction!", 
                                            generateCommentEmail(social_user.user, interaction), 
                                            "hello@readrboard.com", 
                                            [interaction.user.email])
@@ -159,7 +195,7 @@ def page(request, interaction_id = None, **kwargs):
                                 and not p_i.user.email.startswith('tempuser')
                             ):
                                 logger.info("sending page notification to:" + p_i.user.email)
-                                msg = EmailMessage("ReadrBoard: Someone reacted to the same page as you!", 
+                                msg = EmailMessage("[ReadrBoard] Someone reacted to the same page as you!", 
                                                        generatePageEmail(p_i.user, interaction), 
                                                        "hello@readrboard.com", 
                                                        [p_i.user.email])
@@ -201,6 +237,24 @@ def email_agree(request, interaction_id, user_id, count):
         context,
         context_instance=RequestContext(request)
     )
+
+
+
+def email_group_node(request, interaction_id, group_id, admin_index):
+    context = {}
+    interaction = Interaction.objects.get(id=interaction_id)
+    group = Group.objects.get(id=group_id)
+    
+    context['interaction'] = interaction
+    context['group'] = group
+    context['admin'] = group.admins.all()[int(admin_index)]
+    context['base_url'] = settings.BASE_URL
+    return render_to_response(
+        "group_node.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
 
 def email_comment(request, interaction_id, user_id):
     context = {}

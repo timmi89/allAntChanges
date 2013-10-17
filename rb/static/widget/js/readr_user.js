@@ -13,7 +13,7 @@ if ( typeof qs_args.group_id == "undefined" ) {
 function getWindowProps(options){
     options = options || {};
     var w = options.width || 400;
-    var h = options.height || 300;
+    var h = options.height || 350;
     var l = (window.screen.width/2)-(w/2);
     var t = (window.screen.height/2)-(h/2);
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
@@ -374,12 +374,10 @@ window.RDRAuth = {
                 }
 
 				if (top == self) {
-					// QUICK KLUDGE
-					// TODO what we really need is a /api/getUserInfo call to get first/last name from our server, and store it in a session, not a cookie
 					// now write the html for the user
 					if ( $.cookie('user_id') || ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id ) ) {
 						var user_id = ($.cookie('user_id')) ? $.cookie('user_id'):RDRAuth.rdr_user.user_id;
-						var img_url = ($.cookie('img_url')) ? $.cookie('img_url'):RDRAuth.rdr_user.img_url;
+						var img_url = RDRAuth.rdr_user.img_url;
 
 						$('#logged-in').show().css('visibility','visible');
 						$('#logged-out').hide().css('visibility','hidden');
@@ -407,7 +405,6 @@ window.RDRAuth = {
 							$user.append( $avatar, $name );
 
 							var user_id = $.cookie('user_id'),
-								user_name = $.cookie('full_name');
 								$user_menu = $('<div id="log-out-link" />');
 
 							$user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
@@ -513,11 +510,7 @@ window.RDRAuth = {
         $.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: expTime, path: '/' });
         $.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: expTime, path: '/' });
         $.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: expTime, path: '/' });
-        $.cookie('first_name', RDRAuth.rdr_user.first_name, { expires: expTime, path: '/' });
-        $.cookie('full_name', RDRAuth.rdr_user.full_name, { expires: expTime, path: '/' });
-        $.cookie('img_url', RDRAuth.rdr_user.img_url, { expires: expTime, path: '/' });
         $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
-        $.cookie('user_boards', RDRAuth.rdr_user.user_boards, { expires: expTime, path: '/' });
 
         //try out just using 90 days for everything - we're checking fb login every time anyway.
         $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
@@ -528,11 +521,8 @@ window.RDRAuth = {
         RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
         RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
         RDRAuth.rdr_user.user_id = $.cookie('user_id');
-        RDRAuth.rdr_user.first_name = $.cookie('first_name');
-        RDRAuth.rdr_user.full_name = $.cookie('full_name');
-        RDRAuth.rdr_user.img_url = $.cookie('img_url');
 		RDRAuth.rdr_user.user_type = $.cookie('user_type');
-		RDRAuth.rdr_user.user_boards = $.cookie('user_boards');
+        
 	},
 	returnUser: function() {
 		RDRAuth.readUserCookie();
@@ -541,7 +531,7 @@ window.RDRAuth = {
 			if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
 				RDRAuth.checkFBStatus();
 			} else {
-				if ( $.cookie('user_id') && $.cookie('full_name') ) {
+				if ( $.cookie('user_id') ) {
 					$('#logged-in').show().css('visibility','visible');
 					$('#logged-out').hide().css('visibility','hidden');
 
@@ -550,13 +540,10 @@ window.RDRAuth = {
 					$name = $('<strong/>');
 
 					$user.attr('href', '/user/' + $.cookie('user_id') );
-					// $avatar.attr('src', img_url + '?type=square');
-					var username = ( $.cookie('full_name') ) ? $.cookie('full_name'):$.cookie('first_name');
+					var username = "friend";
 					$name.text( username );
 
 					$user.append( $name );
-
-					// $('#logged-in').html( $user ).append('<div id="log-out-link"><a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a></div>');
 				}
 			}
 		} else {
@@ -568,10 +555,7 @@ window.RDRAuth = {
 					img_url : RDRAuth.rdr_user.img_url,
 					user_id : RDRAuth.rdr_user.user_id,
 					readr_token : RDRAuth.rdr_user.readr_token,
-					user_type : RDRAuth.rdr_user.user_type,
-					user_boards : RDRAuth.rdr_user.user_boards,
-					new_board_id : parseInt($.cookie('new_board_id')),
-					new_board_name : $.cookie('new_board_name')
+					user_type : RDRAuth.rdr_user.user_type
 				}
 			};
 			RDRAuth.notifyParent(sendData, "returning_user");
@@ -624,11 +608,7 @@ window.RDRAuth = {
         $.cookie('temp_user', null, { path: '/' });
         $.cookie('readr_token', null, { path: '/' });
         $.cookie('user_id', null, { path: '/' });
-        $.cookie('first_name', null, { path: '/' });
-        $.cookie('full_name', null, { path: '/' });
-        $.cookie('img_url', null, { path: '/' });
         $.cookie('user_type', null, { path: '/' });
-        $.cookie('user_boards', null, { path: '/' });
         $.cookie('rdr_session', null, { path: '/' });
     },
 

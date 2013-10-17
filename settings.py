@@ -93,7 +93,7 @@ if DEBUG:
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
             'LOCATION': 'readr.cache',
-            'TIMEOUT':100
+            'TIMEOUT':60
         }
     }
     """
@@ -161,7 +161,7 @@ else:
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
             'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':24000
+            'TIMEOUT':300
         }
     }
 

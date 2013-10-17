@@ -1,5 +1,5 @@
 from piston.handler import AnonymousBaseHandler
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, Http404, HttpResponseForbidden
 from django.db.models import Count
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from decorators import status_response, json_data, json_data_post
@@ -7,6 +7,7 @@ from exceptions import JSONException
 from utils import *
 from userutils import *
 from authentication.token import *
+from authentication.decorators import requires_admin, requires_admin_rest
 from settings import BASE_URL, STATIC_URL, RB_SOCIAL_ADMINS
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
@@ -493,6 +494,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
     def read(self, request, data):
         known = {}
         hashes = data.get('hashes', [])
+        crossPageHashes = data.get('crossPageHashes', [])
         try:
             page = data['pageID']
         except KeyError:
@@ -508,17 +510,22 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
+            logger.info("PAGE CONTAINERS CACHE")
             cached_result = cache.get('page_containers' + str(page))
         
         if cached_result is not None:
+            logger.info("returning cached container summary results: " + str(cached_result))
             return cached_result
         else:
             # Force evaluation by making lists
             #logger.info("knownUnknown started " + str(page))
-            cacheable_result = getKnownUnknownContainerSummaries(page, hashes)
+
+            cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
+            logger.info(cacheable_result)
+
             #logger.info("knownUnknown done " + str(page))
             try:
-                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes)
+                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes, crossPageHashes=crossPageHashes)
                 
                 t = Thread(target=cache_updater, kwargs={})
                 t.start()
@@ -555,15 +562,24 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
             raise JSONException(u"Bad page id or container_id in content summary call")
 
-        interactions = list(Interaction.objects.filter(
-                container=container_id,
-                page=page_id,
-                approved=True
-                ))
+        if data['cross_page'] == True:
+            page = Page.objects.get(id=page_id)
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    page__site__group = page.site.group,
+                    approved=True
+                    ))
+        else:
+            interactions = list(Interaction.objects.filter(
+                    container=container_id,
+                    page=page_id,
+                    approved=True
+                    ))
         content_ids = (interaction.content_id for interaction in interactions)
         content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
 
-        content_summaries = getContentSummaries(interactions, content)
+        isCrossPage = (data['cross_page'] == True)
+        content_summaries = getContentSummaries(interactions, content, isCrossPage=isCrossPage)
 
         return content_summaries
 
@@ -973,60 +989,76 @@ class GlobalActivityHandler(AnonymousBaseHandler):
             logger.warning(traceback.format_exc(50))   
         
         return global_activity
-    
-    
-        """
-        makeItLean = True
-        historyLen = 3 if makeItLean else 3
-        maxInteractions = 100 if makeItLean else None
 
-        today = datetime.now()
-        tdelta = timedelta(days = -historyLen)
-        the_past = today + tdelta
-        interactions = Interaction.objects.all()
-        interactions = interactions.filter(
-            created__gt = the_past, 
-            kind = 'tag', 
-            approved=True, 
-            page__site__group__approved=True
-        ).order_by('-created')[:maxInteractions]
+
+class BlockedTagHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'POST', 'DELETE', 'PUT')
+
+    @requires_admin_rest
+    def create(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedTag.objects.create(group=group, node = i_node, order=0)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = False)
+        self.clear_caches(existing_interactions)
+        return {"created":True}    
+    
         
-        users = {}
-        pages = {}
-        groups = {}
-        nodes ={}
-        for inter in interactions:
-            if not groups.has_key(inter.page.site.group.name):
-                groups[inter.page.site.group.name] = {'count': 1, "group":model_to_dict(inter.page.site.group, 
-                                                                                        fields=['id', 'short_name'])}
-            else:
-                groups[inter.page.site.group.name]['count'] +=1
-                
-            if not pages.has_key(inter.page.url):
-                pages[inter.page.url] = {'count': 1, "page":model_to_dict(inter.page, fields=['id', 'title'])}
-            else:
-                pages[inter.page.url]['count'] +=1
-            
-            if not inter.user.email.startswith('tempuser'):    
-                if not users.has_key(inter.user.id):
-                    user_dict = model_to_dict(inter.user, exclude=['username','user_permissions', 
-                                                                   'last_login', 'date_joined', 'email',
-                                                                    'is_superuser', 'is_staff', 'password', 'groups'])
-                    user_dict['social_user'] = model_to_dict(inter.user.social_user, exclude=['notification_email_option', 
-                                                                                              'gender', 'provider', 
-                                                                                              'bio', 'hometown', 'user',
-                                                                                              'follow_email_option'])
-                    users[inter.user.id] = {'count': 1, "user":user_dict}
-                else:
-                    users[inter.user.id]['count'] +=1
-                
-            if not nodes.has_key(inter.interaction_node.body):
-                nodes[inter.interaction_node.body] = {'count': 1}
-            else:
-                nodes[inter.interaction_node.body]['count'] +=1
-            
-                
-        return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
-        """
-
+    @requires_admin_rest
+    def read(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedTag.objects.filter(group=group, node=i_node)
+        if len(blocked) == 0:
+            return {"blocked":False}
+        return {"blocked":True}
+        
+        
+    @requires_admin_rest
+    def update(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked, existed = BlockedTag.objects.get_or_create(group=group, node = i_node, order=0)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = False)
+        self.clear_caches(existing_interactions)
+        return {"updated":True}
+    
+    @requires_admin_rest
+    def delete(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedTag.objects.get(group=group, node = i_node)
+        blocked.delete()
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(approved = True)
+        self.clear_caches(existing_interactions)
+        return {"deleted":True}
        
+    def clear_caches(self, interactions):
+        for interaction in interactions:
+            page = interaction.page
+            container = interaction.container
+            
+            try:
+                cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+                page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
+                t = Thread(target=page_container_cache_updater, kwargs={})
+                t.start()
+ 
+                if not interaction.parent or interaction.kind == 'com':
+                    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                    t = Thread(target=global_cache_updater, kwargs={})
+                    t.start()
+        
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+            

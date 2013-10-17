@@ -4,13 +4,8 @@
 
 {% block headerDisplay %}
 
-<style>
-    .rbSubtitle .step1{
-        color: #51ABE2;
-    }
-</style>
 <div class="rbSubtitle">
-    <span>Setup:</span>&nbsp;&nbsp;
+    <span>Setup:</span>&nbsp;
     <span class="step1">(1) &nbsp;Log in to ReadrBoard</span>
     <span class="step2">(2) &nbsp;Register this site</span>
     <span class="step3">(3) &nbsp;You're done!</span>
@@ -19,7 +14,8 @@
 
 {% endblock headerDisplay %}
 
-{% block extendedHead %}  
+{% block extendedHead %}
+    <link href="/static/css/embedded_version.css" rel="stylesheet" type="text/css" media="all" />
 {% endblock %}
 
 {% block mainContent %}
@@ -28,7 +24,7 @@
 {% endblock siteSearch %}
 
 
-  {% block msgHeader %}
+{% block msgHeader %}
   <h3>Please log in ReadrBoard to edit your settings.</h3>
 {% endblock msgHeader %}
  
@@ -45,7 +41,7 @@
     </div>
     
     {% block signupButton %}
-    <div style="float:left;padding:6px;">
+    <div style="float:left;padding:0 6px;">
         <a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;
     font-style:italic;">Or create a new account</a>
     </div>

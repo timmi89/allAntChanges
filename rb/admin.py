@@ -36,10 +36,10 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
 class RBGroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval')
+    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required')
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name', 'demo_group', 'approved')
+            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required')
         }),
         ('Advanced', {
             'fields': ('custom_css', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
@@ -148,6 +148,15 @@ class GroupBlessedTagAdmin(admin.ModelAdmin):
     list_display = ('group', 'node', 'order')
     search_fields = ['group__name', 'node__body', 'node__id']
 
+class BlockedTagAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'order')
+    search_fields = ['group__name', 'node__body', 'node__id']
+
+class AllTagAdmin(admin.ModelAdmin):
+    list_display = ('group', 'node', 'order')
+    search_fields = ['group__name', 'node__body', 'node__id']
+
+
 class LinkAdmin(admin.ModelAdmin):
     def base62(self, obj):
             return obj.to_base62()
@@ -169,6 +178,8 @@ admin.site.register(Content, ContentAdmin)
 admin.site.register(Profile)
 admin.site.register(GroupAdmin, GroupAdminAdmin)
 admin.site.register(GroupBlessedTag, GroupBlessedTagAdmin)
+admin.site.register(BlockedTag, BlockedTagAdmin)
+admin.site.register(AllTag, AllTagAdmin)
 admin.site.register(Follow)
 admin.site.register(UserDefaultTag)
 admin.site.register(NotificationRule)

@@ -1,20 +1,21 @@
 {% load static %}
 
 {% if query_string %}
-<div id="avatar">
-  <h2 style="line-height:24px;height:auto;padding:20px 0;">
-    <em style="font-weight:normal;font-size:18px;">Search for <br/></em>
-    <div style="max-width:200px;display:block;text-align:center;margin:0 auto;"><strong style="color:454545;">{{ query_string }}</strong></div>
+<div id="searchFor">
+  <h2>
+    <em>Search for <br/></em>
+    <div><strong>{{ query_string }}</strong></div>
   </h2>
 </div>
 {% endif %}
 {% if group %}
 <div id="avatar">
-  {% if group.logo_url_lg %}<h2><img src="{{ group.logo_url_lg }}" /></h2>{% endif %}
-	{% if not group.logo_url_lg %}<h2><div>{{ group.name }}</div></h2>{% endif %}
-  <div id="follow_info">
-    <a id="follower_count" href="#follower_list" class="fancybox"></a>
-    <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+  <div class="name_and_info">
+    <h2><div>{{ group.name }}</div></h2>
+    <div id="follow_info">
+      <a id="follower_count" href="#follower_list" class="fancybox"></a>
+      <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+    </div>
   </div>
 </div>
 <script>
@@ -36,34 +37,63 @@ $(document).ready( function() {
 
 
 {% if not profile_user and not group %}
-<div id="avatar">
+<!-- <div id="avatar"> -->
   <!-- <div>
     <a href="/react/">&rarr; Get the Reaction Button</a>
   </div> -->
-</div>
+<!-- </div> -->
 {% endif %}
 
 {% if profile_user %}
 
   {% csrf_token %}
     <div id="avatar">
-    <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} <div>{{ profile_user.social_user.full_name }}</div></h2>
-    <div id="which_content">
-      {% if on_follow_page %}<a href="/user/{{profile_user.id}}">My Activity</a>{% else %}<strong>My Activity</strong>{% endif %} 
-      {% if not on_follow_page %}<a href="/follows/{{profile_user.id}}">Activity I'm Following</a>{% else %}<strong>Activity I'm Following</strong>{% endif %}
-    </div>
+      <div class="name_and_info">
+        <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} <div>{{ profile_user.social_user.full_name }}</div></h2>
 
-    <div id="follow_info">
-      <a id="follower_count" href="#follower_list" class="fancybox"></a>
-      <a id="following_count" href="#following_list" class="fancybox"></a> {% if cookie_user and profile_user.id != cookie_user.id %}
-      <a id="follow_action" class="btn" href="javascript:void(0);"></a>{% endif %}
-    </div>
+        <div id="follow_info">
+          <a id="follower_count" href="#follower_list" class="fancybox"></a>
+          <a id="following_count" href="#following_list" class="fancybox"></a>
+          {% if cookie_user and profile_user.id != cookie_user.id %}
+            <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+          {% endif %}
+        </div>
+      </div>
+
     <script>
     $(document).ready( function() {
       RB.follow.followers({{ profile_user.id }},'usr');
       RB.follow.following({{ profile_user.id }},1);
     });
     </script>
+
+    </div>
+    <div id="which_content">
+        {% if cookie_user and profile_user.id == cookie_user.id %}
+            {% if on_follow_page %}
+                <a href="/user/{{profile_user.id}}">My Activity</a>
+            {% else %}
+                <strong>My Activity</strong>
+            {% endif %} 
+
+            {% if not on_follow_page %}
+                <a href="/follows/{{profile_user.id}}">Activity that I Follow</a>
+            {% else %}
+                <strong>Activity that I Follow</strong>
+            {% endif %}
+        {% else %}
+            {% if on_follow_page %}
+                <a href="/user/{{profile_user.id}}">Activity for {{profile_user.social_user.full_name}}</a>
+            {% else %}
+                <strong>Activity for {{profile_user.social_user.full_name}}</strong>
+            {% endif %} 
+
+            {% if not on_follow_page %}
+                <a href="/follows/{{profile_user.id}}">Activity that {{profile_user.social_user.full_name}} follows</a>
+            {% else %}
+                <strong>Activity that {{profile_user.social_user.full_name}} follows</strong>
+            {% endif %}
+        {% endif %} 
 
     </div>
 {% endif %}

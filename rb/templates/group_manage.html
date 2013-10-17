@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cookie_user }} Management{%endblock%}
+
+{% block wideContent %}
+<div class="mostlyWide">
+
+    {% for group in admin_groups %}
+        {% block settingsHeader %}    
+          <h1>{{group.name}} Settings</h1>
+
+          <style>
+          .manage_section { display:inline-block; padding:25px; margin:0 25px 25px 0; background:#f0f0f0; width:300px;}
+          .manage_section em { font-size:12px; color:#777; }
+          </style>
+
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/">Public Profile</a></h3>
+              <em class="">
+                A publicly-visible stream of reactions people have made on your site.
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/settings/">Settings</a></h3>
+              <em class="">
+                Configure how ReadrBoard looks &amp; works on your site.
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/analytics/">Analytics</a></h3>
+              <em class="">
+                Dashboard of ReadrBoard activity from your readers
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/all_reactions">All Reactions</a></h3>
+              <em class="">
+                This is a list of reactions that have appeared on your site, and that you have <strong>not blocked</strong>.
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/blocked_reactions">Blocked Reactions</a></h3>
+              <em class="">
+                This is a list of reactions that have appeared on your site, and that you have <strong>blocked</strong>.
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/not_approved/">Not Approved Reactions</a></h3>
+              <em class="">
+                This is a list of reactions that have not yet appeared to the public, because it is "unapproved".
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/admin_request/">Admin Requests</a></h3>
+              <em class="">
+                Click to see existing requests to become a Group Admin for your ReadrBoard account.  <br/><br/>
+              </em>
+          </div>
+          <div class="manage_section notice">
+              <h3><a href="/group/{{group.short_name}}/admin_approve/">Request Admin Access</a></h3>
+              <em class="">
+                Send this link to people you would like to make a Group Admin.  Simply visiting this link, if they are logged in, will create the request.
+              </em>
+          </div>
+        {% endblock settingsHeader %}  
+    {% endfor %}  
+  
+
+</div>
+{% endblock wideContent %}
+ 
+    {% block afterWideContent %}
+    {% endblock %}
+
+{% block pageJS %}
+    
+{% endblock %}

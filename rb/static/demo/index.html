@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
   <title>ReadrBoard Demo</title>
-  <link rel="stylesheet" href="readrboard-demo/style_002.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="/static/demo/readrboard-demo/style_002.css" type="text/css" media="screen" />
 
-  <link rel="stylesheet" href="readrboard-demo/global.css" type="text/css" />
-  <link rel="stylesheet" id="admin-bar-css" href="readrboard-demo/admin-bar.css" type="text/css" media="all" />
-  <link rel="stylesheet" id="highlander-comments-css" href="readrboard-demo/style.css" type="text/css" media="all" />
+  <link rel="stylesheet" href="/static/demo/readrboard-demo/global.css" type="text/css" />
+  <link rel="stylesheet" id="admin-bar-css" href="/static/demo/readrboard-demo/admin-bar.css" type="text/css" media="all" />
+  <link rel="stylesheet" id="highlander-comments-css" href="/static/demo/readrboard-demo/style.css" type="text/css" media="all" />
 <meta content="text/html; charset=utf-8" http-equiv="content-type" />
       <meta http-equiv="X-UA-Compatible" content="chrome=1" />
       <meta name="width" content="500" />
@@ -192,7 +192,12 @@
             <br>
             <div id="rdr-summary-wrap" class="rdr"></div>
 
-
+            <!-- <p id="crosstest" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
+            <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
+            
+            <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"><span rdr-counter-for="question1"></span> Reactions</div>
+            <div rdr-grid-for="question1" style="width:1000px;height:400px;"></div>
+            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
 
             <div class="rdr-demo-block rdr-tooltip" title="this is a tooltip">
               <blockquote>
@@ -229,7 +234,7 @@
 
             <div class="rdr-demo-block">
               <div class="alignleft">
-              <p><img src="http://local.readrboard.com:8080/static/demo/readrboard-demo/puppy_henry.png" alt="" width="180" class="contentImg" /></p>
+              <p><img src="/static/demo/readrboard-demo/puppy_henry.png" alt="" width="180" class="contentImg" /></p>
               </div>
 
               <p>Alright, for those of you who might be a little click-shy, here's an easy one. Here's a picture of a cute charming puppy. Admit it, you think it's cute, don't you? Or maybe you think it's preposterous, we don't know, tag it whatever you want.</p>

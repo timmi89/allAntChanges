@@ -12,6 +12,7 @@ import time
 from threading import Thread
 from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
+import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -36,7 +37,7 @@ def getTagSummary(tag, tags):
             break
     return data
 
-def getSummary(interactions, container=None, content=None, page=None, data=None):
+def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
     if not data: data = {}
     counts = {}
     if container:
@@ -70,8 +71,10 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
         (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
     ))
     sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+
+    tag_limit = 500 if isCrossPage else 10
     top_tags = dict((
-        tag for tag in sorted_counts[:10]
+        tag for tag in sorted_counts[:tag_limit]
     ))
 
     top_interactions = {}
@@ -87,15 +90,15 @@ def getSummary(interactions, container=None, content=None, page=None, data=None)
 
     return data
 
-def getContainerSummaries(interactions, containers):
+def getContainerSummaries(interactions, containers, isCrossPage=False):
     data = dict((
-        (container[1], getSummary(interactions, container=container)) for container in containers    
+        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
     ))
     return data
 
-def getContentSummaries(interactions, content):
+def getContentSummaries(interactions, content, isCrossPage=False):
     data = dict((
-        (content_item[0], getSummary(interactions, content=content_item)) for content_item in content    
+        (content_item[0], getSummary(interactions, content=content_item, isCrossPage=isCrossPage)) for content_item in content
     ))
     return data
 
@@ -196,6 +199,7 @@ def createInteractionNode(node_id=None, body=None, group=None):
             pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
             body = pf.clean(body)
         
+        
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
         
@@ -246,7 +250,7 @@ def deleteInteraction(interaction, user):
                 t = Thread(target=container_cache_updater, kwargs={})
                 t.start()
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + interaction.container.hash)
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + [interaction.container.hash])
                 t = Thread(target=container_cache_updater, kwargs={})
                 t.start()
                 
@@ -261,6 +265,12 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+    if kind and kind == 'tag':
+        if group and group.blocked_tags:
+            for blocked in group.blocked_tags.all():
+                if interaction_node.body == blocked.body:
+                    raise JSONException("Group has blocked this tag.")
+         
     # Check to see if user has reached their interaction limit
     tempuser = False
     if isTemporaryUser(user):
@@ -296,12 +306,18 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     except Interaction.DoesNotExist:
         pass
 
-    if parent:
-        pass
-        #print "Creating Interaction with parent node"
-    else:
-        #print "Creating Interaction without parent node"
-        parent = None
+
+    if group and group.signin_organic_required:
+        if not tempuser:
+            pass
+        elif parent:
+            pass
+        else:
+            if interaction_node in group.blessed_tags.all():
+                pass
+            else:
+                raise JSONException(u"sign in required for organic reactions")
+            
     
     try:
         
@@ -325,7 +341,27 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         raise JSONException(u"Error creating interaction object")
 
     new_interaction.save()
-    
+    try:
+        is_new_tag = True
+        if new_interaction.kind == 'tag':
+            for alltag in page.site.group.all_tags.all():
+                if alltag.body == new_interaction.interaction_node.body:
+                    is_new_tag = False
+            if is_new_tag:
+                logger.info("Creating all tag")
+                AllTag.objects.create(group=page.site.group, 
+                                      node = new_interaction.interaction_node, 
+                                      order=len(page.site.group.all_tags.all()))
+                try:
+                    notification = AsynchNewGroupNodeNotification()
+                    t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                    t.start()
+                except Exception, ex:
+                    pass
+            
+    except Exception, ex:
+        logger.info("NO ALL TAG: " + traceback.format_exc(1500))
+        
     ret = dict(
         interaction=new_interaction,
         content_node=content,
@@ -341,14 +377,36 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         t = Thread(target=container_cache_updater, kwargs={})
         t.start()
         
-        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=container.hash)
+        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
         t = Thread(target=page_container_cache_updater, kwargs={})
         t.start()
         
         notification = AsynchPageNotification()
         t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         t.start()
+
+        other_interactions = list(Interaction.objects.filter(
+                    container=container,
+                    page__site__group = page.site.group,
+                    approved=True
+                    ))
+
+        other_pages = set()
+        for other in other_interactions:
+            other_pages.add(other.page)
+        for other_page in other_pages:
+            cache_updater = PageDataCacheUpdater(method="delete", page_id=other_page.id)
+            t = Thread(target=cache_updater, kwargs={})
+            t.start()
         
+            container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=other_page.id)
+            t = Thread(target=container_cache_updater, kwargs={})
+            t.start()
+        
+            page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(other_page.id),hashes=[container.hash])
+            t = Thread(target=page_container_cache_updater, kwargs={})
+            t.start()
+
         if not new_interaction.parent or new_interaction.kind == 'com':
             global_cache_updater = GlobalActivityCacheUpdater(method="update")
             t = Thread(target=global_cache_updater, kwargs={})
@@ -438,7 +496,7 @@ def getSinglePageDataDict(page_id):
     
     
     
-def getKnownUnknownContainerSummaries(page_id, hashes):
+def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
@@ -451,9 +509,36 @@ def getKnownUnknownContainerSummaries(page_id, hashes):
     ).select_related('interaction_node','content','user',('social_user')))
     #logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
+
+    # crossPageHashes
+    if len(crossPageHashes) > 0:
+        crossPageContainers = list(Container.objects.filter(hash__in=crossPageHashes).values_list('id','hash','kind'))
+        crossPageIds = [container[0] for container in crossPageContainers]
+        # MIKE: verify / do?
+        # this interaction request should filter by group
+        # to do so, we think we need a django query or queries that does this:
+            # 1. takes the page_id to find the site its on
+            # 2. uses the site_id to find the group_id
+            # 3. gets a list of page_ids associated with the group_id (group > site > page)... lets call this group_page_ids
+            # ...then that is used in the commented-out part of this query:
+        crossPageInteractions = list(Interaction.objects.filter(
+            container__in=crossPageIds,
+            page__site__group = page.site.group,
+            # page__in=group_page_ids,
+            approved=True
+        ).select_related('interaction_node','content','user',('social_user')))
+
+        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
+
+        
     #logger.info("K KEYS: " + str(known.keys()))
+    # MIKE: verify / do?
+        # does my solution here correctly handle cache for when there is, and isn't, a crossPageKnown list?
     unknown = list(set(hashes) - set(known.keys()))
-    cacheable_result = dict(known=known, unknown=unknown)
+    if 'crossPageKnown' in locals():
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
+    else:
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
     return cacheable_result
 
 def getSettingsDict(group):
@@ -462,6 +547,8 @@ def getSettingsDict(group):
          exclude=[
              'admins',
              'word_blacklist',
+             'blocked_tags',
+             'all_tags',
              'approved',
              'requires_approval',
              'share',

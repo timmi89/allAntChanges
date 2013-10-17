@@ -135,6 +135,7 @@ class Group(models.Model):
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
+    signin_organic_required = models.BooleanField(default=False)
     demo_group = models.BooleanField(default=False)
     word_blacklist = models.TextField(blank=True)
     paragraph_helper = models.BooleanField(default=True)
@@ -150,8 +151,12 @@ class Group(models.Model):
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
-    blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag')
+    blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag', related_name = 'Blessed Tag')
 
+    blocked_tags = models.ManyToManyField(InteractionNode, through='BlockedTag', related_name = 'Blocked Tag')
+    all_tags = models.ManyToManyField(InteractionNode, through='AllTag', related_name = 'All Tag')
+
+    
     # black/whitelist fields
     anno_whitelist = models.CharField(max_length=255, blank=True, default=u"p,img")
     img_whitelist = models.CharField(max_length=255, blank=True)
@@ -211,6 +216,31 @@ class GroupBlessedTag(models.Model):
     
     class Meta:
         ordering = ['order']
+
+class BlockedTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+        unique_together = ('group', 'node')
+
+class AllTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+        unique_together = ('group', 'node')
+
         
 class UserDefaultTag(models.Model):
     social_user = models.ForeignKey(SocialUser)

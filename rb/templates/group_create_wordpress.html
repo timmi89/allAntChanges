@@ -3,6 +3,7 @@
 {% block bodyClass %}embeddedVersion{% endblock bodyClass %}
 
 {% block extendedHead %}
+<link href="/static/css/embedded_version.css" rel="stylesheet" type="text/css" media="all" />
 <script>
     RDR_offline = document.domain == "local.readrboard.com";
     RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8080":"//www.readrboard.com";

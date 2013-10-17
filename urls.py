@@ -3,6 +3,9 @@ from django.conf import settings
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 # Uncomment the next two lines to enable the admin:
+from django.views.generic import RedirectView
+from django.views.generic import TemplateView
+
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
@@ -27,9 +30,9 @@ urlpatterns = patterns('',
   
   
   # For main website
-  url(r'^publishers/$','rb.views.splash'),
-  url(r'^about/$','rb.views.splash'),
-  url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
+  url(r'^$', 'rb.views.home'),
+  #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
+
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
@@ -40,7 +43,9 @@ urlpatterns = patterns('',
   url(r'^settings/$', 'rb.views.settings'),
   url(r'^register/$', 'rb.views.group'),
   url(r'^sites/$', 'rb.views.sites'),
-  url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
+  # url(r'^settings/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
+  # url(r'^(?P<short_name>[\w\-\.]+)/settings/$', 'rb.views.settings'),
   url(r'^settings_wordpress/(?P<short_name>[\w\-\.]+)/$', 'rb.views.settings_wordpress'),
 
 
@@ -87,8 +92,12 @@ urlpatterns = patterns('',
   # Main Site Supporting Pages
   url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
+  url(r'^terms/$', 'rb.views.terms'),
+  url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
-  url(r'^splash/$', 'rb.views.splash'),
+  url(r'^publishers/$','rb.views.learn'),
+  url(r'^about/$','rb.views.about'),
+  url(r'^learn/$','rb.views.learn'),
   
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code' 
@@ -105,9 +114,6 @@ urlpatterns = patterns('',
   #url(r'^cards/(?P<group_id>\d/$', 'rb.views.cards'),
 
   # Extras
-  # 1.3.1 syntax url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
-  # 1.3.1 syntax url(r'^favicon\.ico$', 'django.views.generic.simple.redirect_to', {'url': '/static/site/images/favicon.ico'}),
-  # url(r'^robots\.txt$', 'django.views.generic.simple.direct_to_template', {'template': 'robots.txt', 'mimetype': 'text/plain'}),
   url(r'^favicon\.ico$', RedirectView.as_view(url='/static/site/images/favicon.ico')),
 
   # API
@@ -120,13 +126,16 @@ urlpatterns = patterns('',
   # Group Supporting Pages
   # dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
   # url(r'^signup/$', 'rb.views.create_group'),
-  # 1.3.1 syntax url(r'^signup/$', 'django.views.generic.simple.redirect_to', {'url': '/about/#publishers'}),
+  url(r'^manage/', 'rb.views.manage_groups'),
   url(r'^signup/$', RedirectView.as_view(url='/about/#publishers')),
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
-  url(r'^analytics/', include('readrboard.analytics.urls')),
-  url(r'^admin_request/(?P<short_name>[\w\-\.]+)/$', 'rb.views.admin_request'),
-  url(r'^admin_approve/$', 'rb.views.admin_approve'),
-  url(r'^admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_all_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
+
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
@@ -148,7 +157,6 @@ urlpatterns = patterns('',
 from django.conf.urls.static import static
 
 if settings.DEBUG:
-    # 1.3.1 syntax urlpatterns += url(r'^static/engage\.js$', 'django.views.generic.simple.redirect_to', {'url': '/static/engage_full.js'}),
     urlpatterns += url(r'^static/engage\.js$', RedirectView.as_view(url='/static/engage_full.js')),
 
 urlpatterns += patterns('django.contrib.staticfiles.views',

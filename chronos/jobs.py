@@ -45,6 +45,15 @@ class AsynchPageNotification(AbstractAsynchronousNotification):
         logger.info('page url ' + str(self.url))
         return self.url
  
+
+class AsynchNewGroupNodeNotification(AbstractAsynchronousNotification):
+    def generate_url(self, **kwargs):
+        self.url = '/chronos/group_node/' + str(kwargs['interaction_id']) + '/' + str(kwargs['group_id']) + '/'
+        logger.info('page url ' + str(self.url))
+        return self.url
+ 
+
+
   
 class AbstractNotificationRuleImpl(object):
     args = None
@@ -119,6 +128,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
     def __init__(self, **kwargs):
         self.page_id = kwargs['page_id']
         self.hashes = kwargs.get('hashes',[])
+        self.crossPageHashes = kwargs.get('crossPageHashes',[])
         self.method = kwargs['method']
         
     def hydrate(self):
@@ -131,7 +141,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         #self.key = 'page_containers' + str(self.page_id)
         #logger.info('hydrating using key: ' + self.key)
         if self.method == 'update':  
-            self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes)
+            self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes, self.crossPageHashes)
         
 class GroupSettingsDataCacheUpdater(CacheUpdater):        
     def __init__(self, **kwargs):

@@ -1,4 +1,4 @@
-body{background:#FFFFFF;color:#666666;font-size:12px;font-family:Georgia, "Times New Roman", Times, serif;line-height:20px;margin:0px auto 0px;padding:0px;}#wrap{background:none;margin:0px auto 0px;padding:0px 15px;width:960px;}.hidden{display:none;}.clear{clear:both;}.linerule{border-bottom:1px solid #CCCCCC;padding-top:15px;margin-bottom:15px;}a, a:visited{font-style:italic;color:#000000;text-decoration:none;}a:focus, a:hover, a:active{color:#000000;text-decoration:underline;outline:none;}a img{border:none;}#header{width:960px;margin:0 auto;padding:0px;position:relative;}#header h1{font-size:36px;line-height:36px;margin:0px;text-decoration:none;}#header h1 a{display:block;height:120px;}#header h1 a, #header h1 a:visited{text-decoration:none;}#header h1 a:hover{text-decoration:none;}#header h1 a #sitename{display:block;padding:64px 10px 0 10px;}.headerleft{width:960px;float:left;overflow:hidden;}.headerright{display:block;background:#000000;width:280px;height:30px;z-index:8;position:absolute;top:0;right:0;}#navbar,
+body{background:#FFFFFF;color:#666666;font-size:12px;font-family:Georgia, "Times New Roman", Times, serif;line-height:20px;margin:0px 0px;padding:0px;}#wrap{background:none;margin:0px 0px;padding:0px 15px;width:960px;}.hidden{display:none;}.clear{clear:both;}.linerule{border-bottom:1px solid #CCCCCC;padding-top:15px;margin-bottom:15px;}a, a:visited{font-style:italic;color:#000000;text-decoration:none;}a:focus, a:hover, a:active{color:#000000;text-decoration:underline;outline:none;}a img{border:none;}#header{width:960px;margin:0 auto;padding:0px;position:relative;}#header h1{font-size:36px;line-height:36px;margin:0px;text-decoration:none;}#header h1 a{display:block;height:120px;}#header h1 a, #header h1 a:visited{text-decoration:none;}#header h1 a:hover{text-decoration:none;}#header h1 a #sitename{display:block;padding:64px 10px 0 10px;}.headerleft{width:960px;float:left;overflow:hidden;}.headerright{display:block;background:#000000;width:280px;height:30px;z-index:8;position:absolute;top:0;right:0;}#navbar,
 .navbar{border-bottom:1px solid #000;width:960px;font-size:11px;font-family:Helvetica, Arial, Trebuchet MS, Verdana;font-style:normal;text-transform:uppercase;color:#FFFFFF;font-weight:bold;margin:0 auto 5px auto;padding:0;float:left;}#header input#searchbox{font-size:11px;}#navicons{float:right;display:block;margin:7px 10px 0px 5px;}.navicon{margin:0px 0px 0px 0px;padding:0px 0px 0px 5px;}.ot-menu, .ot-menu *{margin:0;padding:0;list-style:none;}.ot-menu{line-height:1.0;}.ot-menu ul{position:absolute;top:-999em;width:160px;}.ot-menu ul li{min-width:180px;border:none;margin:0px 0px 0px 0px;}.ot-menu li:hover{visibility:inherit;}.ot-menu li{float:left;position:relative;}.ot-menu a{display:block;position:relative;}.ot-menu li:hover ul,
 .ot-menu li.sfHover ul{left:0;top:40px;z-index:99;}ul.ot-menu li:hover li ul,
 ul.ot-menu li.sfHover li ul{top:-999em;}ul.ot-menu li li:hover ul,
@@ -33,3 +33,22 @@ li.sfHover > a > .sf-sub-indicator{background-position:-10px -100px;}.ot-menu ul
 #sidebar_left .widget_twitter .tweets li,
 .homewidgets .widget_twitter .tweets li,
 .homewidgets .widget_twitter .tweets li{display:block;padding-bottom:10px;}#homepagetop .homewidgets ul.tweets li a{display:inline;}#flickr_badge_uber_wrapper img{margin:0 -20px;}#sidebar_left #flickr_badge_uber_wrapper img{max-width:180px;}#sidebar_right #flickr_badge_uber_wrapper img{max-width:280px;}#footertop .widget-area #flickr_badge_uber_wrapper img{max-width:170px;}#footertop .footertopright #flickr_badge_uber_wrapper img{max-width:350px;}#flickr_badge_wrapper{border:0 none !important;background-color:transparent !important;}.widget_recent_comments td{padding-bottom:6px !important;vertical-align:bottom;}.widget_recent_comments .avatar{padding-bottom:4px;}.widget input#s{}.widget #searchsubmit{padding:6px 6px 4px 6px;margin-top:-1px;}img#wpstats{position:absolute;right:10px;bottom:10px;}
+
+/*undo demo styles that are messing with our stuff*/
+#content textarea{
+    background: white;
+}
+
+#content div.rdr div.rdr_header h1, 
+#content div.rdr div.rdr_header h2 {
+    font-family:'RDR_HelveticaBold',Arial,sans-serif; letter-spacing:0px; font-weight:normal; color:#666; margin:0; font-size:11px; padding:3px 9px 0 12px; border:none; 
+    font-size:15px;
+    color:#5999dc;
+    margin-left:12px;
+    white-space: nowrap;
+    text-align:left;
+    text-transform:none;
+    font-style:normal;
+    padding-top: 6px;
+    line-height: 15px;
+}

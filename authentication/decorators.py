@@ -151,6 +151,57 @@ def requires_admin(func):
             return HttpResponseRedirect(isNotAdminRedirectUrl)
     return wrapper
 
+
+def requires_admin_rest(func):
+    def wrapper(*args, **kwargs):
+        request = args[0] if len(args) == 1 else args[1]
+        res = {"status": 'success'}
+        # Check to see if user is logged in to facebook
+        
+        try:
+            cookie_user = checkCookieToken(request)
+            kwargs['cookie_user'] = cookie_user
+        except GraphAPIError:
+            res['status'] =  'fail'
+            res['message'] = 'GRAPHAPIError'
+
+        # If a user is registered and logged in
+        if cookie_user:
+            if len(SocialUser.objects.filter(user=cookie_user)) == 1:
+                try:
+                    admin_groups = cookie_user.social_user.admin_groups()
+                    group_id = kwargs.get('group_id', None)
+                    if group_id:
+                        group = Group.objects.get(id=int(group_id))
+                        if group not in admin_groups:
+                            res['status'] =  'fail'
+                            res['message'] = 'Not an admin'
+                        else:
+                            kwargs['admin_groups'] = [group]
+                    else:
+                        kwargs['admin_groups'] = admin_groups
+                    
+                    res['data'] = func(*args, **kwargs)
+                except JSONException, jsonex:
+                    res['status'] =  'fail'
+                    res['message'] = jsonex
+                except Group.DoesNotExist:
+                    res['status'] =  'fail'
+                    res['message'] = 'Bad Group Id'
+                except Exception, ex:
+                    res['status'] = 'fail'
+                    res['message'] = ex 
+            else:
+                res['status'] =  'fail'
+                res['message'] = 'No Social User'
+                
+        else:
+            res['status'] =  'fail'
+            res['message'] = 'No cookie user'
+        return res
+    
+    return wrapper
+
 def requires_access_key(func):
     def wrapper(*args, **kwargs):
         request = args[0] if len(args) == 1 else args[1]
