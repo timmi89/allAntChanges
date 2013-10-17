@@ -2427,15 +2427,15 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_box_small .rdr_charCount16 { fon
 
 div#rdr_loginPanel {
     z-index: 12101;
-    left: 50% !important;
+ /*   left: 50% !important;
     margin-left: -240px !important;
     top: 50% !important;
     margin-top: -100px !important;
-    position: relative;
+    position: relative;*/
 }
 
 div#rdr_loginPanel .rdr_header_arrow{
-    display: none !important;
+    /*display: none !important;*/
 }
 
 
