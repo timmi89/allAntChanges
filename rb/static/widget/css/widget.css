@@ -1320,7 +1320,8 @@ div#rdr-page-summary.defaultSummaryBar{
     position: fixed;
     top:0;
     right:0;
-    z-index: 95000;
+    /*z-index: 95000;*/
+    z-index: 1200;
     text-align: right;
 }
 div#rdr-page-summary.defaultSummaryBar div.rdr.rdr-summary {
