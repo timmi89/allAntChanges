@@ -5705,55 +5705,31 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     onFail: function(args){
-                        var isPage = (args.kind == 'page' || args.hash=="page");
-                        if (isPage) {
-                            var $message = '<div style="position:absolute;right:13px;">X</div>';
-                            if ( args.response.data && args.response.data.existing && args.response.data.existing === true ) {
-                                $message = $('<em>You have already given that reaction.</em><br><br><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins>');
-                            } else if ( args.response.message.indexOf("Temporary user interaction limit reached") != -1 ) {
-                                // RDR.events.track( 'temp_limit_hit_s' );
-                                $message = $('<em>To continue adding reactions, please <a href="javascript:void(0);" style="color:#008be4;">log in</a>.</em><br><br><strong>Why:</strong> To encourage <strong style="color:#008be4;">high-quality participation from the community</strong>, <ins>we ask that you log in with Facebook. You\'ll also have a profile where you can revisit your reactions, notes, and comments made using <strong style="color:#008be4;">ReadrBoard</strong>!</ins>');
-                                $message.find('a').click( function() {
-                                    RDR.session.showLoginPanel(args);
-                                });
-                            } else {
-                                RDR.session.handleGetUserFail( args, function() {
-                                    RDR.actions.interactions.ajax( args, 'react', 'create' );
-                                });
-                            }
+                      
+                        //RDR.actions.interactions.react.onFail:
+                        //todo: we prob want to move most of this to a general onFail for all interactions.
+                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
 
-                            if ( typeof $message == "object" ) {
-                                $summary_box = $('[rdr-hash="'+args.hash+'"]').hasAttr('rdr-page-container').find('div.rdr-summary');
-                                $summary_box.find('div.rdr_info').html( $message );
-                                //todo: reconsider this method of liberally updating everything
-                                $summary_box.find('div.rdr_info').show(400, RDR.actions.indicators.utils.updateContainerTrackers );
-                            }
+                        //clear loader
+                        var $rindow = args.rindow,
+                            response = args.response;
+                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+
+                        if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                            RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'react', 'create' ); } );
+                            RDR.session.showLoginPanel( args );
+                        } else if ( response.message == "existing interaction" ) {
+                            //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
+                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                //with a message param.
+                                //and a close 'x' button.
+                                args.msgType = "existingInteraction";
+                                RDR.session.rindowUserMessage.show( args );
                         } else {
-                            //RDR.actions.interactions.react.onFail:
-                            //todo: we prob want to move most of this to a general onFail for all interactions.
-                            // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
-
-                            //clear loader
-                            var $rindow = args.rindow,
-                                response = args.response;
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
-
-                            if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'react', 'create' ); } );
-                                RDR.session.showLoginPanel( args );
-                            } else if ( response.message == "existing interaction" ) {
-                                //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                                //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
-                                    //with a message param.
-                                    //and a close 'x' button.
-                                    args.msgType = "existingInteraction";
-                                    RDR.session.rindowUserMessage.show( args );
-                            } else {
-                                // if it failed, see if we can fix it, and if so, try this function one more time
-                                RDR.session.handleGetUserFail( args, function() {
-                                    RDR.actions.interactions.ajax( args, 'react', 'create' );
-                                });
-                            }
+                            // if it failed, see if we can fix it, and if so, try this function one more time
+                            RDR.session.handleGetUserFail( args, function() {
+                                RDR.actions.interactions.ajax( args, 'react', 'create' );
+                            });
                         }
                     }
                 }
