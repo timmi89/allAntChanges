@@ -1183,7 +1183,8 @@ function readrBoard($R){
                     if ( kind == "page" ) {
                         if ( isWriteMode == false ) {
                             // todo: touchHover
-                            $tagBox.click( function() {
+
+                            var clickFunc = function(){
                                 RDR.rindow.hideFooter($rindow);
                                 $rindow.removeClass('rdr_rewritable');
 
@@ -1210,7 +1211,14 @@ function readrBoard($R){
                                 renderReactedContent( $reactionsTable, tag );
 
                                 $this.addClass('rdr_live_hover');
-                            });
+                            };
+
+                            if(isTouchBrowser){
+                                $tagBox.bind('touchstart', clickFunc);
+                            }else{
+                                $tagBox.click(clickFunc);
+                            }
+
                         } else {
                             if(isTouchBrowser){
                                 $tagBox.bind('touchstart', function(e) {
@@ -1253,18 +1261,20 @@ function readrBoard($R){
 
                     // global (all kinds) hover event
                     // todo: touchHover
-                    $tagBox.hover(function() {
-                        var $this = $(this);
+                    if(!isTouchBrowser){
+                        $tagBox.hover(function() {
+                            var $this = $(this);
 
-                        if ( !$this.hasClass('rdr_tagged') ) {
-                            var $tagCount = $this.find('span.rdr_tag_count');
-                            $tagCount.width( $tagCount.width() );
-                            $tagCount.text('+');
-                        }
-                    }, function() {
-                        var $this = $(this);
-                        $this.find('span.rdr_tag_count').text( $this.find('.rdr_tag').data('tag_count') );
-                    });
+                            if ( !$this.hasClass('rdr_tagged') ) {
+                                var $tagCount = $this.find('span.rdr_tag_count');
+                                $tagCount.width( $tagCount.width() );
+                                $tagCount.text('+');
+                            }
+                        }, function() {
+                            var $this = $(this);
+                            $this.find('span.rdr_tag_count').text( $this.find('.rdr_tag').data('tag_count') );
+                        });
+                    }
 
                     // $container.append( $tagBox, " " );
                     
