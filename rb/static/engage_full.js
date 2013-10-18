@@ -111,6 +111,8 @@ function findEngageScript(){
 function readrBoard($R){
     var $ = $R;
 
+    var isTouch = ('ontouchstart' in document.documentElement);
+
     $.extend(RDR, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
@@ -1225,6 +1227,7 @@ function readrBoard($R){
                     }
 
                     // global (all kinds) hover event
+                    // todo: touchHover
                     $tagBox.hover(function() {
                         var $this = $(this);
 
@@ -1877,6 +1880,7 @@ function readrBoard($R){
                     if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                         $tag_table.addClass('rdr-one-column');
 
+                        // todo: touchHover
                         $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
                             var $this = $(this),
                                 $rindow = $this.closest('div.rdr_window');
@@ -3493,6 +3497,7 @@ function readrBoard($R){
                 
                 var minImgWidth = 160;
 
+                // todo: touchHover
                 $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
                     var $this = $(this);
                     var hash = $this.data('hash');
@@ -3837,6 +3842,7 @@ function readrBoard($R){
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
                     if ( HTMLkind != 'body') {
+                        // todo: touchHover
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
                             $(this).addClass('rdr_live_hover');
@@ -4752,6 +4758,7 @@ function readrBoard($R){
                         });
 
                         //setup hover event to hilite and unhlite
+                        // todo: touchHover
                         $tagSpan.hover(
                             function() {
 
@@ -5869,6 +5876,7 @@ if ( sendData.kind=="page" ) {
                             //todo: combine this with the kindSpecificSetup above right?
                             if (kind == 'text'){
                                 $container.unbind('.rdr_helper');
+                                // todo: touchHover
                                 $container.bind('mouseenter.rdr_helper', function() {
                                     var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                                     if ( hasHelper) {
@@ -6279,6 +6287,7 @@ if ( sendData.kind=="page" ) {
                             _commonSetup();
                             $indicator
                                 .appendTo($container_tracker)
+                                // todo: touchHover
                                 .on('mouseenter', function() {
                                     if ( summary.counts.interactions == 0 ) {
                                         var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
@@ -6502,7 +6511,7 @@ if ( sendData.kind=="page" ) {
                                 },300);
 
                                 $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-
+                            // todo: touchHover
                             }).on('mouseenter', function() {
                                 var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                                 clearTimeout(timeoutCloseEvt);
@@ -6510,6 +6519,7 @@ if ( sendData.kind=="page" ) {
 
                             if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes ) ) {
                                 $rindow.find('div.rdr_box').each( function() {
+                                    // todo: touchHover
                                     $(this).hover(
                                         function() {
                                             var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
@@ -8909,6 +8919,7 @@ function $RFunctions($R){
 
                 $summary_widget.find('.rdr-logo').tooltip({});
 
+                // todo: touchHover
                 $summary_widget.hover(
                     function() {
                         // let's get the reaction summaries for the page here.
