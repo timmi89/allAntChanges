@@ -111,7 +111,10 @@ function findEngageScript(){
 function readrBoard($R){
     var $ = $R;
 
-    var isTouch = ('ontouchstart' in document.documentElement);
+    var isTouchBrowser = (
+        ('ontouchstart' in window) || 
+        (window.DocumentTouch && document instanceof DocumentTouch)
+    );
 
     $.extend(RDR, {
         summaries:{},
@@ -3407,6 +3410,10 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
             
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr rdr_sandbox"/>').appendTo('body');
+                if(isTouchBrowser){
+                    $('#rdr_sandbox').addClass('isTouchBrowser');
+                }
+
                 RDR.util.fixBodyBorderOffsetIssue();
                 
                 if(!!RDR.group.br_replace_scope_selector){

@@ -1613,6 +1613,15 @@ div.rdr_indicator.rdr_indicator_for_media {
     /*cursor:pointer;*/
 }
 
+#rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media {
+    display: block !important;
+    margin-top: 24px;
+    opacity: 1 !important;
+}
+#rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media.rdr_indicator_not_img {
+    margin-top: 0;
+}
+
 div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
     display:none;
 }
