@@ -1260,6 +1260,7 @@ div.rdr .rdr_body.rdr_page_reactions_summary td.rdr_content {
 
 div.rdr .rdr_body.rdr_page_reactions_summary .reaction_summary_table {
   background:#fff;
+  width: 100%;
 }
 div.rdr .rdr_body.rdr_page_reactions_summary .reaction_summary_table a.rdr_tag{
   display:inline-block;

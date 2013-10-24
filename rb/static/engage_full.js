@@ -1109,7 +1109,7 @@ function readrBoard($R){
                         return $backButton;
                     }
 
-                    function createReactedContentTable($this, counts) {
+                    function createReactedContentTable($this, counts, pageId) {
 
                         $().selog('hilite', true, 'off');
                         $('.rdr_twtooltip').remove();
@@ -1130,6 +1130,22 @@ function readrBoard($R){
                             // iterate through and create an array of counts + $tr.  this is then sortable.
                             $reactionsTable.find('.rdr_page_reactions').addClass('has_other_reactions');
                             $.each( RDR.interaction_data[ tag.id ], function(int_id, data) {
+
+                                //quick fix for multi page reactions.
+                                // todo: #summaryContentByPageFix
+                                var hash = data.hash;
+                                var summary = RDR.summaries[hash];
+                                var $node = $('[rdr-hash="' + hash + '"]');
+                                var thisPageId = summary.pageId;
+
+                                if(
+                                    !thisPageId || 
+                                    !pageId ||
+                                    (thisPageId != pageId)
+                                ){
+                                    return;
+                                }
+
                                 if ( !$reactionsTable.find('tr.rdr_int_summary_'+int_id).length ) {
                                     var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
                                         thing = RDR.interaction_data[ tag.id ][ int_id ];
@@ -1206,7 +1222,7 @@ function readrBoard($R){
                                 });
 
                                 var $this = $(this),
-                                    $reactionsTable = createReactedContentTable($this, counts);
+                                    $reactionsTable = createReactedContentTable($this, counts, page.id);
 
                                 renderReactedContent( $reactionsTable, tag );
 
@@ -1214,9 +1230,13 @@ function readrBoard($R){
                             };
 
                             if(isTouchBrowser){
-                                $tagBox.bind('touchstart', clickFunc);
+                                $tagBox.bind('touchstart', function(){
+                                    clickFunc();
+                                });
                             }else{
-                                $tagBox.click(clickFunc);
+                                $tagBox.click(function(){
+                                    clickFunc();
+                                });
                             }
 
                         } else {
@@ -4657,8 +4677,13 @@ function readrBoard($R){
                         return;
                     }
 
+                    var pageId = RDR.util.getPageProperty('id', hash);
+                    //quick fix add pageId to summary becuase we need it in the summary widget content lookup
+                    // todo: #summaryContentByPageFix
+                    summary.pageId = pageId;
+
                     var sendData = {
-                        "page_id" : RDR.util.getPageProperty('id', hash),
+                        "page_id" : pageId,
                         "container_id":container_id,
                         "hash":hash,
                         "cross_page": ( summary.$container.hasAttr('rdr-crossPageContent') ) ? true:false
