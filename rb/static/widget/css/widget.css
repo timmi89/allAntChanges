@@ -1628,17 +1628,7 @@ div.rdr_indicator.rdr_indicator_for_media {
 #rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media.rdr_indicator_not_img {
     /*margin-top: 0;*/
 }
-/*try to force the ipad to show the rindow with a slight margin*/
-#rdr_sandbox.isTouchBrowser div.rdr.rdr_window:after {
-    content: "";
-    display: table;
-    position: absolute;
-    width: 10px;
-    height: 32px;
-    right: -8px;
-    top: 0;
-    background: none;
-}
+
 #rdr_sandbox.isTouchBrowser div.rdr.rdr_window.rdr_for_page {
     margin-top: 32px !important;
 }
