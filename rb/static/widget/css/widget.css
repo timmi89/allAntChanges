@@ -1323,6 +1323,9 @@ div#rdr-page-summary.defaultSummaryBar{
     /*z-index: 95000;*/
     z-index: 1200;
     text-align: right;
+    max-width: 220px;
+    max-height: 55px;
+    overflow: hidden;
 }
 div#rdr-page-summary.defaultSummaryBar div.rdr.rdr-summary {
   margin: 10px;
