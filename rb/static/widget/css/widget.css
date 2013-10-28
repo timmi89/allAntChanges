@@ -1629,7 +1629,7 @@ div.rdr_indicator.rdr_indicator_for_media {
     /*margin-top: 0;*/
 }
 #rdr_sandbox.isTouchBrowser div.rdr.rdr_window {
-    margin-left: -5px;
+    margin-right: 10px;
 }
 #rdr_sandbox.isTouchBrowser div.rdr.rdr_window.rdr_for_page {
     margin-top: 32px !important;
