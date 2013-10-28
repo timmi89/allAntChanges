@@ -1248,20 +1248,29 @@ function readrBoard($R){
                             });
                         }
                     } else {
-                        $tagBox.click( function() {
-                            $(this).addClass('rdr_tagged');
-                            $rindow.removeClass('rdr_rewritable');
-                            var hash = $rindow.data('container');
-                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                            RDR.actions.interactions.ajax( args, 'react', 'create');
-                        });
+                        if(isTouchBrowser){
+                            $tagBox.bind('touchstart', function() {
+                                $(this).addClass('rdr_tagged');
+                                $rindow.removeClass('rdr_rewritable');
+                                var hash = $rindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                            });
+                        }else{
+                            $tagBox.click( function() {
+                                $(this).addClass('rdr_tagged');
+                                $rindow.removeClass('rdr_rewritable');
+                                var hash = $rindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                            });
+                        }
                     }
 
                     // global (all kinds) hover event
                     if(!isTouchBrowser){
                         $tagBox.hover(function() {
                             var $this = $(this);
-
                             if ( !$this.hasClass('rdr_tagged') ) {
                                 var $tagCount = $this.find('span.rdr_tag_count');
                                 $tagCount.width( $tagCount.width() );
@@ -1312,18 +1321,34 @@ function readrBoard($R){
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="view comments"></span>');
 
                         $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
-                        $commentHover.click( function() {
-                            // replacewith bug
-                            $(this).tooltip('hide');
-                            RDR.actions.viewCommentContent({
-                                tag:tag,
-                                hash:hash,
-                                rindow:$rindow,
-                                content_node:content_node,
-                                selState:content_node.selState
+                        
+                        if(isTouchBrowser){
+                            $commentHover.bind('touchstart', function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                RDR.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    rindow:$rindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
                             });
-                            return false;
-                        });
+                        }else{
+                            $commentHover.click( function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                RDR.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    rindow:$rindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }
 
                         $tagBox.append( $commentHover );
                         $commentHover.tooltip();
