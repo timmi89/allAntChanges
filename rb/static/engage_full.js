@@ -292,7 +292,7 @@ function readrBoard($R){
             makeHeader: function( _headerText, interactionId ) {
                 //RDR.rindow.makeHeader:
                 var headerText = _headerText || "";
-console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.makeHeader RDR.rindow.makeHeader');
+
                 var headerTml = $.mustache(
                     '<div class="rdr rdr_header">'+
                         '<div class="rdr_header_arrow">'+
@@ -332,7 +332,6 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
                 var $menuShares = makeShareList();
                 $menuDropdownShare.append($menuShares);
 
-                console.log('MOTHER FUCKING rdr_rindowMenurdr_rindowMenurdr_rindowMenu');
                 var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
@@ -1781,20 +1780,12 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
               //RDR.rindow.safeClose:
 
               var isGrid = !!$rindow.attr('rdr-grid-for');
-              console.log('isGrid?? '+isGrid);
+
               if(isGrid){
 
-                $rindow.find('.rdr_rindowMenu').remove()
                 var $header = RDR.rindow.makeHeader( 'Reactions' );
                     $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.updateFooter( $rindow );
-
-              console.log($rindow.find('.rdr_rindowMenu').length);
-              console.log($header.find('.rdr_rindowMenu').length);
-              console.log($rindow.find('.rdr_rindowMenu').remove());
-              
-
-              console.log( $rindow.html() );
 
                     var $panelWrap = $rindow.find('.rdr_body_wrap'),
                         $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
@@ -1806,8 +1797,6 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
 
                     $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
-
-                    $header.find('.rdr_rindowMenu').remove();
 
                     // if ( $rindow.data('initialWidth') >= 480 ) {
                     //     RDR.rindow.tagBox.setWidth( $rindow, 480 );
@@ -3519,12 +3508,14 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
 
                             var minImgWidth = 160;
                             if ( $this.width() >= minImgWidth ) {
+
                                 var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                                     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                                 $this.addClass('rdr_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
+
                                     var hashListsByPageId = RDR.actions.hashNodes( $(this) );
                                     //we expect just the one here, so just get that one.
                                     var hash;
@@ -3536,14 +3527,11 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
                                         RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                                         return;
                                     }
-                                
+
                                     RDR.actions.sendHashes( hashListsByPageId, function(){
                                         if( $this.hasClass('rdr_live_hover') ){
-                                            // $('#rdr_indicator_'+hash).show();
                                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                                 $('#rdr_indicator_' + hash).show();
-                                                // RDR.actions.indicators.utils.borderHilites.update(hash);
-                                                // RDR.actions.indicators.utils.borderHilites.engage(hash);
                                             }
                                         }
                                     });
@@ -3561,6 +3549,7 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
                                         $('#rdr_indicator_' + hash).show();
                                         // RDR.actions.indicators.utils.borderHilites.engage(hash);
                                     }
+
                                     RDR.actions.content_nodes.init(hash, function(){});
                                 }
 
@@ -4002,18 +3991,22 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
                     }
 
                     $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        var $node = $(node);
 
-                        var thisHash = $(node).attr('rdr-hash');
+                        if ( typeof $node.data('rdr-hashed') == "undefined" ) {
+                            var thisHash = $node.attr('rdr-hash');
 
-                        hashList = $.grep(hashList, function(value) {
-                          return value != thisHash;
-                        });
-                        
-                        hashList.push( thisHash );
+                            hashList = $.grep(hashList, function(value) {
+                              return value != thisHash;
+                            });
+                            
+                            hashList.push( thisHash );
 
-                        //init the cross page containers so even the ones that come back with 0 reactions will
-                        //have write mode enabled
-                        RDR.actions.indicators.init(thisHash);
+                            //init the cross page containers so even the ones that come back with 0 reactions will
+                            //have write mode enabled
+                            RDR.actions.indicators.init(thisHash);
+                            $node.data('rdr-hashed', true);
+                        }
                     });
 
                     $.each(hashList, function(idx, hash){
@@ -4305,9 +4298,10 @@ console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.m
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
                     $.each( hashesToInit, function(idx, hash) {
-
+                        var $node = $('[rdr-hash="'+hash+'"]');
+                        
                         // var hash = hashObject.hash;
-                        if (typeof hash != "undefined") {
+                        if (typeof hash != "undefined" && typeof $node.attr('rdr_summary_loaded') == "undefined" ) {
                             RDR.actions.indicators.init(hash);
                             RDR.summaries[hash].crossPage=true;
 
