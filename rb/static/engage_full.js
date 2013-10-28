@@ -1912,16 +1912,18 @@ function readrBoard($R){
                     if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                         $tag_table.addClass('rdr-one-column');
 
-                        $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
-                            var $this = $(this),
-                                $rindow = $this.closest('div.rdr_window');
+                        if(!isTouchBrowser){
+                            $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
 
-                            thisWidth = $rindow.data('initialWidth');
-                        }).on('mouseleave', function() {
-                            var $this = $(this),
-                                $rindow = $this.closest('div.rdr_window');
-                            thisWidth = $rindow.width();
-                        });
+                                thisWidth = $rindow.data('initialWidth');
+                            }).on('mouseleave', function() {
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
+                                thisWidth = $rindow.width();
+                            });
+                        }
                     }
                 }
 
@@ -3889,7 +3891,7 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
-                    if ( HTMLkind != 'body') {
+                    if ( HTMLkind != 'body' && !isTouchBrowser) {
                         // todo: touchHover
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
@@ -4817,37 +4819,39 @@ function readrBoard($R){
 
                         //setup hover event to hilite and unhlite
                         // todo: touchHover
-                        $tagSpan.hover(
-                            function() {
+                        if(!isTouchBrowser){
+                            $tagSpan.hover(
+                                function() {
 
-                                var selStates = $(this).data('selStates');
+                                    var selStates = $(this).data('selStates');
 
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'on');
+                                    //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                    var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                    if (lastSelState){
+                                        $().selog('hilite', lastSelState, 'on');
+                                    }
+                                    /*
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'on');
+                                    });
+                                    */
+                                },
+                                function() {
+
+                                    var selStates = $(this).data('selStates');
+                                    //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                    var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                    if (lastSelState){
+                                        $().selog('hilite', lastSelState, 'off');
+                                    }
+                                    /*
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'off');
+                                    });
+                                    */
                                 }
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'on');
-                                });
-                                */
-                            },
-                            function() {
-
-                                var selStates = $(this).data('selStates');
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'off');
-                                }
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'off');
-                                });
-                                */
-                            }
-                        );
+                            );
+                        }
                     }
                 }//end RDR.actions.content_nodes.utils
             },
@@ -5911,18 +5915,21 @@ if ( sendData.kind=="page" ) {
                             if (kind == 'text'){
                                 $container.unbind('.rdr_helper');
                                 // todo: touchHover
-                                $container.bind('mouseenter.rdr_helper', function() {
-                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                    if ( hasHelper) {
-                                        RDR.actions.indicators.helpers.over($indicator);
-                                    }
-                                });
-                                $container.bind('mouseleave.rdr_helper', function(e) {
-                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                    if ( hasHelper ) {
-                                        RDR.actions.indicators.helpers.out($indicator);
-                                    }
-                                });
+                                
+                                if(!isTouchBrowser){
+                                    $container.bind('mouseenter.rdr_helper', function() {
+                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                        if ( hasHelper) {
+                                            RDR.actions.indicators.helpers.over($indicator);
+                                        }
+                                    });
+                                    $container.bind('mouseleave.rdr_helper', function(e) {
+                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                        if ( hasHelper ) {
+                                            RDR.actions.indicators.helpers.out($indicator);
+                                        }
+                                    });
+                                }
 
                                 //This will be either a helperIndicator or a hidden indicator
                                 var isZeroCountIndicator = !( summary.counts.tags > 0 );
@@ -6562,7 +6569,8 @@ if ( sendData.kind=="page" ) {
 
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
+                        if ( !isWriteMode && !isTouchBrowser) {
+
                             $rindow.on( 'mouseleave', function(e) {
 
                                 var $this = $(this),
@@ -6579,8 +6587,9 @@ if ( sendData.kind=="page" ) {
                                 var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                                 clearTimeout(timeoutCloseEvt);
                             });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes ) ) {
+                            
+                            //note: wrapped in !touchBrowser above
+                            if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes )) {
                                 $rindow.find('div.rdr_box').each( function() {
                                     $(this).hover(
                                         function() {
@@ -6605,6 +6614,7 @@ if ( sendData.kind=="page" ) {
                                     );
                                 });
                             }
+                        
                         }
 
                         if(isPage){
