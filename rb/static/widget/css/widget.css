@@ -420,10 +420,12 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap {
     background: #fff;
     display: none;
 }
-div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover span.rdr_menuTrigger{
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover span.rdr_menuTrigger,
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown.rdr_hover span.rdr_menuTrigger{
     color:#008be4;
 }
-div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_linkWrap {
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_linkWrap,
+div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown.rdr_hover .rdr_linkWrap  {
     display: block;
 }
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link{
@@ -963,7 +965,8 @@ div.rdr.rdr-summary .rdr_chevron_cta {
   margin-left: 6px;
   text-align: left;
 }
-div.rdr.rdr-summary:hover .rdr_chevron_cta i:before {
+div.rdr.rdr-summary:hover .rdr_chevron_cta i:before,
+div.rdr.rdr-summary.rdr_hover .rdr_chevron_cta i:before {
   content: "\f077";
 }
 div.rdr.rdr-summary .rdr_chevron_cta i {
@@ -1090,7 +1093,7 @@ div.rdr.rdr-summary.rdr-summary-no-reactions div.rdr-sum-reactions a.rdr_reactio
     display: none;
 }
 
-div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover {
+div.rdr.rdr-summary div.rdr-sum-reactions a.rdr_reactions_label:hover{
   text-decoration:none;
   background:none;
 }
@@ -1872,7 +1875,8 @@ div.rdr_indicator_for_media .rdr_chevron_cta {
   padding-left: 5px;
   margin-left: 6px;
 }
-div.rdr_indicator_for_media:hover .rdr_chevron_cta i:before {
+div.rdr_indicator_for_media:hover .rdr_chevron_cta i:before,
+div.rdr_indicator_for_media.rdr_hover .rdr_chevron_cta i:before {
   content: "\f077";
   /*background: -moz-linear-gradient(
     top,
