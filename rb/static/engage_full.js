@@ -1087,29 +1087,6 @@ function readrBoard($R){
                                 return;
                             }
 
-                            var $header = RDR.rindow.makeHeader( 'Reactions' );
-                            $rindow.find('.rdr_header').replaceWith($header)
-                            RDR.rindow.updateFooter( $rindow );
-
-                            var $panelWrap = $rindow.find('.rdr_body_wrap'),
-                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
-                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
-                            
-                            $panelWrap.animate({
-                                left: 0
-                            });
-
-                            $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
-                            $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
-
-                            if ( $rindow.data('initialWidth') >= 480 ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
-                            } else {
-                                if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
-                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
-                            }
-
                         });
                         return $backButton;
                     }
@@ -1801,8 +1778,31 @@ function readrBoard($R){
             safeClose: function( $rindow ) {
               //RDR.rindow.safeClose:
 
-              var shouldKeepOpen = !!$rindow.attr('rdr-grid-for');
-              if(shouldKeepOpen){
+              var isGrid = !!$rindow.attr('rdr-grid-for');
+              if(isGrid){
+                var $header = RDR.rindow.makeHeader( 'Reactions' );
+                    $rindow.find('.rdr_header').replaceWith($header)
+                    RDR.rindow.updateFooter( $rindow );
+
+                    var $panelWrap = $rindow.find('.rdr_body_wrap'),
+                        $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
+                        $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
+                    
+                    $panelWrap.animate({
+                        left: 0
+                    });
+
+                    $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+                    $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
+
+                    if ( $rindow.data('initialWidth') >= 480 ) {
+                        RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                        RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                    } else {
+                        if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
+                        RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
+                    }
+
                 return false;
               }
 

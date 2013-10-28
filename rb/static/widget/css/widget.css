@@ -706,6 +706,7 @@ div.rdr_indicator_details_for_media div.rdr_body div.rdr_back { }
 div.rdr div.rdr_back.rdr_hide { margin-top:-10px;}
 /*for now, just hide this button*/
 div.rdr .rdr_view_success div.rdr_back { display: none;}
+div.rdr.rdr_inline .rdr_view_success div.rdr_back { display: block;}
 div[rdr-grid-for] div.rdr_back { display: block;}
 
 
