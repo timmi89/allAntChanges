@@ -45,6 +45,11 @@ RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.r
 RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
 RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
 
+var isTouchBrowser = (
+    ('ontouchstart' in window) || 
+    (window.DocumentTouch && document instanceof DocumentTouch)
+);
+
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
@@ -110,11 +115,6 @@ function findEngageScript(){
 
 function readrBoard($R){
     var $ = $R;
-
-    var isTouchBrowser = (
-        ('ontouchstart' in window) || 
-        (window.DocumentTouch && document instanceof DocumentTouch)
-    );
 
     $.extend(RDR, {
         summaries:{},
@@ -334,7 +334,12 @@ function readrBoard($R){
 
                 var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
                 // $menu.append($menuActions);
-                
+                if(isTouchBrowser){
+                    $menu.on('click', '.rdr_menuDropDown', function(){
+                        $(this).toggleClass('rdr_hover');
+                    });
+                }
+
                 $header.append($menu);
     
                 function makeActionList(){
@@ -1109,7 +1114,7 @@ function readrBoard($R){
                         return $backButton;
                     }
 
-                    function createReactedContentTable($this, counts) {
+                    function createReactedContentTable($this, counts, pageId) {
 
                         $().selog('hilite', true, 'off');
                         $('.rdr_twtooltip').remove();
@@ -1130,6 +1135,22 @@ function readrBoard($R){
                             // iterate through and create an array of counts + $tr.  this is then sortable.
                             $reactionsTable.find('.rdr_page_reactions').addClass('has_other_reactions');
                             $.each( RDR.interaction_data[ tag.id ], function(int_id, data) {
+
+                                //quick fix for multi page reactions.
+                                // todo: #summaryContentByPageFix
+                                var hash = data.hash;
+                                var summary = RDR.summaries[hash];
+                                var $node = $('[rdr-hash="' + hash + '"]');
+                                var thisPageId = summary.pageId;
+
+                                if(
+                                    !thisPageId || 
+                                    !pageId ||
+                                    (thisPageId != pageId)
+                                ){
+                                    return;
+                                }
+
                                 if ( !$reactionsTable.find('tr.rdr_int_summary_'+int_id).length ) {
                                     var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
                                         thing = RDR.interaction_data[ tag.id ][ int_id ];
@@ -1182,8 +1203,7 @@ function readrBoard($R){
                     // porter resume here.  make sure the counts and write element are passed into getReactedContent
                     if ( kind == "page" ) {
                         if ( isWriteMode == false ) {
-                            // todo: touchHover
-
+                            
                             var clickFunc = function(){
                                 RDR.rindow.hideFooter($rindow);
                                 $rindow.removeClass('rdr_rewritable');
@@ -1206,42 +1226,30 @@ function readrBoard($R){
                                 });
 
                                 var $this = $(this),
-                                    $reactionsTable = createReactedContentTable($this, counts);
+                                    $reactionsTable = createReactedContentTable($this, counts, page.id);
 
                                 renderReactedContent( $reactionsTable, tag );
 
                                 $this.addClass('rdr_live_hover');
                             };
 
-                            if(isTouchBrowser){
-                                $tagBox.bind('touchstart', clickFunc);
-                            }else{
-                                $tagBox.click(clickFunc);
-                            }
+                            $tagBox.click(function(){
+                                clickFunc();
+                            });
+
 
                         } else {
-                            if(isTouchBrowser){
-                                $tagBox.bind('touchstart', function(e) {
-                                    $(this).addClass('rdr_tagged');
-                                    $rindow.removeClass('rdr_rewritable');
-                                    var hash = $rindow.data('container');
-                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                    RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
-                            }else{
-                                $tagBox.click( function() {
-                                    $(this).addClass('rdr_tagged');
-                                    $rindow.removeClass('rdr_rewritable');
-                                    var hash = $rindow.data('container');
-                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                    RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
-                            }
+                            $tagBox.click( function() {
+                                $(this).addClass('rdr_tagged');
+                                $rindow.removeClass('rdr_rewritable');
+                                var hash = $rindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                            });
                         }
                     } else {
-                        // todo: touchHover
                         if(isTouchBrowser){
-                            $tagBox.bind('touchstart', function(e) {
+                            $tagBox.bind('touchstart', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
                                 var hash = $rindow.data('container');
@@ -1260,11 +1268,9 @@ function readrBoard($R){
                     }
 
                     // global (all kinds) hover event
-                    // todo: touchHover
                     if(!isTouchBrowser){
                         $tagBox.hover(function() {
                             var $this = $(this);
-
                             if ( !$this.hasClass('rdr_tagged') ) {
                                 var $tagCount = $this.find('span.rdr_tag_count');
                                 $tagCount.width( $tagCount.width() );
@@ -1315,18 +1321,34 @@ function readrBoard($R){
                         var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="view comments"></span>');
 
                         $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
-                        $commentHover.click( function() {
-                            // replacewith bug
-                            $(this).tooltip('hide');
-                            RDR.actions.viewCommentContent({
-                                tag:tag,
-                                hash:hash,
-                                rindow:$rindow,
-                                content_node:content_node,
-                                selState:content_node.selState
+                        
+                        if(isTouchBrowser){
+                            $commentHover.bind('touchstart', function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                RDR.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    rindow:$rindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
                             });
-                            return false;
-                        });
+                        }else{
+                            $commentHover.click( function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                RDR.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    rindow:$rindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }
 
                         $tagBox.append( $commentHover );
                         $commentHover.tooltip();
@@ -1915,17 +1937,18 @@ function readrBoard($R){
                     if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
                         $tag_table.addClass('rdr-one-column');
 
-                        // todo: touchHover
-                        $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
-                            var $this = $(this),
-                                $rindow = $this.closest('div.rdr_window');
+                        if(!isTouchBrowser){
+                            $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
 
-                            thisWidth = $rindow.data('initialWidth');
-                        }).on('mouseleave', function() {
-                            var $this = $(this),
-                                $rindow = $this.closest('div.rdr_window');
-                            thisWidth = $rindow.width();
-                        });
+                                thisWidth = $rindow.data('initialWidth');
+                            }).on('mouseleave', function() {
+                                var $this = $(this),
+                                    $rindow = $this.closest('div.rdr_window');
+                                thisWidth = $rindow.width();
+                            });
+                        }
                     }
                 }
 
@@ -2288,6 +2311,19 @@ function readrBoard($R){
                         "content": content
                     });
                 });
+            },
+            initTouchBrowserSettings: function(){
+                // RDR.util.initTouchBrowserSettings
+                
+                if(isTouchBrowser){
+                    
+                    //quick'n'dirty way to make the helper indicators show up.
+                    // don't do this for now. It makes too many show up.
+                    // $('p[rdr-node=true]').trigger('mouseover');
+                    // $('p[rdr-node=true]').trigger('mouseout');
+                }
+
+                $RDR.dequeue('initAjax');
             },
             initPublicEvents: function(){
                 // RDR.util.initPublicEvents
@@ -3056,6 +3092,7 @@ function readrBoard($R){
                         ignoreWindowEdges:"bt"
                     });
 
+
                     RDR.rindow.tagBox.setWidth( $rindow, 480 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
@@ -3249,13 +3286,18 @@ function readrBoard($R){
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
-                   // this will check for FB login status, too, and set user data
-                   RDR.session.createXDMframe();
-                   //next fired on ajax success
+                    RDR.actions.runPostPageInit();
+
+                    // this will check for FB login status, too, and set user data
+                    RDR.session.createXDMframe();
+                    //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
                    RDR.util.checkForSelectedTextAndLaunchRindow();
                    RDR.util.initPublicEvents();
+                });
+                $RDR.queue('initAjax', function(next){
+                   RDR.util.initTouchBrowserSettings();
                 });
 
                 //start the dequeue chaindel
@@ -3438,13 +3480,106 @@ function readrBoard($R){
                 });
 
             },
+            runPostPageInit: function(){
+                //RDR.actions.runPostPageInit:
+
+                // todo: this is a pretty wide hackey net - rethink later.
+                var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
+                
+                if(isTouchBrowser){
+                    //this can't work until the container_id is registered anyway, just do it on that callback.
+                    //#touchBrowserMediaInit
+                }else{
+                    $('body')
+                        .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
+
+                            var $this = $(this);
+                            
+                            var hash = $this.data('hash');
+
+                                RDR.actions.indicators.utils.updateContainerTrackers();
+
+                            if ( $this.closest('.no-rdr').length ) {
+                                return;
+                            }
+
+                            var minImgWidth = 160;
+                            if ( $this.width() >= minImgWidth ) {
+                                var hasBeenHashed = $this.hasAttr('rdr-hashed'),
+                                    isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+
+                                $this.addClass('rdr_live_hover');
+
+                                if(!hasBeenHashed && !isBlacklisted){
+                                    var hashListsByPageId = RDR.actions.hashNodes( $(this) );
+                                    //we expect just the one here, so just get that one.
+                                    var hash;
+                                    $.each( hashListsByPageId, function(page_id, hashArray) {
+                                        hash = hashArray[0];
+                                    });
+                                    if(!hash){
+                                        //i think there should always be a hash though
+                                        RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                                        return;
+                                    }
+                                
+                                    RDR.actions.sendHashes( hashListsByPageId, function(){
+                                        if( $this.hasClass('rdr_live_hover') ){
+                                            // $('#rdr_indicator_'+hash).show();
+                                            if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                                                $('#rdr_indicator_' + hash).show();
+                                                // RDR.actions.indicators.utils.borderHilites.update(hash);
+                                                // RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                            }
+                                        }
+                                    });
+                                    //these calls are redundant to the same calls in the callback above,
+                                    //but this will make them show up right away,
+                                    //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
+                                    // RDR.actions.indicators.utils.borderHilites.update(hash);
+                                    // RDR.actions.indicators.utils.borderHilites.engage(hash);
+
+                                } else {
+                                    var hash = $this.data('hash');
+                                    
+                                    $this.addClass('rdr_live_hover');
+                                    if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                                        $('#rdr_indicator_' + hash).show();
+                                        // RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                    }
+                                    RDR.actions.content_nodes.init(hash, function(){});
+                                }
+
+                            }
+                        })
+                        .on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
+                            var $this = $(this);
+                                // hash = $this.data('hash');
+
+                            // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
+                            if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
+                                _mediaHoverOff( $this )
+                            }
+                    });
+                }
+                function _mediaHoverOff( obj ) {
+                    var $this = $(obj),
+                        hash = $this.data('hash');
+
+                    $this.removeClass('rdr_live_hover');
+                    $('#rdr_indicator_' + hash).hide();
+                }
+
+            },
             initEnvironment: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
             
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr rdr_sandbox"/>').appendTo('body');
+                
                 if(isTouchBrowser){
                     $('#rdr_sandbox').addClass('isTouchBrowser');
                 }
+                
 
                 RDR.util.fixBodyBorderOffsetIssue();
                 
@@ -3531,106 +3666,7 @@ function readrBoard($R){
                 
                 $(window).resize(RDR.util.throttledUpdateContainerTrackers());
 
-                // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
-                
-                var minImgWidth = 160;
-
-                // todo: touchHover
-                $('body').on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
-                    var $this = $(this);
-                    var hash = $this.data('hash');
-
-                        RDR.actions.indicators.utils.updateContainerTrackers();
-
-                    if ( $this.closest('.no-rdr').length ) {
-                        return;
-                    }
-
-                    // only do whitelisted iframe src domains
-                    // [pb] killing this.  it holds us back.  iframes, like with ads, can be disable through standard no-rdr methods (.no-rdr or the Inactive Sections spot in Admin)
-                    // 10-03-2013
-                    // if ( $this.get(0).tagName.toLowerCase() == "iframe" ) {
-                    //     var dontEngage = true;
-                    //     $.each( RDR.group.iframe_whitelist, function(idx, domain) {
-                    //         if ( $this.attr('src') && $this.attr('src').indexOf(domain) != -1 ) {
-                    //             dontEngage = false; // DO engage, it's a safe domain
-                    //         }
-                    //     });
-                    //     if ( dontEngage == true ) return;
-                    // }
-
-                    if ( $this.width() >= minImgWidth ) {
-                        var hasBeenHashed = $this.hasAttr('rdr-hashed'),
-                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
-
-                        $this.addClass('rdr_live_hover');
-
-                        if(!hasBeenHashed && !isBlacklisted){
-                            var hashListsByPageId = RDR.actions.hashNodes( $(this) );
-                            //we expect just the one here, so just get that one.
-                            var hash;
-                            $.each( hashListsByPageId, function(page_id, hashArray) {
-                                hash = hashArray[0];
-                            });
-                            if(!hash){
-                                //i think there should always be a hash though
-                                RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
-                                return;
-                            }
-                        
-                            RDR.actions.sendHashes( hashListsByPageId, function(){
-                                if( $this.hasClass('rdr_live_hover') ){
-                                    // $('#rdr_indicator_'+hash).show();
-                                    if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                        $('#rdr_indicator_' + hash).show();
-                                        // RDR.actions.indicators.utils.borderHilites.update(hash);
-                                        // RDR.actions.indicators.utils.borderHilites.engage(hash);
-                                    }
-                                }
-                            });
-                            //these calls are redundant to the same calls in the callback above,
-                            //but this will make them show up right away,
-                            //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                            // RDR.actions.indicators.utils.borderHilites.update(hash);
-                            // RDR.actions.indicators.utils.borderHilites.engage(hash);
-
-                        } else {
-                            var hash = $this.data('hash');
-                            
-                            $this.addClass('rdr_live_hover');
-                            if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                $('#rdr_indicator_' + hash).show();
-                                // RDR.actions.indicators.utils.borderHilites.engage(hash);
-                            }
-                            RDR.actions.content_nodes.init(hash, function(){});
-                        }
-
-                    }
-
-
-
-
-                    // }
-                }).on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
-                    var $this = $(this);
-                        // hash = $this.data('hash');
-
-                    // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
-                    if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
-                        _mediaHoverOff( $this )
-                    }
-                });
-
                 $RDR.dequeue('initAjax');
-
-                function _mediaHoverOff( obj ) {
-                    var $this = $(obj),
-                        hash = $this.data('hash');
-
-                    $this.removeClass('rdr_live_hover');
-                    $('#rdr_indicator_' + hash).hide();
-                }
             },
             UIClearState: function(){
                 //RDR.actions.UIClearState:
@@ -3903,7 +3939,7 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
-                    if ( HTMLkind != 'body') {
+                    if ( HTMLkind != 'body' && !isTouchBrowser) {
                         // todo: touchHover
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
@@ -4400,6 +4436,11 @@ function readrBoard($R){
 
                             RDR.content_nodes[hash] = content_node_data;
                             RDR.rindow.update(hash);
+
+                            //#touchBrowserMediaInit
+                            if(isTouchBrowser){
+                                RDR.actions.content_nodes.init(hash, function(){});
+                            }
                         },
                         media: function(hash, summary){
                             //for now, just pass through to img.
@@ -4718,8 +4759,13 @@ function readrBoard($R){
                         return;
                     }
 
+                    var pageId = RDR.util.getPageProperty('id', hash);
+                    //quick fix add pageId to summary becuase we need it in the summary widget content lookup
+                    // todo: #summaryContentByPageFix
+                    summary.pageId = pageId;
+
                     var sendData = {
-                        "page_id" : RDR.util.getPageProperty('id', hash),
+                        "page_id" : pageId,
                         "container_id":container_id,
                         "hash":hash,
                         "cross_page": ( summary.$container.hasAttr('rdr-crossPageContent') ) ? true:false
@@ -4859,37 +4905,39 @@ function readrBoard($R){
 
                         //setup hover event to hilite and unhlite
                         // todo: touchHover
-                        $tagSpan.hover(
-                            function() {
+                        if(!isTouchBrowser){
+                            $tagSpan.hover(
+                                function() {
 
-                                var selStates = $(this).data('selStates');
+                                    var selStates = $(this).data('selStates');
 
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'on');
+                                    //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                    var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                    if (lastSelState){
+                                        $().selog('hilite', lastSelState, 'on');
+                                    }
+                                    /*
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'on');
+                                    });
+                                    */
+                                },
+                                function() {
+
+                                    var selStates = $(this).data('selStates');
+                                    //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
+                                    var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
+                                    if (lastSelState){
+                                        $().selog('hilite', lastSelState, 'off');
+                                    }
+                                    /*
+                                    $.each( selStates, function(idx, selState){
+                                        $().selog('hilite', selState, 'off');
+                                    });
+                                    */
                                 }
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'on');
-                                });
-                                */
-                            },
-                            function() {
-
-                                var selStates = $(this).data('selStates');
-                                //quick hack because I don't yet have a good solution for multiple hilites. (overlapping ones cause issues still.)
-                                var lastSelState = selStates.length ? selStates[selStates.length-1] : null;
-                                if (lastSelState){
-                                    $().selog('hilite', lastSelState, 'off');
-                                }
-                                /*
-                                $.each( selStates, function(idx, selState){
-                                    $().selog('hilite', selState, 'off');
-                                });
-                                */
-                            }
-                        );
+                            );
+                        }
                     }
                 }//end RDR.actions.content_nodes.utils
             },
@@ -5963,18 +6011,21 @@ if ( sendData.kind=="page" ) {
                             if (kind == 'text'){
                                 $container.unbind('.rdr_helper');
                                 // todo: touchHover
-                                $container.bind('mouseenter.rdr_helper', function() {
-                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                    if ( hasHelper) {
-                                        RDR.actions.indicators.helpers.over($indicator);
-                                    }
-                                });
-                                $container.bind('mouseleave.rdr_helper', function(e) {
-                                    var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                    if ( hasHelper ) {
-                                        RDR.actions.indicators.helpers.out($indicator);
-                                    }
-                                });
+                                
+                                if(!isTouchBrowser){
+                                    $container.bind('mouseenter.rdr_helper', function() {
+                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                        if ( hasHelper) {
+                                            RDR.actions.indicators.helpers.over($indicator);
+                                        }
+                                    });
+                                    $container.bind('mouseleave.rdr_helper', function(e) {
+                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                        if ( hasHelper ) {
+                                            RDR.actions.indicators.helpers.out($indicator);
+                                        }
+                                    });
+                                }
 
                                 //This will be either a helperIndicator or a hidden indicator
                                 var isZeroCountIndicator = !( summary.counts.tags > 0 );
@@ -5982,6 +6033,10 @@ if ( sendData.kind=="page" ) {
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
                                     $indicator.addClass('rdr_helper');
+                                    if(isTouchBrowser){
+                                        $indicator.addClass('isTouchBrowser');
+                                    }
+
                                     _setupHoverForShowRindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
@@ -6270,6 +6325,9 @@ if ( sendData.kind=="page" ) {
                                 if(RDR.group.paragraph_helper){
                                     RDR.actions.indicators.show(hash);
                                     $indicator.addClass('rdr_helper');
+                                    if(isTouchBrowser){
+                                        $indicator.addClass('isTouchBrowser');
+                                    }
                                 }else{
                                     RDR.actions.indicators.hide(hash);
                                 }                                                        
@@ -6308,7 +6366,11 @@ if ( sendData.kind=="page" ) {
                         //     }
                         // }, RDR.C.helperIndicators.hoverDelay);
                         // $indicator.data('hoverTimeout', hoverTimeout);
-                        RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        if(isTouchBrowser){
+                            $indicator.css({ display:"inline" });
+                        }else{
+                            RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        }
                         $indicator.css('opacity', RDR.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
@@ -6326,7 +6388,11 @@ if ( sendData.kind=="page" ) {
                         $indicator.data('containerHover', false);
                         var hoverTimeout = $indicator.data('hoverTimeout');
                         clearTimeout(hoverTimeout);
-                        RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                        if(isTouchBrowser){
+                            $indicator.css({ display:"none" });
+                        }else{
+                            RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                        }
                     }
                 },
                 utils:{
@@ -6372,20 +6438,31 @@ if ( sendData.kind=="page" ) {
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
 
                             _commonSetup();
-                            $indicator
-                                .appendTo($container_tracker)
-                                // todo: touchHover
-                                .on('mouseenter', function() {
+                            $indicator.appendTo($container_tracker);
+                            
+                            if(isTouchBrowser){
+                                $indicator.click(function(){
                                     if ( summary.counts.interactions == 0 ) {
                                         var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     } else {
                                         var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
                                     }
                                     $(this).addClass('rdr_live_hover');
-                                })//chain
-                                .on('mouseleave', function() {
-                                    $(this).removeClass('rdr_live_hover');
                                 });
+                            }else{
+                                $indicator
+                                    .on('mouseenter', function() {
+                                        if ( summary.counts.interactions == 0 ) {
+                                            var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                        } else {
+                                            var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
+                                        }
+                                        $(this).addClass('rdr_live_hover');
+                                    })//chain
+                                    .on('mouseleave', function() {
+                                        $(this).removeClass('rdr_live_hover');
+                                    });
+                            }
 
                             //todo: move this from init
                             RDR.actions.indicators.utils.updateContainerTracker(hash);
@@ -6421,7 +6498,11 @@ if ( sendData.kind=="page" ) {
                                 );
 
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
-                                
+                                if(isTouchBrowser){
+                                    $indicator.click(function(){
+                                        $(this).toggleClass('rdr_hover');
+                                    });
+                                }
                             }
 
                         },
@@ -6585,7 +6666,8 @@ if ( sendData.kind=="page" ) {
 
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode ) {
+                        if ( !isWriteMode && !isTouchBrowser) {
+
                             $rindow.on( 'mouseleave', function(e) {
 
                                 var $this = $(this),
@@ -6598,15 +6680,14 @@ if ( sendData.kind=="page" ) {
                                 },300);
 
                                 $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-                            // todo: touchHover
                             }).on('mouseenter', function() {
                                 var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                                 clearTimeout(timeoutCloseEvt);
                             });
-
-                            if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes ) ) {
+                            
+                            //note: wrapped in !touchBrowser above
+                            if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes )) {
                                 $rindow.find('div.rdr_box').each( function() {
-                                    // todo: touchHover
                                     $(this).hover(
                                         function() {
                                             var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
@@ -6630,6 +6711,7 @@ if ( sendData.kind=="page" ) {
                                     );
                                 });
                             }
+                        
                         }
 
                         if(isPage){
@@ -6695,7 +6777,11 @@ if ( sendData.kind=="page" ) {
 
                             // size the rindow based on # of reactions
                             if ( bucketTotal > 6 && !isWriteMode ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                if(isTouchBrowser){
+                                    RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                                }else{
+                                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                }
                             } else if ( typeof page != "undefined" && isWriteMode ) {
                                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
                             } else if ( tagList.length > 1 ) {
@@ -9021,26 +9107,34 @@ function $RFunctions($R){
 
                 $summary_widget.find('.rdr-logo').tooltip({});
 
-                // todo: touchHover
-                $summary_widget.hover(
-                    function() {
-                        // let's get the reaction summaries for the page here.
-                        getReactedContent();
-                        var page_id = $(this).data('page_id');
+                var onActiveEvent = function(){
+                    // let's get the reaction summaries for the page here.
+                    getReactedContent();
+                    var page_id = $(this).data('page_id');
 
-                        var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                        // RDR.events.track( 'view_summary::'+page_id );
-                        RDR.events.trackEventToCloud({
-                            category: "summarybar",
-                            action: "rindow_shown_summarybar",
-                            opt_label: "page: "+page_id,
-                            page_id: page_id
-                        });
+                    var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+                    // RDR.events.track( 'view_summary::'+page_id );
 
-                    },
-                    function() {
-                    }
-                );
+                    RDR.events.trackEventToCloud({
+                        category: "summarybar",
+                        action: "rindow_shown_summarybar",
+                        opt_label: "page: "+page_id,
+                        page_id: page_id
+                    });
+                };
+
+                if(isTouchBrowser){
+                    $summary_widget.click(function(){
+                        onActiveEvent.call(this);
+                        $(this).toggleClass('rdr_hover');
+                    });
+                }else{
+                    $summary_widget.hover(
+                        onActiveEvent,
+                        function() {
+                        }
+                    );
+                }
 
                 //quick fix - I don't know if settings.summary.where(kind =="tag").count is reliable.
                 var trueTotal;
@@ -9069,6 +9163,7 @@ function $RFunctions($R){
                 $summary_widget.append(
                     '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
                 );
+                
             }
 
             function getReactedContent( counts ) {            
