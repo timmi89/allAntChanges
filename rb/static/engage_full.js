@@ -110,7 +110,7 @@ function findEngageScript(){
 
 function readrBoard($R){
     var $ = $R;
-
+    
     var isTouchBrowser = (
         ('ontouchstart' in window) || 
         (window.DocumentTouch && document instanceof DocumentTouch)
@@ -1229,46 +1229,12 @@ function readrBoard($R){
                                 $this.addClass('rdr_live_hover');
                             };
 
-                            if(isTouchBrowser){
-                                $tagBox.bind('touchstart', function(){
-                                    clickFunc();
-                                });
-                            }else{
-                                $tagBox.click(function(){
-                                    clickFunc();
-                                });
-                            }
+                            $tagBox.click(function(){
+                                clickFunc();
+                            });
+
 
                         } else {
-                            if(isTouchBrowser){
-                                $tagBox.bind('touchstart', function(e) {
-                                    $(this).addClass('rdr_tagged');
-                                    $rindow.removeClass('rdr_rewritable');
-                                    var hash = $rindow.data('container');
-                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                    RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
-                            }else{
-                                $tagBox.click( function() {
-                                    $(this).addClass('rdr_tagged');
-                                    $rindow.removeClass('rdr_rewritable');
-                                    var hash = $rindow.data('container');
-                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                    RDR.actions.interactions.ajax( args, 'react', 'create');
-                                });
-                            }
-                        }
-                    } else {
-                        // todo: touchHover
-                        if(isTouchBrowser){
-                            $tagBox.bind('touchstart', function(e) {
-                                $(this).addClass('rdr_tagged');
-                                $rindow.removeClass('rdr_rewritable');
-                                var hash = $rindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                RDR.actions.interactions.ajax( args, 'react', 'create');
-                            });
-                        }else{
                             $tagBox.click( function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
@@ -1277,6 +1243,14 @@ function readrBoard($R){
                                 RDR.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }
+                    } else {
+                        $tagBox.click( function() {
+                            $(this).addClass('rdr_tagged');
+                            $rindow.removeClass('rdr_rewritable');
+                            var hash = $rindow.data('container');
+                            args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
+                            RDR.actions.interactions.ajax( args, 'react', 'create');
+                        });
                     }
 
                     // global (all kinds) hover event
