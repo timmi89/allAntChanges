@@ -522,7 +522,7 @@ change_size_hook();
     <div class="readrboard_column readrboard_column1">
         <div class="readrboard_headline">What do you think about this?</div>  
         <div class="readrboard_counter"><span rdr-counter-for="NTNVideo"></span> people have reacted</div>
-        <div class="readrboard_call_to_action" rdr-cta-for="NTNVideo" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">React Now</div>
+        <div class="readrboard_call_to_action" rdr-cta-for="NTNVideo" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="60">React Now</div>
     </div>
     <div class="readrboard_column readrboard_column2">
         <div rdr-grid-for="NTNVideo" style="height:200px;"></div>
@@ -608,19 +608,40 @@ div.rdr div.rdr_body.rdr_tags_list,
 .readrboard div.rdr.rdr_window {
     background:transparent !important;
 }
-.rdr_color1 { background:rgba(94,200,224,1) !important; }
-.rdr_color2 { background:rgba(94,200,224,0.8) !important; }
-.rdr_color3 { background:rgba(94,200,224,0.6) !important; }
-.rdr_color4 { background:rgba(94,200,224,0.4) !important; }
-.rdr_color5 { background:rgba(94,200,224,0.2) !important; }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color1 { background:rgba(94,200,224,1) ; }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color2 { background:rgba(94,200,224,0.8) ; }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color3 { background:rgba(94,200,224,0.6) ; }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color4 { background:rgba(94,200,224,0.4) ; }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color5 { background:rgba(94,200,224,0.2) ; }
 
 .readrboard .rdr_box {
     width:213px !important;
+    height:70px !important;
 }
+body div.rdr div.rdr_body.rdr_tags_list .rdr_box:hover {
+    background:#fff;
+}
+.readrboard div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag {
+    height: auto !important;
+    top: 25px !important;
+    text-align: left !important;
+    margin-left: 13px !important;
+}
+.readrboard div.rdr div.rdr_body.rdr_tags_list div.rdr_box.rdr_animated div.rdr_tag {
+    /*margin-top: -25px;*/
+}
+.readrboard div.rdr div.rdr_body.rdr_tags_list .rdr_tag_read_icon, 
+.readrboard div.rdr div.rdr_body.rdr_tags_list .rdr_box .rdr_count, 
+.readrboard div.rdr div.rdr_body.rdr_tags_list .rdr_plusOne {
+    /*position: static !important;*/
+    width: auto !important;
+}
+
 .rdr_box .rdr_tag_body {
     color:#454545 !important;
     text-transform: uppercase !important;
     font-size:24px !important;
+    position:static;
 }
 </style>
 

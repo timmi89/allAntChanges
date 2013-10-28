@@ -292,7 +292,7 @@ function readrBoard($R){
             makeHeader: function( _headerText, interactionId ) {
                 //RDR.rindow.makeHeader:
                 var headerText = _headerText || "";
-
+console.log('- - - - -- -- --  - - - - -- -  -RDR.rindow.makeHeader RDR.rindow.makeHeader RDR.rindow.makeHeader');
                 var headerTml = $.mustache(
                     '<div class="rdr rdr_header">'+
                         '<div class="rdr_header_arrow">'+
@@ -332,6 +332,7 @@ function readrBoard($R){
                 var $menuShares = makeShareList();
                 $menuDropdownShare.append($menuShares);
 
+                console.log('MOTHER FUCKING rdr_rindowMenurdr_rindowMenurdr_rindowMenu');
                 var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
@@ -1762,6 +1763,7 @@ function readrBoard($R){
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
+                // do we need to call this twice in this function?
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
@@ -1779,10 +1781,20 @@ function readrBoard($R){
               //RDR.rindow.safeClose:
 
               var isGrid = !!$rindow.attr('rdr-grid-for');
+              console.log('isGrid?? '+isGrid);
               if(isGrid){
+
+                $rindow.find('.rdr_rindowMenu').remove()
                 var $header = RDR.rindow.makeHeader( 'Reactions' );
-                    $rindow.find('.rdr_header').replaceWith($header)
+                    $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.updateFooter( $rindow );
+
+              console.log($rindow.find('.rdr_rindowMenu').length);
+              console.log($header.find('.rdr_rindowMenu').length);
+              console.log($rindow.find('.rdr_rindowMenu').remove());
+              
+
+              console.log( $rindow.html() );
 
                     var $panelWrap = $rindow.find('.rdr_body_wrap'),
                         $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
@@ -1795,15 +1807,17 @@ function readrBoard($R){
                     $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
 
-                    if ( $rindow.data('initialWidth') >= 480 ) {
-                        RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                        RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
-                    } else {
-                        if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
-                        RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
-                    }
+                    $header.find('.rdr_rindowMenu').remove();
 
-                return false;
+                    // if ( $rindow.data('initialWidth') >= 480 ) {
+                    //     RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                    // } else {
+                    //     if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
+                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
+                    // }
+
+                return true;
               }
 
               RDR.rindow.close($rindow);
@@ -2044,7 +2058,7 @@ function readrBoard($R){
                     $linkToComment.click( function(e) {
                         e.preventDefault();
                         //there's a bug, just close the rindow for now. 
-                        RDR.rindow.close( $rindow );
+                        RDR.rindow.safeClose( $rindow );
                         // $rindow.find('.rdr_back').eq(0).click();
                     });
 
@@ -3642,7 +3656,7 @@ function readrBoard($R){
 
                     var $mouse_target = $(event.target);
 
-                    if ( !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length ) {
+                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
                         // if ( $('#rdr_loginPanel').length ) {
                         //     RDR.session.getUser(function() {
                         //         RDR.util.userLoginState();
@@ -5141,7 +5155,8 @@ if ( sendData.kind=="page" ) {
                                         e.preventDefault();
 
                                         //there's a bug, just close the rindow for now. 
-                                        RDR.rindow.close( $rindow );
+                                        // RDR.rindow.close( $rindow );
+                                        RDR.rindow.safeClose( $rindow );
                                         // $rindow.find('.rdr_back').eq(0).click();
                                     });
 
