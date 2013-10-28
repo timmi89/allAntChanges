@@ -2309,6 +2309,18 @@ function readrBoard($R){
                     });
                 });
             },
+            initTouchBrowserSettings: function(){
+                // RDR.util.initTouchBrowserSettings
+                
+                if(isTouchBrowser){
+                    
+                    //quick'n'dirty way to make the helper indicators show up.
+                    $('p[rdr-node=true]').trigger('mouseover');
+                    $('p[rdr-node=true]').trigger('mouseout');
+                }
+
+                $RDR.dequeue('initAjax');
+            },
             initPublicEvents: function(){
                 // RDR.util.initPublicEvents
                 //setup a space to bind and trigger events
@@ -3277,6 +3289,9 @@ function readrBoard($R){
                    RDR.util.checkForSelectedTextAndLaunchRindow();
                    RDR.util.initPublicEvents();
                 });
+                $RDR.queue('initAjax', function(next){
+                   RDR.util.initTouchBrowserSettings();
+                });
 
                 //start the dequeue chaindel
                 $RDR.dequeue('initAjax');
@@ -3462,9 +3477,11 @@ function readrBoard($R){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
             
                 var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr rdr_sandbox"/>').appendTo('body');
+                
                 if(isTouchBrowser){
                     $('#rdr_sandbox').addClass('isTouchBrowser');
                 }
+                
 
                 RDR.util.fixBodyBorderOffsetIssue();
                 
@@ -5936,6 +5953,10 @@ if ( sendData.kind=="page" ) {
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
                                     $indicator.addClass('rdr_helper');
+                                    if(isTouchBrowser){
+                                        $indicator.addClass('isTouchBrowser');
+                                    }
+
                                     _setupHoverForShowRindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
@@ -6223,6 +6244,9 @@ if ( sendData.kind=="page" ) {
                                 if(RDR.group.paragraph_helper){
                                     RDR.actions.indicators.show(hash);
                                     $indicator.addClass('rdr_helper');
+                                    if(isTouchBrowser){
+                                        $indicator.addClass('isTouchBrowser');
+                                    }
                                 }else{
                                     RDR.actions.indicators.hide(hash);
                                 }                                                        
@@ -6261,7 +6285,11 @@ if ( sendData.kind=="page" ) {
                         //     }
                         // }, RDR.C.helperIndicators.hoverDelay);
                         // $indicator.data('hoverTimeout', hoverTimeout);
-                        RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        if(isTouchBrowser){
+                            $indicator.css({ display:"inline" });
+                        }else{
+                            RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        }
                         $indicator.css('opacity', RDR.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
@@ -6279,7 +6307,11 @@ if ( sendData.kind=="page" ) {
                         $indicator.data('containerHover', false);
                         var hoverTimeout = $indicator.data('hoverTimeout');
                         clearTimeout(hoverTimeout);
-                        RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                        if(isTouchBrowser){
+                            $indicator.css({ display:"none" });
+                        }else{
+                            RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                        }
                     }
                 },
                 utils:{
