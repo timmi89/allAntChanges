@@ -743,8 +743,8 @@ function readrBoard($R){
                                             return;
                                         }
 
-                                        var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
-                                        $rindow.find('.rdr_header').replaceWith($header);
+                                        // var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
+                                        // $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.updateTagPanel( $rindow );
 
                                     });
