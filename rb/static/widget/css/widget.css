@@ -1630,6 +1630,10 @@ div.rdr_indicator.rdr_indicator_for_media {
 #rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media.rdr_indicator_not_img {
     /*margin-top: 0;*/
 }
+#rdr_sandbox.isTouchBrowser div.rdr.rdr_window.rdr_for_page {
+    margin-top: 32px !important;
+}
+
 /*touchBrowser overrides for non-sandbox components*/
 div.isTouchBrowser.rdr_indicator.rdr_helper{
     display: inline-block !important;
@@ -2088,8 +2092,6 @@ div.rdr .rdr_window.rdr_page_summary div.rdr_body.rdr_tags_list .rdr_box:hover .
     display: block;
     color: #008be4;
 }
-
-
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box div.rdr_tag {
     position:relative;
