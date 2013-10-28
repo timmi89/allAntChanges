@@ -110,7 +110,7 @@ function findEngageScript(){
 
 function readrBoard($R){
     var $ = $R;
-    
+
     var isTouchBrowser = (
         ('ontouchstart' in window) || 
         (window.DocumentTouch && document instanceof DocumentTouch)
@@ -2290,8 +2290,9 @@ function readrBoard($R){
                     FastClick.attach(document.body);
 
                     //quick'n'dirty way to make the helper indicators show up.
-                    $('p[rdr-node=true]').trigger('mouseover');
-                    $('p[rdr-node=true]').trigger('mouseout');
+                    // don't do this for now. It makes too many show up.
+                    // $('p[rdr-node=true]').trigger('mouseover');
+                    // $('p[rdr-node=true]').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
