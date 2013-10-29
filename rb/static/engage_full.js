@@ -743,8 +743,6 @@ function readrBoard($R){
                                             return;
                                         }
 
-                                        // var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
-                                        // $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.updateTagPanel( $rindow );
 
                                     });
@@ -814,6 +812,7 @@ function readrBoard($R){
                             });
 
                             function _sendComment(event){
+                                console.log('send comment 0');
                                 var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
                                     content_node = args.sendData.content_node_data,
                                     hash = args.hash,
@@ -829,10 +828,13 @@ function readrBoard($R){
                                 }
 
                                 if ( commentText != "Add a comment or #hashtag" ) {
+                                    console.log('send comment 1');
                                     //temp translations..
                                     //quick fix
                                     var summary = RDR.summaries[hash];
                                     content_node.kind = summary.kind;
+                                    console.log(summary);
+                                    console.log(content_node);
                                     var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
                                     //leave parent_id undefined for now - backend will find it.
                                     RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
@@ -1264,12 +1266,22 @@ function readrBoard($R){
                     // figure out if we should add a comment indicator + comment hover
                     var comments = {},
                         num_comments = 0;
-
+console.log('tagbox make 1');
+if (hash=="e84df1d92e6bfb2a5f39865cc2deec1f") {
+    console.log('hash is e84df1d92e6bfb2a5f39865cc2deec1f');
+    console.log(content_node);
+}
                     if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+console.log('tagbox make 2');
                         $.each( content_node.top_interactions.coms, function(idx, comment) {
+console.log('tagbox make 3');
                             if ( comment.tag_id == parseInt( tag.tag_id ) ) {
+console.log('tagbox make 4');
                                 num_comments++;
-                                if ( $.isEmptyObject( comments ) ) comments = content_node.top_interactions.coms;
+                                if ( $.isEmptyObject( comments ) ) {
+console.log('tagbox make 5');
+                                    comments = content_node.top_interactions.coms;
+                                }
                             }
                         });
                     }
@@ -4299,7 +4311,7 @@ function readrBoard($R){
                     // basically, this has to be done if the TAG GRID is open on load.
                     $.each( hashesToInit, function(idx, hash) {
                         var $node = $('[rdr-hash="'+hash+'"]');
-                        
+
                         // var hash = hashObject.hash;
                         if (typeof hash != "undefined" && typeof $node.attr('rdr_summary_loaded') == "undefined" ) {
                             RDR.actions.indicators.init(hash);
@@ -4487,19 +4499,22 @@ function readrBoard($R){
                                 var newComs = {},
                                     coms = summary.top_interactions.coms;
 
+console.log('coms');
+console.log(coms);
+console.log(summary.kind);
                                 $.each(coms, function(arrIdx, com){
                                     //sortby tag_id
 
                                     // [ porter ] this shouldn't be needed, but it is,
                                     // because the correct comment set, for text, is actually found in summary.content_nodes.top_interactions, which does not exist for images
-                                    if ( summary.kind == "text" ) {
+                                    if ( summary.kind == "text") {
                                         newComs[com.tag_id] = com;
                                     } else {
                                         if ( !newComs[com.tag_id] ) newComs[com.tag_id] = [];
                                         newComs[com.tag_id].push(com);
                                     }
                                 });
-
+console.log(newComs);
                                 summary.top_interactions.coms = newComs;
                                 RDR.actions.summaries.save(summary);
 
@@ -6639,10 +6654,12 @@ if ( sendData.kind=="page" ) {
                             //do nothing
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+                                console.log('making an inline tagbox 1');
                                 // write inline tags: readmode, for all content types (kind)
                                 RDR.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
+                                    console.log('making an inline tagbox 2');
                                     if ( !summary.crossPage ) {
                                         RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
                                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
@@ -6654,6 +6671,7 @@ if ( sendData.kind=="page" ) {
                                         });
                                     }
                                 } else {
+                                    console.log('making an inline tagbox 3');
                                     RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
                                     $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                         $rindow.remove();
@@ -6731,8 +6749,24 @@ if ( sendData.kind=="page" ) {
                         // RDR.rindow.jspUpdate($rindow);
                         // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
 
-                        isotopeTags( $tagsListContainer );
-                        isotopeFillGap($tagsListContainer);
+                        if ( $rindow.attr('rdr-grid-type') != "flow" ) {
+                            isotopeTags( $tagsListContainer );
+                            isotopeFillGap($tagsListContainer);
+                        } else {
+                            // $tagsListContainer.find('.rdr_box').addClass('rdr_animated');
+                            var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
+                                currentTagBoxAnimating = 0;
+                            var animationQueue = setInterval( animateNextBox, 10 );
+
+                            function animateNextBox() {
+                                var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
+                                $thisBox.addClass('rdr_animated');
+                                currentTagBoxAnimating++;
+                                if ( currentTagBoxAnimating > tagBoxesCount ) {
+                                    clearInterval( animationQueue );
+                                }
+                            }
+                        }
 
                         return $tagsListContainer;
 
@@ -7818,7 +7852,7 @@ if ( sendData.kind=="page" ) {
 
                     $submitButton.click(function(e) {
                         var commentText = $commentTextarea.val();
-
+console.log('make comment 0');
                         //keyup doesn't guarentee this, so check again (they could paste in for example);
                         if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
@@ -7827,16 +7861,21 @@ if ( sendData.kind=="page" ) {
                         }
 
                         if ( commentText != helpText ) {
+                            console.log('make comment 1');
+console.log(summary);
+console.log(content_node);
                             //temp translations..
                             //quick fix.  images don't get the data all passed through to here correctly.
                             //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
                             if ($.isEmptyObject(content_node) && summary.kind=="img") {
+                                console.log('make comment 2');
                                 content_node = {
                                     "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
                             } else {
+                                console.log('make comment 3');
                                 // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
                                 content_node.kind = "text";
                             }
@@ -7847,6 +7886,7 @@ if ( sendData.kind=="page" ) {
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
 
                         } else{
+                            console.log('make comment 4');
                             $commentTextarea.focus();
                         }
                         return false; //so the page won't reload
