@@ -6873,6 +6873,7 @@ if ( sendData.kind=="page" ) {
                             columnWidth: 160
                           }
                         }, function() {
+
                             var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                 currentTagBoxAnimating = 0;
                             var animationQueue = setInterval( animateNextBox, 10 );
@@ -8529,8 +8530,8 @@ if ( sendData.kind=="page" ) {
                     //todo: can't we use the hashes returned by this function instead?
                     RDR.actions.hashNodes( $container );
 
+                    var hashesByPageId = {};
                     if ( page.containers.length > 0 ) {
-                        var hashesByPageId = {};
                         hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
                             if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
@@ -8549,7 +8550,7 @@ if ( sendData.kind=="page" ) {
                         //    // just grab the first crosspage hash.. we get them all later.  
                         //    // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
                         //    // known_hash list, to prevent some duplication.
-                        var hashesByPageId = {};
+                        // var hashesByPageId = {};
                         hashesByPageId[ page.id ] = [];
 
                         // should we find custom-display nodes and add to the hashList here?
