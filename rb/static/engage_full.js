@@ -6763,7 +6763,8 @@ if ( sendData.kind=="page" ) {
                             // $tagsListContainer.find('.rdr_box').addClass('rdr_animated');
                             var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                 currentTagBoxAnimating = 0;
-                            var animationQueue = setInterval( animateNextBox, 10 );
+                            // var animationQueue = setInterval( animateNextBox, 10 );
+                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
                             function animateNextBox() {
                                 var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
@@ -6876,7 +6877,7 @@ if ( sendData.kind=="page" ) {
 
                             var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
                                 currentTagBoxAnimating = 0;
-                            var animationQueue = setInterval( animateNextBox, 10 );
+                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
                             function animateNextBox() {
                                 var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');

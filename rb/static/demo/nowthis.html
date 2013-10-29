@@ -535,18 +535,24 @@ div.rdr.rdr_window.w640,
     width:640px !important;
 }
 .readrboard {
-    overflow:auto;
+    /*overflow:auto;*/
+    /*min-height: 250px;*/
     margin:20px 0;
+    clear:both;
 }
 .readrboard_column {
-    float:left;
+    /*float:left;*/
+    display:inline-block;
+    vertical-align: top;
 }
 .readrboard_column1 {
     width:340px;
-    margin-right:20px;
+    margin-right:0px;
 }
 .readrboard_column2 {
     width:640px;
+    overflow-y:auto;
+    overflow-x:hidden;
 }
 .readrboard_headline {
     margin: 0;
