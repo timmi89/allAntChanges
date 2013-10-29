@@ -378,6 +378,7 @@ function readrBoard($R){
                     "media" :
                     "text"
                 );
+
                 var headerText;
 
                 if( kind == "text" ){
@@ -628,6 +629,7 @@ function readrBoard($R){
                     "media" :
                     "text"
                 );
+
                 var options = _options || {};
 
                 var $elm = $rindow.find('.rdr_visiblePanel');
@@ -812,7 +814,7 @@ function readrBoard($R){
                             });
 
                             function _sendComment(event){
-                                console.log('send comment 0');
+
                                 var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
                                     content_node = args.sendData.content_node_data,
                                     hash = args.hash,
@@ -828,13 +830,11 @@ function readrBoard($R){
                                 }
 
                                 if ( commentText != "Add a comment or #hashtag" ) {
-                                    console.log('send comment 1');
                                     //temp translations..
                                     //quick fix
                                     var summary = RDR.summaries[hash];
                                     content_node.kind = summary.kind;
-                                    console.log(summary);
-                                    console.log(content_node);
+
                                     var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
                                     //leave parent_id undefined for now - backend will find it.
                                     RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
@@ -1266,20 +1266,13 @@ function readrBoard($R){
                     // figure out if we should add a comment indicator + comment hover
                     var comments = {},
                         num_comments = 0;
-console.log('tagbox make 1');
-if (hash=="e84df1d92e6bfb2a5f39865cc2deec1f") {
-    console.log('hash is e84df1d92e6bfb2a5f39865cc2deec1f');
-    console.log(content_node);
-}
+
                     if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-console.log('tagbox make 2');
+
                         $.each( content_node.top_interactions.coms, function(idx, comment) {
-console.log('tagbox make 3');
                             if ( comment.tag_id == parseInt( tag.tag_id ) ) {
-console.log('tagbox make 4');
                                 num_comments++;
                                 if ( $.isEmptyObject( comments ) ) {
-console.log('tagbox make 5');
                                     comments = content_node.top_interactions.coms;
                                 }
                             }
@@ -4269,7 +4262,20 @@ console.log('tagbox make 5');
                             };
                         } else {
                             // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
-                            content_node.kind = "text";
+
+                            // see if this is a custom display type
+                            // if so, use that info to set the kind
+                            // i know, this looks bad, is duplicated elsewhere, and looks overlappng with the code in the if() right above
+                            var $node = $('[rdr-hash="'+summary.hash+'"]'),
+                                content_type = $node.attr('rdr-content-type');
+
+                            if ( content_type ) {
+                                if (content_type == "media") { content_node.kind = "media"; }
+                                else if (content_type == "image") { content_node.kind = "img"; }
+                                else { content_node.kind = "text"; }
+                            } else {
+                                content_node.kind = "text";
+                            }
                         }
                         var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
 
@@ -4499,9 +4505,6 @@ console.log('tagbox make 5');
                                 var newComs = {},
                                     coms = summary.top_interactions.coms;
 
-console.log('coms');
-console.log(coms);
-console.log(summary.kind);
                                 $.each(coms, function(arrIdx, com){
                                     //sortby tag_id
 
@@ -4514,7 +4517,7 @@ console.log(summary.kind);
                                         newComs[com.tag_id].push(com);
                                     }
                                 });
-console.log(newComs);
+
                                 summary.top_interactions.coms = newComs;
                                 RDR.actions.summaries.save(summary);
 
@@ -6654,12 +6657,10 @@ if ( sendData.kind=="page" ) {
                             //do nothing
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
-                                console.log('making an inline tagbox 1');
                                 // write inline tags: readmode, for all content types (kind)
                                 RDR.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
-                                    console.log('making an inline tagbox 2');
                                     if ( !summary.crossPage ) {
                                         RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
                                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
@@ -6671,7 +6672,6 @@ if ( sendData.kind=="page" ) {
                                         });
                                     }
                                 } else {
-                                    console.log('making an inline tagbox 3');
                                     RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
                                     $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                         $rindow.remove();
@@ -7852,7 +7852,6 @@ if ( sendData.kind=="page" ) {
 
                     $submitButton.click(function(e) {
                         var commentText = $commentTextarea.val();
-console.log('make comment 0');
                         //keyup doesn't guarentee this, so check again (they could paste in for example);
                         if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
@@ -7861,23 +7860,32 @@ console.log('make comment 0');
                         }
 
                         if ( commentText != helpText ) {
-                            console.log('make comment 1');
-console.log(summary);
-console.log(content_node);
                             //temp translations..
                             //quick fix.  images don't get the data all passed through to here correctly.
                             //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
                             if ($.isEmptyObject(content_node) && summary.kind=="img") {
-                                console.log('make comment 2');
+
                                 content_node = {
                                     "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
                             } else {
-                                console.log('make comment 3');
+
                                 // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
-                                content_node.kind = "text";
+                                // see if this is a custom display type
+                                // if so, use that info to set the kind
+                                // i know, this looks bad, is duplicated elsewhere, and looks overlappng with the code in the if() right above
+                                var $node = $('[rdr-hash="'+summary.hash+'"]'),
+                                    content_type = $node.attr('rdr-content-type');
+
+                                if ( content_type ) {
+                                    if (content_type == "media") { content_node.kind = "media"; }
+                                    else if (content_type == "image") { content_node.kind = "image"; }
+                                    else { content_node.kind = "text"; }
+                                } else {
+                                    content_node.kind = "text";
+                                }
                             }
                             var selState = selState || null;
                             var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
@@ -7886,7 +7894,6 @@ console.log(content_node);
                             RDR.actions.interactions.ajax( args, 'comment', 'create');
 
                         } else{
-                            console.log('make comment 4');
                             $commentTextarea.focus();
                         }
                         return false; //so the page won't reload
