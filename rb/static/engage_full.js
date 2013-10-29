@@ -753,7 +753,7 @@ function readrBoard($R){
 
                                 RDR.user = RDR.user || {};
                                 
-                                $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                var onAction = function(event){
                                     var args = event.data.args;
 
                                     // panelEvent - undo1
@@ -767,7 +767,14 @@ function readrBoard($R){
 
                                     RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
-                                });
+                                };
+
+                                if(isTouchBrowser){
+                                    $rindow.find('a.rdr_undo_link').on('tap.rdr', {args:args}, onAction);
+                                }else{
+                                    $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, onAction);
+                                }
+
                             // } else if ( args.scenario == "reactionExists" ) {
                                 // $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
                             // }
