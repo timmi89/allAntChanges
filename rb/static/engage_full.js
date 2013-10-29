@@ -1249,7 +1249,7 @@ function readrBoard($R){
                         }
                     } else {
                         if(isTouchBrowser){
-                            $tagBox.bind('tap', function() {
+                            $tagBox.bind('click', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
                                 var hash = $rindow.data('container');
@@ -1323,7 +1323,7 @@ function readrBoard($R){
                         $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
                         
                         if(isTouchBrowser){
-                            $commentHover.bind('tap', function() {
+                            $commentHover.bind('click', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
                                 RDR.actions.viewCommentContent({
@@ -8509,13 +8509,15 @@ RDR_scriptPaths.jqueryMobile = "http://code.jquery.com/mobile/1.3.2/jquery.mobil
 rdr_loadScript({src:RDR_scriptPaths.jquery}, function(){
 
     load_jquery_ui_partial(jQuery);
-    if(isTouchBrowser){
-        rdr_loadScript({src:RDR_scriptPaths.jqueryMobile}, function(){
-            jquery_onload(jQuery);
-        });
-    }else{
-        jquery_onload(jQuery);
-    }
+    // if(isTouchBrowser){
+    //     rdr_loadScript({src:RDR_scriptPaths.jqueryMobile}, function(){
+    //         jquery_onload(jQuery);
+    //     });
+    // }else{
+    //     jquery_onload(jQuery);
+    // }
+    
+    jquery_onload(jQuery);
 });
 
 function jquery_onload(jQuery){
