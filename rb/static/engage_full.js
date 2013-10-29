@@ -256,7 +256,7 @@ function readrBoard($R){
                 //RDR.groupSettings.getBlessedTags:
                 var perContainerSettings = window.readrboard_extend_per_container;
                 if(hash && perContainerSettings){
-                    var name = getCrossPageName(hash);
+                    var name = getCustomDisplayContainers(hash);
                     var perContainerExtentions = perContainerSettings[name];
                     if(perContainerExtentions && perContainerExtentions.blessed_tags){
                         var settings = RDR.groupSettings._translate(perContainerExtentions);
@@ -264,7 +264,7 @@ function readrBoard($R){
                     }
                 }
 
-                function getCrossPageName(hash){
+                function getCustomDisplayContainers(hash){
                     var $el = $('[rdr-hash="' + hash + '"]');
                     var name = $el.attr('rdr-custom-display');
                     return name;
@@ -743,8 +743,8 @@ function readrBoard($R){
                                             return;
                                         }
 
-                                        var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
-                                        $rindow.find('.rdr_header').replaceWith($header);
+                                        // var $header = RDR.rindow.makeHeader( 'Reactions', args.response.data.interaction.id);
+                                        // $rindow.find('.rdr_header').replaceWith($header);
                                         RDR.rindow.updateTagPanel( $rindow );
 
                                     });
@@ -1085,29 +1085,6 @@ function readrBoard($R){
                             if(!isGridForRindow){
                                 RDR.rindow.close($rindow);
                                 return;
-                            }
-
-                            var $header = RDR.rindow.makeHeader( 'Reactions' );
-                            $rindow.find('.rdr_header').replaceWith($header)
-                            RDR.rindow.updateFooter( $rindow );
-
-                            var $panelWrap = $rindow.find('.rdr_body_wrap'),
-                                $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
-                                $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
-                            
-                            $panelWrap.animate({
-                                left: 0
-                            });
-
-                            $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
-                            $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
-
-                            if ( $rindow.data('initialWidth') >= 480 ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
-                            } else {
-                                if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
-                                RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
                             }
 
                         });
@@ -1785,6 +1762,7 @@ function readrBoard($R){
                 if(settings.height){
                     $new_rindow.height(settings.height);
                 }
+                // do we need to call this twice in this function?
                 RDR.actionbar.closeAll();
 
                 $new_rindow.settings = settings;
@@ -1801,9 +1779,34 @@ function readrBoard($R){
             safeClose: function( $rindow ) {
               //RDR.rindow.safeClose:
 
-              var shouldKeepOpen = !!$rindow.attr('rdr-grid-for');
-              if(shouldKeepOpen){
-                return false;
+              var isGrid = !!$rindow.attr('rdr-grid-for');
+
+              if(isGrid){
+
+                var $header = RDR.rindow.makeHeader( 'Reactions' );
+                    $rindow.find('.rdr_header').replaceWith($header);
+                    RDR.rindow.updateFooter( $rindow );
+
+                    var $panelWrap = $rindow.find('.rdr_body_wrap'),
+                        $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
+                        $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
+                    
+                    $panelWrap.animate({
+                        left: 0
+                    });
+
+                    $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+                    $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
+
+                    // if ( $rindow.data('initialWidth') >= 480 ) {
+                    //     RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                    // } else {
+                    //     if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
+                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
+                    // }
+
+                return true;
               }
 
               RDR.rindow.close($rindow);
@@ -2044,7 +2047,7 @@ function readrBoard($R){
                     $linkToComment.click( function(e) {
                         e.preventDefault();
                         //there's a bug, just close the rindow for now. 
-                        RDR.rindow.close( $rindow );
+                        RDR.rindow.safeClose( $rindow );
                         // $rindow.find('.rdr_back').eq(0).click();
                     });
 
@@ -2384,7 +2387,7 @@ function readrBoard($R){
                     var hash = hashOrObject;
                 }
                 // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id');
+                var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : ( $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id') ) ?$('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id'):$('body').data('page_id');
 
                 // store the page_id on this node to prevent walking-up again later
                 if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
@@ -3505,12 +3508,14 @@ function readrBoard($R){
 
                             var minImgWidth = 160;
                             if ( $this.width() >= minImgWidth ) {
+
                                 var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                                     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
                                 $this.addClass('rdr_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
+
                                     var hashListsByPageId = RDR.actions.hashNodes( $(this) );
                                     //we expect just the one here, so just get that one.
                                     var hash;
@@ -3522,14 +3527,11 @@ function readrBoard($R){
                                         RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                                         return;
                                     }
-                                
+
                                     RDR.actions.sendHashes( hashListsByPageId, function(){
                                         if( $this.hasClass('rdr_live_hover') ){
-                                            // $('#rdr_indicator_'+hash).show();
                                             if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
                                                 $('#rdr_indicator_' + hash).show();
-                                                // RDR.actions.indicators.utils.borderHilites.update(hash);
-                                                // RDR.actions.indicators.utils.borderHilites.engage(hash);
                                             }
                                         }
                                     });
@@ -3547,6 +3549,7 @@ function readrBoard($R){
                                         $('#rdr_indicator_' + hash).show();
                                         // RDR.actions.indicators.utils.borderHilites.engage(hash);
                                     }
+
                                     RDR.actions.content_nodes.init(hash, function(){});
                                 }
 
@@ -3642,7 +3645,7 @@ function readrBoard($R){
 
                     var $mouse_target = $(event.target);
 
-                    if ( !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length ) {
+                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
                         // if ( $('#rdr_loginPanel').length ) {
                         //     RDR.session.getUser(function() {
                         //         RDR.util.userLoginState();
@@ -3737,12 +3740,35 @@ function readrBoard($R){
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
                             if ( $(node).text() != $(node).parent().text() ) {
+                                // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
                                 return !!$(node).text();
                             }
                         },
                         setupFunc: function(){
                             var body = RDR.util.getCleanText(this);
                             $(this).data('body',body);
+                        }
+
+                    },
+                    {
+                        kind: 'custom',
+                        $group: null,
+                        whiteList: '',
+                        filterParam: function(idx, node){
+                            // look for a rdr-src
+                            var $node = $(this);
+
+                            // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
+                            return !!$node.hasAttr('rdr-src');
+                        },
+                        setupFunc: function(){
+                            // set the rdr-src to the 'body'
+                            var $node = $(this),
+                                body = $node.attr('rdr-src');
+
+                            $node.data({
+                                'body':body
+                            });
                         }
 
                     }
@@ -3953,6 +3979,7 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
+
                 // RDR.actions.sendHashes:
                 $.each(hashesByPageId, function(pageId, hashList){
                     
@@ -3962,6 +3989,25 @@ function readrBoard($R){
                         RDR.safeThrow("No more messy hashes allowed!!");
                         return;
                     }
+
+                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        var $node = $(node);
+
+                        if ( typeof $node.data('rdr-hashed') == "undefined" ) {
+                            var thisHash = $node.attr('rdr-hash');
+
+                            hashList = $.grep(hashList, function(value) {
+                              return value != thisHash;
+                            });
+                            
+                            hashList.push( thisHash );
+
+                            //init the cross page containers so even the ones that come back with 0 reactions will
+                            //have write mode enabled
+                            RDR.actions.indicators.init(thisHash);
+                            $node.data('rdr-hashed', true);
+                        }
+                    });
 
                     $.each(hashList, function(idx, hash){
                         //might not need to protect against this anymore.
@@ -3983,8 +4029,10 @@ function readrBoard($R){
                         RDR.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
                     }
 
+                    // get crossPage containers (which may/may not also be custom display)
+                    // they need to be initialized by this point (rdr-hashed)
                     var crossPageHashes = [];
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
                         var thisHash = $(node).attr('rdr-hash');
                         crossPageHashes.push( thisHash );
 
@@ -3999,7 +4047,6 @@ function readrBoard($R){
 
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
-
 
                     RDR.actions.sendHashesForSinglePage({
                        short_name : RDR.group.short_name,
@@ -4024,70 +4071,88 @@ function readrBoard($R){
                             json: $.toJSON(sendData)
                         },
                         success: function(response) {
-                            // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
-                            RDR.known_hashes = response.data.known;
+                            if ( typeof response != "undefined" && typeof response.data != "undefined" ) {
+                                // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
+                                if (typeof response.data.known != "undefined" ) {
+                                    RDR.known_hashes = response.data.known;
+                                }
 
-                            // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
-                            if ( response.data.crossPageKnown ) {
-                                RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
-                                RDR.crosspage_hashes = response.data.crossPageKnown;
-                            }
-
-                            // is a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
-                            // but we still want to do an init of the node... so we make dummy objects
-                            // this is so we can init the nodes down below when we call
-                            // RDR.actions.containers.initCrossPageHashes(response.data.crossPageKnown);
-                            $.each( $('[rdr-custom-display]'), function( idx, node ) {
-                                var thisHash = $(node).attr('rdr-hash');
-                                var dummySummaryObject = {
-                                        "hash":thisHash,
-                                        "counts": {
-                                            "coms": 0, 
-                                            "tags": 0, 
-                                            "interactions": 0
-                                        }, 
-                                        "top_interactions": {
-                                            "coms": [], 
-                                            "tags": {}
-                                        }
+                                // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
+                                if ( typeof response.data.crossPageKnown != "undefined" ) {
+                                    if (typeof response.data.known != "undefined" ) {
+                                        RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
                                     }
-                                RDR.crosspage_hashes[thisHash] = dummySummaryObject;
-                            });
-
-                            var summaries = {};
-                            summaries[ pageId ] = response.data.known;
-                            
-                            $.each(response.data.unknown, function(idx, hash){
-                                if (typeof hash != "string") {
-                                    RDR.safeThrow('why the f would this not be a string?');
-                                    return;
+                                    RDR.crosspage_hashes = response.data.crossPageKnown;
                                 }
 
-                                var unknown_summary;
-                                // get the kind
-                                var $node = $('[rdr-hash="'+hash+'"]');
-                                var kind = $node.data('kind');
-                                if(!kind){
-                                    RDR.safeThrow('node should always have data: kind');
+                                // if a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
+                                // but we still want to do an init of the node... so we make dummy objects
+                                // this is so we can init the nodes down below when we call
+                                // RDR.actions.containers.initCustomDisplayHashes(response.data.crossPageKnown);
+                                $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                                    var thisHash = $(node).attr('rdr-hash');
+                                    var dummySummaryObject = {
+                                            "hash":thisHash,
+                                            "counts": {
+                                                "coms": 0, 
+                                                "tags": 0, 
+                                                "interactions": 0
+                                            }, 
+                                            "top_interactions": {
+                                                "coms": [], 
+                                                "tags": {}
+                                            }
+                                        }
+                                    if (typeof RDR.crosspage_hashes != "undefined" ) {
+                                        RDR.crosspage_hashes = {};
+                                    }
+                                    RDR.crosspage_hashes[thisHash] = dummySummaryObject;
+                                });
+
+                                var summaries = {};
+                                summaries[ pageId ] = response.data.known;
+                                
+                                $.each(response.data.unknown, function(idx, hash){
+                                    if (typeof hash != "string") {
+                                        RDR.safeThrow('why would this not be a string?');
+                                        return;
+                                    }
+
+                                    var unknown_summary;
+                                    // get the kind
+                                    var $node = $('[rdr-hash="'+hash+'"]');
+                                    var kind = $node.data('kind');
+                                    if(!kind){
+                                        RDR.safeThrow('node should always have data: kind');
+                                    }
+                                    unknown_summary = RDR.util.makeEmptySummary( hash, kind );
+
+                                    summaries[ pageId ][ hash ] = unknown_summary;
+                                });
+
+                                // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
+                                if ( !$.isEmptyObject(summaries) ){
+                                    //setup the summaries
+                                    RDR.actions.containers.setup(summaries);
+
+                                    //the callback verifies the new container and draws the actionbar
+                                    //wont get run if this single hash is unknown.
+                                    if(typeof onSuccessCallback !== 'undefined'){
+                                        onSuccessCallback();
+                                    }
                                 }
-                                unknown_summary = RDR.util.makeEmptySummary( hash, kind );
 
-                                summaries[ pageId ][ hash ] = unknown_summary;
-                            });
+                                var initSomeHashes = [];
+                                $.each( response.data.crossPageKnown , function(idx, hashObject) {
+                                    initSomeHashes.push(hashObject.hash);
+                                });
 
-                            // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
-                            if ( !$.isEmptyObject(summaries) ){
-                                //setup the summaries
-                                RDR.actions.containers.setup(summaries);
+                                $.each( $('[rdr-custom-display]') , function(idx, node) {
+                                    initSomeHashes.push( $(node).data('hash') );
+                                });
 
-                                //the callback verifies the new container and draws the actionbar
-                                //wont get run if this single hash is unknown.
-                                if(typeof onSuccessCallback !== 'undefined'){
-                                    onSuccessCallback();
-                                }
+                                RDR.actions.containers.initCustomDisplayHashes( initSomeHashes );
                             }
-
-                            RDR.actions.containers.initCrossPageHashes(response.data.crossPageKnown);
                         }
                     });
 
@@ -4220,7 +4285,7 @@ function readrBoard($R){
                     var $container = $('[rdr-hash="'+hash+'"]'),
                         customDisplayName = $container.attr('rdr-custom-display'),
                         $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
-                        
+
                     if ($grid.length) {
                         RDR.actions.content_nodes.init(hash, function() {
                             RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
@@ -4228,14 +4293,15 @@ function readrBoard($R){
                         });
                     }
                 },
-                initCrossPageHashes: function(crossPageHashes){
+                initCustomDisplayHashes: function(hashesToInit){
                     // go ahead and initialize the content nodes for cross-page containers
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the TAG GRID is open on load.
-                    $.each( crossPageHashes, function(idx, crosspage_known) {
-
-                        var hash = crosspage_known.hash;
-                        if (typeof hash != "undefined") {
+                    $.each( hashesToInit, function(idx, hash) {
+                        var $node = $('[rdr-hash="'+hash+'"]');
+                        
+                        // var hash = hashObject.hash;
+                        if (typeof hash != "undefined" && typeof $node.attr('rdr_summary_loaded') == "undefined" ) {
                             RDR.actions.indicators.init(hash);
                             RDR.summaries[hash].crossPage=true;
 
@@ -4389,6 +4455,9 @@ function readrBoard($R){
                             this.img(hash, summary);
                         },
                         text: function(hash, summary){
+
+                        },
+                        custom: function(hash, summary){
 
                         }
                     };
@@ -5080,7 +5149,8 @@ if ( sendData.kind=="page" ) {
                                         e.preventDefault();
 
                                         //there's a bug, just close the rindow for now. 
-                                        RDR.rindow.close( $rindow );
+                                        // RDR.rindow.close( $rindow );
+                                        RDR.rindow.safeClose( $rindow );
                                         // $rindow.find('.rdr_back').eq(0).click();
                                     });
 
@@ -5334,7 +5404,16 @@ if ( sendData.kind=="page" ) {
                             //If readmode, we will have a content_node.  If not, use content_node_data, and build a new content_node on success.
                             var content_node = args.content_node || null;
 
-                            if(kind == 'img' || kind == 'media' || kind == 'med'){
+                            if ( kind == 'custom' ){
+                                content_node_data = {
+                                    'container': rindow.data('container'),
+                                    'body': $container.attr('rdr-src'),
+                                    'kind':'media',
+                                    'location': $container.get(0).nodeName.toLowerCase(), // trying to store the tagName, so we can convert to a media type later...???
+                                    'hash':hash
+                                };
+
+                            } else if(kind == 'img' || kind == 'media' || kind == 'med'){
                                 var hashBody = $container[0].src;
 
 
@@ -5892,12 +5971,13 @@ if ( sendData.kind=="page" ) {
                         $container.attr('rdr-hasIndicator', 'true');
 
                         if ( $container.hasAttr('rdr-custom-display') ) {
+
                             var customDisplayName = $container.attr('rdr-custom-display'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
                                 $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
                                 $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
-                            
+
                             // some init.  does this make sense here?
                             _setupHoverToFetchContentNodes();
 
@@ -6188,12 +6268,13 @@ if ( sendData.kind=="page" ) {
                         isText = summary.kind === 'text';
                     // for now, separately handle the "custom display" elements
                     if ( $container.hasAttr('rdr-custom-display') ) {
+
                             var customDisplayName = $container.attr('rdr-custom-display'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
                             $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
                             $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
-                        
+
                         // some init.  does this make sense here?
 
                             // if there is a counter on the page
@@ -8364,15 +8445,14 @@ if ( sendData.kind=="page" ) {
                     RDR.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
-                    // RDR.actions.pages.initPageContainer
-                    
+                    // RDR.actions.pages.initPageContainer                    
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
                     var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
+
                     if ( $container.length !== 1 ) return;
                     //else
-
                     $container.removeAttr( 'rdr-page-key' );
                     $container.attr( 'rdr-page-container' , pageId );
 
@@ -8391,7 +8471,7 @@ if ( sendData.kind=="page" ) {
 
                     // hash the "page" descendant nodes
                     // RDR.actions.hashNodes( $container, "nomedia" );
-                    
+
                     //todo: can't we use the hashes returned by this function instead?
                     RDR.actions.hashNodes( $container );
 
@@ -8401,19 +8481,34 @@ if ( sendData.kind=="page" ) {
                         $.each( page.containers, function(idx, container) {
                             if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
                         });
-                        RDR.actions.sendHashes( hashesByPageId );
-                    } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
-                        // should this be $('[rdr-custom-display]') instead of crossPageContent??
+
+                        // RDR.actions.sendHashes( hashesByPageId );
+                    // } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
+                    }
+
+                    if ( page && $('[rdr-custom-display]').length ) {
+                        // [pb] should this be $('[rdr-custom-display]') instead of crossPageContent??
+                        // [pb] 10/2013: methinks yes, b/c we want to ensure a custom display is visible. 
+                        //               see comment right below:
 
                         // if no reactions on this page, but there is a cross-page container... force a call.  
-                        // just grab the first crosspage hash.. we get them all later.  
-                        // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
-                        // known_hash list, to prevent some duplication.
+                        //    // just grab the first crosspage hash.. we get them all later.  
+                        //    // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
+                        //    // known_hash list, to prevent some duplication.
                         var hashesByPageId = {};
                         hashesByPageId[ page.id ] = [];
-                        hashesByPageId[ page.id ].push( $('[rdr-crossPageContent="true"]:eq(0)').attr('rdr-hash') );
-                        RDR.actions.sendHashes( hashesByPageId );
+
+                        // should we find custom-display nodes and add to the hashList here?
+                        $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                            RDR.actions.hashNodes( $(node) );
+                            var thisHash = $(node).attr('rdr-hash');
+                            hashesByPageId[ page.id ].push( thisHash );
+                        });
+                        // hashesByPageId[ page.id ].push( $('[rdr-custom-display="true"]:eq(0)').attr('rdr-hash') );
+                        // RDR.actions.sendHashes( hashesByPageId );
                     }
+
+                    RDR.actions.sendHashes( hashesByPageId );
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
@@ -8429,7 +8524,8 @@ if ( sendData.kind=="page" ) {
                         widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
                     }else{
                         //use the default summaryBar instead
-                        var displayDefaultBar = ( typeof RDR.engageScriptParams.bookmarklet == "undefined" ) ? "bottom:-1000px !important":"";
+                        // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
+                        var displayDefaultBar = ( typeof RDR.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
                         widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar" style="'+displayDefaultBar+'"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
