@@ -335,7 +335,7 @@ function readrBoard($R){
                 var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('click', '.rdr_menuDropDown', function(){
+                    $menu.on('tap', '.rdr_menuDropDown', function(){
                         $(this).toggleClass('rdr_hover');
                     });
                 }
@@ -1228,7 +1228,7 @@ function readrBoard($R){
                         }
                     } else {
                         if(isTouchBrowser){
-                            $tagBox.bind('click', function() {
+                            $tagBox.bind('tap', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
                                 var hash = $rindow.data('container');
@@ -1312,7 +1312,7 @@ console.log('tagbox make 5');
                         $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
                         
                         if(isTouchBrowser){
-                            $commentHover.bind('click', function() {
+                            $commentHover.bind('tap', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
                                 RDR.actions.viewCommentContent({
@@ -6465,7 +6465,7 @@ if ( sendData.kind=="page" ) {
                             $indicator.appendTo($container_tracker);
                             
                             if(isTouchBrowser){
-                                $indicator.click(function(){
+                                $indicator.bind('tap', function(){
                                     if ( summary.counts.interactions == 0 ) {
                                         var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     } else {
@@ -6523,7 +6523,7 @@ if ( sendData.kind=="page" ) {
 
                                 $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
                                 if(isTouchBrowser){
-                                    $indicator.click(function(){
+                                    $indicator.bind('tap', function(){
                                         $(this).toggleClass('rdr_hover');
                                     });
                                 }
@@ -9196,7 +9196,7 @@ function $RFunctions($R){
                 };
 
                 if(isTouchBrowser){
-                    $summary_widget.click(function(){
+                    $summary_widget.bind('tap', function(){
                         onActiveEvent.call(this);
                         $(this).toggleClass('rdr_hover');
                     });
