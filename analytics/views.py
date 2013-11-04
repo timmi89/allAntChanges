@@ -7,7 +7,7 @@ from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
-from authentication.decorators import requires_admin
+from authentication.decorators import requires_admin, requires_admin_super
 from django.template import RequestContext
 from authentication.token import checkCookieToken
 
