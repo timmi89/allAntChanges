@@ -974,6 +974,10 @@ div.splashQuote {
 
 
 /* analytics */
+section.datepicker,
+section.panel{
+    margin-bottom: 20px;
+}
 section[role="datepicker"] form{
     margin: 0;
 }
@@ -983,7 +987,7 @@ section[role="datepicker"] label  { display:inline; }
 #ui-datepicker-div {z-index:11 !important;}
 section[role="interaction frequency"]         { overflow:auto; text-align:center; }
 
-#interactionBigStats .bigStat h1      { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:25px 0 0; margin:0; color:#638296; background:none;}
+#interactionBigStats .bigStat h1      { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:5px 0 0; margin:0; color:#638296; background:none;}
 #interactionBigStats .bigStat h4      { margin:-10px 0 10px;}
 
 #interactionBigStats {
