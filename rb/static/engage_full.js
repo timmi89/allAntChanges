@@ -2635,9 +2635,9 @@ function readrBoard($R){
             userLoginState: function() {
                 //RDR.util.userLoginState
                 if ( !$('#rdr-user').length ) {
-                    $('#rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
+                    $('.rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
                 }
-                if ( RDR && RDR.user && RDR.user.full_name && $('#rdr-page-summary.defaultSummaryBar').length ) {
+                if ( RDR && RDR.user && RDR.user.full_name && $('.rdr-page-summary.defaultSummaryBar').length ) {
                     var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
                     $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
@@ -3362,7 +3362,7 @@ function readrBoard($R){
           
                 var useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
-                    !$('#rdr-page-summary').length &&
+                    !$('.rdr-page-summary').length &&
                     !$(RDR.group.post_selector).length &&
                     !$(RDR.group.summary_widget_selector).length
                 );
@@ -3370,7 +3370,7 @@ function readrBoard($R){
                 if (useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
-                    $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar"/>').appendTo('body');
+                    $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar"/>').appendTo('body');
                 }
                 
                 // RDR.session.educateUser(); //this function has changed now
@@ -3452,8 +3452,8 @@ function readrBoard($R){
                     if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
                         $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
 
-                        if ( $('#rdr-page-summary').length == 1 ) {
-                            $('#rdr-page-summary').attr('rdr-page-widget-key',key);
+                        if ( $('.rdr-page-summary').length == 1 ) {
+                            $('.rdr-page-summary').attr('rdr-page-widget-key',key);
                         } else {
                             var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
                             // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
@@ -8576,13 +8576,13 @@ if ( sendData.kind=="page" ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
                         widgetSummarySettings.jqFunc = "after";
                         
-                    } else if( $("#rdr-page-summary").length==1 ){
-                        widgetSummarySettings.$anchor = $("#rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
+                    } else if( $(".rdr-page-summary").length==1 ){
+                        widgetSummarySettings.$anchor = $(".rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
                     }else{
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
                         var displayDefaultBar = ( typeof RDR.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
-                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr defaultSummaryBar" style="'+displayDefaultBar+'"/>');
+                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
