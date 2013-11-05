@@ -8,6 +8,7 @@ Frequency = Resource(handler=FrequencyHandler)
 Active = Resource(handler=ActiveHandler)
 Tagged = Resource(handler=TaggedHandler)
 Recent = Resource(handler=RecentHandler)
+InhouseAnalytics = Resource(handler=InhouseAnalyticsJSONHandler)
 
 urlpatterns = patterns('',
     url(r'^/$', 'analytics.views.analytics'),
@@ -21,4 +22,8 @@ urlpatterns = patterns('',
     url(r'^/pages/active/$', Active, kwargs={"subject":"page"}),
     url(r'^/pages/recent/$', Recent),
     url(r'^/pages/tagged/$', Tagged),
+    
+    # e.g. /analytics/inhouse/#start=1/03/13#end=11/04/13
+    url(r'^/inhouse/$', 'analytics.views.analytics_inhouse'),
+    url(r'^/inhouse/test/$', InhouseAnalytics),
 )

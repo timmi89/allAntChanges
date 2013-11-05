@@ -137,6 +137,10 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
+  #inhouse
+  url(r'^analytics', include('readrboard.analytics.urls')),
+
+
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
   url(r'^wordpress_edit/$', 'rb.views.wordpress_edit'),
