@@ -3363,7 +3363,7 @@ function readrBoard($R){
                 var useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
                     !$('.rdr-page-summary').length &&
-                    !$(RDR.group.post_selector).length &&
+                    // !$(RDR.group.post_selector).length &&
                     !$(RDR.group.summary_widget_selector).length
                 );
                 
