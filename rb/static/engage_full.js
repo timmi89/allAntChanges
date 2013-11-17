@@ -50,6 +50,9 @@ var isTouchBrowser = (
     (window.DocumentTouch && document instanceof DocumentTouch)
 );
 
+isTouchBrowser = true;
+console.log('isTouchBrowser: '+isTouchBrowser);
+
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
@@ -2331,14 +2334,62 @@ function readrBoard($R){
                 // RDR.util.initTouchBrowserSettings
                 
                 if(isTouchBrowser){
-                    
-                    //quick'n'dirty way to make the helper indicators show up.
-                    // don't do this for now. It makes too many show up.
-                    // $('p[rdr-node=true]').trigger('mouseover');
-                    // $('p[rdr-node=true]').trigger('mouseout');
+                    $(window).on('scrollstop', function() {
+                        RDR.util.mobileHelperToggle();
+                    });
+                    //quick'n'dirty way to init the helper indicators for mobile
+                    $( RDR.group.anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
+            },
+            mobileHelperToggle: function() {
+                // RDR.util.mobileHelperToggle
+                var foundFirstTextNode = false;
+                $('[rdr-node="true"]').each( function() {
+
+                    var $this = $(this),
+                        nodeTop = $this.offset().top - $(window).scrollTop();
+
+                    if ( nodeTop > 30 && foundFirstTextNode == false ) {
+
+                        var mediaSelector = 'img,' + RDR.group.media_selector;
+                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
+                            var hash = $this.data('hash');
+                            
+                            if (hash) {
+                                $this.addClass('rdr_live_hover');
+                                if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
+                                    $('#rdr_indicator_' + hash).show();
+                                    // RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                }
+
+                                RDR.actions.content_nodes.init(hash, function(){});
+                            }
+                        } else {
+                            $this.addClass('rdr_live_hover');
+                            foundFirstTextNode = true;
+                        }
+
+
+                    } else {
+                        $this.removeClass('rdr_live_hover');
+                        $('.rdr_helper_rindow').hide();
+                        
+                        var mediaSelector = 'img,' + RDR.group.media_selector;
+                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
+                            if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
+                                // _mediaHoverOff( $this )
+                                // var $this = $(obj),
+                                var hash = $this.data('hash');
+
+                                $this.removeClass('rdr_live_hover');
+                                $('#rdr_indicator_' + hash).hide();
+                            }
+                        }
+                    }
+                });
+                
             },
             initPublicEvents: function(){
                 // RDR.util.initPublicEvents
@@ -3954,7 +4005,8 @@ function readrBoard($R){
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
-                    if ( HTMLkind != 'body' && !isTouchBrowser) {
+                    // if ( HTMLkind != 'body' && !isTouchBrowser) {
+                    if ( HTMLkind != 'body' ) {
                         // todo: touchHover
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
@@ -6067,9 +6119,9 @@ if ( sendData.kind=="page" ) {
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
                                     $indicator.addClass('rdr_helper');
-                                    if(isTouchBrowser){
-                                        $indicator.addClass('isTouchBrowser');
-                                    }
+                                    // if(isTouchBrowser){
+                                    //     $indicator.addClass('isTouchBrowser');
+                                    // }
 
                                     _setupHoverForShowRindow();
                                 }else{
@@ -6359,9 +6411,9 @@ if ( sendData.kind=="page" ) {
                                 if(RDR.group.paragraph_helper){
                                     RDR.actions.indicators.show(hash);
                                     $indicator.addClass('rdr_helper');
-                                    if(isTouchBrowser){
-                                        $indicator.addClass('isTouchBrowser');
-                                    }
+                                    // if(isTouchBrowser){
+                                    //     $indicator.addClass('isTouchBrowser');
+                                    // }
                                 }else{
                                     RDR.actions.indicators.hide(hash);
                                 }                                                        
@@ -6400,11 +6452,11 @@ if ( sendData.kind=="page" ) {
                         //     }
                         // }, RDR.C.helperIndicators.hoverDelay);
                         // $indicator.data('hoverTimeout', hoverTimeout);
-                        if(isTouchBrowser){
-                            $indicator.css({ display:"inline" });
-                        }else{
+                        // if(isTouchBrowser){
+                            // $indicator.css({ display:"inline" });
+                        // }else{
                             RDR.util.cssSuperImportant( $indicator, { display:"inline" });
-                        }
+                        // }
                         $indicator.css('opacity', RDR.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
@@ -6423,7 +6475,7 @@ if ( sendData.kind=="page" ) {
                         var hoverTimeout = $indicator.data('hoverTimeout');
                         clearTimeout(hoverTimeout);
                         if(isTouchBrowser){
-                            $indicator.css({ display:"none" });
+                            // $indicator.css({ display:"none" });
                         }else{
                             RDR.util.cssSuperImportant( $indicator, { display:"none" });
                         }
@@ -6891,10 +6943,17 @@ if ( sendData.kind=="page" ) {
                       } // isotopeTags
 
                         function isotopeFillGap($tagsListContainer){
-                            
                             var $boxes = $tagsListContainer.find('.rdr_box');
                             var $lastTag = $boxes.eq(-1);
                                 
+                            
+                            if ( isTouchBrowser ) {
+                                if ( $boxes.index($lastTag) % 2 ==0 ) {
+                                    $lastTag.addClass('rdr_wide');
+                                }
+                                return;
+                            }
+
                             if(!$lastTag.length){
                                 return;
                             }
@@ -6902,16 +6961,21 @@ if ( sendData.kind=="page" ) {
                             var lastTagDims = $lastTag.position();
                             var doBreak = false;
 
-                            $lastTag
-                                .addClass('rdr_clear_transform')
-                                .css({
-                                    height: 'auto',
-                                    width: 'auto',
-                                    top: lastTagDims.top,
-                                    left: lastTagDims.left,
-                                    bottom: 0,
-                                    right: 0
-                                });  
+                                var $parent = $thisTag.parent();
+                                var ttlH = $parent.height();
+                                var ttlW = $parent.width();
+                                var percentTop = (thisTagDims.top / ttlH)* 100;
+                                var percentLeft = (thisTagDims.left / ttlW)* 100;
+                                if(isAdjacentRow){
+                                    $thisTag
+                                        .addClass('rdr_clear_transform')
+                                        .css({
+                                            height: 'auto',
+                                            top: percentTop+"%",
+                                            left: percentLeft+"%",
+                                            bottom: 0
+                                        });  
+                                }
 
                             //force the position to fill the space.
                             $($boxes.get().reverse()).each(function(){
@@ -6931,13 +6995,18 @@ if ( sendData.kind=="page" ) {
                                     return;
                                 }
                                 
+                                var $parent = $thisTag.parent();
+                                var ttlH = $parent.height();
+                                var ttlW = $parent.width();
+                                var percentTop = (thisTagDims.top / ttlH)* 100;
+                                var percentLeft = (thisTagDims.left / ttlW)* 100;
                                 if(isAdjacentRow){
                                     $thisTag
                                         .addClass('rdr_clear_transform')
                                         .css({
                                             height: 'auto',
-                                            top: thisTagDims.top,
-                                            left: thisTagDims.left,
+                                            top: percentTop+"%",
+                                            left: percentLeft+"%",
                                             bottom: 0
                                         });  
                                 }
@@ -6954,7 +7023,6 @@ if ( sendData.kind=="page" ) {
                                 // }
 
                             });
-                            
                         }
 
                     },
