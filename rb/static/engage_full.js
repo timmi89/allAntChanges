@@ -6958,21 +6958,16 @@ if ( sendData.kind=="page" ) {
                             var lastTagDims = $lastTag.position();
                             var doBreak = false;
 
-                                var $parent = $thisTag.parent();
-                                var ttlH = $parent.height();
-                                var ttlW = $parent.width();
-                                var percentTop = (thisTagDims.top / ttlH)* 100;
-                                var percentLeft = (thisTagDims.left / ttlW)* 100;
-                                if(isAdjacentRow){
-                                    $thisTag
-                                        .addClass('rdr_clear_transform')
-                                        .css({
-                                            height: 'auto',
-                                            top: percentTop+"%",
-                                            left: percentLeft+"%",
-                                            bottom: 0
-                                        });  
-                                }
+                            $lastTag
+                                .addClass('rdr_clear_transform')
+                                .css({
+                                    height: 'auto',
+                                    width: 'auto',
+                                    top: lastTagDims.top,
+                                    left: lastTagDims.left,
+                                    bottom: 0,
+                                    right: 0
+                                });  
 
                             //force the position to fill the space.
                             $($boxes.get().reverse()).each(function(){
@@ -6992,18 +6987,13 @@ if ( sendData.kind=="page" ) {
                                     return;
                                 }
                                 
-                                var $parent = $thisTag.parent();
-                                var ttlH = $parent.height();
-                                var ttlW = $parent.width();
-                                var percentTop = (thisTagDims.top / ttlH)* 100;
-                                var percentLeft = (thisTagDims.left / ttlW)* 100;
                                 if(isAdjacentRow){
                                     $thisTag
                                         .addClass('rdr_clear_transform')
                                         .css({
                                             height: 'auto',
-                                            top: percentTop+"%",
-                                            left: percentLeft+"%",
+                                            top: thisTagDims.top,
+                                            left: thisTagDims.left,
                                             bottom: 0
                                         });  
                                 }
