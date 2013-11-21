@@ -373,7 +373,7 @@ div.rdr div.rdr_header                         {
     box-sizing : border-box;
 }
 div.rdr div.rdr_header div.rdr_header_arrow    { 
-  top: -10px;
+  bottom: 31px;
   left: 6px;
   position:absolute;
 }
@@ -2083,9 +2083,9 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box {
     text-align:center; font-family:'RDR_HelveticaBold',Helvetica,Arial; box-sizing: border-box; overflow:hidden; letter-spacing:-1px;
     position: relative;
     /*a slight faded border so when the same color stacks up there is a little separation*/
-    -moz-box-shadow: 0 0 4px -1px #aaa;
-    -webkit-box-shadow: 0 0 4px -1px #aaa;
-    box-shadow: 0 0 4px -1px #aaa;
+    -moz-box-shadow: 0 0 2px -1px #bbb;
+    -webkit-box-shadow: 0 0 2px -1px #bbb;
+    box-shadow: 0 0 2px -1px #bbb;
 }
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_read_icon{
