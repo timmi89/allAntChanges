@@ -3,6 +3,7 @@
 
 var RDR = {};
 if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
+    window.READRBOARDCOM.actions.reInit();
     return;
 }
 
@@ -3731,6 +3732,10 @@ function readrBoard($R){
 
                 $RDR.dequeue('initAjax');
             },
+            reInit: function() {
+                // RDR.actions.reInit:
+                RDR.actions.hashCustomDisplayHashes();
+            },
             UIClearState: function(){
                 //RDR.actions.UIClearState:
                 // clear any errant tooltips
@@ -4218,6 +4223,22 @@ function readrBoard($R){
                     });
 
                 
+            },
+            hashCustomDisplayHashes: function() {
+                // RDR.actions.hashCustomDisplayHashes:
+                if ( $('[rdr-custom-display]').length ) {
+                    var hashes = [];
+
+                    // should we find custom-display nodes and add to the hashList here?
+                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        RDR.actions.hashNodes( $(node) );
+                        var thisHash = $(node).attr('rdr-hash');
+                        hashes.push( thisHash );
+                    });
+
+                }
+
+                RDR.actions.sendHashes( hashes );
             },
             comments: {
                 makeCommentBox: function(settings, options){
@@ -8556,7 +8577,8 @@ if ( sendData.kind=="page" ) {
                     RDR.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
-                    // RDR.actions.pages.initPageContainer                    
+                    // RDR.actions.pages.initPageContainer
+
                     var page = RDR.pages[pageId],
                         key = page.key; //todo: consider phasing out - use id instead
 
