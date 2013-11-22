@@ -2442,7 +2442,9 @@ function readrBoard($R){
                         return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
                     }
                 } else if (!hashOrObject) {
-                    return false;
+                    // whiskey tango foxtrot
+                    // return false;
+                    return $('[rdr-page-container]').eq(0).data('page_id');
                 }
                 if ( typeof hashOrObject == "string" ) {
                     var hash = hashOrObject;
@@ -4100,8 +4102,7 @@ function readrBoard($R){
                     // get crossPage containers (which may/may not also be custom display)
                     // they need to be initialized by this point (rdr-hashed)
                     var crossPageHashes = [];
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
-                        $.clog('sendhashes crosspage 1');
+                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
                         var thisHash = $(node).attr('rdr-hash');
                         crossPageHashes.push( thisHash );
 
@@ -4229,20 +4230,27 @@ function readrBoard($R){
             },
             hashCustomDisplayHashes: function() {
                 // RDR.actions.hashCustomDisplayHashes:
-                $.clog('hashCustomDisplayHashes');
+                $.clog('hashCustomDisplayHashes 1');
+                var pageCustomDisplays = {},
+                    pageId = RDR.util.getPageProperty();
+                
+                pageCustomDisplays[ pageId ] = [];
+                
                 if ( $('[rdr-custom-display]').length ) {
-                    var hashes = [];
 
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[rdr-custom-display]'), function( idx, node ) {
                         RDR.actions.hashNodes( $(node) );
                         var thisHash = $(node).attr('rdr-hash');
-                        hashes.push( thisHash );
+                        pageCustomDisplays[ pageId ].push( thisHash );
+                        RDR.actions.indicators.init( thisHash );
                     });
 
                 }
+                $.clog('hashCustomDisplayHashes 1');
+                $.clog( pageCustomDisplays[ pageId ] );
 
-                RDR.actions.sendHashes( hashes );
+                RDR.actions.sendHashes( pageCustomDisplays[ pageId ] );
             },
             comments: {
                 makeCommentBox: function(settings, options){
