@@ -3734,6 +3734,7 @@ function readrBoard($R){
             },
             reInit: function() {
                 // RDR.actions.reInit:
+                $.clog('reinit');
                 RDR.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(){
@@ -4047,6 +4048,7 @@ function readrBoard($R){
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
 
                 // RDR.actions.sendHashes:
+                $.clog('sendhashes');
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -4098,7 +4100,8 @@ function readrBoard($R){
                     // get crossPage containers (which may/may not also be custom display)
                     // they need to be initialized by this point (rdr-hashed)
                     var crossPageHashes = [];
-                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
+                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        $.clog('sendhashes crosspage 1');
                         var thisHash = $(node).attr('rdr-hash');
                         crossPageHashes.push( thisHash );
 
@@ -4226,6 +4229,7 @@ function readrBoard($R){
             },
             hashCustomDisplayHashes: function() {
                 // RDR.actions.hashCustomDisplayHashes:
+                $.clog('hashCustomDisplayHashes');
                 if ( $('[rdr-custom-display]').length ) {
                     var hashes = [];
 
@@ -6377,7 +6381,7 @@ if ( sendData.kind=="page" ) {
                                 if ( summary.counts.tags > 0 ) {
                                     $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
                                 } else {
-                                    $counter.html('No');
+                                    $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
