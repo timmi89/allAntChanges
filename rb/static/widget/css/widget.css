@@ -373,7 +373,7 @@ div.rdr div.rdr_header                         {
     box-sizing : border-box;
 }
 div.rdr div.rdr_header div.rdr_header_arrow    { 
-  bottom: 31px;
+  bottom: 29px;
   left: 6px;
   position:absolute;
 }
