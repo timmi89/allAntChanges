@@ -3736,7 +3736,6 @@ function readrBoard($R){
             },
             reInit: function() {
                 // RDR.actions.reInit:
-                $.clog('reinit');
                 RDR.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(){
@@ -4050,7 +4049,6 @@ function readrBoard($R){
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
 
                 // RDR.actions.sendHashes:
-                $.clog('sendhashes');
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -4230,7 +4228,6 @@ function readrBoard($R){
             },
             hashCustomDisplayHashes: function() {
                 // RDR.actions.hashCustomDisplayHashes:
-                $.clog('hashCustomDisplayHashes 1');
                 var pageCustomDisplays = {},
                     pageId = RDR.util.getPageProperty();
                 
@@ -4247,8 +4244,6 @@ function readrBoard($R){
                     });
 
                 }
-                $.clog('hashCustomDisplayHashes 1');
-                $.clog( pageCustomDisplays[ pageId ] );
 
                 RDR.actions.sendHashes( pageCustomDisplays[ pageId ] );
             },
