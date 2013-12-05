@@ -555,6 +555,10 @@ div.rdr div.rdr_header h1 {
  font-style:normal;
  padding-top: 6px;
 }
+div.rdr.w160 div.rdr_header h1 {
+ font-size:13px;
+}
+
 div.rdr.rdr_inline div.rdr_header h1    {
     padding-top:0; 
     margin-top:-4px; 
@@ -2308,7 +2312,7 @@ div.rdr div.rdr_footer .rdr_click_overlay{
     background: none;
 }
 
-div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 3px;}
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%;}
 div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4; }
 
 div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
@@ -2323,6 +2327,10 @@ div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
   text-align: center;
   cursor: pointer;
   display: none;
+}
+
+div.rdr.w160 div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
+  margin-right:-22px;
 }
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box span.rdr_comment_hover { 
@@ -2448,4 +2456,14 @@ div#rdr_loginPanel .rdr_header_arrow{
     -o-transform:  translate(0px, 0px) !important;
     -ms-transform:  translate(0px, 0px) !important;
     transform:  translate(0px, 0px) !important;  
+}
+
+
+/* force capital first letter on reactions for now */
+div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {
+    text-transform: lowercase;
+}
+
+div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
+    text-transform: uppercase;
 }
