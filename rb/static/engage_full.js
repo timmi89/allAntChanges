@@ -4047,8 +4047,8 @@ function readrBoard($R){
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
-
                 // RDR.actions.sendHashes:
+
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -4067,7 +4067,7 @@ function readrBoard($R){
                             hashList = $.grep(hashList, function(value) {
                               return value != thisHash;
                             });
-                            
+
                             hashList.push( thisHash );
 
                             //init the cross page containers so even the ones that come back with 0 reactions will
@@ -4228,6 +4228,7 @@ function readrBoard($R){
             },
             hashCustomDisplayHashes: function() {
                 // RDR.actions.hashCustomDisplayHashes:
+
                 var pageCustomDisplays = {},
                     pageId = RDR.util.getPageProperty();
                 
@@ -4237,15 +4238,18 @@ function readrBoard($R){
 
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[rdr-custom-display]'), function( idx, node ) {
-                        RDR.actions.hashNodes( $(node) );
-                        var thisHash = $(node).attr('rdr-hash');
+                        var $node = $(node);
+                        RDR.actions.hashNodes( $node );
+                        var thisHash = $node.attr('rdr-hash');
+
                         pageCustomDisplays[ pageId ].push( thisHash );
+
                         RDR.actions.indicators.init( thisHash );
                     });
 
                 }
 
-                RDR.actions.sendHashes( pageCustomDisplays[ pageId ] );
+                RDR.actions.sendHashes( pageCustomDisplays );
             },
             comments: {
                 makeCommentBox: function(settings, options){
@@ -6301,10 +6305,10 @@ if ( sendData.kind=="page" ) {
                             var $thisCTA = $(this);
                             $thisCTA.on('mouseover.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
-                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                                if( hasHelper ){
+                                // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                // if( hasHelper ){
                                     // RDR.events.track('paragraph_helper_engage');
-                                }
+                                // }
                             });
                         });
                     }
@@ -7366,6 +7370,10 @@ if ( sendData.kind=="page" ) {
             summaries:{
                 init: function(hash){
                     //RDR.actions.summaries.init:
+
+                    if ( typeof RDR.summaries[hash] == 'object' ) {
+                        return RDR.summaries[hash];
+                    }
 
                     //todo: it might make sense to just get this from the backend, since it has a function to do this already.
 
