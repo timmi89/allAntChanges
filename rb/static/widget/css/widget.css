@@ -2274,7 +2274,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color5 .rdr_count{
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_box:hover { 
     cursor:pointer;
-    background:#fff;
+    background:#fff !important;
     /*box-shadow:0px 0px 32px #ccc inset;*/
     -moz-box-shadow: 0 0 25px -7px #333 inset;
     -webkit-box-shadow: 0 0 25px -7px #333 inset;
@@ -2312,7 +2312,7 @@ div.rdr div.rdr_footer .rdr_click_overlay{
     background: none;
 }
 
-div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%;}
+div.rdr div.rdr_footer .rdr_box .rdr_custom_tag input { text-align:center; margin:0 auto; font-family:'RDR_HelveticaBold'; font-size:16px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; }
 div.rdr div.rdr_footer:hover .rdr_box .rdr_custom_tag input { color:#008be4; }
 
 div.rdr div.rdr_footer .rdr_box .rdr_custom_tag .rdr_custom_tag_submit {
