@@ -3410,7 +3410,6 @@ function readrBoard($R){
                                 anno_selector = $.trim(anno_selector);
                                 active_sections_with_anno_whitelist += active_selector + ' ' + anno_selector;
 
-                                console.log(anno_idx, anno_whitelist.length -1);
                                 // add a comma if this isn't the last item in the loop
                                 if ( anno_idx != anno_whitelist.length -1 ) {
                                     active_sections_with_anno_whitelist += ',';
