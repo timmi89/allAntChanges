@@ -3389,7 +3389,7 @@ function readrBoard($R){
                         var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
-                        $(RDR.group.no_readr).each( function() {
+                        $(RDR.group.active_sections).find(RDR.group.no_readr).each( function() {
                             $(this).addClass('no-rdr');
                             $(this).find('img').addClass('no-rdr');
                         });
