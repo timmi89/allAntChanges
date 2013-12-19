@@ -142,6 +142,7 @@ function readrBoard($R){
                 img_container_selectors:"#primary-photo",
                 active_sections: "body",
                 anno_whitelist: "body p",
+                active_sections_with_anno_whitelist:"",
                 media_selector: "embed, video, object, iframe",
                 // iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
@@ -2337,7 +2338,7 @@ function readrBoard($R){
                         RDR.util.mobileHelperToggle();
                     });
                     //quick'n'dirty way to init the helper indicators for mobile
-                    $( RDR.group.active_sections + ' ' + RDR.group.anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
+                    $( RDR.group.active_sections_with_anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
@@ -3393,6 +3394,37 @@ function readrBoard($R){
                             $(this).find('img').addClass('no-rdr');
                         });
 
+                        // setup the active sections + anno_whitelist (i.e. allowed tags)
+                        if ( RDR.group.active_sections == "" ) {
+                            RDR.group.active_sections = "body";
+                        }
+                        var active_sections = RDR.group.active_sections.split(','),
+                            active_sections_with_anno_whitelist = "",
+                            anno_whitelist = RDR.group.anno_whitelist.split(',');
+                        
+                        
+                        $.each(active_sections, function(active_idx, active_selector) {
+                            active_selector = $.trim( active_selector );
+                            
+                            $.each( anno_whitelist, function(anno_idx, anno_selector) {
+                                anno_selector = $.trim(anno_selector);
+                                active_sections_with_anno_whitelist += active_selector + ' ' + anno_selector;
+
+                                console.log(anno_idx, anno_whitelist.length -1);
+                                // add a comma if this isn't the last item in the loop
+                                if ( anno_idx != anno_whitelist.length -1 ) {
+                                    active_sections_with_anno_whitelist += ',';
+                                }
+                            });
+                            // add a comma if this isn't the last item in the loop
+                            if ( active_idx != active_sections.length -1 ) {
+                                active_sections_with_anno_whitelist += ',';
+                            }
+                        });
+
+                        RDR.group.active_sections_with_anno_whitelist = active_sections_with_anno_whitelist;
+                        
+
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
                         if ( RDR.group.custom_css !== "" ) {
@@ -3802,7 +3834,7 @@ function readrBoard($R){
                     {
                         kind: 'text',
                         $group: null,
-                        whiteList: RDR.group.active_sections + ' ' + RDR.group.anno_whitelist,
+                        whiteList: RDR.group.active_sections_with_anno_whitelist,
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
