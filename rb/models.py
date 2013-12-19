@@ -158,6 +158,7 @@ class Group(models.Model):
 
     
     # black/whitelist fields
+    active_sections = models.CharField(max_length=255, blank=True)
     anno_whitelist = models.CharField(max_length=255, blank=True, default=u"p,img")
     img_whitelist = models.CharField(max_length=255, blank=True)
     img_blacklist = models.CharField(max_length=255, blank=True)

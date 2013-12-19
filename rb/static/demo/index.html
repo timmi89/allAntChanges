@@ -179,6 +179,16 @@
     <div id="content">
       <div id="contentleft">
         <div class="postarea">
+          <!-- <p id="crosstest" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
+          <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
+          
+          <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"> Reactions</div>
+          <!-- <div rdr-grid-for="question1" style="width:1000px;height:400px;"></div> -->
+          <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
+          <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question1"></span> reactions</div>
+
+          <p>here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. </p>
+          <img src="http://dummyimage.com/400x200/447799/99bbcc&text=not+inside+.post" />
           <div id="post-1" class="post-1 post type-post status-publish format-standard hentry category-uncategorized">
           
 
@@ -193,13 +203,6 @@
             <br>
             <div id="rdr-summary-wrap" class="rdr"></div>
 
-            <!-- <p id="crosstest" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
-            <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
-            
-            <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"> Reactions</div>
-            <!-- <div rdr-grid-for="question1" style="width:1000px;height:400px;"></div> -->
-            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
-            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question1"></span> reactions</div>
 
             <div class="rdr-demo-block rdr-tooltip" title="this is a tooltip">
               <blockquote>

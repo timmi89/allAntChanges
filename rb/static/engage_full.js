@@ -140,6 +140,7 @@ function readrBoard($R){
             defaults: {
                 img_selector: "img",
                 img_container_selectors:"#primary-photo",
+                active_sections: "body",
                 anno_whitelist: "body p",
                 media_selector: "embed, video, object, iframe",
                 // iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
@@ -2336,7 +2337,7 @@ function readrBoard($R){
                         RDR.util.mobileHelperToggle();
                     });
                     //quick'n'dirty way to init the helper indicators for mobile
-                    $( RDR.group.anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
+                    $( RDR.group.active_sections + ' ' + RDR.group.anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
@@ -3556,7 +3557,7 @@ function readrBoard($R){
                     //this can't work until the container_id is registered anyway, just do it on that callback.
                     //#touchBrowserMediaInit
                 }else{
-                    $('body')
+                    $(RDR.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
                             var $this = $(this);
@@ -3801,7 +3802,7 @@ function readrBoard($R){
                     {
                         kind: 'text',
                         $group: null,
-                        whiteList: RDR.group.anno_whitelist,
+                        whiteList: RDR.group.active_sections + ' ' + RDR.group.anno_whitelist,
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.

@@ -39,27 +39,24 @@
     			<label for="id_temp_interact"><span class="labelTitle">Temporary Interactions </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
     			{{ form.temp_interact }}{{ form.temp_interact.errors }}
     		</div>
-    		<div class="formRow">
-    			<label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
-    			{{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
-    		</div>
-    		<div class="formRow">
-    			<label for="id_logo_url_med"><span class="labelTitle">Medium Logo </span><span>URL to a medium logo file (max 100x50)</span></label>
-    			{{ form.logo_url_med }}{{ form.logo_url_med.errors }}
-    		</div>
-    		<div class="formRow">
-    			<label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
-    			{{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
-    		</div>
+
     	</section>
 
         <section class="configuarationSection">
             <h3>Configuring Your Site</h3>
             <h4>Customize ReadrBoard by defining these <a href="http://api.jquery.com/category/selectors/" target="_blank">jQuery selectors</a>.</h4>
             <div class="formRow">
-                <label for="id_anno_whitelist">
+                <label for="id_no_readr">
                     <span class="labelTitle">Active Sections (jQuery selector)</span>
-                    <span>Defines sections that ReadrBoard interacts with by default.</span>
+                    <span>Tell ReadrBoard where the content its allowed to interact with can be found.  For example, if you're using WordPress, you may just want people to interact with your article content -- typically all found inside the <code>.post</code> element.  Multiple elements allowed.</span>
+                    <span class="formInputExample">Example: <i>article.post, #slideshow</i></span>
+                </label>
+                {{ form.active_sections }}{{ form.active_sections.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_anno_whitelist">
+                    <span class="labelTitle">Active Tags (jQuery selector)</span>
+                    <span>Defines tags within the Active Sections that ReadrBoard can interact with.</span>
                     <span class="formInputExample">Example: <i>p,img</i></span>
                 </label>
                 {{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
@@ -68,7 +65,7 @@
                 <label for="id_no_readr">
                     <span class="labelTitle">Inactive Sections (jQuery selector)</span>
                     <span>Defines sections that ReadrBoard should always ignore.</span>
-                    <span class="formInputExample">Example: <i>.myHeader, .mySidebar</i></span>
+                    <span class="formInputExample">Example: <i>.myHeader, .mySidebar, .myFooter</i></span>
                 </label>
                 {{ form.no_readr }}{{ form.no_rdr.errors }}
             </div>
@@ -128,7 +125,14 @@
             <h3>Moderation</h3>
             <div class="formRow" style="margin: 10px 0;">
                 {{ form.requires_approval }}{{ form.requires_approval.errors }}
-                <label for="id_requires_approval"><span class="labelTitle">Requires Approval? </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
+                <label for="id_requires_approval"><span class="labelTitle">Auto-block all reactions </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
+            </div>
+            <div class="formRow">
+                <label for="id_signin_organic_required">
+                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
+                    <span class="labelTitle">Require login for custom reactions</span>
+                    <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
+                </label>
             </div>
             <div class="formRow word_blacklist_row">
 
@@ -152,6 +156,7 @@
                 <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" readonly="readonly" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
 
             </div>
+            
         </section>
         <section class="">
             <h3>Miscellaneous</h3>
@@ -181,17 +186,18 @@
             </div>
 
             <div class="formRow">
-                <label for="id_signin_organic_required">
-                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
-                    <span class="labelTitle">Require login for custom reactions</span>
-                    <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
-                </label>
+                <label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
+                {{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_logo_url_med"><span class="labelTitle">Medium Logo </span><span>URL to a medium logo file (max 100x50)</span></label>
+                {{ form.logo_url_med }}{{ form.logo_url_med.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
+                {{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
             </div>
 
-            <!-- <div class="formRow">
-                <label for="call_to_action"><span class="labelTitle">Call To Action </span><span>A call to action for your users.  HTML is A-okay.</span></label>
-                {{ form.call_to_action }}
-            </div> -->
         </section>
     </div>
 {% comment %}

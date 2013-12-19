@@ -317,6 +317,7 @@ class GroupForm(forms.ModelForm):
             'name',
             'short_name', 
             'twitter',
+            'active_sections',
             'anno_whitelist',
             'no_readr',
             'img_whitelist',
