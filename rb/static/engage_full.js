@@ -3052,8 +3052,8 @@ function readrBoard($R){
 
 
                                 for ( var i in message.data ) {
+                                    RDR.user = RDR.user || {};
                                     if ( i == "user_boards" ) {
-                                        RDR.user = RDR.user || {};
                                         RDR.user.user_boards = $.evalJSON( message.data[i] );
                                     } else {
                                         RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
