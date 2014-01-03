@@ -7,7 +7,7 @@ from django.db.models import Count, Sum
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
-from authentication.decorators import requires_admin
+from authentication.decorators import requires_admin, requires_admin_super
 from django.template import RequestContext
 from authentication.token import checkCookieToken
 
@@ -195,3 +195,69 @@ class FrequencyHandler(AnalyticsHandler):
 
         return periods
             
+
+@requires_admin_super
+def analytics_inhouse(request, **kwargs):
+    context = {}
+    context['fb_client_id'] = FACEBOOK_APP_ID
+    context['cookie_user'] = kwargs['cookie_user']
+
+    return render_to_response(
+        "analytics_inhouse.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+def inhouse_analytics_request(func):
+    def wrapper(self, request, *args, **kwargs):
+        params = request.GET
+        data = {}
+        # All Analytics Handler's have access to these
+        data['start'] = params.get('start', None)
+        data['end'] = params.get('end', None)
+        data['max_count'] = params.get('max_count', None)
+        data['page_id'] = params.get('page_id', None)
+        
+        # Pass in either tag body or tag id
+        data['tag'] = params.get('tag', None)
+        data['tag_id'] = params.get('tag_id', None)
+        return func(self, request, data, *args, **kwargs)
+    return wrapper
+
+
+# [ec] mostly a quick copy of AnalyticsHandler.  Refactor later.
+class InhouseAnalyticsHandler(AnonymousBaseHandler):
+    @requires_admin_super
+    @inhouse_analytics_request
+    def read(self, request, data, **kwargs):
+        interactions = Interaction.objects.all()
+        # dont filter byfor this.
+        # interactions = interactions.filter(page__site_group)
+        
+        # Page specific filters
+        if data['page_id']:
+            page = Page.objects.get(id=data['page_id'])
+            interactions = interactions.filter(page=page)
+        
+        # Date range filters    
+        if data['start']:
+            interactions = interactions.filter(
+                created__gte=datetime.strptime(data['start'], "%m/%d/%y")
+            )
+        if data['end']:
+            interactions = interactions.filter(
+                created__lte=datetime.strptime(data['end'], "%m/%d/%y")
+            )
+
+        return self.process(interactions, data, **kwargs)
+
+class InhouseAnalyticsJSONHandler(InhouseAnalyticsHandler):
+    def process(self, interactions, data, **kwargs):
+        
+        page_ids = interactions.order_by('page').values('page')
+        pages = Page.objects.filter(id__in=page_ids)
+
+        site_ids = pages.order_by('site').values('site')
+        sites = Site.objects.filter(id__in=site_ids)
+
+        return sites

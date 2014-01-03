@@ -2,7 +2,7 @@
 from models import *
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core import serializers
 from settings import FACEBOOK_APP_ID, BASE_URL
 from baseconv import base62_decode
@@ -47,26 +47,91 @@ def widgetCss(request):
       context_instance=RequestContext(request),
       mimetype = 'text/css')
 
+def home(request):
+    return HttpResponseRedirect('/learn/')
+
 def team(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
-      "team.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
-      context_instance=RequestContext(request)
+        "team.html",
+        context,
+        context_instance=RequestContext(request)
     )
 
 def faq(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
-      "faq.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+        "faq.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+def terms(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "terms.html",
+      context,
       context_instance=RequestContext(request)
     )
 
-def splash(request):
+def privacy(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
     return render_to_response(
-      "splash.html",
-      {'fb_client_id': FACEBOOK_APP_ID},
+      "privacy.html",
+      context,
       context_instance=RequestContext(request)
     )
+
+def learn(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "learn.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+
+def about(request):
+    return redirect('/', permanent=True)
 
 def fb(request):
     return render_to_response(

@@ -4,7 +4,7 @@ from os import uname
 if uname()[1] == "hat" : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
-#DEBUG=True
+# DEBUG=True
 
 # Server e-mail account
 if DEBUG:

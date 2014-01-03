@@ -72,6 +72,7 @@ def addDefaultsForNewGroup(group, cookie_user):
     
     group.word_blacklist = default_group.word_blacklist
     group.anno_whitelist = default_group.anno_whitelist
+    group.active_sections = default_group.active_sections
     group.save()
     
     blessed = GroupBlessedTag.objects.filter(group = default_group)

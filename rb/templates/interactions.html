@@ -25,7 +25,13 @@ $('#cards').addClass('user_profile');
             {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
             
             <div class="cardWrap">
-            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" data-interaction-id="{{ interaction.id }}" data-kind="{{ interaction.content.kind }}" data-user-name="{{ interaction.user.social_user.full_name }}">
+            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" 
+                data-interaction-id="{{ interaction.id }}" 
+                data-interaction-body="{{ interaction.interaction_node.body }}" 
+                data-kind="{{ interaction.content.kind }}"
+                data-user-name="{{ interaction.user.social_user.full_name }}"
+                data-group-name="{{ page.grouper.site.group.short_name }}"
+            >
                 {% if cookie_user %}
                 <div class="buttons">
                           {% if interaction.user.id == cookie_user.id %}
@@ -54,7 +60,11 @@ $('#cards').addClass('user_profile');
                         {% if interaction.user.social_user.full_name != "" %}
                         <a href="/user/{{interaction.user.id}}/">
                             {{ interaction.user.social_user.full_name }}
-                            <img src="{{ interaction.user.social_user.img_url }}"/>
+                            {% if interaction.user.social_user.img_url %}
+                                <img src="{{ interaction.user.social_user.img_url }}"/>
+                            {% else %}
+                                <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                            {% endif %}
                         </a>
                         {% endif %}
                         {% if interaction.user.social_user.full_name == "" %}
@@ -70,7 +80,7 @@ $('#cards').addClass('user_profile');
                 </div>
                 <div class="me_too_outcome"></div>
                 <div class="main">
-                    <h1><a href="/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
+                    <h1><a href="/stream/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
                     <div class="contentBox {{ interaction.content.kind }}">
                         {% if interaction.content.kind == "img" %}
                         <!--
@@ -592,8 +602,7 @@ $(document).ready(function(){
   
   $('.card').each(function(idx, card) {
     var $card = $(card);
-    // $card.find('h1 a').bigtext();
-
+    
     if ( !$card.find('.comment_container').length ) {
       $card.find('.comments').remove();
     }

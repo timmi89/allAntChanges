@@ -151,6 +151,14 @@ def getPage(host, page_request):
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
 
+    if canonical:
+        if canonical == "same":
+            canonical = url
+        else:
+            url = canonical
+    else:
+        canonical = ""
+
     try:
         site = Site.objects.get(domain=host, group=int(group_id))
     except Site.DoesNotExist:
@@ -166,11 +174,6 @@ def getPage(host, page_request):
     if '#' in url and '!' not in url:
         url = url[:url.index('#')]
 
-    if canonical:
-        if canonical == "same":
-            canonical = url
-    else:
-        canonical = ""
     page = Page.objects.get_or_create(
         url = url,
         canonical_url = canonical,

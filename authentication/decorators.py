@@ -151,6 +151,37 @@ def requires_admin(func):
             return HttpResponseRedirect(isNotAdminRedirectUrl)
     return wrapper
 
+# Note this is mostly a copy of requires_admin - refactor later.
+def requires_admin_super(func):
+    def wrapper(*args, **kwargs):
+        request = args[0] if len(args) == 1 else args[1]
+
+        isNotAdminRedirectUrl = "/"
+
+        # Check to see if user is logged in to facebook
+        try:
+            cookie_user = checkCookieToken(request)
+            kwargs['cookie_user'] = cookie_user
+        except GraphAPIError:
+            return HttpResponseRedirect(isNotAdminRedirectUrl)
+
+        # If a user is registered and logged in
+        if cookie_user:
+            userList = SocialUser.objects.filter(user=cookie_user)
+            readr_admins = SocialUser.objects.filter(
+                user__email__in=RB_SOCIAL_ADMINS
+            )
+            if len(userList) == 1:
+                user = userList[0]
+                if user in readr_admins:
+                    return func(*args, **kwargs)
+                else:
+                    return HttpResponseRedirect(isNotAdminRedirectUrl)
+            else:
+                return HttpResponseRedirect(isNotAdminRedirectUrl)
+        else:
+            return HttpResponseRedirect(isNotAdminRedirectUrl)
+    return wrapper    
 
 def requires_admin_rest(func):
     def wrapper(*args, **kwargs):

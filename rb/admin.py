@@ -42,7 +42,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required')
         }),
         ('Advanced', {
-            'fields': ('custom_css', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
+            'fields': ('custom_css', 'active_sections', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')

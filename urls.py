@@ -30,9 +30,9 @@ urlpatterns = patterns('',
   
   
   # For main website
-  url(r'^publishers/$','rb.views.splash'),
-  url(r'^about/$','rb.views.splash'),
-  url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
+  url(r'^$', 'rb.views.home'),
+  #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
+
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^stream/$', 'rb.views.main', kwargs={"view":"index"}),
   url(r'^tags/$', 'rb.views.main', kwargs={"view":"tags"}),
@@ -92,8 +92,12 @@ urlpatterns = patterns('',
   # Main Site Supporting Pages
   url(r'^team/$', 'rb.views.team'),
   url(r'^faq/$', 'rb.views.faq'),
+  url(r'^terms/$', 'rb.views.terms'),
+  url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
-  url(r'^splash/$', 'rb.views.splash'),
+  url(r'^publishers/$','rb.views.learn'),
+  url(r'^about/$','rb.views.about'),
+  url(r'^learn/$','rb.views.learn'),
   
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code' 
@@ -132,6 +136,10 @@ urlpatterns = patterns('',
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
+
+  #inhouse
+  url(r'^analytics', include('readrboard.analytics.urls')),
+
 
   # Plugin Settings
   url(r'^wordpress/$', 'rb.views.wordpress'),
