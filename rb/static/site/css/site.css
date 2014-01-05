@@ -1,0 +1,135 @@
+/*
+Colors
+
+Header
+	text:						dcdcdc
+	background: 		3c3c3c
+
+Subheader
+	text: 					ffffff
+  background:  		65b4e7
+
+  nav
+
+masthead -- full width
+  default:  gray RB logo?
+
+content space
+  reaction tags
+    color, border #737373
+  content color:  #3b3b3b
+  secondary:    #3c3c3c
+  third:        #bababa
+  icon color (tags): #989898
+  blue link color: #65b4e7
+  gray text bg:  rgba(60,60,60,0.84)
+*/
+
+
+/* Normalize + H5BP - minified */
+article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary{display:block;}audio,canvas,video{display:inline;zoom:1;}audio:not([controls]){display:none;height:0;}[hidden]{display:none;}html{font-size:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}html,button,input,select,textarea{font-family:sans-serif;color:#222;}body{font-size:1em;line-height:1.4;margin:0;}a:focus{outline:thin dotted;}a:active,a:hover{outline:0;}h1{font-size:2em;margin:.67em 0;}h2{font-size:1.5em;margin:.83em 0;}h3{font-size:1.17em;margin:1em 0;}h4{font-size:1em;margin:1.33em 0;}h5{font-size:.83em;margin:1.67em 0;}h6{font-size:.67em;margin:2.33em 0;}abbr[title]{border-bottom:1px dotted;}b,strong{font-weight:700;}blockquote{margin:1em 40px;}dfn{font-style:italic;}mark{background:#ff0;color:#000;}code,kbd,pre,samp{font-family:monospace, serif;_font-family:'courier new', monospace;font-size:1em;}pre{white-space:pre-wrap;word-wrap:break-word;}q{quotes:none;}q:before,q:after{content:none;}small{font-size:80%;}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}sup{top:-.5em;}sub{bottom:-.25em;}dd{margin:0 0 0 40px;}menu,ol,ul{padding:0 0 0 40px;}nav ul,nav ol{list-style:none;list-style-image:none;}img{border:0;-ms-interpolation-mode:bicubic;vertical-align:middle;}svg:not(:root){overflow:hidden;}fieldset{border:0;margin:0;padding:0;}legend{border:0;white-space:normal;margin-left:-7px;padding:0;}button,input,select,textarea{font-size:100%;vertical-align:middle;margin:0;}button,input{line-height:normal;}button,html input[type=button],/* 1 */
+input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;overflow:visible;}button[disabled],input[disabled]{cursor:default;}input[type=checkbox],input[type=radio]{box-sizing:border-box;height:13px;width:13px;padding:0;}input[type=search]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;}input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration{-webkit-appearance:none;}button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}textarea{overflow:auto;vertical-align:top;resize:vertical;}table{border-collapse:collapse;border-spacing:0;}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0;}.chromeframe{background:#ccc;color:#000;margin:.2em 0;padding:.2em 0;}.ir{background-color:transparent;border:0;overflow:hidden;text-indent:-9999px;}.ir:before{content:"";display:block;width:0;height:150%;}.hidden{display:none!important;visibility:hidden;}.visuallyhidden{border:0;clip:rect(0000);height:1px;overflow:hidden;position:absolute;width:1px;margin:-1px;padding:0;}.visuallyhidden.focusable:active,.visuallyhidden.focusable:focus{clip:auto;height:auto;overflow:visible;position:static;width:auto;margin:0;}.invisible{visibility:hidden;}.clearfix:before,.clearfix:after{content:" ";display:table;}.clearfix:after{clear:both;}.clearfix{zoom:1;}p,pre,dl,menu,ol,ul{margin:1em 0;}figure,form{margin:0;}::-moz-selection,::selection{background:#b3d4fc;text-shadow:none;}@media print{*{background:transparent!important;color:#000!important;box-shadow:none!important;text-shadow:none!important;}a,a:visited{text-decoration:underline;}a[href]:after{content:" (" attr(href) ")";}abbr[title]:after{content:" (" attr(title) ")";}.ir a:after,a[href^=javascript:]:after,a[href^=#]:after{content:"";}pre,blockquote{border:1px solid #999;page-break-inside:avoid;}thead{display:table-header-group;}tr,img{page-break-inside:avoid;}img{max-width:100%!important;}@page{margin:.5cm;}p,h2,h3{orphans:3;widows:3;}h2,h3{page-break-after:avoid;}}
+
+html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, time, mark, audio, video {margin: 0;padding: 0;border: 0;outline: 0;font-size: 100%;vertical-align: baseline;background: transparent;}
+
+body {
+	font-family:Helvetica,'RDR_Helvetica',Arial,sans-serif;
+}
+
+li {}
+
+header[role="global"] {
+	width: 100%;
+	height: 75px;
+	background: #3c3c3c;
+	color: #dcdcdc;
+	text-align: center;
+	font-family:'RDR_HelveticaBold','HelveticaBold',Helvetica,Arial,sans-serif;
+}
+header[role="global"] .content {position:relative; max-width:1140px; margin:0 auto;}
+header[role="global"] a.logo    { display:inline-block; position: relative; z-index:2;}
+header[role="global"] h1        { 
+text-indent: 100%;
+white-space: nowrap;
+overflow: hidden;
+	background:url(../images/header_logo.png) top center no-repeat;width:177px; height:75px; padding:0; margin:0; }
+header[role="global"] .who_for	{ position:absolute; top:33px; right:5px; }
+header[role="global"] .who_for	a { font-size: 12px; color:#dcdcdc; text-decoration: none; margin-left:20px;}
+
+header[role="global"] #user_and_search	{ position:absolute; top:14px; left:0px; text-align: left; width:auto; z-index:1;}
+
+header[role="global"] #user       { display:block;float:left; margin:5px 10px 2px;}
+header[role="global"] #user #logged-in      { visibility:hidden; height:37px; font-size:11px;}
+header[role="global"] #user #logged-out     { height:37px;}
+header[role="global"] #user #logged-in img  { float:left; max-width:45px; max-height:42px; xborder:1px solid #424242; }
+header[role="global"] #user strong          { }
+header[role="global"] #user a               { color:#999; font-size:12px; text-decoration: none; }
+header[role="global"] #user #logged-out     { margin-top:9px; text-align:right; }
+header[role="global"] #user #logged-out > i { display: none; }
+header[role="global"] #user #logged-out #login-options  { display:none; background:#fff; margin-top:7px; overflow:auto; padding:5px; border:1px solid #aaa; position: absolute;}
+header[role="global"] #user #logged-out:hover #login-options  { display:block; }
+header[role="global"] #user #logged-in > i { display: none; }
+header[role="global"] #user #logged-in #log-out-link { top:48px; left:10px; padding:10px; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif;text-align:left; font-size:14px; display:none; position:absolute; background:#666; max-width:300px; box-shadow: 0px 0px 3px #333; }
+header[role="global"] #user #logged-in #log-out-link a  { color:#65b4e7; display:block; font-size:14px; text-decoration: none; margin-bottom: 2px;}
+header[role="global"] #user #logged-in #log-out-link label  { font-size:14px; display: block;}
+header[role="global"] #user #logged-in #log-out-link h5  { color:#ccc; font-size:10px;text-transform:uppercase;border-top:1px solid #aaa;margin:5px 0;padding-top:5px; }
+header[role="global"] #user #logged-in #log-out-link .who_for { display:none; }
+header[role="global"] #user #logged-in:hover #log-out-link  { display:block; }
+
+header[role="global"] #site_search      									{ margin:13px 10px 0px 10px; display:block;float:left; }
+header[role="global"] #site_search i     									{ font-size:22px; display:inline-block; }
+header[role="global"] #site_search.rdr_hover i.fa-search,
+header[role="global"] #site_search:hover i.fa-search 			{ color:#65b4e7; }
+header[role="global"] #site_search form     							{ font-size:22px; display: inline-block; }
+header[role="global"] #site_search input  								{ background:transparent;color:#ccc;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;font-size:14px;}
+header[role="global"] #site_search.rdr_hover input,
+header[role="global"] #site_search:hover input  					{ background:#555;}
+header[role="global"] #site_search button 								{ display:none; background: none; border: none; color: #dcdcdc; margin-left: -35px; margin-top: 2px;}
+header[role="global"] #site_search.rdr_hover button,
+header[role="global"] #site_search:hover button 					{ display:inline-block;}
+
+section[role="group links"]             { }
+ul.link-list              { margin-bottom:0; }
+ul.link-list li           { list-style-type:none; font-size:12px; }
+ul.link-list li a         { }
+ul.link-list li.active a  { }
+
+.group_settings_menu    { display:block; border-top:1px solid #aaa;margin:5px 0;padding-top:5px;  }
+.group_settings_menu:hover section[role="group panel header"] { display:block; }
+.group_settings_menu h3   { font-weight:normal; font-size:12px; }
+
+
+section[role="subheader"] {
+	width: 100%;
+	height: 50px;
+	background: #65b4e7;
+	color: #fff;
+	text-align: center;
+	font-family:'RDR_HelveticaBold','HelveticaBold',Helvetica,Arial,sans-serif;
+}
+header[role="global"] .content {position:relative; max-width:1140px; margin:0 auto;}
+
+
+
+@media (max-width: 480px) {}
+@media (max-width: 767px) {
+	header[role="global"] { text-align:right; height:50px; }
+	header[role="global"] h1 { margin-top:0px; margin-right:-20px; background-size:125px 53px; }
+	header[role="global"] a { margin-bottom:10px; }
+	header[role="global"] #user {margin-top:0;}
+	header[role="global"] .who_for {display: none;}
+	header[role="global"] #site_search { margin-top:-1px; }
+	header[role="global"] #site_search i     									{ font-size:16px; }
+	header[role="global"] #user #logged-in > i { display: block; font-size:21px; margin: 5px 0px 0px 5px; }
+	header[role="global"] #user #logged-in > a { display: none; }
+	header[role="global"] #user #logged-out > a { display: none; }
+	header[role="global"] #user #logged-out > i { display: block; font-size:27px; margin: 5px 0px 0px 5px; }
+	header[role="global"] #user #logged-in #log-out-link	{ top:30px; }
+	header[role="global"] #user #logged-in #log-out-link .who_for { display:block; position:static; margin-bottom:5px; padding-bottom:5px; border-bottom: 1px solid #aaa;}
+	header[role="global"] #user #logged-in #log-out-link .who_for a { color:#dcdcdc; margin:0 20px 0 0; display:inline-block; font-family:'RDR_HelveticaBold','HelveticaBold',Helvetica,Arial,sans-serif; }
+
+	section[role="subheader"] { height:35px; }
+}
+@media (min-width: 481px) and (max-width: 800px) {}
+@media (min-width: 801px) {}
+
