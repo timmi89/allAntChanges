@@ -54,6 +54,7 @@ img {
 	border-width: 0;
 	vertical-align: middle;
 	-ms-interpolation-mode: bicubic;
+	height:auto;
 }
 a {
 	text-decoration: none;
