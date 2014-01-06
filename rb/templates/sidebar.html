@@ -8,16 +8,36 @@
   </h2>
 </div>
 {% endif %}
+
+
 {% if group %}
-<div id="avatar">
-  <div class="name_and_info">
-    <h2><div>{{ group.name }}</div></h2>
-    <div id="follow_info">
-      <a id="follower_count" href="#follower_list" class="fancybox"></a>
-      <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+<section role="subheader">
+  <div class="content">
+    <div class="right">
+      <div id="follow_info" class="item">
+        <a id="follower_count" href="#follower_list" class="fancybox"></a>
+        <a id="follow_action" class="circle_button" href="javascript:void(0);"><i class="fa fa-plus"></i></a>
+      </div>
+    </div>
+    <div class="left">
+      <div class="item">
+        {{ group.name }}
+      </div>
     </div>
   </div>
+</section>
+<div class="masthead group profile background">
+    <div class="message content">
+      <div class="subtitle"><h2>Reactions at</h2></div>
+      <div><h1>{{ group.name }}</h1></div>
+    </div>
 </div>
+
+<!-- <div id="avatar">
+  <div class="name_and_info">
+
+  </div>
+</div> -->
 <script>
 $(document).ready( function() {
   RB.follow.followers({{ group.id }},'grp');
@@ -42,6 +62,15 @@ $(document).ready( function() {
     <a href="/react/">&rarr; Get the Reaction Button</a>
   </div> -->
 <!-- </div> -->
+
+<div class="masthead main background">
+    <div class="message content">
+        <h1>React to anything on the web.</h1>
+        <h2>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h2>
+    </div>
+</div>
+
+
 {% endif %}
 
 {% if profile_user %}

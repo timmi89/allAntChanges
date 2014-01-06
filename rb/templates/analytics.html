@@ -3,10 +3,12 @@
 
 
 {% block extendedHead %}
+<script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script>
 <script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script>
 <script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2">
 <style>
     section[role="datepicker"] button {
         position: relative;
@@ -43,7 +45,7 @@
                 </div>
             </div>
         </div>
-        <div class="reactions" style="width:960px;overflow:hidden;">
+        <div class="reactions" style="width:960px;overflow:hidden;margin:0 auto;">
             <h1 style="margin:40px 0 0;text-align:center;width:960x;">Reactions</h1>
             <div id="tag_cloud_container">
                 <section role="tag cloud grid">

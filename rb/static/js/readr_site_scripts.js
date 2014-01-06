@@ -239,12 +239,12 @@ RB = {
                     if ( data.type == "brd") {
                         var follower_count = parseInt($('#board_follower_count').text() ) + 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
-                        $('#board_follow_button').unbind().text('Stop following this board').click( function() {
+                        $('#board_follow_button').unbind().html('<i class="fa fa-minus"></i>').click( function() {
                             RB.follow.remove(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
-                        $('#follow_action').text( 'Stop following this '+person_or_group ).unbind().click( function() {
+                        $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
                             var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                             RB.follow.remove( id, type );
                         });
@@ -274,12 +274,12 @@ RB = {
                     if ( data.type == "brd") {
                         var follower_count = parseInt($('#board_follower_count').text() ) - 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
-                        $('#board_follow_button').unbind().text('Follow this board').click( function() {
+                        $('#board_follow_button').unbind().html('<i class="fa fa-plus"></i>').click( function() {
                             RB.follow.add(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
-                        $('#follow_action').text( 'Follow this '+person_or_group ).unbind().click( function() {
+                        $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
                             var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                             RB.follow.add( id, type );
                         });
@@ -388,11 +388,11 @@ RB = {
                         var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
                             person_or_group = (data.entity_type=="usr") ? "person":"group";
                         if ( response.data.user_is_follower ) {
-                            $('#follow_action').text( 'Stop following this ' + person_or_group ).unbind().click( function() {
+                            $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
                                 RB.follow.remove( id, type );
                             });
                         } else {
-                            $('#follow_action').text( 'Follow this ' + person_or_group ).unbind().click( function() {
+                            $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
                                 RB.follow.add( id, type );
                             });
                         }

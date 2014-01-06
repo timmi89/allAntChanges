@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block extendedHead %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2">
+{% endblock %}
 
 {% block title %}{{ cookie_user }} Management{%endblock%}
 

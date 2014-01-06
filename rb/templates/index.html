@@ -7,16 +7,7 @@
 {%endblock%}
 
 {% block mastheadContent %}
-<div class="masthead main background">
-    <div class="message content">
-        <h2>React to anything on the web.</h2>
-        <h3>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h3>
-    </div>
-</div>
-<div class="masthead secondary">
-    <!-- <h4><i class="icon-dashboard"></i> Publishers: &nbsp;ReadrBoard will increase your KPIs up to 15%. &nbsp;And it’s free.  &nbsp;<a href="/learn/">Learn more</a>.</h4> -->
-    <h4><i class="icon-dashboard"></i> Publishers: &nbsp;Install ReadrBoard to get more readers engaging than ever before. &nbsp;For free.  &nbsp;<a href="/learn/">Learn more</a>.</h4>
-</div>
+{% include "sidebar.html" %}
 {% endblock %}
 
 {% block wideContent %}
@@ -26,7 +17,6 @@
 {% endif %}
 {% endif %}
     
-{% include "sidebar.html" %}
 
 {% endblock wideContent %}
 
@@ -75,11 +65,18 @@
 (function($){
     $(function(){
 
-        $('#cards').isotope({
-          itemSelector:'.cardWrap',
-          masonry: {
-            columnWidth: 530
-          }
+        // $('#cards').isotope({
+        //   itemSelector:'.cardWrap',
+        //   masonry: {
+        //     columnWidth: 530
+        //   }
+        // });
+
+        var container = document.querySelector('#cards');
+        var msnry = new Masonry( container, {
+          // options
+          // columnWidth: 300,
+          itemSelector: '.card'
         });
 
         {% if board %}
