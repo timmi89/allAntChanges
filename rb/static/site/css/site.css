@@ -222,7 +222,7 @@ font-family: 'moreicons';
     content: "\e011";
 }
 
-.stats { background:url(/static/site/images/stats_bg.jpg) center center no-repeat; padding:55px 0 0; color:#fff; height:262px; background-color:##50A0DF;/*4997D4*/}
+.stats { background:url(../../site/images/stats_bg.jpg) center center no-repeat; padding:55px 0 0; color:#fff; height:262px; background-color:##50A0DF;/*4997D4*/}
 .stats p {margin-bottom: 0;}
 .stats .column { display: inline-block;  }
 .stats .column.one { text-align: center; }
@@ -831,7 +831,12 @@ div.breadcrumb {
 	}
 
 }
-@media (min-width: 481px) and (max-width: 800px) {}
+@media (min-width: 481px) and (max-width: 800px) {
+	.card {
+		width:40%;
+		margin-right:4%;
+	}
+}
 @media (min-width: 768px) {
 	.readrboard_is_better { width:1084px; }
 	.readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
