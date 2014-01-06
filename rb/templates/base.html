@@ -213,8 +213,12 @@
 
     {% endblock header %}
     
-    <section role="content" class="clearfix">
-      <section role="wide section">
+    <section role="masthead">
+        {% block mastheadContent %}
+        {% endblock %}
+    </section>
+    <section role="page content" class="clearfix content">
+      <section class="grid-whole padded">
         {% block wideContent %}
         {% endblock %}
       </section>
@@ -240,25 +244,23 @@
 
     
     {% block footer %}
-    <footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
+    <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
         <div class="footerLinks">
             <ul class="footerLinksLeft">
                 <li>
-                    <a href="/"><strong>Home</strong></a>
+                    <a href="/">Home</a>
                 </li>
-                <!-- 
                 <li>
-                    <a href="/learn/"><strong>About ReadrBoard</strong></a>
+                    <a href="/learn/">About ReadrBoard</a>
                 </li> 
-                -->
                 <li>
-                    <a href="/stream/"><strong>Live Stream</strong></a>
+                    <a href="/stream/">Live Stream</a>
                 </li>
                 <li>
-                    <a href="/privacy/"><strong>Privacy</strong></a>
+                    <a href="/privacy/">Privacy</a>
                 </li>
                 <li>
-                    <a href="/terms/"><strong>Terms</strong></a>
+                    <a href="/terms/">Terms</a>
                 </li>
                 <li>
                     <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>

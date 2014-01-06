@@ -6,12 +6,9 @@
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
-{% block wideContent %}
-{% if not profile_user and not group and not board and not page %}
-{% if not query_string and not singleton %}
-
-<div class="masthead main">
-    <div class="message">
+{% block mastheadContent %}
+<div class="masthead main background">
+    <div class="message content">
         <h2>React to anything on the web.</h2>
         <h3>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h3>
     </div>
@@ -20,6 +17,12 @@
     <!-- <h4><i class="icon-dashboard"></i> Publishers: &nbsp;ReadrBoard will increase your KPIs up to 15%. &nbsp;And it’s free.  &nbsp;<a href="/learn/">Learn more</a>.</h4> -->
     <h4><i class="icon-dashboard"></i> Publishers: &nbsp;Install ReadrBoard to get more readers engaging than ever before. &nbsp;For free.  &nbsp;<a href="/learn/">Learn more</a>.</h4>
 </div>
+{% endblock %}
+
+{% block wideContent %}
+{% if not profile_user and not group and not board and not page %}
+{% if not query_string and not singleton %}
+
 {% endif %}
 {% endif %}
     
