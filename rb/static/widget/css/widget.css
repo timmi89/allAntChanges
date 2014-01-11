@@ -1670,6 +1670,7 @@ div.rdr_inline_video div.rdr_indicator.rdr_indicator_for_media {
 div.rdr_indicator_for_text{
     display: inline;
     position: relative;
+    vertical-align: top;
 }
 div.rdr_indicator_for_text * {
     display:inline;
@@ -1694,9 +1695,6 @@ div.rdr_helper_rindow div.rdr_header h1{
     font-size: 13px;
 }
 
-div.rdr_indicator_for_text{
-    vertical-align: text-top;
-}
 .rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
   opacity:1.0 !important;
   -moz-opacity:1.0 !important;
