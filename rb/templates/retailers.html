@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}ReadrBoard{%endblock%}
+{% block extendedHead %}
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
+<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
+{%endblock%}
+
+{% block mastheadContent %}
+{% endblock %}
+
+{% block wideContent %}
+    <div class="retailers_page">
+        <div class="masthead no-rdr">
+            <div class="">
+                <h1>Increase engagement instantly</h1>
+            </div>
+            <div class="grid-half s-grid-whole padded">
+                <p>Retailers know that engaging with visitors<br/>turns them into customers.</p>
+                <p>ReadrBoard is the easiest, friendliest way to engage people visiting your online store.</p>
+                <p>Capture insights, contact information, and customers.</p>
+            </div>
+            <div class="grid-half s-grid-whole padded">
+                <div class="average_increase">
+                    <label>Average Increase</label>
+                    <i class="rdr_icon-circle-arrow-up"></i>
+                    <h2>12%</h2>
+                </div>
+            </div>
+            <div class="grid-whole s-grid-whole padded">
+                <h2>See how visitors can engage your site with ReadrBoard:</h2>
+                <iframe src="//player.vimeo.com/video/83894920" width="1140" height="642" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+    $('.get_readrboard').click( function() {
+        $('.get_readrboard_form').toggle(200);
+    });
+
+    $('.readrboard_is_better').waypoint('sticky', { offset: 75 });
+    </script>
+
+
+{% endblock %}
+
+{% block complementarySection %}
+{% endblock %}
+
+
+
+{% block pageJS %}
+<script>
+if (window.location.href.indexOf('publishers') != -1 ) {
+    $('#readers').hide();
+}
+</script>
+<script src="/static/engage.js" defer></script>
+{% endblock %}
+<!-- widget for slideshow -->

@@ -96,6 +96,7 @@ urlpatterns = patterns('',
   url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^publishers/$','rb.views.learn'),
+  url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
   url(r'^learn/$','rb.views.learn'),
   
