@@ -39,7 +39,7 @@ body {
 	padding-top:75px;
 }
 body.has_subheader {
-	padding-top:125px;
+	padding-top:120px;
 }
 
 li {}
@@ -147,6 +147,10 @@ section[role="subheader"] .content {position:relative; max-width:1140px; margin:
 section[role="subheader"] .content .right {
 	float:right;
 }
+section[role="subheader"] .content .left {
+	margin-left: 10px;
+}
+
 section[role="subheader"] .content .item {
 	display: inline-block;
 	height: 34px;
@@ -158,6 +162,8 @@ section[role="subheader"] .content .item {
 section[role="subheader"] .content .item a {
 	color:#fff;
 }
+
+section[role="subheader"] i.fa.fa-chevron-right { margin:0 10px; }
 
 /****** learn ******/
 .learn_page .masthead {letter-spacing:-1px; overflow:auto; padding:0;}
@@ -281,12 +287,44 @@ p { font-size:18px; }
 }*/
 .retailers_page .masthead { padding-top:0; text-align: center;}
 .retailers_page .masthead h1 { font-family:'RDR_HelveticaBold'; font-size:48px; margin:40px 0; background: transparent; color:#3b3b3b;}
-.retailers_page .masthead h2 { font-family:'RDR_HelveticaBold'; font-size:28px; margin:60px 0 20px; background: transparent; color:#3b3b3b; letter-spacing: 0px;}
-.retailers_page .masthead p { text-align: left; font-size: 22px; line-height: 28px;}
+.retailers_page .masthead p { text-align: left; font-size: 22px; line-height: 28px; color:#555;}
+.retailers_page .masthead p strong { color:#65b4e7; font-weight:normal;}
 .retailers_page .masthead .average_increase { box-sizing:border-box; background:#9dd55e; box-sizing: border-box; background: url(../../site/images/retailers_engagement_increase_bg.png) top right #9dd55e; height: 220px; margin-top: -10px; text-align: center;}
-.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica','RDR_Helvetica'; font-size:36px; font-weight:100; padding-top:10px; display: block;}
+.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica','RDR_Helvetica'; font-size:24px; font-weight:100; display: block;}
 .retailers_page .masthead .average_increase i { color:#446024; font-size:85px; margin:0; display:inline-block;}
-.retailers_page .masthead .average_increase h2 { color:#fff; font-size:125px; margin:0; padding:0; display:inline-block;}
+.retailers_page .masthead .average_increase h2 { font-family:'RDR_HelveticaBold'; font-weight:normal; color:#fff; font-size:125px; margin:0; padding:0; display:inline-block; background: transparent;}
+.retailers_page .new-section { margin-top:60px; padding-top:60px; border-top:1px solid #ccc;}
+/*.retailers_page .new-section.demo iframe { width:1140px; height:642px;}*/
+.retailers_page .new-section h2 { font-family:'RDR_HelveticaBold'; font-size:28px; margin:0px 0 40px; background: transparent; color:#3b3b3b; letter-spacing: 0px; text-align: center; font-weight:normal;}
+.retailers_page .new-section .grid-third h2,
+.retailers_page .new-section .grid-two-thirds h2,
+.retailers_page .new-section .grid-half h2 { text-align: left; }
+.retailers_page .new-section.q-and-a { text-align: right; }
+.retailers_page .new-section.q-and-a h2 { margin-bottom:20px; }
+.retailers_page .new-section.q-and-a h3 { font-family: 'Hoefler Text',Times,serif; font-weight: normal; font-size: 24px; color: #aaa; margin: 0; padding: 0px 11px; background: #fff; display: inline-block; text-align: center; font-style: italic; letter-spacing: 1px; }
+.retailers_page .new-section.q-and-a hr { margin:-19px 0px 20px; }
+.retailers_page .new-section.q-and-a .case_study { text-align: center; padding-top:40px; }
+.retailers_page .new-section.q-and-a p { font-size: 16px; }
+.retailers_page .new-section.other-features {}
+.retailers_page .new-section.other-features .feature { text-align: center; }
+.retailers_page .new-section.other-features .feature i { font-size:64px; color:#333; margin-bottom:20px; }
+.retailers_page .new-section.other-features .feature h5 { font-size:24px; color:#777; margin:0; padding:0; }
+.retailers_page .new-section.other-features .feature p { font-size:18px; color:#777; }
+
+.videoWrapper {
+	position: relative;
+	padding-bottom: 56.25%; /* 16:9 */
+	padding-top: 0px;
+	height: 0;
+}
+.videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
 /*.retailers_page .masthead .average_increase div { display:inline-block; float:left; }*/
 /****** end retailers ******/
 
@@ -789,7 +827,9 @@ div.breadcrumb {
 
 
 /* media queries for responsiveness */
-@media (max-width: 480px) {}
+@media (max-width: 480px) {
+	/*.retailers_page .new-section.demo iframe { width:300px; height:169px;}*/
+}
 @media (max-width: 767px) {
 	body {padding-top:50px;}
 	header[role="global"] { text-align:right; height:50px; }
@@ -808,7 +848,13 @@ div.breadcrumb {
 	header[role="global"] #user #logged-in #log-out-link .who_for { display:block; position:static; margin-bottom:5px; padding-bottom:5px; border-bottom: 1px solid #aaa;}
 	header[role="global"] #user #logged-in #log-out-link .who_for a { color:#dcdcdc; margin:0 20px 0 0; display:inline-block; font-family:'RDR_HelveticaBold','HelveticaBold',Helvetica,Arial,sans-serif; }
 
-	section[role="subheader"] { height:35px; }
+	section[role="subheader"] { height:35px; top:50px; }
+	section[role="subheader"] .content .item { font-size:12px; padding-top:10px; }
+	body.has_subheader { padding-top:95px; }
+
+	.retailers_page .masthead .average_increase i { font-size:65px; }
+	.retailers_page .masthead .average_increase h2 { font-size:95px; }
+
 
 	footer[role="global"] .footerLinks > ul li { margin-bottom:20px;}
 

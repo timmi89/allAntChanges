@@ -65,7 +65,7 @@
 
 </head>
 
-<body class="{% block bodyClass %}{% endblock %} {% if profile_user or group or board or page %}has_subheader{%endif%} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
+<body class="{% block bodyClass %}{% endblock %} {% if hasSubheader %}has_subheader{%endif%} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
     <div id="fb-root"></div>
     <script>
 
