@@ -89,17 +89,15 @@ $(document).ready( function() {
     <div class="grid-third center">
       <div id="which_content" class="item">
           {% if cookie_user and profile_user.id == cookie_user.id %}
-              {% if on_follow_page %}
-                  <a href="/user/{{profile_user.id}}">My Activity</a>
-              {% else %}
-                  <strong>My Activity</strong>
-              {% endif %} 
-
-              {% if not on_follow_page %}
-                  <a href="/follows/{{profile_user.id}}">Activity that I Follow</a>
-              {% else %}
-                  <strong>Activity that I Follow</strong>
-              {% endif %}
+            <ul>
+                {% if not on_follow_page %}
+                <li>My Activity <i class="fa fa-chevron-down"></i></li>
+                <li><a href="/follows/{{profile_user.id}}">Activity that I Follow</a></li>
+                {% else %}
+                <li>Activity that I Follow</li>
+                <li><a href="/user/{{profile_user.id}}">My Activity</a>
+                {% endif %} 
+            </ul>
           {% else %}
             <ul>
               {% if not on_follow_page %}
@@ -109,12 +107,6 @@ $(document).ready( function() {
               <li>Activity that {{profile_user.social_user.full_name}} follows <i class="fa fa-chevron-down"></i></li>
               <li><a href="/user/{{profile_user.id}}">Activity for {{profile_user.social_user.full_name}}</a>
               {% endif %} 
-
-              <!-- {% if not on_follow_page %} -->
-                  <!-- <a href="/follows/{{profile_user.id}}">Activity that {{profile_user.social_user.full_name}} follows</a> -->
-              <!-- {% else %} -->
-                  <!-- <strong>Activity that {{profile_user.social_user.full_name}} follows</strong> -->
-              <!-- {% endif %} -->
             </ul>
           {% endif %} 
         </div>
