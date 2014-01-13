@@ -17,6 +17,16 @@ $('#cards').addClass('user_profile');
 {% endif %}
 </script>
 
+{% if query_string %}
+<div id="searchFor">
+  <h2>
+    <em>Search for <br/></em>
+    <div><strong>{{ query_string }}</strong></div>
+  </h2>
+</div>
+{% endif %}
+
+
 <div class="cardsWrap grid-whole">
     <div id="cards">
     {% regroup current_page.object_list by page as pi %}
@@ -56,7 +66,7 @@ $('#cards').addClass('user_profile');
                     {% if cookie_user %}
                     <div class="buttons">
                       {% if interaction.user.id == cookie_user.id %}
-                        <a rel="tooltip" title="Undo this reaction" class="tag_remove circle_button" href="javascript:void(0);"><i class="fa fa-plus"></i></a>
+                        <a rel="tooltip" title="Undo this reaction" class="tag_remove circle_button" href="javascript:void(0);"><i class="fa fa-minus"></i></a>
                       {% endif %}
                       {% if interaction.user.id != cookie_user.id %}
                         <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too circle_button" href="javascript:void(0);">+1</a>

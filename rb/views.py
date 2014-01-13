@@ -268,6 +268,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     # Interactions for user profile
     if user_id:
         interactions = user_helper(user_id, interactions, context)
+        context['hasSubheader'] = True
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
@@ -277,6 +278,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     # Interactions for group profile
     if short_name:
         interactions = group_helper(short_name, interactions, context)
+        context['hasSubheader'] = True
         
     if interaction_id:
         interactions = singleton_helper(interaction_id, interactions, context)
@@ -907,6 +909,8 @@ def follow_interactions(request, user_id):
         'timestamp': timestamp,
         'BASE_URL': BASE_URL
     }
+
+    context['hasSubheader'] = True
 
     if cookie_user:
         context['cookie_user'] = cookie_user

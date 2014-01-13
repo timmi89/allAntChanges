@@ -312,20 +312,21 @@ RB = {
                 success: function(response) {
                     if ( data.types.length == 1 && $.inArray('brd', data.types) != -1 ) {
                         
+                        // 1/13/2014:  I'm disabling Boards for now!  -- pb.
                         // abstract this
-                        var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
-                        $.each( response.data.paginated_follows, function(idx, followed_item) {
-                            var board_id = followed_item.brd.id;
-                            $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
-                        });
-                        var boards_width = $('#content').width() + $('#pages').width();
-                        $boards.width( boards_width );
-                        if ( boards_width < 570 ) {
-                            $boards.find('ul').width(285);
-                        } else if ( boards_width < 855 ) {
-                            $boards.find('ul').width(570);
-                        }
-                        $('#cards').before( $boards );
+                        // var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
+                        // $.each( response.data.paginated_follows, function(idx, followed_item) {
+                        //     var board_id = followed_item.brd.id;
+                        //     $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
+                        // });
+                        // var boards_width = $('#content').width() + $('#pages').width();
+                        // $boards.width( boards_width );
+                        // if ( boards_width < 570 ) {
+                        //     $boards.find('ul').width(285);
+                        // } else if ( boards_width < 855 ) {
+                        //     $boards.find('ul').width(570);
+                        // }
+                        // $('#cards').before( $boards );
 
                     } else {
                         
