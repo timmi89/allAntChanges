@@ -155,6 +155,29 @@ window.readrboard_extend = {
 
 
   <body class="product" id="logan-buffet">
+    <style>
+    body { padding-top:40px; }
+    .rdr-wrap {
+      position:fixed;
+      height:40px;
+      background:#65b4e7;
+      color:#fff;
+      text-align:center;
+      box-sizing:border-box;
+      padding-top:15px;
+      font-family:Helvetica,'RDR_Helvetica',Arial,sans-serif;
+      width:100%;
+      z-index:1000;
+      top:0;
+    }
+    .rdr-wrap a {
+      color:#fff;
+      text-decoration: underline;
+    }
+    </style>
+    <header class="rdr-wrap">
+      This is a demo page of ReadrBoard for Retailers, using the excellent <a href="http://providence-birch.myshopify.com/" target="_blank">Birch Theme</a> at <a href="www.shopify.com" target="_blank">Shopify</a>. &nbsp; <a href="/retailers">Return to ReadrBoard</a>
+    </header>
     <div id="app-wrap">
       <div id="header-actions">
   <div class="row padded-h">
@@ -164,7 +187,7 @@ window.readrboard_extend = {
         <div class="cell text-right">
           <span class="cart">
   <span class="items">
-    <a href="/cart">
+    <a href="#">
        <i class="icon-shopping-cart"></i> 0 items
        <span class="order-total">
         - $0.00
@@ -176,12 +199,12 @@ window.readrboard_extend = {
           <span class="session">
 
   
-  <strong><a href="/account/login" id="customer_login_link">Sign-in</a></strong>
+  <strong><a href="#" id="customer_login_link">Sign-in</a></strong>
   
   <span>or</span>
 
 </span>
-          <strong><a class="checkout" href="/cart">Checkout</a></strong>
+          <strong><a class="checkout" href="#">Checkout</a></strong>
         </div>
       </div>
     </div>
@@ -213,7 +236,7 @@ window.readrboard_extend = {
           <div class="cell text-left">
             <div id="brand">
   
-    <h1 id="brand-primary-text"><a href="http://providence-birch.myshopify.com" title="">Birch<span>.</span></a></h1>
+    <h1 id="brand-primary-text"><a href="http://providence-birch.myshopify.com" target="_blank">Birch<span>.</span></a></h1>
   
 
   
@@ -243,7 +266,7 @@ window.readrboard_extend = {
 
           
             <li class="">
-              <a href="/">Home</a>
+              <a href="#">Home</a>
             </li>
             
             <li class="divider">/</li>
@@ -259,7 +282,7 @@ window.readrboard_extend = {
 
           
             <li class="">
-              <a href="/collections/all">Catalog</a>
+              <a href="#">Catalog</a>
             </li>
             
             <li class="divider">/</li>
@@ -275,7 +298,7 @@ window.readrboard_extend = {
 
           
             <li class="">
-              <a href="/blogs/news">Blog</a>
+              <a href="#">Blog</a>
             </li>
             
             <li class="divider">/</li>
@@ -291,7 +314,7 @@ window.readrboard_extend = {
 
           
             <li class="">
-              <a href="/pages/about-us">About Us</a>
+              <a href="#">About Us</a>
             </li>
             
             <li class="divider">/</li>
@@ -306,107 +329,7 @@ window.readrboard_extend = {
           
 
           
-            <li class="has-dropdown">
-              <a href="#">Styles</a>
-              <ul class="dropdown">
-                
-
-                  
-
-                  
-                  <li>
-                    <a href="http://providence-seaside.myshopify.com/">Seaside</a>
-                  </li>
-                  
-
-                
-
-                  
-
-                  
-                  <li>
-                    <a href="http://providence-birch.myshopify.com/">Birch</a>
-                  </li>
-                  
-
-                
-              </ul>
-            </li>
             
-            <li class="divider">/</li>
-            
-          
-
-        
-
-          
-          
-
-          
-
-          
-            <li class="has-dropdown">
-              <a href="#">Theme</a>
-              <ul class="dropdown">
-                
-
-                  
-
-                  
-                  <li>
-                    <a href="http://empy.re/buy/providence-shopify">Purchase Providence</a>
-                  </li>
-                  
-
-                
-
-                  
-
-                  
-                  <li class="has-dropdown">
-                    <a href="/">Page Templates</a>
-                      <ul class="dropdown">
-                        
-                        <li><a href="/pages/page-template-full-width">Full Width</a></li>
-                        
-                        <li><a href="/pages/page-template-sidebar-left">Sidebar Left</a></li>
-                        
-                        <li><a href="/pages/page-template-sidebar-right">Sidebar Right</a></li>
-                        
-                        <li><a href="/pages/page-template-contact">Contact</a></li>
-                        
-                      </ul>
-                  </li>
-                  
-                  <li class="divider"></li>
-                  
-                  
-
-                
-
-                  
-
-                  
-                  <li>
-                    <a href="http://empy.re/documentation/shopify/providence/">Documentation</a>
-                  </li>
-                  
-
-                
-
-                  
-
-                  
-                  <li>
-                    <a href="http://support.empy.re">Support</a>
-                  </li>
-                  
-
-                
-              </ul>
-            </li>
-            
-          
 
         
       </ul>
@@ -443,7 +366,7 @@ window.readrboard_extend = {
 
     <ul>
 
-      <li class=""><a href="/cart">Checkout - 0 items for $0.00</a></li>
+      <li class=""><a href="#">Checkout - 0 items for $0.00</a></li>
 
       
 
@@ -455,7 +378,7 @@ window.readrboard_extend = {
 
         
             <li class="">
-              <a href="/">Home</a>
+              <a href="#">Home</a>
             </li>
             
           
@@ -470,7 +393,7 @@ window.readrboard_extend = {
 
         
             <li class="">
-              <a href="/collections/all">Catalog</a>
+              <a href="#">Catalog</a>
             </li>
             
           
@@ -485,7 +408,7 @@ window.readrboard_extend = {
 
         
             <li class="">
-              <a href="/blogs/news">Blog</a>
+              <a href="#">Blog</a>
             </li>
             
           
@@ -500,7 +423,7 @@ window.readrboard_extend = {
 
         
             <li class="">
-              <a href="/pages/about-us">About Us</a>
+              <a href="#">About Us</a>
             </li>
             
           
@@ -514,101 +437,10 @@ window.readrboard_extend = {
         
 
         
-            <li class="has-dropdown">
-              <a href="#">Styles</a>
-              <ul class="dropdown">
-                
-
-                  
-
-                  
-                    <li>
-                      <a href="http://providence-seaside.myshopify.com/">Seaside</a>
-                    </li>
-                  
-                
-
-                  
-
-                  
-                    <li>
-                      <a href="http://providence-birch.myshopify.com/">Birch</a>
-                    </li>
-                  
-                
-              </ul>
-            </li>
-          
-
-        
-
-        
-        
-
-
-        
-
-        
-            <li class="has-dropdown">
-              <a href="#">Theme</a>
-              <ul class="dropdown">
-                
-
-                  
-
-                  
-                    <li>
-                      <a href="http://empy.re/buy/providence-shopify">Purchase Providence</a>
-                    </li>
-                  
-                
-
-                  
-
-                  
-                  <li class="has-dropdown">
-                    <a href="/">Page Templates</a>
-                      <ul class="dropdown">
-                        
-                        <li><a href="/pages/page-template-full-width">Full Width</a></li>
-                        
-                        <li><a href="/pages/page-template-sidebar-left">Sidebar Left</a></li>
-                        
-                        <li><a href="/pages/page-template-sidebar-right">Sidebar Right</a></li>
-                        
-                        <li><a href="/pages/page-template-contact">Contact</a></li>
-                        
-                      </ul>
-                  </li>
-                  
-                
-
-                  
-
-                  
-                    <li>
-                      <a href="http://empy.re/documentation/shopify/providence/">Documentation</a>
-                    </li>
-                  
-                
-
-                  
-
-                  
-                    <li>
-                      <a href="http://support.empy.re">Support</a>
-                    </li>
-                  
-                
-              </ul>
-            </li>
-          
-
-        
-
+            
       
         
-          <li class=""><a href="/account">My Account</a></li>
+          <li class=""><a href="#">My Account</a></li>
         
       
 
@@ -649,13 +481,13 @@ window.readrboard_extend = {
                 <ul class='breadcrumbs'>
 
   
-    <li><a href="http://providence-birch.myshopify.com" title="">Home</a></li>
+    <li><a href="#" title="">Home</a></li>
   
 
   <!-- Product -->
   
     
-      <li><a href="/collections/types?q=Furniture" title="Furniture">Furniture</a></li>
+      <li><a href="#" title="Furniture">Furniture</a></li>
     
 
   <li><span>Logan Buffet</span></li>
@@ -818,7 +650,7 @@ window.readrboard_extend = {
     
 
     <div class="form-actions variant-selects-true">
-      <button type="submit" name="add" class="button large add-to-cart" onclick="addItem('add-to-cart');return false;">Add to Cart</button>
+      <button type="submit" name="add" class="button large add-to-cart" onclick="return false;">Add to Cart</button>
     </div>
 
   </form>
@@ -1407,17 +1239,12 @@ window.readrboard_extend = {
 
     <ul class="link-list">
 
-  <li><a href="/" title="">Home</a></li>
-
-  <li><a href="/collections/all" title="">Catalog</a></li>
-
-  <li><a href="/blogs/news" title="">Blog</a></li>
-
-  <li><a href="/pages/about-us" title="">About Us</a></li>
-
-  <li><a href="/pages/html-styles" title="">Styles</a></li>
-
-  <li><a href="http://themeforest.net/item/providence-shopify-theme/2846835" title="">Theme</a></li>
+  <li><a href="#">Home</a></li>
+  <li><a href="#">Catalog</a></li>
+  <li><a href="#">Blog</a></li>
+  <li><a href="#">About Us</a></li>
+  <li><a href="#">Styles</a></li>
+  <li><a href="#">Theme</a></li>
 
 </ul>
     </div>
@@ -1458,7 +1285,6 @@ window.readrboard_extend = {
     <form>
       <select>
         <option>Jump to...</option>
-
         <option value="/cart">Checkout - 0 items for $0.00</option>
 
         
@@ -1547,7 +1373,7 @@ window.readrboard_extend = {
       
 
       <li class="nav-item first">
-        <a href="/search">Search</a>
+        <a href="#">Search</a>
       </li>
       
       <li class="divider">/</li>
@@ -1558,7 +1384,7 @@ window.readrboard_extend = {
       
 
       <li class="nav-item">
-        <a href="/pages/about-us">About Us</a>
+        <a href="#">About Us</a>
       </li>
       
       <li class="divider">/</li>
@@ -1594,7 +1420,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="Paypal"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-paypal.png?2116" alt="paypal" /></a>
+      <a href="#" class="payment-method" title="Paypal"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-paypal.png?2116" alt="paypal" /></a>
   
 
 
@@ -1602,7 +1428,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="Google checkout"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-google-checkout.png?2116" alt="google-checkout" /></a>
+      <a href="#" class="payment-method" title="Google checkout"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-google-checkout.png?2116" alt="google-checkout" /></a>
   
 
 
@@ -1610,7 +1436,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="Visa"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-visa.png?2116" alt="visa" /></a>
+      <a href="#" class="payment-method" title="Visa"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-visa.png?2116" alt="visa" /></a>
   
 
 
@@ -1618,7 +1444,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="Mastercard"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-mastercard.png?2116" alt="mastercard" /></a>
+      <a href="#" class="payment-method" title="Mastercard"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-mastercard.png?2116" alt="mastercard" /></a>
   
 
 
@@ -1631,7 +1457,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="Cirrus"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-cirrus.png?2116" alt="cirrus" /></a>
+      <a href="#" class="payment-method" title="Cirrus"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-cirrus.png?2116" alt="cirrus" /></a>
   
 
 
@@ -1639,7 +1465,7 @@ window.readrboard_extend = {
 
   
     
-      <a href="/cart" class="payment-method" title="American express"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-american-express.png?2116" alt="american-express" /></a>
+      <a href="#" class="payment-method" title="American express"><img src="//cdn.shopify.com/s/files/1/0170/3174/t/6/assets/icon-cc-american-express.png?2116" alt="american-express" /></a>
   
 
 
