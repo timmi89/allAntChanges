@@ -496,6 +496,9 @@ RB = {
         searchBoards : function(search_term) {
             // RB.interactions.searchBoards
 
+            // DO NOT DO THIS RIGHT NOW.
+            return;
+
             var sendData = {"search_term":search_term, "page_num":1};
 
             $.ajax({
