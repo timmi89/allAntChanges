@@ -2432,17 +2432,22 @@ div#rdr_loginPanel .rdr_header_arrow{
 
 
 /*rarely used html tag to wrap br-separated text when the group settings specifies*/
-.rdr_br_replaced rt{
+.rdr_br_replaced_section div.rdr_br_replaced {
     margin: 0 0 15px 0;
     padding: 0;
     display: block;
     line-height: inherit;
     text-align: left;
+    border:0;
+    outline: 0;
+    vertical-align: baseline;
+    background: transparent;
+    position:relative;
 }
 
 /*hack to hide the trailing text indicator*/
-.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
-    display: none;
+div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
+    /*display: none;*/
 }
 
 [rdr-grid-for] .jspPane { z-index:100; margin-left:0; }

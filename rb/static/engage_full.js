@@ -2642,13 +2642,13 @@ function readrBoard($R){
                     for(var i = 0; i < sections.length; i++) {
                         var innerText = sections[i];
                         
-                        //use this rarely-used html5 element as a conveninent wrapper
+                        //use a div rarely-used html5 element as a conveninent wrapper
                         //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
-                        $dummySection.append('<rt>'+innerText+'</rt>');
+                        $dummySection.append('<div class="rdr_br_replaced">'+innerText+'</div>');
                     }
 
                     $this
-                      .addClass('rdr_br_replaced')
+                      .addClass('rdr_br_replaced_section')
                       .html($dummySection.html());
                 });
             },
@@ -3388,6 +3388,8 @@ function readrBoard($R){
                         var group_settings = response.data;
                         var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
+
+                        RDR.group.anno_whitelist += ',div.rdr_br_replaced';
 
                         $(RDR.group.active_sections).find(RDR.group.no_readr).each( function() {
                             $(this).addClass('no-rdr');
