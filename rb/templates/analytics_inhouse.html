@@ -127,8 +127,6 @@
 
         RB.analytics.setDates();
 
-        //init this once so that the destroy function doesn't error when it refreshes this.
-        $('section[role="tag cloud grid"]').isotope();
         
         $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
         $('input[name="start_date"]').val( RB.analytics.startDate );
