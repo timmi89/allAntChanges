@@ -91,6 +91,18 @@
                 </label>
                 {{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
             </div>
+            <div class="formRow">
+                <label for="id_summary_widget_method">
+                    <span class="labelTitle">Summary Widget Insertion Method</span>
+                    <span>Should ReadrBoard insert the Summary Widget before, inside, or after the Summary Widget Selector.  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                </label>
+                {{ form.summary_widget_method.as_hidden }}{{ form.summary_widget_method.errors }}
+                <select id="summary_widget_method_selector">
+                    <option {% if group.summary_widget_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                    <option {% if group.summary_widget_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                    <option {% if group.summary_widget_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                </select>
+            </div>
             <div class="formRow wordpressKeepDefaults">
                 <label for="id_post_selector">
                     <span class="labelTitle">Post Selector (jQuery selector)</span>
@@ -245,6 +257,10 @@
                     $(this).toggleClass('hidden');
                 });
                 return false;
+            });
+
+            $('#summary_widget_method_selector').change( function() {
+                $('#id_summary_widget_method').val( $(this).val() );
             });
 
         });

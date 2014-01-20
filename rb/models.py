@@ -166,6 +166,7 @@ class Group(models.Model):
     post_selector = models.CharField(max_length=255, blank=True)
     post_href_selector = models.CharField(max_length=255, blank=True)
     summary_widget_selector = models.CharField(max_length=255, blank=True)
+    summary_widget_method = models.CharField(max_length=255, blank=True)
     br_replace_scope_selector = models.CharField(max_length=255, blank=True)
     
     # logo fields

@@ -156,6 +156,7 @@ function readrBoard($R){
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
                 media_url_ignore_query: true,
+                summary_widget_method: 'after',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -8695,12 +8696,10 @@ if ( sendData.kind=="page" ) {
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
-                    widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
                     
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector+'[rdr-page-widget-key="' + key + '"]') ) {
                         widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
-                        widgetSummarySettings.jqFunc = "after";
                         
                     } else if( $(".rdr-page-summary").length==1 ){
                         widgetSummarySettings.$anchor = $(".rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
@@ -9301,9 +9300,11 @@ function $RFunctions($R){
                     page_key:page.key
                 });
 
+                var summaryWidgetInsertionMethod = ( RDR.group.summary_widget_method != "" ) ? RDR.group.summary_widget_method : "after";
+
                 //page.jqFunc would be something like 'append' or 'after',
                 //so this would read $summary_widget_parent.append($summary_widget);
-                $summary_widget_parent[page.jqFunc]($summary_widget);
+                $summary_widget_parent[ summaryWidgetInsertionMethod ]($summary_widget);
 
                 var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
                 $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
