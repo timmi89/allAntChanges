@@ -167,9 +167,14 @@ body { }
           </div> 
           -->
           <!-- OPTION B -->
-          <div style="margin:20px;text-align:center;">
-            <div style="background:#aaa;color:#000;padding:5px 10px;text-align:left;font-size:14px;font-weight:bold;box-sizing:border-box;display:inline-block;margin-right:20px;" rdr-cta-for="rr_video" rdr-mode="read" rdr-offset-x="0" rdr-offset-y="31"><span rdr-counter-for="rr_video" class="rdr_count"></span> Reactions</div>
-            <div style="background:#ffc313;color:#000;padding:5px 10px;text-align:left;font-size:14px;font-weight:bold;box-sizing:border-box;display:inline-block;" rdr-cta-for="rr_video" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="31">What's your reaction?</div>
+          <style>
+          .retroreport_readrboard_ui { margin:20px;text-align:center; }
+          .readrboard_view_reactions { background:#aaa;color:#000;padding:5px 10px;text-align:left;font-size:14px;font-weight:bold;box-sizing:border-box;display:inline-block;margin-right:20px; }
+          .readrboard_add_reaction { background:#ffc313;color:#000;padding:5px 10px;text-align:left;font-size:14px;font-weight:bold;box-sizing:border-box;display:inline-block; }
+          </style>
+          <div class="retroreport_readrboard_ui">
+            <div class="readrboard_view_reactions" rdr-cta-for="rr_video" rdr-mode="read" rdr-offset-x="0" rdr-offset-y="31"><span rdr-counter-for="rr_video" class="rdr_count"></span> Reactions</div>
+            <div class="readrboard_add_reaction" rdr-cta-for="rr_video" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="31">What's your reaction?</div>
           </div>
         </div>
         

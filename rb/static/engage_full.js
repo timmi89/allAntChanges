@@ -3495,6 +3495,22 @@ function readrBoard($R){
 
                             if ( $post_href.attr('href') ) {
                                 url = $post_href.attr('href');
+
+                                // IE fix for window.location.origin
+                                if (!window.location.origin) {
+                                    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+                                }
+
+                                // does this URL have the origin on it?  or does it just begin with a relative path?
+                                if ( url.indexOf(window.location.origin) == -1 ) {
+                                    if ( url.substr(0,1) == "/" ) {
+                                        url = window.location.origin + url;
+                                    } else {
+                                        url = window.location.origin + window.location.pathname + url;
+                                    }
+                                }
+
+
                                 urlsArr.push(url);
 
                                 thisPage = {
