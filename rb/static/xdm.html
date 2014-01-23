@@ -147,7 +147,9 @@
 
         if(!RDR_offline){
             rdr_loadScript( {src:chartbeat_script}, function() {
-                pSUPERFLY.virtualPage(qs_args.parentUrl, decodeURIComponent(qs_args.group_name) );
+                if ( typeof pSUPERFLY != "undefined" ) {
+                    pSUPERFLY.virtualPage(qs_args.parentUrl, decodeURIComponent(qs_args.group_name) );
+                }
             });
         }		
 	</script>
