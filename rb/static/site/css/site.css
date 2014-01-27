@@ -546,6 +546,8 @@ section[role="subheader"] .circle_button {
 .card .main .contentBox iframe,
 .card .main .contentBox.med a,
 .card .main .contentBox.img a { xmax-height:500px; overflow:hidden; display:block; width:100%; }
+.card .main .contentBox iframe,
+.card .main .contentBox img { min-height: 190px; }
 
 .card div.comments    { background:#fff; border-top:1px dotted #d3d4d4; padding:10px; clear:both; margin:10px 0 5px; }
 .card div.comments h2 {  font-size:12px;  border-bottom: 1px solid #CCC; padding-bottom: 5px; margin-bottom: 0;}
