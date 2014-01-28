@@ -303,6 +303,7 @@ function readrBoard($R){
                             '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
                         '</div>'+
                         '<div class="rdr_loader"></div>'+
+                        '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
                         '<div class="rdr_indicator_stats">'+
                             '<img class="no-rdr rdr_pin" src="{{RDR_staticUrl}}widget/images/blank.png">'+
                             '<span class="rdr_count"></span>'+
@@ -1754,6 +1755,7 @@ function readrBoard($R){
                         '<div class="rdr rdr_header">'+
                             '<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="rdr_loader"></div>'+
+                            '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
                         '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
                         '<div class="rdr rdr_footer"></div>'
@@ -4490,7 +4492,7 @@ function readrBoard($R){
                                 if ( !$grid.closest('.rdr_grid_wrapper').length ) {
                                     $grid.wrap('<div class="rdr_grid_wrapper" style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
                                 }
-                                $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
+                                $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
                                 RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
                             } else {
                                 RDR.actions.content_nodes.init(hash);
