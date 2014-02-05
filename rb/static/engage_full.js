@@ -4033,14 +4033,15 @@ function readrBoard($R){
                     
                     // check to see if this is an IMG inside a hashed node.  if so, check this thing for siblings.
                     // both HTML and text.
-                    if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
+                    // if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
+                    if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !$this.find(RDR.group.anno_whitelist).length ) {
                         var $parentNodes = $this.parents('[rdr-hash]');
                         RDR.actions.stripRdrNode($parentNodes);
                     }
 
                     // via http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
                     function _getTextNodesIn(el) {
-                        return $(el).find(":not(iframe)").andSelf().contents().filter(function() {
+                        return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
                             return this.nodeType == 3;
                         });
                     };
@@ -6177,6 +6178,18 @@ if ( sendData.kind=="page" ) {
 
                             //todo: combine this with the kindSpecificSetup above right?
                             if (kind == 'text'){
+                                if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
+                                    RDR.actions.stripRdrNode($container);
+                                    return;
+                                }
+
+                                function _getTextNodesIn(el) {
+                                    return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
+                                        return this.nodeType == 3;
+                                    });
+                                };
+
+
                                 $container.unbind('.rdr_helper');
                                 // todo: touchHover
                                 
@@ -8636,7 +8649,7 @@ if ( sendData.kind=="page" ) {
             },
             stripRdrNode: function($els) {
                 //RDR.actions.stripRdrNode
-                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
+                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash').find('.rdr_indicator').remove();
             },
             pages: {
                 //RDR.actions.pages:
