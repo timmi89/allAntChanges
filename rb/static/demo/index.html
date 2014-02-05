@@ -376,9 +376,109 @@
 //     domain = match[0];
 //     console.log(match);
 // }
+</script>
+
+<script src="/static/js/ff/FatFractal.js" type="text/javascript"></script>
+<script type="text/javascript">
+var ff = new FatFractal(),
+    loggedInUser;
+
+ff.setDebug(true);
+ff.setSimulateCookies(true);
+ff.setBaseUrl("http://readrboard.fatfractal.com/eventsdev2");
+ff.login('readrWidget', 'G0g0g04w4y', function(responseUser) {
+
+  // shows a valid user
+  console.log(responseUser)
+
+
+    // models
+  // function GroupsTest(data) {
+  //     if (data) {
+  //         this.clazz = data.clazz;
+  //         this.guid = data.guid;
+  //         this.short_name = data.short_name;
+  //     } else {
+  //         this.clazz = "GroupsTest";
+  //         this.guid = null;
+  //         this.short_name = null;
+  //     }
+  //     return this;
+  // }
+
+  function PagesTest(data) {
+      if (data) {
+          this.clazz = data.clazz;
+          this.guid = data.guid;
+          this.url = data.url;
+      } else {
+          this.clazz = "PagesTest";
+          this.guid = null;
+          this.url = null;
+      }
+      return this;
+  }
+
+
+  var group = new GroupsTest();
+  group.short_name = "theguardian";
+  group.name = "The Guardian US";
+
+  var page = new PagesTest();
+  page.url = "http://theguardian.com/world/2014/jan/27/obama-state-union-address-middle-class-mobility";
+  page.title = "Obama's State of the Union Address &amp; Middle Class Mobility";
+
+  // persist page
+//   ff.createObjAtUri(page, "/GroupsTest",
+//       function (obj, statusMessage) {
+//           var savedGroup = obj;
+
+//           console.log('saved group');
+//           console.log(obj);
+
+//           page.group = savedGroup;
+   
+//           // persist dad
+//           ff.createObjAtUri(page, "/PagesTest",
+//               function (obj, statusMessage) {
+//                   var savedPage = obj;
+
+//                   console.log('saved page');
+//                   console.log(obj);
+
+//               }
+//           );
+//       }
+//   );
+  // ff.getObjFromExtension("/ff/ext/ExtensionTest?user=porter",
+  var postData = {
+    foo:'bar',
+    userTest:'el portero',
+    pageUrl:'http://theguardian.com/world/2014/jan/27/obama-state-union-address-middle-class-mobility'
+  };
+  
+  ff.postObjToExtension(postData, 'ExtensionTest',
+      function(testObject) {
+        console.log('testObject');
+        console.log(testObject);
+        // console.log( JSON.parse(testObject.sentJson) );
+          // self.showLoading(false);
+          // m_ratingCountLabel.innerHTML = statsObject.totalRatings;
+          // m_userCountLabel.innerHTML = statsObject.totalUsers;
+          // m_celebrityCountLabel.innerHTML = statsObject.totalCelebrities;
+          // m_yourRatingCountLabel.innerHTML = statsObject.yourRatings;
+      }, function(statusCode, responseText){
+          // self.showLoading(false);
+          console.error("Error "+ statusCode + ": " + JSON.parse(responseText).statusMessage);
+      }
+  );
+}, function(failResponse) {console.log(failResponse)});
+
 
 
 </script>
+
+
   </div>
 </body>
 </html>

@@ -129,6 +129,40 @@ class SocialUser(models.Model):
     class Meta:
         unique_together = ('provider', 'uid', 'username')
 
+class Product(models.Model):
+    # just using text fields.  postgre does not care (http://stackoverflow.com/questions/7354588/django-charfield-vs-textfield) and mysql, well, whatever  -- pb.
+    # all from schema.org ProductModel -- http://schema.org/ProductModel
+    additionalType              = models.TextField(blank=True, null=True)
+    alternateName               = models.TextField(blank=True, null=True)
+    description                 = models.TextField(blank=True, null=True)
+    image                       = models.TextField(blank=True, null=True)
+    name                        = models.TextField(blank=True, null=True)
+    sameAs                      = models.TextField(blank=True, null=True)
+    url                         = models.TextField(blank=True, null=True)
+    aggregateRating_ratingValue             = models.TextField(blank=True, null=True)
+    brand_name                       = models.TextField(blank=True, null=True)
+    color                       = models.TextField(blank=True, null=True)
+    gtin13                      = models.TextField(blank=True, null=True)
+    gtin14                      = models.TextField(blank=True, null=True)
+    gtin8                       = models.TextField(blank=True, null=True)
+    logo                        = models.TextField(blank=True, null=True)
+    manufacturer                = models.TextField(blank=True, null=True)
+    model                       = models.TextField(blank=True, null=True)
+    mpn                         = models.TextField(blank=True, null=True)
+    offers_price                      = models.TextField(blank=True, null=True)
+    offers_priceCurrency                      = models.TextField(blank=True, null=True)
+    productID                   = models.TextField(blank=True, null=True)
+    releaseDate                 = models.TextField(blank=True, null=True)
+    sku                         = models.TextField(blank=True, null=True)
+    weight                      = models.TextField(blank=True, null=True)
+    width                       = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+    # class Meta:
+    #     ordering = ['name']
+
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=50, unique=True)
