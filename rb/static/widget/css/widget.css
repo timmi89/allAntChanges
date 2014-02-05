@@ -419,7 +419,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown.rdr_menu_actions{
     */
     padding-right: 10px;
     background: #fff;
-    height: 33px;
+    height: 31px;
 }
 
 
@@ -440,7 +440,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_icon-share-ov
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap {
     position: absolute;
     right: 0;
-    top: 32px;
+    top: 29px;
     box-shadow: 0 0px 4px #ccc;
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;
