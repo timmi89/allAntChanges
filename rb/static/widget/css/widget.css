@@ -189,6 +189,9 @@ div.rdr_about {
   margin-right: 3px;
   opacity:0.65;
 }
+div.rdr_helper_rindow div.rdr_about {
+  display: none;
+}
 div.rdr_about a {
   display:block;
   width: 20px;
