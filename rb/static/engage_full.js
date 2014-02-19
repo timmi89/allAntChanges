@@ -3394,9 +3394,10 @@ function readrBoard($R){
 
                         RDR.group.anno_whitelist += ',div.rdr_br_replaced';
 
-                        $(RDR.group.active_sections).find(RDR.group.no_readr).each( function() {
-                            $(this).addClass('no-rdr');
-                            $(this).find('img').addClass('no-rdr');
+                        $(RDR.group.no_readr).each( function() {
+                            var $this = $(this);
+                            $this.addClass('no-rdr');
+                            $this.find('img').addClass('no-rdr');
                         });
 
                         // setup the active sections + anno_whitelist (i.e. allowed tags)
