@@ -9267,15 +9267,9 @@ function $RFunctions($R){
                         });
                     }).on("mouseup", function() {
                         $(this).off("mousemove.rdr_drag"); // Unbind events from document
-                        if ($selected !== null) {
-                            $selected.removeClass(opt.draggableClass);
-                            $selected = null;
-                        }
                     });
 
                     e.preventDefault(); // disable selection
-                }).on("mouseup", function() {
-                    $selected = null;
                 });
 
                 return this;
