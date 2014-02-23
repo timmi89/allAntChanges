@@ -2246,6 +2246,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body{
     width: 100% !important;
     top: 45% !important;
     margin-top: -0.5em !important;
+    text-align: center;
 }
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_split .rdr_tag_body{
     margin-top: -1em !important;
@@ -2486,7 +2487,7 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
 
 /* force capital first letter on reactions for now */
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {
-    text-transform: lowercase;
+    /*text-transform: lowercase;*/
 }
 
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {

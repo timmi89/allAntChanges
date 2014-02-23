@@ -3400,6 +3400,10 @@ function readrBoard($R){
                         var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
+                        if (RDR.group.hideOnMobile === true && isTouchBrowser) {
+                            return false;
+                        }
+
                         RDR.group.anno_whitelist += ',div.rdr_br_replaced';
 
                         $(RDR.group.no_readr).each( function() {
