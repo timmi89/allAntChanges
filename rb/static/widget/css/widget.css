@@ -731,7 +731,7 @@ div.rdr div.rdr_info        {font:italic 11px Arial;color:#767676; margin:0; cur
 div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee; -webkit-border-radius:6px; -moz-border-radius:6px; border-radius:6px; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0; }
 div.rdr div.rdr_share_social                   { overflow:visible; position: relative; top: 4px; min-width:90px;}
 div.rdr div.rdr_share_social strong            { display:block; float:left; margin:5px 5px 0 24px; }
-div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; }
+div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; border-bottom:1px solid #ddd; padding-bottom: 10px;}
 
 div.rdr div.rdr_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.rdr div.rdr_back:hover { background:#999; }
@@ -804,18 +804,37 @@ div.rdr div.rdr_comment .rdr_comment_body{
     margin-left: 27px;
 }
 
-div.rdr ul.rdr_shareLinks {
-    display: block;
-    min-width: 95px;
+div.rdr .rdr_shareLinks {
+  margin-top:5px;
+  padding-top:5px;
+  font-size:18px;
+  color:#999;
+  text-align: center;
 }
-div.rdr ul.rdr_shareLinks li {
+div.rdr .rdr_shareLinks ul {
+    display: inline-block;
+    /*min-width: 95px;*/
+}
+div.rdr .rdr_shareLinks ul li {
     padding: 5px 0 5px 5px;
     display:inline-block;
     list-style:none;
 }
-div.rdr ul.rdr_shareLinks img {
-    width:25px; 
-    margin:0;
+div.rdr .rdr_shareLinks ul i {
+    font-size:20px;
+    background:#fff;
+    text-decoration: none;
+}
+div.rdr .rdr_shareLinks ul i:hover {
+    background:#eee;
+}
+div.rdr .rdr_shareLinks ul i.rdr_icon-twitter {
+  color:#55acee;
+  padding:6px;
+}
+div.rdr .rdr_shareLinks ul i.rdr_icon-facebook {
+  color:#3b5998;
+  padding:6px 10px;
 }
 
 /* forms */

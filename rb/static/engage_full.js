@@ -329,15 +329,7 @@ function readrBoard($R){
                 var $menuActions = makeActionList();
                 $menuDropdownActions.append($menuActions);
 
-                var $menuDropdownShare = $(
-                    '<div class="rdr_menuDropDown rdr_menu_share">'+
-                        '<span class="rdr_icon-share rdr_icon-share-override rdr_menuTrigger"></span>'+
-                    '</div>'
-                );
-                var $menuShares = makeShareList();
-                $menuDropdownShare.append($menuShares);
-
-                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
+                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
                     $menu.on('tap', '.rdr_menuDropDown', function(){
@@ -358,14 +350,6 @@ function readrBoard($R){
                                     '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">View at ReadrBoard</a>'+
                                 '</li>'+
                             '</ul>'+
-                        '</div>'
-                    );
-                    return $links;
-                }
-
-                function makeShareList(){
-                    var $links = $(
-                        '<div class="rdr_linkWrap">'+
                         '</div>'
                     );
                     return $links;
@@ -730,8 +714,10 @@ function readrBoard($R){
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
-                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
-                                    $sayMore = RDR.actions.comments.makeCommentBox({
+                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success );
+                                
+                                if ( args.kind != 'page' ) {
+                                    var $sayMore = RDR.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
                                         hash: hash,
@@ -739,6 +725,7 @@ function readrBoard($R){
                                         $rindow: $rindow,
                                         selState: content_node.selState || null
                                     }).appendTo( $options );
+                                }
 
                                 // if ( kind != "text" ) {
                                     var $backButton = $('<div class="rdr_back">Close X</div>');
@@ -793,7 +780,6 @@ function readrBoard($R){
                                     '<div class="rdr_clear"></div>'+
                                 '</div>'
                             );
-
 
 
                             // // comment functionality
@@ -858,14 +844,14 @@ function readrBoard($R){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<ul class="rdr_shareLinks"></ul>'),
+                                var $shareLinks = $('<div class="rdr_shareLinks">Share your reaction: <ul></ul></div>'),
                                 // sns sharing links
-                                socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+                                socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                                    $shareLinks.append($link);
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="rdr_icon-'+val+'"></i></a></li>');
+                                    $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
                                         var tag_body = args.tag.tag_body || args.tag.body;
@@ -905,7 +891,8 @@ function readrBoard($R){
                                 return $shareLinks;
                             }
 
-                            var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
+                            // var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
+                            var $shareSocialWrap = $('.rdr_nextActions');
                             $shareSocialWrap.append( makeShareLinks() );
                         }
 
@@ -6191,16 +6178,17 @@ if ( sendData.kind=="page" ) {
 
                             //todo: combine this with the kindSpecificSetup above right?
                             if (kind == 'text'){
+                                function _getTextNodesIn(el) {
+                                    return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
+                                        return this.nodeType == 3;
+                                    });
+                                }
+
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
                                     RDR.actions.stripRdrNode($container);
                                     return;
                                 }
 
-                                function _getTextNodesIn(el) {
-                                    return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
-                                        return this.nodeType == 3;
-                                    });
-                                };
 
 
                                 $container.unbind('.rdr_helper');
@@ -6336,7 +6324,7 @@ if ( sendData.kind=="page" ) {
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
-                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Respond to this</span>' );
+                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Click to respond</span>' );
                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                             $rindow.remove();
                             var $container = $('[rdr-hash="'+hash+'"]');
@@ -8330,7 +8318,7 @@ if ( sendData.kind=="page" ) {
                         share_url = 'http://www.facebook.com/sharer.php?s=100' +
                                         '&p[title]='+encodeURI( mainShareText )+
                                         '&p[url]='+args.short_url+
-                                        '&p[summary]='+encodeURI(footerShareText)+
+                                        '&p[summary]='+encodeURI(mainShareText)+
                                         //these will just be "" if not relevant
                                         imageQueryP+
                                         videoQueryP;
@@ -8479,7 +8467,7 @@ if ( sendData.kind=="page" ) {
                             //use >>
                             doHTMLEscape ? 
                                 "&raquo;" :
-                                "Â»"
+                                "»"
                         ;
 
 
