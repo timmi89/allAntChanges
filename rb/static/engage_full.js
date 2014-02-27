@@ -1013,7 +1013,7 @@ function readrBoard($R){
                             charCountText = 'rdr_charCount15';
                             tagBodyCrazyHtml = 
                             '<div class="rdr_tag_body rdr_tag_lineone">' + 
-                            tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
+                            tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "rdr_box_small" ) {
                             //     boxSize = "rdr_box_medium";
                             // }
@@ -8810,8 +8810,10 @@ RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+    RDR_staticUrl+"global/js/jquery-1.10.2.min.js" :
+    // RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+    // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js";
 
 RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
 
@@ -8840,6 +8842,24 @@ function jquery_onload(jQuery){
     //Give back the $ and jQuery.
     $R = jQuery.noConflict(true);
     var $ = $R;
+
+    // add $.browser functionality back since we're using a newer version of jQuery, but some of our code + older plugins rely on it.
+    /*!
+     * jQuery Browser Plugin 0.0.5
+     * https://github.com/gabceb/jquery-browser-plugin
+     *
+     * Original jquery-browser code Copyright 2005, 2013 jQuery Foundation, Inc. and other contributors
+     * http://jquery.org/license
+     *
+     * Modifications Copyright 2014 Gabriel Cebrian
+     * https://github.com/gabceb
+     *
+     * Released under the MIT license
+     *
+     * Date: 05-01-2014
+     */
+    !function(a,b){"use strict";var c,d;if(a.uaMatch=function(a){a=a.toLowerCase();var b=/(opr)[\/]([\w.]+)/.exec(a)||/(chrome)[ \/]([\w.]+)/.exec(a)||/(version)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.exec(a)||/(webkit)[ \/]([\w.]+)/.exec(a)||/(opera)(?:.*version|)[ \/]([\w.]+)/.exec(a)||/(msie) ([\w.]+)/.exec(a)||a.indexOf("trident")>=0&&/(rv)(?::| )([\w.]+)/.exec(a)||a.indexOf("compatible")<0&&/(mozilla)(?:.*? rv:([\w.]+)|)/.exec(a)||[],c=/(ipad)/.exec(a)||/(iphone)/.exec(a)||/(android)/.exec(a)||/(windows phone)/.exec(a)||/(win)/.exec(a)||/(mac)/.exec(a)||/(linux)/.exec(a)||[];return{browser:b[3]||b[1]||"",version:b[2]||"0",platform:c[0]||""}},c=a.uaMatch(b.navigator.userAgent),d={},c.browser&&(d[c.browser]=!0,d.version=c.version,d.versionNumber=parseInt(c.version)),c.platform&&(d[c.platform]=!0),(d.chrome||d.opr||d.safari)&&(d.webkit=!0),d.rv){var e="msie";c.browser=e,d[e]=!0}if(d.opr){var f="opera";c.browser=f,d[f]=!0}if(d.safari&&d.android){var g="android";c.browser=g,d[g]=!0}d.name=c.browser,d.platform=c.platform,a.browser=d}($,window);
+
 
     if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
         return false;

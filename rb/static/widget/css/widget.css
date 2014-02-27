@@ -2486,10 +2486,13 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
 
 
 /* force capital first letter on reactions for now */
-div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {
-    /*text-transform: lowercase;*/
-}
+/* NEVER MIND.  DESTROYS IE. */
+/* http://stackoverflow.com/questions/7135174/ie8-hangs-when-opening-a-site-which-uses-css3 */
 
-div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
+/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {*/
+    /*text-transform: lowercase;*/
+/*}*/
+
+/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
     text-transform: uppercase;
-}
+}*/
