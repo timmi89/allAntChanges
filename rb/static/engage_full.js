@@ -3546,7 +3546,7 @@ function readrBoard($R){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                var pageUrl = window.location.href;
+                var pageUrl = window.location.href.split('#')[0];
                 if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
                     canonical_url = $('link[rel="canonical"]').length > 0 ?
                                 $('link[rel="canonical"]').attr('href') : pageUrl;
