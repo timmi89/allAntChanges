@@ -3582,6 +3582,19 @@ function readrBoard($R){
                     $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
+
+                    if ( !$.cookie('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
+                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Double-tap</strong> any paragraph to respond!<a>Close this</a>',
+                            double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
+                            $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
+                            $sandbox = $('#rdr_sandbox');
+
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('tap', function() {
+                            $.cookie('hideDoubleTapMessage', true);
+                            $(this).remove();
+                        }).appendTo( $sandbox );
+                    }
+
                 }else{
                     $(RDR.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){

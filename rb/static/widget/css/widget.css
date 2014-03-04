@@ -2545,6 +2545,32 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
     transform:  translate(0px, 0px) !important;  
 }
 
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message {
+  background:#fff;
+  position: fixed;
+  width: 75%;
+  padding:4px;
+  left: 50%;
+  margin: 0 0 0 -37.5%;
+  color:#008BE4;
+  box-shadow: 0px 0px 10px #999;
+  font-size:11px;
+  text-align: center;
+  z-index:11000;
+}
+
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message.rdr_top {
+  top:0;
+}
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message.rdr_bottom {
+  bottom:0;
+}
+
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message a {
+  font-size:11px;
+  display:block;
+  padding-top:4px;
+}
 
 /* force capital first letter on reactions for now */
 /* NEVER MIND.  DESTROYS IE. */
