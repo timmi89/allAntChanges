@@ -484,7 +484,7 @@ function readrBoard($R){
                       if (callback) callback();
                       if ( $rindow.data('jsp') ) {
                           var API = $rindow.data('jsp');
-                          // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                          // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                           API.reinitialise();
                       } else {
                           $rindow.jScrollPane({ showArrows:true });
@@ -527,7 +527,7 @@ function readrBoard($R){
                     
                     if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
-                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
                         $rindow.jScrollPane({ showArrows:true });
@@ -923,7 +923,7 @@ function readrBoard($R){
                         var $this = $(this);
 
                         if( !$this.hasClass('jspScrollable') ){
-                            // IE.  for some reason, THIS fires the scrollstop event.  WTF:
+                            // IE.  for some reason, THIS fires the scrollend event.  WTF:
                             $(this).jScrollPane({ showArrows:true });
                         }else{
                             var API = $(this).data('jsp');
@@ -1227,6 +1227,8 @@ function readrBoard($R){
                         }
                     } else {
                         if(isTouchBrowser){
+                            // mobiletodo.  simulate hover and a css class.
+                            // check for class, and if present, simulate click
                             $tagBox.bind('tap', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
@@ -2332,61 +2334,30 @@ function readrBoard($R){
                 // RDR.util.initTouchBrowserSettings
                 
                 if(isTouchBrowser){
-                    $(window).on('scrollstop', function() {
+                    $('body').addClass('rdr_touch_browser');
+                    // mobiletodo: DO WE NEED
+                    $(window).on('scrollend', function() {
                         RDR.util.mobileHelperToggle();
                     });
+
                     //quick'n'dirty way to init the helper indicators for mobile
-                    $( RDR.group.active_sections_with_anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
+                    // mobiletodo do we need this?
+                    // $( RDR.group.active_sections_with_anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
             },
             mobileHelperToggle: function() {
                 // RDR.util.mobileHelperToggle
-                var foundFirstTextNode = false;
-                $('[rdr-node="true"]').each( function() {
+                $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
 
                     var $this = $(this),
-                        nodeTop = $this.offset().top - $(window).scrollTop();
+                        hash = $this.data('hash');
 
-                    if ( nodeTop > 30 && foundFirstTextNode == false ) {
-
-                        var mediaSelector = 'img,' + RDR.group.media_selector;
-                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
-                            var hash = $this.data('hash');
-                            
-                            if (hash) {
-                                $this.addClass('rdr_live_hover');
-                                if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                    $('#rdr_indicator_' + hash).show();
-                                    // RDR.actions.indicators.utils.borderHilites.engage(hash);
-                                }
-
-                                RDR.actions.content_nodes.init(hash, function(){});
-                            }
-                        } else {
-                            $this.addClass('rdr_live_hover');
-                            foundFirstTextNode = true;
-                        }
-
-
-                    } else {
-                        $this.removeClass('rdr_live_hover');
-                        $('.rdr_helper_rindow').hide();
-                        
-                        var mediaSelector = 'img,' + RDR.group.media_selector;
-                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
-                            if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
-                                // _mediaHoverOff( $this )
-                                // var $this = $(obj),
-                                var hash = $this.data('hash');
-
-                                $this.removeClass('rdr_live_hover');
-                                $('#rdr_indicator_' + hash).hide();
-                            }
-                        }
-                    }
+                    RDR.actions.indicators.init(hash);
+                    $this.addClass('rdr_live_hover');
                 });
+
                 
             },
             initPublicEvents: function(){
@@ -3606,8 +3577,11 @@ function readrBoard($R){
                 var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
                 
                 if(isTouchBrowser){
-                    //this can't work until the container_id is registered anyway, just do it on that callback.
-                    //#touchBrowserMediaInit
+                    // init the "indicators" for media objects, on mobile only.
+                    // so that the image call-to-action is present and populated
+                    $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+                        RDR.actions.indicators.init( $(this).attr('rdr-hash') );
+                    });
                 }else{
                     $(RDR.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
@@ -3757,7 +3731,7 @@ function readrBoard($R){
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
-                $(document).on('click.rdr',function(event) {
+                $(document).on('mousedown.rdr',function(event) {
 
                     var $mouse_target = $(event.target);
 
@@ -3769,9 +3743,11 @@ function readrBoard($R){
                         // }
                         RDR.actions.UIClearState();
 
-                        $('div.rdr_indicator_details_for_media').each( function() {
-                            RDR.actions.containers.media.onDisengage( $(this).data('container') );
-                        });
+                        if ( !isTouchBrowser ) {
+                            $('div.rdr_indicator_details_for_media').each( function() {
+                                RDR.actions.containers.media.onDisengage( $(this).data('container') );
+                            });
+                        }
                     }
 
                 });
@@ -3792,24 +3768,31 @@ function readrBoard($R){
                 RDR.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(){
-                //RDR.actions.UIClearState:
-                // clear any errant tooltips
-                $('div.rdr_twtooltip').remove();
+                // if (!isTouchBrowser) {
+                    //RDR.actions.UIClearState:
+                    // clear any errant tooltips
+                    $('div.rdr_twtooltip').remove();
 
-                RDR.rindow.closeAll();
-                RDR.actionbar.closeAll();
-                RDR.actions.containers.media.disengageAll();
-                // RDR.actions.indicators.utils.borderHilites.disengageAll();
-                $('div.rdr_indicator_for_media').hide();
-                $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+                    RDR.rindow.closeAll();
+                    RDR.actionbar.closeAll();
+                    RDR.actions.containers.media.disengageAll();
+                    // RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+                    
+                    if (!isTouchBrowser) { 
+                        $('div.rdr_indicator_for_media').hide();
+                    }
 
-                $().selog('hilite', true, 'off');
+                    $().selog('hilite', true, 'off');
 
-                //clear a share alert if it exists - do this better later.
-                var shareBoxExists = $('.rdr_fromShareLink').length;
-                if( shareBoxExists ){
-                    RDR.session.alertBar.close( 'fromShareLink' );
-                }
+                    //clear a share alert if it exists - do this better later.
+                    var shareBoxExists = $('.rdr_fromShareLink').length;
+                    if( shareBoxExists ){
+                        RDR.session.alertBar.close( 'fromShareLink' );
+                    }
+                // } else {
+
+                // }
             },
             catchRangyErrors: function(errorMsg){
                 //RDR.actions.catchRangyErrors:
@@ -3967,7 +3950,7 @@ function readrBoard($R){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
-                        
+
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = RDR.util.md5.hex_md5( hashText );
@@ -4015,7 +3998,6 @@ function readrBoard($R){
                         }
 
                     } else {
-                        
                         if(!body){
                           return;
                         }
@@ -4065,7 +4047,8 @@ function readrBoard($R){
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
                     if ( HTMLkind != 'body' ) {
-                        // todo: touchHover
+                        // // todo: touchHover
+                        
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
                             $(this).addClass('rdr_live_hover');
@@ -4083,7 +4066,7 @@ function readrBoard($R){
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
-                    indicatorInitQueue.push(hash);
+                    // indicatorInitQueue.push(hash);
 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
@@ -4608,6 +4591,7 @@ function readrBoard($R){
                             //#touchBrowserMediaInit
                             if(isTouchBrowser){
                                 RDR.actions.content_nodes.init(hash, function(){});
+                                RDR.actions.indicators.init(hash);
                             }
                         },
                         media: function(hash, summary){
@@ -6207,6 +6191,18 @@ if ( sendData.kind=="page" ) {
                                             RDR.actions.indicators.helpers.out($indicator);
                                         }
                                     });
+                                } else {
+                                    if (kind=="text") {
+                                        $container.on('doubletap', function(e){
+                                            var $this_container = $('[rdr-hash="'+hash+'"]');
+                                            // var $container = $(e.target);
+
+                                            var el = $this_container[0]
+                                            $('document').selog('selectEl', el);
+
+                                            var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                        });
+                                    }
                                 }
 
                                 //This will be either a helperIndicator or a hidden indicator
@@ -6243,7 +6239,8 @@ if ( sendData.kind=="page" ) {
                             .appendTo($indicator)
                             .append(
                                 '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                                '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                                '<span class="rdr_count" />', //the count will get added automatically later, and on every update.
+                                '<span class="rdr_count_label" />' 
                             );
 
                         $indicator.css('visibility','visible');
@@ -6486,21 +6483,24 @@ if ( sendData.kind=="page" ) {
 
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
                         var $count = $indicator_body.find('.rdr_count'),
+                            $count_label = $indicator_body.find('.rdr_count_label'),
                             $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
                             hasReactions = summary.counts.tags > 0;
 
+                        var reactionLabel = (summary.counts.tags>1) ? "Reactions" : "Reaction";
                         if ( hasReactions ) {
                             if (isText) {
                                 $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                $count_label.text(reactionLabel);
                             } else {
-                                var reactionLabel = (summary.counts.tags>1) ? " Reactions" : " Reaction";
-                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + reactionLabel );
+                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
                             }
                             if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
 
                             RDR.actions.indicators.show(hash);
                             
                         } else {
+                            $indicator.addClass('rdr_no_reactions');
                             $count.html( '<span class="rdr_react_label">What do you think?</span>' );
                             
                             if(isText){
@@ -6609,6 +6609,16 @@ if ( sendData.kind=="page" ) {
                                 $container_tracker = $('<div class="rdr_container_tracker" />'),
                                 indicatorDetailsId = 'rdr_indicator_details_'+hash,
                                 page_id = RDR.util.getPageProperty('id', hash );
+
+                            if( $container.width() < 160 ){
+                                RDR.safeThrow('Too small to init.');
+                                return;
+                            }
+
+                            if( $container.css('display') == 'none' || $container.css('visibility') == 'hidden' ){
+                                RDR.safeThrow('not visible.');
+                                return;
+                            }
 
                             var $existing = $('#rdr_container_tracker_'+hash);
                             if($existing.length){
@@ -8803,7 +8813,8 @@ RDR_scriptPaths.jquery = RDR_offline ?
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js";
 
-RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
+// dont think we use this -- we embedded it below.
+// RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
 
 // RDR_scriptPaths.jqueryUI = RDR_offline ?
 //     RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
@@ -8952,7 +8963,6 @@ function $RFunctions($R){
         plugin_jquery_enhancedOffset($R);
         plugin_jquery_drags($R);
         plugin_jquery_mousewheel($R);
-        plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_isotope($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_twitterTip($R);
@@ -10178,16 +10188,6 @@ function $RFunctions($R){
             args.unshift(event,delta,deltaX,deltaY);return($.event.dispatch||$.event.handle).apply(this,args);}
         }
         //end function plugin_jquery_mousewheel
-
-        function plugin_jquery_scrollStartAndStop(jQuery){
-            var $ = jQuery;
-            /**
-            * jQuery scrollstart and scrollstop
-            * @author james padolsey
-            * @version ??
-            */
-            var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
-        }
 
         function plugin_jquery_isotope($){
             /**
