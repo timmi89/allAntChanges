@@ -234,7 +234,24 @@ function readrBoard($R){
         groupSettings: {
             getCustomSettings: function(){
                 //RDR.groupSettings.getCustomSettings:
+
+                // grab anything on the page
                 var group_extentions = window.readrboard_extend || {};
+
+                // grab anything from the URL
+                // example usage:  rdr_hideOnMobile=false&rdr_doubleTapMessage=%27hello%20world%27
+                var qs = RDR.util.getQueryParams(),
+                    group_qs_extensions = {};
+
+                $.each(qs, function(key, val){
+                    if ( key.indexOf('rdr_') === 0 ) {
+                        key = key.substr(4);
+                        group_qs_extensions[key] = val;
+                    }
+                });       
+
+                group_extentions = $.extend({}, group_extentions, group_qs_extensions );
+
                 //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
                 return RDR.groupSettings._translate(group_extentions);
             },
@@ -3583,6 +3600,7 @@ function readrBoard($R){
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
 
+                    // we should handle settings through a JSON cookie.  will do later.
                     if ( !$.cookie('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
                         var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Double-tap</strong> any paragraph to respond!<a>Close this</a>',
                             double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
@@ -3590,6 +3608,7 @@ function readrBoard($R){
                             $sandbox = $('#rdr_sandbox');
 
                         $doubleTapMessage.addClass( double_tap_message_position ).on('tap', function() {
+                            // we should handle settings through a JSON cookie.  will do later.
                             $.cookie('hideDoubleTapMessage', true);
                             $(this).remove();
                         }).appendTo( $sandbox );
