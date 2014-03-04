@@ -339,7 +339,11 @@ class GroupForm(forms.ModelForm):
             'summary_widget_method',
             'br_replace_scope_selector',
             'call_to_action',
-            'paragraph_helper'
+            'paragraph_helper',
+            'hideOnMobile',
+            'hideDoubleTapMessage',
+            'doubleTapMessage',
+            'doubleTapMessagePosition'
         )
 
 

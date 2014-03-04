@@ -172,6 +172,34 @@
             
         </section>
         <section class="">
+            <h3>Mobile Settings</h3>
+            <div class="formRow" style="margin: 10px 0;">
+                {{ form.hideOnMobile }}{{ form.hideOnMobile.errors }}
+                <label for="id_hideOnMobile"><span class="labelTitle">Hide ReadrBoard on Mobile? </span><span>Hide ReadrBoard completely on mobile/touchscreen devices.</span></label>
+            </div>
+
+            <div class="formRow" style="margin: 10px 0;">    
+                {{ form.hideDoubleTapMessage }}{{ form.hideDoubleTapMessage.errors }}
+                <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can double-tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
+            </div>
+            <div class="formRow" style="margin: 10px 0;">
+                <label for="id_doubleTapMessage"><span class="labelTitle">Double Tap Message </span><span>ReadrBoard has a default message telling your visitors that they can double-tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
+                {{ form.doubleTapMessage }}{{ form.doubleTapMessage.errors }}
+            </div>
+
+            <div class="formRow" style="margin: 10px 0;">
+                <label for="id_doubleTapMessagePosition">
+                    <span class="labelTitle">Double-tap Message Position</span>
+                    <span>The message telling readers that they can double-tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
+                </label>
+                {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
+                <select id="doubleTapMessagePosition_selector">
+                    <option {% if group.doubleTapMessagePosition == "bottom" %}selected="selected"{% endif %} value="bottom">Bottom</option>
+                    <option {% if group.doubleTapMessagePosition == "top" %}selected="selected"{% endif %} value="top">Top</option>
+                </select>
+            </div>
+        </section>
+        <section class="">
             <h3>Miscellaneous</h3>
             <div class="formRow">
                 <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
@@ -186,6 +214,8 @@
                     font-family: 'Courier', 'Courier New';
                     font-size: 12px;
                     color: #777;
+                }
+                #id_custom_css {
                     height:350px;
                 }
                 </style>
@@ -261,6 +291,10 @@
 
             $('#summary_widget_method_selector').change( function() {
                 $('#id_summary_widget_method').val( $(this).val() );
+            });
+
+            $('#doubleTapMessagePosition_selector').change( function() {
+                $('#id_doubleTapMessagePosition').val( $(this).val() );
             });
 
         });

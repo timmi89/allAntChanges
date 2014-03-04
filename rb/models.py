@@ -148,6 +148,12 @@ class Group(models.Model):
     # Jquery settings
     inline_selector = models.CharField(max_length=100, default='', blank=True)
     inline_func = models.CharField(max_length=25, default='', blank=True)
+
+    # mobile settings
+    hideOnMobile = models.BooleanField(default=False)
+    hideDoubleTapMessage = models.BooleanField(default=False)
+    doubleTapMessage = models.TextField(blank=True)
+    doubleTapMessagePosition = models.CharField(max_length=25, default='bottom')
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
