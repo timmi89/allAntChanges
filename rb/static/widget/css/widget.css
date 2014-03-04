@@ -151,10 +151,6 @@ span.rdr_react_label {
   display: inline-block;
   cursor:pointer;
 }
-body.rdr_touch_browser span.rdr_react_label {
-  font-size:11px;
-  padding-right:3px;
-}
 
 div.rdr_actionbar span.rdr_react_label {
   padding:4px 4px;
@@ -1684,9 +1680,9 @@ div.rdr_indicator.rdr_indicator_for_media {
 /*touchBrowser overrides for sandbox*/
 #rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media {
     display: block;
-    opacity:1.0;
-    -moz-opacity:1.0;
-    -khtml-opacity:1.0;
+    opacity:1.0 !important;
+    -moz-opacity:1.0 !important;
+    -khtml-opacity:1.0 !important;
     visibility: visible;;
 }
 /*
@@ -1899,6 +1895,9 @@ body.rdr_touch_browser div.rdr_indicator_for_text.rdr_no_reactions {
 body.rdr_touch_browser div.rdr_indicator_for_text div.rdr_indicator_body {
   left:0;
   position:static;
+}
+div.rdr_indicator_for_text div.rdr_indicator_body .rdr_count_label {
+  display:none;
 }
 body.rdr_touch_browser div.rdr_indicator_for_text div.rdr_indicator_body .rdr_count_label {
   color:#888;
@@ -2141,6 +2140,10 @@ div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
     margin:1px 0 0 13px;
     font-size:12px;
     display:inline-block;
+}
+body.rdr_touch_browser div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
+  font-size:11px;
+  padding-right:7px;
 }
 
 span.rdr_indicator_categoryTitle{ 
