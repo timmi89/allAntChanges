@@ -144,7 +144,6 @@ function readrBoard($R){
                 anno_whitelist: "body p",
                 active_sections_with_anno_whitelist:"",
                 media_selector: "embed, video, object, iframe",
-                // iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
                 comment_length: 300,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,

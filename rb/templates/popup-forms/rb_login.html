@@ -7,15 +7,19 @@
   <div class="container">
     <div id="errorMsgWrap"></div>
     <div id="direct_registration" class="formBody clearfix">
-  		<div class='formBodySection'>
-  			<label>User Name</label>
-			<input type="text" name="username" tabindex="1" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
+  		<div class='formBodySection grid-whole'>
+  			<div class="grid-half"><label>User Name</label></div>
+            <div class="grid-half">
+    			<input type="text" name="username" tabindex="1" />
+    			<a class="alternateAction" href="javascript:void(0);" onclick="createNewAccount();" style="font-size:11px;font-style:italic;">Create New Account &raquo;</a>
+            </div>
 		</div>
-		<div class='formBodySection'>
-	  		<label>Password</label>
-			<input type="password" name="password" tabindex="2" />
-			<a class="alternateAction" href="javascript:void(0);" onclick="forgotPassword();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+		<div class='formBodySection grid-whole'>
+	  		<div class="grid-half"><label>Password</label></div>
+            <div class="grid-half">
+                <input type="password" name="password" tabindex="2" />
+                <a class="alternateAction" href="javascript:void(0);" onclick="forgotPassword();" style="font-size:11px;font-style:italic;">Forgot Password? &raquo;</a>
+            </div>
 		</div>
 	</div>
 	<button class="btn" onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
