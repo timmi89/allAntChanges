@@ -3529,6 +3529,11 @@ function readrBoard($R){
                                 $('title').text() ?
                                 $('title').text() : "";
 
+                    // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
+                    if (canonical_url.indexOf('//') === 0) {
+                        canonical_url = window.location.protocol + canonical_url;
+                    }
+
                     thisPage = {
                         group_id: parseInt(RDR.group.id, 10),
                         url: pageUrl,
