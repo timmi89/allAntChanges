@@ -160,7 +160,7 @@ class ModifySocialUserForm(forms.ModelForm):
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
         
             if check_nodes.count() == 0:
-                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+                inode = InteractionNode.objects.get_or_create(body__exact=tag)[0]
 
             elif check_nodes.count() > 1:
                 inode = check_nodes[0]
@@ -274,7 +274,7 @@ class GroupForm(forms.ModelForm):
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
         
             if check_nodes.count() == 0:
-                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+                inode = InteractionNode.objects.get_or_create(body__exact=tag)[0]
 
             elif check_nodes.count() > 1:
                 inode = check_nodes[0]
