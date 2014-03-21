@@ -2602,7 +2602,7 @@ function readrBoard($R){
             
             fixBrTags: function(){
                 // RDR.util.fixBrTags:
-                
+
                 //find the $sections through br tags that are in the scoped section.
                 var $sections = $(RDR.group.br_replace_scope_selector).find('> br').parent();
 
@@ -2619,7 +2619,7 @@ function readrBoard($R){
                     var $dummySection = $('<p></p>');
 
                     //use jquery's parser not regex to find <br> tags (http://bit.ly/3x9sQX)
-                    $clone.find('br').each(function(){
+                    $clone.find('> br').each(function(){
                         $(this).replaceWith(marker);
                     });
                     var sections = $clone.html().split(marker);
@@ -2629,6 +2629,7 @@ function readrBoard($R){
                         
                         //use a div rarely-used html5 element as a conveninent wrapper
                         //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
+                        // update:  no, dont.  running into CSS and browser support issues.
                         $dummySection.append('<div class="rdr_br_replaced">'+innerText+'</div>');
                     }
 
@@ -3929,7 +3930,7 @@ function readrBoard($R){
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
                     if(!!RDR.group.br_replace_scope_selector && (group.kind == "text")){
-                        $group = $group.add( $node.find( '.rdr_br_replaced rt' ) );
+                        $group = $group.add( $node.find( '.rdr_br_replaced' ) );
                     }
 
                     //take out prev categorized nodes (text is last, so we default to that)
