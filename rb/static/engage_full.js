@@ -2604,7 +2604,7 @@ function readrBoard($R){
                 // RDR.util.fixBrTags:
                 
                 //find the $sections through br tags that are in the scoped section.
-                var $sections = $(RDR.group.br_replace_scope_selector).find('br').parent();
+                var $sections = $(RDR.group.br_replace_scope_selector).find('> br').parent();
 
                 if(!$sections.length){
                     return;
