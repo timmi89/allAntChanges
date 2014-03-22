@@ -4021,6 +4021,16 @@ function readrBoard($R){
                             hashBody = match[0] + '/' + filename;
                         }
 
+                        var queryStringDomains = [
+                            'soundcloud.com'
+                        ];
+
+                        $.each(queryStringDomains, function(idx, domain) {
+                            if (hashBody.indexOf(domain) != -1) {
+                                RDR.group.media_url_ignore_query = false;   
+                            }
+
+                        });
                         if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
                             hashBody = hashBody.split('?')[0];
                         }
