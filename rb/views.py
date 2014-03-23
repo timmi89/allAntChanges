@@ -29,6 +29,10 @@ from django.views.decorators.vary import vary_on_headers
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils import simplejson
+# for the page reset thing...  hacky, i know:
+from django.core.cache import cache
+from chronos.jobs import *
+from threading import Thread
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -242,6 +246,19 @@ def group(request):
 # @cache_page(60)
 # @vary_on_cookie
 @vary_on_headers('Cookie')
+
+def resetPageData(request, page_id=None, **kwargs):
+    try:
+        cache_updater = PageDataCacheUpdater(method="delete", page_id=page_id)
+        t = Thread(target=cache_updater, kwargs={})
+        t.start()
+
+    except Exception, e:
+        logger.warning(traceback.format_exc(50))
+
+    context = {}
+    return render_to_response("pagereset.html", context, context_instance=RequestContext(request))
+
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, interaction_id=None, **kwargs):
     page_num = request.GET.get('page_num', 1)
     context = main_helper(request, user_id, short_name, **kwargs)

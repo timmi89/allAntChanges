@@ -160,7 +160,7 @@ class ModifySocialUserForm(forms.ModelForm):
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
         
             if check_nodes.count() == 0:
-                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+                inode = InteractionNode.objects.create(body=tag)
 
             elif check_nodes.count() > 1:
                 inode = check_nodes[0]
@@ -274,7 +274,7 @@ class GroupForm(forms.ModelForm):
             check_nodes = InteractionNode.objects.filter(body__exact = tag)
         
             if check_nodes.count() == 0:
-                inode = InteractionNode.objects.get_or_create(body=tag)[0]
+                inode = InteractionNode.objects.create(body=tag)
 
             elif check_nodes.count() > 1:
                 inode = check_nodes[0]
@@ -339,7 +339,11 @@ class GroupForm(forms.ModelForm):
             'summary_widget_method',
             'br_replace_scope_selector',
             'call_to_action',
-            'paragraph_helper'
+            'paragraph_helper',
+            'hideOnMobile',
+            'hideDoubleTapMessage',
+            'doubleTapMessage',
+            'doubleTapMessagePosition'
         )
 
 

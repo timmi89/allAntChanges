@@ -151,6 +151,7 @@ span.rdr_react_label {
   display: inline-block;
   cursor:pointer;
 }
+
 div.rdr_actionbar span.rdr_react_label {
   padding:4px 4px;
 }
@@ -175,6 +176,9 @@ div.rdr_actionbar_for_media {
     border: 1px solid #bbb;
     height: auto;
 }
+/*body.rdr_touch_browser div.rdr_actionbar_for_media {
+  display:block;
+}*/
 div.rdr_actionbar_for_media li { 
     display:block;
     float:left;
@@ -188,6 +192,9 @@ div.rdr_about {
   margin-top: 3px;
   margin-right: 3px;
   opacity:0.65;
+}
+div.rdr_helper_rindow div.rdr_about {
+  display: none;
 }
 div.rdr_about a {
   display:block;
@@ -419,7 +426,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown.rdr_menu_actions{
     */
     padding-right: 10px;
     background: #fff;
-    height: 28px;
+    height: 31px;
 }
 
 
@@ -440,7 +447,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_menuDropDown:hover .rdr_icon-share-ov
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap {
     position: absolute;
     right: 0;
-    top: 32px;
+    top: 29px;
     box-shadow: 0 0px 4px #ccc;
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;
@@ -728,7 +735,7 @@ div.rdr div.rdr_info        {font:italic 11px Arial;color:#767676; margin:0; cur
 div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee; -webkit-border-radius:6px; -moz-border-radius:6px; border-radius:6px; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0; }
 div.rdr div.rdr_share_social                   { overflow:visible; position: relative; top: 4px; min-width:90px;}
 div.rdr div.rdr_share_social strong            { display:block; float:left; margin:5px 5px 0 24px; }
-div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; }
+div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; border-bottom:1px solid #ddd; padding-bottom: 10px;}
 
 div.rdr div.rdr_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.rdr div.rdr_back:hover { background:#999; }
@@ -801,18 +808,37 @@ div.rdr div.rdr_comment .rdr_comment_body{
     margin-left: 27px;
 }
 
-div.rdr ul.rdr_shareLinks {
-    display: block;
-    min-width: 95px;
+div.rdr .rdr_shareLinks {
+  margin-top:5px;
+  padding-top:5px;
+  font-size:18px;
+  color:#999;
+  text-align: center;
 }
-div.rdr ul.rdr_shareLinks li {
+div.rdr .rdr_shareLinks ul {
+    display: inline-block;
+    /*min-width: 95px;*/
+}
+div.rdr .rdr_shareLinks ul li {
     padding: 5px 0 5px 5px;
     display:inline-block;
     list-style:none;
 }
-div.rdr ul.rdr_shareLinks img {
-    width:25px; 
-    margin:0;
+div.rdr .rdr_shareLinks ul i {
+    font-size:20px;
+    background:#fff;
+    text-decoration: none;
+}
+div.rdr .rdr_shareLinks ul i:hover {
+    background:#eee;
+}
+div.rdr .rdr_shareLinks ul i.rdr_icon-twitter {
+  color:#55acee;
+  padding:6px;
+}
+div.rdr .rdr_shareLinks ul i.rdr_icon-facebook {
+  color:#3b5998;
+  padding:6px 10px;
 }
 
 /* forms */
@@ -1652,18 +1678,20 @@ div.rdr_indicator.rdr_indicator_for_media {
 }
 
 /*touchBrowser overrides for sandbox*/
-/*#rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media {
-    display: block !important;
+#rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media {
+    display: block;
     opacity:1.0 !important;
     -moz-opacity:1.0 !important;
     -khtml-opacity:1.0 !important;
     visibility: visible;;
 }
+/*
 #rdr_sandbox.isTouchBrowser div.rdr_indicator.rdr_indicator_for_media.rdr_indicator_not_img {
 
 }
+*/
 
-#rdr_sandbox.isTouchBrowser div.rdr.rdr_window.rdr_for_page {
+/*#rdr_sandbox.isTouchBrowser div.rdr.rdr_window.rdr_for_page {
     margin-top: 32px !important;
 }
 */
@@ -1690,6 +1718,9 @@ div.rdr_indicator_for_text{
     display: inline;
     position: relative;
     vertical-align: top;
+}
+body.rdr_touch_browser div.rdr_indicator_for_text {
+  display:block;
 }
 div.rdr_indicator_for_text * {
     display:inline;
@@ -1814,6 +1845,7 @@ div.rdr_indicator_details img.rdr_pin {
 
 .no-rdr div.rdr_indicator,
 body.no-rdr div.rdr-summary,
+.no-rdr div.rdr-summary,
 .no-rdr.rdr_live_hover div.rdr_indicator,
 .no-rdr .rdr_live_hover div.rdr_indicator,
 .no-rdr .rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
@@ -1829,6 +1861,9 @@ div.rdr_indicator.rdr_indicator_for_media img.rdr_pin {
     background:url("../images/readr_icons.png") no-repeat -2px -1px;
     position:absolute;
     margin:6px 0 0;
+}
+body.rdr_touch_browser div.rdr_indicator.rdr_indicator_for_media img.rdr_pin {
+  background-position: -182px -1px;
 }
 /*indicator pin inline indicator only*/
 div.rdr_indicator img.rdr_pin{ 
@@ -1854,6 +1889,25 @@ div.rdr_indicator_for_text div.rdr_indicator_body{
     /*top: -15px;*/
 }
 
+body.rdr_touch_browser div.rdr_indicator_for_text.rdr_no_reactions {
+  /*visibility:hidden !important;*/
+  display:none !important;
+}
+body.rdr_touch_browser div.rdr_indicator_for_text div.rdr_indicator_body {
+  left:0;
+  position:static;
+}
+div.rdr_indicator_for_text div.rdr_indicator_body .rdr_count_label {
+  display:none;
+}
+body.rdr_touch_browser div.rdr_indicator_for_text div.rdr_indicator_body .rdr_count_label {
+  color:#888;
+  display: inline-block;
+  font-family: normal 12px Arial, sans-serif;
+  font-size: 11px;
+  font-weight:bold;
+}
+
 
 
 div.rdr_indicator_for_media div.rdr_indicator_body{
@@ -1877,6 +1931,10 @@ div.rdr_indicator_for_media div.rdr_indicator_body{
   text-shadow:
     0px -1px 0px rgba(000,000,000,0.1),
     0px 1px 0px rgba(255,255,255,1);
+}
+body.rdr_touch_browser div.rdr_indicator_for_media div.rdr_indicator_body{
+background: rgba(255,255,255,0.75);
+  text-shadow:none;
 }
 div.rdr_indicator_for_media.rdr_indicator_not_img div.rdr_indicator_body{
   -moz-box-shadow:
@@ -1910,6 +1968,9 @@ div.rdr_indicator_for_media .rdr_chevron_cta {
   padding-top: 6px;
   padding-left: 5px;
   margin-left: 6px;
+}
+body.rdr_touch_browser div.rdr_indicator_for_media .rdr_chevron_cta {
+  display:none;
 }
 div.rdr_indicator_for_media:hover .rdr_chevron_cta i:before,
 div.rdr_indicator_for_media.rdr_hover .rdr_chevron_cta i:before {
@@ -2081,6 +2142,10 @@ div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
     font-size:12px;
     display:inline-block;
 }
+body.rdr_touch_browser div.rdr_indicator.rdr_indicator_for_media span.rdr_count {
+  font-size:11px;
+  padding-right:7px;
+}
 
 span.rdr_indicator_categoryTitle{ 
     width:auto;
@@ -2243,6 +2308,7 @@ div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body{
     width: 100% !important;
     top: 45% !important;
     margin-top: -0.5em !important;
+    text-align: center;
 }
 div.rdr div.rdr_body.rdr_tags_list .rdr_tag_split .rdr_tag_body{
     margin-top: -1em !important;
@@ -2480,12 +2546,41 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
     transform:  translate(0px, 0px) !important;  
 }
 
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message {
+  background:#fff;
+  position: fixed;
+  width: 75%;
+  padding:4px;
+  left: 50%;
+  margin: 0 0 0 -37.5%;
+  color:#008BE4;
+  box-shadow: 0px 0px 10px #999;
+  font-size:11px;
+  text-align: center;
+  z-index:11000;
+}
+
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message.rdr_top {
+  top:0;
+}
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message.rdr_bottom {
+  bottom:0;
+}
+
+#rdr_sandbox.isTouchBrowser .rdr_mobile_message a {
+  font-size:11px;
+  display:block;
+  padding-top:4px;
+}
 
 /* force capital first letter on reactions for now */
-div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {
-    text-transform: lowercase;
-}
+/* NEVER MIND.  DESTROYS IE. */
+/* http://stackoverflow.com/questions/7135174/ie8-hangs-when-opening-a-site-which-uses-css3 */
 
-div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
+/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {*/
+    /*text-transform: lowercase;*/
+/*}*/
+
+/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
     text-transform: uppercase;
-}
+}*/
