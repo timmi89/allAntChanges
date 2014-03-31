@@ -183,6 +183,14 @@ class Group(models.Model):
     inline_selector = models.CharField(max_length=100, default='', blank=True)
     inline_func = models.CharField(max_length=25, default='', blank=True)
 
+    # new attributes for data dashboard.  all are form fields to support page settings.
+    author_selector = models.CharField(max_length=255, blank=True) # jquery()
+    author_attribute = models.CharField(max_length=255, blank=True) # jquery .attr()
+    topics_selector = models.CharField(max_length=255, blank=True) # jquery()
+    topics_attribute = models.CharField(max_length=255, blank=True) # jquery .attr()
+    section_selector = models.CharField(max_length=255, blank=True)  # jquery()
+    section_attribute = models.CharField(max_length=255, blank=True)  # jquery .attr()
+
     # mobile settings
     hideOnMobile = models.BooleanField(default=False)
     hideDoubleTapMessage = models.BooleanField(default=False)
@@ -345,6 +353,11 @@ class Page(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=255, blank=True)
     canonical_url = models.URLField(blank=True)
+    
+    # new for data dashboard v2
+    author = models.CharField(max_length=255, blank=True) # text, i.e. "John Dear"
+    topics = models.CharField(max_length=255, blank=True) # comma-delimited, i.e. "politics, healthcare, lovin"
+    section = models.CharField(max_length=255, blank=True)  # publisher defined, i.e. "Politics"
 
     def interactions(self):
         return Interaction.objects.filter(page=self)

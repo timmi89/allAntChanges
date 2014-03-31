@@ -343,7 +343,13 @@ class GroupForm(forms.ModelForm):
             'hideOnMobile',
             'hideDoubleTapMessage',
             'doubleTapMessage',
-            'doubleTapMessagePosition'
+            'doubleTapMessagePosition',
+            'author_selector',
+            'author_attribute',
+            'topics_selector',
+            'topics_attribute',
+            'section_selector',
+            'section_attribute'
         )
 
 

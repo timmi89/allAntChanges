@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
 
@@ -42,11 +43,11 @@
 
     	</section>
 
-        <section class="configuarationSection">
-            <h3>Configuring Your Site</h3>
+        <section class="configurationSection">
+            <h3>Where ReadrBoard Interacts</h3>
             <h4>Customize ReadrBoard by defining these <a href="http://api.jquery.com/category/selectors/" target="_blank">jQuery selectors</a>.</h4>
             <div class="formRow">
-                <label for="id_no_readr">
+                <label for="id_active_sections">
                     <span class="labelTitle">Active Sections (jQuery selector)</span>
                     <span>Tell ReadrBoard where the content its allowed to interact with can be found.  For example, if you're using WordPress, you may just want people to interact with your article content -- typically all found inside the <code>.post</code> element.  Multiple elements allowed.</span>
                     <span class="formInputExample">Example: <i>article.post, #slideshow</i></span>
@@ -119,7 +120,7 @@
             </div>
             <!-- this is too confusing still to expose to the user. -->
             <div class="formRow">
-                <label for="id_no_readr">
+                <label for="id_br_replace_scope_selector">
                     <span class="labelTitle">BR Tag Replacement (jQuery selector)</span>
                     <span>Some platforms, like Blogspot, separate paragraphs with a BR HTML tag, rather than P tags.  This is a problem, since there is a limit to how long a single piece of content can be for ReadrBoard.  If your CMS does this, ReadrBoard can replace the BR tags and wrap your content inside a tag. <strong>Most websites do not have this problem, so if you are unsure, just leave this empty!</strong></span>
                     <span class="formInputExample">Example: <i>.article</i></span>
@@ -130,7 +131,39 @@
             {% if hostplatform %}
                 <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />
             {% endif %}
-
+        </section>
+        <section class="configurationSection">
+            <h3>Page Attributes</h3>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Author(s)</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.author_selector|cssClass:'selector' }}').attr('{{ form.author_attribute|cssClass:'attribute' }}');
+                {{ form.author_selector.errors }}
+                {{ form.author_attribute.errors }}
+            </div>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Topics</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain topic tags.  If there is more than one tag, we'll iterate through and generated a comma-separated list of topic tags. We assume a jQuery selector for the tag, and that the tag is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.topics_selector|cssClass:'selector' }}').attr('{{ form.topics_attribute|cssClass:'attribute' }}');
+                {{ form.topics_selector.errors }}
+                {{ form.topics_attribute.errors }}
+            </div>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Site Section(s)</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain the site section(s) this article is in, such as Politics or News.  If there is more than one tag, we'll iterate through and generated a comma-separated list of sections. We assume a jQuery selector for the tag, and that the section name is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
+                {{ form.section_selector.errors }}
+                {{ form.section_attribute.errors }}
+            </div>
         </section>
     </div>
     <div class="rightColumn column">

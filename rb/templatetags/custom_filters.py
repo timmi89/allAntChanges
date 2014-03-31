@@ -61,4 +61,7 @@ def split_reaction(tagBodyRaw):
 	return mark_safe(tagBody)
 
 
+@register.filter(name='cssClass')
+def cssClass(field, css):
+   return field.as_widget(attrs={"class":css})
 

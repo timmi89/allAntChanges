@@ -594,12 +594,15 @@ body.popupForm.wide section[role="content"] { border:none; }
     margin:2px 5px 0px 0;
     float:left;
 }
+#groupSettings .formRow .selector { width:30%; }
+#groupSettings .formRow .attribute { width:15%; }
+
 form.big-form         { padding:10px 20px; }
 form.big-form label     { display:block; margin: 5px 0;}
 form.big-form label span    { display:block; font-style:italic; font-size:12px; }
 form.big-form label span.labelTitle {font-style:normal; font-weight: bold; margin-top: 1px; color:#008be4; font-size:14px;}
 form.big-form label span.formInputExample {color: #999;}
-form.big-form .configuarationSection h4     {
+form.big-form .configurationSection h4     {
     font-size: 14px;
     margin-bottom: 10px;
 }

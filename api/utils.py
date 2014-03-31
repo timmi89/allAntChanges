@@ -150,6 +150,10 @@ def getPage(host, page_request):
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
+    
+    author = page_request.get('author', None)
+    topics = page_request.get('topics', None)
+    section = page_request.get('section', None)
 
     if canonical:
         if canonical == "same":
