@@ -1,0 +1,30 @@
+#DROP OBJECTTYPE /Events
+#DROP COLLECTION COMPLETELY /Events
+
+CREATE OBJECTTYPE Events (site_name STRING, site_tld STRING, site_id NUMERIC, page__id STRING, page_title STRING, page_url STRING, page_topics STRING, referrer STRING, session_id STRING, user STRING, content_type STRING, content STRING, event_type STRING, event_value STRING, event_parent STRING)
+CREATE RELATIONAL COLLECTION /Events OBJECTTYPE Events
+
+CREATE OBJECTTYPE Topics    ( tag STRING )
+CREATE OBJECTTYPE Content   ( page__id STRING, page_title STRING, canonical_url STRING, site_id NUMERIC, content_type STRING, topic_tags GRABBAG /Topics )
+
+#CREATE OBJECTTYPE Person name STRING, gender STRING, mother REFERENCE /People, father REFERENCE /People, siblings GRABBAG /People
+
+
+CREATE EXTENSION /deleteTestData UNSECURED AS javascript:require('scripts/Extensions').deleteTestData();
+CREATE EXTENSION /createTestData UNSECURED AS javascript:require('scripts/Extensions').createTestData();
+CREATE EXTENSION /createTestEvents UNSECURED AS javascript:require('scripts/Extensions').createTestEvents();
+CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
+CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();
+CREATE EXTENSION /getMostEngagedPages     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPages();
+CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
+CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scripts/Extensions').getContentWithMostPVs();
+CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();
+CREATE EXTENSION /getMostScrolled     UNSECURED AS javascript:require('scripts/Extensions').getMostScrolled();
+CREATE EXTENSION /getMostLoaded     UNSECURED AS javascript:require('scripts/Extensions').getMostLoaded();
+CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts/Extensions').getGroupAggregate();
+CREATE EXTENSION /writeGrabbags     UNSECURED AS javascript:require('scripts/Extensions').writeGrabbags();
+CREATE EXTENSION /runSomeSql     UNSECURED AS javascript:require('scripts/Extensions').runSomeSql();
+CREATE EXTENSION /testStuff     UNSECURED AS javascript:require('scripts/Extensions').testStuff();
+
+SET CORS https://system.fatfractal.com http://localhost:8080 https://localhost:8080
+

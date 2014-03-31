@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <fatfractal-app>
-    <display-name>eventsdev2</display-name>
-    <description>eventsdev2 application</description>
+    <display-name>eventsdev</display-name>
+    <description>eventsdev application</description>
 
     <default-application-type>application.type.noserver</default-application-type>
     
@@ -12,7 +12,7 @@
     </onload>
 
     <database>
-        <database-name>eventsdev2</database-name>
+        <database-name>eventsdev</database-name>
         <database-user>foo</database-user>
         <database-password>bar</database-password>
         <database-collection>__app_config</database-collection>
@@ -33,6 +33,7 @@
         <extern>file://./extern/mysql-connector-java-5.1.6.jar</extern>
         <extern>file://./extern/imgscalr-lib-4.2.jar</extern>
         <extern>file://./extern/scribe-1.3.2.jar</extern>
+        <extern>file://./extern/cron4j-2.2.5.jar</extern>
     </externs>
 
     <action>
