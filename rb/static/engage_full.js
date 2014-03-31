@@ -3530,6 +3530,8 @@ function readrBoard($R){
                                 $('title').text() ?
                                 $('title').text() : "";
 
+                    canonical_url = canonical_url.toLowerCase();
+
                     // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                     // if (canonical_url.indexOf('//') === 0) {
                         // canonical_url = canonical_url.substr(2);
