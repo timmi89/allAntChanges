@@ -242,7 +242,7 @@ function readrBoard($R){
 
                     });
 
-                    if (window.frames['rdr-xdm-hidden']) {
+                    if ( typeof RDR.group.readyToTrack != 'undefined' && RDR.group.readyToTrack === true ) {
                         $.postMessage(
                             "register-event::"+data,
                             RDR_baseUrl + "/static/xdm.html",
@@ -3134,6 +3134,7 @@ function readrBoard($R){
                                 RDR.util.userLoginState();
 
                             } else if ( message.status == "xdm loaded" ) {
+                                RDR.group.readyToTrack = true;
                                 RDR.util.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
