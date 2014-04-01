@@ -49,6 +49,10 @@ exports.deleteTestData = function() {
     ff.deleteAllForQuery("/Events/(page_title ne '')");
 };
 
+exports.deleteTestUsers = function() {
+    ff.deleteAllForQuery("/FFUser/(userName contains_any 'teamreadrboard readrWidget')");
+};
+
 
 exports.createTestContent = function() {
     var content = ff.createObjAtUri(new Content({

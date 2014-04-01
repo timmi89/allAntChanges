@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <fatfractal-app>
-    <display-name>eventsdev</display-name>
-    <description>eventsdev application</description>
+    <display-name>eventsprerelational</display-name>
+    <description>eventsprerelational application</description>
 
     <default-application-type>application.type.noserver</default-application-type>
     
@@ -12,7 +12,7 @@
     </onload>
 
     <database>
-        <database-name>eventsdev</database-name>
+        <database-name>eventsprerelational</database-name>
         <database-user>foo</database-user>
         <database-password>bar</database-password>
         <database-collection>__app_config</database-collection>

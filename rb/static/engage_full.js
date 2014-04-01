@@ -204,17 +204,20 @@ function readrBoard($R){
             },
             trackEventToCloud: function( params ) {
                 // RDR.events.trackEventToCloud
-                
-                RDR.user = RDR.user || {};
 
-                if (params.event_type && params.event_value){
+                RDR.user = RDR.user || {};
+                RDR.event_queue = RDR.event_queue || [];
+
+                if (typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+
+                    var page_id = ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString();
                     var data = $.toJSON({
 
                         event_type: params.event_type,
                         event_value: params.event_value,
                         group_id: RDR.group.id || null,
                         user_id: RDR.user.user_id || null,
-                        page_id: params.page_id || RDR.util.getPageProperty('id'),
+                        page_id: page_id,
                         page_title: RDR.group.thisPage.title || null,
                         canonical_url: RDR.group.thisPage.canonical_url || null,
                         page_url: RDR.group.thisPage.url || null,
@@ -228,27 +231,26 @@ function readrBoard($R){
                         site_section: RDR.group.section || null,
                         isTouchBrowser: isTouchBrowser,
                         screen_width:  screen.width,
-                        screen_height:  screen.width,
-                        pixel_density:  window.devicePixelRatio,
+                        screen_height:  screen.height,
+                        pixel_density:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                        // pixel_density:  window.devicePixelRatio,
                         user_agent:  navigator.userAgent,
-
-                        // event_type: params.event_type,
-                        // event_value: params.event_value,
-                        // opt_label: params.opt_label || null,
-                        // opt_value: params.opt_value || null,
-                        // opt_noninteraction: params.opt_noninteraction || null,
                         
                         container_hash: params.container_hash || null,
                         container_kind: params.container_kind || null,
-                        tag_body: params.tag_body || null
+                        reaction_body: params.reaction_body || null
 
                     });
 
-                    $.postMessage(
-                        "register-event::"+data,
-                        RDR_baseUrl + "/static/xdm.html",
-                        window.frames['rdr-xdm-hidden']
-                    );
+                    if (window.frames['rdr-xdm-hidden']) {
+                        $.postMessage(
+                            "register-event::"+data,
+                            RDR_baseUrl + "/static/xdm.html",
+                            window.frames['rdr-xdm-hidden']
+                        );
+                    } else {
+                        RDR.event_queue.push(params);
+                    }
                 }
             }    
         },
@@ -902,12 +904,10 @@ function readrBoard($R){
                                         RDR.events.trackEventToCloud({
                                             event_type: "share",
                                             event_value: val,
-                                            // action: "share_open_attempt",
-                                            // opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
                                             container_hash: hash,
                                             container_kind: args.kind,
                                             page_id: args.page_id,
-                                            tag_body: tag_body
+                                            reaction_body: tag_body
                                         });
 
                                         var summary = RDR.summaries[hash];
@@ -1194,6 +1194,12 @@ function readrBoard($R){
                                                 location:thing.content_node.location
                                             };
                                             RDR.session.revealSharedContent(data);
+
+                                            RDR.events.trackEventToCloud({
+                                                event_type: 'summary bar',
+                                                event_value: 'view content',
+                                                page_id: thisPageId
+                                            });
                                         });
 
                                         // insert the new content into the right place, ordered by count
@@ -1222,10 +1228,13 @@ function readrBoard($R){
                         if ( isWriteMode == false ) {
                             
                             var clickFunc = function(){
+
+
                                 RDR.rindow.hideFooter($rindow);
                                 $rindow.removeClass('rdr_rewritable');
 
-                                var page = RDR.pages[ RDR.util.getPageProperty('id', hash) ],
+                                var page_id = RDR.util.getPageProperty('id', hash),
+                                    page = RDR.pages[ page_id ],
                                     tag_count = tag.tag_count,
                                     counts = {
                                         "img":0,
@@ -1233,6 +1242,15 @@ function readrBoard($R){
                                         "media":0,
                                         "page":(tag_count=="+")?0:tag_count
                                     };
+                                
+
+                                RDR.events.trackEventToCloud({
+                                    event_type: 'summary bar',
+                                    event_value: 'view reactions',
+                                    page_id: page_id
+                                });
+
+
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
@@ -2844,6 +2862,11 @@ function readrBoard($R){
                     event_type: event_type,
                     event_value: milestone
                 });
+            },
+            fireEventQueue: function() {
+                $.each( RDR.event_queue, function(idx, event_params) {
+                    RDR.events.trackEventToCloud(event_params);
+                });
             }
         },
         debug: function(){
@@ -3110,6 +3133,8 @@ function readrBoard($R){
 
                                 RDR.util.userLoginState();
 
+                            } else if ( message.status == "xdm loaded" ) {
+                                RDR.util.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
@@ -3483,14 +3508,14 @@ function readrBoard($R){
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
           
-                var useDefaultSummaryBar = (
+                RDR.group.useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
                     !$('.rdr-page-summary').length &&
                     // !$(RDR.group.post_selector).length &&
                     !$(RDR.group.summary_widget_selector).length
                 );
                 
-                if (useDefaultSummaryBar){
+                if (RDR.group.useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
                     $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar"/>').appendTo('body');
@@ -3628,12 +3653,31 @@ function readrBoard($R){
                     success: function(response) {
                         // RDR.events.track( 'load' );
 
+                        var load_event_value = '';
+                        if (RDR.group.useDefaultSummaryBar){
+                            load_event_value = 'default summary bar';
+                        } else {
+                            if (response.data.length === 1) {
+                                load_event_value = 'single summary bar';
+                            } else if (response.data.length > 1) {
+                                load_event_value = 'multiple pages'
+                            } else {
+                                load_event_value = 'unexpected';
+                            }
+                        }
+
                         $.each( response.data, function(key,page){
                             //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                             page.key = key;
                             page.url = pageDict[key].url;
                             RDR.actions.pages.save(page.id, page);
                             RDR.actions.pages.initPageContainer(page.id);
+                        });
+
+                        RDR.events.trackEventToCloud({
+                            event_type: 'widget_load',
+                            event_value: load_event_value,
+                            page_id: RDR.util.getPageProperty('id')
                         });
 
                         $RDR.dequeue('initAjax');
@@ -3841,6 +3885,16 @@ function readrBoard($R){
                     }, 250));
                 });
 
+                
+                // this does not seem to work!
+                // $(window).on('beforeunload.rdr',function(event) {
+                    // RDR.events.trackEventToCloud({
+                    //     event_type: 'page_exit',
+                    //     event_value: '',
+                    //     page_id: RDR.util.getPageProperty('id')
+                    // });
+                // });
+
                 // ReadrBoard Timer?  unsure
                 // if (/*@cc_on!@*/false) { // check for Internet Explorer
                 //     document.onfocusin = RDR.util.windowFocus;
@@ -3852,7 +3906,6 @@ function readrBoard($R){
                 
                 // clearTimeout($.data(this, 'rdr_intervalTimer'));
                 // $.data(this, 'rdr_intervalTimer', setTimeout(function() {
-                //     console.log('rdrboard timer');
                 // }, 10000));
                 
 
@@ -5598,6 +5651,15 @@ if ( sendData.kind=="page" ) {
                             
                             RDR.util.triggerPublicEvent('comment');
 
+                            RDR.events.trackEventToCloud({
+                                event_type: "comment",
+                                event_value: interaction.interaction_node.body,
+                                container_hash: hash,
+                                container_kind: content_node.kind,
+                                page_id: args.page_id,
+                                reaction_body: args.tag.tag_body
+                            });
+
                         },
                         remove: function(args){
                             //RDR.actions.interactions.comment.onSuccess.remove:
@@ -5859,6 +5921,17 @@ if ( sendData.kind=="page" ) {
 
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
+                            
+
+                            RDR.events.trackEventToCloud({
+                                event_type: 'reaction',
+                                event_value: tag.body,
+                                reaction_body: tag.body,
+                                container_hash: args.hash,
+                                container_kind: args.kind,
+                                page_id: args.page_id
+                            });
+
                             $('#rdr_loginPanel').remove();
                             
                             //clear loader
@@ -8139,6 +8212,15 @@ if ( sendData.kind=="page" ) {
                     $rindow = args.rindow,
                     content_node = args.content_node;
 
+                RDR.events.trackEventToCloud({
+                    event_type: "view comments",
+                    event_value: '',
+                    container_hash: args.hash,
+                    container_kind: args.content_node.kind,
+                    page_id: RDR.util.getPageProperty('id'),
+                    reaction_body: args.tag.tag_body
+                });
+
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more');
                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
                 RDR.rindow.hideFooter( $rindow );
@@ -9638,10 +9720,7 @@ function $RFunctions($R){
                     // RDR.events.track( 'view_summary::'+page_id );
 
                     RDR.events.trackEventToCloud({
-                        // category: "summarybar",
-                        // action: "rindow_shown_summarybar",
-                        // opt_label: "page: "+page_id,
-                        event_type: 'summary_bar',
+                        event_type: 'summary bar',
                         event_value: 'show',
                         page_id: page_id
                     });
