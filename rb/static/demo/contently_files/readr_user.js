@@ -513,7 +513,7 @@ window.RDRAuth = {
         $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
 
         //try out just using 90 days for everything - we're checking fb login every time anyway.
-        $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
+        // $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
         // $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
     },
     readUserCookie: function() {
@@ -609,7 +609,8 @@ window.RDRAuth = {
         $.cookie('readr_token', null, { path: '/' });
         $.cookie('user_id', null, { path: '/' });
         $.cookie('user_type', null, { path: '/' });
-        $.cookie('rdr_session', null, { path: '/' });
+        // $.cookie('rdr_session', null, { path: '/' });
+        // $.cookie('rdr_user', null, { path: '/' });
     },
 
     doFBLogin: function(requesting_action) {

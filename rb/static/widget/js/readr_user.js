@@ -109,50 +109,57 @@ window.RDRAuth = {
     	},
         trackEventToCloud: function(params){
             // RDRAuth.events.trackEventToCloud
+            
+            console.log('readr user tracking params');
+            console.log(params);
+
+            // Old.  When Using Parse.
             //Record events to 3rd party event tracking.  These parameters match Google's event tracking API.
             //see https://developers.google.com/analytics/devguides/collection/gajs/eventTrackerGuide#SettingUpEventTracking
-            var category = params.category,
-                action = params.action,
-                opt_label = params.opt_label || null,
-                opt_value = params.opt_value  || null,
-                opt_noninteraction = params.opt_noninteraction  || null;
+            // var category = params.category,
+            //     action = params.action,
+            //     opt_label = params.opt_label || null,
+            //     opt_value = params.opt_value  || null,
+            //     opt_noninteraction = params.opt_noninteraction  || null;
                 
-            //these are extra params that we are adding only for parse, not google analytics.
-            //google analytics duplicates some of these as json in opt_value
-            var shareNetwork = params.shareNetwork || null,
-                container_hash = params.container_hash || null,
-                container_kind = params.container_kind || null,
-                page_id = params.page_id || null,
-                tag_body = params.tag_body || null,
-                user_id = params.user_id || null,
-                group_id = params.group_id || null;
+            // //these are extra params that we are adding only for parse, not google analytics.
+            // //google analytics duplicates some of these as json in opt_value
+            // var shareNetwork = params.shareNetwork || null,
+            //     container_hash = params.container_hash || null,
+            //     container_kind = params.container_kind || null,
+            //     page_id = params.page_id || null,
+            //     tag_body = params.tag_body || null,
+            //     user_id = params.user_id || null,
+            //     group_id = params.group_id || null;
+
                 
-            if( typeof Parse !== "undefined" ){
-                //uncomment for debugging
-                // console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
-                var parseTrackingRepo = RDRAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
-                var ParseTracker = Parse.Object.extend(parseTrackingRepo);
-                var parseTracker = new ParseTracker();
-                parseTracker.save({
-                    category: category,
-                    action: action,
-                    shareNetwork: shareNetwork,
-                    container_hash: container_hash,
-                    container_kind: container_kind,
-                    page_id: page_id,
-                    tag_body: tag_body,
-                    user_id: user_id,
-                    group_id: group_id
-                }, {
-                  success: function(object) {
-                  }
-                });
-            }
+            // if( typeof Parse !== "undefined" ){
+            //     //uncomment for debugging
+            //     // console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+            //     var parseTrackingRepo = RDRAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
+            //     var ParseTracker = Parse.Object.extend(parseTrackingRepo);
+            //     var parseTracker = new ParseTracker();
+            //     parseTracker.save({
+            //         category: category,
+            //         action: action,
+            //         shareNetwork: shareNetwork,
+            //         container_hash: container_hash,
+            //         container_kind: container_kind,
+            //         page_id: page_id,
+            //         tag_body: tag_body,
+            //         user_id: user_id,
+            //         group_id: group_id
+            //     }, {
+            //       success: function(object) {
+            //       }
+            //     });
+            // }
             
             //don't log google tracking events while offline
-            if( typeof _gaq !== "undefined" && !RDRAuth.isOffline ){
-                _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
-            }
+            // killing for now.  we can't make much use of this.
+            // if( typeof _gaq !== "undefined" && !RDRAuth.isOffline ){
+                // _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
+            // }
         },
         helpers: {
             trackFBLoginAttempt: function(){
@@ -513,7 +520,7 @@ window.RDRAuth = {
         $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
 
         //try out just using 90 days for everything - we're checking fb login every time anyway.
-        $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
+        // $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
         // $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
     },
     readUserCookie: function() {
@@ -610,6 +617,7 @@ window.RDRAuth = {
         $.cookie('user_id', null, { path: '/' });
         $.cookie('user_type', null, { path: '/' });
         $.cookie('rdr_session', null, { path: '/' });
+        $.cookie('rdr_user', null, { path: '/' });
     },
 
     doFBLogin: function(requesting_action) {
