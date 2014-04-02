@@ -10,10 +10,10 @@
 #CREATE OBJECTTYPE Person name STRING, gender STRING, mother REFERENCE /People, father REFERENCE /People, siblings GRABBAG /People
 
 
-CREATE EXTENSION /deleteTestData UNSECURED AS javascript:require('scripts/Extensions').deleteTestData();
-CREATE EXTENSION /deleteTestUsers UNSECURED AS javascript:require('scripts/Extensions').deleteTestUsers();
-CREATE EXTENSION /createTestData UNSECURED AS javascript:require('scripts/Extensions').createTestData();
-CREATE EXTENSION /createTestEvents UNSECURED AS javascript:require('scripts/Extensions').createTestEvents();
+#CREATE EXTENSION /deleteTestData UNSECURED AS javascript:require('scripts/Extensions').deleteTestData();
+#CREATE EXTENSION /deleteTestUsers UNSECURED AS javascript:require('scripts/Extensions').deleteTestUsers();
+#CREATE EXTENSION /createTestData UNSECURED AS javascript:require('scripts/Extensions').createTestData();
+#CREATE EXTENSION /createTestEvents UNSECURED AS javascript:require('scripts/Extensions').createTestEvents();
 CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
 CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();
 CREATE EXTENSION /getMostEngagedPages     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPages();

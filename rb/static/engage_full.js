@@ -218,9 +218,9 @@ function readrBoard($R){
                         group_id: RDR.group.id || null,
                         user_id: RDR.user.user_id || null,
                         page_id: page_id,
-                        page_title: RDR.group.thisPage.title || null,
-                        canonical_url: RDR.group.thisPage.canonical_url || null,
-                        page_url: RDR.group.thisPage.url || null,
+                        page_title: RDR.util.getPageProperty('title') || null,
+                        canonical_url: RDR.util.getPageProperty('canonical_url') || null,
+                        page_url: RDR.util.getPageProperty('page_url') || null,
                         long_term_session: RDR.user.guid || null,
                         short_term_session: RDR.user.session || null,
                         referrer: document.referrer,
@@ -2459,40 +2459,71 @@ function readrBoard($R){
             },
             getPageProperty: function( prop, hashOrObject ) {
             //RDR.util.getPageProperty
+
             // goal is, generally, to get the Page ID integer.
                 if (!prop) {
                     prop = "id";
                 }
-                var page_id;
 
-                //hack to accomodate the dirty - hash=="page"
-                if(hashOrObject == "page"){
-                    // hack salvage data
-                    page_id = $('.rdr_window').data('container').attr('rdr-page-id');
-                    return parseInt(page_id, 10);
-                }
+                if (prop == "id") {
+                    var page_id;
 
-                // this code is to accommodate passing in either a hash (string) or jquery element to 
-                if (typeof hashOrObject == "object") {
-                    if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
-                        return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
+                    //hack to accomodate the dirty - hash=="page"
+                    if(hashOrObject == "page"){
+                        // hack salvage data
+                        page_id = $('.rdr_window').data('container').attr('rdr-page-id');
+                        return parseInt(page_id, 10);
                     }
-                } else if (!hashOrObject) {
-                    // whiskey tango foxtrot
-                    // return false;
-                    return $('[rdr-page-container]').eq(0).data('page_id');
-                }
-                if ( typeof hashOrObject == "string" ) {
-                    var hash = hashOrObject;
-                }
-                // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : ( $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id') ) ?$('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id'):$('body').data('page_id');
 
-                // store the page_id on this node to prevent walking-up again later
-                if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
-                    $('[rdr-hash="'+hash+'"]').data('page_id', page_id);
+                    // this code is to accommodate passing in either a hash (string) or jquery element to 
+                    if (typeof hashOrObject == "object") {
+                        if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
+                            return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
+                        }
+                    } else if (!hashOrObject) {
+                        // whiskey tango foxtrot
+                        // return false;
+                        return $('[rdr-page-container]').eq(0).data('page_id');
+                    }
+                    if ( typeof hashOrObject == "string" ) {
+                        var hash = hashOrObject;
+                    }
+                    // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
+                    var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : ( $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id') ) ?$('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id'):$('body').data('page_id');
+
+                    // store the page_id on this node to prevent walking-up again later
+                    if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
+                        $('[rdr-hash="'+hash+'"]').data('page_id', page_id);
+                    }
+                    return parseInt( page_id );
                 }
-                return parseInt( page_id );
+                if (prop == "title") {
+                    var title = $('meta[property="og:title"]').attr('content') ?
+                            $('meta[property="og:title"]').attr('content') :
+                                $('title').text() ?
+                                $('title').text() : "";
+
+                    return $.trim(title);
+                }
+                
+                // what's in the address bar?
+                if (prop == "page_url") {
+                    var page_url = window.location.href.split('#')[0];
+                    return $.trim(page_url.toLowerCase());
+                }
+
+                // what is the stated canonical?
+                if (prop == "canonical_url") {
+                    var canonical_url = $('link[rel="canonical"]').length > 0 ?
+                                $('link[rel="canonical"]').attr('href') : pageUrl;
+                    
+                    canonical_url = canonical_url.toLowerCase();
+
+                    if (canonical_url == RDR.util.getPageProperty('page_url') ) {
+                        canonical_url = "same";
+                    }
+                    return $.trim(canonical_url);
+                }
             },
             buildInteractionData: function() {
                 //RDR.util.buildInteractionData
@@ -3594,16 +3625,11 @@ function readrBoard($R){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                var pageUrl = window.location.href.split('#')[0];
+                var pageUrl = RDR.util.getPageProperty('page_url');
                 if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
-                    canonical_url = $('link[rel="canonical"]').length > 0 ?
-                                $('link[rel="canonical"]').attr('href') : pageUrl;
-                    title = $('meta[property="og:title"]').attr('content') ?
-                            $('meta[property="og:title"]').attr('content') :
-                                $('title').text() ?
-                                $('title').text() : "";
-
-                    canonical_url = canonical_url.toLowerCase();
+                    
+                    canonical_url = RDR.util.getPageProperty('canonical_url');
+                    title = RDR.util.getPageProperty('title');
 
                     // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                     // if (canonical_url.indexOf('//') === 0) {
