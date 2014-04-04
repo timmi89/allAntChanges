@@ -41,18 +41,22 @@ CREATE COLLECTION /FFNotificationID OBJECTTYPE FFNotificationID
 #
 # Extension Resources
 #
-CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
-CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();
 CREATE EXTENSION /getEventCounts     UNSECURED AS javascript:require('scripts/Extensions').getEventCounts();
-CREATE EXTENSION /getMostEngagedPages     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPages();
 CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
+CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();
 CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scripts/Extensions').getContentWithMostPVs();
 CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();
 CREATE EXTENSION /getMostScrolled     UNSECURED AS javascript:require('scripts/Extensions').getMostScrolled();
 CREATE EXTENSION /getMostLoaded     UNSECURED AS javascript:require('scripts/Extensions').getMostLoaded();
 CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts/Extensions').getGroupAggregate();
-CREATE EXTENSION /writeGrabbags     UNSECURED AS javascript:require('scripts/Extensions').writeGrabbags();
-CREATE EXTENSION /runSomeSql     UNSECURED AS javascript:require('scripts/Extensions').runSomeSql();
-CREATE EXTENSION /testStuff     UNSECURED AS javascript:require('scripts/Extensions').testStuff();
+CREATE EXTENSION /timeSiteAvg     UNSECURED AS javascript:require('scripts/Extensions').timeSiteAvg();
+CREATE EXTENSION /getPopularBrowsers     UNSECURED AS javascript:require('scripts/Extensions').getPopularBrowsers();
+
+#CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
+#CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();
+#CREATE EXTENSION /writeGrabbagsCron     UNSECURED AS javascript:require('scripts/Extensions').writeGrabbagsCron();
+#CREATE EXTENSION /runSomeSql     UNSECURED AS javascript:require('scripts/Extensions').runSomeSql();
+#CREATE EXTENSION /testStuff     UNSECURED AS javascript:require('scripts/Extensions').testStuff();
+#CREATE EXTENSION /getMostEngagedPages     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPages();
 
 

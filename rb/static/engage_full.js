@@ -233,9 +233,9 @@ function readrBoard($R){
                         screen_width:  screen.width,
                         screen_height:  screen.height,
                         pixel_density:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
-                        // pixel_density:  window.devicePixelRatio,
                         user_agent:  navigator.userAgent,
                         
+                        // content_id: ????
                         container_hash: params.container_hash || null,
                         container_kind: params.container_kind || null,
                         reaction_body: params.reaction_body || null
@@ -2506,9 +2506,12 @@ function readrBoard($R){
                     return $.trim(title);
                 }
                 
+
                 // what's in the address bar?
+                // this is outside the conditional b/c it's referenced by the canonical URL conditional, too
+                var page_url = window.location.href.split('#')[0];
+            
                 if (prop == "page_url") {
-                    var page_url = window.location.href.split('#')[0];
                     return $.trim(page_url.toLowerCase());
                 }
 
