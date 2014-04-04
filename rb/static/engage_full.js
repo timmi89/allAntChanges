@@ -225,6 +225,7 @@ function readrBoard($R){
                         short_term_session: RDR.user.session || null,
                         referrer: document.referrer,
 
+                        content_attributes: params.content_attributes || null,
                         content_location: params.content_location || null,
                         topics: RDR.group.topics || null,
                         author: RDR.group.author || null,
@@ -298,6 +299,8 @@ function readrBoard($R){
             },
             getBlessedTags: function(hash){
                 //RDR.groupSettings.getBlessedTags:
+
+                // return blessed tags for this hash, if they exist...
                 var perContainerSettings = window.readrboard_extend_per_container;
                 if(hash && perContainerSettings){
                     var name = getCustomDisplayContainers(hash);
@@ -314,6 +317,8 @@ function readrBoard($R){
                     return name;
                 }
 
+                // otherwise, return the reactions that are set on the page
+                // via Admin or via window.readrboard_extend object
                 return RDR.group.blessed_tags;
             }
         },
@@ -2628,7 +2633,7 @@ function readrBoard($R){
                 // TODO: <br> tags and block-level tags can screw up words.  ex:
                 // hello<br>how are you?   here becomes
                 // hellohow are you?    <-- no space where the <br> was.  bad.
-                var node_text = $.trim( $node.html().replace(/< *br *\/?>/gi, '\n') );
+                var node_text = $.trim( $node.html().replace(/< *br *\/?>/gi, ' ') );
                 var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
 
                 if( body && typeof body == "string" && body !== "" ) {
@@ -3068,6 +3073,7 @@ function readrBoard($R){
                 } else if ( callback ) {
                     RDR.session.receiveMessage( false, callback );
                 }
+
                 $.postMessage(
                     "getUser",
                     RDR_baseUrl + "/static/xdm.html",
@@ -4390,7 +4396,9 @@ function readrBoard($R){
                               return value != thisHash;
                             });
 
-                            hashList.push( thisHash );
+                            if (typeof thisHash != 'undefined') {
+                                hashList.push( thisHash );
+                            }
 
                             //init the cross page containers so even the ones that come back with 0 reactions will
                             //have write mode enabled
@@ -5400,6 +5408,7 @@ function readrBoard($R){
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
                     //get user and only procceed on success of that.
+
                     RDR.session.getUser( args, function(newArgs){
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
@@ -6747,6 +6756,8 @@ if ( sendData.kind=="page" ) {
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
+                    
+
                     // for now, separately handle the "custom display" elements
                     if ( $container.hasAttr('rdr-custom-display') ) {
 
@@ -9047,7 +9058,10 @@ if ( sendData.kind=="page" ) {
                         $.each( $('[rdr-custom-display]'), function( idx, node ) {
                             RDR.actions.hashNodes( $(node) );
                             var thisHash = $(node).attr('rdr-hash');
-                            hashesByPageId[ page.id ].push( thisHash );
+
+                            if (typeof thisHash != 'undefined') {
+                                hashesByPageId[ page.id ].push( thisHash );
+                            }
                         });
                         // hashesByPageId[ page.id ].push( $('[rdr-custom-display="true"]:eq(0)').attr('rdr-hash') );
                         // RDR.actions.sendHashes( hashesByPageId );

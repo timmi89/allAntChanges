@@ -224,6 +224,7 @@ window.RDRAuth = {
 		});
 	},
 	getUser: function() {
+    console.log('RU getUser 1');
 		RDRAuth.readUserCookie();
 		if ( !RDRAuth.rdr_user.readr_token ) {
 			// user is null.  get a tempUser.
@@ -693,6 +694,7 @@ $(document).ready(function(){
                     var data;
 
                     if( e.data == "getUser" ) {
+                      console.log('RU getUser A');
                         RDRAuth.getUser();
                     } else if ( e.data == "reloadXDMframe" ) {
                         window.location.reload();
