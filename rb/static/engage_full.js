@@ -2477,23 +2477,27 @@ function readrBoard($R){
 
                     // this code is to accommodate passing in either a hash (string) or jquery element to 
                     if (typeof hashOrObject == "object") {
-                        if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
-                            return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
+                        // if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
+                        if ( $(hashOrObject).closest('[rdr-page-container]').length ) {
+                            return parseInt( $(hashOrObject).closest('[rdr-page-container]').attr('rdr-page-container') );
                         }
                     } else if (!hashOrObject) {
                         // whiskey tango foxtrot
                         // return false;
-                        return $('[rdr-page-container]').eq(0).data('page_id');
+                        // return $('[rdr-page-container]').eq(0).data('page_id');
+                        return $('[rdr-page-container]').eq(0).attr('rdr-page-container');
                     }
                     if ( typeof hashOrObject == "string" ) {
                         var hash = hashOrObject;
+                        var $objWithHash = $('[rdr-hash="'+hash+'"]');
                     }
                     // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                    var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : ( $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id') ) ?$('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id'):$('body').data('page_id');
+                    // so foxtrot ugly
+                    var page_id = ( $objWithHash.data('page_id') ) ? $objWithHash.data('page_id') : ( $objWithHash.closest('[rdr-page-container]').length ) ? $objWithHash.closest('[rdr-page-container]').attr('rdr-page-container'):$('body').attr('rdr-page-container');
 
                     // store the page_id on this node to prevent walking-up again later
-                    if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
-                        $('[rdr-hash="'+hash+'"]').data('page_id', page_id);
+                    if ( $objWithHash.hasAttr('rdr-page-container') && !$objWithHash.data('page_id') ) {
+                        $objWithHash.data('page_id', page_id);
                     }
                     return parseInt( page_id );
                 }
@@ -2607,9 +2611,10 @@ function readrBoard($R){
                 str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
                 binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
             },
-            getCleanText: function(textNode) {
+            getCleanText: function($node) {
+                // RDR.util.getCleanText
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
-                var $node = $(textNode);
+                // var $node = $(textNode);
 
                 //make sure it doesnt alredy have in indicator - it shouldn't.
                 var $indicator = $node.find('.rdr_indicator');
@@ -2623,7 +2628,7 @@ function readrBoard($R){
                 // TODO: <br> tags and block-level tags can screw up words.  ex:
                 // hello<br>how are you?   here becomes
                 // hellohow are you?    <-- no space where the <br> was.  bad.
-                var node_text = $node.html().replace(/< *br *\/?>/gi, '\n');
+                var node_text = $.trim( $node.html().replace(/< *br *\/?>/gi, '\n') );
                 var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
 
                 if( body && typeof body == "string" && body !== "" ) {
@@ -3654,7 +3659,8 @@ function readrBoard($R){
                     pageDict[key] = thisPage;
 
                     if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                        $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                        // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                        $( 'body' ).attr('rdr-page-key',key);
 
                         if ( $('.rdr-page-summary').length == 1 ) {
                             $('.rdr-page-summary').attr('rdr-page-widget-key',key);
@@ -4107,14 +4113,18 @@ function readrBoard($R){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
-                            if ( $(node).text() != $(node).parent().text() ) {
+                            var $node = $(node),
+                                node_text = $node.text(),
+                                node_parent_text = $node.parent().text();
+                            if ( node_text != node_parent_text ) {
                                 // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
-                                return !!$(node).text();
+                                return !!node_text;
                             }
                         },
                         setupFunc: function(){
-                            var body = RDR.util.getCleanText(this);
-                            $(this).data('body',body);
+                            var $this = $(this),
+                                body = RDR.util.getCleanText($this);
+                            $this.data('body',body);
                         }
 
                     },
