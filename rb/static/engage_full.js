@@ -242,7 +242,7 @@ function readrBoard($R){
 
                     });
 
-                    if ( typeof RDR.group.readyToTrack != 'undefined' && RDR.group.readyToTrack === true ) {
+                    if ( typeof RDR.group.xdmLoaded != 'undefined' && RDR.group.xdmLoaded === true ) {
                         $.postMessage(
                             "register-event::"+data,
                             RDR_baseUrl + "/static/xdm.html",
@@ -2518,7 +2518,7 @@ function readrBoard($R){
                 // what is the stated canonical?
                 if (prop == "canonical_url") {
                     var canonical_url = $('link[rel="canonical"]').length > 0 ?
-                                $('link[rel="canonical"]').attr('href') : pageUrl;
+                                $('link[rel="canonical"]').attr('href') : page_url;
                     
                     canonical_url = canonical_url.toLowerCase();
 
@@ -3168,7 +3168,7 @@ function readrBoard($R){
                                 RDR.util.userLoginState();
 
                             } else if ( message.status == "xdm loaded" ) {
-                                RDR.group.readyToTrack = true;
+                                RDR.group.xdmLoaded = true;
                                 RDR.util.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
