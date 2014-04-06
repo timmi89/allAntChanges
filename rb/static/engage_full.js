@@ -303,7 +303,7 @@ function readrBoard($R){
                 // return blessed tags for this hash, if they exist...
                 var perContainerSettings = window.readrboard_extend_per_container;
                 if(hash && perContainerSettings){
-                    var name = getCustomDisplayContainers(hash);
+                    var name = getCustomRDRItems(hash);
                     var perContainerExtentions = perContainerSettings[name];
                     if(perContainerExtentions && perContainerExtentions.blessed_tags){
                         var settings = RDR.groupSettings._translate(perContainerExtentions);
@@ -311,9 +311,9 @@ function readrBoard($R){
                     }
                 }
 
-                function getCustomDisplayContainers(hash){
+                function getCustomRDRItems(hash){
                     var $el = $('[rdr-hash="' + hash + '"]');
-                    var name = $el.attr('rdr-custom-display');
+                    var name = $el.attr('rdr-item');
                     return name;
                 }
 
@@ -1126,8 +1126,8 @@ function readrBoard($R){
 
 
                             //temp fix because the rindow scrollpane re-init isnt working
-                            var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                            if(!isGridForRindow){
+                            var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                            if(!isViewForRindow){
                                 RDR.rindow.close($rindow);
                                 return;
                             }
@@ -1860,9 +1860,9 @@ function readrBoard($R){
             safeClose: function( $rindow ) {
               //RDR.rindow.safeClose:
 
-              var isGrid = !!$rindow.attr('rdr-grid-for');
+              var isView = !!$rindow.attr('rdr-view-reactions-for');
 
-              if(isGrid){
+              if(isView){
 
                 var $header = RDR.rindow.makeHeader( 'Reactions' );
                     $rindow.find('.rdr_header').replaceWith($header);
@@ -3454,6 +3454,14 @@ function readrBoard($R){
                    //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
+                   that.handleDeprecated();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.initHTMLAttributes();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
                     that.initPageData();
                     //next fired on ajax success
                 });
@@ -4040,6 +4048,57 @@ function readrBoard($R){
 
                 $RDR.dequeue('initAjax');
             },
+            handleDeprecated: function() {
+                // rewrite some deprecated ReadrBoard attributes into their newer versions
+                $('[rdr-custom-display]').each( function() {
+                    var $this = $(this);
+                    $this.attr('rdr-item', $this.attr('rdr-custom-display') );
+                    $this.removeAttr('rdr-custom-display');
+                });
+
+                $('[rdr-grid-for]').each( function() {
+                    var $this = $(this);
+                    $this.attr('rdr-view-reactions-for', $this.attr('rdr-grid-for') );
+                    $this.removeAttr('rdr-grid-for');
+                });
+                $RDR.dequeue('initAjax');
+            },
+            initHTMLAttributes: function() {
+                // grab rdr-items that have a set of rdr-reactions and add to window.readrboard_extend_per_container
+                $('[rdr-reactions][rdr-item]').each( function () {
+                    var $this = $(this),
+                        itemName = $this.attr('rdr-item'),
+                        reactions = $this.attr('rdr-reactions');
+
+                    if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
+                        var itemDefinition = {};
+                        itemDefinition.blessed_tags = [];
+
+                        $.each(reactions.split(';'), function(idx, tag) {
+                            itemDefinition.blessed_tags.push( $.trim(tag) );
+                        });
+
+                        window.readrboard_extend_per_container[itemName] = itemDefinition;
+                    }
+                });
+                console.log('window.readrboard_extend_per_container');
+                console.log(window.readrboard_extend_per_container);
+
+/*
+window.readrboard_extend_per_container = {
+  "question1": {
+      blessed_tags: [
+          "tag1",
+          "tag2",
+          "tag3"
+      ]
+  }
+};
+*/
+
+
+                $RDR.dequeue('initAjax');
+            },
             reInit: function() {
                 // RDR.actions.reInit:
                 RDR.actions.hashCustomDisplayHashes();
@@ -4386,7 +4445,7 @@ function readrBoard($R){
                         return;
                     }
 
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                    $.each( $('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
 
                         if ( typeof $node.data('rdr-hashed') == "undefined" ) {
@@ -4545,7 +4604,7 @@ function readrBoard($R){
                                     initSomeHashes.push(hashObject.hash);
                                 });
 
-                                $.each( $('[rdr-custom-display]') , function(idx, node) {
+                                $.each( $('[rdr-item]') , function(idx, node) {
                                     initSomeHashes.push( $(node).data('hash') );
                                 });
 
@@ -4564,10 +4623,10 @@ function readrBoard($R){
                 
                 pageCustomDisplays[ pageId ] = [];
                 
-                if ( $('[rdr-custom-display]').length ) {
+                if ( $('[rdr-item]').length ) {
 
                     // should we find custom-display nodes and add to the hashList here?
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                    $.each( $('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
                         RDR.actions.hashNodes( $node );
                         var thisHash = $node.attr('rdr-hash');
@@ -4719,8 +4778,8 @@ function readrBoard($R){
                     RDR.actions.indicators.init(hash);
 
                     var $container = $('[rdr-hash="'+hash+'"]'),
-                        customDisplayName = $container.attr('rdr-custom-display'),
-                        $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                        customDisplayName = $container.attr('rdr-item'),
+                        $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]');
 
                     if ($grid.length) {
                         RDR.actions.content_nodes.init(hash, function() {
@@ -4745,10 +4804,10 @@ function readrBoard($R){
                             // i know, this should be abstracted.  it's too ProPublica specific.  
                             // needs abstraction, and conditionals to determine what to do based on the display properties.
                             var $container = $('[rdr-hash="'+hash+'"]'),
-                                customDisplayName = $container.attr('rdr-custom-display'),
+                                customDisplayName = $container.attr('rdr-item'),
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                                $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                                 gridWidth = $grid.width(),
                                 gridHeight = $grid.height();
 
@@ -6428,12 +6487,12 @@ if ( sendData.kind=="page" ) {
 
                         $container.attr('rdr-hasIndicator', 'true');
 
-                        if ( $container.hasAttr('rdr-custom-display') ) {
+                        if ( $container.hasAttr('rdr-item') ) {
 
-                            var customDisplayName = $container.attr('rdr-custom-display'),
+                            var customDisplayName = $container.attr('rdr-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                                $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                                 $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
 
                             // some init.  does this make sense here?
@@ -6541,7 +6600,7 @@ if ( sendData.kind=="page" ) {
                             //of course, don't pass true for shouldReInit here.
                             RDR.actions.indicators.update(hash);
 
-                        } // /else of if (rdr-custom-display) conditional
+                        } // /else of if (rdr-item) conditional
                     }
 
                     /*helper functions */
@@ -6662,7 +6721,7 @@ if ( sendData.kind=="page" ) {
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
                         $indicator.on('mouseover.contentNodeInit', function(){
                             // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
-                            if ( !$indicator.hasAttr('rdr-custom-display') ) {
+                            if ( !$indicator.hasAttr('rdr-item') ) {
                                 RDR.actions.content_nodes.init(hash, callback);
                             }
                         });
@@ -6759,12 +6818,12 @@ if ( sendData.kind=="page" ) {
                     
 
                     // for now, separately handle the "custom display" elements
-                    if ( $container.hasAttr('rdr-custom-display') ) {
+                    if ( $container.hasAttr('rdr-item') ) {
 
-                            var customDisplayName = $container.attr('rdr-custom-display'),
+                            var customDisplayName = $container.attr('rdr-item'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                            $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                            $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                             $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
 
                         // some init.  does this make sense here?
@@ -8129,7 +8188,7 @@ if ( sendData.kind=="page" ) {
                                     summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
                                 });
                             });
-                        // has no content node obj?  i.e. is text that is probably a rdr-custom-display.
+                        // has no content node obj?  i.e. is text that is probably a rdr-item.
                         } else {
                             $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
@@ -8417,8 +8476,8 @@ if ( sendData.kind=="page" ) {
                     $backButton.click( function() {
     
                         //temp fix because the rindow scrollpane re-init isnt working
-                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                        if(!isGridForRindow){
+                        var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                        if(!isViewForRindow){
                             RDR.rindow.close($rindow);
                             return;
                         }
@@ -8839,7 +8898,7 @@ if ( sendData.kind=="page" ) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
-                if ( $mouse_target.hasAttr('rdr-custom-display') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-custom-display')+'"]').length ) { 
+                if ( $mouse_target.hasAttr('rdr-item') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-item')+'"]').length ) { 
                     return; 
                 }
 
@@ -9042,8 +9101,8 @@ if ( sendData.kind=="page" ) {
                     // } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
                     }
 
-                    if ( page && $('[rdr-custom-display]').length ) {
-                        // [pb] should this be $('[rdr-custom-display]') instead of crossPageContent??
+                    if ( page && $('[rdr-item]').length ) {
+                        // [pb] should this be $('[rdr-item]') instead of crossPageContent??
                         // [pb] 10/2013: methinks yes, b/c we want to ensure a custom display is visible. 
                         //               see comment right below:
 
@@ -9055,7 +9114,7 @@ if ( sendData.kind=="page" ) {
                         hashesByPageId[ page.id ] = [];
 
                         // should we find custom-display nodes and add to the hashList here?
-                        $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        $.each( $('[rdr-item]'), function( idx, node ) {
                             RDR.actions.hashNodes( $(node) );
                             var thisHash = $(node).attr('rdr-hash');
 
@@ -9063,7 +9122,7 @@ if ( sendData.kind=="page" ) {
                                 hashesByPageId[ page.id ].push( thisHash );
                             }
                         });
-                        // hashesByPageId[ page.id ].push( $('[rdr-custom-display="true"]:eq(0)').attr('rdr-hash') );
+                        // hashesByPageId[ page.id ].push( $('[rdr-item="true"]:eq(0)').attr('rdr-hash') );
                         // RDR.actions.sendHashes( hashesByPageId );
                     }
 

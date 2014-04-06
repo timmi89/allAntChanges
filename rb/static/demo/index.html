@@ -192,21 +192,9 @@
         <div class="postarea">
           <div class="second-area">
             <!-- <p id="crosstest" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
-            <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
-            <script>
-            window.readrboard_extend_per_container = {
-              "question1": {
-                  blessed_tags: [
-                      "tag1",
-                      "tag2",
-                      "tag3"
-                  ]
-              }
-            };
-            </script>
+            <p id="crosstest" rdr-item="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
             
             <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"> Reactions</div>
-            <!-- <div rdr-grid-for="question1" style="width:1000px;height:400px;"></div> -->
             <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
             <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question1"></span> reactions</div>
 
@@ -214,6 +202,7 @@
             <img src="http://dummyimage.com/400x200/447799/99bbcc&text=not+inside+.post" />
           </div>
 
+            
           
           <div id="post-1" class="post-1 post type-post status-publish format-standard hentry category-uncategorized">
           
@@ -237,8 +226,53 @@
             </div>
             <iframe src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/140560293&amp;color=ff4200&amp;auto_play=false&amp;hide_related=false&amp;show_artwork=true" height="166" width="100%" frameborder="no" scrolling="no"></iframe>
             
-            <h1 style="margin:50px 50px 20px 50px;" rdr-custom-display="question2" rdr-content-attributes="question" rdr-reactions="because;it just is; what??; lulz">Why is it like that?</h1>
-            <div style="padding:10px;margin:0px 0 10px 50px;background:#444;color:#fff;width:100px;" rdr-cta-for="question2" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">Your Answer</div>
+            <h1 style="margin:50px 50px 20px 50px;" rdr-item="question2" rdr-content-attributes="question" rdr-reactions="because;it just is; what??; lulz">Why is it like that?</h1>
+            <!-- <p id="crosstest"                  rdr-item="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
+            <!-- <div rdr-view-reactions-for="" rdr-view-style="" style="margin-bottom:10px;"> -->
+            <div style="padding:10px;margin:0px 0 30px 50px;background:#444;color:#fff;width:100px;" rdr-cta-for="question2" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">Your Answer?</div>
+            <div style="padding:10px;margin:0px 0 30px 50px;background:#444;color:#fff;width:100px;" rdr-cta-for="question2" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question2"></span> reactions</div>
+            
+
+
+            <script>
+            window.readrboard_extend_per_container = {
+              "question1": {
+                  blessed_tags: [
+                      "tag1",
+                      "tag2",
+                      "tag3"
+                  ]
+              } //,
+              // "question2": {
+              //     blessed_tags: [
+              //         "tag1a",
+              //         "tag2a",
+              //         "tag3a"
+              //     ]
+              // }
+            };
+            </script>
+
+              <div class="rdr"> <!-- rdr_window rdr_widget rdr_for_page -->
+              <div class="rdr_body_wrap">
+              <div class="rdr_body rdr_tags_list">
+
+                <div class="rdr_box rdr_color1 xrdr_box_small  rdr_clear_transform rdr_animated">
+                  <div class="rdr_tag rdr_charCount4">
+                    <div class="rdr_tag_body rdr_tag_lineone">Test</div>
+                    <span class="rdr_count">1</span>
+                    <i class="rdr_icon-search rdr_tag_read_icon"></i>
+                    <span class="rdr_plusOne">+1</span>
+                  </div>
+                </div>
+
+              </div>
+              </div>
+              </div>
+
+
+            </div>
+
 
 
             <img style="width:450px;" class="contentImg alignright size-medium wp-image-18 rdr-tooltip" title="readrboard-widget" src="/static/demo/readrboard-demo/readrboard-widget-3.png" alt="" />
