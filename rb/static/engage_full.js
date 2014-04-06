@@ -996,19 +996,32 @@ function readrBoard($R){
                         boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
                         $rindow = ( params.$rindow ) ? params.$rindow : null,
                         $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$rindow ) ? params.$rindow.find('div.rdr_body.rdr_tags_list') : null,
+                        reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
+                        tagWidth = '',
                         colorInt = ( params.colorInt ) ? params.colorInt:1,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $rindow.data('kind'),
                         hash = ($rindow.data('hash')) ? $rindow.data('hash'):$rindow.data('container'),
                         summary = RDR.summaries[hash],
+                        totalReactions = (typeof summary != 'undefined')?summary.counts.tags:0,
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
+                        // later, we'll allow rendering percentages on grids/etc, as an option
+                        var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
+                        if (renderPercentages===true) {
+                            tagCount = parseInt(tagCount/totalReactions*100);
+                            tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*10*.8 )) + '%';
+                        }
+
                     if ( content_node_id ) {
                         content_node.id = content_node_id;
                     }
+
+                    // NB: a bunch of the following junk is grid-specific, but is sort of ignored in CSS
+                    // for ex,
 
                     // this can go away if we change CSS class names
                     var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
@@ -1074,7 +1087,7 @@ function readrBoard($R){
                         '<span class="rdr_count">'+tagCount+'</span>' +
                         '<i class="rdr_icon-search rdr_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
+                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
                             '<div '+
                                 'class="rdr_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -4081,21 +4094,6 @@ function readrBoard($R){
                         window.readrboard_extend_per_container[itemName] = itemDefinition;
                     }
                 });
-                console.log('window.readrboard_extend_per_container');
-                console.log(window.readrboard_extend_per_container);
-
-/*
-window.readrboard_extend_per_container = {
-  "question1": {
-      blessed_tags: [
-          "tag1",
-          "tag2",
-          "tag3"
-      ]
-  }
-};
-*/
-
 
                 $RDR.dequeue('initAjax');
             },
@@ -4601,11 +4599,15 @@ window.readrboard_extend_per_container = {
 
                                 var initSomeHashes = [];
                                 $.each( response.data.crossPageKnown , function(idx, hashObject) {
-                                    initSomeHashes.push(hashObject.hash);
+                                    if ( initSomeHashes.indexOf(hashObject.hash) == -1 ) {
+                                        initSomeHashes.push(hashObject.hash);
+                                    }
                                 });
 
                                 $.each( $('[rdr-item]') , function(idx, node) {
-                                    initSomeHashes.push( $(node).data('hash') );
+                                    if ( initSomeHashes.indexOf($(node).data('hash')) == -1 ) {
+                                        initSomeHashes.push( $(node).data('hash') );
+                                    }
                                 });
 
                                 RDR.actions.containers.initCustomDisplayHashes( initSomeHashes );
@@ -4789,9 +4791,10 @@ window.readrboard_extend_per_container = {
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
-                    // go ahead and initialize the content nodes for cross-page containers
+                    // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
-                    // basically, this has to be done if the TAG GRID is open on load.
+                    // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
+
                     $.each( hashesToInit, function(idx, hash) {
                         var $node = $('[rdr-hash="'+hash+'"]');
 
@@ -4800,38 +4803,50 @@ window.readrboard_extend_per_container = {
                             RDR.actions.indicators.init(hash);
                             RDR.summaries[hash].crossPage=true;
 
-                            // init a tag grid for an open custom display thing.
+                            // init a reaction-view for an open custom display thing.
                             // i know, this should be abstracted.  it's too ProPublica specific.  
                             // needs abstraction, and conditionals to determine what to do based on the display properties.
                             var $container = $('[rdr-hash="'+hash+'"]'),
                                 customDisplayName = $container.attr('rdr-item'),
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
-                                gridWidth = $grid.width(),
-                                gridHeight = $grid.height();
+                                $reactionView = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
+                                reactionViewStyle = $reactionView.attr('rdr-view-style') || 'grid',
+                                reactionViewWidth = $reactionView.width(),
+                                reactionViewHeight = $reactionView.height();
 
-                            // if the grid has no height specified, give it one
-                            // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
-                            if ( gridHeight < 200 ) { gridHeight = 200; $grid.height(gridHeight); }
+                            $reactionView.data('hash', hash).data('container', hash);
 
-                            RDR.util.cssSuperImportant( $grid, { height:gridHeight+"px" });
+                            if ( reactionViewStyle == "grid" ) {
 
-                            if ($grid.length) {
-                                // since currently, our grid needs to have a width that's a factor of 160... force that:
-                                var statedWidthDividedBy160 = parseInt( gridWidth / 160 );
-                                
-                                gridWidth = statedWidthDividedBy160 * 160;
-                                if ( gridWidth > 960 ) { gridWidth=960; }
+                                // if the reactionView grid has no height specified, give it one
+                                // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
+                                if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
 
-                                // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
-                                if ( !$grid.closest('.rdr_grid_wrapper').length ) {
-                                    $grid.wrap('<div class="rdr_grid_wrapper" style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
+                                RDR.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
+
+                                if ($reactionView.length) {
+                                    // since currently, our reactionView needs to have a width that's a factor of 160... force that:
+                                    var statedWidthDividedBy160 = parseInt( reactionViewWidth / 160 );
+                                    
+                                    reactionViewWidth = statedWidthDividedBy160 * 160;
+                                    if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
+
+                                    // RDR.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
+                                    if ( !$reactionView.closest('.rdr_reactionView_wrapper').length ) {
+                                        $reactionView.wrap('<div class="rdr_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
+                                    }
+
+                                    // can the header stuff be optional?
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="rdr rdr_window rdr_inline w'+reactionViewWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_grid rdr_clearfix"></div></div>');
+                                    RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                } else {
+                                    RDR.actions.content_nodes.init(hash);
                                 }
-                                $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
-                            } else {
-                                RDR.actions.content_nodes.init(hash);
+                            } else if ( reactionViewStyle == "horizontal_bars" ) {
+                                console.log('horizontal_bars');
+                                $reactionView.html('<div class="rdr rdr_inline rdr_body_wrap rdr_horizontal_bars rdr_clearfix"></div>'); // gotta insert the rdr_body_wrap or there is no container to attach to in makeTagsListForInline 
+                                RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
                             }
                         }
                     });
@@ -5264,6 +5279,7 @@ window.readrboard_extend_per_container = {
                     }
 
                     var pageId = RDR.util.getPageProperty('id', hash);
+
                     //quick fix add pageId to summary becuase we need it in the summary widget content lookup
                     // todo: #summaryContentByPageFix
                     summary.pageId = pageId;
@@ -5278,6 +5294,7 @@ window.readrboard_extend_per_container = {
                     //use an assetLoader that returns a deferred to ensure it gets loaded only once
                     //and callbacks will run on success - or immediately if it has already returned.
                     var assetLoader = RDR.assetLoaders.content_nodes[container_id];
+
                     if(!assetLoader){
                         assetLoader = $.ajax({
                             url: RDR_baseUrl+"/api/summary/container/content/",
@@ -5293,7 +5310,6 @@ window.readrboard_extend_per_container = {
                     //todo: also remove redundant callbacks from the summary widget.
                     //we still need the onSuccessCallbacks to run though.
                     assetLoader.then(function(response) {
-
                         if ( response.status !== "success" ) {
                             return false;
                         }
@@ -5306,6 +5322,7 @@ window.readrboard_extend_per_container = {
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
                             var $container = $('[rdr-hash="'+hash+'"]');
+
                             try{
                                 node.selState = $container.selog('save', { 'serialRange': node.location });
                             }
@@ -7149,7 +7166,7 @@ if ( sendData.kind=="page" ) {
                         //RDR.actions.indicators.utils.makeTagsListForInline:
                         // page is the page object, not a boolean
 
-                        var hash = $rindow.data('hash');
+                        var hash = $rindow.data('hash') || $rindow.attr('rdr-hash');
                         
                         var isPage = !hash || hash == "page";
 
@@ -7157,16 +7174,17 @@ if ( sendData.kind=="page" ) {
                         
                         var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
 
+                        var reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid';
+
                         // For IE8 and earlier version.
                         if (!Date.now) {
                           Date.now = function() {
                             return new Date().valueOf();
                           }
                         }
-                        
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now()),
-                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list rdr_'+reactionViewStyle+'" />').data('now', Date.now()),
+                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $rindow.find('.rdr_tags_list');
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
@@ -7201,8 +7219,10 @@ if ( sendData.kind=="page" ) {
                             writeTagBoxes(blessed_tags);
                         } else if(isPage){
                             //do nothing
+                            // whiskey tango...?
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+
                                 // write inline tags: readmode, for all content types (kind)
                                 RDR.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
@@ -7240,7 +7260,6 @@ if ( sendData.kind=="page" ) {
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
                         if ( !isWriteMode && !isTouchBrowser) {
-
                             $rindow.on( 'mouseleave', function(e) {
 
                                 var $this = $(this),
@@ -7294,8 +7313,7 @@ if ( sendData.kind=="page" ) {
                         // $tagsListContainer.append($tag_table);
                         // RDR.rindow.jspUpdate($rindow);
                         // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
-
-                        if ( $rindow.attr('rdr-grid-type') != "flow" ) {
+                        if ( reactionViewStyle == "grid" || isWriteMode ) {
                             isotopeTags( $tagsListContainer );
                             isotopeFillGap($tagsListContainer);
                         } else {
@@ -7361,27 +7379,29 @@ if ( sendData.kind=="page" ) {
 
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
+
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
                                 colorInt = 1;
 
-                            // size the rindow based on # of reactions
-                            if ( bucketTotal > 6 && !isWriteMode ) {
-                                if(isTouchBrowser){
+                            // if a grid, size the rindow based on # of reactions
+                            if ( reactionViewStyle == 'grid') {
+                                if ( bucketTotal > 6 && !isWriteMode ) {
+                                    if(isTouchBrowser){
+                                        RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                                    }else{
+                                        RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                    }
+                                } else if ( typeof page != "undefined" && isWriteMode ) {
                                     RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                                }else{
-                                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                } else if ( tagList.length > 1 ) {
+                                    if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                    if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                    if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 }
-                            } else if ( typeof page != "undefined" && isWriteMode ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                            } else if ( tagList.length > 1 ) {
-                                if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                            } 
+                            }
 
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
-
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
                                   RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
@@ -8176,6 +8196,7 @@ if ( sendData.kind=="page" ) {
 
                     var summary = RDR.summaries[hash];
                     summary.interaction_order = [];
+                    summary.counts.highest_tag_count = 0;
 
                     var isText = summary.kind == "text" || summary.kind == "txt";
                     //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
@@ -8186,12 +8207,14 @@ if ( sendData.kind=="page" ) {
                             $.each( summary.content_nodes, function( node_id, node_data ) {
                                 $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
                                     summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                                    setHighestTagCount(tag_data.count);
                                 });
                             });
                         // has no content node obj?  i.e. is text that is probably a rdr-item.
                         } else {
                             $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                                setHighestTagCount(tag_data.count);
                             });
                         }
                     } else if ( !$.isEmptyObject( summary.top_interactions ) && !$.isEmptyObject( summary.content_nodes) ) {
@@ -8199,9 +8222,16 @@ if ( sendData.kind=="page" ) {
                         var node_id = $.map( summary.content_nodes, function(value, key) {return key;})[0];
                         $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                             summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                            setHighestTagCount(tag_data.count);
                         });
                     }
                     summary.interaction_order.sort( SortByTagCount );
+
+                    function setHighestTagCount(tag_count) {
+                        if (tag_count > summary.counts.highest_tag_count ) {
+                            summary.counts.highest_tag_count = tag_count;
+                        }
+                    }
                     
                 },
                 sortPopularTextContainers: function() {
