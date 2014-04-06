@@ -998,6 +998,7 @@ function readrBoard($R){
                         $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$rindow ) ? params.$rindow.find('div.rdr_body.rdr_tags_list') : null,
                         reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
+                        tagPercent = 0,
                         tagWidth = '',
                         colorInt = ( params.colorInt ) ? params.colorInt:1,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
@@ -1012,8 +1013,8 @@ function readrBoard($R){
                         // later, we'll allow rendering percentages on grids/etc, as an option
                         var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
                         if (renderPercentages===true) {
-                            tagCount = parseInt(tagCount/totalReactions*100);
-                            tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*10*.8 )) + '%';
+                            tagPercent = parseInt(tagCount/totalReactions*100);
+                            tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
                         }
 
                     if ( content_node_id ) {
@@ -1047,7 +1048,7 @@ function readrBoard($R){
                     
                     var charCountText = ""
                     //split long tag onto two lines.
-                    if ( tagBodyRaw.length < 16 ) {
+                    if ( tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'rdr_charCount'+tagBodyRaw.length;
                         tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
@@ -1078,13 +1079,14 @@ function readrBoard($R){
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
+                    var tagCountDisplay = (renderPercentages===true) ? tagPercent+'%':tagCount;
                     var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
                         "" : 
                         '<span class="rdr_plusOne">+1</span>';
 
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
-                        '<span class="rdr_count">'+tagCount+'</span>' +
+                        '<span class="rdr_count">'+tagCountDisplay+'</span>' +
                         '<i class="rdr_icon-search rdr_tag_read_icon"></i>';
 
                     var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
@@ -4844,7 +4846,6 @@ function readrBoard($R){
                                     RDR.actions.content_nodes.init(hash);
                                 }
                             } else if ( reactionViewStyle == "horizontal_bars" ) {
-                                console.log('horizontal_bars');
                                 $reactionView.html('<div class="rdr rdr_inline rdr_body_wrap rdr_horizontal_bars rdr_clearfix"></div>'); // gotta insert the rdr_body_wrap or there is no container to attach to in makeTagsListForInline 
                                 RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
                             }

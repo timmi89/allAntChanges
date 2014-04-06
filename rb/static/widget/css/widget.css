@@ -2502,8 +2502,32 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_grid .rdr_box.rdr_box_small .rdr_charCoun
 
 
 /******** rdr_horizontal_bars **********/
-div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars { width:100%; }
-div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box     { margin-bottom:10px; }
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars { width:100%; position: relative; }
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box     { margin-bottom:10px; overflow:visible; clear:both; cursor: pointer;}
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_tag_body         { font-size:20px; font-family:Helvetica,'RDR_Helvetica'; padding:5px; display:inline-block; color:#666; font-weight:100; white-space:nowrap; float:left; }
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_count            { position:absolute; right:5px; margin-top:5px; font-size:20px; opacity:0.5; }
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_plusOne          { position:absolute; right:5px; margin-top:5px; font-size:20px; opacity:0.5; display:none;}
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; float: left; margin: 3px 0 12px 0; opacity: 0.5;}
+
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_tag {
+  height: 31px;
+  background:linear-gradient(to right, rgba(250,250,250,0.5), rgba(150,150,150,0.2) );
+  border-top:1px solid rgba(100,100,100,0.3);
+  border-bottom:1px solid rgba(100,100,100,0.3);
+  /*border-right:1px solid rgba(100,100,100,0.3);*/
+  box-shadow: 0 0 2px #bbb;
+}
+
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount16 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount17 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount18 .rdr_tag_body  { font-size:18px; }
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount19 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount20 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount21 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount22 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount23 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount24 .rdr_tag_body,
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount25 .rdr_tag_body { font-size:14px; margin-top:4px; }
 
 /*div.rdr .rdr_hiddenPanel { visibility:hidden; }*/
 
