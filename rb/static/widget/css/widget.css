@@ -2161,6 +2161,10 @@ div.rdr div.rdr_body.rdr_tags_list {
     background:#fff;
 }
 
+div.rdr.rdr_inline div.rdr_body.rdr_tags_list {
+  background:none;
+}
+
 div.rdr div.rdr_body.rdr_tags_list { height:auto;; font-family:'RDR_HelveticaBold'; letter-spacing:0px; }
 div.rdr div.rdr_body.rdr_tags_list.rdr_grid { background:#fff; width:160px; }
 div.rdr.rdr_window.w320 div.rdr_body.rdr_tags_list.rdr_grid { width:320px; }
@@ -2507,7 +2511,8 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box     { margin-bot
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_tag_body         { font-size:20px; font-family:Helvetica,'RDR_Helvetica'; padding:5px; display:inline-block; color:#666; font-weight:100; white-space:nowrap; float:left; }
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_count            { position:absolute; right:5px; margin-top:5px; font-size:20px; opacity:0.5; }
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_plusOne          { position:absolute; right:5px; margin-top:5px; font-size:20px; opacity:0.5; display:none;}
-div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; float: left; margin: 3px 0 12px 0; opacity: 0.5;}
+div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; float: left; margin: 3px 0 12px 0; opacity: 0.33;}
+/*div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; opacity: 0.33; position: absolute; left:-30px; padding-top:20px; }*/
 
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_tag {
   height: 31px;
@@ -2601,6 +2606,7 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
   display:block;
   padding-top:4px;
 }
+
 
 /* force capital first letter on reactions for now */
 /* NEVER MIND.  DESTROYS IE. */

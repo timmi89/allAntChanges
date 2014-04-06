@@ -1011,12 +1011,15 @@ function readrBoard($R){
                         message = '';
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
-                        var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
-                        if (renderPercentages===true) {
-                            tagPercent = parseInt(tagCount/totalReactions*100);
-                            tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
-                        }
+                    var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
+                    if (renderPercentages===true) {
+                        tagPercent = parseInt(tagCount/totalReactions*100);
+                        tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
+                    }
 
+                    // if (content_node_id == 'undefined'){
+                        // return;
+                    // }
                     if ( content_node_id ) {
                         content_node.id = content_node_id;
                     }
@@ -3459,6 +3462,7 @@ function readrBoard($R){
                 //RDR.actions.init:
                 var that = this;
                 $RDR = $(RDR);
+                window.readrboard_extend_per_container = window.readrboard_extend_per_container || {};
                 $RDR.queue('initAjax', function(next){
                     that.initGroupData(RDR.group.short_name);
                     //next fired on ajax success
@@ -3904,6 +3908,8 @@ function readrBoard($R){
                 });
 
                 // setup a scroll event detector
+                /*
+
                 var active_section_offsets = $(RDR.group.active_sections+':eq(0)').offset();
                 RDR.group.active_section_top = active_section_offsets.top;
                 RDR.group.active_section_bottom = active_section_offsets.bottom;
@@ -3949,6 +3955,7 @@ function readrBoard($R){
                         }
                     }, 250));
                 });
+                */
 
                 
                 // this does not seem to work!
@@ -4817,7 +4824,7 @@ function readrBoard($R){
                                 reactionViewWidth = $reactionView.width(),
                                 reactionViewHeight = $reactionView.height();
 
-                            $reactionView.data('hash', hash).data('container', hash);
+                            $reactionView.data('hash', hash).data('container', hash).addClass('no-rdr');
 
                             if ( reactionViewStyle == "grid" ) {
 
@@ -8327,7 +8334,9 @@ if ( sendData.kind=="page" ) {
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
-                    RDR.actions.containers.updateCrossPageHash(hash);
+                    if (args.scenario != "reactionExists") {
+                        RDR.actions.containers.updateCrossPageHash(hash);
+                    }
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
@@ -9284,7 +9293,7 @@ function jquery_onload(jQuery){
     !function(a,b){"use strict";var c,d;if(a.uaMatch=function(a){a=a.toLowerCase();var b=/(opr)[\/]([\w.]+)/.exec(a)||/(chrome)[ \/]([\w.]+)/.exec(a)||/(version)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.exec(a)||/(webkit)[ \/]([\w.]+)/.exec(a)||/(opera)(?:.*version|)[ \/]([\w.]+)/.exec(a)||/(msie) ([\w.]+)/.exec(a)||a.indexOf("trident")>=0&&/(rv)(?::| )([\w.]+)/.exec(a)||a.indexOf("compatible")<0&&/(mozilla)(?:.*? rv:([\w.]+)|)/.exec(a)||[],c=/(ipad)/.exec(a)||/(iphone)/.exec(a)||/(android)/.exec(a)||/(windows phone)/.exec(a)||/(win)/.exec(a)||/(mac)/.exec(a)||/(linux)/.exec(a)||[];return{browser:b[3]||b[1]||"",version:b[2]||"0",platform:c[0]||""}},c=a.uaMatch(b.navigator.userAgent),d={},c.browser&&(d[c.browser]=!0,d.version=c.version,d.versionNumber=parseInt(c.version)),c.platform&&(d[c.platform]=!0),(d.chrome||d.opr||d.safari)&&(d.webkit=!0),d.rv){var e="msie";c.browser=e,d[e]=!0}if(d.opr){var f="opera";c.browser=f,d[f]=!0}if(d.safari&&d.android){var g="android";c.browser=g,d[g]=!0}d.name=c.browser,d.platform=c.platform,a.browser=d}($,window);
 
 
-    if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
+    if ( $.browser.msie  && parseInt($.browser.version, 10) < 9 ) {
         return false;
     }
     if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
