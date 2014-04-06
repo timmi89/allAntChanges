@@ -6543,6 +6543,9 @@ if ( sendData.kind=="page" ) {
                             $('#rdr_container_tracker_'+hash).remove();
                             $('#rdr_indicator_details_'+hash).remove();
 
+                            if ($('#rdr_indicator_'+hash).length) {
+                                return;
+                            }
                             var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');

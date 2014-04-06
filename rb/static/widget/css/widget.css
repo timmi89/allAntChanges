@@ -1835,6 +1835,7 @@ div.rdr_indicator_details img.rdr_pin {
     background:url("../images/readr_icons.png") no-repeat -179px -1px; 
     position:absolute;
     margin:0;
+    box-shadow:none;
 }
 
 .rdr_live_hover div.rdr_indicator {
