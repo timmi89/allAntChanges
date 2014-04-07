@@ -209,6 +209,13 @@ body.custom-background { background-color: #f9f9f9; }
     display: table;
     clear: both;
   }
+  .lyrics {
+    text-align:left;
+  }
+  .lyrics ol {
+    list-style-type: none;
+    margin:0 0 20px 0;
+  }
   .question {
     width:100%;
   }
@@ -229,38 +236,38 @@ body.custom-background { background-color: #f9f9f9; }
     <div class="row">
       <div class="col-two-thirds lyrics">
         <a href="http://bop.fm/s/the-guess-who/no-time" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://bop.fm']);" data-width="600" data-bop-link="">The Guess Who &#8211; No Time</a><script type="text/javascript" src="http://assets.bop.fm/embed.js" async=""></script>
-        <p style="text-align: center;">
-          <div>NO TIME LEFT FOR YOU, ON MY WAY TO BETTER THINGS</div>
-          <div>NO TIME LEFT FOR YOU, I FOUND MYSELF SOME WINGS</div>
-          <div>NO TIME LEFT FOR YOU, DISTANT ROADS ARE CALLIN&#8217; ME</div>
-          <div>NO TIME LEFT FOR YOU, DA-NN-DA-NN-DA-NN-DA-NN-DA&#8230;</div>
-        </p>
-        <p style="text-align: center;">
-          <div>NO TIME FOR A SUMMER FRIEND</div>
-          <div>NO TIME FOR THE LOVE YOU SEND</div>
-          <div>SEASONS CHANGE AND SO DID I</div>
-          <div>YOU NEED NOT WONDER WHY (2X)</div>
-          <div>THERE&#8217;S NO TIME LEFT FOR YOU</div>
-          <div>NO TIME LEFT FOR YOU&#8230;</div>
-        </p>
-        <p style="text-align: center;">
-          <div>NO TIME FOR A GENTLE RAIN</div>
-          <div>NO TIME FOR MY WATCH AND CHAIN</div>
-          <div>NO TIME FOR REVOLVING DOORS</div>
-          <div>NO TIME FOR THE KILLIN&#8217; FLOOR (2X)</div>
-          <div>THERE&#8217;S NO TIME LEFT FOR YOU</div>
-          <div>NO TIME LEFT FOR YOU&#8230;</div>
-        </p>
-        <p style="text-align: center;">
-          <div>NO TIME, NO TIME, NO TIME, NO TIME&#8230;</div>
-          <div>I GOT GOT GOT GOT NO TIME&#8230;</div>
-          <div>GOT NO TIME, GOT NO TIME, GOT NO TIME&#8230;</div>
-          <div>I GOT GOT GOT GOT NO TIME&#8230;</div>
-        </p>
+        <ol>
+          <li>NO TIME LEFT FOR YOU, ON MY WAY TO BETTER THINGS</li>
+          <li>NO TIME LEFT FOR YOU, I FOUND MYSELF SOME WINGS</li>
+          <li>NO TIME LEFT FOR YOU, DISTANT ROADS ARE CALLIN&#8217; ME</li>
+          <li>NO TIME LEFT FOR YOU, DA-NN-DA-NN-DA-NN-DA-NN-DA&#8230;</li>
+        </ol>
+        <ol>
+          <li>NO TIME FOR A SUMMER FRIEND</li>
+          <li>NO TIME FOR THE LOVE YOU SEND</li>
+          <li>SEASONS CHANGE AND SO DID I</li>
+          <li>YOU NEED NOT WONDER WHY (2X)</li>
+          <li>THERE&#8217;S NO TIME LEFT FOR YOU</li>
+          <li>NO TIME LEFT FOR YOU...</li>
+        </ol>
+        <ol>
+          <li>NO TIME FOR A GENTLE RAIN</li>
+          <li>NO TIME FOR MY WATCH AND CHAIN</li>
+          <li>NO TIME FOR REVOLVING DOORS</li>
+          <li>NO TIME FOR THE KILLIN&#8217; FLOOR (2X)</li>
+          <li>THERE&#8217;S NO TIME LEFT FOR YOU</li>
+          <li>NO TIME LEFT FOR YOU...</li>
+        </ol>
+        <ol>
+          <li>NO TIME, NO TIME, NO TIME, NO TIME&#8230;</li>
+          <li>I GOT GOT GOT GOT NO TIME&#8230;</li>
+          <li>GOT NO TIME, GOT NO TIME, GOT NO TIME&#8230;</li>
+          <li>I GOT GOT GOT GOT NO TIME&#8230;</li>
+        </ol>
       </div>
       <div class="col-one-third questions">
         <div class="question">
-          <h1 rdr-item="question1" rdr-crossPageContent="true" rdr-content-attributes="question" rdr-reactions="Lyrics;Guitar Riffs;How it sounds live;Burton's Beard! :)">The best thing about <strong>No Time</strong> is...</h1>
+          <h1 rdr-item="question1" rdr-crossPageContent="true" rdr-content-attributes="question" rdr-reactions="Lyrics;Guitar Riffs;How it sounds live;Burton's 'stache'!">The best thing about <strong>No Time</strong> is...</h1>
           <div rdr-view-reactions-for="question1" rdr-view-style="horizontal_bars" style="margin:10px 0;"></div>
           <div class="response" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="30">What's your response?</div>
         </div>
@@ -305,8 +312,8 @@ body.custom-background { background-color: #f9f9f9; }
 <script>
 window.readrboard_extend = {
   active_sections:".lyrics",
-  anno_whitelist:"div",
-  summary_widget_selector:"p:eq(0)",
+  // anno_whitelist:"p span",
+  summary_widget_selector:"ol:eq(0)",
   summary_widget_method:"before"
 };
 </script>

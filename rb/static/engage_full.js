@@ -4303,6 +4303,8 @@ function readrBoard($R){
                         oldHash = RDR.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
+                        // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
+
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
                         var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
                         var srcArray = hashBody.split('/');
@@ -4358,8 +4360,19 @@ function readrBoard($R){
                         if(!body){
                           return;
                         }
+
                         hashText = "rdr-"+kind+"-"+body;
                         hash = RDR.util.md5.hex_md5( hashText );
+
+                        if ( !$this.hasAttr('rdr-hash') )  {
+
+                            var iteration = 1;
+                            while ( typeof RDR.summaries[hash] != 'undefined' ) {
+                                hashText = "rdr-"+kind+"-"+body+"-"+iteration;
+                                hash = RDR.util.md5.hex_md5( hashText );
+                                iteration++;
+                            }
+                        }
                     }
 
                     // prevent the identical nested elements being double-hashed bug
@@ -9137,7 +9150,9 @@ if ( sendData.kind=="page" ) {
                     if ( page.containers.length > 0 ) {
                         hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
-                            if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
+                            if ( typeof container.hash != "undefined") {
+                                hashesByPageId[ page.id ].push( container.hash );
+                            }
                         });
 
                         // RDR.actions.sendHashes( hashesByPageId );
@@ -9154,7 +9169,7 @@ if ( sendData.kind=="page" ) {
                         //    // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
                         //    // known_hash list, to prevent some duplication.
                         // var hashesByPageId = {};
-                        hashesByPageId[ page.id ] = [];
+                        hashesByPageId[ page.id ] = hashesByPageId[ page.id ] || [];
 
                         // should we find custom-display nodes and add to the hashList here?
                         $.each( $('[rdr-item]'), function( idx, node ) {
