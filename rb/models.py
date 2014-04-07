@@ -398,6 +398,7 @@ class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
     kind = models.CharField(max_length=25)
+    item_type = models.CharField(max_length=64, db_index=True)
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
@@ -417,7 +418,6 @@ class Interaction(DateAwareModel, UserAwareModel):
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     approved = models.BooleanField(default=True)
-    # include_in_page_summary = models.BooleanField(default=True)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)

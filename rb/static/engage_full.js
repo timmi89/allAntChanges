@@ -1521,20 +1521,8 @@ function readrBoard($R){
                     //RDR.rindow._rindowTypes.tagMode.make(settings);
                     // [porter] we should change the name of this function.  no need to nest under _rindowTypes anymore, right?
                     make: function(settings){
-console.log('settings');
-console.log(settings);
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
-
-
-/*
-
-var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-
-*/
-
-
-
 
                         if ( settings.is_page == true ) {
                             var page = settings.page,
@@ -4084,6 +4072,7 @@ var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.t
                 $RDR.dequeue('initAjax');
             },
             handleDeprecated: function() {
+                //rdr-content-type ????  could be come rdr-content-attributes="question"
                 // rewrite some deprecated ReadrBoard attributes into their newer versions
                 $('[rdr-custom-display]').each( function() {
                     var $this = $(this);
@@ -7234,18 +7223,6 @@ if ( sendData.kind=="page" ) {
 
                                 // actually, these should always be sorted already - dont think we need this.
                                 // RDR.actions.summaries.sortByTags(page.toptags);
-
-                                // ABSTRACT THIS?
-                                // are toptags ONLY in a rdr-no-summary ?
-console.log('page.toptags');
-console.log(page.toptags);
-                                $.each(page.toptags, function(idx, tag) {
-console.log(tag.tag_count);
-                                    if (tag.tag_count == 1 ) {
-                                        // tag.tag_count =0;
-
-                                    }
-                                });
 
                                 writeTagBoxes( page.toptags );
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
