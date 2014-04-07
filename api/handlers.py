@@ -289,7 +289,7 @@ class TagHandler(InteractionHandler):
         # Get the container
         container = Container.objects.get_or_create(
             hash = container_hash,
-            defaults = {'kind': container_kind,}
+            defaults = {'kind': container_kind,'item_type':content_node_data['item_type']}
         )[0]
 
         if parent_id is not None:

@@ -5907,6 +5907,7 @@ if ( sendData.kind=="page" ) {
 
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
+                            $container = $('[rdr-hash="'+hash+'"]'),
                             kind,
                             tag,
                             sendData;
@@ -5956,7 +5957,8 @@ if ( sendData.kind=="page" ) {
                                     'body': $container.attr('rdr-src'),
                                     'kind':'media',
                                     'location': $container.get(0).nodeName.toLowerCase(), // trying to store the tagName, so we can convert to a media type later...???
-                                    'hash':hash
+                                    'hash':hash,
+                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                 };
 
                             } else if(kind == 'img' || kind == 'media' || kind == 'med'){
@@ -5996,7 +5998,8 @@ if ( sendData.kind=="page" ) {
                                     'body': hashBody,
                                     'kind':kind,
                                     // 'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
-                                    'hash':hash
+                                    'hash':hash,
+                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                 };
 
                                 //add dims
@@ -6012,7 +6015,8 @@ if ( sendData.kind=="page" ) {
                                         'body': content_node.body,
                                         'location': content_node.location,
                                         'kind':kind,
-                                        'id':content_node.id
+                                        'id':content_node.id,
+                                        'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                     };
                                 }else{
                                     var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
@@ -6025,7 +6029,8 @@ if ( sendData.kind=="page" ) {
                                         'container': rindow.data('container'),
                                         'body': selState.text,
                                         'location': selState.serialRange,
-                                        'kind': kind
+                                        'kind': kind,
+                                        'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                     };
                                 }
                             }

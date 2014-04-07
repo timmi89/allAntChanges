@@ -398,7 +398,7 @@ class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
     kind = models.CharField(max_length=25)
-    item_type = models.CharField(max_length=64, db_index=True)
+    item_type = models.CharField(max_length=64, blank=True, db_index=True)
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash
