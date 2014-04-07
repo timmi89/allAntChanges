@@ -417,6 +417,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     approved = models.BooleanField(default=True)
+    # include_in_page_summary = models.BooleanField(default=True)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)

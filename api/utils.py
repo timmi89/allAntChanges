@@ -476,9 +476,13 @@ def getSinglePageDataDict(page_id):
         interaction__page=current_page,
         interaction__approved=True
     )
+
     ordered_tags = tags.order_by('body')
     tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
     toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
+
+    # singletagcounts = ordered_tags.annotate(tag_count=Count('interaction')).filter(tag_count__lt=2)
+    # singletoptags_with_containers = singletagcounts.values('id','interaction__container')
   
     # ---Find top 10 shares on a give page---
     # content = Content.objects.filter(interaction__page=current_page.id)
@@ -494,6 +498,7 @@ def getSinglePageDataDict(page_id):
             id=current_page.id,
             summary=summary,
             toptags=toptags,
+            # singletoptags_with_containers=singletoptags_with_containers,
             # topusers=topusers,
             # topshares=topshares,
             containers=containers
