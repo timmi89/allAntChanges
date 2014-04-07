@@ -1051,7 +1051,7 @@ function readrBoard($R){
                     
                     var charCountText = ""
                     //split long tag onto two lines.
-                    if ( tagBodyRaw.length < 16 || renderPercentages === true) {
+                    if ( typeof tagBodyRaw != 'undefiend' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'rdr_charCount'+tagBodyRaw.length;
                         tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
@@ -5344,6 +5344,7 @@ function readrBoard($R){
                         //todo: think about this more later:
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
+
                             var $container = $('[rdr-hash="'+hash+'"]');
 
                             try{
@@ -6019,19 +6020,52 @@ if ( sendData.kind=="page" ) {
                                         'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                     };
                                 }else{
-                                    var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
-                                        selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
-                                        if(!selState){
-                                            RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
-                                            return;
-                                        }
-                                    content_node_data = {
-                                        'container': rindow.data('container'),
-                                        'body': selState.text,
-                                        'location': selState.serialRange,
-                                        'kind': kind,
-                                        'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
-                                    };
+
+                                    // is it a rdr-item?  if so, let's force the content_node info, if already known
+                                    if ( $container.hasAttr('rdr-item') ) {
+                                        $.each( RDR.summaries[hash].content_nodes, function(content_node_id, node) {
+                                            // grab the first one that is not 'undefined'
+                                            if ( content_node_id != 'undefined' ) {
+                                                content_node = node;
+                                            }
+                                        });
+
+                                        content_node_data = {
+                                            'container': rindow.data('container'),
+                                            'body': content_node.body,
+                                            'location': content_node.location,
+                                            'kind':kind,
+                                            'id':content_node.id,
+                                            'item_type': $container.attr('rdr-item-type')
+                                        };
+                                    } else {
+                                        var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
+                                            selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
+                                            if(!selState){
+                                                RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
+                                                return;
+                                            }
+                                        content_node_data = {
+                                            'container': rindow.data('container'),
+                                            'body': selState.text,
+                                            'location': selState.serialRange,
+                                            'kind': kind,
+                                            'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                        };
+                                    }
+
+                                }
+
+                                // now correct this 0/0:0,0/2:6 bug
+                                // unsure why this occurs, i have not replicated it consistently
+                                // but it causes the Q&A breakage where the same content appears different to the back-end, due to location being
+                                // something like 0/0:0,0/2:6 rather than 0:0,2:6
+                                if ( content_node_data.location.indexOf('/') != -1 ) {
+                                    var newLocationArray = content_node_data.location.split(','),
+                                        newLocation = '';
+
+                                    newLocation = newLocationArray[0].split('/')[1] + ',' + newLocationArray[1].split('/')[1];
+                                    content_node_data.location = newLocation;
                                 }
                             }
 
