@@ -6022,14 +6022,15 @@ if ( sendData.kind=="page" ) {
                                 }else{
 
                                     // is it a rdr-item?  if so, let's force the content_node info, if already known
-                                    if ( $container.hasAttr('rdr-item') ) {
+                                    // UGHUGHUGHUGHUGHUGHUGHUGHUGHUGH
+                                    // i don't foxtrot think this is a doing a fucking thing.  
+                                    if ( $container.hasAttr('rdr-item') && typeof RDR.summaries[hash].content_nodes != 'undefined' && RDR.summaries[hash].content_nodes.length ) {
                                         $.each( RDR.summaries[hash].content_nodes, function(content_node_id, node) {
                                             // grab the first one that is not 'undefined'
                                             if ( content_node_id != 'undefined' ) {
                                                 content_node = node;
                                             }
                                         });
-
                                         content_node_data = {
                                             'container': rindow.data('container'),
                                             'body': content_node.body,
