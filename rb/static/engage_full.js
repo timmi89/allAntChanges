@@ -69,7 +69,7 @@ function test_readrboard_extend(){
         return;
     }
     window.readrboard_extend = {
-        blessed_tags: [
+        default_reactions: [
             "Love It",
             "Hate It",
             "Heeeeeey"
@@ -77,14 +77,14 @@ function test_readrboard_extend(){
     };
     window.readrboard_extend_per_container = {
         "question1": {
-            blessed_tags: [
+            default_reactions: [
                 "tag1",
                 "tag2",
                 "tag3"
             ]
         },
         "question2": {
-            blessed_tags: [
+            default_reactions: [
                 "tag3",
                 "tag4",
                 "tag5",
@@ -260,7 +260,15 @@ function readrBoard($R){
                 //RDR.groupSettings.getCustomSettings:
 
                 // grab anything on the page
-                var group_extentions = window.readrboard_extend || {};
+                var group_extensions = window.readrboard_extend || {};
+
+                // handle deprecated "blessed_tags"
+                if ( typeof group_extensions.blessed_tags != 'undefined' ) {
+                    // use .slice() to copy by value
+                    // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                    group_extensions.default_reactions = group_extensions.blessed_tags.slice();
+                    delete group_extensions.blessed_tags;
+                }
 
                 // grab anything from the URL
                 // example usage:  rdr_hideOnMobile=false&rdr_doubleTapMessage=%27hello%20world%27
@@ -274,14 +282,15 @@ function readrBoard($R){
                     }
                 });       
 
-                group_extentions = $.extend({}, group_extentions, group_qs_extensions );
+                group_extensions = $.extend({}, group_extensions, group_qs_extensions );
 
                 //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
-                return RDR.groupSettings._translate(group_extentions);
+                return RDR.groupSettings._translate(group_extensions);
             },
             translators: {
-                blessed_tags: function(tagsList){
+                default_reactions: function(tagsList){
                     // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
+                    // modified to reference 'default_reactions' instead of 'blessed_tags'
                     return $.map(tagsList, function(val, idx){
                         return {body: val};
                     });
@@ -289,7 +298,6 @@ function readrBoard($R){
             },
             _translate: function(settings){
                 //RDR.groupSettings._translate:
-
                 var ret_settings = {};
                 var translators = RDR.groupSettings.translators;
                 $.each(settings, function(key, val){
@@ -305,9 +313,19 @@ function readrBoard($R){
                 if(hash && perContainerSettings){
                     var name = getCustomRDRItems(hash);
                     var perContainerExtentions = perContainerSettings[name];
-                    if(perContainerExtentions && perContainerExtentions.blessed_tags){
+
+                    // handle deprecated "blessed_tags"
+                    // if ( typeof perContainerExtentions.blessed_tags != 'undefined' ) {
+                    if (perContainerExtentions && perContainerExtentions.blessed_tags) {
+                        // use .slice() to copy by value
+                        // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                        perContainerExtentions.default_reactions = perContainerExtentions.blessed_tags.slice();
+                        delete perContainerExtentions.blessed_tags;
+                    }
+
+                    if(perContainerExtentions && perContainerExtentions.default_reactions){
                         var settings = RDR.groupSettings._translate(perContainerExtentions);
-                        return settings.blessed_tags;
+                        return settings.default_reactions;
                     }
                 }
 
@@ -319,7 +337,7 @@ function readrBoard($R){
 
                 // otherwise, return the reactions that are set on the page
                 // via Admin or via window.readrboard_extend object
-                return RDR.group.blessed_tags;
+                return RDR.group.default_reactions;
             }
         },
         rindow: {
@@ -4096,10 +4114,10 @@ function readrBoard($R){
 
                     if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
                         var itemDefinition = {};
-                        itemDefinition.blessed_tags = [];
+                        itemDefinition.default_reactions = [];
 
                         $.each(reactions.split(';'), function(idx, tag) {
-                            itemDefinition.blessed_tags.push( $.trim(tag) );
+                            itemDefinition.default_reactions.push( $.trim(tag) );
                         });
 
                         window.readrboard_extend_per_container[itemName] = itemDefinition;
@@ -6747,16 +6765,18 @@ if ( sendData.kind=="page" ) {
                             _updateRindowForHelperIndicator();
 
                             // RDR.events.track('paragraph_helper_show');
-                            RDR.events.trackEventToCloud({
-                                // category: "engage",
-                                // action: "rindow_shown_indicatorhelper",
-                                // opt_label: "kind: text, hash: " + hash,
-                                event_type: 'rindow_show',
-                                event_value: 'indicator_helper',
-                                container_hash: hash,
-                                container_kind: "text",
-                                page_id: page_id
-                            });
+
+                            // DONT FIRE... too many events
+                            // RDR.events.trackEventToCloud({
+                            //     // category: "engage",
+                            //     // action: "rindow_shown_indicatorhelper",
+                            //     // opt_label: "kind: text, hash: " + hash,
+                            //     event_type: 'rindow_show',
+                            //     event_value: 'indicator_helper',
+                            //     container_hash: hash,
+                            //     container_kind: "text",
+                            //     page_id: page_id
+                            // });
                         }else{
                             // RDR.events.track( 'view_node::'+hash, hash );
                             RDR.events.trackEventToCloud({
@@ -7238,7 +7258,7 @@ if ( sendData.kind=="page" ) {
 
                         var summary = !isPage ? RDR.summaries[hash] : {};
                         
-                        var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
+                        var default_reactions = RDR.groupSettings.getBlessedTags(hash);
 
                         var reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid';
 
@@ -7275,14 +7295,14 @@ if ( sendData.kind=="page" ) {
                                 var $header = RDR.rindow.makeHeader( 'What do you think?' ),
                                     isWriteMode = true;
                                 $rindow.find('.rdr_header').replaceWith($header);
-                                writeTagBoxes(blessed_tags);
+                                writeTagBoxes(default_reactions);
                                 var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
-                            writeTagBoxes(blessed_tags);
+                            writeTagBoxes(default_reactions);
                         } else if(isPage){
                             //do nothing
                             // whiskey tango...?

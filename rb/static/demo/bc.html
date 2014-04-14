@@ -201,16 +201,19 @@ body.custom-background { background-color: #f9f9f9; }
   </header><!-- .entry-header -->
 
   <style>
-  [class*='col-'] { float:left; }
-  .col-two-thirds { width:67%; }
-  .col-one-third { width:23%; }
+  /*[class*='col-'] { float:left; }*/
+  /*.col-two-thirds { width:100%; }*/
+  /*.col-one-third { width:100%; }*/
+  .row {
+    text-align: center;
+  }
   .row:after {
     content: "";
     display: table;
     clear: both;
   }
   .lyrics {
-    text-align:left;
+    /*text-align:left;*/
   }
   .lyrics iframe {
     margin-bottom:30px;
@@ -219,8 +222,18 @@ body.custom-background { background-color: #f9f9f9; }
     list-style-type: none;
     margin:10px 0 10px 0;
   }
+  .questions {
+    padding:100px 0;
+  }
   .question {
-    width:100%;
+    width:300px;
+    float:left;
+    margin-right:50px;
+    padding-right:50px;
+  }
+  .question:first-child {
+    margin-left:15%;
+    border-right:1px solid #ccc;
   }
   .questions h1 {
     color:#666;
@@ -241,8 +254,9 @@ body.custom-background { background-color: #f9f9f9; }
   </style>
   <div class="entry-content">
     <div class="row">
-      <div class="col-two-thirds lyrics">
+      <div class="lyrics">
         <a href="http://bop.fm/s/the-guess-who/no-time" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://bop.fm']);" data-width="600" data-bop-link="">The Guess Who &#8211; No Time</a><script type="text/javascript" src="http://assets.bop.fm/embed.js" async=""></script>
+        <div class="summary_container"></div>
         <ol>
           <li>NO TIME LEFT FOR YOU, ON MY WAY TO BETTER THINGS</li>
           <li>NO TIME LEFT FOR YOU, I FOUND MYSELF SOME WINGS</li>
@@ -272,7 +286,9 @@ body.custom-background { background-color: #f9f9f9; }
           <li>I GOT GOT GOT GOT NO TIME&#8230;</li>
         </ol>
       </div>
-      <div class="col-one-third questions">
+    </div>
+    <div class="row">
+      <div class="questions">
         <div class="question">
           <h1 rdr-item="question1" rdr-crossPageContent="true" rdr-item-type="question" rdr-reactions="Lyrics;Guitar Riffs;How it sounds live;Burton's 'stache'!">The best thing about <strong>No Time</strong> is...</h1>
           <div rdr-view-reactions-for="question1" rdr-view-style="horizontal_bars" style="margin:10px 0;"></div>
@@ -287,6 +303,12 @@ body.custom-background { background-color: #f9f9f9; }
           <div class="responses" ><span rdr-counter-for="question2"></span> Responses</div>
         </div>
       </div>
+    </div>
+    <div class="row lyrics">
+      <p>&nbsp;</p>
+      <p style="text-align: center;">Original Handwritten Lyrics to No Time</p>
+      <p>&nbsp;</p>
+      <p><a href="http://BurtonCummings.com/wp-content/uploads/2014/03/no_Time.jpg" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://BurtonCummings.com']);"><img class="size-large wp-image-544 aligncenter" alt="Original Handwritten Lyrics to No Time" src="http://BurtonCummings.com/wp-content/uploads/2014/03/no_Time-788x1024.jpg" width="640" height="831" /></a></p>
     </div>
 <p style="text-align: center;">Songwriters: Burton Cummings &amp; Randy Bachman</p>
 <p style="text-align: center;">© Shillelagh Music</p>
@@ -321,9 +343,10 @@ body.custom-background { background-color: #f9f9f9; }
 <script>
 window.readrboard_extend = {
   active_sections:".lyrics",
+  // default_reactions:['well hello!!','not a chance!!!!']
   // anno_whitelist:"p span",
-  summary_widget_selector:"ol:eq(0)",
-  summary_widget_method:"before"
+  summary_widget_selector:"ol:last-child",
+  summary_widget_method:"after"
 };
 </script>
 <script src="/static/engage.js" defer type="text/javascript"></script>

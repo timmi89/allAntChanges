@@ -122,6 +122,8 @@ exports.getMostEngagedPagesWithPVs = function() {
          + "group by a.page__id, a.num_ses, a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, a.facebook_referrals, a.twitter_referrals " //, c.num_pg_ld_sespg " //, d.reaction_count "
          + "order by hotness DESC ";
 
+         // hotness on FB: http://techcrunch.com/2014/04/03/the-filtered-feed-problem/
+
 
     result.push({sql:sql,results:ff.executeSQL(sql)});
 
@@ -492,6 +494,7 @@ exports.getMostEngagedPages = function() {
 
     // try to get 'most engaged'
     // LOOK UP HOTNESS ALOGIRTHM from reddit etc
+        // facebook's:  http://techcrunch.com/2014/04/03/the-filtered-feed-problem/
     sql = "SELECT "
             + "  page__id as PageID, page_title as PageTitle, site_id as SiteID, page_topics as PageTopics "
             + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
