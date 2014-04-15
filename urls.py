@@ -134,6 +134,7 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_all_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('readrboard.analytics.urls_v1')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
@@ -141,6 +142,7 @@ urlpatterns = patterns('',
 
   #inhouse
   url(r'^analytics', include('readrboard.analytics.urls')),
+  url(r'^analytics_v1', include('readrboard.analytics.urls_v1')),
 
 
   # Plugin Settings

@@ -167,7 +167,7 @@
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics/'+type+'/popular/'+querystring,
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/popular/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -279,7 +279,7 @@
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics/'+type+'/active/'+querystring,
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/active/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -383,7 +383,7 @@
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics/'+type+'/recent/'+querystring,
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/recent/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -584,7 +584,7 @@
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics/frequency/'+querystring,
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/frequency/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
