@@ -40,7 +40,8 @@ CREATE COLLECTION /FFNotificationID OBJECTTYPE FFNotificationID
 
 
 # Permissions
-PERMIT read:none write:none ON /saveEvent
+# PERMIT read:none write:none ON /saveEvent
+# PERMIT read:none write:none ON /Events
 
 #
 # Extension Resources
