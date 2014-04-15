@@ -38,9 +38,15 @@ CREATE COLLECTION /FFNotificationID OBJECTTYPE FFNotificationID
 # Event Handlers
 #
 
+
+# Permissions
+PERMIT read:none write:none ON /saveEvent
+
 #
 # Extension Resources
 #
+CREATE EXTENSION /saveEvent     UNSECURED AS javascript:require('scripts/Extensions').saveEvent();
+
 CREATE EXTENSION /getEventCounts     UNSECURED AS javascript:require('scripts/Extensions').getEventCounts();
 CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
 CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();

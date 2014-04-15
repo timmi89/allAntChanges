@@ -31,7 +31,8 @@ function RegisterRequest(){return this.userName=null,this.password=null,this.fir
 // ff.setSimulateCookies(true);
 // ff.setBaseUrl("http://readrboard.fatfractal.com/eventsdev");
 // ff.setBaseUrl("http://readrboard.fatfractal.com/eventsprerelational");
-
+// ff.setBaseUrl("http://localhost:8080/eventsprerelational");
+// console.log('base is set-----');
 // var newUserRegisterRequest = new RegisterRequest();
 // newUserRegisterRequest.firstName = "Team";
 // newUserRegisterRequest.lastName = "ReadrBoard";
@@ -139,8 +140,13 @@ window.RDRAuth = {
     	},
         trackEventToCloud: function(params){
             // RDRAuth.events.trackEventToCloud
-            
+            // console.log('lets seee....');
             // if (typeof ff_loggedInUser != 'undefined' && typeof ff_loggedInUser.guid != 'undefined') {
+            // ff.postObjToExtension(params, "saveEvent", function(response) {
+            //   console.log('FF response');
+            //   console.log(response);
+            // });
+              
 
             //   // ff.createObjAtUri(params, 'EventsDev',
             //   ff.createObjAtUri(params, 'Events',

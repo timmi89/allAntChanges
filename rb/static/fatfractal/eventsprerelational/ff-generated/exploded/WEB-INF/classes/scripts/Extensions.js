@@ -46,6 +46,24 @@ function Content(data) {
 }
 
 
+exports.saveEvent = function() {
+    // var payload = ff.getExtensionRequestData().httpContent;
+    
+    // if (payload.api_token !== 'fooooooo') // or whatever sort of validation you want, could also be on the site that is making the request
+    // {
+    //     throw {statusCode:403, statusMessage:’No’};
+    // }
+
+    // ff.response().result = payload;
+    ff.response().result = {'hello':'world'};
+
+    // OK we’ve got an authorized request - remove the token from the payload before storing the data
+   // delete payload.api_token;
+
+    // And save the object
+    // ff.createObjAtUri(payload, “/Events”);
+};
+
 // GARY!
 exports.getEventCounts = function() {
     var result = [];

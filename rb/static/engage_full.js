@@ -183,25 +183,25 @@ function readrBoard($R){
         styles: {
         },
         events: {
-            track : function( data, hash ) {
+            // track : function( data, hash ) {
                 // RDR.events.track:
                 
-                var standardData = "",
-                    timestamp = new Date().getTime();
+                // var standardData = "",
+                //     timestamp = new Date().getTime();
                 
-                RDR.user = RDR.user || {};
+                // RDR.user = RDR.user || {};
                 
-                if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
-                if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
-                if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
-                if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
+                // if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
+                // if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
+                // if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
+                // if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
 
-                var eventSrc = data+standardData,
-                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                // var eventSrc = data+standardData,
+                //     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
-                $('#rdr_event_pixels').append($event);
+                // $('#rdr_event_pixels').append($event);
 
-            },
+            // },
             trackEventToCloud: function( params ) {
                 // RDR.events.trackEventToCloud
 
@@ -3539,6 +3539,14 @@ function readrBoard($R){
                         var custom_group_settings = RDR.groupSettings.getCustomSettings();
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
+                        // handle deprecated .blessed_tags, change to .default_reactions
+                        if ( typeof RDR.group.blessed_tags != 'undefined' ) {
+                            // use .slice() to copy by value
+                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                            RDR.group.default_reactions = RDR.group.blessed_tags.slice();
+                            delete RDR.group.blessed_tags;
+                        }
+
                         if (RDR.group.hideOnMobile === true && isTouchBrowser) {
                             return false;
                         }
@@ -4712,7 +4720,7 @@ function readrBoard($R){
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        // RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         $(this).removeClass('rdr_default_msg');
                         if( $(this).val() == helpText ){
                             $(this).val('');
@@ -7425,7 +7433,6 @@ if ( sendData.kind=="page" ) {
                         // sort a list of tags into their buckets
                         // private function, but could be a RDR.util or RDR.tagBox function
                         function createTagBuckets( tagList ) {
-
                             // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 

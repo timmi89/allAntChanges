@@ -20,6 +20,7 @@
 
     <externs>
         <extern>file://./extern/fatfractal-noserver-0.1.0.jar</extern>
+        <extern>file://./extern/fatfractal-scribe-0.1.0.jar</extern>
         <extern>file://./extern/ringojs-20120824.jar</extern>
         <extern>file://./extern/rhino-1_7R5-20120824.jar</extern>
         <extern>file://./extern/antlr-runtime-3.4.jar</extern>
