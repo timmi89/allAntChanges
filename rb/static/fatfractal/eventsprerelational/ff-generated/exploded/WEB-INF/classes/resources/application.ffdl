@@ -40,7 +40,8 @@ CREATE COLLECTION /FFNotificationID OBJECTTYPE FFNotificationID
 
 
 # Permissions
-PERMIT read:none write:none ON /saveEvent
+# PERMIT read:none write:none ON /saveEvent
+# PERMIT read:none write:none ON /Events
 
 #
 # Extension Resources
@@ -57,6 +58,9 @@ CREATE EXTENSION /getMostLoaded     UNSECURED AS javascript:require('scripts/Ext
 CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts/Extensions').getGroupAggregate();
 CREATE EXTENSION /timeSiteAvg     UNSECURED AS javascript:require('scripts/Extensions').timeSiteAvg();
 CREATE EXTENSION /getPopularBrowsers     UNSECURED AS javascript:require('scripts/Extensions').getPopularBrowsers();
+
+# import
+CREATE EXTENSION /importEvent     UNSECURED AS javascript:require('scripts/Extensions').importEvent();
 
 #CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
 #CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();

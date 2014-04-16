@@ -45,6 +45,25 @@ function Content(data) {
     return this;
 }
 
+exports.importEvent = function() {
+    var wrapped = ff.getExtensionRequestData().httpContent;
+    var event = wrapped.val;
+
+    event.clazz = 'Events';
+    event.isTouchBrowser = !!event.isTouchBrowser;
+    if (! event.user_id) {
+        event.user_id = 0;
+    }
+
+    if (++numImported % 100 === 0) {
+        print ("Imported " + numImported + " since " + started);
+    }
+    var existing = ff.getObjFromUri("/Events/" + event.guid);
+    if (! existing) {
+        ff.createObjAtUri(event, "/Events");
+    }
+};
+
 
 exports.saveEvent = function() {
     // var payload = ff.getExtensionRequestData().httpContent;

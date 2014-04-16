@@ -49,10 +49,10 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8080'
-    BASE_URL = 'http://local.readrboard.com:8080'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8080'
-    STATIC_URL = '//local.readrboard.com:8080/static/'
+    URL_NO_PROTO = 'local.readrboard.com:8081'
+    BASE_URL = 'http://local.readrboard.com:8081'
+    BASE_URL_SECURE = 'https://local.readrboard.com:8081'
+    STATIC_URL = '//local.readrboard.com:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
