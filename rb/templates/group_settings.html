@@ -3,6 +3,14 @@
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
 
+{% block mastheadContent %}
+    {% with group=form.instance %}
+    {% with "settings" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+{% endblock %}
+
 {% block wideContent %}
 <div class="mostlyWide">
 {% with group=form.instance %}

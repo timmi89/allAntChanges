@@ -733,6 +733,7 @@ def settings(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['cookie_user'] = kwargs['cookie_user']
+    context['hasSubheader'] = True
 
     # todo move wordpress stuff
     if request.method == 'POST':
