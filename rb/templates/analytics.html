@@ -50,8 +50,8 @@
 .summary .engagement-rate .donut { border-right:1px solid #ccc; width:90%;  }
 .summary .other-totals {  }
 /* http://css-tricks.com/vertically-center-multi-lined-text/ */
-.summary .other-totals .grid-quarter > div { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
-.summary .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
+.other-totals .attribute > div { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
+.other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
 .section { margin-bottom:80px; clear:both; overflow: auto;}
 .section h1 { font-size: 21px; }
 .section.readrboard-usage h1 {margin-bottom: -32px;}
@@ -69,10 +69,10 @@
             <div class="donut" id="donut-example" style="height:200px;"></div>
         </div>
         <div class="grid-9 other-totals">
-            <div class="grid-quarter"><div>1,040 <label>Reactions</label></div></div>
-            <div class="grid-quarter"><div>134,200 <label>Reaction Views</label></div></div>
-            <div class="grid-quarter"><div>52% <label>Avg Scroll Depth</label></div></div>
-            <div class="grid-quarter"><div>0:37 <label>Avg Time Spent on Content</label></div></div>
+            <div class="grid-quarter attribute"><div>1,040 <label>Reactions</label></div></div>
+            <div class="grid-quarter attribute"><div>134,200 <label>Reaction Views</label></div></div>
+            <div class="grid-quarter attribute"><div>52% <label>Avg Scroll Depth</label></div></div>
+            <div class="grid-quarter attribute"><div>0:37 <label>Avg Time Spent on Content</label></div></div>
         </div>
     </div>
     <div class="section readrboard-usage">
@@ -103,6 +103,7 @@
         </div>
     </div>
 <style>
+a { color:#5ba0bc; }
 .topic-tag { display: inline-block; }
 .topic-tag:hover { background:#f0f0f0; }
 .topic-tag a { color:#5ba0bc; text-decoration: none;  }
@@ -112,7 +113,7 @@
 .reaction-tag { border:4px solid #737373; padding:10px 20px; display:block; text-align:center; margin-right:10px; margin-bottom:10px;}
     .grid-6 .reaction-tag { font-size:48px; }
     .grid-4 .reaction-tag { font-size:24px; }
-.reaction-tag a { color:#3c3c3c; font-weight:bold; }
+.reaction-tag a {  color:#3c3c3c; font-weight:bold; }
 .reaction-tag .counter { display:block;font-size:16px; }
 </style>
     <div class="section reactions-and-topics">
@@ -131,10 +132,6 @@
                 <div class="grid-4"><span class="reaction-tag"><a href="#">OMG <span class="counter">32</span></a></span></div>
                 <div class="grid-4"><span class="reaction-tag"><a href="#">Amazing! <span class="counter">24</span></a></span></div>
                 <div class="grid-4"><span class="reaction-tag"><a href="#">Agreed <span class="counter">21</span></a></span></div>
-
-                <!-- <div class="grid-4 column header noteworthy">Used ReadrBoard in last 180 days</div>
-                <div class="grid-4 column header">No recent usage</div>
-                <div class="grid-4 column header">No recent usage</div> -->
             </div>
             <div class="grid-6">
                 <div class="grid-12">
@@ -152,8 +149,171 @@
             </div>
         </div>
     </div>
-    <div class="grid-12 section">
-        <div id="area-example"></div>
+<style>
+.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
+.page_card h1 { font-size:18px; }
+.page_card .attribute { font-size:16px; font-weight:bold; }
+.page_card .attribute label { font-size:12px; font-weight:normal; display:block; }
+.page_card .reactions { font-size:11px; font-weight:bold; } 
+</style>
+    <div class="section reactions-and-topics">
+        <div class="grid-12 row padded header">
+            <h1>Most Engaged Pages</h1>
+        </div>
+        <div class="grid-12 row padded">
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Broncos prep for Super Bowl 48 moves to New Jersey</a></h1>
+                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">GOP looking to rollback new gun control</a></h1>
+                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Peyton Manning 'certain' Seahawks will be challenge</a></h1>
+                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Mayor Hancock seeks to expand Xcel</a></h1>
+                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Some other headline here</a></h1>
+                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Incredible local news article</a></h1>
+                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">You won't believe what happens when this 11 year old turtle hears for the first time</a></h1>
+                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">Shocking discover at local power plant</a></h1>
+                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
+                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="section engaged-referrers">
+        <div class="grid-12 row padded header">
+            <h1>Most Engaged Referrers</h1>
+        </div>
+        <div class="grid-12 row padded">
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">facebook.com</a></h1>
+                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">google.com</a></h1>
+                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">twitter.com</a></h1>
+                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
+                </section>
+            </div>
+            <div class="grid-3 center padded">
+                <section class="page_card">
+                    <h1><a href="#">pinterest.com</a></h1>
+                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
+                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
+                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="grid-12 sessions section">
+        <div class="grid-12 row padded header">
+            <div class="grid-9">
+                <h1>Engaged Sessions / Last 30 Days</h1>
+            </div>
+            <div class="grid-3">
+                <h1>Time Spent / Last 30 Days</h1>
+            </div>
+        </div>
+        <div class="grid-3 engagement-rate">
+            <div class="donut" id="session-actions" style="height:200px;"></div>
+        </div>
+        <div class="grid-6 other-totals">
+            <div class="grid-third attribute"><div>140 <label>Reacted</label></div></div>
+            <div class="grid-third attribute"><div>1,200 <label>Viewed Reactions</label></div></div>
+            <div class="grid-third attribute"><div>8,041 <label>Scrolled Down</label></div></div>
+        </div>
+        <div class="grid-3 engagement-rate">
+            <div class="donut" id="session-time" style="height:200px;"></div>
+        </div>
+    </div>
+    <div class="section engagement-over-time">
+        <div class="grid-12 row padded header">
+            <h1>Engagement Over Time</h1>
+        </div>
+        <div class="grid-12 row padded">
+            <div id="area-example"></div>
+        </div>
     </div>
 </section>
 </div>
@@ -168,7 +328,8 @@ function numberWithCommas(x) {
         // put in external file...
         RB.analytics = {
         	updateAll: function() {
-                console.log('RB.analytics.updateAll....');
+
+                
                 Morris.Donut({
                   element: 'donut-example',
                   data: [
@@ -177,19 +338,44 @@ function numberWithCommas(x) {
                   ],
                   formatter: function (y) { return y + "%" }
                 }).select(0);
+
+                Morris.Donut({
+                  element: 'session-actions',
+                  data: [
+                    {label: "Took Action", value: 14000 },
+                    {label: "Reacted", value: 140 },
+                    {label: "Viewed Reactions", value: 1200 },
+                    {label: "Scrolled", value: 8041 }
+                  ]
+                }).select(0);
+
+                Morris.Donut({
+                  element: 'session-time',
+                  data: [
+                    {label: "sessions over 0:15", value: 14000 },
+                    {label: "sessions over 0:30", value: 10000 },
+                    {label: "sessions over 0:45", value: 6000 },
+                    {label: "sessions over 1:00", value: 1000 },
+                    {label: "sessions over 1:30", value: 800 },
+                    {label: "sessions over 2:00", value: 300 },
+                  ]
+                }).select(0);
+
+
+
                 Morris.Area({
                   element: 'area-example',
                   data: [
-                    { y: '4-10-14', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
-                    { y: '4-11-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { y: '4-12-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-                    { y: '4-13-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { y: '4-14-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-                    { y: '4-15-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { y: '4-16-14', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
+                    { date: '4-10-14', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
+                    { date: '4-11-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+                    { date: '4-12-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+                    { date: '4-13-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+                    { date: '4-14-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+                    { date: '4-15-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+                    { date: '4-16-14', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
                   ],
                   lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
-                  xkey: 'y',
+                  xkey: 'date',
                   ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
                   labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
                 });
