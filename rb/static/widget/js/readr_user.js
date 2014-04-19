@@ -31,7 +31,7 @@ function RegisterRequest(){return this.userName=null,this.password=null,this.fir
 // ff.setSimulateCookies(true);
 // ff.setBaseUrl("http://readrboard.fatfractal.com/eventsdev");
 // ff.setBaseUrl("http://readrboard.fatfractal.com/eventsprerelational");
-// ff.setBaseUrl("http://localhost:8080/eventsprerelational");
+// ff.setBaseUrl("http://localhost:8081/eventsprerelational");
 // console.log('base is set-----');
 // var newUserRegisterRequest = new RegisterRequest();
 // newUserRegisterRequest.firstName = "Team";

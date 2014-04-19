@@ -710,7 +710,7 @@ div.rdr div.rdr_commentSet div.rdr_commentBy img      {width:24px; height:24px; 
 div.rdr div.rdr_commentSet div.rdr_comment            {
     font: italic 14px Georgia; 
     color:#999;
-    padding: 7px 2px 2px 2px;
+    padding: 7px 2px;
     overflow-x:hidden;
 }
 div.rdr div.rdr_comment button            {float:right;}
@@ -736,7 +736,7 @@ div.rdr div.rdr_info        {font:italic 11px Arial;color:#767676; margin:0; cur
 div.rdr div.rdr_shareBox                       { background:#edf6ff; border:1px solid #b6d3ee; -webkit-border-radius:6px; -moz-border-radius:6px; border-radius:6px; margin:0 0 0 10px; text-align: center; width: 120px; display:inline-block; padding:3px 0; }
 div.rdr div.rdr_share_social                   { overflow:visible; position: relative; top: 4px; min-width:90px;}
 div.rdr div.rdr_share_social strong            { display:block; float:left; margin:5px 5px 0 24px; }
-div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; border-bottom:1px solid #ddd; padding-bottom: 10px;}
+div.rdr div.rdr_commentBox                     { clear:both; display:block; text-align:left; border-bottom:1px solid #ddd; padding-bottom: 10px; margin:10px 0;}
 
 div.rdr div.rdr_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.rdr div.rdr_back:hover { background:#999; }
@@ -755,7 +755,10 @@ div.rdr div.rdr_otherCommentsBox { max-width:300px;}*/
 div.rdr.rdr_indicator_details_for_media div.rdr_comment,
 div.rdr.rdr_indicator_details_for_media div.rdr_otherCommentsBox { max-width:none;}
 
-div.rdr div.rdr_comment_header { display:block; text-align:left;}
+div.rdr div.rdr_comment_header { display:block; text-align:left; margin:10px 0; }
+div.rdr div.rdr_comment_header h4 { font-size:14px;}
+div.rdr div.rdr_commentComplete { margin:10px 0;}
+div.rdr div.rdr_commentComplete h4 { font-size:14px; }
 div.rdr div.rdr_comment textarea {
     margin-bottom:0 0 1px 0;
     resize:none;
@@ -2515,6 +2518,7 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_plusOne    
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; float: left; margin: 3px 0 12px 0; opacity: 0.33;}
 /*div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_comment_hover    { display:block; opacity: 0.33; position: absolute; left:-30px; padding-top:20px; }*/
 
+
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_tag {
   height: 31px;
   background:linear-gradient(to right, rgba(250,250,250,0.5), rgba(150,150,150,0.2) );
@@ -2608,15 +2612,9 @@ div.rdr_br_replaced > div.rdr_indicator_for_text.rdr_helper{
   padding-top:4px;
 }
 
+/* mobile */
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {
+  div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_count            { margin-top: -1px; font-size: 12px; }
+}
 
-/* force capital first letter on reactions for now */
-/* NEVER MIND.  DESTROYS IE. */
-/* http://stackoverflow.com/questions/7135174/ie8-hangs-when-opening-a-site-which-uses-css3 */
 
-/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body {*/
-    /*text-transform: lowercase;*/
-/*}*/
-
-/*div.rdr div.rdr_body.rdr_tags_list .rdr_tag_body:first-letter {
-    text-transform: uppercase;
-}*/

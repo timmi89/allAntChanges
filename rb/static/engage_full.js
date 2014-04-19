@@ -42,9 +42,9 @@ RDR_offline = !!(
     RDR.engageScriptSrc.indexOf('local.readrboard2.com') != -1 ||
     document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"http://www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
@@ -1158,7 +1158,7 @@ function readrBoard($R){
 
                     function _makeBackButton(){
                         var $backButton = $('<div class="rdr_back">Close X</div>');
-                        $backButton.click( function() {
+                        $backButton.on('click.rdr, touchend.rdr', function() {
 
 
                             //temp fix because the rindow scrollpane re-init isnt working
@@ -1228,7 +1228,7 @@ function readrBoard($R){
                                             $tr.append('<td class="rdr_content"><img src="'+RDR_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
                                         }
 
-                                        $tr.click( function(e) {
+                                        $tr.on('click.rdr, touchend.rdr', function(e) {
                                             e.preventDefault();
                                             var data = {
                                                 container_hash:thing.hash,
@@ -1309,13 +1309,13 @@ function readrBoard($R){
                                 $this.addClass('rdr_live_hover');
                             };
 
-                            $tagBox.click(function(){
+                            $tagBox.on('click.rdr, touchend.rdr', function(){
                                 clickFunc();
                             });
 
 
                         } else {
-                            $tagBox.click( function() {
+                            $tagBox.on('click.rdr, touchend.rdr', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
                                 var hash = $rindow.data('container');
@@ -3158,7 +3158,6 @@ function readrBoard($R){
                 }
             },
             createXDMframe: function() {
-
                 RDR.session.receiveMessage({}, function() {
                     RDR.util.userLoginState();
                 });
@@ -3182,7 +3181,9 @@ function readrBoard($R){
                 //The only side effect is that it adds a user property to args ( args[user] ).
                 $.receiveMessage(
                     function(e){
+                        
                         var message = $.evalJSON( e.data );
+                        
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -3793,6 +3794,7 @@ function readrBoard($R){
                 if(isTouchBrowser){
                     // init the "indicators" for media objects, on mobile only.
                     // so that the image call-to-action is present and populated
+                    // $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
                     $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
@@ -4069,7 +4071,7 @@ function readrBoard($R){
 
                     var $mouse_target = $(event.target);
 
-                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
                         // if ( $('#rdr_loginPanel').length ) {
                         //     RDR.session.getUser(function() {
                         //         RDR.util.userLoginState();
@@ -4334,7 +4336,7 @@ function readrBoard($R){
                         // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
 
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
-                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                         var srcArray = hashBody.split('/');
 
                         srcArray.splice(0,2);
@@ -6839,7 +6841,11 @@ if ( sendData.kind=="page" ) {
                     }
                     function _showRindowAfterLoad(){
                         $indicator.unbind('mouseover.contentNodeInit');
-                        $indicator.triggerHandler('mouseover.showRindow');
+                        if (isTouchBrowser) {
+                            $indicator.triggerHandler('touchstart.showRindow');
+                        } else {
+                            $indicator.triggerHandler('mouseover.showRindow');
+                        }
                     }
 
                     function _customDisplaySetupHoverForShowRindow($cta){
@@ -6855,7 +6861,7 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.on('mouseover.showRindow', function(){
+                            $thisCTA.unbind('mouseover.showRindow, touchstart.showRindow').on('mouseover.showRindow, touchstart.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
                                 // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                                 // if( hasHelper ){
@@ -6880,7 +6886,6 @@ if ( sendData.kind=="page" ) {
                         //     summary.$rindow_readmode.remove();
                         // }
                         //end - todo
-
                         var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
                         if (mode=="writeMode") {
                             if($container.length){
@@ -6893,6 +6898,7 @@ if ( sendData.kind=="page" ) {
 
                             $('document').selog('selectEl', el);
                         }
+
                         var $rindow = RDR.rindow.make( mode, {hash:hash, '$custom_cta':$cta } );
                         var page_id = RDR.util.getPageProperty('id', hash );
 
@@ -6903,7 +6909,7 @@ if ( sendData.kind=="page" ) {
                         }
 
                         $indicator.$rindow = $rindow;
-                        
+
                         // RDR.events.track( 'view_node::'+hash, hash );
                         // RDR.events.track('start_react_text');
                         RDR.events.trackEventToCloud({
@@ -7108,7 +7114,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             if( $container.css('display') == 'none' || $container.css('visibility') == 'hidden' ){
-                                RDR.safeThrow('not visible.');
+                                RDR.safeThrow('not visible: ');
                                 return;
                             }
 
@@ -8819,8 +8825,8 @@ if ( sendData.kind=="page" ) {
 
                                 //for testing offline
                                 if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                    content = content.replace("localhost:8080", "www.readrboard.com");
+                                    content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                    content = content.replace("localhost:8081", "www.readrboard.com");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -8914,8 +8920,8 @@ if ( sendData.kind=="page" ) {
                             case "image":
                                                             //for testing offline
                                 if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                    content = content.replace("localhost:8080", "www.readrboard.com");
+                                    content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                    content = content.replace("localhost:8081", "www.readrboard.com");
                                 }
 
                                 mainShareText = _wrapTag(args.reaction, true);

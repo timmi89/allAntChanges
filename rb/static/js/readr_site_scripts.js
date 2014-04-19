@@ -1,7 +1,7 @@
 var RDR_offline = (window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"http://www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/";
 
 var RB = RB ? RB : {};
 
@@ -918,8 +918,8 @@ RB = {
 
                             //for testing offline
                             if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                content = content.replace("localhost:8080", "www.readrboard.com");
+                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                content = content.replace("localhost:8081", "www.readrboard.com");
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -1003,8 +1003,8 @@ RB = {
                         case "image":
                                                         //for testing offline
                             if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                content = content.replace("localhost:8080", "www.readrboard.com");
+                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                content = content.replace("localhost:8081", "www.readrboard.com");
                             }
 
                             mainShareText = _wrapTag(interaction_body, true);
