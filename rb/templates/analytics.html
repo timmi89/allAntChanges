@@ -83,6 +83,11 @@
         </div>
     </div>
 <script>
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
     var readrboardUsageData = {
@@ -121,8 +126,8 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
     '<div class="grid-9 other-totals"></div></div>');
 
     var summaryData = [
-        { data:'1,040',label:'Reactions' },
-        { data:'134,200',label:'Reaction Views' },
+        { data:numberWithCommas(1040),label:'Reactions' },
+        { data:numberWithCommas(134200),label:'Reaction Views' },
         { data:'52%',label:'Avg Scroll Depth' },
         { data:'0:37',label:'Avg Time Spent on Content' }
     ];
@@ -186,15 +191,15 @@ a { color:#5ba0bc; }
                 <div class="reactions-holder">&nbsp;</div>
             </div>
             <div class="grid-6 hasLoader">
-                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing topics...</div></div>
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Topics...</div></div>
                 <div class="topics-holder">&nbsp;</div>
             </div>
         </div>
 <script>
 var $temp_popularReactions = $('<div><div class="template"></div></div>');
 var popularReactions = [
-    { body:'Awesome', count:60 },
-    { body:'Ugh', count:50 },
+    { body:'Awesome', count:1460 },
+    { body:'Ugh', count:1150 },
     { body:'Why Not', count:40 },
     { body:'And how is that right', count:30 },
     { body:'10 10 10 10 10 10 10 10 1', count:20 },
@@ -208,7 +213,7 @@ var itemNumber = 1;
 $.each(popularReactions, function(idx, reaction) {
     var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
     var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
-    $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+reaction.count+'</span></a></span></div>'); 
+    $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
     itemNumber++;
 });
 
@@ -295,6 +300,11 @@ $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template'
 .content-item .reaction-tag { font-weight:normal; font-size:12px; padding:5px; display:inline-block; border-width:2px;}
 .via { padding:10px 0; color:#999; font-size:12px; }
 .via a { font-size:12px; color:#5ba0bc; }
+.engaged-content {
+    /* until we have a simple iframe that can load the content... */
+    /* <iframe src="readrboard.com/content/ID"></iframe> */
+    display:none;
+}
 </style>
     <div class="section engaged-content">
         <div class="grid-12 row padded header">
@@ -381,10 +391,12 @@ $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.t
 </script>
 
 <style>
-.session_summaries { overflow:hidden; }
+.session_summaries { overflow:hidden; min-height: 200px;}
+.engagement-over-time { overflow:hidden; }
+.engagement-over-time .hasLoader { min-height: 200px;}
 </style>
 
-    <div class="grid-12 section session_summaries">
+    <div class="grid-12 section session_summaries hasLoader">
         <div class="grid-12 row padded header">
             <div class="grid-9">
                 <h1>Engaged Sessions / Last 30 Days</h1>
@@ -393,7 +405,8 @@ $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.t
                 <h1>Time Spent / Last 30 Days</h1>
             </div>
         </div>
-        <div class="grid-3 engagement-rate">
+        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Sessions...</div></div>
+        <!-- <div class="grid-3 engagement-rate">
             <div class="donut" id="session-actions" style="height:200px;"></div>
         </div>
         <div class="grid-6 other-totals">
@@ -403,71 +416,93 @@ $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.t
         </div>
         <div class="grid-3 engagement-rate">
             <div class="donut" id="session-time" style="height:200px;"></div>
-        </div>
+        </div> -->
     </div>
     <div class="section engagement-over-time">
         <div class="grid-12 row padded header">
             <h1>Engagement Over Time</h1>
         </div>
-        <div class="grid-12 row padded">
-            <div id="area-example"></div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Gathering recent daily activity...</div></div>
         </div>
     </div>
+<script>
+var session_totals = {
+    reacted:140,
+    viewed:1200,
+    scrolled:8041
+};
+var $temp_sessionInfo = $('<div><div class="template">' +
+    '<div class="grid-3 engagement-rate">' +
+            '<div class="donut" id="session-actions" style="height:200px;"></div>' +
+        '</div>' +
+        '<div class="grid-6 other-totals">' +
+            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.reacted) + ' <label>Reacted</label></div></div>' +
+            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.viewed) + ' <label>Viewed Reactions</label></div></div>' +
+            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.scrolled) + ' <label>Scrolled Down</label></div></div>' +
+        '</div>' +
+        '<div class="grid-3 engagement-rate">' +
+            '<div class="donut" id="session-time" style="height:200px;"></div>' +
+        '</div>' +
+    '</div></div>');
+
+    $('.section.session_summaries.hasLoader').append($temp_sessionInfo).find('.template').animate({'opacity':1},500);
+
+    Morris.Donut({
+      element: 'session-actions',
+      data: [
+        {label: "Took Action", value: 14000 },
+        {label: "Reacted", value: 140 },
+        {label: "Viewed Reactions", value: 1200 },
+        {label: "Scrolled", value: 8041 }
+      ]
+    }).select(0);
+
+    Morris.Donut({
+      element: 'session-time',
+      data: [
+        {label: "sessions over 0:15", value: 14000 },
+        {label: "sessions over 0:30", value: 10000 },
+        {label: "sessions over 0:45", value: 6000 },
+        {label: "sessions over 1:00", value: 1000 },
+        {label: "sessions over 1:30", value: 800 },
+        {label: "sessions over 2:00", value: 300 },
+      ]
+    }).select(0);
+
+</script>
+
+<script>
+// ENGAGEMENT OVER TIME
+$('.section.engagement-over-time .hasLoader').append('<div id="engagement-over-time-graph"></div>').find('.template').animate({'opacity':1},500);
+Morris.Area({
+  element: 'engagement-over-time-graph',
+  data: [
+    { date: '2014-4-10', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
+    { date: '2014-4-11', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+    { date: '2014-4-12', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+    { date: '2014-4-13', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+    { date: '2014-4-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+    { date: '2014-4-15', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+    { date: '2014-4-16', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
+  ],
+  lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
+  xkey: 'date',
+  ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
+  labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
+});
+</script>
+
 </section>
 </div>
 
 <script>
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
 
 (function(){
 
         // put in external file...
         RB.analytics = {
         	updateAll: function() {
-
-
-                Morris.Donut({
-                  element: 'session-actions',
-                  data: [
-                    {label: "Took Action", value: 14000 },
-                    {label: "Reacted", value: 140 },
-                    {label: "Viewed Reactions", value: 1200 },
-                    {label: "Scrolled", value: 8041 }
-                  ]
-                }).select(0);
-
-                Morris.Donut({
-                  element: 'session-time',
-                  data: [
-                    {label: "sessions over 0:15", value: 14000 },
-                    {label: "sessions over 0:30", value: 10000 },
-                    {label: "sessions over 0:45", value: 6000 },
-                    {label: "sessions over 1:00", value: 1000 },
-                    {label: "sessions over 1:30", value: 800 },
-                    {label: "sessions over 2:00", value: 300 },
-                  ]
-                }).select(0);
-
-
-
-                Morris.Area({
-                  element: 'area-example',
-                  data: [
-                    { date: '4-10-14', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
-                    { date: '4-11-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { date: '4-12-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-                    { date: '4-13-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { date: '4-14-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-                    { date: '4-15-14', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-                    { date: '4-16-14', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
-                  ],
-                  lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
-                  xkey: 'date',
-                  ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
-                  labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
-                });
 
         	},
             setDates: function(){
@@ -478,6 +513,21 @@ function numberWithCommas(x) {
 
                 RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
                 RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+
+                console.log('RB.analytics.startDate');
+                console.log(RB.analytics.jsStartDate);
+                console.log( moment(RB.analytics.jsStartDate).unix() );
+
+                console.log('RB.analytics.endDate');
+                console.log(RB.analytics.jsendDate);
+                console.log( moment(RB.analytics.jsendtDate).unix() );
+
+    //Oh - another thing - createdAt and updatedAt are now stored in their own columns also - thus you can do time-based queries. 
+    // The complication is that they are stored as standard bigint values, being the number of milliseconds since 1970
+    //             So for example to get everything in events for the past 1 hour you can do
+    // in your javascript
+    //     var hourAgo = new Date().getTime() - (60 * 60 * 1000);
+    // sql = “select count(*) from events where createdAt >= “ + hourAgo;
             }
 
         };
