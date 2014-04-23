@@ -69,7 +69,8 @@ exports.getEventCounts = function() {
     var reaction_count = ff.getResultCountForQuery("/Events/(event_type eq 'reaction')");
     var scroll_count = ff.getResultCountForQuery("/Events/(event_type eq 'scroll')");
     var content_reaction_view_count = ff.getResultCountForQuery("/Events/(event_type eq 'rindow_show' and event_value eq 'readmode')");
-    var summarybar_view_count = ff.getResultCountForQuery("/Events/(event_type eq 'summary bar' and event_value eq 'view reactions')");
+    var summarybar_view_count = ff.getResultCountForQuery("/Events/(event_type eq 'summary bar' and event_value contains_any 'show reactions')"); // 'view reactions' OR 'show'
+    // var summarybar_view_count = ff.getResultCountForQuery("/Events/(event_type eq 'summary bar' and event_value eq 'view reactions')");
     var load_count = ff.getResultCountForQuery("/Events/(event_type eq 'widget_load')");
     result.push({ total_count: total_count, reaction_count:reaction_count, summarybar_view_count:summarybar_view_count, content_reaction_view_count:content_reaction_view_count, scroll_count:scroll_count, load_count:load_count });
     ff.response().result = result;

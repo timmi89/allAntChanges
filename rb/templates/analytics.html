@@ -52,7 +52,7 @@
 /* http://css-tricks.com/vertically-center-multi-lined-text/ */
 .other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
 .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
-.section { margin-bottom:80px; clear:both; overflow-: auto; overflow-x:hidden; position: relative;}
+.section { margin-bottom:80px; clear:both; overflow-y: auto; overflow-x:hidden; position: relative;}
 .section h1 { font-size: 21px; }
 .section.readrboard-usage { min-height: 150px; }
 .section.readrboard-usage h1 {margin-bottom: -32px;}
@@ -133,6 +133,15 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
 
     $('.section.summary').append($temp_summarySection).find('.template').animate({'opacity':1},500);
 
+
+    Morris.Donut({
+      element: 'engaged-sessions',
+      data: [
+        {label: "Engaged Sessions", value: 10.5 },
+        {label: "Non-Engaged Sessions", value: 89.5 }
+      ],
+      formatter: function (y) { return y + "%" }
+    }).select(0);
 </script>
 
 
@@ -234,97 +243,51 @@ $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopi
     </div>
 <style>
 .page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
+.page_card:hover { background:#ddeefa; }
 .page_card h1 { font-size:18px; }
 .page_card .attribute { font-size:16px; font-weight:bold; }
 .page_card .attribute label { font-size:12px; font-weight:normal; display:block; }
 .page_card .reactions { font-size:11px; font-weight:bold; } 
 </style>
-    <div class="section reactions-and-topics">
+    <div class="section engaged-pages">
         <div class="grid-12 row padded header">
             <h1>Most Engaged Pages</h1>
         </div>
-        <div class="grid-12 row padded">
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Broncos prep for Super Bowl 48 moves to New Jersey</a></h1>
-                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">GOP looking to rollback new gun control</a></h1>
-                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Peyton Manning 'certain' Seahawks will be challenge</a></h1>
-                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Mayor Hancock seeks to expand Xcel</a></h1>
-                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Some other headline here</a></h1>
-                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Incredible local news article</a></h1>
-                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">You won't believe what happens when this 11 year old turtle hears for the first time</a></h1>
-                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Dislike; Agree; Surprising; ...</div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">Shocking discover at local power plant</a></h1>
-                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
-                    <div class="grid-12 reactions padded">Amazing; Can't Wait; Love it; ...</div>
-                </section>
-            </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
         </div>
+<script>
+var $temp_engagedPages = $('<div><div class="template"></div></div>');
+var engagedPages = [
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { title:'headline goes here', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' }
+];
+
+$.each(engagedPages, function(idx, page) {
+    var $page = $('<div class="grid-3 center padded">' +
+        '<section class="page_card">' +
+            '<h1><a href="#">'+page.title+'</a></h1>' +
+            '<div class="grid-6 attribute padded">'+ page.engagement_rate +' <label>Engagement</label></div>' +
+            '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
+            '<div class="grid-6 attribute padded">'+ page.avg_time +' <label>Engagement</label></div>' +
+            '<div class="grid-6 attribute padded">'+ page.pvs_session +' <label>Avg Scroll</label></div>' +
+            '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
+        '</section>' +
+    '</div>');
+
+    $temp_engagedPages.find('.template').append( $page );
+});
+
+$('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
+</script>
     </div>
 <style>
 .content-item a { font-weight:normal; font-size:18px; color:#3c3c3c; }
@@ -380,46 +343,48 @@ $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopi
         <div class="grid-12 row padded header">
             <h1>Most Engaged Referrers</h1>
         </div>
-        <div class="grid-12 row padded">
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">facebook.com</a></h1>
-                    <div class="grid-6 attribute padded">11.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:42 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">2.3 <label>Avg Scroll</label></div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">google.com</a></h1>
-                    <div class="grid-6 attribute padded">12.4% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">26% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:40 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.8 <label>Avg Scroll</label></div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">twitter.com</a></h1>
-                    <div class="grid-6 attribute padded">14.6% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">31% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:22 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.7 <label>Avg Scroll</label></div>
-                </section>
-            </div>
-            <div class="grid-3 center padded">
-                <section class="page_card">
-                    <h1><a href="#">pinterest.com</a></h1>
-                    <div class="grid-6 attribute padded">12.2% <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">16% <label>Avg Scroll</label></div>
-                    <div class="grid-6 attribute padded">0:23 <label>Engagement</label></div>
-                    <div class="grid-6 attribute padded">1.9 <label>Avg Scroll</label></div>
-                </section>
-            </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Referrer Engagement...</div></div>
         </div>
     </div>
-    <div class="grid-12 sessions section">
+<script>
+var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
+var engagedReferrers = [
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' },
+    { tld:'somedomain.com', engagement_rate:'11.2', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'amazing,cant wait...' }
+];
+
+$.each(engagedReferrers, function(idx, referrer) {
+    var $referrer = $('<div class="grid-3 center padded">' +
+        '<section class="page_card">' +
+            '<h1><a href="#">'+referrer.tld+'</a></h1>' +
+            '<div class="grid-6 attribute padded">'+ referrer.engagement_rate +' <label>Engagement</label></div>' +
+            '<div class="grid-6 attribute padded">'+ referrer.avg_scroll +' <label>Avg Scroll</label></div>' +
+            '<div class="grid-6 attribute padded">'+ referrer.avg_time +' <label>Engagement</label></div>' +
+            '<div class="grid-6 attribute padded">'+ referrer.pvs_session +' <label>Avg Scroll</label></div>' +
+            // '<div class="grid-12 reactions padded">'+ referrer.reactions +'</div>' +
+        '</section>' +
+    '</div>');
+
+    $temp_engagedReferrers.find('.template').append( $referrer );
+});
+
+$('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
+</script>
+
+<style>
+.session_summaries { overflow:hidden; }
+</style>
+
+    <div class="grid-12 section session_summaries">
         <div class="grid-12 row padded header">
             <div class="grid-9">
                 <h1>Engaged Sessions / Last 30 Days</h1>
@@ -432,9 +397,9 @@ $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopi
             <div class="donut" id="session-actions" style="height:200px;"></div>
         </div>
         <div class="grid-6 other-totals">
-            <div class="grid-third attribute"><div>140 <label>Reacted</label></div></div>
-            <div class="grid-third attribute"><div>1,200 <label>Viewed Reactions</label></div></div>
-            <div class="grid-third attribute"><div>8,041 <label>Scrolled Down</label></div></div>
+            <div class="grid-third attribute"><div class="data">140 <label>Reacted</label></div></div>
+            <div class="grid-third attribute"><div class="data">1,200 <label>Viewed Reactions</label></div></div>
+            <div class="grid-third attribute"><div class="data">8,041 <label>Scrolled Down</label></div></div>
         </div>
         <div class="grid-3 engagement-rate">
             <div class="donut" id="session-time" style="height:200px;"></div>
@@ -462,15 +427,6 @@ function numberWithCommas(x) {
         RB.analytics = {
         	updateAll: function() {
 
-                
-                Morris.Donut({
-                  element: 'engaged-sessions',
-                  data: [
-                    {label: "Engaged Sessions", value: 10.5 },
-                    {label: "Non-Engaged Sessions", value: 89.5 }
-                  ],
-                  formatter: function (y) { return y + "%" }
-                }).select(0);
 
                 Morris.Donut({
                   element: 'session-actions',
