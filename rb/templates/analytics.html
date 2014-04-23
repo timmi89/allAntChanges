@@ -50,7 +50,7 @@
 .summary .engagement-rate .donut { border-right:1px solid #ccc; width:90%;  }
 .summary .other-totals {  }
 /* http://css-tricks.com/vertically-center-multi-lined-text/ */
-.other-totals .attribute > div { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
+.other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
 .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
 .section { margin-bottom:80px; clear:both; overflow: auto;}
 .section h1 { font-size: 21px; }
@@ -62,22 +62,18 @@
 .row.header { font-weight:bold; border-bottom:1px solid #ccc; }
 .row.even { background:#f0f0f0; }
 .row.header:hover { background:transparent; }
+.loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute;}
+.loading div { display: inline-block; }
+.template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
+/*.template.rendered { opacity:1;transition: opacity 5s ease-in-out; -moz-transition: opacity 5s ease-in-out; -webkit-transition: opacity 5s ease-in-out; }*/
 </style>
 <section id="analyticsReport" role="panels">
-    <div class="grid-12 summary section">
-        <div class="grid-3 engagement-rate">
-            <div class="donut" id="donut-example" style="height:200px;"></div>
-        </div>
-        <div class="grid-9 other-totals">
-            <div class="grid-quarter attribute"><div>1,040 <label>Reactions</label></div></div>
-            <div class="grid-quarter attribute"><div>134,200 <label>Reaction Views</label></div></div>
-            <div class="grid-quarter attribute"><div>52% <label>Avg Scroll Depth</label></div></div>
-            <div class="grid-quarter attribute"><div>0:37 <label>Avg Time Spent on Content</label></div></div>
-        </div>
+    <div class="grid-12 section summary">
+        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
     </div>
     <div class="section readrboard-usage">
-        <h1>ReadrBoard Usage</h1>
-        <div class="grid-12 row padded header">
+        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing ReadrBoard Usage...</div></div>
+        <!-- <div class="grid-12 row padded header">
             <div class="grid-3 column header">&nbsp;</div>
             <div class="grid-3 column header">Used ReadrBoard in last 30 days</div>
             <div class="grid-3 column header noteworthy">Used ReadrBoard in last 180 days</div>
@@ -100,8 +96,72 @@
             <div class="grid-3 column">29%</div>
             <div class="grid-3 column noteworthy">25%</div>
             <div class="grid-3 column">15%</div>
-        </div>
+        </div> -->
     </div>
+<script>
+var $temp_readrboardUsage = $('<div><div class="template"><h1>ReadrBoard Usage</h1>'+
+        '<div class="grid-12 row padded header">' +
+            '<div class="grid-3 column header">&nbsp;</div>' +
+            '<div class="grid-3 column header">Used ReadrBoard in last 30 days</div>' +
+            '<div class="grid-3 column header noteworthy">Used ReadrBoard in last 180 days</div>' +
+            '<div class="grid-3 column header">No recent usage</div>' +
+        '</div>' +
+    '</div></div>');
+
+    var readrboardUsageData = {
+        rb_last_30:[1431,1.9,29],
+        rb_last_180:[10432,1.8,25],
+        no_rb:[55012,1.5,15]
+    };
+
+    var $sessions_row = $('<div class="grid-12 row padded content">' +
+            '<div class="grid-3 column left">Sessions</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.rb_last_30[0]+'</div>' +
+            '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[0]+'</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.no_rb[0]+'</div>' +
+        '</div>');
+    var $session_pageviews_row = $('<div class="grid-12 row padded content even">' +
+            '<div class="grid-3 column left">Session Pageviews</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.rb_last_30[1]+'</div>' +
+            '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[1]+'</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.no_rb[1]+'</div>' +
+        '</div>');
+    var $avg_scrolldepth_row = $('<div class="grid-12 row padded content">' +
+            '<div class="grid-3 column left">Avg Scroll Depth</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.rb_last_30[2]+'</div>' +
+            '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
+            '<div class="grid-3 column">'+readrboardUsageData.no_rb[2]+'</div>' +
+        '</div>');
+
+    $temp_readrboardUsage.find('.template').append( $sessions_row, $session_pageviews_row, $avg_scrolldepth_row );
+
+    $('.section.readrboard-usage').append($temp_readrboardUsage).find('.template').animate({'opacity':1},500);
+
+
+var $temp_summarySection = $('<div class="template"><div class="grid-3 engagement-rate">'+
+        '<div class="donut" id="engaged-sessions" style="height:200px;"></div>'+
+    '</div>'+
+    '<div class="grid-9 other-totals"></div></div>');
+
+    var summaryData = [
+        { data:'1,040',label:'Reactions' },
+        { data:'134,200',label:'Reaction Views' },
+        { data:'52%',label:'Avg Scroll Depth' },
+        { data:'0:37',label:'Avg Time Spent on Content' }
+    ];
+    $.each(summaryData, function(idx, item) {
+        var $item = $('<div class="grid-quarter attribute"><div class="data">'+item.data+' <label>'+item.label+'</label></div></div>');
+        $temp_summarySection.find('.other-totals').append($item);
+    });
+
+    // $('.summary.section').append($temp_summarySection);
+    // $('.summary.section').find('.template').addClass('rendered');
+    $('.section.summary').append($temp_summarySection).find('.template').animate({'opacity':1},500);
+
+</script>
+
+
+
 <style>
 a { color:#5ba0bc; }
 .topic-tag { display: inline-block; }
@@ -244,9 +304,9 @@ a { color:#5ba0bc; }
         </div>
     </div>
 <style>
-.content a { font-weight:normal; font-size:18px; color:#3c3c3c; }
-.content .reactions { margin-top:10px;}
-.content .reaction-tag { font-weight:normal; font-size:12px; padding:5px; display:inline-block; border-width:2px;}
+.content-item a { font-weight:normal; font-size:18px; color:#3c3c3c; }
+.content-item .reactions { margin-top:10px;}
+.content-item .reaction-tag { font-weight:normal; font-size:12px; padding:5px; display:inline-block; border-width:2px;}
 .via { padding:10px 0; color:#999; font-size:12px; }
 .via a { font-size:12px; color:#5ba0bc; }
 </style>
@@ -256,7 +316,7 @@ a { color:#5ba0bc; }
         </div>
         <div class="grid-12 row padded">
             <div class="grid-4 padded">
-                <section class="content">
+                <section class="content-item">
                     <h1><a href="#">All three of us, Ludo, Silvia and myself, are from three different countries. So there all three of us were, speaking different languages, and having fun reading GIFs aloud and comparing in our native tongues, along with different customs and perceptions,” Petrovici says.</a></h1>
                     <div class="grid-12 via">
                         <em>via <a href="#">SomeArticle Name</a></em>
@@ -268,7 +328,7 @@ a { color:#5ba0bc; }
                 </section>
             </div>
             <div class="grid-4 padded">
-                <section class="content">
+                <section class="content-item">
                     <h1><a href="#"><img src="http://www.vancouverdesi.com/wp-content/uploads/2014/04/9737239-300x186.jpg"/></a></h1>
                     <div class="grid-12 via">
                         <em>via <a href="#">SomeArticle Name</a></em>
@@ -280,7 +340,7 @@ a { color:#5ba0bc; }
                 </section>
             </div>
             <div class="grid-4 padded">
-                <section class="content">
+                <section class="content-item">
                     <h1><a href="#"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/kzcs5EQOLwo"></iframe></a></h1>
                     <div class="grid-12 via">
                         <em>via <a href="#">SomeArticle Name</a></em>
@@ -381,7 +441,7 @@ function numberWithCommas(x) {
 
                 
                 Morris.Donut({
-                  element: 'donut-example',
+                  element: 'engaged-sessions',
                   data: [
                     {label: "Engaged Sessions", value: 10.5 },
                     {label: "Non-Engaged Sessions", value: 89.5 }

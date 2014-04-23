@@ -3,9 +3,9 @@
 #
 SET ActivateUsersOnReg          false
 SET AllowAutoRegistration       false
-SET AllowNewCollections         true
-SET AllowNewObjectTypes         true
-SET AllowNewMembers             true
+SET AllowNewCollections         false
+SET AllowNewObjectTypes         false
+SET AllowNewMembers             false
 SET AllowSystemUserToLogin      true
 SET AndroidPushAuthToken        YOUR_ANDROID_AUTH_TOKEN_GOES_HERE
 SET ApplePushKeystorePassword   YOUR_KEYSTORE_PASSWORD_GOES_HERE
@@ -31,7 +31,7 @@ CREATE ALIAS ON OBJECTTYPE FFUser GRABBAG BackReferences.FFUserGroup.users AS me
 CREATE OBJECTTYPE FFUserGroup (groupName STRING, users GRABBAG /FFUser)
 CREATE OBJECTTYPE FFNotificationID (idType STRING, idValue STRING)
 
-CREATE OBJECTTYPE Events (event_type STRING, event_value STRING, group_id NUMERIC, user_id NUMERIC, page_id NUMERIC, page_title CLOB, canonical_url CLOB, page_url CLOB, long_term_session STRING, short_term_session STRING, referrer_url CLOB, referrer_tld STRING, content_attributes STRING, content_location STRING, page_topics STRING, author STRING, site_section STRING, isTouchBrowser BOOLEAN, screen_width NUMERIC, screen_height NUMERIC, pixel_density NUMERIC, user_agent STRING, content_id NUMERIC, article_height NUMERIC, container_hash STRING, container_kind STRING, reaction_body STRING)
+CREATE OBJECTTYPE Events (event_type STRING, event_value STRING, group_id NUMERIC, user_id NUMERIC, page_id NUMERIC, page_title CLOB, canonical_url CLOB, page_url CLOB, long_term_session STRING, short_term_session STRING, referrer_url CLOB, referrer_tld STRING, content_attributes STRING, content_location STRING, page_topics CLOB, author STRING, site_section STRING, isTouchBrowser BOOLEAN, screen_width NUMERIC, screen_height NUMERIC, pixel_density NUMERIC, user_agent STRING, content_id NUMERIC, article_height NUMERIC, container_hash STRING, container_kind STRING, reaction_body STRING)
 CREATE RELATIONAL COLLECTION /Events OBJECTTYPE Events
 
 
