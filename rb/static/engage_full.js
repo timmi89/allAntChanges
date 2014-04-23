@@ -3981,7 +3981,7 @@ function readrBoard($R){
                     '60':((RDR.group.active_section_height/5*3)+RDR.group.active_section_top),
                     '80':((RDR.group.active_section_height/5*4)+RDR.group.active_section_top),
                     '100':RDR.group.active_section_bottom,
-                    'fired_0':false,
+                    'fired_0':true,  // this should never fire
                     'fired_20':false,
                     'fired_40':false,
                     'fired_60':false,

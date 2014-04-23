@@ -112,7 +112,7 @@ exports.getPageTitles = function() {
 exports.getMostEngagedPagesWithPVs = function() {
     var sql;
     var result = [];
-    var group_id = 14;
+    var group_id = 1846;
 
     // grab everything -- raw counts, and the doozy:  avg pageviews per session that viewed a certain page!
     // queyr help via http://stackoverflow.com/questions/22747343/inner-join-on-same-table-with-avg/22748347
@@ -130,15 +130,15 @@ exports.getMostEngagedPagesWithPVs = function() {
 
                 // + ", COUNT(CASE WHEN referrer_tld = 'facebook.com' and event_type = 'widget_load' THEN 1 END) AS facebook_referrals "
                 // + ", COUNT(CASE WHEN referrer = 'twitter' THEN 1 END) AS twitter_referrals "
-                  + "FROM events where group_id != " + group_id + " "
+                  + "FROM events where group_id = " + group_id + " "
                   + "group by page_id) a, "
                + "(select short_term_session, count(event_type) as num_pg_ld_ses "
                   + "FROM events "
-                  + "where event_type = 'widget_load' "
+                  + "where event_type = 'widget_load' and group_id = " + group_id + " "
                   + "group by short_term_session) b, "
                + "(select short_term_session, page_id, count(event_type) as num_pg_ld_sespg "
                   + "FROM events "
-                  + "where event_type = 'widget_load' "
+                  + "where event_type = 'widget_load' and group_id = " + group_id + " "
                   + "group by short_term_session, page_id) c, "
                + "(select page_title, page_id "
                   + "FROM events "
@@ -168,7 +168,8 @@ exports.getMostEngagedPagesWithPVs = function() {
     
     // porter: see engage_full.js for array sorting code.
 
-    result.push({topics_count:topics_count,topics:topics, results:sql_results });
+    // result.push({topics_count:topics_count,topics:topics, results:sql_results });
+    result.push({results:sql_results });
     ff.response().result = result;
 
 };
