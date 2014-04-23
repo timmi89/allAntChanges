@@ -124,7 +124,7 @@ window.RDRAuth = {
     	},
         trackEventToCloud: function(params){
             // RDRAuth.events.trackEventToCloud
-
+            
             // if (typeof ff_loggedInUser != 'undefined' && typeof ff_loggedInUser.guid != 'undefined') {
             ff.postObjToExtension(params, "saveEvent", function(response) {});
               

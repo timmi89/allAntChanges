@@ -232,7 +232,7 @@ function readrBoard($R){
                             short_term_session: RDR.user.session || null,
                             referrer_tld: referrer_tld || null,
                             content_id: params.content_id || null,
-                            content_height: RDR.group.active_section_milestones[100] || null,
+                            article_height: RDR.group.active_section_milestones[100] || null,
                             container_hash: params.container_hash || null,
                             container_kind: params.container_kind || null,
                             reaction_body: params.reaction_body || null,
@@ -244,7 +244,7 @@ function readrBoard($R){
                             referrer_url: referrer_url || null,
                             content_attributes: params.content_attributes || null,  // what is this for?
                             content_location: params.content_location || null,  
-                            topics: RDR.group.topics || null,
+                            page_topics: RDR.group.topics || null,
                             author: RDR.group.author || null,
                             site_section: RDR.group.section || null,
                             isTouchBrowser: isTouchBrowser || false,
@@ -265,6 +265,7 @@ function readrBoard($R){
                             short_term_session: RDR.user.session || null,
                             referrer_tld: referrer_tld || null,
                             content_id: params.content_id || null,
+                            content_location: params.content_location || null,  
                             container_hash: params.container_hash || null,
                             container_kind: params.container_kind || null,
                             reaction_body: params.reaction_body || null
@@ -6174,11 +6175,11 @@ if ( sendData.kind=="page" ) {
 
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
-                            
+
                             RDR.events.trackEventToCloud({
                                 event_type: 'reaction',
-                                event_value: tag.body,
-                                reaction_body: tag.body,
+                                event_value: (tag.body) ? tag.body:tag.tag_body,
+                                reaction_body: (tag.body) ? tag.body:tag.tag_body,
                                 container_hash: args.hash,
                                 container_kind: args.kind,
                                 content_location: content_node.location,

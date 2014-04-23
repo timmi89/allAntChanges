@@ -29,7 +29,7 @@ function Events(data) {
     this.pixel_density = data.pixel_density;
     this.user_agent = data.user_agent;
     this.content_id = data.content_id;
-    this.content_height = data.content_height;
+    this.article_height = data.article_height;
     this.container_hash = data.container_hash;
     this.container_kind = data.container_kind;
     this.reaction_body = data.reaction_body;
@@ -125,7 +125,6 @@ exports.getMostEngagedPagesWithPVs = function() {
           + ", a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth " // , a.topics " // a.facebook_referrals " //, a.twitter_referrals "
           + ", ((a.reaction_count + a.reaction_view_count + a.scroll_count + avg(cast(c.num_pg_ld_sespg as decimal(10,8))))/(a.widget_load_count+1.000)) as hotness "
           + "from (select page_id "
-                + ", CASE WHEN page_title IS NOT NULL THEN page_title END AS page_title "
                 + ", COUNT(distinct short_term_session) as num_ses "
                 + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
                 + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "

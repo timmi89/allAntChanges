@@ -31,7 +31,7 @@ CREATE ALIAS ON OBJECTTYPE FFUser GRABBAG BackReferences.FFUserGroup.users AS me
 CREATE OBJECTTYPE FFUserGroup (groupName STRING, users GRABBAG /FFUser)
 CREATE OBJECTTYPE FFNotificationID (idType STRING, idValue STRING)
 
-CREATE OBJECTTYPE Events (event_type STRING, event_value STRING, group_id NUMERIC, user_id NUMERIC, page_id NUMERIC, page_title CLOB, canonical_url CLOB, page_url CLOB, long_term_session STRING, short_term_session STRING, referrer_url CLOB, referrer_tld STRING, content_attributes STRING, content_location STRING, topics STRING, author STRING, site_section STRING, isTouchBrowser BOOLEAN, screen_width NUMERIC, screen_height NUMERIC, pixel_density NUMERIC, user_agent STRING, content_id NUMERIC, content_height NUMERIC, container_hash STRING, container_kind STRING, reaction_body STRING)
+CREATE OBJECTTYPE Events (event_type STRING, event_value STRING, group_id NUMERIC, user_id NUMERIC, page_id NUMERIC, page_title CLOB, canonical_url CLOB, page_url CLOB, long_term_session STRING, short_term_session STRING, referrer_url CLOB, referrer_tld STRING, content_attributes STRING, content_location STRING, topics STRING, author STRING, site_section STRING, isTouchBrowser BOOLEAN, screen_width NUMERIC, screen_height NUMERIC, pixel_density NUMERIC, user_agent STRING, content_id NUMERIC, article_height NUMERIC, container_hash STRING, container_kind STRING, reaction_body STRING)
 CREATE RELATIONAL COLLECTION /Events OBJECTTYPE Events
 
 
@@ -57,17 +57,10 @@ CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scr
 CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();
 CREATE EXTENSION /getMostScrolled     UNSECURED AS javascript:require('scripts/Extensions').getMostScrolled();
 CREATE EXTENSION /getMostLoaded     UNSECURED AS javascript:require('scripts/Extensions').getMostLoaded();
+CREATE EXTENSION /getPageTitles     UNSECURED AS javascript:require('scripts/Extensions').getPageTitles();
 CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts/Extensions').getGroupAggregate();
 CREATE EXTENSION /timeSiteAvg     UNSECURED AS javascript:require('scripts/Extensions').timeSiteAvg();
 CREATE EXTENSION /getPopularBrowsers     UNSECURED AS javascript:require('scripts/Extensions').getPopularBrowsers();
-
-#################
-#################
-#################
-# REMOVE THIS
-#################
-#################
-# CREATE EXTENSION /deleteTestEvents     UNSECURED AS javascript:require('scripts/Extensions').deleteTestEvents();
 
 
 
