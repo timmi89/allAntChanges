@@ -29,18 +29,12 @@ function Events(data) {
     this.pixel_density = data.pixel_density;
     this.user_agent = data.user_agent;
     this.content_id = data.content_id;
-    this.content_height = data.content_height;
     this.container_hash = data.container_hash;
     this.container_kind = data.container_kind;
     this.reaction_body = data.reaction_body;
 
     return this;
 }
-
-exports.deleteTestEvents = function() {
-    ff.deleteAllForQuery("/Events/(page_title ne '')");
-};
-
 
 exports.saveEvent = function() {
     var payload = ff.getExtensionRequestData().httpContent;
@@ -54,8 +48,8 @@ exports.saveEvent = function() {
     ff.createObjAtUri(payload, "/Events");
 
 
-    // ff.response().result = payload;
-    ff.response().result = {result:'success'};
+    ff.response().result = payload;
+    // ff.response().result = {'hello':'world'};
 
     // OK we’ve got an authorized request - remove the token from the payload before storing the data
    // delete payload.api_token;
@@ -84,7 +78,7 @@ exports.getMostScrolled = function() {
     var result = [];
 
     // avg scroll depth.  convert from string to int then average the values
-    sql = "SELECT AVG(CAST(event_value as int)) as scroll_depth, page_id FROM events where event_type = 'scroll' group by page_id order by scroll_depth DESC";
+    sql = "SELECT AVG(CAST(event_value as int)) as scroll_depth, page__id FROM Events where event_type = 'scroll' group by page__id order by scroll_depth DESC";
     result.push({sql:sql,results:ff.executeSQL(sql)});
     ff.response().result = result;
 
@@ -94,17 +88,7 @@ exports.getMostLoaded = function() {
     var sql;
     var result = [];
 
-    sql = "SELECT COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load, page_id FROM events group by page_id order by widget_load DESC";
-    result.push({sql:sql,results:ff.executeSQL(sql)});
-    ff.response().result = result;
-
-};
-
-exports.getPageTitles = function() {
-    var sql;
-    var result = [];
-
-    sql = "select page_title, page_id FROM events where page_title IS NOT NULL group by page_id";
+    sql = "SELECT COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load, page__id FROM Events group by page__id order by widget_load DESC";
     result.push({sql:sql,results:ff.executeSQL(sql)});
     ff.response().result = result;
 
@@ -117,75 +101,87 @@ exports.getPageTitles = function() {
 exports.getMostEngagedPagesWithPVs = function() {
     var sql;
     var result = [];
-    var group_id = 14;
 
     // grab everything -- raw counts, and the doozy:  avg pageviews per session that viewed a certain page!
     // queyr help via http://stackoverflow.com/questions/22747343/inner-join-on-same-table-with-avg/22748347
-    sql = "select distinct a.page_id, d.page_title, a.num_ses, avg(cast(c.num_pg_ld_sespg as decimal(10,8))) as avg_ses_pg_exist "
-          + ", a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth " // , a.topics " // a.facebook_referrals " //, a.twitter_referrals "
+    sql = "select distinct a.page__id, a.num_ses, avg(cast(c.num_pg_ld_sespg as decimal(10,8))) as avg_ses_pg_exist "
+          + ", a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, a.facebook_referrals, a.twitter_referrals "
           + ", ((a.reaction_count + a.reaction_view_count + a.scroll_count + avg(cast(c.num_pg_ld_sespg as decimal(10,8))))/(a.widget_load_count+1.000)) as hotness "
-          + "from (select page_id "
-                + ", CASE WHEN page_title IS NOT NULL THEN page_title END AS page_title "
-                + ", COUNT(distinct short_term_session) as num_ses "
+          + "from (select page__id "
+                + ", COUNT(distinct session_id) as num_ses "
                 + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
                 + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "
-                + ", COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count "
+                + ", COUNT(CASE WHEN event_type = 'reaction_view' THEN 1 END) AS reaction_view_count "
                 + ", COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count "
-                + ", AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as UNSIGNED) END) as scroll_depth " 
-                // + ", (CASE WHEN referrer_tld = 'facebook.com' and event_type = 'widget_load' THEN 1 END) AS topics "
-
-                // + ", COUNT(CASE WHEN referrer_tld = 'facebook.com' and event_type = 'widget_load' THEN 1 END) AS facebook_referrals "
-                // + ", COUNT(CASE WHEN referrer = 'twitter' THEN 1 END) AS twitter_referrals "
-                  + "FROM events where group_id != " + group_id + " "
-                  + "group by page_id) a, "
-               + "(select short_term_session, count(event_type) as num_pg_ld_ses "
-                  + "FROM events "
+                + ", AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as int) END) as scroll_depth " 
+                + ", COUNT(CASE WHEN referrer = 'facebook' THEN 1 END) AS facebook_referrals "
+                + ", COUNT(CASE WHEN referrer = 'twitter' THEN 1 END) AS twitter_referrals "
+                  + "from Events "
+                  + "group by page__id) a, "
+               + "(select session_id, count(event_type) as num_pg_ld_ses "
+                  + "from Events "
                   + "where event_type = 'widget_load' "
-                  + "group by short_term_session) b, "
-               + "(select short_term_session, page_id, count(event_type) as num_pg_ld_sespg "
-                  + "FROM events "
+                  + "group by session_id) b, "
+               + "(select session_id, page__id, count(event_type) as num_pg_ld_sespg "
+                  + "from Events "
                   + "where event_type = 'widget_load' "
-                  + "group by short_term_session, page_id) c, "
-               + "(select page_title, page_id "
-                  + "FROM events "
-                  + "where page_title IS NOT NULL group by page_id) d "
-         + "where a.page_id = c.page_id "
-           + "and a.page_id = d.page_id "
-           + "and b.short_term_session = c.short_term_session "
-           // + "and a.short_term_session = 1 "  // filter to the site
-         + "group by a.page_id, d.page_title " // , a.num_ses, a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, d.page_title " //, c.num_pg_ld_sespg " // a.facebook_referrals " //, a.twitter_referrals " //, d.reaction_count "
+                  + "group by session_id, page__id) c "
+         + "where a.page__id = c.page__id "
+           + "and b.session_id = c.session_id "
+           // + "and a.session_id = 1 "  // filter to the site
+         + "group by a.page__id, a.num_ses, a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, a.facebook_referrals, a.twitter_referrals " //, c.num_pg_ld_sespg " //, d.reaction_count "
          + "order by hotness DESC ";
 
          // hotness on FB: http://techcrunch.com/2014/04/03/the-filtered-feed-problem/
 
-    var sql_results = ff.executeSQL(sql);
+
+    result.push({sql:sql,results:ff.executeSQL(sql)});
 
     // now, sort / count the PageTopics tags
-    // NOTE:  tags are stored as "tag1, tag2" in a field.  rather than trying to create grabbags, I thought I'd do it in code
+    // GARY!  NOTE:  tags are stored as "tag1, tag2" in a field.  rather than trying to create grabbags, I thought I'd do it in code
     // by iterating through results, and multipling each tag by that page's engagement score (hotness), creating an array of most-popular-tags like
     // [ ['putin',40], ['russia',39], ['broncos',21] ];
-    var topics = [];
-    var topics_count = 0;
-    for (var i=0;i<sql_results.length;i++) {
-        topics_count++;
-        topics.push(sql_results[i].topics);
-    }
-
+    // --> CAN I DO THIS IN SQL? 
+    // --> is this better than the grabbag, since this won't be run very often?  this is only run when viewing a dashboard, at least for now
     
     // porter: see engage_full.js for array sorting code.
 
-    result.push({topics_count:topics_count,topics:topics, results:sql_results });
     ff.response().result = result;
 
 };
 
+
+// NOT DONE YET
+// make this like getMostEngagedPagesWithPVs, but for content_id
+// or keep it simple:  COUNT(reactions) + COUNT(reaction_views)
+exports.getContentWithMostPVs = function() {
+    var sql;
+    var result = [];
+
+    sql = "SELECT "
+            + "session_id, page__id, "
+            + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
+    //         + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "
+    //         + ", COUNT(CASE WHEN event_type = 'reaction_view' THEN 1 END) AS reaction_view_count "
+    //         + ", COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count "
+    //         + ", AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as int) END) as scroll_depth " 
+    //         + ", COUNT(CASE WHEN referrer = 'facebook' THEN 1 END) AS facebook_referrals "
+    //         + ", COUNT(CASE WHEN referrer = 'twitter' THEN 1 END) AS twitter_referrals "
+            
+            + "FROM Events " 
+            + "group by session_id, page__id ";   // order by (engagement_rate) DESC
+
+    result.push({sql:sql,results:ff.executeSQL(sql)});
+    ff.response().result = result;
+
+};
 
 // GARY!
 exports.getPopularReactions = function() {
     var sql;
     var result = [];
 
-    sql = "SELECT event_value as reaction, count(event_value) as reaction_count FROM events WHERE site_id = 1 and event_type = 'reaction' order by reaction_count DESC"; 
+    sql = "SELECT event_value as reaction, count(event_value) as reaction_count FROM Events WHERE site_id = 1 and event_type = 'reaction' order by reaction_count DESC"; 
     result.push({sql:sql,results:ff.executeSQL(sql)});
     ff.response().result = result;
 };
@@ -196,10 +192,6 @@ exports.getPopularReactions = function() {
 // also, I can probably simplify this using similar subqueries like in getMostEngagedPagesWithPVs
 // GARY!
 exports.getEngagedSessionTotals = function() {
-    return;
-};
-
-exports.getEngagedSessionTotals_old = function() {
     var sql;
     var result = [];
 
@@ -216,18 +208,18 @@ exports.getEngagedSessionTotals_old = function() {
     // sessions with widget_load, scroll but no reaction and reaction_view
     // GARY: I've read "not in()" can be quite slow, whereas in() uses indices.  if true, this query should change methinks.
     var no_readr_sessions_sql = "SELECT "  // DISTINCT is ok.  seems to sort alphabetically
-            + "short_term_session "
+            + "session_id "
             + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
-            + "FROM events WHERE event_type = 'widget_load' and short_term_session not in (select distinct short_term_session FROM events where event_type = 'reaction' or event_type = 'reaction_view') "
-            + "group by short_term_session";
+            + "FROM Events WHERE event_type = 'widget_load' and session_id not in (select distinct session_id from Events where event_type = 'reaction' or event_type = 'reaction_view') "
+            + "group by session_id";
 
     // sessions with reaction and/or reaction_view
     var readr_sessions_sql = "SELECT DISTINCT "  // DISTINCT is ok.  seems to sort alphabetically
-            + "short_term_session "
+            + "session_id "
             + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
-            // + "FROM events where event_type = 'reaction' or event_type = 'reaction_view' "
-            + "FROM events WHERE event_type = 'widget_load' and short_term_session in (select distinct short_term_session FROM events where event_type = 'reaction' or event_type = 'reaction_view') "
-            + "group by short_term_session";
+            // + "from Events where event_type = 'reaction' or event_type = 'reaction_view' "
+            + "FROM Events WHERE event_type = 'widget_load' and session_id in (select distinct session_id from Events where event_type = 'reaction' or event_type = 'reaction_view') "
+            + "group by session_id";
 
     // var total_widget_loads = ff.executeSQL(total_widget_loads)[0]['WIDGET_LOAD_COUNT'];
     var nonReadrBoard = ff.executeSQL(no_readr_sql);
@@ -245,7 +237,7 @@ exports.getEngagedSessionTotals_old = function() {
 
         var no_readr_scroll_depth_sql = "SELECT "
                 + "AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as int) END) as scroll_depth "
-                + "FROM events where short_term_session in(" + nonReadrBoard_session_ids + ")";
+                + "FROM Events where session_id in(" + nonReadrBoard_session_ids + ")";
 
         var nonReadrScrollAvg = ff.executeSQL(no_readr_scroll_depth_sql)[0]['SCROLL_DEPTH'];
     } else {
@@ -266,7 +258,7 @@ exports.getEngagedSessionTotals_old = function() {
 
         var readr_scroll_depth_sql = "SELECT "
                 + "AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as int) END) as scroll_depth "
-                + "FROM events where short_term_session in(" + ReadrBoard_session_ids + ")";
+                + "FROM Events where session_id in(" + ReadrBoard_session_ids + ")";
 
         var ReadrScrollAvg = ff.executeSQL(readr_scroll_depth_sql)[0]['SCROLL_DEPTH'];
     } else {
@@ -294,8 +286,8 @@ exports.getGroupAggregate = function() {
             + ", COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count "
             + ", AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as int) END) as scroll_depth " 
 
-            + "FROM events WHERE site_id = 1 "  //  or site_id = 2 
-            // + "group by page_id, site_id order by ((reaction_count + reaction_view_count + scroll_count)/(widget_load_count+1.0)) DESC ";   // order by (engagement_rate) DESC
+            + "FROM Events WHERE site_id = 1 "  //  or site_id = 2 
+            // + "group by page__id, site_id order by ((reaction_count + reaction_view_count + scroll_count)/(widget_load_count+1.0)) DESC ";   // order by (engagement_rate) DESC
 
     result.push({sql:sql,results:ff.executeSQL(sql)});
     ff.response().result = result;
@@ -349,40 +341,40 @@ DEPRECATED BY TAG ITERATION IN getMostEngagedPagesWithPVs?
     var result = [];
 
     // query for pages and topics
-    // WORKS: sql = "SELECT DISTINCT page_id, page_topics FROM events where page_topics != '' group by page_id, page_topics";  //  
+    // WORKS: sql = "SELECT DISTINCT page__id, page_topics FROM Events where page_topics != '' group by page__id, page_topics";  //  
     // result.push({sql:sql,results:ff.executeSQL(sql)});
 
     // select all pages in the last 5 minutes
-    sql = "SELECT DISTINCT * FROM events where site_id = 1";
-    // sql = "SELECT DISTINCT page_id, page_topics FROM events where page_id = '1010'";
+    sql = "SELECT DISTINCT * FROM Events where site_id = 1";
+    // sql = "SELECT DISTINCT page__id, page_topics FROM Events where page__id = '1010'";
     result.push({sql:sql,results:ff.executeSQL(sql)});
 
     var sqlResponse = ff.executeSQL(sql);
 
     var pagesFromRecentEvents = {}; // store the results for displaying in browser
 
-    // iterate through and create a map of page_id and unique topic tags
+    // iterate through and create a map of page__id and unique topic tags
     for ( var i in sqlResponse ) {
 
         var item = sqlResponse[i];
 
         // does pagesFromRecentEvents[1000] for page_id 1000 exist yet?
-        if ( pagesFromRecentEvents[item.page_id] == undefined ) {
-            pagesFromRecentEvents[item.page_id] = [];
+        if ( pagesFromRecentEvents[item.PAGE__ID] == undefined ) {
+            pagesFromRecentEvents[item.PAGE__ID] = [];
         }
 
         var topics = item.PAGE_TOPICS.split(',');
 
         for (var j in topics) {
             var tag = topics[j].trim();
-            if ( tag.length >= 1 && pagesFromRecentEvents[item.page_id].indexOf(tag) == -1 ) {
-                pagesFromRecentEvents[item.page_id].push(tag);
+            if ( tag.length >= 1 && pagesFromRecentEvents[item.PAGE__ID].indexOf(tag) == -1 ) {
+                pagesFromRecentEvents[item.PAGE__ID].push(tag);
             }
         }
     }
     result.push(pagesFromRecentEvents);
 
-    var ffPageQuery = "page_id contains_any '";
+    var ffPageQuery = "page__id contains_any '";
     for ( var pageId in pagesFromRecentEvents ) {
         ffPageQuery += pageId+' '
     }
@@ -421,22 +413,22 @@ exports.getEvents = function() {
     // GLOBAL QUERIES
 
     // PAGE LEVEL QUERIES
-    sql = "SELECT * FROM events WHERE page_id = '1002'";   
+    sql = "SELECT * FROM Events WHERE page__id = '1002'";   
     // result.push({sql:sql,results:ff.executeSQL(sql)});
 
     // distinct reactions
-    // sql = "SELECT DISTINCT event_value FROM events WHERE page_id = 4213";
+    // sql = "SELECT DISTINCT event_value FROM Events WHERE page_id = 4213";
     
     // list of reactions, ordered by count from most to least
-    // sql = "SELECT event_value as event_value FROM events WHERE page_id = 3112 and event_type = 'reaction'"; // , count(*) as event_value_count FROM events"; // WHERE event_type = 'reaction' order by count(*) DESC"; 
-    // sql = "select * FROM events where o_value like '%:4213%'";
-    // sql = "SELECT count(*) FROM events WHERE page_id = 4213 and event_type = 'reaction'";
+    // sql = "SELECT event_value as event_value FROM Events WHERE page_id = 3112 and event_type = 'reaction'"; // , count(*) as event_value_count FROM Events"; // WHERE event_type = 'reaction' order by count(*) DESC"; 
+    // sql = "select * from Events where o_value like '%:4213%'";
+    // sql = "SELECT count(*) FROM Events WHERE page_id = 4213 and event_type = 'reaction'";
 
     // list of event types, from most to least, for a given site
-    // sql = "SELECT event_type as event_type, count(*) as event_type_count FROM events WHERE site_id = 4 group by event_type order by count(*) DESC"; 
+    // sql = "SELECT event_type as event_type, count(*) as event_type_count FROM Events WHERE site_id = 4 group by event_type order by count(*) DESC"; 
 
     // avg scroll depth.  convert from string to int then average the values
-    // sql = "SELECT AVG(CAST(event_value as int)) as scroll_depth FROM events where event_type = 'scroll'";
+    // sql = "SELECT AVG(CAST(event_value as int)) as scroll_depth FROM Events where event_type = 'scroll'";
 
     // end WORKS!
 
@@ -444,13 +436,13 @@ exports.getEvents = function() {
     // sql = "";
 
     // from Gary.  these work.
-   // sql = "select count(*) FROM events";
+   // sql = "select count(*) from Events";
    // result.push({sql:sql,results:ff.executeSQL(sql)});
 
-   // sql = "select * FROM events where page_id = '5544'";
+   // sql = "select * from Events where page__id = '5544'";
    // result.push({sql:sql,results:ff.executeSQL(sql)});
 
-   // sql = "select page_id, count(*) as eventcount FROM events group by page_id order by eventcount desc";
+   // sql = "select page__id, count(*) as eventcount from Events group by page__id order by eventcount desc";
    // result.push({sql:sql,results:ff.executeSQL(sql)});
    // end from Gary
 
@@ -458,7 +450,7 @@ exports.getEvents = function() {
 
     // topic tag breakout?
     // date-restricted queries?
-    // page views per session?   unique widget load page_id by short_term_session right?
+    // page views per session?   unique widget load page_id by session_id right?
 
     result.push({sql:sql,results:ff.executeSQL(sql)});
 
@@ -514,7 +506,7 @@ exports.getMostEngagedPages = function() {
     // LOOK UP HOTNESS ALOGIRTHM from reddit etc
         // facebook's:  http://techcrunch.com/2014/04/03/the-filtered-feed-problem/
     sql = "SELECT "
-            + "  page_id as PageID, page_title as PageTitle, site_id as SiteID, page_topics as PageTopics "
+            + "  page__id as PageID, page_title as PageTitle, site_id as SiteID, page_topics as PageTopics "
             + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
             + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "
             + ", COUNT(CASE WHEN event_type = 'reaction_view' THEN 1 END) AS reaction_view_count "
@@ -523,12 +515,12 @@ exports.getMostEngagedPages = function() {
             + ", COUNT(CASE WHEN referrer_tld = 'facebook.com' THEN 1 END) AS facebook_referrals "
             + ", COUNT(CASE WHEN referrer_tld = 'twitter.com' THEN 1 END) AS twitter_referrals "
 
-            // get session IDs where page_id = PageID
-            // + ", ( SELECT DISTINCT b.short_term_session FROM events b WHERE b.event_type = 'widget_load' ) as SessionIDs "
-            // + "FROM events WHERE event_type = 'widget_load'
+            // get session IDs where page__id = PageID
+            // + ", ( SELECT DISTINCT b.session_id FROM Events b WHERE b.event_type = 'widget_load' ) as SessionIDs "
+            // + "FROM Events WHERE event_type = 'widget_load'
 
             
-            + "FROM events "  // WHERE site_id = 1 or site_id = 2 
+            + "FROM Events "  // WHERE site_id = 1 or site_id = 2 
             + "group by PageID, PageTitle, SiteID, PageTopics order by ((reaction_count + reaction_view_count + scroll_count)/(widget_load_count+1.0)) DESC ";   // order by (engagement_rate) DESC
 
             // couldn't get SQL division to work apart from in the ORDER BY.  was referencing
@@ -566,7 +558,7 @@ exports.getMostEngagedPages = function() {
 // function Content(data) {
 //     this.clazz = "Content";
 //     this.tag = data.tag;
-//     this.page_id = data.page_id;
+//     this.page__id = data.page__id;
 //     this.page_title = data.page_title;
 //     this.canonical_url = data.canonical_url;
 //     this.site_id = data.site_id;
@@ -596,6 +588,12 @@ exports.getMostEngagedPages = function() {
 
 
 
+
+// exports.deleteTestData = function() {
+//     ff.deleteAllForQuery("/Events/(page_title ne '')");
+// };
+
+
 // exports.deleteTestUsers = function() {
 //     ff.deleteAllForQuery("/FFUser/(userName contains_any 'teamreadrboard readrWidget')");
 // };
@@ -603,7 +601,7 @@ exports.getMostEngagedPages = function() {
 
 // exports.createTestContent = function() {
 //     var content = ff.createObjAtUri(new Content({
-//         page_id:'0', page_title:'test page', canonical_url:'www.google.com', site_id:'0', content_type:'text'
+//         page__id:'0', page_title:'test page', canonical_url:'www.google.com', site_id:'0', content_type:'text'
 //     }), "/Content");
 // };
 // exports.createTestEvents = function() {
@@ -695,7 +693,7 @@ exports.getMostEngagedPages = function() {
 //     var i, j;
 
 //     for (i=0;i<1000;i++){
-//         // CREATE OBJECTTYPE Interaction (site_name STRING, site_tld STRING, site_id NUMERIC, page_id NUMERIC, page_title STRING, page_url STRING, page_topics STRING, user STRING, content STRING, reaction STRING, reaction_parent STRING)
+//         // CREATE OBJECTTYPE Interaction (site_name STRING, site_tld STRING, site_id NUMERIC, page__id NUMERIC, page_title STRING, page_url STRING, page_topics STRING, user STRING, content STRING, reaction STRING, reaction_parent STRING)
 
 //         // {'site_name':'Fast Company', 'site_tld':'www.fastcolabs.com','site_id':1},
 //         var site_choice = Math.floor(Math.random()*sites.length);
@@ -705,7 +703,7 @@ exports.getMostEngagedPages = function() {
 //         var content = contents[ Math.floor(Math.random()*contents.length) ];
 //         var referrer = referrers[ Math.floor(Math.random()*referrers.length) ];
 
-//         var short_term_session = user+'-'+site_choice+(Math.floor(Math.random()*2)).toString();
+//         var session_id = user+'-'+site_choice+(Math.floor(Math.random()*2)).toString();
 
 //         var adjective_choice = Math.floor(Math.random()*adjectives.length);
 //         var adjective = adjectives[adjective_choice];
@@ -752,7 +750,7 @@ exports.getMostEngagedPages = function() {
 //         }
         
 //         var interaction = ff.createObjAtUri(new Events({
-//             site_name:sites[site_choice].site_name, site_tld:sites[site_choice].site_tld, site_id:sites[site_choice].site_id, page_id:pageId, page_title:page_title, page_url:page_url, page_topics:page_topics, referrer:referrer, short_term_session:short_term_session, user:user, content_type:content.type, content:content.content, event_type:event_type, event_value:event_value, event_parent:event_parent
+//             site_name:sites[site_choice].site_name, site_tld:sites[site_choice].site_tld, site_id:sites[site_choice].site_id, page__id:pageId, page_title:page_title, page_url:page_url, page_topics:page_topics, referrer:referrer, session_id:session_id, user:user, content_type:content.type, content:content.content, event_type:event_type, event_value:event_value, event_parent:event_parent
 //         }), "/Events");
 
 //     }

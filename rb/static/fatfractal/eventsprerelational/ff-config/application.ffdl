@@ -27,6 +27,9 @@ CREATE ALIAS ON OBJECTTYPE FFUser GRABBAG BackReferences.FFUserGroup.users AS me
 CREATE OBJECTTYPE FFUserGroup (groupName STRING, users GRABBAG /FFUser)
 CREATE OBJECTTYPE FFNotificationID (idType STRING, idValue STRING)
 
+# CREATE OBJECTTYPE Events (page_url STRING, event_value STRING, event_type STRING, reaction_body STRING, group_id NUMERIC, user_id NUMERIC, screen_width NUMERIC, screen_height NUMERIC, canonical_url STRING, referrer STRING, long_term_session STRING, user_agent STRING, site_section STRING, page_id STRING, short_term_session STRING, pixel_density NUMERIC, page_title STRING, container_hash STRING, container_kind STRING, content_attributes STRING, content_location STRING, isTouchBrowser BOOLEAN, topics STRING, author STRING)
+CREATE RELATIONAL COLLECTION /Events OBJECTTYPE Events
+
 #
 # Collection Resources
 #
@@ -47,7 +50,6 @@ CREATE COLLECTION /FFNotificationID OBJECTTYPE FFNotificationID
 # Extension Resources
 #
 CREATE EXTENSION /saveEvent     UNSECURED AS javascript:require('scripts/Extensions').saveEvent();
-
 CREATE EXTENSION /getEventCounts     UNSECURED AS javascript:require('scripts/Extensions').getEventCounts();
 CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
 CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();
@@ -59,8 +61,6 @@ CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts
 CREATE EXTENSION /timeSiteAvg     UNSECURED AS javascript:require('scripts/Extensions').timeSiteAvg();
 CREATE EXTENSION /getPopularBrowsers     UNSECURED AS javascript:require('scripts/Extensions').getPopularBrowsers();
 
-# import
-CREATE EXTENSION /importEvent     UNSECURED AS javascript:require('scripts/Extensions').importEvent();
 
 #CREATE EXTENSION /createTestContent UNSECURED AS javascript:require('scripts/Extensions').createTestContent();
 #CREATE EXTENSION /getEvents     UNSECURED AS javascript:require('scripts/Extensions').getEvents();

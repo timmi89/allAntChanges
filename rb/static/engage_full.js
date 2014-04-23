@@ -211,37 +211,67 @@ function readrBoard($R){
                 if (typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
                     var page_id = ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString();
-                    var data = $.toJSON({
+                    
+                    var referrer_url_array = document.referrer.split('/');
+                    var referrer_url = referrer_url_array.splice(2).join('/');
+                    
+                    var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
+                    var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
+                    var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
 
-                        event_type: params.event_type,
-                        event_value: params.event_value,
-                        group_id: RDR.group.id || null,
-                        user_id: RDR.user.user_id || null,
-                        page_id: page_id,
-                        page_title: RDR.util.getPageProperty('title') || null,
-                        canonical_url: RDR.util.getPageProperty('canonical_url') || null,
-                        page_url: RDR.util.getPageProperty('page_url') || null,
-                        long_term_session: RDR.user.guid || null,
-                        short_term_session: RDR.user.session || null,
-                        referrer: document.referrer,
-
-                        content_attributes: params.content_attributes || null,
-                        content_location: params.content_location || null,
-                        topics: RDR.group.topics || null,
-                        author: RDR.group.author || null,
-                        site_section: RDR.group.section || null,
-                        isTouchBrowser: isTouchBrowser,
-                        screen_width:  screen.width,
-                        screen_height:  screen.height,
-                        pixel_density:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
-                        user_agent:  navigator.userAgent,
-                        
-                        // content_id: ????
-                        container_hash: params.container_hash || null,
-                        container_kind: params.container_kind || null,
-                        reaction_body: params.reaction_body || null
-
-                    });
+                    if (params.event_type == 'widget_load') {
+                        var trackData = {
+                            // for all events
+                            clazz: "Events",
+                            event_type: params.event_type,
+                            event_value: params.event_value,
+                            group_id: RDR.group.id || null,
+                            user_id: RDR.user.user_id || null,
+                            page_id: page_id,
+                            long_term_session: RDR.user.guid || null,
+                            short_term_session: RDR.user.session || null,
+                            referrer_tld: referrer_tld || null,
+                            content_id: params.content_id || null,
+                            content_height: RDR.group.active_section_milestones[100] || null,
+                            container_hash: params.container_hash || null,
+                            container_kind: params.container_kind || null,
+                            reaction_body: params.reaction_body || null,
+                            
+                            // widget load only
+                            page_title: RDR.util.getPageProperty('title') || null,
+                            canonical_url: RDR.util.getPageProperty('canonical_url') || null,
+                            page_url: RDR.util.getPageProperty('page_url') || null,
+                            referrer_url: referrer_url || null,
+                            content_attributes: params.content_attributes || null,  // what is this for?
+                            content_location: params.content_location || null,  
+                            topics: RDR.group.topics || null,
+                            author: RDR.group.author || null,
+                            site_section: RDR.group.section || null,
+                            isTouchBrowser: isTouchBrowser || false,
+                            screen_width:  screen.width,
+                            screen_height:  screen.height,
+                            pixel_density:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                            user_agent:  navigator.userAgent
+                        };
+                    } else {
+                        var trackData = {
+                            clazz: "Events",
+                            event_type: params.event_type,
+                            event_value: params.event_value,
+                            group_id: RDR.group.id || null,
+                            user_id: RDR.user.user_id || null,
+                            page_id: page_id,
+                            long_term_session: RDR.user.guid || null,
+                            short_term_session: RDR.user.session || null,
+                            referrer_tld: referrer_tld || null,
+                            content_id: params.content_id || null,
+                            container_hash: params.container_hash || null,
+                            container_kind: params.container_kind || null,
+                            reaction_body: params.reaction_body || null
+                        };
+                    }
+                    
+                    var data = $.toJSON( trackData );
 
                     if ( typeof RDR.group.xdmLoaded != 'undefined' && RDR.group.xdmLoaded === true ) {
                         $.postMessage(
@@ -3937,7 +3967,7 @@ function readrBoard($R){
                 });
 
                 // setup a scroll event detector
-                /*
+                /**/
 
                 var active_section_offsets = $(RDR.group.active_sections+':eq(0)').offset();
                 RDR.group.active_section_top = active_section_offsets.top;
@@ -3958,6 +3988,7 @@ function readrBoard($R){
                     'fired_100':false
                 };
 
+        
                 $(window).on('scroll.rdr', function() {
                     clearTimeout($.data(this, 'rdr_scrollTimer'));
                     $.data(this, 'rdr_scrollTimer', setTimeout(function() {
@@ -3971,20 +4002,25 @@ function readrBoard($R){
                         if ( RDR.group.active_section_milestones['fired_60'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.util.fireScrollEvent('60'); RDR.group.active_section_milestones['fired_60'] = true; }
                         if ( RDR.group.active_section_milestones['fired_80'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.util.fireScrollEvent('80'); RDR.group.active_section_milestones['fired_80'] = true; }
                         if ( RDR.group.active_section_milestones['fired_100'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.util.fireScrollEvent('100'); RDR.group.active_section_milestones['fired_100'] = true; }
-                        if (
-                            RDR.group.active_section_milestones['fired_0'] === true &&
-                            RDR.group.active_section_milestones['fired_20'] === true &&
-                            RDR.group.active_section_milestones['fired_40'] === true &&
-                            RDR.group.active_section_milestones['fired_60'] === true &&
-                            RDR.group.active_section_milestones['fired_80'] === true &&
-                            RDR.group.active_section_milestones['fired_100'] === true 
-                            ) {
-                            // $(window).unbind('scroll.rdr');
-                        RDR.util.fireScrollEvent('more');
-                        }
+                        
+                        // too many "more" events
+                        // idea was note when people are scrolling up, down, up down.
+                        // not sure it's valuable
+                        
+                        // if (
+                        //     RDR.group.active_section_milestones['fired_0'] === true &&
+                        //     RDR.group.active_section_milestones['fired_20'] === true &&
+                        //     RDR.group.active_section_milestones['fired_40'] === true &&
+                        //     RDR.group.active_section_milestones['fired_60'] === true &&
+                        //     RDR.group.active_section_milestones['fired_80'] === true &&
+                        //     RDR.group.active_section_milestones['fired_100'] === true 
+                        //     ) {
+                        //     // $(window).unbind('scroll.rdr');
+                        // RDR.util.fireScrollEvent('more');
+                        // }
                     }, 250));
                 });
-                */
+
 
                 
                 // this does not seem to work!
@@ -4336,6 +4372,7 @@ function readrBoard($R){
                         // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
 
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
+                        // modified to support 2 character suffixes, like .fm or .io
                         var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                         var srcArray = hashBody.split('/');
 
@@ -6138,13 +6175,14 @@ if ( sendData.kind=="page" ) {
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
                             
-
                             RDR.events.trackEventToCloud({
                                 event_type: 'reaction',
                                 event_value: tag.body,
                                 reaction_body: tag.body,
                                 container_hash: args.hash,
                                 container_kind: args.kind,
+                                content_location: content_node.location,
+                                content_id: (response.data.content_node) ? response.data.content_node.id:null,
                                 page_id: args.page_id
                             });
 

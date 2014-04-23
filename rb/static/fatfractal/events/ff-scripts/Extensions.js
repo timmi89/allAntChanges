@@ -100,16 +100,6 @@ exports.getMostLoaded = function() {
 
 };
 
-exports.getPageTitles = function() {
-    var sql;
-    var result = [];
-
-    sql = "select page_title, page_id FROM events where page_title IS NOT NULL group by page_id";
-    result.push({sql:sql,results:ff.executeSQL(sql)});
-    ff.response().result = result;
-
-};
-
 
 // testing for getMostEngagedPages with PVs/session added.  once we get this right, we don't need both.
 // GARY!
@@ -121,11 +111,10 @@ exports.getMostEngagedPagesWithPVs = function() {
 
     // grab everything -- raw counts, and the doozy:  avg pageviews per session that viewed a certain page!
     // queyr help via http://stackoverflow.com/questions/22747343/inner-join-on-same-table-with-avg/22748347
-    sql = "select distinct a.page_id, d.page_title, a.num_ses, avg(cast(c.num_pg_ld_sespg as decimal(10,8))) as avg_ses_pg_exist "
+    sql = "select distinct a.page_id, a.num_ses, avg(cast(c.num_pg_ld_sespg as decimal(10,8))) as avg_ses_pg_exist "
           + ", a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth " // , a.topics " // a.facebook_referrals " //, a.twitter_referrals "
           + ", ((a.reaction_count + a.reaction_view_count + a.scroll_count + avg(cast(c.num_pg_ld_sespg as decimal(10,8))))/(a.widget_load_count+1.000)) as hotness "
           + "from (select page_id "
-                + ", CASE WHEN page_title IS NOT NULL THEN page_title END AS page_title "
                 + ", COUNT(distinct short_term_session) as num_ses "
                 + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
                 + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "
@@ -148,9 +137,9 @@ exports.getMostEngagedPagesWithPVs = function() {
                   + "group by short_term_session, page_id) c, "
                + "(select page_title, page_id "
                   + "FROM events "
-                  + "where page_title IS NOT NULL group by page_id) d "
+                  + "where event_type = 'widget_load') d "
          + "where a.page_id = c.page_id "
-           + "and a.page_id = d.page_id "
+           + "and c.page_id = d.page_id "
            + "and b.short_term_session = c.short_term_session "
            // + "and a.short_term_session = 1 "  // filter to the site
          + "group by a.page_id, d.page_title " // , a.num_ses, a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, d.page_title " //, c.num_pg_ld_sespg " // a.facebook_referrals " //, a.twitter_referrals " //, d.reaction_count "
