@@ -52,61 +52,38 @@
 /* http://css-tricks.com/vertically-center-multi-lined-text/ */
 .other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
 .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
-.section { margin-bottom:80px; clear:both; overflow: auto;}
+.section { margin-bottom:80px; clear:both; overflow-: auto; overflow-x:hidden; position: relative;}
 .section h1 { font-size: 21px; }
+.section.readrboard-usage { min-height: 150px; }
 .section.readrboard-usage h1 {margin-bottom: -32px;}
 .column { text-align: center; color:#7f7f7f; font-size:14px; }
 .column.left { text-align: left; }
 .noteworthy { color:#247292; }
 .row { clear:both; overflow:auto; }
-.row.header { font-weight:bold; border-bottom:1px solid #ccc; }
+.header { font-weight:bold; border-bottom:1px solid #ccc; }
 .row.even { background:#f0f0f0; }
 .row.header:hover { background:transparent; }
-.loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute;}
+.loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute; top:33%; box-sizing: border-box; }
 .loading div { display: inline-block; }
 .template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
 /*.template.rendered { opacity:1;transition: opacity 5s ease-in-out; -moz-transition: opacity 5s ease-in-out; -webkit-transition: opacity 5s ease-in-out; }*/
 </style>
 <section id="analyticsReport" role="panels">
-    <div class="grid-12 section summary">
+    <div class="grid-12 section summary hasLoader">
         <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
     </div>
-    <div class="section readrboard-usage">
+    <div class="section readrboard-usage hasLoader">
         <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing ReadrBoard Usage...</div></div>
-        <!-- <div class="grid-12 row padded header">
+        <h1>ReadrBoard Usage</h1>
+        <div class="grid-12 row padded header">
             <div class="grid-3 column header">&nbsp;</div>
             <div class="grid-3 column header">Used ReadrBoard in last 30 days</div>
             <div class="grid-3 column header noteworthy">Used ReadrBoard in last 180 days</div>
             <div class="grid-3 column header">No recent usage</div>
         </div>
-        <div class="grid-12 row padded content">
-            <div class="grid-3 column left">Sessions</div>
-            <div class="grid-3 column">1,431</div>
-            <div class="grid-3 column noteworthy">10,432</div>
-            <div class="grid-3 column">55,012</div>
-        </div>
-        <div class="grid-12 row padded content even">
-            <div class="grid-3 column left">Session Pageviews</div>
-            <div class="grid-3 column">1.9</div>
-            <div class="grid-3 column noteworthy">1.8</div>
-            <div class="grid-3 column">1.5</div>
-        </div>
-        <div class="grid-12 row padded content">
-            <div class="grid-3 column left">Avg Scroll Depth</div>
-            <div class="grid-3 column">29%</div>
-            <div class="grid-3 column noteworthy">25%</div>
-            <div class="grid-3 column">15%</div>
-        </div> -->
     </div>
 <script>
-var $temp_readrboardUsage = $('<div><div class="template"><h1>ReadrBoard Usage</h1>'+
-        '<div class="grid-12 row padded header">' +
-            '<div class="grid-3 column header">&nbsp;</div>' +
-            '<div class="grid-3 column header">Used ReadrBoard in last 30 days</div>' +
-            '<div class="grid-3 column header noteworthy">Used ReadrBoard in last 180 days</div>' +
-            '<div class="grid-3 column header">No recent usage</div>' +
-        '</div>' +
-    '</div></div>');
+var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
     var readrboardUsageData = {
         rb_last_30:[1431,1.9,29],
@@ -154,8 +131,6 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
         $temp_summarySection.find('.other-totals').append($item);
     });
 
-    // $('.summary.section').append($temp_summarySection);
-    // $('.summary.section').find('.template').addClass('rendered');
     $('.section.summary').append($temp_summarySection).find('.template').animate({'opacity':1},500);
 
 </script>
@@ -164,17 +139,28 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
 
 <style>
 a { color:#5ba0bc; }
+.reactions-and-topics .hasLoader { min-height:150px; }
 .topic-tag { display: inline-block; }
 .topic-tag:hover { background:#f0f0f0; }
 .topic-tag a { color:#5ba0bc; text-decoration: none;  }
 .topic-tag.large { font-size:54px; padding:10px 10px; }
 .topic-tag.medium { font-size:34px; padding:10px 10px; }
 .topic-tag.small { font-size:21px; padding:10px 10px; }
-.reaction-tag { border:4px solid #737373; padding:10px 20px; display:block; text-align:center; margin-right:10px; margin-bottom:10px;}
-    .grid-6 .reaction-tag { font-size:48px; }
-    .grid-4 .reaction-tag { font-size:24px; }
-.reaction-tag a {  color:#3c3c3c; font-weight:bold; }
+.reaction-tag { border:4px solid #737373; padding:10px 20px; display:block; text-align:center; margin-right:10px; margin-bottom:10px; white-space: nowrap;}
+    .grid-6 .reaction-tag { font-size:42px; }
+    .grid-4 .reaction-tag { font-size:24px; padding:10px; }
+    .grid-3 .reaction-tag { font-size:14px; padding:10px; }
+    .topic-tag .smaller,
+    .reaction-tag.smaller { font-size:80%; }
+    .topic-tag .smallest,
+    .reaction-tag.smallest { font-size:60%; }
+.reaction-tag a {  color:#3c3c3c; font-weight:bold; display: inline-block; overflow: hidden; width: 100%;}
 .reaction-tag .counter { display:block;font-size:16px; }
+.reactions-and-topics .reactions-holder .grid-6 .reaction-tag { height:78px; }
+.reactions-and-topics .reactions-holder .grid-4 .reaction-tag { height:53px; }
+.reactions-and-topics .reactions-holder .grid-3 .reaction-tag { height:39px; }
+.hasLoader {position: relative;}
+/*.loading{display:none;}*/
 </style>
     <div class="section reactions-and-topics">
         <div class="grid-12 row padded header">
@@ -185,29 +171,66 @@ a { color:#5ba0bc; }
                 <h1>Most Engaged Topics</h1>
             </div>
         </div>
-        <div class="grid-12 row padded">
-            <div class="grid-6">
-                <div class="grid-6"><span class="reaction-tag"><a href="#">Clever <span class="counter">67</span></a></span></div>
-                <div class="grid-6"><span class="reaction-tag"><a href="#">Duh <span class="counter">55</span></a></span></div>
-                <div class="grid-4"><span class="reaction-tag"><a href="#">OMG <span class="counter">32</span></a></span></div>
-                <div class="grid-4"><span class="reaction-tag"><a href="#">Amazing! <span class="counter">24</span></a></span></div>
-                <div class="grid-4"><span class="reaction-tag"><a href="#">Agreed <span class="counter">21</span></a></span></div>
+        <div class="grid-12 padded">
+            <div class="grid-6 hasLoader">
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Counting Reactions...</div></div>
+                <div class="reactions-holder">&nbsp;</div>
             </div>
-            <div class="grid-6">
-                <div class="grid-12">
-                    <span class="topic-tag large"><a href="#">broncos</a></span>
-                    <span class="topic-tag large"><a href="#">gun control</a></span>
-                    <span class="topic-tag medium"><a href="#">weather</a></span>
-                    <span class="topic-tag medium"><a href="#">xcel</a></span>
-                    <span class="topic-tag medium"><a href="#">energy</a></span>
-                    <span class="topic-tag medium"><a href="#">shooting</a></span>
-                    <span class="topic-tag small"><a href="#">road work</a></span>
-                    <span class="topic-tag small"><a href="#">mayor hancock</a></span>
-                    <span class="topic-tag small"><a href="#">pit bulls</a></span>
-                    <span class="topic-tag small"><a href="#">bacon</a></span>
-                </div>
+            <div class="grid-6 hasLoader">
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing topics...</div></div>
+                <div class="topics-holder">&nbsp;</div>
             </div>
         </div>
+<script>
+var $temp_popularReactions = $('<div><div class="template"></div></div>');
+var popularReactions = [
+    { body:'Awesome', count:60 },
+    { body:'Ugh', count:50 },
+    { body:'Why Not', count:40 },
+    { body:'And how is that right', count:30 },
+    { body:'10 10 10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 1', count:20 },
+    { body:'ww ww ww w w1ww', count:20 }
+];
+var itemNumber = 1;
+$.each(popularReactions, function(idx, reaction) {
+    var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
+    var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
+    $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+reaction.count+'</span></a></span></div>'); 
+    itemNumber++;
+});
+
+$('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
+
+
+var $temp_popularTopics = $('<div><div class="template"></div></div>');
+var popularTopics = [
+    { body:'broncos', count:60 },
+    { body:'gun control', count:50 },
+    { body:'politics', count:40 },
+    { body:'weather', count:30 },
+    { body:'10 10 10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 10 1', count:20 },
+    { body:'10 10 10 10 1', count:20 },
+    { body:'ww ww ww w w1ww', count:20 }
+];
+var itemNumber = 1;
+$.each(popularTopics, function(idx, topic) {
+    var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
+    var charCountModifier = (topic.body.length>14) ? 'smaller':(topic.body.length>20) ? 'smallest':'large'
+    // $temp_popularTopics.find('.template').append('<div class="grid-'+gridNum+'"><span class="topic-tag '+charCountModifier+'"><a href="#">'+topic.body+' <span class="counter">'+topic.count+'</span></a></span></div>'); 
+    $temp_popularTopics.find('.template').append('<span class="topic-tag '+size+'"><a href="#" class="'+charCountModifier+'">'+topic.body+'</a></span>'); 
+    itemNumber++;
+});
+
+$('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopics).find('.template').animate({'opacity':1},500);
+
+</script>
     </div>
 <style>
 .page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
