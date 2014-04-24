@@ -109,16 +109,56 @@ exports.getPageTitles = function() {
 };
 
 // combine the session queries later, to reduce overhead.
-exports.getSummaries = function() {
-    engaged_session_sql = "create temporary table short_sessions as (" +
-    " select page_id , COUNT(distinct short_term_session) as num_ses ," +
-    " COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count ," +
-    " COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count ," +
-    " COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count ," +
-    " COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count ," +
-    " AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as UNSIGNED) END) as scroll_depth" +
-    " from events where group_id = 4 group by page_id" +
-    " ) ";
+exports.getSessionsSummaries = function() {
+    var sql;
+    var result = [];
+    var group_id = 4;
+
+    var sql = "select count(distinct short_term_session) as non_engaged_count " +
+    "from events " +
+    "where group_id = 4 and short_term_session NOT IN" +
+    "(select distinct short_term_session from events where group_id = 4 and event_type != 'widget_load')";
+    var non_engaged_count = ff.executeSQL(sql);
+
+    var sql = "select count(distinct short_term_session) as all_sessions_count " +
+    "from events " +
+    "where group_id = 4 and event_type = 'widget_load' ";
+    var all_sessions_count = ff.executeSQL(sql);
+
+    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE event_type = 'scroll' group by short_term_session, page_id) a" 
+    var scroll_avg = ff.executeSQL(sql);
+
+    
+
+
+
+        // select count(session_id) from load events
+        // and 
+        // select count(session_id) from other events
+
+
+        // SELECT DISTINCT id_client
+        //  FROM yourtable t
+        //  WHERE id_service = 4 AND id_client NOT IN
+        //  (SELECT DISTINCT id_client
+        //  FROM yourtable t
+        //  WHERE id_user = 1
+        //  )
+
+    // engaged_session_sql = "create temporary table sessions as (" +
+    // " select page_id , COUNT(distinct short_term_session) as num_ses ," +
+    // " COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count ," +
+    // " COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count ," +
+    // " COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count ," +
+    // " COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count ," +
+    // " AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as UNSIGNED) END) as scroll_depth" +
+    // " from events where group_id = " + group_id + " group by page_id" +
+    // " ) ";
+
+    result.push({ scroll_avg:scroll_avg[0].avg_scroll_depth, non_engaged_count:non_engaged_count[0].non_engaged_count, all_sessions_count:all_sessions_count[0].all_sessions_count });
+    // result.push({ scroll_avg:scroll_avg });
+    
+    ff.response().result = result;
 };
 
 // NEW VERSION FROM GARY

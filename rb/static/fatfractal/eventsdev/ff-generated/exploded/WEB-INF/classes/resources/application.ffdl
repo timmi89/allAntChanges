@@ -53,6 +53,8 @@ CREATE EXTENSION /saveEvent     UNSECURED AS javascript:require('scripts/Extensi
 CREATE EXTENSION /getEventCounts     UNSECURED AS javascript:require('scripts/Extensions').getEventCounts();
 CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
 CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();
+CREATE EXTENSION /getSessionsSummaries     UNSECURED AS javascript:require('scripts/Extensions').getSessionsSummaries();
+
 CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scripts/Extensions').getContentWithMostPVs();
 CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();
 CREATE EXTENSION /getMostScrolled     UNSECURED AS javascript:require('scripts/Extensions').getMostScrolled();
