@@ -150,18 +150,13 @@ exports.getReadrBoardUsage = function() {
     "where group_id = 4 and short_term_session NOT IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show'))";
     var non_readrboard_short_term_sessions_count = ff.executeSQL(sql);
 
-    // var sql = "select count(distinct short_term_session) as non_readrboard_short_term_sessions_count " +
-    // "from events " +
-    // "where group_id = 4 and short_term_session NOT IN" +
-    // "(select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction') OR event_type = 'rindow_show'))";
-    // var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' group by short_term_session, page_id) a" 
-    
     var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' " +
               "and short_term_session NOT IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
               "group by short_term_session, page_id) a";
     var non_readr_scroll = ff.executeSQL(sql);
 
     var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' " +
+              "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
               "group by short_term_session, page_id) a";
     var readr_scroll = ff.executeSQL(sql);
 
@@ -170,14 +165,51 @@ exports.getReadrBoardUsage = function() {
     "where group_id = 4 and event_type = 'widget_load' ";
     var all_sessions_count = ff.executeSQL(sql);
 
+    // try { ff.executeSQL("drop temporary table if exists temp_rdr_a"); } catch (ignore) {}
+    // try {ff.executeSQL("drop temporary table if exists temp_rdr_b"); } catch (ignore) {}
+    // try {ff.executeSQL("drop temporary table if exists temp_rdr_c"); } catch (ignore) {}
 
-    result.push({ no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count, non_readr_scroll:non_readr_scroll[0].avg_scroll_depth, readr_scroll:readr_scroll[0].avg_scroll_depth, all_sessions_count:all_sessions_count[0].all_sessions_count });
+    // var sql;
+    // sql = "create temporary table temp_rdr__a as (" +
+    // " select page_id , COUNT(distinct short_term_session) as num_ses ," +
+    // " COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count ," +
+    // " COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count ," +
+    // " COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count ," +
+    // " from events where group_id = "+group_id+" group by page_id" +
+    // " ) ";
+    // ff.executeSQL(sql);
+
+    // sql = "create temporary table temp_rdr_b as"
+            // + " ("
+    // sql = "SELECT AVG(a.pageviews) as avg_pageviews from (select short_term_session, count(event_type) as pageviews " +
+
+    // sql = "select short_term_session, count(event_type) as pageviews " +
+    //       "from events where event_type = 'widget_load' and group_id = "+group_id+" " 
+    //       "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+    //       "group by short_term_session";
+    var sql = "SELECT AVG(a.pv_count) as avg_pv from (SELECT short_term_session, page_id, count(event_value) as pv_count from events WHERE group_id = 4 and event_type = 'widget_load' " +
+              "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+              "group by short_term_session, page_id) a";
+
+    var rdr_pvs = ff.executeSQL(sql);
+            // + " )";
+
+    // sql = "create temporary table temp_rdr_c as"
+    //         + " ("
+    //         + " select short_term_session, page_id, count(event_type) as num_pg_ld_sespg"
+    //         + " from events where event_type = 'widget_load' and group_id = "+group_id+" group by short_term_session, page_id"
+    //         + " )";
+    // ff.executeSQL(sql);
+
+
+    result.push({ rdr_pvs:rdr_pvs, no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count, non_readr_scroll:non_readr_scroll[0].avg_scroll_depth, readr_scroll:readr_scroll[0].avg_scroll_depth, all_sessions_count:all_sessions_count[0].all_sessions_count });
     // result.push({ scroll_avg:scroll_avg });
     
     ff.response().result = result;
 };
 
 // NEW VERSION FROM GARY
+// NEEDS MAX() in SCROLL DEPTH
 exports.getMostEngagedPagesWithPVs = function() {
     var sql;
     var result = [];
