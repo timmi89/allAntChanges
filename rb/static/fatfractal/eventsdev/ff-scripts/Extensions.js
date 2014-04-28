@@ -62,6 +62,8 @@ exports.saveEvent = function() {
 // GARY!
 exports.getEventCounts = function() {
     var result = [];
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 1441;
+
     // var array_count = ff.getArrayFromUri('/Events').length;
     // result.push({ array_count:array_count });
 
@@ -112,99 +114,142 @@ exports.getPageTitles = function() {
 exports.getSummaries = function() {
     var sql;
     var result = [];
-    var group_id = 4;
+    // var requestData = ff.getExtensionRequestData().httpContent;
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 1441;
 
     var sql = "select count(distinct short_term_session) as non_engaged_sessions_count " +
     "from events " +
-    "where group_id = 4 and short_term_session NOT IN" +
-    "(select distinct short_term_session from events where group_id = 4 and event_type != 'widget_load')";
+    "where group_id = "+group_id+" and short_term_session NOT IN" +
+    "(select distinct short_term_session from events where group_id = "+group_id+" and event_type != 'widget_load')";
     var non_engaged_sessions_count = ff.executeSQL(sql);
 
     var sql = "select count(distinct short_term_session) as all_sessions_count " +
     "from events " +
-    "where group_id = 4 and event_type = 'widget_load' ";
+    "where group_id = "+group_id+" and event_type = 'widget_load' ";
     var all_sessions_count = ff.executeSQL(sql);
 
-    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' group by short_term_session, page_id) a" 
+    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = "+group_id+" and event_type = 'scroll' group by short_term_session, page_id) a" 
     var scroll_avg = ff.executeSQL(sql);
 
-    var sql = "SELECT COUNT(event_type) as reaction_count from events WHERE group_id = 4 and event_type = 'reaction' and event_value IS NOT NULL " 
+    var sql = "SELECT COUNT(event_type) as reaction_count from events WHERE group_id = "+group_id+" and event_type = 'reaction' and event_value IS NOT NULL " 
     var reaction_count = ff.executeSQL(sql);
 
-    var sql = "SELECT COUNT(event_type) as reaction_view_count from events WHERE group_id = 4 and event_type = 'rindow_show' and event_value = 'readmode' " 
+    var sql = "SELECT COUNT(event_type) as reaction_view_count from events WHERE group_id = "+group_id+" and event_type = 'rindow_show' and event_value = 'readmode' " 
     var reaction_view_count = ff.executeSQL(sql);
 
-    result.push({ reaction_count:reaction_count[0].reaction_count, reaction_view_count:reaction_view_count[0].reaction_view_count, scroll_avg:scroll_avg[0].avg_scroll_depth, non_engaged_sessions_count:non_engaged_sessions_count[0].non_engaged_sessions_count, all_sessions_count:all_sessions_count[0].all_sessions_count });
+    result.push({ group_id:group_id, reaction_count:reaction_count[0].reaction_count, reaction_view_count:reaction_view_count[0].reaction_view_count, scroll_avg:scroll_avg[0].avg_scroll_depth, non_engaged_sessions_count:non_engaged_sessions_count[0].non_engaged_sessions_count, all_sessions_count:all_sessions_count[0].all_sessions_count });
     // result.push({ scroll_avg:scroll_avg });
     
     ff.response().result = result;
 };
 
+exports.getReadrBoardUsageNew = function() {
+    var sql;
+    var result = [];
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 4;
+
+    try { ff.executeSQL("drop temporary table if exists rdr_sessions"); } catch (ignore) {}
+    
+    sql = "CREATE TEMPORARY TABLE rdr_sessions as (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show'))";
+    ff.executeSQL(sql);
+
+    var sql = "select count(distinct e.short_term_session) as non_readrboard_short_term_sessions_count " +
+    "from events e " +
+        "LEFT JOIN rdr_sessions r " +
+        "ON e.short_term_session = r.short_term_session " +
+    "where e.group_id = "+group_id+" ";
+
+    var non_readrboard_short_term_sessions_count = ff.executeSQL(sql);
+
+    // var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = "+group_id+" and event_type = 'scroll' " +
+    //           "and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+    //           "group by short_term_session, page_id) a";
+    
+    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT e.short_term_session, e.page_id, MAX(e.event_value) as max_value " + //" from events WHERE group_id = "+group_id+" and event_type = 'scroll' " +
+              "from events e " +
+                "LEFT JOIN rdr_sessions r " +
+                "ON e.short_term_session = r.short_term_session " +
+              "where e.group_id = "+group_id+" and e.event_type = 'scroll' " +
+              "group by e.short_term_session, e.page_id) a";
+    var non_readr_scroll = ff.executeSQL(sql);
+
+    // result.push({ no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count }); 
+    result.push({ no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count, non_readr_scroll:non_readr_scroll[0].avg_scroll_depth }); 
+
+    // clear memory
+    try { ff.executeSQL("drop temporary table if exists rdr_sessions"); } catch (ignore) {}
+    
+    ff.response().result = result;
+
+};
+
 exports.getReadrBoardUsage = function() {
     var sql;
     var result = [];
-    var group_id = 4;
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 1441;
 
     var sql = "select count(distinct short_term_session) as non_readrboard_short_term_sessions_count " +
     "from events " +
-    "where group_id = 4 and short_term_session NOT IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show'))";
+    "where group_id = "+group_id+" and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show'))";
     var non_readrboard_short_term_sessions_count = ff.executeSQL(sql);
 
-    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' " +
-              "and short_term_session NOT IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = "+group_id+" and event_type = 'scroll' " +
+              "and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
               "group by short_term_session, page_id) a";
     var non_readr_scroll = ff.executeSQL(sql);
 
-    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = 4 and event_type = 'scroll' " +
-              "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+    var sql = "SELECT AVG(a.max_value) as avg_scroll_depth from (SELECT short_term_session, page_id, MAX(event_value) as max_value from events WHERE group_id = "+group_id+" and event_type = 'scroll' " +
+              "and short_term_session IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
               "group by short_term_session, page_id) a";
     var readr_scroll = ff.executeSQL(sql);
 
     var sql = "select count(distinct short_term_session) as all_sessions_count " +
     "from events " +
-    "where group_id = 4 and event_type = 'widget_load' ";
+    "where group_id = "+group_id+" and event_type = 'widget_load' ";
     var all_sessions_count = ff.executeSQL(sql);
 
-    // try { ff.executeSQL("drop temporary table if exists temp_rdr_a"); } catch (ignore) {}
-    // try {ff.executeSQL("drop temporary table if exists temp_rdr_b"); } catch (ignore) {}
-    // try {ff.executeSQL("drop temporary table if exists temp_rdr_c"); } catch (ignore) {}
 
-    // var sql;
-    // sql = "create temporary table temp_rdr__a as (" +
-    // " select page_id , COUNT(distinct short_term_session) as num_ses ," +
-    // " COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count ," +
-    // " COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count ," +
-    // " COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count ," +
-    // " from events where group_id = "+group_id+" group by page_id" +
-    // " ) ";
-    // ff.executeSQL(sql);
-
-    // sql = "create temporary table temp_rdr_b as"
-            // + " ("
-    // sql = "SELECT AVG(a.pageviews) as avg_pageviews from (select short_term_session, count(event_type) as pageviews " +
-
-    // sql = "select short_term_session, count(event_type) as pageviews " +
-    //       "from events where event_type = 'widget_load' and group_id = "+group_id+" " 
-    //       "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
-    //       "group by short_term_session";
-    var sql = "SELECT AVG(a.pv_count) as avg_pv from (SELECT short_term_session, page_id, count(event_value) as pv_count from events WHERE group_id = 4 and event_type = 'widget_load' " +
-              "and short_term_session IN (select distinct short_term_session from events where group_id = 4 and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+    var sql = "SELECT AVG(a.pv_count) as rdr_pvs from (SELECT short_term_session, page_id, count(event_value) as pv_count from events WHERE group_id = "+group_id+" and event_type = 'widget_load' " +
+              "and short_term_session IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
               "group by short_term_session, page_id) a";
 
     var rdr_pvs = ff.executeSQL(sql);
-            // + " )";
 
-    // sql = "create temporary table temp_rdr_c as"
-    //         + " ("
-    //         + " select short_term_session, page_id, count(event_type) as num_pg_ld_sespg"
-    //         + " from events where event_type = 'widget_load' and group_id = "+group_id+" group by short_term_session, page_id"
-    //         + " )";
-    // ff.executeSQL(sql);
+    var sql = "SELECT AVG(a.pv_count) as no_rdr_pvs from (SELECT short_term_session, page_id, count(event_value) as pv_count from events WHERE group_id = "+group_id+" and event_type = 'widget_load' " +
+          "and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+          "group by short_term_session, page_id) a";
+
+    var no_rdr_pvs = ff.executeSQL(sql);
 
 
-    result.push({ rdr_pvs:rdr_pvs, no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count, non_readr_scroll:non_readr_scroll[0].avg_scroll_depth, readr_scroll:readr_scroll[0].avg_scroll_depth, all_sessions_count:all_sessions_count[0].all_sessions_count });
-    // result.push({ scroll_avg:scroll_avg });
-    
+    // AVG TIME -- use short_term_session, page_id as in SCROLL queries
+    // SELECT AVG(timeDiff)
+    // select short_term_session, created_at from events ORDER BY createdAt DESC limit 1
+    // select short_term_session, created_at from events ORDER BY createdAt ASC limit 1
+    // var sql = "SELECT short_term_session, createdAt from events WHERE group_id = "+group_id+" and event_type = 'widget_load' GROUP BY short_term_session ORDER BY createdAt LIMIT 1"; //  +
+          // "and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show')) " +
+          // "group by short_term_session, page_id)";
+    // var sql = "SELECT short_term_session, (MAX(createdAt) - MIN(createdAt)) as sessionTime from events GROUP BY short_term_session";
+    // var session_times = ff.executeSQL(sql);
+
+    // WORKS?  
+    var sql = "SELECT AVG(NULLIF(a.sessionTime,0)) / 60000 as avg_session_time, AVG(NULLIF(a.sessionTime,0)) as avg_session_time_w_zero from " +
+        "(SELECT short_term_session, (MAX(createdAt) - MIN(createdAt)) as sessionTime from events WHERE group_id = "+group_id+" " +
+        "and short_term_session IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show') ) " +
+        "GROUP BY short_term_session) a";
+    var rdr_avg_time = ff.executeSQL(sql);
+
+    var sql = "SELECT AVG(NULLIF(a.sessionTime,0)) / 60000 as avg_session_time, AVG(NULLIF(a.sessionTime,0)) as avg_session_time_w_zero from " +
+        "(SELECT short_term_session, (MAX(createdAt) - MIN(createdAt)) as sessionTime from events WHERE group_id = "+group_id+" " +
+        "and short_term_session NOT IN (select distinct short_term_session from events where group_id = "+group_id+" and (event_type = 'reaction' OR event_type = 'rindow_show') ) " +
+        "GROUP BY short_term_session) a";
+    var no_rdr_avg_time = ff.executeSQL(sql);
+
+
+
+
+
+    result.push({ rdr_avg_time:rdr_avg_time[0].avg_session_time, no_rdr_avg_time:no_rdr_avg_time[0].avg_session_time, rdr_pvs:rdr_pvs[0].rdr_pvs, no_rdr_pvs:no_rdr_pvs[0].no_rdr_pvs, no_readr_short_session_count:non_readrboard_short_term_sessions_count[0].non_readrboard_short_term_sessions_count, non_readr_scroll:non_readr_scroll[0].avg_scroll_depth, readr_scroll:readr_scroll[0].avg_scroll_depth, all_sessions_count:all_sessions_count[0].all_sessions_count }); 
     ff.response().result = result;
 };
 
@@ -213,7 +258,7 @@ exports.getReadrBoardUsage = function() {
 exports.getMostEngagedPagesWithPVs = function() {
     var sql;
     var result = [];
-    var group_id = 4;
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 1441;
 
     try { ff.executeSQL("drop temporary table if exists gary_temp_a"); } catch (ignore) {}
     try {ff.executeSQL("drop temporary table if exists gary_temp_b"); } catch (ignore) {}
@@ -292,6 +337,7 @@ exports.getMostEngagedPagesWithPVs = function() {
 exports.getPopularReactions = function() {
     var sql;
     var result = [];
+    var group_id = ff.getExtensionRequestData().httpParameters['group_id'] || 1441;
 
     // sql = "SELECT event_value as reaction, count(event_value) as reaction_count FROM events WHERE group_id = 4 and event_type = 'reaction' order by reaction_count DESC"; 
     // sql = "SELECT event_value as reaction FROM events WHERE group_id = 4 and event_type = 'reaction' and event_value IS NOT NULL";

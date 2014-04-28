@@ -53,6 +53,10 @@ CREATE EXTENSION /saveEvent     UNSECURED AS javascript:require('scripts/Extensi
 CREATE EXTENSION /getEventCounts     UNSECURED AS javascript:require('scripts/Extensions').getEventCounts();
 CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require('scripts/Extensions').getMostEngagedPagesWithPVs();
 CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();
+CREATE EXTENSION /getSummaries     UNSECURED AS javascript:require('scripts/Extensions').getSummaries();
+CREATE EXTENSION /getReadrBoardUsage     UNSECURED AS javascript:require('scripts/Extensions').getReadrBoardUsage();
+CREATE EXTENSION /getReadrBoardUsageNew     UNSECURED AS javascript:require('scripts/Extensions').getReadrBoardUsageNew();
+
 CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scripts/Extensions').getContentWithMostPVs();
 CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();
 CREATE EXTENSION /getMostScrolled     UNSECURED AS javascript:require('scripts/Extensions').getMostScrolled();
@@ -61,6 +65,4 @@ CREATE EXTENSION /getPageTitles     UNSECURED AS javascript:require('scripts/Ext
 CREATE EXTENSION /getGroupAggregate     UNSECURED AS javascript:require('scripts/Extensions').getGroupAggregate();
 CREATE EXTENSION /timeSiteAvg     UNSECURED AS javascript:require('scripts/Extensions').timeSiteAvg();
 CREATE EXTENSION /getPopularBrowsers     UNSECURED AS javascript:require('scripts/Extensions').getPopularBrowsers();
-
-
 

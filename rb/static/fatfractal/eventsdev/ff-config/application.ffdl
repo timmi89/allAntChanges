@@ -55,6 +55,7 @@ CREATE EXTENSION /getMostEngagedPagesWithPVs     UNSECURED AS javascript:require
 CREATE EXTENSION /getPopularReactions     UNSECURED AS javascript:require('scripts/Extensions').getPopularReactions();
 CREATE EXTENSION /getSummaries     UNSECURED AS javascript:require('scripts/Extensions').getSummaries();
 CREATE EXTENSION /getReadrBoardUsage     UNSECURED AS javascript:require('scripts/Extensions').getReadrBoardUsage();
+CREATE EXTENSION /getReadrBoardUsageNew     UNSECURED AS javascript:require('scripts/Extensions').getReadrBoardUsageNew();
 
 CREATE EXTENSION /getContentWithMostPVs     UNSECURED AS javascript:require('scripts/Extensions').getContentWithMostPVs();
 CREATE EXTENSION /getEngagedSessionTotals     UNSECURED AS javascript:require('scripts/Extensions').getEngagedSessionTotals();

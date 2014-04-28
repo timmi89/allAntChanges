@@ -503,6 +503,16 @@ Morris.Area({
         // put in external file...
         RB.analytics = {
         	updateAll: function() {
+                console.log('group_id: {{ group.id }}');
+                // var dataResponse = ff.postObjToExtension({group_id:{{ group.id }} },"getSummaries",
+                ff.getArrayFromExtension("/getSummaries?group_id={{ group.id }}",
+                    function (obj) {
+                        // success
+                        console.log(obj[0]);
+                    },
+                    function (statusCode, statusMessage) {
+                        // error occurred
+                    });
 
         	},
             setDates: function(){
