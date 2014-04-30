@@ -183,6 +183,33 @@ function readrBoard($R){
         styles: {
         },
         events: {
+            focusedSeconds:0,
+            fireScrollEvent: function(milestone) {
+                if (milestone.indexOf('more') != -1) {
+                    var event_type = 'scroll_more';
+                } else {
+                    var event_type = 'sc';
+                }
+                RDR.events.trackEventToCloud({
+                    event_type: event_type,
+                    event_value: milestone
+                });
+
+            },
+            fireEventQueue: function() {
+                $.each( RDR.events.queue, function(idx, event_params) {
+                    RDR.events.trackEventToCloud(event_params);
+                });
+            },
+            checkTime: function() {
+                if ( RDR.events.focusedSeconds % 10 == 15 ) {
+                    RDR.events.trackEventToCloud({
+                        event_type: 't',
+                        event_value: RDR.events.focusedSeconds
+                    });
+                }
+                RDR.events.focusedSeconds++;
+            },
             // track : function( data, hash ) {
                 // RDR.events.track:
                 
@@ -206,7 +233,7 @@ function readrBoard($R){
                 // RDR.events.trackEventToCloud
 
                 RDR.user = RDR.user || {};
-                RDR.event_queue = RDR.event_queue || [];
+                RDR.events.queue = RDR.events.queue || [];
 
                 if (typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
@@ -291,6 +318,7 @@ function readrBoard($R){
                               widget_load   :     wl
                               comment       :     c
                               reaction      :     re
+                              time          :     t
 
                             event_value
                               view content    :   vc
@@ -315,7 +343,7 @@ function readrBoard($R){
                             window.frames['rdr-xdm-hidden']
                         );
                     } else {
-                        RDR.event_queue.push(params);
+                        RDR.events.queue.push(params);
                     }
                 }
             }    
@@ -2469,6 +2497,16 @@ function readrBoard($R){
             }
         },
         util: {
+            windowBlur: function() { RDR.util.clearWindowInterval(); },
+            windowFocus: function() { RDR.util.setWindowInterval(); },
+            clearWindowInterval: function () {
+                clearInterval($.data(this, 'rdr_intervalTimer'));
+            },
+            setWindowInterval: function () {
+                $.data(this, 'rdr_intervalTimer', setInterval(function() {
+                    RDR.events.checkTime();
+                }, 1000));
+            },
             checkForSelectedTextAndLaunchRindow: function(){
                 //RDR.util.checkForSelectedTextAndLaunchRindow
                     
@@ -2996,23 +3034,6 @@ function readrBoard($R){
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
-            },
-            fireScrollEvent: function(milestone) {
-                if (milestone.indexOf('more') != -1) {
-                    var event_type = 'scroll_more';
-                } else {
-                    var event_type = 'sc';
-                }
-                RDR.events.trackEventToCloud({
-                    event_type: event_type,
-                    event_value: milestone
-                });
-
-            },
-            fireEventQueue: function() {
-                $.each( RDR.event_queue, function(idx, event_params) {
-                    RDR.events.trackEventToCloud(event_params);
-                });
             }
         },
         debug: function(){
@@ -3283,7 +3304,7 @@ function readrBoard($R){
 
                             } else if ( message.status == "xdm loaded" ) {
                                 RDR.group.xdmLoaded = true;
-                                RDR.util.fireEventQueue();
+                                RDR.events.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
@@ -4048,28 +4069,11 @@ function readrBoard($R){
                         var scrolltop = $(window).scrollTop();
                         var windowHeight = $(window).height();
 
-                        if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.util.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
-                        if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.util.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
-                        if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.util.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
-                        if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.util.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
-                        if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.util.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
-                        // if ( RDR.group.active_section_milestones['fired'] < 0 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['0'] ) { RDR.util.fireScrollEvent('0'); RDR.group.active_section_milestones['fired_0'] = true; }
-                        
-                        // too many "more" events
-                        // idea was note when people are scrolling up, down, up down.
-                        // not sure it's valuable
-                        
-                        // if (
-                        //     RDR.group.active_section_milestones['fired_0'] === true &&
-                        //     RDR.group.active_section_milestones['fired_20'] === true &&
-                        //     RDR.group.active_section_milestones['fired_40'] === true &&
-                        //     RDR.group.active_section_milestones['fired_60'] === true &&
-                        //     RDR.group.active_section_milestones['fired_80'] === true &&
-                        //     RDR.group.active_section_milestones['fired_100'] === true 
-                        //     ) {
-                        //     // $(window).unbind('scroll.rdr');
-                        // RDR.util.fireScrollEvent('more');
-                        // }
+                        if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
+                        if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
+                        if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
+                        if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
+                        if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
                     }, 250));
                 });
 
@@ -4085,18 +4089,15 @@ function readrBoard($R){
                 // });
 
                 // ReadrBoard Timer?  unsure
-                // if (/*@cc_on!@*/false) { // check for Internet Explorer
-                //     document.onfocusin = RDR.util.windowFocus;
-                //     document.onfocusout = RDR.util.windowBlur;
-                // } else {
-                //     window.onfocus = RDR.util.windowFocus;
-                //     window.onblur = RDR.util.windowBlur;
-                // }
+                if (/*@cc_on!@*/false) { // check for Internet Explorer
+                    document.onfocusin = RDR.util.windowFocus;
+                    document.onfocusout = RDR.util.windowBlur;
+                } else {
+                    window.onfocus = RDR.util.windowFocus;
+                    window.onblur = RDR.util.windowBlur;
+                }
                 
-                // clearTimeout($.data(this, 'rdr_intervalTimer'));
-                // $.data(this, 'rdr_intervalTimer', setTimeout(function() {
-                // }, 10000));
-                
+                RDR.util.setWindowInterval();
 
                 RDR.util.fixBodyBorderOffsetIssue();
                 

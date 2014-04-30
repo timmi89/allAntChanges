@@ -6,6 +6,7 @@ event_type
   widget_load   :     wl
   comment       :     c
   reaction      :     re
+  time          :     t
 
 event_value
   view content    :   vc
