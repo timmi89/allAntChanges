@@ -1,0 +1,23 @@
+event_type
+  share         :     sh
+  summary bar   :     sb
+  rindow_show   :     rs
+  scroll        :     sc
+  widget_load   :     wl
+  comment       :     c
+  reaction      :     re
+
+event_value
+  view content    :   vc
+  view comments   :   vcom
+  view reactions  :   vr
+  writemode       :   wr
+  readmode        :   rd
+
+  default summary bar   :   def
+  single summary bar    :   si
+  multiple pages        :   mu
+  unexpected            :   unex
+
+
+look at scroll events...

@@ -219,58 +219,68 @@ function readrBoard($R){
                     var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
                     var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
 
-                    if (params.event_type == 'widget_load') {
+                    // if (params.event_type == 'widget_load') {
                         var trackData = {
+                            /*
+
+                            et : event_type
+                            ev : event_value
+                            gid : group_id
+                            uid : user_id
+                            pid : page_id
+                            lts : long_term_session
+                            sts : short_term_session
+                            ref : referrer_tld
+                            cid : content_id
+                            ah : article_height
+                            ch : container_hash
+                            ck : container_kind
+                            r : reaction_body
+                            pt : page_title
+                            cu : canonical_url
+                            pu : page_url
+                            ru : referrer_url
+                            ca : content_attributes
+                            cl : content_location
+                            ptop : page_topics
+                            a : author
+                            sec : site_section
+                            it : isTouchBrowser
+                            sw : screen_width
+                            sh : screen_height
+                            pd : pixel_density
+                            ua : user_agent
+
+                            */
                             // for all events
-                            clazz: "Events",
-                            event_type: params.event_type,
-                            event_value: params.event_value,
-                            group_id: RDR.group.id || null,
-                            user_id: RDR.user.user_id || null,
-                            page_id: page_id,
-                            long_term_session: RDR.user.guid || null,
-                            short_term_session: RDR.user.session || null,
-                            referrer_tld: referrer_tld || null,
-                            content_id: params.content_id || null,
-                            article_height: RDR.group.active_section_milestones[100] || null,
-                            container_hash: params.container_hash || null,
-                            container_kind: params.container_kind || null,
-                            reaction_body: params.reaction_body || null,
-                            
-                            // widget load only
-                            page_title: RDR.util.getPageProperty('title') || null,
-                            canonical_url: RDR.util.getPageProperty('canonical_url') || null,
-                            page_url: RDR.util.getPageProperty('page_url') || null,
-                            referrer_url: referrer_url || null,
-                            content_attributes: params.content_attributes || null,  // what is this for?
-                            content_location: params.content_location || null,  
-                            page_topics: RDR.group.topics || null,
-                            author: RDR.group.author || null,
-                            site_section: RDR.group.section || null,
-                            isTouchBrowser: isTouchBrowser || false,
-                            screen_width:  screen.width,
-                            screen_height:  screen.height,
-                            pixel_density:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
-                            user_agent:  navigator.userAgent
+                            et: params.event_type,
+                            ev: params.event_value,
+                            gid: RDR.group.id || null,
+                            uid: RDR.user.user_id || null,
+                            pid: page_id,
+                            lts: RDR.user.guid || null,
+                            sts: RDR.user.session || null,
+                            ref: referrer_tld || null,
+                            cid: params.content_id || null,
+                            ah: RDR.group.active_section_milestones[100] || null,
+                            ch: params.container_hash || null,
+                            ck: params.container_kind || null,
+                            r: params.reaction_body || null,
+                            pt: RDR.util.getPageProperty('title') || null,
+                            cu: RDR.util.getPageProperty('canonical_url') || null,
+                            pu: RDR.util.getPageProperty('page_url') || null,
+                            ru: referrer_url || null,
+                            ca: params.content_attributes || null,  // what is this for?
+                            cl: params.content_location || null,  
+                            ptop: RDR.group.topics || null,
+                            a: RDR.group.author || null,
+                            sec: RDR.group.section || null,
+                            it: isTouchBrowser || false,
+                            sw:  screen.width,
+                            sh:  screen.height,
+                            pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                            ua:  navigator.userAgent
                         };
-                    } else {
-                        var trackData = {
-                            clazz: "Events",
-                            event_type: params.event_type,
-                            event_value: params.event_value,
-                            group_id: RDR.group.id || null,
-                            user_id: RDR.user.user_id || null,
-                            page_id: page_id,
-                            long_term_session: RDR.user.guid || null,
-                            short_term_session: RDR.user.session || null,
-                            referrer_tld: referrer_tld || null,
-                            content_id: params.content_id || null,
-                            content_location: params.content_location || null,  
-                            container_hash: params.container_hash || null,
-                            container_kind: params.container_kind || null,
-                            reaction_body: params.reaction_body || null
-                        };
-                    }
                     
                     var data = $.toJSON( trackData );
 
@@ -956,7 +966,7 @@ function readrBoard($R){
                                         }
 
                                         RDR.events.trackEventToCloud({
-                                            event_type: "share",
+                                            event_type: "sh",
                                             event_value: val,
                                             container_hash: hash,
                                             container_kind: args.kind,
@@ -1268,8 +1278,8 @@ function readrBoard($R){
                                             RDR.session.revealSharedContent(data);
 
                                             RDR.events.trackEventToCloud({
-                                                event_type: 'summary bar',
-                                                event_value: 'view content',
+                                                event_type: 'sb',
+                                                event_value: 'vc',
                                                 page_id: thisPageId
                                             });
                                         });
@@ -1317,8 +1327,8 @@ function readrBoard($R){
                                 
 
                                 RDR.events.trackEventToCloud({
-                                    event_type: 'summary bar',
-                                    event_value: 'view reactions',
+                                    event_type: 'sb',
+                                    event_value: 'vr',
                                     page_id: page_id
                                 });
 
@@ -1616,8 +1626,8 @@ function readrBoard($R){
                                 RDR.events.trackEventToCloud({
                                     // category: "engage",
                                     // action: "rindow_shown_writemode",
-                                    event_type: 'rindow_show',
-                                    event_value: 'writemode',
+                                    event_type: 'rs',
+                                    event_value: 'wr',
                                     // opt_label: "kind: text, hash: " + hash,
                                     container_hash: hash,
                                     container_kind: kind,
@@ -1687,8 +1697,8 @@ function readrBoard($R){
                                         // category: "engage",
                                         // action: "rindow_shown_readmode",
                                         // opt_label: "kind: "+kind+", hash: " + hash,
-                                        event_type: 'rindow_show',
-                                        event_value: 'readmode',
+                                        event_type: 'rs',
+                                        event_value: 'rd',
                                         container_hash: hash,
                                         container_kind: kind,
                                         page_id: page_id
@@ -2968,7 +2978,7 @@ function readrBoard($R){
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
                 } else {
-                    var event_type = 'scroll';
+                    var event_type = 'sc';
                 }
                 RDR.events.trackEventToCloud({
                     event_type: event_type,
@@ -3783,14 +3793,14 @@ function readrBoard($R){
 
                         var load_event_value = '';
                         if (RDR.group.useDefaultSummaryBar){
-                            load_event_value = 'default summary bar';
+                            load_event_value = 'def';
                         } else {
                             if (response.data.length === 1) {
-                                load_event_value = 'single summary bar';
+                                load_event_value = 'si';
                             } else if (response.data.length > 1) {
-                                load_event_value = 'multiple pages'
+                                load_event_value = 'mu'
                             } else {
-                                load_event_value = 'unexpected';
+                                load_event_value = 'unex';
                             }
                         }
 
@@ -3803,7 +3813,7 @@ function readrBoard($R){
                         });
 
                         RDR.events.trackEventToCloud({
-                            event_type: 'widget_load',
+                            event_type: 'wl',
                             event_value: load_event_value,
                             page_id: RDR.util.getPageProperty('id')
                         });
@@ -3944,7 +3954,15 @@ function readrBoard($R){
                     $.cookie('rdr_session', short_session_guid, { expires: short_session_expiretime });
                 } else {
                     RDR.user.session = $.cookie('rdr_session');
+
+                    // lets extend the session time 
+                    console.log('lets extend the session time GUID');
+                    var minutes = 30;
+                    var short_session_expiretime = new Date();
+                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+                    $.cookie('rdr_session', RDR.user.session, { expires: short_session_expiretime });
                 }
+
                 if( $.cookie('rdr_user') === null ) {
                     var long_session_guid = RDR.user.guid = RDR.util.createGuid();
                     var long_session_expiretime = new Date();
@@ -3953,6 +3971,14 @@ function readrBoard($R){
                     $.cookie('rdr_user', long_session_guid, { expires: long_session_expiretime });
                 } else {
                     RDR.user.guid = $.cookie('rdr_user');
+
+                    //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
+                    // lets extend the session time 
+                    // console.log('lets extend the session time USER');
+                    // var days = 180;
+                    // var long_session_expiretime = new Date();
+                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    // $.cookie('rdr_user', RDR.user.long_session_guid, { expires: long_session_expiretime });
                 }
 
                 // get author, topics, tags from publisher-defined tags
@@ -5867,7 +5893,7 @@ if ( sendData.kind=="page" ) {
                             RDR.util.triggerPublicEvent('comment');
 
                             RDR.events.trackEventToCloud({
-                                event_type: "comment",
+                                event_type: "c",
                                 event_value: interaction.interaction_node.body,
                                 container_hash: hash,
                                 container_kind: content_node.kind,
@@ -6177,7 +6203,7 @@ if ( sendData.kind=="page" ) {
                                 int_id = response.data.interaction.id;
 
                             RDR.events.trackEventToCloud({
-                                event_type: 'reaction',
+                                event_type: 're',
                                 event_value: (tag.body) ? tag.body:tag.tag_body,
                                 reaction_body: (tag.body) ? tag.body:tag.tag_body,
                                 container_hash: args.hash,
@@ -6442,7 +6468,7 @@ if ( sendData.kind=="page" ) {
                                         RDR.events.trackEventToCloud({
                                             // action: "share_open_attempt",
                                             // opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
-                                            event_type: "share",
+                                            event_type: "sh",
                                             event_value: val,
                                             container_kind: args.kind,
                                             page_id: args.page_id
@@ -6832,8 +6858,8 @@ if ( sendData.kind=="page" ) {
                                 // category: "engage",
                                 // action: "rindow_shown_readmode",
                                 // opt_label: "kind: text, hash: " + hash,
-                                event_type: 'rindow_show',
-                                event_value: 'readmode',
+                                event_type: 'rs',
+                                event_value: 'rd',
                                 container_hash: hash,
                                 container_kind: "text",
                                 page_id: page_id
@@ -6949,14 +6975,16 @@ if ( sendData.kind=="page" ) {
 
                         $indicator.$rindow = $rindow;
 
+                        var event_value = ($cta.attr('rdr-mode')=="write") ? 'wr':'rd';
+
                         // RDR.events.track( 'view_node::'+hash, hash );
                         // RDR.events.track('start_react_text');
                         RDR.events.trackEventToCloud({
                             // category: "engage",
                             // action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
                             // opt_label: "kind: text, hash: " + hash,
-                            event_type: 'rindow_show',
-                            event_value: $cta.attr('rdr-mode') +"mode",
+                            event_type: 'rs',
+                            event_value: event_value,
                             container_hash: hash,
                             container_kind: "text",
                             page_id: page_id
@@ -8493,7 +8521,7 @@ if ( sendData.kind=="page" ) {
                     content_node = args.content_node;
 
                 RDR.events.trackEventToCloud({
-                    event_type: "view comments",
+                    event_type: "vcom",
                     event_value: '',
                     container_hash: args.hash,
                     container_kind: args.content_node.kind,
@@ -10005,7 +10033,7 @@ function $RFunctions($R){
                     // RDR.events.track( 'view_summary::'+page_id );
 
                     RDR.events.trackEventToCloud({
-                        event_type: 'summary bar',
+                        event_type: 'sb',
                         event_value: 'show',
                         page_id: page_id
                     });
