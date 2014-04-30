@@ -280,6 +280,30 @@ function readrBoard($R){
                             sh:  screen.height,
                             pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
                             ua:  navigator.userAgent
+
+                            /*
+                            value abbreviations
+                            event_type
+                              share         :     sh
+                              summary bar   :     sb
+                              rindow_show   :     rs
+                              scroll        :     sc
+                              widget_load   :     wl
+                              comment       :     c
+                              reaction      :     re
+
+                            event_value
+                              view content    :   vc
+                              view comments   :   vcom
+                              view reactions  :   vr
+                              writemode       :   wr
+                              readmode        :   rd
+
+                              default summary bar   :   def
+                              single summary bar    :   si
+                              multiple pages        :   mu
+                              unexpected            :   unex
+                            */
                         };
                     
                     var data = $.toJSON( trackData );
@@ -2974,7 +2998,6 @@ function readrBoard($R){
                 });
             },
             fireScrollEvent: function(milestone) {
-
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
                 } else {
@@ -2984,6 +3007,7 @@ function readrBoard($R){
                     event_type: event_type,
                     event_value: milestone
                 });
+
             },
             fireEventQueue: function() {
                 $.each( RDR.event_queue, function(idx, event_params) {
@@ -4007,12 +4031,13 @@ function readrBoard($R){
                     '60':((RDR.group.active_section_height/5*3)+RDR.group.active_section_top),
                     '80':((RDR.group.active_section_height/5*4)+RDR.group.active_section_top),
                     '100':RDR.group.active_section_bottom,
-                    'fired_0':true,  // this should never fire
-                    'fired_20':false,
-                    'fired_40':false,
-                    'fired_60':false,
-                    'fired_80':false,
-                    'fired_100':false
+                    'fired':0
+                    // 'fired_0':true,  // this should never fire
+                    // 'fired_20':false,
+                    // 'fired_40':false,
+                    // 'fired_60':false,
+                    // 'fired_80':false,
+                    // 'fired_100':false
                 };
 
         
@@ -4023,12 +4048,12 @@ function readrBoard($R){
                         var scrolltop = $(window).scrollTop();
                         var windowHeight = $(window).height();
 
-                        if ( RDR.group.active_section_milestones['fired_0'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['0'] ) { RDR.util.fireScrollEvent('0'); RDR.group.active_section_milestones['fired_0'] = true; }
-                        if ( RDR.group.active_section_milestones['fired_20'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.util.fireScrollEvent('20'); RDR.group.active_section_milestones['fired_20'] = true; }
-                        if ( RDR.group.active_section_milestones['fired_40'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.util.fireScrollEvent('40'); RDR.group.active_section_milestones['fired_40'] = true; }
-                        if ( RDR.group.active_section_milestones['fired_60'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.util.fireScrollEvent('60'); RDR.group.active_section_milestones['fired_60'] = true; }
-                        if ( RDR.group.active_section_milestones['fired_80'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.util.fireScrollEvent('80'); RDR.group.active_section_milestones['fired_80'] = true; }
-                        if ( RDR.group.active_section_milestones['fired_100'] === false && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.util.fireScrollEvent('100'); RDR.group.active_section_milestones['fired_100'] = true; }
+                        if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.util.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
+                        if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.util.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
+                        if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.util.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
+                        if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.util.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
+                        if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.util.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
+                        // if ( RDR.group.active_section_milestones['fired'] < 0 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['0'] ) { RDR.util.fireScrollEvent('0'); RDR.group.active_section_milestones['fired_0'] = true; }
                         
                         // too many "more" events
                         // idea was note when people are scrolling up, down, up down.
@@ -7254,7 +7279,8 @@ if ( sendData.kind=="page" ) {
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
+                                // $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body'); // .append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
                                 if(isTouchBrowser){
                                     $indicator.bind('tap', function(){
                                         $(this).toggleClass('rdr_hover');
