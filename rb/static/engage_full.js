@@ -202,7 +202,7 @@ function readrBoard($R){
                 });
             },
             checkTime: function() {
-                if ( RDR.events.focusedSeconds % 15 == 0 ) {
+                if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 ) {
                     RDR.events.trackEventToCloud({
                         event_type: 't',
                         event_value: RDR.events.focusedSeconds
