@@ -184,7 +184,6 @@ function readrBoard($R){
         },
         events: {
             focusedSeconds:0,
-            justFocused: true,
             fireScrollEvent: function(milestone) {
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
@@ -203,16 +202,19 @@ function readrBoard($R){
                 });
             },
             checkTime: function() {
-                if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 && RDR.events.justFocused === false ) {
-                    RDR.events.trackEventToCloud({
-                        event_type: 't',
-                        event_value: RDR.events.focusedSeconds.toString()
-                    });
-                }
-                if (RDR.events.justFocused === false ) {
+                if ( document.hasFocus() === true ){
+                    if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 ) {  // && RDR.events.justFocused === false 
+                        RDR.events.trackEventToCloud({
+                            event_type: 't',
+                            event_value: RDR.events.focusedSeconds.toString()
+                        });
+                    }
                     RDR.events.focusedSeconds++;
-                } else {
-                    RDR.events.justFocused = false;
+                    // if (RDR.events.justFocused === false ) {
+                    //     RDR.events.focusedSeconds++;
+                    // } else {
+                    //     RDR.events.justFocused = false;
+                    // }
                 }
             },
             // track : function( data, hash ) {
@@ -2502,10 +2504,10 @@ function readrBoard($R){
             }
         },
         util: {
-            windowBlur: function() { RDR.util.clearWindowInterval(); },
-            windowFocus: function() { RDR.util.setWindowInterval(); RDR.events.justFocused = true; },
+            windowBlur: function() { /*RDR.util.clearWindowInterval();*/ return; },
+            windowFocus: function() { return; },
             clearWindowInterval: function () {
-                clearInterval($.data(this, 'rdr_intervalTimer'));
+                // clearInterval($.data(this, 'rdr_intervalTimer'));
             },
             setWindowInterval: function () {
                 $.data(this, 'rdr_intervalTimer', setInterval(function() {
@@ -4092,14 +4094,6 @@ function readrBoard($R){
                 // });
 
                 // ReadrBoard Timer?  unsure
-                if (/*@cc_on!@*/false) { // check for Internet Explorer
-                    document.onfocusin = RDR.util.windowFocus;
-                    document.onfocusout = RDR.util.windowBlur;
-                } else {
-                    window.onfocus = RDR.util.windowFocus;
-                    window.onblur = RDR.util.windowBlur;
-                }
-                
                 RDR.util.setWindowInterval();
 
                 RDR.util.fixBodyBorderOffsetIssue();
