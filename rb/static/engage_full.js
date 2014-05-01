@@ -205,7 +205,7 @@ function readrBoard($R){
                 if ( document.hasFocus() === true ){
                     if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 ) {  // && RDR.events.justFocused === false 
                         RDR.events.trackEventToCloud({
-                            event_type: 't',
+                            event_type: 'ti',
                             event_value: RDR.events.focusedSeconds.toString()
                         });
                     }
