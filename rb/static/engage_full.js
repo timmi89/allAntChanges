@@ -184,6 +184,7 @@ function readrBoard($R){
         },
         events: {
             focusedSeconds:0,
+            justFocused: true,
             fireScrollEvent: function(milestone) {
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
@@ -202,13 +203,17 @@ function readrBoard($R){
                 });
             },
             checkTime: function() {
-                if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 ) {
+                if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 && RDR.events.justFocused === false ) {
                     RDR.events.trackEventToCloud({
-                        event_type: 'tm',
+                        event_type: 't',
                         event_value: RDR.events.focusedSeconds.toString()
                     });
                 }
-                RDR.events.focusedSeconds++;
+                if (RDR.events.justFocused === false ) {
+                    RDR.events.focusedSeconds++;
+                } else {
+                    RDR.events.justFocused = false;
+                }
             },
             // track : function( data, hash ) {
                 // RDR.events.track:
@@ -2498,7 +2503,7 @@ function readrBoard($R){
         },
         util: {
             windowBlur: function() { RDR.util.clearWindowInterval(); },
-            windowFocus: function() { RDR.util.setWindowInterval(); },
+            windowFocus: function() { RDR.util.setWindowInterval(); RDR.events.justFocused = true; },
             clearWindowInterval: function () {
                 clearInterval($.data(this, 'rdr_intervalTimer'));
             },
@@ -4001,7 +4006,6 @@ function readrBoard($R){
                     RDR.user.session = $.cookie('rdr_session');
 
                     // lets extend the session time 
-                    console.log('lets extend the session time GUID');
                     var minutes = 30;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
@@ -4019,7 +4023,6 @@ function readrBoard($R){
 
                     //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
                     // lets extend the session time 
-                    // console.log('lets extend the session time USER');
                     // var days = 180;
                     // var long_session_expiretime = new Date();
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
