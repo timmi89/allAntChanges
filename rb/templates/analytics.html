@@ -505,14 +505,16 @@ Morris.Area({
         	updateAll: function() {
                 console.log('group_id: {{ group.id }}');
                 // var dataResponse = ff.postObjToExtension({group_id:{{ group.id }} },"getSummaries",
-                ff.getArrayFromExtension("/getSummaries?group_id={{ group.id }}",
-                    function (obj) {
-                        // success
-                        console.log(obj[0]);
-                    },
-                    function (statusCode, statusMessage) {
-                        // error occurred
-                    });
+                // ff.getArrayFromExtension("/getSummaries?group_id={{ group.id }}",
+                //     function (obj) {
+                //         // success
+                //         console.log(obj[0]);
+                //     },
+                //     function (statusCode, statusMessage) {
+                //         // error occurred
+                //     });
+
+doAjax();
 
         	},
             setDates: function(){
@@ -580,5 +582,31 @@ Morris.Area({
 
 
 })();
+
+
+function doAjax() {
+    console.log('doAjax.......');
+    $.ajax({
+    url: 'http://readrboard-events.appspot.com/query/test',
+    // url: 'http://localhost:8080/query/test',
+    type: "get",
+    // contentType: "application/json",
+    dataType : 'json',
+    // dataType: "jsonp",
+    // data: {
+    //     json: $.toJSON( {host_name : window.location.hostname} )
+    // },
+    success: function(response) {
+        console.log('success');
+        // console.log(response);
+        console.log(response.links_to);
+        console.log(response.file_id);
+        }
+    });
+}
+
+
+
+
 </script>
 {% endblock wideContent %}

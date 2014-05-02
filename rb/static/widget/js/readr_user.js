@@ -19,6 +19,8 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
 
+var trackingUrl = (document.domain != "local.readrboard.com") ? "http://readrboard-events.appspot.com/" : "http://localhost:8080"
+
 window.RDRAuth = {
     isOffline: (document.domain == "local.readrboard.com"),
 	rdr_user: {},
@@ -110,7 +112,7 @@ window.RDRAuth = {
             // RDRAuth.events.trackEventToCloud
 
             $.ajax({
-                url: "http://readrboard-events.appspot.com/",
+                url: trackingUrl,
                 type: "get",
                 contentType: "application/json",
                 dataType: "jsonp",

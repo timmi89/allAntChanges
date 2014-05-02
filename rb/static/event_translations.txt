@@ -6,11 +6,11 @@ event_type
   widget_load   :     wl
   comment       :     c
   reaction      :     re
-  time          :     t
+  time          :     ti
+  view comments   :   vcom
 
 event_value
   view content    :   vc
-  view comments   :   vcom
   view reactions  :   vr
   writemode       :   wr
   readmode        :   rd

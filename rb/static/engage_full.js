@@ -203,7 +203,7 @@ function readrBoard($R){
             },
             checkTime: function() {
                 if ( document.hasFocus() === true ){
-                    if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 15 == 0 ) {  // && RDR.events.justFocused === false 
+                    if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 20 == 0 ) {  // && RDR.events.justFocused === false 
                         RDR.events.trackEventToCloud({
                             event_type: 'ti',
                             event_value: RDR.events.focusedSeconds.toString()
@@ -2511,7 +2511,7 @@ function readrBoard($R){
             },
             setWindowInterval: function () {
                 $.data(this, 'rdr_intervalTimer', setInterval(function() {
-                    RDR.events.checkTime();
+                    if (typeof RDR.events != 'undefined') { RDR.events.checkTime(); }
                 }, 1000));
             },
             checkForSelectedTextAndLaunchRindow: function(){
