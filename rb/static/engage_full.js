@@ -3894,7 +3894,7 @@ function readrBoard($R){
 
                     // we should handle settings through a JSON cookie.  will do later.
                     if ( !$.cookie('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
-                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Double-tap</strong> any paragraph to respond!<a>Close this</a>',
+                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>Close this</a>',
                             double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
                             $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#rdr_sandbox');
@@ -6765,7 +6765,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     if (kind=="text") {
-                                        $container.on('doubletap', function(e){
+                                        $container.on('singletap', function(e){
                                             var $this_container = $('[rdr-hash="'+hash+'"]');
                                             // var $container = $(e.target);
 
