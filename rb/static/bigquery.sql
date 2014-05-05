@@ -1,3 +1,6 @@
+https://developers.google.com/bigquery/query-reference#datetimefunctions
+
+
 Schema
 
 et          event_type
@@ -31,9 +34,9 @@ createdAt                     TIMESTAMP
 
 
 
-select count(short_term_session) as non_engaged_sessions_count 
+select count(sts) as non_engaged_sessions_count 
 from [events.test] 
-where group_id = 0 and short_term_session NOT IN 
+where gid = 0 and sts [NOT] IN 
 (select short_term_session from [events.test] where group_id = 0 and event_type != 'widget_load' group by short_term_session) 
 group by short_term_session
 
