@@ -587,21 +587,21 @@ doAjax();
 function doAjax() {
     console.log('doAjax.......');
     $.ajax({
-    url: 'http://readrboard-events.appspot.com/query/test',
-    // url: 'http://localhost:8080/query/test',
-    type: "get",
-    // contentType: "application/json",
-    dataType : 'json',
-    // dataType: "jsonp",
-    // data: {
-    //     json: $.toJSON( {host_name : window.location.hostname} )
-    // },
-    success: function(response) {
-        console.log('success');
-        console.log(response);
-        }
-    });
-}
+        url: '//events.readrboard.com/query/',
+        // url: 'http://localhost:8080/query/test',
+        type: "get",
+        // contentType: "application/json",
+        // dataType : 'json',
+        // dataType: "jsonp",
+        // data: {
+        //     json: $.toJSON( {host_name : window.location.hostname} )
+        // },
+        success: function(response) {
+            console.log('success');
+            console.log(response);
+            }
+        });
+    }
 
 
 
