@@ -102,11 +102,14 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 ### DEFINITELY GOOD
 
 ## CREATE TABLE:  RDR sessions
+/initAnalytics
 select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts
 
 ## CREATE TABLE:  session_pageLoads
 ## GIVES ME: avg page views per rdr session
 ## "this session load pages from this list, a total of N times"
+/query/create_session_pageLoads
+
 select sts, GROUP_CONCAT(STRING(pid)) as pid_list, count(pid) as loadCount
 from [events.data] where et='wl' and gid = 1167 
 group by sts

@@ -1,6 +1,12 @@
-Node CORS
+ajax to call to Node with gid
+
 queryQueue[]
 create UID on server in first call from queue
+
+
+queryOrder
+  create rdr_sessions
+
 
 
 DASHBOARD INIT create these tables
@@ -19,6 +25,9 @@ DASHBOARD INIT create these tables
   temp_fastcolabs_sessionContentTimes_IDENTIFIER:  SESSION_ID   PID   createdTime
 
 
+TIDY UP
+  re-enable datepicker
+  uncomment in analytics.html RB.group.id = {{ group.id }}
 
 OPEN QUESTIONS
   What is hotness?

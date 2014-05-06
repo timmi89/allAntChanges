@@ -502,20 +502,22 @@ Morris.Area({
 
         // put in external file...
         RB.analytics = {
+            queryHost: '//localnode.com:3000',
+            initAnalytics: function() {
+                $.ajax({
+                url: RB.analytics.queryHost + '/initAnalytics',
+                type: "get",
+                data: {
+                    json: $.toJSON( { sn:'{{group.short_name}}',gid:RB.group.id } )
+                },
+                success: function(response) {
+                    console.log('success');
+                    console.log(response);
+                    }
+                });
+            },
         	updateAll: function() {
                 console.log('group_id: {{ group.id }}');
-                // var dataResponse = ff.postObjToExtension({group_id:{{ group.id }} },"getSummaries",
-                // ff.getArrayFromExtension("/getSummaries?group_id={{ group.id }}",
-                //     function (obj) {
-                //         // success
-                //         console.log(obj[0]);
-                //     },
-                //     function (statusCode, statusMessage) {
-                //         // error occurred
-                //     });
-
-doAjax();
-
         	},
             setDates: function(){
 
@@ -548,8 +550,11 @@ doAjax();
         // defined in template
         RB.group.short_name = "{{ group.short_name }}";
         RB.group.full_name = "{{ group.name }}";
+        // RB.group.id = "{{ group.id }}";
+        RB.group.id = 1167;
         
         $(function(){
+            RB.group.id = 1167;
 
             RB.analytics.setDates();
 
@@ -564,48 +569,26 @@ doAjax();
             $('input[name="start_date"]').val( RB.analytics.startDate );
             $('input[name="end_date"]').val( RB.analytics.endDate );
 
-            $('section[role="datepicker"] form').submit( function() {
+            
+            // ***** DATE PICKER: re-enable
+            // $('section[role="datepicker"] form').submit( function() {
 
-                var startDate = $('input[name="start_date"]').val();
-                var endDate = $('input[name="end_date"]').val();
+            //     var startDate = $('input[name="start_date"]').val();
+            //     var endDate = $('input[name="end_date"]').val();
                 
-                RB.util.setHashValue('start', startDate );
-                RB.util.setHashValue('end', endDate );
+            //     RB.util.setHashValue('start', startDate );
+            //     RB.util.setHashValue('end', endDate );
 
-                RB.analytics.updateAll();
-                return false;
-            });
+            //     RB.analytics.updateAll();
+            //     return false;
+            // });
 
-            RB.analytics.updateAll();
+            RB.analytics.initAnalytics();
 
         });
 
 
 })();
-
-
-function doAjax() {
-    console.log('doAjax.......');
-    $.ajax({
-        url: '//events.readrboard.com/test/',
-        // url: 'http://localhost:3000/',
-        // url: 'http://localhost:8080/query/test',
-        type: "get",
-        // contentType: "application/json",
-        // dataType : 'json',
-        // dataType: "jsonp",
-        // data: {
-        //     json: $.toJSON( {host_name : window.location.hostname} )
-        // },
-        success: function(response) {
-            console.log('success');
-            console.log(response);
-            }
-        });
-    }
-
-
-
 
 </script>
 {% endblock wideContent %}
