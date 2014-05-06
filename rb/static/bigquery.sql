@@ -105,11 +105,22 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts
 
 ## CREATE TABLE:  session_pageLoads
+## GIVES ME: avg page views per rdr session
 ## "this session load pages from this list, a total of N times"
 select sts, GROUP_CONCAT(STRING(pid)) as pid_list, count(pid) as loadCount
 from [events.data] where et='wl' and gid = 1167 
 group by sts
 order by loadCount DESC;
+
+## CREATE TABLE:  pageloads_with_sessionList
+## NEED?????  it creates some massively ugly columns
+## "this session load pages from this list, a total of N times"
+####
+#     select pid, GROUP_CONCAT(sts) as sts_list, count(pid) as loadCount
+#     from [events.data] where et='wl' and gid = 1167 
+#     group by pid
+#     order by loadCount DESC;
+####
 
 
 ## NON-RDR sessions
@@ -120,22 +131,33 @@ order by loadCount DESC;
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
 
-select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.scroll_count, b.median_scroll from 
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.page_topics, b.median_scroll,  
+  ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
+  from 
   (select pid
     , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
+    , LAST(CASE WHEN et = 'wl' THEN ptop END) AS page_topics
     , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
     , COUNT(CASE WHEN et = 'sc' THEN 1 END) AS scroll_count
     , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
-      FROM [events.data] where gid = 1167 
-      and sts IN ( select sts from [events.rdrSessions] group by sts )
+      FROM [events.data] where gid = 1441 
+      # and sts IN ( select sts from [events.rdrSessions] group by sts )
       group by pid) as a 
   join 
   (select pid, avg(scroll_depth) as median_scroll from  
     (select sts, pid, MAX(ev) as scroll_depth from [events.data] 
-     where et='sc' and gid = 1167 and sts IN ( select sts from [events.rdrSessions] group by sts )
+     where et='sc' and gid = 1441 
+     # and sts IN ( select sts from [events.rdrSessions] group by sts )
      group by sts, pid )
   group by pid) as b
-  on a.pid = b.pid;
+  on a.pid = b.pid
+  order by hotness DESC
+  
+  -- join
+  -- (select avg(loadCount) from 
+  --   (select pid_list, loadCount from [events.session_pageLoads]
+  --   where pid_list CONTAINS '634702') as c 
+  -- group by sts, loadCount)) as C
 
 
 
