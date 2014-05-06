@@ -17,7 +17,7 @@ queryOrder
       _pageLoads
         sts:eb8a793f-8373-4a2a-87c6-5d6e05d3bd87, pid_list:191226,191226,191226,191226,191226,191226, loadCount: 6 
 
-      _sessionContentTimes
+      _sessionPageTimes
         sts:328ad7a1-5476-4f24-8d06-229d6374c873, pid:638085, timeDiff:1000
 
   /summaries
@@ -41,7 +41,7 @@ DASHBOARD INIT create these tables
   // NON_RDR_SESSION_ID  PID   where widget_load
 
   // all events & session types
-  temp_fastcolabs_sessionContentTimes_IDENTIFIER:  SESSION_ID   PID   createdTime
+  temp_fastcolabs_sessionPageTimes_IDENTIFIER:  SESSION_ID   PID   createdTime
 
 
 TIDY UP
