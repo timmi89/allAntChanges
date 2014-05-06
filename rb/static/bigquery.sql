@@ -131,7 +131,7 @@ order by loadCount DESC;
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
 
-select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, c.median_seconds, 
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, c.median_mseconds, 
   ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
   from 
   (select pid
@@ -152,8 +152,9 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
   group by pid) as b
   on a.pid = b.pid
   join
-  (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_seconds from [events.sessContentTimes] group by pid) as c
+  (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes] group by pid) as c
   on a.pid = c.pid 
+  where a.wl_count > 3
   order by hotness DESC
   
   -- join
@@ -206,7 +207,7 @@ order by timeDiff ASC
 # QUERY TABLE: MEDIAN TIME.  
 # already filtered by group ID at table create time
 ## median time, all sessions
-select NTH(5, QUANTILES(timeDiff, 11)) as median_seconds from [events.sessContentTimes]
+select NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes]
 
 
 ## STILL NEED
