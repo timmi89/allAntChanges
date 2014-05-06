@@ -5,7 +5,8 @@ DASHBOARD INIT create these tables
   RDR_SESSION_ID  PID       where widget_load
 
   // widget loads only
-  NON_RDR_SESSION_ID  PID   where widget_load
+  // DO WE NEED THIS, OR ALWAYS JSUT DO NOT IN?
+  // NON_RDR_SESSION_ID  PID   where widget_load
 
   // all events & session types
   temp_fastcolabs_sessionContentTimes_IDENTIFIER:  SESSION_ID   PID   createdTime
