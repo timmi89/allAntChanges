@@ -140,31 +140,13 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.scroll_coun
 
 
 ## WORKING ON PAGE COUNT
-## maybe???
-select pid, avg(loadCount) as page_load_avg from 
-  (select sts, pid, count(pid) as loadCount from [events.session_pageLoads] 
-    where sts IN ( select sts from [events.rdrSessions] group by sts )
-  group by sts, pid) 
-group by pid order by page_load_avg DESC
+## by page_id
+select avg(loadCount) from 
+(select sts, loadCount from [events.session_pageLoads]
+where pid_list CONTAINS '634702'
+#and sts NOT IN ( select sts from [events.rdrSessions] group by sts )
+group by sts, loadCount)
 
-
-## page loads per page regardless of session
-select pid, count(pid) as loadCount from [events.session_pageLoads] group by pid
-
-
-select pid, avg(loadCount) as page_load_avg from 
-  (select pid, count(pid) as loadCount from [events.session_pageLoads] 
-    where sts IN ( select sts from [events.rdrSessions] group by sts )
-  group by pid) 
-group by pid order by page_load_avg DESC
-
-## avg page loads per session
-select sts, avg(loadCount) as session_load_avg from 
-  (select sts, count(pid) as loadCount from [events.session_pageLoads] 
-    where sts IN ( select sts from [events.rdrSessions] group by sts )
-  group by sts) 
-group by sts order by session_load_avg DESC
-#####
 
 
 
