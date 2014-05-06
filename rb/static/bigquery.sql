@@ -103,13 +103,24 @@ group by sts
 
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
-select pid
-  , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
-  , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
-  , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
-    FROM [events.data] where gid = 1167 
-    and sts IN ( select sts from [events.rdrSessions] group by sts )
-    group by pid
+
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, b.avg_scroll_depth from 
+  (select pid
+    , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
+    , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
+    , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
+      FROM [events.data] where gid = 1167 
+      and sts IN ( select sts from [events.rdrSessions] group by sts )
+      group by pid) as a 
+  join 
+  (select pid, AVG(max_value) as avg_scroll_depth from 
+    ( SELECT sts, pid, MAX(ev) as max_value from [events.data]
+     WHERE gid = 1167 and et = 'sc' 
+     and sts IN ( select sts from [events.rdrSessions] group by sts )
+    group by sts, pid 
+    ) group by pid ) b
+  on a.pid = b.pid;
+
   -- , avg(loadCount) from (select sts, count(pid) as loadCount from [events.rdrSession_pageLoads] group by sts order by loadCount DESC)
 
 
