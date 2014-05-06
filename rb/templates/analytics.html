@@ -503,7 +503,22 @@ Morris.Area({
         // put in external file...
         RB.analytics = {
             queryHost: '//localnode.com:3000',
+            queue:['initAnalytics','createSessionPageloads'],
+            dequeue: function() {
+                console.log('dequeue');
+                console.log(RB.analytics.queue);
+                if (typeof RB.analytics[RB.analytics.queue[0]] == 'function') {
+                    RB.analytics[RB.analytics.queue[0]]();
+                    RB.analytics.queue.shift();
+                }
+            },
+            toggleGlobalLoader: function() {
+                // TODO animate something
+                console.log('toggleGlobalLoader');
+            },
             initAnalytics: function() {
+                RB.analytics.toggleGlobalLoader();
+                console.log('initAnalytics');
                 $.ajax({
                 url: RB.analytics.queryHost + '/initAnalytics',
                 type: "get",
@@ -511,8 +526,41 @@ Morris.Area({
                     json: $.toJSON( { sn:'{{group.short_name}}',gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('success');
+                    console.log('received: init success');
                     console.log(response);
+                    RB.group.tempTablePre = response.tempTablePre;
+                    RB.analytics.dequeue();
+                    }
+                });
+            },
+            createSessionPageloads: function() {
+                console.log('createSessionPageloads');
+                $.ajax({
+                url: RB.analytics.queryHost + '/createSessionPageloads',
+                type: "get",
+                data: {
+                    json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
+                },
+                success: function(response) {
+                    console.log('received: create sessions success');
+                    console.log(response);
+                    RB.analytics.dequeue();
+                    }
+                });
+            },
+            sessionContentTimes: function() {
+                console.log('sessionContentTimes');
+                $.ajax({
+                url: RB.analytics.queryHost + '/sessionContentTimes',
+                type: "get",
+                data: {
+                    json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
+                },
+                success: function(response) {
+                    console.log('received: create sessionContentTimes success');
+                    console.log(response);
+                    RB.analytics.dequeue();
+                    RB.analytics.toggleGlobalLoader();
                     }
                 });
             },
@@ -583,7 +631,8 @@ Morris.Area({
             //     return false;
             // });
 
-            RB.analytics.initAnalytics();
+            // RB.analytics.initAnalytics();
+            RB.analytics.dequeue();
 
         });
 
