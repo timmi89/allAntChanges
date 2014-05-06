@@ -345,6 +345,69 @@ exports.getMostEngagedPagesWithPVs = function() {
 };
 
 
+/////////// OLD
+// testing for getMostEngagedPages with PVs/session added.  once we get this right, we don't need both.
+// GARY!
+// this is probably the hairiest/slowest query?  it's the most important, and almost everything else would be a subset of this
+exports.getMostEngagedPagesWithPVs = function() {
+    var sql;
+    var result = [];
+    var group_id = 14;
+
+    // grab everything -- raw counts, and the doozy:  avg pageviews per session that viewed a certain page!
+    // queyr help via http://stackoverflow.com/questions/22747343/inner-join-on-same-table-with-avg/22748347
+    sql = "select distinct a.page_id, a.num_ses, avg(cast(c.num_pg_ld_sespg as decimal(10,8))) as avg_ses_pg_exist "
+          + ", a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth " // , a.topics " // a.facebook_referrals " //, a.twitter_referrals "
+          + ", ((a.reaction_count + a.reaction_view_count + a.scroll_count + avg(cast(c.num_pg_ld_sespg as decimal(10,8))))/(a.widget_load_count+1.000)) as hotness "
+          + "from (select page_id "
+                + ", COUNT(distinct short_term_session) as num_ses "
+                + ", COUNT(CASE WHEN event_type = 'widget_load' THEN 1 END) AS widget_load_count "
+                + ", COUNT(CASE WHEN event_type = 'reaction' THEN 1 END) AS reaction_count "
+                + ", COUNT(CASE WHEN event_type = 'rindow_show' and event_value = 'readmode' THEN 1 END) AS reaction_view_count "
+                + ", COUNT(CASE WHEN event_type = 'scroll' THEN 1 END) AS scroll_count "
+                + ", AVG(CASE WHEN event_type = 'scroll' THEN CAST(event_value as UNSIGNED) END) as scroll_depth " 
+                  + "FROM events where group_id != " + group_id + " "
+                  + "group by page_id) a, "
+               + "(select short_term_session, count(event_type) as num_pg_ld_ses "
+                  + "FROM events "
+                  + "where event_type = 'widget_load' "
+                  + "group by short_term_session) b, "
+               + "(select short_term_session, page_id, count(event_type) as num_pg_ld_sespg "
+                  + "FROM events "
+                  + "where event_type = 'widget_load' "
+                  + "group by short_term_session, page_id) c, "
+               + "(select page_title, page_id "
+                  + "FROM events "
+                  + "where event_type = 'widget_load') d "
+         + "where a.page_id = c.page_id "
+           + "and c.page_id = d.page_id "
+           + "and b.short_term_session = c.short_term_session "
+           // + "and a.short_term_session = 1 "  // filter to the site
+         + "group by a.page_id, d.page_title " // , a.num_ses, a.widget_load_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.scroll_depth, d.page_title " //, c.num_pg_ld_sespg " // a.facebook_referrals " //, a.twitter_referrals " //, d.reaction_count "
+         + "order by hotness DESC ";
+
+         // hotness on FB: http://techcrunch.com/2014/04/03/the-filtered-feed-problem/
+
+    var sql_results = ff.executeSQL(sql);
+
+    // now, sort / count the PageTopics tags
+    // NOTE:  tags are stored as "tag1, tag2" in a field.  rather than trying to create grabbags, I thought I'd do it in code
+    // by iterating through results, and multipling each tag by that page's engagement score (hotness), creating an array of most-popular-tags like
+    // [ ['putin',40], ['russia',39], ['broncos',21] ];
+    var topics = [];
+    var topics_count = 0;
+    for (var i=0;i<sql_results.length;i++) {
+        topics_count++;
+        topics.push(sql_results[i].topics);
+    }
+
+    
+    // porter: see engage_full.js for array sorting code.
+
+    result.push({topics_count:topics_count,topics:topics, results:sql_results });
+    ff.response().result = result;
+
+};
 
 
 // GARY!

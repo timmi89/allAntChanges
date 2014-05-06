@@ -42,7 +42,7 @@ value abbreviations
       widget_load   :     wl
       comment       :     c
       reaction      :     re
-      time          :     t
+      time          :     ti
 
     event_value
       view content    :   vc
@@ -64,6 +64,10 @@ value abbreviations
 "et":"re"
 
 
+# PAGE NAMES
+mydata.people20140325
+
+events.SHORTNAME20140325
 
 
 # EVENT TOTALS
@@ -87,6 +91,74 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 
 
 
+### DEFINITELY GOOD
+
+## RDR sessions
+select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts
+
+## NON-RDR sessions
+select sts from [events.data] where gid = 1167 and sts 
+not in (select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts)
+group by sts
+
+# PAGE COUNTS, broken out by session type.  should they be?
+# NEEDS pvs, scroll depth
+select pid
+  , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
+  , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
+  , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
+    FROM [events.data] where gid = 1167 
+    and sts IN ( select sts from [events.rdrSessions] group by sts )
+    group by pid
+  -- , avg(loadCount) from (select sts, count(pid) as loadCount from [events.rdrSession_pageLoads] group by sts order by loadCount DESC)
+
+
+SELECT AVG(a.max_value) as avg_scroll_depth from 
+    ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
+     WHERE gid = 1167 and et = 'sc' 
+     and sts IN ( select sts from [events.data] e2 where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) ) 
+    group by sts, pid 
+    ) a 
+
+
+-- select pid, sts FROM [events.data] where gid = 1167 order by TIMESTAMP_TO_MSEC(createdAt) ASC limit 1
+# event create times by session, pid
+-- select sts, pid, max(createdTime) as maxTime, min(createdTime) as minTime 
+-- from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime DESC)
+
+## sessionContentTimes
+select sts, pid, maxTime-minTime as timeDiff 
+from (select sts, pid, max(createdTime) as maxTime, min(createdTime) as minTime 
+from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime)
+group by sts, pid)
+group by sts, pid, timeDiff
+having timeDiff > 0
+order by timeDiff ASC
+
+# MEDIAN TIME
+select NTH(50, QUANTILES(timeDiff, 101)) as median_seconds from [events.sessContentTimes]
+
+
+## STILL NEED
+# AVG PAGEVIEWS
+# TOPICS
+
+
+
+#### USEFUL....  for the session query
+# RB AVG SCROLL DEPTH
+SELECT AVG(a.max_value) as avg_scroll_depth from 
+    ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
+     WHERE gid = 1167 and et = 'sc' 
+     and sts IN ( select sts from [events.data] e2 where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) ) 
+    group by sts, pid 
+    ) a 
+
+
+
+
+
+############## OLD
 select count(sts) as non_engaged_sessions_count 
 from [events.test] 
 where gid = 0 and sts [NOT] IN 
