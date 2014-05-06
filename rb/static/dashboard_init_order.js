@@ -1,3 +1,8 @@
+Node CORS
+queryQueue[]
+create UID on server in first call from queue
+
+
 DASHBOARD INIT create these tables
   // widget loads only
   RDR_SESSION_ID  PID       where widget_load
@@ -17,4 +22,3 @@ DASHBOARD INIT create these tables
 
 OPEN QUESTIONS
   What is hotness?
-  
