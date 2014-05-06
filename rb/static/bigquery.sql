@@ -154,7 +154,7 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
   join
   (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes] group by pid) as c
   on a.pid = c.pid 
-  where a.wl_count > 3
+  where a.wl_count > 5
   order by hotness DESC
   
   -- join
