@@ -131,14 +131,14 @@ order by loadCount DESC;
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
 
-select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.scroll_count, a.page_topics, b.median_scroll,  
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll,  
   ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
   from 
   (select pid
     , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
     , LAST(CASE WHEN et = 'wl' THEN ptop END) AS page_topics
     , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
-    , COUNT(CASE WHEN et = 'sc' THEN 1 END) AS scroll_count
+    #, COUNT(CASE WHEN et = 'sc' THEN 1 END) AS scroll_count
     , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
       FROM [events.data] where gid = 1441 
       # and sts IN ( select sts from [events.rdrSessions] group by sts )
@@ -162,7 +162,7 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.scroll_coun
 
 
 ## WORKING ON PAGE COUNT
-## by page_id
+## by page_id.  WORKS but unsure how to stuff into engagedPages
 select avg(loadCount) from 
 (select sts, loadCount from [events.session_pageLoads]
 where pid_list CONTAINS '634702'
