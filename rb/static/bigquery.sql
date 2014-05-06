@@ -131,7 +131,7 @@ order by loadCount DESC;
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
 
-select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll,  
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, c.median_seconds, 
   ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
   from 
   (select pid
@@ -140,17 +140,20 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
     , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
     #, COUNT(CASE WHEN et = 'sc' THEN 1 END) AS scroll_count
     , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
-      FROM [events.data] where gid = 1441 
+      FROM [events.data] where gid = 1167 
       # and sts IN ( select sts from [events.rdrSessions] group by sts )
       group by pid) as a 
   join 
   (select pid, avg(scroll_depth) as median_scroll from  
     (select sts, pid, MAX(ev) as scroll_depth from [events.data] 
-     where et='sc' and gid = 1441 
+     where et='sc' and gid = 1167 
      # and sts IN ( select sts from [events.rdrSessions] group by sts )
      group by sts, pid )
   group by pid) as b
   on a.pid = b.pid
+  join
+  (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_seconds from [events.sessContentTimes] group by pid) as c
+  on a.pid = c.pid 
   order by hotness DESC
   
   -- join
@@ -163,6 +166,7 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
 
 ## WORKING ON PAGE COUNT
 ## by page_id.  WORKS but unsure how to stuff into engagedPages
+##### perhaps via additional ajax call for now.
 select avg(loadCount) from 
 (select sts, loadCount from [events.session_pageLoads]
 where pid_list CONTAINS '634702'
@@ -199,13 +203,17 @@ group by sts, pid, timeDiff
 having timeDiff > 0
 order by timeDiff ASC
 
-# QUERY TABLE: MEDIAN TIME
-select NTH(50, QUANTILES(timeDiff, 101)) as median_seconds from [events.sessContentTimes]
+# QUERY TABLE: MEDIAN TIME.  
+# already filtered by group ID at table create time
+## median time, all sessions
+select NTH(5, QUANTILES(timeDiff, 11)) as median_seconds from [events.sessContentTimes]
 
 
 ## STILL NEED
 # AVG PAGEVIEWS
 # TOPICS
+
+
 
 
 
