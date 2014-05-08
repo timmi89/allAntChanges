@@ -73,10 +73,14 @@ events.SHORTNAME20140325
 # EVENT TOTALS
 select et, count(et) from [events.data] where et != 't' and et != 'tm'  group by et;
 
+
+# SESSION TOTALS
+select sts, count(sts) from [events.data] where gid = 1660 group by sts
+
 # AVG SCROLL DEPTH
 SELECT AVG(a.max_value) as avg_scroll_depth from 
     ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
-     WHERE gid = 1441 and et = 'sc' 
+     WHERE gid = 1660 and et = 'sc' 
     group by sts, pid 
     ) a 
 
@@ -84,26 +88,41 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 # RB AVG SCROLL DEPTH
 SELECT AVG(a.max_value) as avg_scroll_depth from 
     ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
-     WHERE gid = 1167 and et = 'sc' 
-     and sts IN ( select sts from [events.data] e2 where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) ) 
+     WHERE gid = 1660 and et = 'sc' 
+     and sts IN ( select sts from [events.data] e2 where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' ) ) ) 
     group by sts, pid 
     ) a 
 
 
+# avg page loads
+select (avg(loadCount)) from 
+(select sts, GROUP_CONCAT(STRING(pid)) as pid_list, count(pid) as loadCount
+from [events.data] where et='wl' and gid = 1660 
+group by sts
+order by loadCount DESC);
+
+# avg RDR page loads
+select (avg(loadCount)) from 
+(select sts, GROUP_CONCAT(STRING(pid)) as pid_list, count(pid) as loadCount
+from [events.data] where et='wl' and gid = 1660 
+  and sts IN ( select sts from [events.data] e2 where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) ) 
+group by sts
+order by loadCount DESC);
+
+# REFERRERS
+select ref, count(et) evCount from [events.data] where gid = 1661 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) group by ref
+order by evCount DESC
 
 
 
 
 
 
-
-
-
-### DEFINITELY GOOD
+### NEXT
 
 ## CREATE TABLE:  RDR sessions
 /initAnalytics
-select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts
+select sts from [events.data] where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) group by sts
 ####DONE
 
 ## CREATE TABLE:  session_pageLoads
@@ -112,7 +131,7 @@ select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and 
 /createSessionPageloads
 
 select sts, GROUP_CONCAT(STRING(pid)) as pid_list, count(pid) as loadCount
-from [events.data] where et='wl' and gid = 1167 
+from [events.data] where et='wl' and gid = 1660 
 group by sts
 order by loadCount DESC;
 
@@ -121,15 +140,17 @@ order by loadCount DESC;
 ## "this session load pages from this list, a total of N times"
 ####
 #     select pid, GROUP_CONCAT(sts) as sts_list, count(pid) as loadCount
-#     from [events.data] where et='wl' and gid = 1167 
+#     from [events.data] where et='wl' and gid = 1660 
 #     group by pid
 #     order by loadCount DESC;
 ####
 
+## event totals
+select et, count(ev) as event_count from [events.data] where gid = 1660 group by et
 
 ## NON-RDR sessions
--- select sts from [events.data] where gid = 1167 and sts 
--- not in (select sts from [events.data] where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) group by sts)
+-- select sts from [events.data] where gid = 1660 and sts 
+-- not in (select sts from [events.data] where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) group by sts)
 -- group by sts
 
 # PAGE COUNTS, broken out by session type.  should they be?
@@ -144,13 +165,13 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
     , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
     #, COUNT(CASE WHEN et = 'sc' THEN 1 END) AS scroll_count
     , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
-      FROM [events.data] where gid = 1167 
+      FROM [events.data] where gid = 1660 
       # and sts IN ( select sts from [events.rdrSessions] group by sts )
       group by pid) as a 
   join 
   (select pid, avg(scroll_depth) as median_scroll from  
     (select sts, pid, MAX(ev) as scroll_depth from [events.data] 
-     where et='sc' and gid = 1167 
+     where et='sc' and gid = 1660 
      # and sts IN ( select sts from [events.rdrSessions] group by sts )
      group by sts, pid )
   group by pid) as b
@@ -186,23 +207,22 @@ group by sts, loadCount)
 
 SELECT AVG(a.max_value) as avg_scroll_depth from 
     ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
-     WHERE gid = 1167 and et = 'sc' 
-     and sts IN ( select sts from [events.data] e2 where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) ) 
+     WHERE gid = 1660 and et = 'sc' 
     group by sts, pid 
-    ) a 
+    ) a
 
 
--- select pid, sts FROM [events.data] where gid = 1167 order by TIMESTAMP_TO_MSEC(createdAt) ASC limit 1
+-- select pid, sts FROM [events.data] where gid = 1660 order by TIMESTAMP_TO_MSEC(createdAt) ASC limit 1
 # event create times by session, pid
 -- select sts, pid, max(createdTime) as maxTime, min(createdTime) as minTime 
--- from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime DESC)
+-- from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1660 group by pid, sts, createdTime DESC)
 
 
 
 ## CREATE TABLE: sessionContentTimes
 select sts, pid, maxTime-minTime as timeDiff 
 from (select sts, pid, max(createdTime) as maxTime, min(createdTime) as minTime 
-from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime)
+from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1660 group by pid, sts, createdTime)
 group by sts, pid)
 group by sts, pid, timeDiff
 having timeDiff > 0
@@ -226,10 +246,44 @@ select NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessConte
 # RB AVG SCROLL DEPTH
 SELECT AVG(a.max_value) as avg_scroll_depth from 
     ( SELECT sts, pid, MAX(ev) as max_value from [events.data] e1 
-     WHERE gid = 1167 and et = 'sc' 
-     and sts IN ( select sts from [events.data] e2 where gid = 1167 and (et = 're' OR (et = 'rs' and ev='rd')) ) 
+     WHERE gid = 1660 and et = 'sc' 
+     and sts IN ( select sts from [events.data] e2 where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) ) 
     group by sts, pid 
     ) a 
+
+
+
+
+#### FAIL TO GET GROUP SUMMARIES
+select SUM(a.wl_count) wl, SUM(a.reaction_count) rc, SUM(a.reaction_view_count) rvc, NTH(5, QUANTILES(b.median_scroll,11)) as ms, NTH(5, QUANTILES(c.median_mseconds,11)) as mm from (
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, c.median_mseconds, 
+  ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
+  from 
+  (select pid
+    , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
+    , LAST(CASE WHEN et = 'wl' THEN ptop END) AS page_topics
+    , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
+    , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
+      FROM [events.data] where gid = 1660 
+      # and sts IN ( select sts from [events.rdrSessions] group by sts )
+      group by pid) as a 
+  join 
+  (select pid, avg(scroll_depth) as median_scroll from  
+    (select sts, pid, MAX(ev) as scroll_depth from [events.data] 
+     where et='sc' and gid = 1660 
+     # and sts IN ( select sts from [events.rdrSessions] group by sts )
+     group by sts, pid )
+  group by pid) as b
+  on a.pid = b.pid
+  join
+  (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes] group by pid) as c
+  on a.pid = c.pid 
+  where a.wl_count > 5
+  order by hotness DESC
+  )
+
+
+
 
 
 
