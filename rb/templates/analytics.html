@@ -215,12 +215,12 @@ function otherData() {
     // 
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
     var engagedPages = [
-        { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Amazing, Love It' },
-        { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, Amazing' },
-        { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, OMG!!!!' },
-        { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'I\'ll take it,Love it, Impeccable' },
-        { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love it, Amazing' },
-        { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It' }
+        { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'52.2%', avg_time:'4:41', pvs_session:'2.5', reactions:'Amazing, Love It' },
+        { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'61.6%', avg_time:'3:12', pvs_session:'2.4', reactions:'Love It, Amazing' },
+        { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'62.3%', avg_time:'3:33', pvs_session:'3.0', reactions:'Love It, OMG!!!!' },
+        { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'51.1%', avg_time:'4:02', pvs_session:'2.2', reactions:'I\'ll take it,Love it, Impeccable' },
+        { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'37.8%', avg_time:'6:26', pvs_session:'3.2', reactions:'Love it, Amazing' },
+        { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'54.4%', avg_time:'2:47', pvs_session:'1.5', reactions:'Love It' }
     ];
 
     $.each(engagedPages, function(idx, page) {
@@ -272,9 +272,9 @@ function otherData() {
 
     //
     var session_totals = {
-        reacted:140,
-        viewed:1200,
-        scrolled:8041
+        reacted:1940,
+        viewed:14231,
+        scrolled:132002
     };
     var $temp_sessionInfo = $('<div><div class="template">' +
         '<div class="grid-3 engagement-rate">' +
@@ -295,10 +295,10 @@ function otherData() {
     Morris.Donut({
       element: 'session-actions',
       data: [
-        {label: "Took Action", value: 14000 },
-        {label: "Reacted", value: 140 },
-        {label: "Viewed Reactions", value: 1200 },
-        {label: "Scrolled", value: 8041 }
+        // {label: "Took Action", value: 135798 },
+        {label: "Reacted", value: 1940 },
+        {label: "Viewed Reactions", value: 14231 },
+        {label: "Scrolled", value: 132002 }
       ]
     }).select(0);
 
@@ -319,13 +319,13 @@ function otherData() {
     Morris.Area({
       element: 'engagement-over-time-graph',
       data: [
-        { date: '2014-4-10', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
-        { date: '2014-4-11', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-        { date: '2014-4-12', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-        { date: '2014-4-13', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-        { date: '2014-4-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-        { date: '2014-4-15', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-        { date: '2014-4-16', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
+        { date: '2014-5-10', Reactions: 50,  ReactionViews: 150, Scrolls: 1130,   TimeSpent: 50 },
+        { date: '2014-5-11', Reactions: 75,  ReactionViews: 165, Scrolls: 1276,  TimeSpent: 165 },
+        { date: '2014-5-12', Reactions: 50,  ReactionViews: 140, Scrolls: 1052,  TimeSpent: 140 },
+        { date: '2014-5-13', Reactions: 75,  ReactionViews: 165, Scrolls: 975,  TimeSpent: 165 },
+        { date: '2014-5-14', Reactions: 50,  ReactionViews: 140, Scrolls: 1451,  TimeSpent: 140 },
+        { date: '2014-5-15', Reactions: 75,  ReactionViews: 165, Scrolls: 1372,  TimeSpent: 165 },
+        { date: '2014-5-16', Reactions: 100, ReactionViews: 190, Scrolls: 1108,  TimeSpent: 190 }
       ],
       lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
       xkey: 'date',
@@ -632,8 +632,8 @@ a { color:#5ba0bc; }
             simulate: function() {
                 var readrboardUsageData = {
                     // sessions, pageviews, scroll, time
-                    rb_last_30:[14984,2.55,58.55,'3:48'],
-                    no_rb:[149510,1.56,58.1,'4:42']
+                    rb_last_30:[14984,2.55,58.1,'3:48'],
+                    no_rb:[149510,1.56,58.55,'4:42']
                 };
                 topSummary( readrboardUsageData );
             },
