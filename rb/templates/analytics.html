@@ -58,7 +58,7 @@
 .section h1 { font-size: 21px; }
 .section.readrboard-usage { min-height: 150px; }
 .section.readrboard-usage h1 {margin-bottom: -32px;}
-.column { text-align: center; color:#7f7f7f; font-size:14px; }
+.column { text-align: center; color:#7f7f7f; font-size:20px; }
 .column.left { text-align: left; }
 .noteworthy { color:#247292; }
 .row { clear:both; overflow:auto; }
@@ -102,9 +102,9 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
     var $sessions_row = $('<div class="grid-12 row padded content">' +
             '<div class="grid-4 column left">Sessions</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[0]+'</div>' +
+            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.rb_last_30[0])+'</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[0]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.no_rb[0]+'</div>' +
+            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.no_rb[0])+'</div>' +
         '</div>');
     var $session_pageviews_row = $('<div class="grid-12 row padded content even">' +
             '<div class="grid-4 column left">Session Pageviews</div>' +
@@ -114,9 +114,9 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
         '</div>');
     var $avg_scrolldepth_row = $('<div class="grid-12 row padded content">' +
             '<div class="grid-4 column left">Avg Scroll Depth</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[2]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[2]+'%</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.no_rb[2]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.no_rb[2]+'%</div>' +
         '</div>');
     var $avg_time_row = $('<div class="grid-12 row padded content even">' +
             '<div class="grid-4 column left">Avg Time on Content</div>' +
@@ -157,7 +157,187 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
       ],
       formatter: function (y) { return y + "%" }
     }).select(0);
+
+
+otherData();
+
 }
+
+
+function otherData() {
+    // 
+    var $temp_popularReactions = $('<div><div class="template"></div></div>');
+    var popularReactions = [
+        { body:'Love It', count:1668 },
+        { body:'Amazing', count:260 },
+        { body:'Uh, no', count:127 },
+        { body:'I\'ll Take it', count:77 },
+        { body:'You sure?', count:55 },
+        { body:'Hilarious', count:31 },
+        { body:'A lesson in patience', count:25 },
+        { body:'Solid Collectively', count:20 }
+    ];
+    var itemNumber = 1;
+    $.each(popularReactions, function(idx, reaction) {
+        var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
+        var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
+        $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+        itemNumber++;
+    });
+
+    $('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
+
+
+    var $temp_popularTopics = $('<div><div class="template"></div></div>');
+    var popularTopics = [
+        { body:'The Roots', count:60 },
+        { body:'Roots Picnic', count:55 },
+        { body:'Black Thought', count:50 },
+        { body:'DJ Kast One', count:45 },
+        { body:'Questlove', count:40 },
+        { body:'Nas', count:35 },
+        { body:'Q Tip', count:30 },
+        { body:'In the lonely hour', count:25 },
+        { body:'Sam Smith', count:20 },
+    ];
+    var itemNumber = 1;
+    $.each(popularTopics, function(idx, topic) {
+        var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
+        var charCountModifier = (topic.body.length>14) ? 'smaller':(topic.body.length>20) ? 'smallest':'large'
+        // $temp_popularTopics.find('.template').append('<div class="grid-'+gridNum+'"><span class="topic-tag '+charCountModifier+'"><a href="#">'+topic.body+' <span class="counter">'+topic.count+'</span></a></span></div>'); 
+        $temp_popularTopics.find('.template').append('<span class="topic-tag '+size+'"><a href="#" class="'+charCountModifier+'">'+topic.body+'</a></span>'); 
+        itemNumber++;
+    });
+
+    $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopics).find('.template').animate({'opacity':1},500);
+
+
+    // 
+    var $temp_engagedPages = $('<div><div class="template"></div></div>');
+    var engagedPages = [
+        { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Amazing, Love It' },
+        { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, Amazing' },
+        { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, OMG!!!!' },
+        { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'I\'ll take it,Love it, Impeccable' },
+        { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love it, Amazing' },
+        { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It' }
+    ];
+
+    $.each(engagedPages, function(idx, page) {
+        var $page = $('<div class="grid-3 center padded">' +
+            '<section class="page_card">' +
+                '<h1><a href="#">'+page.title+'</a></h1>' +
+                '<div class="grid-6 attribute padded">'+ page.engagement_rate +' <label>Engagement</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.avg_time +' <label>Engagement</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.pvs_session +' <label>Avg PVs</label></div>' +
+                '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
+            '</section>' +
+        '</div>');
+
+        $temp_engagedPages.find('.template').append( $page );
+    });
+
+    $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
+
+    //
+    var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
+    var engagedReferrers = [
+        { tld:'okayafrica.com', engagement_rate:'15.1%', avg_scroll:'60.3%', avg_time:'5:01', pvs_session:'3.4'},
+        { tld:'facebook.com', engagement_rate:'13.2%', avg_scroll:'59.2%', avg_time:'4:59', pvs_session:'2.2'},
+        { tld:'google.com', engagement_rate:'10.8%', avg_scroll:'52.0%', avg_time:'3:43', pvs_session:'1.8'},
+        { tld:'(direct)', engagement_rate:'10.7%', avg_scroll:'61.5%', avg_time:'4:34', pvs_session:'2.9'},
+        { tld:'google.co.za', engagement_rate:'9.9%', avg_scroll:'54.3%', avg_time:'3:01', pvs_session:'3.1'},
+        { tld:'t.co', engagement_rate:'9.2%', avg_scroll:'55.4%', avg_time:'4:49', pvs_session:'1.9'},
+        { tld:'google.co.uk', engagement_rate:'8.8%', avg_scroll:'56.2%', avg_time:'3:55', pvs_session:'1.8'}
+    ];
+
+    $.each(engagedReferrers, function(idx, referrer) {
+        var $referrer = $('<div class="grid-3 center padded">' +
+            '<section class="page_card">' +
+                '<h1><a href="#">'+referrer.tld+'</a></h1>' +
+                '<div class="grid-6 attribute padded">'+ referrer.engagement_rate +' <label>Engagement</label></div>' +
+                '<div class="grid-6 attribute padded">'+ referrer.avg_scroll +' <label>Avg Scroll</label></div>' +
+                '<div class="grid-6 attribute padded">'+ referrer.avg_time +' <label>Engagement</label></div>' +
+                '<div class="grid-6 attribute padded">'+ referrer.pvs_session +' <label>Avg PVs</label></div>' +
+                // '<div class="grid-12 reactions padded">'+ referrer.reactions +'</div>' +
+            '</section>' +
+        '</div>');
+
+        $temp_engagedReferrers.find('.template').append( $referrer );
+    });
+
+    $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
+
+
+    //
+    var session_totals = {
+        reacted:140,
+        viewed:1200,
+        scrolled:8041
+    };
+    var $temp_sessionInfo = $('<div><div class="template">' +
+        '<div class="grid-3 engagement-rate">' +
+                '<div class="donut" id="session-actions" style="height:200px;"></div>' +
+            '</div>' +
+            '<div class="grid-6 other-totals">' +
+                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.reacted) + ' <label>Reacted</label></div></div>' +
+                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.viewed) + ' <label>Viewed Reactions</label></div></div>' +
+                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.scrolled) + ' <label>Scrolled Down</label></div></div>' +
+            '</div>' +
+            '<div class="grid-3 engagement-rate">' +
+                '<div class="donut" id="session-time" style="height:200px;"></div>' +
+            '</div>' +
+        '</div></div>');
+
+    $('.section.session_summaries.hasLoader').append($temp_sessionInfo).find('.template').animate({'opacity':1},500);
+
+    Morris.Donut({
+      element: 'session-actions',
+      data: [
+        {label: "Took Action", value: 14000 },
+        {label: "Reacted", value: 140 },
+        {label: "Viewed Reactions", value: 1200 },
+        {label: "Scrolled", value: 8041 }
+      ]
+    }).select(0);
+
+    Morris.Donut({
+      element: 'session-time',
+      data: [
+        {label: "sessions over 0:15", value: 14000 },
+        {label: "sessions over 0:30", value: 10000 },
+        {label: "sessions over 0:45", value: 6000 },
+        {label: "sessions over 1:00", value: 1000 },
+        {label: "sessions over 1:30", value: 800 },
+        {label: "sessions over 2:00", value: 300 },
+      ]
+    }).select(0);
+
+    // ENGAGEMENT OVER TIME
+    $('.section.engagement-over-time .hasLoader').append('<div id="engagement-over-time-graph"></div>').find('.template').animate({'opacity':1},500);
+    Morris.Area({
+      element: 'engagement-over-time-graph',
+      data: [
+        { date: '2014-4-10', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
+        { date: '2014-4-11', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+        { date: '2014-4-12', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+        { date: '2014-4-13', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+        { date: '2014-4-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
+        { date: '2014-4-15', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
+        { date: '2014-4-16', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
+      ],
+      lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
+      xkey: 'date',
+      ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
+      labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
+    });
+
+}
+
+
+
+
 </script>
 
 
@@ -207,50 +387,6 @@ a { color:#5ba0bc; }
             </div>
         </div>
 <script>
-var $temp_popularReactions = $('<div><div class="template"></div></div>');
-var popularReactions = [
-    { body:'Love It', count:1668 },
-    { body:'Amazing', count:260 },
-    { body:'Uh, no', count:127 },
-    { body:'I\'ll Take it', count:77 },
-    { body:'You sure?', count:55 },
-    { body:'Hilarious', count:31 },
-    { body:'A lesson in patience', count:25 },
-    { body:'Solid Collectively', count:20 }
-];
-var itemNumber = 1;
-$.each(popularReactions, function(idx, reaction) {
-    var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
-    var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
-    $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
-    itemNumber++;
-});
-
-$('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
-
-
-var $temp_popularTopics = $('<div><div class="template"></div></div>');
-var popularTopics = [
-    { body:'The Roots', count:60 },
-    { body:'Roots Picnic', count:55 },
-    { body:'Black Thought', count:50 },
-    { body:'DJ Kast One', count:45 },
-    { body:'Questlove', count:40 },
-    { body:'Nas', count:35 },
-    { body:'Q Tip', count:30 },
-    { body:'In the lonely hour', count:25 },
-    { body:'Sam Smith', count:20 },
-];
-var itemNumber = 1;
-$.each(popularTopics, function(idx, topic) {
-    var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
-    var charCountModifier = (topic.body.length>14) ? 'smaller':(topic.body.length>20) ? 'smallest':'large'
-    // $temp_popularTopics.find('.template').append('<div class="grid-'+gridNum+'"><span class="topic-tag '+charCountModifier+'"><a href="#">'+topic.body+' <span class="counter">'+topic.count+'</span></a></span></div>'); 
-    $temp_popularTopics.find('.template').append('<span class="topic-tag '+size+'"><a href="#" class="'+charCountModifier+'">'+topic.body+'</a></span>'); 
-    itemNumber++;
-});
-
-$('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopics).find('.template').animate({'opacity':1},500);
 
 </script>
     </div>
@@ -270,32 +406,7 @@ $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopi
             <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
         </div>
 <script>
-var $temp_engagedPages = $('<div><div class="template"></div></div>');
-var engagedPages = [
-    { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Amazing, Love It' },
-    { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, Amazing' },
-    { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It, OMG!!!!' },
-    { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'I\'ll take it,Love it, Impeccable' },
-    { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love it, Amazing' },
-    { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'26', avg_time:'0:47', pvs_session:'1.2', reactions:'Love It' }
-];
 
-$.each(engagedPages, function(idx, page) {
-    var $page = $('<div class="grid-3 center padded">' +
-        '<section class="page_card">' +
-            '<h1><a href="#">'+page.title+'</a></h1>' +
-            '<div class="grid-6 attribute padded">'+ page.engagement_rate +' <label>Engagement</label></div>' +
-            '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
-            '<div class="grid-6 attribute padded">'+ page.avg_time +' <label>Engagement</label></div>' +
-            '<div class="grid-6 attribute padded">'+ page.pvs_session +' <label>Avg PVs</label></div>' +
-            '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
-        '</section>' +
-    '</div>');
-
-    $temp_engagedPages.find('.template').append( $page );
-});
-
-$('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
 </script>
     </div>
 <style>
@@ -362,33 +473,7 @@ $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template'
         </div>
     </div>
 <script>
-var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
-var engagedReferrers = [
-    { tld:'okayafrica.com', engagement_rate:'15.1%', avg_scroll:'60.3%', avg_time:'5:01', pvs_session:'3.4'},
-    { tld:'facebook.com', engagement_rate:'13.2%', avg_scroll:'59.2%', avg_time:'4:59', pvs_session:'2.2'},
-    { tld:'google.com', engagement_rate:'10.8%', avg_scroll:'52.0%', avg_time:'3:43', pvs_session:'1.8'},
-    { tld:'(direct)', engagement_rate:'10.7%', avg_scroll:'61.5%', avg_time:'4:34', pvs_session:'2.9'},
-    { tld:'google.co.za', engagement_rate:'9.9%', avg_scroll:'54.3%', avg_time:'3:01', pvs_session:'3.1'},
-    { tld:'t.co', engagement_rate:'9.2%', avg_scroll:'55.4%', avg_time:'4:49', pvs_session:'1.9'},
-    { tld:'google.co.uk', engagement_rate:'8.8%', avg_scroll:'56.2%', avg_time:'3:55', pvs_session:'1.8'}
-];
 
-$.each(engagedReferrers, function(idx, referrer) {
-    var $referrer = $('<div class="grid-3 center padded">' +
-        '<section class="page_card">' +
-            '<h1><a href="#">'+referrer.tld+'</a></h1>' +
-            '<div class="grid-6 attribute padded">'+ referrer.engagement_rate +' <label>Engagement</label></div>' +
-            '<div class="grid-6 attribute padded">'+ referrer.avg_scroll +' <label>Avg Scroll</label></div>' +
-            '<div class="grid-6 attribute padded">'+ referrer.avg_time +' <label>Engagement</label></div>' +
-            '<div class="grid-6 attribute padded">'+ referrer.pvs_session +' <label>Avg PVs</label></div>' +
-            // '<div class="grid-12 reactions padded">'+ referrer.reactions +'</div>' +
-        '</section>' +
-    '</div>');
-
-    $temp_engagedReferrers.find('.template').append( $referrer );
-});
-
-$('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
 </script>
 
 <style>
@@ -427,72 +512,6 @@ $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.t
             <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Gathering recent daily activity...</div></div>
         </div>
     </div>
-<script>
-var session_totals = {
-    reacted:140,
-    viewed:1200,
-    scrolled:8041
-};
-var $temp_sessionInfo = $('<div><div class="template">' +
-    '<div class="grid-3 engagement-rate">' +
-            '<div class="donut" id="session-actions" style="height:200px;"></div>' +
-        '</div>' +
-        '<div class="grid-6 other-totals">' +
-            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.reacted) + ' <label>Reacted</label></div></div>' +
-            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.viewed) + ' <label>Viewed Reactions</label></div></div>' +
-            '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.scrolled) + ' <label>Scrolled Down</label></div></div>' +
-        '</div>' +
-        '<div class="grid-3 engagement-rate">' +
-            '<div class="donut" id="session-time" style="height:200px;"></div>' +
-        '</div>' +
-    '</div></div>');
-
-    $('.section.session_summaries.hasLoader').append($temp_sessionInfo).find('.template').animate({'opacity':1},500);
-
-    Morris.Donut({
-      element: 'session-actions',
-      data: [
-        {label: "Took Action", value: 14000 },
-        {label: "Reacted", value: 140 },
-        {label: "Viewed Reactions", value: 1200 },
-        {label: "Scrolled", value: 8041 }
-      ]
-    }).select(0);
-
-    Morris.Donut({
-      element: 'session-time',
-      data: [
-        {label: "sessions over 0:15", value: 14000 },
-        {label: "sessions over 0:30", value: 10000 },
-        {label: "sessions over 0:45", value: 6000 },
-        {label: "sessions over 1:00", value: 1000 },
-        {label: "sessions over 1:30", value: 800 },
-        {label: "sessions over 2:00", value: 300 },
-      ]
-    }).select(0);
-
-</script>
-
-<script>
-// ENGAGEMENT OVER TIME
-$('.section.engagement-over-time .hasLoader').append('<div id="engagement-over-time-graph"></div>').find('.template').animate({'opacity':1},500);
-Morris.Area({
-  element: 'engagement-over-time-graph',
-  data: [
-    { date: '2014-4-10', Reactions: 50,  ReactionViews: 50, Scrolls: 50,   TimeSpent: 50 },
-    { date: '2014-4-11', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-    { date: '2014-4-12', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-    { date: '2014-4-13', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-    { date: '2014-4-14', Reactions: 50,  ReactionViews: 40, Scrolls: 150,  TimeSpent: 140 },
-    { date: '2014-4-15', Reactions: 75,  ReactionViews: 65, Scrolls: 175,  TimeSpent: 165 },
-    { date: '2014-4-16', Reactions: 100, ReactionViews: 90, Scrolls: 100,  TimeSpent: 190 }
-  ],
-  lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
-  xkey: 'date',
-  ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
-  labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
-});
-</script>
 
 </section>
 </div>
