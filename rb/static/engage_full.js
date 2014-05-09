@@ -1154,6 +1154,9 @@ function readrBoard($R){
                       tagBodyCrazyHtml = "",
                       tagIsSplitClass = "";
 
+                    
+                    if (typeof tagBodyRaw == 'undefined') { return; }
+                    
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
                         message = (isWriteMode) ? '+1 '+tagBodyRaw :'';
