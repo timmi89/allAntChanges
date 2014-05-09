@@ -1169,7 +1169,7 @@ function readrBoard($R){
                     
                     var charCountText = ""
                     //split long tag onto two lines.
-                    if ( typeof tagBodyRaw != 'undefiend' && tagBodyRaw.length < 16 || renderPercentages === true) {
+                    if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'rdr_charCount'+tagBodyRaw.length;
                         tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
