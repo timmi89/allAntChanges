@@ -221,9 +221,90 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 
 
 ## CREATE TABLE: sessionContentTimes
+# NEW:
+# TIME DIFF, no avg yet
+## TAKE FOUR -- No PID ##
+select avg(timeDiff) as sessionTime from (
+SELECT timeDiff, NTILE(100) OVER (order by timeDiff) as ntile from (
+
+select sts, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+    from (select sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by sts, createdTime)    
+    where sts IN ( select sts from [events.data] where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' ) ) ) 
+    group by sts
+
+    )
+) where timeDiff > 0 and ntile BETWEEN 20 and 80;
+
+## TAKE THREE -- uses PID ##
+select avg(timeDiff) as sessionTime from (
+SELECT timeDiff, NTILE(100) OVER (order by timeDiff) as ntile from (
+
+select sts, pid, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+    from (select pid, sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by pid, sts, createdTime)    
+    where sts IN ( select sts from [events.data] e2 where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' ) ) ) 
+    group by sts, pid
+
+    )
+) where timeDiff > 0 and ntile BETWEEN 10 and 90
+
+
+
+#################### 
+#################### ref
+#################### 
+# outliers
+# from http://jasonsouthwell.com/blog/removing-outliers-in-a-sql-server-query
+-- select w.Gender, Avg(w.Weight) as AvgWeight
+--     from ScaleData w
+--     join ( select d.Gender, Avg(d.Weight) as AvgWeight, 
+--                   2*STDEVP(d.Weight) StdDeviation
+--              from ScaleData d
+--             group by d.Gender
+--          ) d
+--       on w.Gender = d.Gender
+--      and w.Weight between d.AvgWeight-d.StdDeviation 
+--                       and d.AvgWeight+d.StdDeviation
+--    group by w.Gender
+
+
+
+
+
+-- select AVG(a.timeDiff) as avgTimeDiff 
+--   from (
+--     select sts, pid, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+--     from (select pid, sts, createdAt as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime)    
+--     group by sts, pid
+--     ) a
+--   join (
+--     select AVG(timeDiff) as avgTimeDiff, 2*STDDEV(timeDiff) StdDeviation from (
+--         select sts, pid, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+--         from (select pid, sts, createdAt as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime)    
+--         group by sts, pid
+--       ) b
+--     ) b
+--   on a.timeDiff between b.avgTimeDiff-b.StdDeviation
+--                     and b.avgTimeDiff+b.StdDeviation
+
+
+#################### 
+
+
+
+## TAKE TWO ##
+select sts, pid, maxTime-minTime as timeDiff 
+  from (
+
+select sts, pid, max(TIMESTAMP_TO_SEC(createdTime)) as maxTime, min(TIMESTAMP_TO_SEC(createdTime)) as minTime  #, MINUTE(createdTime) as timeUnit
+    from (select pid, sts, createdAt as createdTime FROM [events.data] where gid = 1167 group by pid, sts, createdTime)    
+    group by sts, pid
+
+    )
+
+## TAKE ONE ##
 select sts, pid, maxTime-minTime as timeDiff 
 from (select sts, pid, max(createdTime) as maxTime, min(createdTime) as minTime 
-from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1660 group by pid, sts, createdTime)
+from (select pid, sts, TIMESTAMP_TO_MSEC(createdAt) as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by pid, sts, createdTime)
 group by sts, pid)
 group by sts, pid, timeDiff
 having timeDiff > 0
