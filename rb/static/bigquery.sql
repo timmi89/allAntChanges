@@ -223,6 +223,59 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
 ## CREATE TABLE: sessionContentTimes
 # NEW:
 # TIME DIFF, no avg yet
+
+#NO NTILE
+  select avg(rdr_timeDiff) as rdr_avg_time, avg(timeDiff) as avg_time from 
+    (
+      select rdr_timeDiff from (
+        select sts, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as rdr_timeDiff 
+        from (select sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by sts, createdTime)    
+        where sts IN ( select sts from [events.data] where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' ) ) ) 
+        group by sts
+      ) where rdr_timeDiff > 0 and rdr_timeDiff < 1800
+    ),
+   (
+      SELECT timeDiff from (
+        select sts, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+        from (select sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by sts, createdTime)    
+        group by sts
+        ) where timeDiff > 0 and timeDiff < 1800
+   )
+
+   
+
+## TAKE FIVE WIHT NTILE
+select rdr_avg_time, avg_time from 
+  (
+  select avg(rdr_timeDiff) as rdr_avg_time from 
+    (
+    SELECT rdr_timeDiff, NTILE(100) OVER (order by rdr_timeDiff ASC) as rdr_ntile from 
+      (
+        select rdr_timeDiff from (
+          select sts, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as rdr_timeDiff 
+          from (select sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by sts, createdTime)    
+          where sts IN ( select sts from [events.data] where gid = 1660 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' ) ) ) 
+          group by sts
+        ) where rdr_timeDiff > 0 and rdr_timeDiff < 2700
+      )
+    ) where rdr_ntile BETWEEN 20 and 80
+   ),
+   (
+  select avg(timeDiff) as avg_time from 
+    (
+    SELECT timeDiff, NTILE(100) OVER (order by timeDiff ASC) as ntile from 
+      (
+        SELECT timeDiff from (
+          select sts, (max(TIMESTAMP_TO_SEC(createdTime)) - min(TIMESTAMP_TO_SEC(createdTime))) as timeDiff 
+          from (select sts, createdAt as createdTime FROM [events.data] where gid = 1660 and YEAR(createdAt)=2014 group by sts, createdTime)    
+          group by sts
+          ) where timeDiff > 0 and timeDiff < 2700
+      )
+    ) where ntile BETWEEN 20 and 80
+   )
+
+
+
 ## TAKE FOUR -- No PID ##
 select avg(timeDiff) as sessionTime from (
 SELECT timeDiff, NTILE(100) OVER (order by timeDiff) as ntile from (

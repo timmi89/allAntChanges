@@ -4004,14 +4004,14 @@ function readrBoard($R){
                 if( $.cookie('rdr_session') === null ) {
                     var short_session_guid = RDR.user.session = RDR.util.createGuid();
                     var short_session_expiretime = new Date();
-                    var minutes = 30;
+                    var minutes = 15;
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
                     $.cookie('rdr_session', short_session_guid, { expires: short_session_expiretime });
                 } else {
                     RDR.user.session = $.cookie('rdr_session');
 
                     // lets extend the session time 
-                    var minutes = 30;
+                    var minutes = 10;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
                     $.cookie('rdr_session', RDR.user.session, { expires: short_session_expiretime });
