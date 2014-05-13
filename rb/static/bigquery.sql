@@ -157,7 +157,7 @@ select et, count(ev) as event_count from [events.data] where gid = 1660 group by
 # PAGE COUNTS, broken out by session type.  should they be?
 # NEEDS pvs, scroll depth
 
-select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, c.median_mseconds, 
+select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics, b.median_scroll, 
   ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
   from 
   (select pid
@@ -177,11 +177,15 @@ select a.pid, a.wl_count, a.reaction_count, a.reaction_view_count, a.page_topics
      group by sts, pid )
   group by pid) as b
   on a.pid = b.pid
-  join
-  (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes] group by pid) as c
-  on a.pid = c.pid 
-  where a.wl_count > 5
-  order by hotness DESC
+  where a.wl_count > 5 and a.reaction_count>0 
+  order by hotness desc
+  
+## NOT RIGHT NOW
+ # join
+ # (select pid, NTH(5, QUANTILES(timeDiff, 11)) as median_mseconds from [events.sessContentTimes] group by pid) as c
+ # on a.pid = c.pid 
+ # where a.wl_count > 5
+ # order by hotness DESC
   
   -- join
   -- (select avg(loadCount) from 
@@ -242,7 +246,7 @@ SELECT AVG(a.max_value) as avg_scroll_depth from
         ) where timeDiff > 0 and timeDiff < 1800
    )
 
-   
+
 
 ## TAKE FIVE WIHT NTILE
 select rdr_avg_time, avg_time from 

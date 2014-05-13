@@ -95,6 +95,20 @@ function numberWithCommas(x) {
 //         no_rb:[55012,1.5,15,10]
 //     };
 function topSummary( readrboardUsageData ) {
+console.log(readrboardUsageData);
+
+/*
+readrboardUsageData.all_sessions_count: 12495
+readrboardUsageData.avg_pageviews: 1.12
+readrboardUsageData.avg_scroll_depth: 71.87
+readrboardUsageData.avg_time: 146.3
+readrboardUsageData.rdr_avg_pageviews: 1.23
+readrboardUsageData.rdr_avg_scroll_depth: 73.24
+readrboardUsageData.rdr_avg_time: 245.68
+readrboardUsageData.rdr_sessions_count: 597
+readrboardUsageData.reaction_count: 25
+readrboardUsageData.reaction_view_count: 1164
+*/
 
 var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
@@ -102,27 +116,27 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
     var $sessions_row = $('<div class="grid-12 row padded content">' +
             '<div class="grid-4 column left">Sessions</div>' +
-            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.rb_last_30[0])+'</div>' +
+            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.rdr_sessions_count)+'</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[0]+'</div>' +
-            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.no_rb[0])+'</div>' +
+            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.all_sessions_count)+'</div>' +
         '</div>');
     var $session_pageviews_row = $('<div class="grid-12 row padded content even">' +
             '<div class="grid-4 column left">Session Pageviews</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[1]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_pageviews+'</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[1]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.no_rb[1]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.avg_pageviews+'</div>' +
         '</div>');
     var $avg_scrolldepth_row = $('<div class="grid-12 row padded content">' +
             '<div class="grid-4 column left">Avg Scroll Depth</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[2]+'%</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.no_rb[2]+'%</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.avg_scroll_depth+'%</div>' +
         '</div>');
     var $avg_time_row = $('<div class="grid-12 row padded content even">' +
             '<div class="grid-4 column left">Avg Time on Content</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rb_last_30[3]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_time+'</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.no_rb[3]+'</div>' +
+            '<div class="grid-4 column">'+readrboardUsageData.avg_time+'</div>' +
         '</div>');
 
     $temp_readrboardUsage.find('.template').append( $sessions_row, $session_pageviews_row, $avg_scrolldepth_row, $avg_time_row );
@@ -136,10 +150,10 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
     '<div class="grid-9 other-totals"></div></div>');
 
     var summaryData = [
-        { data:numberWithCommas(2575),label:'Reactions' },
-        { data:numberWithCommas(174356),label:'Reaction Views' },
-        { data:'58.5%',label:'Avg Scroll Depth' },
-        { data:'3:48',label:'Avg Time Spent on Content' }
+        { data:numberWithCommas(readrboardUsageData.reaction_count),label:'Reactions' },
+        { data:numberWithCommas(readrboardUsageData.reaction_view_count),label:'Reaction Views' },
+        { data: readrboardUsageData.rdr_avg_scroll_depth.toString() + '%',label:'Avg Scroll Depth' },
+        { data:readrboardUsageData.rdr_avg_time,label:'Avg Time Spent on Content' }
     ];
     $.each(summaryData, function(idx, item) {
         var $item = $('<div class="grid-quarter attribute"><div class="data">'+item.data+' <label>'+item.label+'</label></div></div>');
@@ -149,57 +163,83 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
     $('.section.summary').append($temp_summarySection).find('.template').animate({'opacity':1},500);
 
 
+    var rdr_session_percentage = (Math.round( (readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
+    var session_percentage = (Math.round( ((readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count)/readrboardUsageData.all_sessions_count) * 100)/100)*100;
+
     Morris.Donut({
       element: 'engaged-sessions',
       data: [
-        {label: "Engaged ReadrBoard", value: 9.9 },
-        {label: "Other Sessions", value: 90.1 }
+        {label: "Engaged ReadrBoard", value: rdr_session_percentage },
+        {label: "Other Sessions", value: session_percentage }
       ],
       formatter: function (y) { return y + "%" }
     }).select(0);
 
 
-otherData();
+// otherData();
 
 }
 
+function pageSummary(pages) {
+    var $temp_engagedPages = $('<div><div class="template"></div></div>');
 
-function otherData() {
-    // 
-    var $temp_popularReactions = $('<div><div class="template"></div></div>');
-    var popularReactions = [
-        { body:'Love It', count:1668 },
-        { body:'Amazing', count:260 },
-        { body:'Uh, no', count:127 },
-        { body:'I\'ll Take it', count:77 },
-        { body:'You sure?', count:55 },
-        { body:'Hilarious', count:31 },
-        { body:'A lesson in patience', count:25 },
-        { body:'Solid Collectively', count:20 }
-    ];
-    var itemNumber = 1;
-    $.each(popularReactions, function(idx, reaction) {
-        var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
-        var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
-        $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="#">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
-        itemNumber++;
+    var pageNum = (pages.length > 30) ? 30 : pages.length;
+
+    var engagedPages = [];
+    for (var i=0;i<30;i++) {
+        var engagement_rate = (pages[i].a_reaction_count + pages[i].a_reaction_view_count/pages[i].a_wl_count*100).toFixed(2);
+        engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:pages[i].b_median_scroll } );
+        // engagedPages.push({ body:hotTopics[i][0], count:hotTopics[i][1] });
+    }
+
+    // var engagedPages = [
+    //     { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'52.2%', avg_time:'4:41', pvs_session:'2.5', reactions:'Amazing, Love It' },
+    //     { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'61.6%', avg_time:'3:12', pvs_session:'2.4', reactions:'Love It, Amazing' },
+    //     { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'62.3%', avg_time:'3:33', pvs_session:'3.0', reactions:'Love It, OMG!!!!' },
+    //     { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'51.1%', avg_time:'4:02', pvs_session:'2.2', reactions:'I\'ll take it,Love it, Impeccable' },
+    //     { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'37.8%', avg_time:'6:26', pvs_session:'3.2', reactions:'Love it, Amazing' },
+    //     { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'54.4%', avg_time:'2:47', pvs_session:'1.5', reactions:'Love It' }
+    // ];
+
+    $.each(engagedPages, function(idx, page) {
+        var $page = $('<div class="grid-3 center padded">' +
+            '<section class="page_card">' +
+                '<h1><a href="#">'+page.title+'</a></h1>' +
+                '<div class="grid-6 attribute padded">'+ page.engagement_rate +'% <label>Engagement</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.reaction_count +' <label>Reactions</label></div>' +
+                '<div class="grid-6 attribute padded">'+ page.reaction_view_count +' <label>Reaction View Count</label></div>' +
+                // '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
+            '</section>' +
+        '</div>');
+
+        $temp_engagedPages.find('.template').append( $page );
     });
 
-    $('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
+    $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
 
-
+}
+function hotTopics(hotTopics) {
     var $temp_popularTopics = $('<div><div class="template"></div></div>');
-    var popularTopics = [
-        { body:'The Roots', count:60 },
-        { body:'Roots Picnic', count:55 },
-        { body:'Black Thought', count:50 },
-        { body:'DJ Kast One', count:45 },
-        { body:'Questlove', count:40 },
-        { body:'Nas', count:35 },
-        { body:'Q Tip', count:30 },
-        { body:'In the lonely hour', count:25 },
-        { body:'Sam Smith', count:20 },
-    ];
+
+    var topicNum = (hotTopics.length > 30) ? 30 : hotTopics.length;
+
+    var popularTopics = [];
+    for (var i=0;i<30;i++) {
+        popularTopics.push({ body:hotTopics[i][0], count:hotTopics[i][1] });
+    }
+
+    // var popularTopics = [
+    //     { body:'The Roots', count:60 },
+    //     { body:'Roots Picnic', count:55 },
+    //     { body:'Black Thought', count:50 },
+    //     { body:'DJ Kast One', count:45 },
+    //     { body:'Questlove', count:40 },
+    //     { body:'Nas', count:35 },
+    //     { body:'Q Tip', count:30 },
+    //     { body:'In the lonely hour', count:25 },
+    //     { body:'Sam Smith', count:20 },
+    // ];
     var itemNumber = 1;
     $.each(popularTopics, function(idx, topic) {
         var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
@@ -210,35 +250,14 @@ function otherData() {
     });
 
     $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopics).find('.template').animate({'opacity':1},500);
+}
 
-
+function otherData() {
     // 
-    var $temp_engagedPages = $('<div><div class="template"></div></div>');
-    var engagedPages = [
-        { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'52.2%', avg_time:'4:41', pvs_session:'2.5', reactions:'Amazing, Love It' },
-        { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'61.6%', avg_time:'3:12', pvs_session:'2.4', reactions:'Love It, Amazing' },
-        { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'62.3%', avg_time:'3:33', pvs_session:'3.0', reactions:'Love It, OMG!!!!' },
-        { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'51.1%', avg_time:'4:02', pvs_session:'2.2', reactions:'I\'ll take it,Love it, Impeccable' },
-        { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'37.8%', avg_time:'6:26', pvs_session:'3.2', reactions:'Love it, Amazing' },
-        { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'54.4%', avg_time:'2:47', pvs_session:'1.5', reactions:'Love It' }
-    ];
+    
 
-    $.each(engagedPages, function(idx, page) {
-        var $page = $('<div class="grid-3 center padded">' +
-            '<section class="page_card">' +
-                '<h1><a href="#">'+page.title+'</a></h1>' +
-                '<div class="grid-6 attribute padded">'+ page.engagement_rate +' <label>Engagement</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.avg_time +' <label>Engagement</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.pvs_session +' <label>Avg PVs</label></div>' +
-                '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
-            '</section>' +
-        '</div>');
 
-        $temp_engagedPages.find('.template').append( $page );
-    });
-
-    $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
+    
 
     //
     var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
@@ -391,7 +410,7 @@ a { color:#5ba0bc; }
 </script>
     </div>
 <style>
-.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
+.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; height:250px; margin-bottom:30px;}
 .page_card:hover { background:#ddeefa; }
 .page_card h1 { font-size:18px; }
 .page_card .attribute { font-size:16px; font-weight:bold; }
@@ -538,31 +557,39 @@ a { color:#5ba0bc; }
                     }
                 }
 
-                RB.analytics.toggleGlobalLoader();
-                RB.analytics.getSummaries();
+                // RB.analytics.toggleGlobalLoader();
             },
             toggleGlobalLoader: function() {
                 // TODO animate something
-                console.log('toggleGlobalLoader');
+                // console.log('toggleGlobalLoader');
             },
             initAnalytics: function() {
-                RB.analytics.toggleGlobalLoader();
-                console.log('initAnalytics');
-                $.ajax({
-                    url: RB.analytics.queryHost + '/initAnalytics',
-                    type: "get",
-                    data: {
-                        json: $.toJSON( { sn:'{{group.short_name}}',gid:RB.group.id } )
-                    },
-                    success: function(response) {
-                        console.log('received: init success');
-                        console.log(response);
-                        RB.group.tempTablePre = response.tempTablePre;
-                        RB.analytics.createRdrSessions();
-                        RB.analytics.createSessionPageloads();
-                        RB.analytics.sessionPageTimes();
-                        }
-                    });
+                RB.analytics.getTopPages();
+                RB.analytics.getTopReactions();
+                RB.analytics.getSummaries();
+
+
+                // RB.analytics.toggleGlobalLoader();
+                // RB.analytics.createRdrSessions();
+                // RB.analytics.createSessionPageloads();
+                // RB.analytics.sessionPageTimes();
+
+                // console.log('initAnalytics');
+                // $.ajax({
+                //     url: RB.analytics.queryHost + '/initAnalytics',
+                //     type: "get",
+                //     data: {
+                //         json: $.toJSON( { sn:'{{group.short_name}}',gid:RB.group.id } )
+                //     },
+                //     success: function(response) {
+                //         console.log('received: init success');
+                //         console.log(response);
+                //         RB.group.tempTablePre = response.tempTablePre;
+                //         RB.analytics.createRdrSessions();
+                //         RB.analytics.createSessionPageloads();
+                //         RB.analytics.sessionPageTimes();
+                //         }
+                //     });
             },
             createSessionPageloads: function() {
                 console.log('createSessionPageloads');
@@ -616,11 +643,69 @@ a { color:#5ba0bc; }
                 url: RB.analytics.queryHost + '/getSummaries',
                 type: "get",
                 data: {
-                    json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
+                    json: $.toJSON( { gid:RB.group.id } )
                 },
                 success: function(response) {
                     console.log('received: getSummaries success');
+                    topSummary(response);
+                    // console.log(response);
+                    // RB.analytics.dequeue('getSummaries');
+
+                    }
+                });
+            },
+            getTopPages: function() {
+                console.log('getTopPages');
+                $.ajax({
+                url: RB.analytics.queryHost + '/getTopPages',
+                type: "get",
+                data: {
+                    json: $.toJSON( { gid:RB.group.id } )
+                },
+                success: function(response) {
+                    // console.log('received: getTopPages success');
+                    // console.log(response);
+                    pageSummary(response.pages);
+                    hotTopics(response.hot_topics);
+                    // RB.analytics.dequeue('getSummaries');
+
+                    }
+                });
+            },
+            getTopReactions: function() {
+                console.log('getTopReactions');
+                $.ajax({
+                url: RB.analytics.queryHost + '/getTopReactions',
+                type: "get",
+                data: {
+                    json: $.toJSON( { gid:RB.group.id } )
+                },
+                success: function(response) {
+                    console.log('received: getTopReactions success');
                     console.log(response);
+
+                    var $temp_popularReactions = $('<div><div class="template"></div></div>');
+                    var popularReactions = response.reactions;
+                    // [
+                    //     { body:'Love It', count:1668 },
+                    //     { body:'Amazing', count:260 },
+                    //     { body:'Uh, no', count:127 },
+                    //     { body:'I\'ll Take it', count:77 },
+                    //     { body:'You sure?', count:55 },
+                    //     { body:'Hilarious', count:31 },
+                    //     { body:'A lesson in patience', count:25 },
+                    //     { body:'Solid Collectively', count:20 }
+                    // ];
+                    var itemNumber = 1;
+                    $.each(popularReactions, function(idx, reaction) {
+                        console.log(reaction);
+                        var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
+                        var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':''
+                        $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+RB.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+                        itemNumber++;
+                    });
+
+                    $('.section.reactions-and-topics').find('.reactions-holder').html($temp_popularReactions).find('.template').animate({'opacity':1},500);
                     // RB.analytics.dequeue('getSummaries');
 
                     }
