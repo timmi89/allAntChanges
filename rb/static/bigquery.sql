@@ -114,8 +114,25 @@ order by loadCount DESC);
 select ref, count(et) evCount from [events.data] where gid = 1661 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) group by ref
 order by evCount DESC
 
-
-
+# REFERRERS
+select a.ref, a.wl_count, a.reaction_count, a.reaction_view_count, b.median_scroll, 
+  ((a.reaction_count + a.reaction_view_count + b.median_scroll)/(a.wl_count+1.000)) as hotness
+  from 
+  (select ref
+    , COUNT(CASE WHEN et = 'wl' THEN 1 END) AS wl_count
+    , COUNT(CASE WHEN et = 're' THEN 1 END) AS reaction_count
+    , COUNT(CASE WHEN ( (et = 'rs' and ev = 'rd') OR (et = 'sb' and ev = 'show')) THEN 1 END) AS reaction_view_count
+      FROM [events.data] where gid = 1660 
+      group by ref) as a 
+  join 
+  (select ref, avg(scroll_depth) as median_scroll from  
+    (select sts, ref, MAX(ev) as scroll_depth from [events.data] 
+     where et='sc' and gid = 1660 
+     group by sts, ref )
+  group by ref) as b
+  on a.ref = b.ref
+  where a.wl_count > 5 and a.reaction_count>0 
+  order by hotness desc
 
 
 

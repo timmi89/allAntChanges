@@ -182,39 +182,33 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
 
 function pageSummary(pages) {
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
+    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Scroll Depth</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
 
     var pageNum = (pages.length > 30) ? 30 : pages.length;
 
     var engagedPages = [];
     for (var i=0;i<30;i++) {
-        var engagement_rate = (pages[i].a_reaction_count + pages[i].a_reaction_view_count/pages[i].a_wl_count*100).toFixed(2);
-        engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:pages[i].b_median_scroll } );
+        var engagement_rate = Math.round(((pages[i].a_reaction_count + pages[i].a_reaction_view_count)/pages[i].a_wl_count)*100);
+        var scroll_rate = Math.round(pages[i].b_median_scroll*100)/100;
+        engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness } );
         // engagedPages.push({ body:hotTopics[i][0], count:hotTopics[i][1] });
     }
 
-    // var engagedPages = [
-    //     { title:'SZA – "Sweet November" + "Julia" & \'Z\' Tracklisting', engagement_rate:'21.2%', avg_scroll:'52.2%', avg_time:'4:41', pvs_session:'2.5', reactions:'Amazing, Love It' },
-    //     { title:'Prince Wastes No Time, Drops "The Breakdown"', engagement_rate:'14.4%', avg_scroll:'61.6%', avg_time:'3:12', pvs_session:'2.4', reactions:'Love It, Amazing' },
-    //     { title:'Sam Smith \'In The Lonely Hour\' Track List + Album Cover', engagement_rate:'13.2%', avg_scroll:'62.3%', avg_time:'3:33', pvs_session:'3.0', reactions:'Love It, OMG!!!!' },
-    //     { title:'The Roots Drop "When The People Cheer" - 1st Single From \'...&TYSYC\' [CDQ]', engagement_rate:'12.8%', avg_scroll:'51.1%', avg_time:'4:02', pvs_session:'2.2', reactions:'I\'ll take it,Love it, Impeccable' },
-    //     { title:'Nas x Q-Tip x The Roots – "One Love" + "The World Is Yours" Live On The Tonight Show', engagement_rate:'12.7%', avg_scroll:'37.8%', avg_time:'6:26', pvs_session:'3.2', reactions:'Love it, Amazing' },
-    //     { title:'Listen to The Roots "Tomorrow" feat. Raheem DeVaughn [CDQ]', engagement_rate:'12.0%', avg_scroll:'54.4%', avg_time:'2:47', pvs_session:'1.5', reactions:'Love It' }
-    // ];
-
     $.each(engagedPages, function(idx, page) {
-        var $page = $('<div class="grid-3 center padded">' +
-            '<section class="page_card">' +
-                '<h1><a href="#">'+page.title+'</a></h1>' +
-                '<div class="grid-6 attribute padded">'+ page.engagement_rate +'% <label>Engagement</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.avg_scroll +' <label>Avg Scroll</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.reaction_count +' <label>Reactions</label></div>' +
-                '<div class="grid-6 attribute padded">'+ page.reaction_view_count +' <label>Reaction View Count</label></div>' +
+        var $page = $('<tr class="page_card">' +
+                '<td class="title"><h1><a href="#">'+page.title+'</a></h1></td>' +
+                '<td class="attribute">'+ page.engagement_rate +' <label>Engagement</label></td>' +
+                '<td class="attribute">'+ page.avg_scroll +'% <label>Avg Scroll</label></td>' +
+                '<td class="attribute">'+ page.reaction_count +' <label>Reactions</label></td>' +
+                '<td class="attribute">'+ page.reaction_view_count +' <label>Reaction View Count</label></td>' +
+                '<td class="attribute">'+ page.wl_count +' <label>Reads</label></td>' +
                 // '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
-            '</section>' +
-        '</div>');
+        '</tr>');
 
-        $temp_engagedPages.find('.template').append( $page );
+        $table.append($page);
+
     });
+    $temp_engagedPages.find('.template').append( $table );
 
     $('.section.engaged-pages .hasLoader').html($temp_engagedPages).find('.template').animate({'opacity':1},500);
 
@@ -251,6 +245,40 @@ function hotTopics(hotTopics) {
 
     $('.section.reactions-and-topics').find('.topics-holder').html($temp_popularTopics).find('.template').animate({'opacity':1},500);
 }
+
+function refSummary(referrers) {
+    var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
+    var $table = $('<table><tr><th>Title</th><th>Scroll Depth</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+
+    var referrerNum = (referrers.length > 30) ? 30 : referrers.length;
+    var engagedReferrers = [];
+    for (var i=0;i<30;i++) {
+        if (typeof referrers[i] != 'undefined') {
+            var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*100);
+            var scroll_rate = Math.round(referrers[i].b_median_scroll*100)/100;
+            engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, avg_scroll:scroll_rate, wl_count:referrers[i].a_wl_count } );
+        }
+    }
+
+    $.each(engagedReferrers, function(idx, referrer) {
+        var $referrer = $('<tr class="page_card">' +
+                '<td class="title"><h1><a href="#">'+referrer.title+'</a></h1></td>' +
+                // '<td class="attribute">'+ referrer.hotness +' <label>Engagement</label></td>' +
+                '<td class="attribute">'+ referrer.avg_scroll +'% <label>Avg Scroll</label></td>' +
+                '<td class="attribute">'+ referrer.reaction_count +' <label>Reactions</label></td>' +
+                '<td class="attribute">'+ referrer.reaction_view_count +' <label>Reaction View Count</label></td>' +
+                '<td class="attribute">'+ referrer.wl_count +' <label>Reads</label></td>' +
+        '</tr>');
+
+        $table.append($referrer);
+
+    });
+    $temp_engagedReferrers.find('.template').append( $table );
+
+    $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
+
+}
+
 
 function otherData() {
     // 
@@ -410,11 +438,13 @@ a { color:#5ba0bc; }
 </script>
     </div>
 <style>
-.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; height:250px; margin-bottom:30px;}
+.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
 .page_card:hover { background:#ddeefa; }
-.page_card h1 { font-size:18px; }
-.page_card .attribute { font-size:16px; font-weight:bold; }
-.page_card .attribute label { font-size:12px; font-weight:normal; display:block; }
+.page_card h1 { font-size:16px; }
+.page_card td {padding:10px 0; text-align: center;}
+.page_card .title { width:40%;}
+.page_card .attribute { font-size:14px; xfont-weight:bold; width:12%;}
+.page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
 .page_card .reactions { font-size:11px; font-weight:bold; } 
 </style>
     <div class="section engaged-pages">
@@ -496,8 +526,8 @@ a { color:#5ba0bc; }
 </script>
 
 <style>
-.session_summaries { overflow:hidden; min-height: 200px;}
-.engagement-over-time { overflow:hidden; }
+.session_summaries { overflow:hidden; min-height: 200px; display: none;}
+.engagement-over-time { overflow:hidden; display: none; }
 .engagement-over-time .hasLoader { min-height: 200px;}
 </style>
 
@@ -567,6 +597,7 @@ a { color:#5ba0bc; }
                 RB.analytics.getTopPages();
                 RB.analytics.getTopReactions();
                 RB.analytics.getSummaries();
+                RB.analytics.getTopReferrers();
 
 
                 // RB.analytics.toggleGlobalLoader();
@@ -669,7 +700,32 @@ a { color:#5ba0bc; }
                     hotTopics(response.hot_topics);
                     // RB.analytics.dequeue('getSummaries');
 
-                    }
+                }, error: function(request, status, error) {
+                    console.log('error: ', status, error);
+                }, complete:function(request, status) {
+                    console.log('get top pages COMPLETE: '+status);
+                }
+                });
+            },
+            getTopReferrers: function() {
+                console.log('getTopReferrers');
+                $.ajax({
+                url: RB.analytics.queryHost + '/getTopReferrers',
+                type: "get",
+                data: {
+                    json: $.toJSON( { gid:RB.group.id } )
+                },
+                success: function(response) {
+                    // console.log('received: getTopReferrers success');
+                    // console.log(response);
+                    refSummary(response.referrers);
+                    // RB.analytics.dequeue('getSummaries');
+
+                }, error: function(request, status, error) {
+                    console.log('error: ', status, error);
+                }, complete:function(request, status) {
+                    console.log('get top pages COMPLETE: '+status);
+                }
                 });
             },
             getTopReactions: function() {
