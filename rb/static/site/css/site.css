@@ -232,8 +232,11 @@ section[role="subheader"].admin {
 
 /****** learn ******/
 .learn_page .masthead {letter-spacing:-1px; overflow:auto; padding:0;}
-.learn_page .masthead h1 { font-family:'RDR_HelveticaBold'; font-size:48px; margin:40px 0; background: transparent; color:#3b3b3b;}
+.learn_page .masthead h1 { font-family:'RDR_Helvetica'; font-size:42px; background: transparent; color:#3b3b3b;}
+.learn_page .masthead h1 .subnotes { font-size:21px; margin-bottom:20px;}
+.learn_page .masthead h2  { margin:17px 0 0 0; }
 .learn_page .masthead p  { font-family:'Helvetica','RDR_Helvetica'; font-size:28px; color:#3b3b3b; }
+.learn_page .masthead sup  { font-size:16px; color:#3b3b3b; vertical-align: top; line-height: 285%; }
 .learn_page .masthead strong {display: block;}
 .engagement_today { background:#dfdfdf; clear:both; margin-top:40px;}
 .engagement_today h2 { font-family:Helvetica,'RDR_HelveticaBold'; font-size:28px; margin-bottom:20px; }
