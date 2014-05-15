@@ -100,6 +100,7 @@ urlpatterns = patterns('',
   url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
   url(r'^learn/$','rb.views.learn'),
+  url(r'^notes/$','rb.views.notes'),
   
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code' 

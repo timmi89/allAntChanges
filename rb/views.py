@@ -135,6 +135,20 @@ def learn(request):
       context_instance=RequestContext(request)
     )
 
+def notes(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+    context['hasSubheader'] = True
+
+    return render_to_response(
+      "notes.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+
 def retailers(request):
     cookie_user = checkCookieToken(request)
     context = {
