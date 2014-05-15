@@ -809,11 +809,12 @@ a { color:#5ba0bc; }
         // defined in template
         RB.group.short_name = "{{ group.short_name }}";
         RB.group.full_name = "{{ group.name }}";
-        // RB.group.id = "{{ group.id }}";
-        RB.group.id = 1660;
+        RB.group.id = "{{ group.id }}";
+        // RB.group.id = 1660;
         
         $(function(){
-            RB.group.id = 1660;
+            // RB.group.id = 1660;
+            RB.group.id = "{{ group.id }}";
 
             RB.analytics.setDates();
 
