@@ -5,6 +5,12 @@
 
 {% block title %}{{ cookie_user }} Management{%endblock%}
 
+{% block mastheadContent %}
+    {% with "manage_reactions" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+{% endblock %}
+
 {% block wideContent %}
 <div class="mostlyWide">
 	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
