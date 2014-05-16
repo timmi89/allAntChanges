@@ -9,6 +9,7 @@
 <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
 <link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
 <link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2">
+<script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
 <style>
     section[role="datepicker"] button {
         position: relative;
@@ -18,6 +19,14 @@
 {% endblock %}
 
 {% block wideContent %}
+
+<script type="text/javascript">
+//don't depend on Parse
+if(typeof Parse !== "undefined"){
+    Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+}
+</script>
+
 <div class="mostlyWide">
 <h1>{{ group.name }} Analytics</h1>
 <section role="datepicker" class="datepicker">
