@@ -92,6 +92,17 @@ window.RDRAuth = {
         RDRAuth.popups.loginWindow.focus();
         return false;
     },
+    openChangePasswordWindow: function(options){
+        var windowProps = getWindowProps(options);
+        RDRAuth.popups.loginWindow = window.open(
+            RDR_baseUrl+'/change_password/',
+            'readr_change_password',
+            windowProps
+        );
+        RDRAuth.checkRBLoginWindow();
+        RDRAuth.popups.loginWindow.focus();
+        return false;
+    },
 	events: {
 		track: function( data ) {
 	        // RDRAuth.events.track:

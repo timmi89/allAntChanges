@@ -154,6 +154,7 @@ urlpatterns = patterns('',
   url(r'^user_create/$', 'rb.views.create_rb_user'),
   url(r'^confirmemail/$', 'rb.views.confirm_rb_user'),
   url(r'^reset_password/$', 'rb.views.reset_rb_password'),
+  url(r'^change_password/$', 'rb.views.change_rb_password'),
   url(r'^request_password/$', 'rb.views.request_password_reset'),
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   

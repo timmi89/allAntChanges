@@ -704,6 +704,46 @@ def request_password_reset(request):
     
     return response   
 
+def change_rb_password(request):
+    data = {}
+    context = {}
+    cookie_user = checkCookieToken(request)
+    # cookies = request.COOKIES
+    # data['user_id'] = cookies.get('user_id', None)
+    # data['readr_token'] = cookies.get('readr_token', None)
+
+    if not cookie_user: return HttpResponseRedirect('/')
+
+    if request.method == 'GET':
+        form = ChangePasswordWhileLoggedInForm(initial={'uid' : cookie_user.id })
+
+    elif request.method == 'POST':
+        try:
+            user_id = request.POST['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your request.  Looks like you are not logged in.'
+            logger.warning(str(ke))
+    
+        form = ChangePasswordWhileLoggedInForm(request.POST)
+        # is_valid_token = validatePasswordToken(user_id, password_token)
+        
+        if form.is_valid():
+            logger.info("resetting password for " + str(user_id))
+            user = form.save(True)            
+            context['requested'] = True
+    
+
+    context['form'] = form
+    
+    response =  render_to_response(
+        "popup-forms/password_change_loggedin.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+    return response
+        
+
 def reset_rb_password(request):
     context = {}
     if request.method == 'GET':

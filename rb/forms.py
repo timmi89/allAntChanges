@@ -75,6 +75,47 @@ class CreateUserForm(forms.ModelForm):
             user.save()
         return user
             
+class ChangePasswordWhileLoggedInForm(forms.ModelForm):
+    uid = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
+    password = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_("Password confirmation"), widget=forms.PasswordInput,
+        help_text = _("Enter the same password as above, for verification."))
+
+    def __init__(self, *args, **kwargs):
+        super(ChangePasswordWhileLoggedInForm, self).__init__(*args, **kwargs)
+        
+    class Meta:
+        model = User
+        fields = ("password",)
+
+    def clean_uid(self):
+        return self.cleaned_data['uid']
+        
+    def clean_password(self):
+        return self.cleaned_data.get("password","")
+
+    def clean_password2(self):
+        password = self.cleaned_data.get("password", "")
+        password2 = self.cleaned_data["password2"]
+        if password != password2:
+            print "Bad password "
+            raise forms.ValidationError(_("The two password fields didn't match."))
+        return password2
+    
+    def is_valid(self):
+        valid = super(ChangePasswordWhileLoggedInForm, self).is_valid()
+        print self.errors
+        return valid
+    
+    def save(self, commit=True):
+        user = User.objects.get(id=int(self.cleaned_data['uid']))
+        
+        user.set_password(self.cleaned_data["password"])
+        
+        if commit:
+            user.save()
+        return user
+
 class ChangePasswordForm(forms.ModelForm):
     uid = forms.CharField(label=_('User Id'), widget=forms.HiddenInput)
     password_token = forms.CharField(label=_('Reset Token'), widget=forms.HiddenInput)
