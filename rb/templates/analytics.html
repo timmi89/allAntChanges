@@ -693,8 +693,8 @@ a { color:#5ba0bc; }
                     json: $.toJSON( { gid:RB.group.id } )
                 },
                 success: function(response) {
-                    // console.log('received: getTopPages success');
-                    // console.log(response);
+                    console.log('received: getTopPages success');
+                    console.log(response);
                     pageSummary(response.pages);
                     hotTopics(response.hot_topics);
                     // RB.analytics.dequeue('getSummaries');
