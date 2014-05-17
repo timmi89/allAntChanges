@@ -19,9 +19,9 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
 
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://readrboard-events.appspot.com/" : "http://localhost:8080"
+var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert"
 
-var trackingUrl = "http://events.readrboard.com/insert";
+// var trackingUrl = "http://events.readrboard.com/insert";
 
 window.RDRAuth = {
     isOffline: (document.domain == "local.readrboard.com"),
