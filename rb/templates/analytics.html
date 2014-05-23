@@ -10,19 +10,6 @@
 <script src="/static/components/morris/morris.js"></script>
 <script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
 
-<!-- <script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script> -->
-<!-- <script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script> -->
-<!-- <script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script> -->
-<!-- <script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script> -->
-<!-- <link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css"> -->
-<!--
-<style>
-    section[role="datepicker"] button {
-        position: relative;
-        top:-4px;
-    }
-</style>
--->
 {% endblock %}
 
 {% block mastheadContent %}
@@ -69,9 +56,176 @@
 .loading div { display: inline-block; }
 .template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
 /*.template.rendered { opacity:1;transition: opacity 5s ease-in-out; -moz-transition: opacity 5s ease-in-out; -webkit-transition: opacity 5s ease-in-out; }*/
+
+
+.loading { display:none; }
+
+
+.datapoint { width:75%; margin:0 auto 5rem; }
+.datapoint .number { font-family: 'RDR_HelveticaBold'; font-size:64px; color:#616161; }
+.datapoint .number.medium { font-size:48px; }
+.datapoint .number.small { font-size:42px; }
+.datapoint label { display:block; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; }
+
+.center-column { text-align:center;  }
+.center-column .datapoint { margin:0 auto; }
+
+.dashboard-name { width:85%; margin:0 auto; border:7px solid #616161; font-family: 'RDR_HelveticaBold'; font-size:42px; color:#616161; text-align: center; overflow: hidden; padding: 1.5rem 0.5rem; }
+.first-column .dashboard-name { display:none;}
+
+.legend { }
+.legend .legend-title { font-family: 'RDR_HelveticaBold'; font-size:21px; color:#616161; }
+.legend .legend-content { background:#f4f4f4; }
+.legend .legend-content .legend-value { display:inline-block; margin:0.5rem 0; }
+.legend .legend-content .legend-value .legend-color { display:inline-block; width:1rem; height:1rem; background:#000; margin-bottom: -2px; }
+.legend .legend-content .legend-value .legend-label { display:inline-block; color:#000; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:14px; }
+
+.legend.engagement-legend { margin:2rem auto 1rem; width:70%; }
+.legend.engagement-legend .legend-content { margin-top: 2rem; margin-bottom: -1rem; }
+.legend.engagement-legend .legend-color.engaged { background:#92c325; }
+.legend.engagement-legend .legend-label.engaged { color:#7ba51f; margin-right:2rem; }
+
+.legend.engagement-legend .legend-color.not-engaged { background:#909090; }
+.legend.engagement-legend .legend-label.not-engaged { color:#909090; }
+
+.graph-canvas { height:200px; z-index:1; }
+.graph-title { margin:1rem 1rem -1rem; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; color:#616161; }
+.graph-value { font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; color:#616161; margin-top:-1.2rem; position: relative; z-index: 2; }
+
+.morris-hover.morris-default-style { display:none !important; }
+
+@media (min-width: 1px) and (max-width: 960px){
+.grid-3 .datapoint .number { font-size:42px; }
+.grid-3 .datapoint .number.medium { font-size:36px; }
+.grid-3 .datapoint .number.small { font-size:24px; }
+.dashboard-name { font-size: 32px;  }
+
+
+.graph-title { font-size: 0.75rem; height: 3rem; }
+}
+@media (min-width: 1px) and (max-width: 480px){
+.dashboard-name { display:none;}
+.first-column .dashboard-name { display:block; margin-bottom: 2rem; }
+}
 </style>
+
+
 <section id="analyticsReport" role="panels">
     <div class="grid-12 section summary hasLoader">
+        <div class="grid-3 s-grid-whole padded right s-center first-column">
+            <div class="dashboard-name">
+                On Our Network
+            </div>
+            <div class="datapoint articles-engaged">
+                <div class="number">430</div>
+                <label>articles actively engaged</label>
+            </div>
+            <div class="datapoint people-engaged">
+                <div class="number">1,430</div>
+                <label>people engaging</label>
+            </div>
+
+            <div class="datapoint articles-read">
+                <div class="number">12,041</div>
+                <label>article reads</label>
+            </div>
+        </div>
+        <div class="grid-6 s-grid-whole padded center-column second-column">
+            <div class="dashboard-name">
+                On Our Network
+            </div>
+            <div class="legend engagement-legend">
+                <div class="legend-title">Engagement Activity</div>
+                <div class="legend-content">
+                    <div class="legend-value">
+                        <div class="legend-color engaged"></div>
+                        <div class="legend-label engaged">Used ReadrBoard</div>
+                    </div>
+                    <div class="legend-value">
+                        <div class="legend-color not-engaged"></div>
+                        <div class="legend-label not-engaged">Ohter Visitors</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row engagement-bar-graphs">
+                <div class="grid-4 graphset pageview-graphset">
+                    <div class="graph-title">Pageviews<br/>per Session</div>
+                    <div class="graph-canvas" id="pageview-graph"></div>
+                    <div class="grid-2">&nbsp;</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-2">&nbsp;</div>
+                </div>
+                <div class="grid-4 graphset time-graphset">
+                    <div class="graph-title">Time<br/>on Content</div>
+                    <div class="graph-canvas" id="time-graph"></div>
+                    <div class="grid-2">&nbsp;</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-2">&nbsp;</div>
+                </div>
+                <div class="grid-4 graphset scroll-depth-graphset">
+                    <div class="graph-title">Scroll<br/>Depth</div>
+                    <div class="graph-canvas" id="scroll-depth-graph"></div>
+                    <div class="grid-2">&nbsp;</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-4 graph-value">1.6</div>
+                    <div class="grid-2">&nbsp;</div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-3 s-grid-whole padded s-center third-column">
+            <div class="datapoint articles-engaged">
+                <div class="number">430</div>
+                <label>reactions</label>
+            </div>
+            <div class="datapoint people-engaged">
+                <div class="number">1,430</div>
+                <label>reaction views</label>
+            </div>
+
+            <div class="datapoint session-donut"></div>
+        </div>
+
+<script>
+Morris.Bar({
+  element: 'pageview-graph',
+  data: [
+    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+  ],
+  xkey: 'datatype',
+  ykeys: ['a', 'b'],
+  labels: ['', ''],
+  grid:false,
+  axes:false,
+  barColors:['#92c325','#909090']
+});
+Morris.Bar({
+  element: 'time-graph',
+  data: [
+    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+  ],
+  xkey: 'datatype',
+  ykeys: ['a', 'b'],
+  labels: ['', ''],
+  grid:false,
+  axes:false,
+  barColors:['#92c325','#909090']
+});
+Morris.Bar({
+  element: 'scroll-depth-graph',
+  data: [
+    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+  ],
+  xkey: 'datatype',
+  ykeys: ['a', 'b'],
+  labels: ['', ''],
+  grid:false,
+  axes:false,
+  barColors:['#92c325','#909090']
+});
+</script>
+
         <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
     </div>
     <div class="section readrboard-usage hasLoader">
@@ -97,6 +251,8 @@ function numberWithCommas(x) {
 function topSummary( readrboardUsageData ) {
 // console.log(readrboardUsageData);
 
+readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
+
 /*
 readrboardUsageData.all_sessions_count: 12495
 readrboardUsageData.avg_pageviews: 1.12
@@ -118,7 +274,7 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
             '<div class="grid-4 column left">Sessions</div>' +
             '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.rdr_sessions_count)+'</div>' +
             // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[0]+'</div>' +
-            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.all_sessions_count)+'</div>' +
+            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.no_rdr_sessions_count)+'</div>' +
         '</div>');
     var $session_pageviews_row = $('<div class="grid-12 row padded content even">' +
             '<div class="grid-4 column left">Session Pageviews</div>' +
@@ -164,7 +320,7 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
 
 
     var rdr_session_percentage = (Math.round( (readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
-    var session_percentage = (Math.round( ((readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count)/readrboardUsageData.all_sessions_count) * 100)/100)*100;
+    var session_percentage = (Math.round( (readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
 
     Morris.Donut({
       element: 'engaged-sessions',
@@ -570,7 +726,7 @@ a { color:#5ba0bc; }
 
         // put in external file...
         RB.analytics = {
-            queryHost: '//events.readrboard.com',
+            queryHost: (document.domain != "local.readrboard.com") ? "//events.readrboard.com" : "//localnode.com:3000",
             queue:{
                 'createSessionPageloads' : false,
                 'createRdrSessions' : false,
@@ -677,8 +833,8 @@ a { color:#5ba0bc; }
                 },
                 success: function(response) {
                     console.log('received: getSummaries success');
+                    console.log(response);
                     topSummary(response);
-                    // console.log(response);
                     // RB.analytics.dequeue('getSummaries');
 
                     }
@@ -814,7 +970,7 @@ a { color:#5ba0bc; }
         
         $(function(){
             // RB.group.id = 1660;
-            RB.group.id = "{{ group.id }}";
+            RB.group.id = 2147; //"{{ group.id }}";
 
             RB.analytics.setDates();
 
@@ -843,7 +999,7 @@ a { color:#5ba0bc; }
             //     return false;
             // });
 
-            RB.analytics.initAnalytics();
+            // RB.analytics.initAnalytics();
             // RB.analytics.dequeue();
 
         });
