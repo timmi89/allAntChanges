@@ -33,7 +33,7 @@
 
 <style>
 /*.summary {color:#aaa !important;}*/
-.summary.hasLoader {min-height:110px;}
+.summary.hasLoader {min-height:110px; margin-bottom:0;}
 .summary .engagement-rate { }
 .summary .engagement-rate h2 { }
 .summary .engagement-rate .donut { border-right:1px solid #ccc; width:90%;  }
@@ -42,35 +42,36 @@
 .other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
 .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
 .section { margin-bottom:80px; clear:both; overflow-y: auto; overflow-x:hidden; position: relative;}
-.section h1 { font-size: 21px; }
-.section.readrboard-usage { min-height: 150px; }
-.section.readrboard-usage h1 {margin-bottom: -32px;}
+.section h1 { font-size: 32px; color: #616161; font-family: 'Helvetica','RDR_HelveticaBold'; }
+/*.section.readrboard-usage { min-height: 150px; }*/
+/*.section.readrboard-usage h1 {margin-bottom: -32px;}*/
 .column { text-align: center; color:#7f7f7f; font-size:20px; }
 .column.left { text-align: left; }
 .noteworthy { color:#247292; }
 .row { clear:both; overflow:auto; }
-.header { font-weight:bold; border-bottom:1px solid #ccc; }
+.header { border-bottom:1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 1rem;}
 .row.even { background:#f0f0f0; }
-.row.header:hover { background:transparent; }
+/*.row.header:hover { background:transparent; }*/
 .loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute; top:33%; box-sizing: border-box; }
 .loading div { display: inline-block; }
 .template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
+.template th {color:#616161;}
 /*.template.rendered { opacity:1;transition: opacity 5s ease-in-out; -moz-transition: opacity 5s ease-in-out; -webkit-transition: opacity 5s ease-in-out; }*/
 
-
-.loading { display:none; }
 
 
 .datapoint { width:75%; margin:0 auto 5rem; }
 .datapoint .number { font-family: 'RDR_HelveticaBold'; font-size:64px; color:#616161; }
 .datapoint .number.medium { font-size:48px; }
 .datapoint .number.small { font-size:42px; }
-.datapoint label { display:block; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; }
+.datapoint label { display:block; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; padding:0 0.25rem; }
+
+.datapoint.session-donut { margin-top:-2.5rem; }
 
 .center-column { text-align:center;  }
 .center-column .datapoint { margin:0 auto; }
 
-.dashboard-name { width:85%; margin:0 auto; border:7px solid #616161; font-family: 'RDR_HelveticaBold'; font-size:42px; color:#616161; text-align: center; overflow: hidden; padding: 1.5rem 0.5rem; }
+.dashboard-name { width:85%; margin:0 auto; border:4px solid #aaa; font-family: 'RDR_HelveticaBold'; font-size:42px; color:#616161; text-align: center; overflow: hidden; padding: 1.5rem 0.5rem; }
 .first-column .dashboard-name { display:none;}
 
 .legend { }
@@ -112,86 +113,142 @@
 
 <section id="analyticsReport" role="panels">
     <div class="grid-12 section summary hasLoader">
-        <div class="grid-3 s-grid-whole padded right s-center first-column">
-            <div class="dashboard-name">
-                On Our Network
-            </div>
-            <div class="datapoint articles-engaged">
-                <div class="number">430</div>
-                <label>articles actively engaged</label>
-            </div>
-            <div class="datapoint people-engaged">
-                <div class="number">1,430</div>
-                <label>people engaging</label>
-            </div>
-
-            <div class="datapoint articles-read">
-                <div class="number">12,041</div>
-                <label>article reads</label>
-            </div>
-        </div>
-        <div class="grid-6 s-grid-whole padded center-column second-column">
-            <div class="dashboard-name">
-                On Our Network
-            </div>
-            <div class="legend engagement-legend">
-                <div class="legend-title">Engagement Activity</div>
-                <div class="legend-content">
-                    <div class="legend-value">
-                        <div class="legend-color engaged"></div>
-                        <div class="legend-label engaged">Used ReadrBoard</div>
-                    </div>
-                    <div class="legend-value">
-                        <div class="legend-color not-engaged"></div>
-                        <div class="legend-label not-engaged">Ohter Visitors</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row engagement-bar-graphs">
-                <div class="grid-4 graphset pageview-graphset">
-                    <div class="graph-title">Pageviews<br/>per Session</div>
-                    <div class="graph-canvas" id="pageview-graph"></div>
-                    <div class="grid-2">&nbsp;</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-2">&nbsp;</div>
-                </div>
-                <div class="grid-4 graphset time-graphset">
-                    <div class="graph-title">Time<br/>on Content</div>
-                    <div class="graph-canvas" id="time-graph"></div>
-                    <div class="grid-2">&nbsp;</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-2">&nbsp;</div>
-                </div>
-                <div class="grid-4 graphset scroll-depth-graphset">
-                    <div class="graph-title">Scroll<br/>Depth</div>
-                    <div class="graph-canvas" id="scroll-depth-graph"></div>
-                    <div class="grid-2">&nbsp;</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-4 graph-value">1.6</div>
-                    <div class="grid-2">&nbsp;</div>
-                </div>
-            </div>
-        </div>
-        <div class="grid-3 s-grid-whole padded s-center third-column">
-            <div class="datapoint articles-engaged">
-                <div class="number">430</div>
-                <label>reactions</label>
-            </div>
-            <div class="datapoint people-engaged">
-                <div class="number">1,430</div>
-                <label>reaction views</label>
-            </div>
-
-            <div class="datapoint session-donut"></div>
-        </div>
+        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
+    </div>
 
 <script>
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+// var readrboardUsageData = {
+//         // sessions, pageviews, scroll, time
+//         rb_last_30:[1431,1.9,29,10],
+//         no_rb:[55012,1.5,15,10]
+//     };
+function topSummary() {
+// console.log(readrboardUsageData);
+
+readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
+
+/*
+all_sessions_count: 366
+articles_read_count: 31
+avg_pageviews: 1.46
+avg_scroll_depth: 73.97
+avg_time: "2:05"
+engaged_page_count: 10
+no_rdr_sessions_count: 292
+rdr_avg_pageviews: 1.2
+rdr_avg_scroll_depth: 78.59
+rdr_avg_time: "3:08"
+rdr_sessions_count: 74
+reaction_count: 77
+reaction_view_count: 108
+*/
+
+var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
+
+    var summaryHTML = [];
+    summaryHTML.push( '<div class="grid-3 s-grid-whole padded right s-center first-column"> ');
+        summaryHTML.push( '<div class="dashboard-name"> ');
+            summaryHTML.push( '{{ group.name }}');
+        summaryHTML.push( '</div> ');
+        
+        summaryHTML.push( '<div class="datapoint people-engaged"> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.rdr_sessions_count)+'</div> ');
+            summaryHTML.push( '<label>engaged sessions</label> ');
+        summaryHTML.push( '</div> ');
+        
+        summaryHTML.push( '<div class="datapoint articles-engaged"> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.engaged_page_count)+'</div> ');
+            summaryHTML.push( '<label>articles actively engaged</label> ');
+        summaryHTML.push( '</div> ');
+
+        summaryHTML.push( '<div class="datapoint articles-read"> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.articles_read_count)+'</div> ');
+            summaryHTML.push( '<label>article reads</label> ');
+        summaryHTML.push( '</div> ');
+    summaryHTML.push( '</div> ');
+    summaryHTML.push( '<div class="grid-6 s-grid-whole padded center-column second-column"> ');
+        summaryHTML.push( '<div class="dashboard-name"> ');
+            summaryHTML.push( '{{ group.name }}');
+        summaryHTML.push( '</div> ');
+        summaryHTML.push( '<div class="legend engagement-legend"> ');
+            summaryHTML.push( '<div class="legend-title">Engagement Activity</div> ');
+            summaryHTML.push( '<div class="legend-content"> ');
+                summaryHTML.push( '<div class="legend-value"> ');
+                    summaryHTML.push( '<div class="legend-color engaged"></div> ');
+                    summaryHTML.push( '<div class="legend-label engaged">Used ReadrBoard</div> ');
+                summaryHTML.push( '</div> ');
+                summaryHTML.push( '<div class="legend-value"> ');
+                    summaryHTML.push( '<div class="legend-color not-engaged"></div> ');
+                    summaryHTML.push( '<div class="legend-label not-engaged">Other Visitors</div> ');
+                summaryHTML.push( '</div> ');
+            summaryHTML.push( '</div> ');
+        summaryHTML.push( '</div> ');
+        summaryHTML.push( '<div class="row engagement-bar-graphs"> ');
+            summaryHTML.push( '<div class="grid-4 graphset pageview-graphset"> ');
+                summaryHTML.push( '<div class="graph-title">Pageviews<br/>per Session</div> ');
+                summaryHTML.push( '<div class="graph-canvas" id="pageview-graph"></div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_pageviews+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_pageviews+'</div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+            summaryHTML.push( '</div> ');
+            summaryHTML.push( '<div class="grid-4 graphset time-graphset"> ');
+                summaryHTML.push( '<div class="graph-title">Time<br/>on Content</div> ');
+                summaryHTML.push( '<div class="graph-canvas" id="time-graph"></div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_time+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_time+'</div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+            summaryHTML.push( '</div> ');
+            summaryHTML.push( '<div class="grid-4 graphset scroll-depth-graphset"> ');
+                summaryHTML.push( '<div class="graph-title">Scroll<br/>Depth</div> ');
+                summaryHTML.push( '<div class="graph-canvas" id="scroll-depth-graph"></div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_scroll_depth+'%</div> ');
+                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+            summaryHTML.push( '</div> ');
+        summaryHTML.push( '</div> ');
+    summaryHTML.push( '</div> ');
+    summaryHTML.push( '<div class="grid-3 s-grid-whole padded s-center third-column"> ');
+        summaryHTML.push( '<div class="datapoint reactions"> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.reaction_count)+'</div> ');
+            summaryHTML.push( '<label>reactions</label> ');
+        summaryHTML.push( '</div> ');
+        summaryHTML.push( '<div class="datapoint reaction-views"> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.reaction_view_count)+'</div> ');
+            summaryHTML.push( '<label>reaction views</label> ');
+        summaryHTML.push( '</div> ');
+summaryHTML.push( ' ');
+        summaryHTML.push( '<div class="datapoint session-donut graph-canvas" id="engaged-sessions" style="height:200px;"></div> ');
+    summaryHTML.push( '</div> ');
+
+var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'</div>');
+
+    $('.section.summary').html($temp_summarySection).find('.template').animate({'opacity':1},500);
+
+    drawSummaryGraphs();
+    $(window).resize(drawSummaryGraphs);
+
+}
+
+function timeStringToSeconds(timeString) {
+    // assumes MM:SS
+    var a = timeString.split(':');
+    var seconds = (+a[0]) * 60 + (+a[1]);
+    return seconds;
+}
+
+function drawSummaryGraphs() {
+    $('.graph-canvas').html('');
 Morris.Bar({
   element: 'pageview-graph',
   data: [
-    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_pageviews, b: readrboardUsageData.avg_pageviews }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -200,10 +257,11 @@ Morris.Bar({
   axes:false,
   barColors:['#92c325','#909090']
 });
+
 Morris.Bar({
   element: 'time-graph',
   data: [
-    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_time, b: readrboardUsageData.avg_time }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -215,7 +273,7 @@ Morris.Bar({
 Morris.Bar({
   element: 'scroll-depth-graph',
   data: [
-    { datatype: 'Pageviews', a: 1.61, b: 1.25 }
+    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_scroll_depth, b: readrboardUsageData.avg_scroll_depth }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -224,102 +282,8 @@ Morris.Bar({
   axes:false,
   barColors:['#92c325','#909090']
 });
-</script>
 
-        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
-    </div>
-    <div class="section readrboard-usage hasLoader">
-        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing ReadrBoard Usage...</div></div>
-        <h1>ReadrBoard Usage</h1>
-        <div class="grid-12 row padded header">
-            <div class="grid-4 column ">&nbsp;</div>
-            <div class="grid-4 column ">Used ReadrBoard in last 30 days</div>
-            <!-- <div class="grid-3 column header noteworthy">Used ReadrBoard in last 180 days</div> -->
-            <div class="grid-4 column ">No recent usage</div>
-        </div>
-    </div>
-<script>
-
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-// var readrboardUsageData = {
-//         // sessions, pageviews, scroll, time
-//         rb_last_30:[1431,1.9,29,10],
-//         no_rb:[55012,1.5,15,10]
-//     };
-function topSummary( readrboardUsageData ) {
-// console.log(readrboardUsageData);
-
-readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
-
-/*
-readrboardUsageData.all_sessions_count: 12495
-readrboardUsageData.avg_pageviews: 1.12
-readrboardUsageData.avg_scroll_depth: 71.87
-readrboardUsageData.avg_time: 146.3
-readrboardUsageData.rdr_avg_pageviews: 1.23
-readrboardUsageData.rdr_avg_scroll_depth: 73.24
-readrboardUsageData.rdr_avg_time: 245.68
-readrboardUsageData.rdr_sessions_count: 597
-readrboardUsageData.reaction_count: 25
-readrboardUsageData.reaction_view_count: 1164
-*/
-
-var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
-
-    
-
-    var $sessions_row = $('<div class="grid-12 row padded content">' +
-            '<div class="grid-4 column left">Sessions</div>' +
-            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.rdr_sessions_count)+'</div>' +
-            // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[0]+'</div>' +
-            '<div class="grid-4 column">'+numberWithCommas(readrboardUsageData.no_rdr_sessions_count)+'</div>' +
-        '</div>');
-    var $session_pageviews_row = $('<div class="grid-12 row padded content even">' +
-            '<div class="grid-4 column left">Session Pageviews</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_pageviews+'</div>' +
-            // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[1]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.avg_pageviews+'</div>' +
-        '</div>');
-    var $avg_scrolldepth_row = $('<div class="grid-12 row padded content">' +
-            '<div class="grid-4 column left">Avg Scroll Depth</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div>' +
-            // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.avg_scroll_depth+'%</div>' +
-        '</div>');
-    var $avg_time_row = $('<div class="grid-12 row padded content even">' +
-            '<div class="grid-4 column left">Avg Time on Content</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.rdr_avg_time+'</div>' +
-            // '<div class="grid-3 column noteworthy">'+readrboardUsageData.rb_last_180[2]+'</div>' +
-            '<div class="grid-4 column">'+readrboardUsageData.avg_time+'</div>' +
-        '</div>');
-
-    $temp_readrboardUsage.find('.template').append( $sessions_row, $session_pageviews_row, $avg_scrolldepth_row, $avg_time_row );
-
-    $('.section.readrboard-usage').append($temp_readrboardUsage).find('.template').animate({'opacity':1},500);
-
-
-var $temp_summarySection = $('<div class="template"><div class="grid-3 engagement-rate">'+
-        '<div class="donut" id="engaged-sessions" style="height:200px;"></div>'+
-    '</div>'+
-    '<div class="grid-9 other-totals"></div></div>');
-
-    var summaryData = [
-        { data:numberWithCommas(readrboardUsageData.reaction_count),label:'Reactions' },
-        { data:numberWithCommas(readrboardUsageData.reaction_view_count),label:'Reaction Views' },
-        { data: readrboardUsageData.rdr_avg_scroll_depth.toString() + '%',label:'Avg Scroll Depth' },
-        { data:readrboardUsageData.rdr_avg_time,label:'Avg Time Spent on Content' }
-    ];
-    $.each(summaryData, function(idx, item) {
-        var $item = $('<div class="grid-quarter attribute"><div class="data">'+item.data+' <label>'+item.label+'</label></div></div>');
-        $temp_summarySection.find('.other-totals').append($item);
-    });
-
-    $('.section.summary').append($temp_summarySection).find('.template').animate({'opacity':1},500);
-
-
-    var rdr_session_percentage = (Math.round( (readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
+var rdr_session_percentage = (Math.round( (readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
     var session_percentage = (Math.round( (readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
 
     Morris.Donut({
@@ -332,35 +296,36 @@ var $temp_summarySection = $('<div class="template"><div class="grid-3 engagemen
     }).select(0);
 
 
-// otherData();
-
-}
+} // end drawSummaryGraphs
 
 function pageSummary(pages) {
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Scroll Depth</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof pages != 'undefined') {
         var pageNum = (pages.length > 30) ? 30 : pages.length;
 
-        var engagedPages = [];
+        var engagedPages = [],
+            engagementRates = [];
         for (var i=0;i<30;i++) {
             if (typeof pages[i] != 'undefined' ) {
                 var engagement_rate = Math.round(((pages[i].a_reaction_count + pages[i].a_reaction_view_count)/pages[i].a_wl_count)*10000)/100;
                 var scroll_rate = Math.round(pages[i].b_median_scroll*100)/100;
                 engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness } );
-            // engagedPages.push({ body:hotTopics[i][0], count:hotTopics[i][1] });
+                engagementRates.push(engagement_rate);
             }
         }
+        engagementRateMax = engagementRates.sort().shift();
 
         $.each(engagedPages, function(idx, page) {
+
             var $page = $('<tr class="page_card">' +
-                    '<td class="title"><h1><a href="#">'+page.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((page.engagement_rate / engagementRateMax)*100) +'% 30px;"><a href="#">'+page.title+'</a></h1></td>' +
                     '<td class="attribute">'+ page.engagement_rate +'% <label>Engagement</label></td>' +
-                    '<td class="attribute">'+ page.avg_scroll +'% <label>Avg Scroll</label></td>' +
                     '<td class="attribute">'+ page.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ page.reaction_view_count +' <label>Reaction View Count</label></td>' +
                     '<td class="attribute">'+ page.wl_count +' <label>Reads</label></td>' +
+                    '<td class="attribute">'+ page.avg_scroll +'% <label>Avg Scroll</label></td>' +
                     // '<div class="grid-12 reactions padded">'+ page.reactions +'</div>' +
             '</tr>');
 
@@ -399,28 +364,33 @@ function hotTopics(hotTopics) {
 
 function refSummary(referrers) {
     var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th>Title</th><th>Scroll Depth</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof referrers != 'undefined') {
 
         var referrerNum = (referrers.length > 30) ? 30 : referrers.length;
-        var engagedReferrers = [];
+        var engagedReferrers = [],
+            engagementRates = [];
         for (var i=0;i<30;i++) {
             if (typeof referrers[i] != 'undefined') {
-                var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*100);
+                // var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*100);
+                var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*10000)/100;
                 var scroll_rate = Math.round(referrers[i].b_median_scroll*100)/100;
-                engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, avg_scroll:scroll_rate, wl_count:referrers[i].a_wl_count } );
+                engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:referrers[i].a_wl_count } );
+                engagementRates.push(engagement_rate);
             }
         }
+        engagementRateMax = engagementRates.sort().shift();
 
         $.each(engagedReferrers, function(idx, referrer) {
             var $referrer = $('<tr class="page_card">' +
-                    '<td class="title"><h1><a href="#">'+referrer.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((referrer.engagement_rate / engagementRateMax)*100) +'% 30px;"><a href="#">'+referrer.title+'</a></h1></td>' +
                     // '<td class="attribute">'+ referrer.hotness +' <label>Engagement</label></td>' +
-                    '<td class="attribute">'+ referrer.avg_scroll +'% <label>Avg Scroll</label></td>' +
+                    '<td class="attribute">'+ referrer.engagement_rate +'% <label>Engagement</label></td>' +
                     '<td class="attribute">'+ referrer.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ referrer.reaction_view_count +' <label>Reaction View Count</label></td>' +
                     '<td class="attribute">'+ referrer.wl_count +' <label>Reads</label></td>' +
+                    '<td class="attribute">'+ referrer.avg_scroll +'% <label>Avg Scroll</label></td>' +
             '</tr>');
 
             $table.append($referrer);
@@ -431,112 +401,6 @@ function refSummary(referrers) {
         $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
     }
 }
-
-
-function otherData() {
-    // 
-    
-
-
-    
-
-    //
-    var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
-    var engagedReferrers = [
-        { tld:'okayafrica.com', engagement_rate:'15.1%', avg_scroll:'60.3%', avg_time:'5:01', pvs_session:'3.4'},
-        { tld:'facebook.com', engagement_rate:'13.2%', avg_scroll:'59.2%', avg_time:'4:59', pvs_session:'2.2'},
-        { tld:'google.com', engagement_rate:'10.8%', avg_scroll:'52.0%', avg_time:'3:43', pvs_session:'1.8'},
-        { tld:'(direct)', engagement_rate:'10.7%', avg_scroll:'61.5%', avg_time:'4:34', pvs_session:'2.9'},
-        { tld:'google.co.za', engagement_rate:'9.9%', avg_scroll:'54.3%', avg_time:'3:01', pvs_session:'3.1'},
-        { tld:'t.co', engagement_rate:'9.2%', avg_scroll:'55.4%', avg_time:'4:49', pvs_session:'1.9'},
-        { tld:'google.co.uk', engagement_rate:'8.8%', avg_scroll:'56.2%', avg_time:'3:55', pvs_session:'1.8'}
-    ];
-
-    $.each(engagedReferrers, function(idx, referrer) {
-        var $referrer = $('<div class="grid-3 center padded">' +
-            '<section class="page_card">' +
-                '<h1><a href="#">'+referrer.tld+'</a></h1>' +
-                '<div class="grid-6 attribute padded">'+ referrer.engagement_rate +' <label>Engagement</label></div>' +
-                '<div class="grid-6 attribute padded">'+ referrer.avg_scroll +' <label>Avg Scroll</label></div>' +
-                '<div class="grid-6 attribute padded">'+ referrer.avg_time +' <label>Engagement</label></div>' +
-                '<div class="grid-6 attribute padded">'+ referrer.pvs_session +' <label>Avg PVs</label></div>' +
-                // '<div class="grid-12 reactions padded">'+ referrer.reactions +'</div>' +
-            '</section>' +
-        '</div>');
-
-        $temp_engagedReferrers.find('.template').append( $referrer );
-    });
-
-    $('.section.engaged-referrers .hasLoader').html($temp_engagedReferrers).find('.template').animate({'opacity':1},500);
-
-
-    //
-    var session_totals = {
-        reacted:1940,
-        viewed:14231,
-        scrolled:132002
-    };
-    var $temp_sessionInfo = $('<div><div class="template">' +
-        '<div class="grid-3 engagement-rate">' +
-                '<div class="donut" id="session-actions" style="height:200px;"></div>' +
-            '</div>' +
-            '<div class="grid-6 other-totals">' +
-                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.reacted) + ' <label>Reacted</label></div></div>' +
-                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.viewed) + ' <label>Viewed Reactions</label></div></div>' +
-                '<div class="grid-third attribute"><div class="data">' + numberWithCommas(session_totals.scrolled) + ' <label>Scrolled Down</label></div></div>' +
-            '</div>' +
-            '<div class="grid-3 engagement-rate">' +
-                '<div class="donut" id="session-time" style="height:200px;"></div>' +
-            '</div>' +
-        '</div></div>');
-
-    $('.section.session_summaries.hasLoader').append($temp_sessionInfo).find('.template').animate({'opacity':1},500);
-
-    Morris.Donut({
-      element: 'session-actions',
-      data: [
-        // {label: "Took Action", value: 135798 },
-        {label: "Reacted", value: 1940 },
-        {label: "Viewed Reactions", value: 14231 },
-        {label: "Scrolled", value: 132002 }
-      ]
-    }).select(0);
-
-    Morris.Donut({
-      element: 'session-time',
-      data: [
-        {label: "sessions over 0:15", value: 14000 },
-        {label: "sessions over 0:30", value: 10000 },
-        {label: "sessions over 0:45", value: 6000 },
-        {label: "sessions over 1:00", value: 1000 },
-        {label: "sessions over 1:30", value: 800 },
-        {label: "sessions over 2:00", value: 300 },
-      ]
-    }).select(0);
-
-    // ENGAGEMENT OVER TIME
-    $('.section.engagement-over-time .hasLoader').append('<div id="engagement-over-time-graph"></div>').find('.template').animate({'opacity':1},500);
-    Morris.Area({
-      element: 'engagement-over-time-graph',
-      data: [
-        { date: '2014-5-10', Reactions: 50,  ReactionViews: 150, Scrolls: 1130,   TimeSpent: 50 },
-        { date: '2014-5-11', Reactions: 75,  ReactionViews: 165, Scrolls: 1276,  TimeSpent: 165 },
-        { date: '2014-5-12', Reactions: 50,  ReactionViews: 140, Scrolls: 1052,  TimeSpent: 140 },
-        { date: '2014-5-13', Reactions: 75,  ReactionViews: 165, Scrolls: 975,  TimeSpent: 165 },
-        { date: '2014-5-14', Reactions: 50,  ReactionViews: 140, Scrolls: 1451,  TimeSpent: 140 },
-        { date: '2014-5-15', Reactions: 75,  ReactionViews: 165, Scrolls: 1372,  TimeSpent: 165 },
-        { date: '2014-5-16', Reactions: 100, ReactionViews: 190, Scrolls: 1108,  TimeSpent: 190 }
-      ],
-      lineColors: ['#7cc1db','#bf9fb8','#c1d1b6','#c4c4c4'],
-      xkey: 'date',
-      ykeys: ['Reactions', 'ReactionViews', 'Scrolls', 'TimeSpent'],
-      labels: ['Reactions', 'Reaction Views', 'Scrolls', 'Time Spent']
-    });
-
-}
-
-
-
 
 </script>
 
@@ -570,20 +434,14 @@ a { color:#5ba0bc; }
 /*.loading{display:none;}*/
 </style>
     <div class="section reactions-and-topics">
-        <div class="grid-12 row padded header">
-            <div class="grid-6">
-                <h1>Most Popular Reactions</h1>
-            </div>
-            <div class="grid-6">
-                <h1>Most Engaged Topics</h1>
-            </div>
-        </div>
         <div class="grid-12 padded">
-            <div class="grid-6 hasLoader">
+            <div class="grid-6 s-grid-whole hasLoader">
+                <h1 class="header">Most Popular Reactions</h1> 
                 <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Counting Reactions...</div></div>
                 <div class="reactions-holder">&nbsp;</div>
             </div>
-            <div class="grid-6 hasLoader">
+            <div class="grid-6 s-grid-whole hasLoader">
+                <h1 class="header">Most Engaged Topics</h1>
                 <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Topics...</div></div>
                 <div class="topics-holder">&nbsp;</div>
             </div>
@@ -593,18 +451,20 @@ a { color:#5ba0bc; }
 </script>
     </div>
 <style>
-.page_card { background:#f9f9f9; border:1px solid #ccc; clear:both; overflow:auto; }
-.page_card:hover { background:#ddeefa; }
-.page_card h1 { font-size:16px; }
+.page_card { clear:both; overflow:auto; }
+.page_card:hover { background:#f3f3f3; }
+.page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
 .page_card td {padding:10px 0; text-align: center;}
-.page_card .title { width:40%;}
-.page_card .attribute { font-size:14px; xfont-weight:bold; width:12%;}
+.page_card .title { width:40%;  text-align: left; }
+.page_card .title h1 { font-size:14px; font-weight:normal; background:url(/static/images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
+.page_card .title h1 a { color:#616161;}
+.page_card .attribute { font-size:14px; xfont-weight:bold; width:12%; }
 .page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
 .page_card .reactions { font-size:11px; font-weight:bold; } 
 </style>
     <div class="section engaged-pages">
-        <div class="grid-12 row padded header">
-            <h1>Most Engaged Pages</h1>
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Pages</h1>
         </div>
         <div class="grid-12 row padded hasLoader">
             <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
@@ -626,8 +486,8 @@ a { color:#5ba0bc; }
 }
 </style>
     <div class="section engaged-content">
-        <div class="grid-12 row padded header">
-            <h1>Most Engaged Content</h1>
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Content</h1>
         </div>
         <div class="grid-12 row padded">
             <div class="grid-4 padded">
@@ -669,51 +529,11 @@ a { color:#5ba0bc; }
         </div>
     </div>
     <div class="section engaged-referrers">
-        <div class="grid-12 row padded header">
-            <h1>Most Engaged Referrers</h1>
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Referrers</h1>
         </div>
         <div class="grid-12 row padded hasLoader">
             <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Referrer Engagement...</div></div>
-        </div>
-    </div>
-<script>
-
-</script>
-
-<style>
-.session_summaries { overflow:hidden; min-height: 200px; display: none;}
-.engagement-over-time { overflow:hidden; display: none; }
-.engagement-over-time .hasLoader { min-height: 200px;}
-</style>
-
-    <div class="grid-12 section session_summaries hasLoader">
-        <div class="grid-12 row padded header">
-            <div class="grid-9">
-                <h1>Engaged Sessions / Last 30 Days</h1>
-            </div>
-            <div class="grid-3">
-                <h1>Time Spent / Last 30 Days</h1>
-            </div>
-        </div>
-        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Sessions...</div></div>
-        <!-- <div class="grid-3 engagement-rate">
-            <div class="donut" id="session-actions" style="height:200px;"></div>
-        </div>
-        <div class="grid-6 other-totals">
-            <div class="grid-third attribute"><div class="data">140 <label>Reacted</label></div></div>
-            <div class="grid-third attribute"><div class="data">1,200 <label>Viewed Reactions</label></div></div>
-            <div class="grid-third attribute"><div class="data">8,041 <label>Scrolled Down</label></div></div>
-        </div>
-        <div class="grid-3 engagement-rate">
-            <div class="donut" id="session-time" style="height:200px;"></div>
-        </div> -->
-    </div>
-    <div class="section engagement-over-time">
-        <div class="grid-12 row padded header">
-            <h1>Engagement Over Time</h1>
-        </div>
-        <div class="grid-12 row padded hasLoader">
-            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Gathering recent daily activity...</div></div>
         </div>
     </div>
 
@@ -834,7 +654,8 @@ a { color:#5ba0bc; }
                 success: function(response) {
                     console.log('received: getSummaries success');
                     console.log(response);
-                    topSummary(response);
+                    readrboardUsageData = response;
+                    topSummary();
                     // RB.analytics.dequeue('getSummaries');
 
                     }
@@ -842,24 +663,95 @@ a { color:#5ba0bc; }
             },
             getTopPages: function() {
                 console.log('getTopPages');
-                $.ajax({
-                url: RB.analytics.queryHost + '/getTopPages',
-                type: "get",
-                data: {
-                    json: $.toJSON( { gid:RB.group.id } )
-                },
-                success: function(response) {
-                    console.log('received: getTopPages success');
-                    console.log(response);
-                    pageSummary(response.pages);
-                    hotTopics(response.hot_topics);
-                    // RB.analytics.dequeue('getSummaries');
+                // var tempPageOb = { 'pages': [
+                //     {
+                //         'a_pid': "655899",
+                //         'a_pt': "Glamour Boy Lyrics | Burton Cummings",
+                //         'a_reaction_count': 4,
+                //         'a_reaction_view_count': 9,
+                //         'a_wl_count': 11,
+                //         'b_median_scroll': 76,
+                //         'hotness': 1.8433333333333333
+                //     },
+                //     {
+                //         'a_pid': "591875",
+                //         'a_pt': "No Time Lyrics | Burton Cummings",
+                //         'a_reaction_count': 18,
+                //         'a_reaction_view_count': 36,
+                //         'a_wl_count': 73,
+                //         'b_median_scroll': 82.29508196721312,
+                //         'hotness': 1.552680549401861
+                //     },{
+                //         'a_pid': "655909",
+                //         'a_pt': "Hang On To Your Life Lyrics | Burton Cummings",
+                //         'a_reaction_count': 14,
+                //         'a_reaction_view_count': 34,
+                //         'a_wl_count': 59,
+                //         'b_median_scroll': 69.76744186046511,
+                //         'hotness': 1.4976744186046511
+                //     },{
+                //         'a_pid': "655863",
+                //         'a_pt': "American Woman Lyrics | Burton Cummings",
+                //         'a_reaction_count': 23,
+                //         'a_reaction_view_count': 23,
+                //         'a_wl_count': 75,
+                //         'b_median_scroll': 70.58823529411765,
+                //         'hotness': 1.3111455108359134
+                //     },{
+                //         'a_pid': "655940",
+                //         'a_pt': "Rain Dance Lyrics | Burton Cummings",
+                //         'a_reaction_count': 4,
+                //         'a_reaction_view_count': 0,
+                //         'a_wl_count': 7,
+                //         'b_median_scroll': 80,
+                //         'hotness': 1.3
+                //     },{
+                //         'a_pid': "655860",
+                //         'a_pt': "Albert Flasher Lyrics | Burton Cummings",
+                //         'a_reaction_count': 1,
+                //         'a_reaction_view_count': 0,
+                //         'a_wl_count': 5,
+                //         'b_median_scroll': 90,
+                //         'hotness': 1.0666666666666667
+                //     },{
+                //         'a_pid': "655891",
+                //         'a_pt': "Dreams Lyrics | Burton Cummings",
+                //         'a_reaction_count': 6,
+                //         'a_reaction_view_count': 2,
+                //         'a_wl_count': 39,
+                //         'b_median_scroll': 69.6,
+                //         'hotness': 0.8959999999999999
+                //     },{
+                //         'a_pid': "619469",
+                //         'a_pt': "These Eyes Lyrics | Burton Cummings",
+                //         'a_reaction_count': 4,
+                //         'a_reaction_view_count': 1,
+                //         'a_wl_count': 26,
+                //         'b_median_scroll': 70,
+                //         'hotness': 0.8851851851851851
+                //     }]
+                // };
 
-                }, error: function(request, status, error) {
-                    console.log('error: ', status, error);
-                }, complete:function(request, status) {
-                    console.log('get top pages COMPLETE: '+status);
-                }
+                // pageSummary(tempPageOb.pages);
+                
+                $.ajax({
+                    url: RB.analytics.queryHost + '/getTopPages',
+                    type: "get",
+                    data: {
+                        json: $.toJSON( { gid:RB.group.id } )
+                    },
+                    success: function(response) {
+                        console.log('received: getTopPages success');
+                        console.log(response);
+                        pageSummary(response.pages);
+                        hotTopics(response.hot_topics);
+                        // RB.analytics.dequeue('getSummaries');
+
+                    }, error: function(request, status, error) {
+                        console.log('error: ', status, error);
+                    }, complete:function(request, status) {
+                        console.log('get top pages COMPLETE: '+status);
+                    }
                 });
             },
             getTopReferrers: function() {
@@ -969,8 +861,8 @@ a { color:#5ba0bc; }
         // RB.group.id = 1660;
         
         $(function(){
-            // RB.group.id = 1660;
-            RB.group.id = 2147; //"{{ group.id }}";
+            RB.group.id = 1660;
+            // RB.group.id = {{ group.id }};
 
             RB.analytics.setDates();
 
@@ -999,7 +891,7 @@ a { color:#5ba0bc; }
             //     return false;
             // });
 
-            // RB.analytics.initAnalytics();
+            RB.analytics.initAnalytics();
             // RB.analytics.dequeue();
 
         });
