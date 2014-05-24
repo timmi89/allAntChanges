@@ -313,18 +313,16 @@ function pageSummary(pages) {
             if (typeof pages[i] != 'undefined' ) {
                 var engagement_rate = Math.round(((pages[i].a_reaction_count + pages[i].a_reaction_view_count)/pages[i].a_wl_count)*10000)/100;
                 var scroll_rate = Math.round(pages[i].b_median_scroll*100)/100;
-                engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness } );
+                engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness, page_url:pages[i].a_pu } );
                 engagementRates.push(engagement_rate);
             }
         }
         engagementRateMax = engagementRates.sort(numOrdDesc).shift();
-        log('page engagementRateMax: '+engagementRateMax);
-        log(engagementRates);
 
         $.each(engagedPages, function(idx, page) {
 
             var $page = $('<tr class="page_card">' +
-                    '<td class="title"><h1 style="background-size:'+ parseInt((page.engagement_rate / 100)*100) +'% 30px;"><a href="#">'+page.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((page.engagement_rate / 100)*100) +'% 30px;"><a href="'+page.page_url+'" target="_blank">'+page.title+'</a></h1></td>' +
                     '<td class="attribute">'+ page.engagement_rate +'% <label>Engagement</label></td>' +
                     '<td class="attribute">'+ page.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ page.reaction_view_count +' <label>Reaction View Count</label></td>' +
@@ -385,8 +383,6 @@ function refSummary(referrers) {
             }
         }
         engagementRateMax = engagementRates.sort(numOrdDesc).shift();
-        log('ref engagementRateMax: '+engagementRateMax);
-        log(engagementRates);
 
         $.each(engagedReferrers, function(idx, referrer) {
             var $referrer = $('<tr class="page_card">' +
