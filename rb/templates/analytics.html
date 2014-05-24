@@ -324,7 +324,7 @@ function pageSummary(pages) {
         $.each(engagedPages, function(idx, page) {
 
             var $page = $('<tr class="page_card">' +
-                    '<td class="title"><h1 style="background-size:'+ parseInt((page.engagement_rate / engagementRateMax)*10) +'% 30px;"><a href="#">'+page.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((page.engagement_rate / engagementRateMax)*100) +'% 30px;"><a href="#">'+page.title+'</a></h1></td>' +
                     '<td class="attribute">'+ page.engagement_rate +'% <label>Engagement</label></td>' +
                     '<td class="attribute">'+ page.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ page.reaction_view_count +' <label>Reaction View Count</label></td>' +
@@ -390,7 +390,7 @@ function refSummary(referrers) {
 
         $.each(engagedReferrers, function(idx, referrer) {
             var $referrer = $('<tr class="page_card">' +
-                    '<td class="title"><h1 style="background-size:'+ parseInt((referrer.engagement_rate / engagementRateMax)*10) +'% 30px;"><a href="#">'+referrer.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((referrer.engagement_rate / engagementRateMax)*100) +'% 30px;"><a href="#">'+referrer.title+'</a></h1></td>' +
                     // '<td class="attribute">'+ referrer.hotness +' <label>Engagement</label></td>' +
                     '<td class="attribute">'+ referrer.engagement_rate +'% <label>Engagement</label></td>' +
                     '<td class="attribute">'+ referrer.reaction_count +' <label>Reactions</label></td>' +
