@@ -127,7 +127,6 @@ function numberWithCommas(x) {
 //         no_rb:[55012,1.5,15,10]
 //     };
 function topSummary() {
-// console.log(readrboardUsageData);
 
 readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
 
@@ -298,6 +297,9 @@ var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboard
 
 } // end drawSummaryGraphs
 
+// for the array sort
+function numOrdDesc(a, b){ return (b-a); }
+
 function pageSummary(pages) {
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
     var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
@@ -315,7 +317,7 @@ function pageSummary(pages) {
                 engagementRates.push(engagement_rate);
             }
         }
-        engagementRateMax = engagementRates.sort().shift();
+        engagementRateMax = engagementRates.sort(numOrdDesc).shift();
         log('page engagementRateMax: '+engagementRateMax);
         log(engagementRates);
 
@@ -382,7 +384,7 @@ function refSummary(referrers) {
                 engagementRates.push(engagement_rate);
             }
         }
-        engagementRateMax = engagementRates.sort().shift();
+        engagementRateMax = engagementRates.sort(numOrdDesc).shift();
         log('ref engagementRateMax: '+engagementRateMax);
         log(engagementRates);
 
@@ -552,7 +554,6 @@ table { width:100%; }
                 'sessionPageTimes' : false
             },
             dequeue: function(funcName) {
-                console.log( 'dequeue: ' + funcName );
                 RB.analytics.queue[funcName] = true;
 
                 for (var i in RB.analytics.queue){
@@ -565,7 +566,6 @@ table { width:100%; }
             },
             toggleGlobalLoader: function() {
                 // TODO animate something
-                // console.log('toggleGlobalLoader');
             },
             initAnalytics: function() {
                 RB.analytics.getTopPages();
@@ -597,7 +597,6 @@ table { width:100%; }
                 //     });
             },
             createSessionPageloads: function() {
-                console.log('createSessionPageloads');
                 $.ajax({
                 url: RB.analytics.queryHost + '/createSessionPageloads',
                 type: "get",
@@ -605,14 +604,13 @@ table { width:100%; }
                     json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('received: create sessions success');
-                    console.log(response);
+                    // console.log('received: create sessions success');
+                    // console.log(response);
                     RB.analytics.dequeue('createSessionPageloads');
                     }
                 });
             },
             createRdrSessions: function() {
-                console.log('createRdrSessions');
                 $.ajax({
                 url: RB.analytics.queryHost + '/createRdrSessions',
                 type: "get",
@@ -620,15 +618,14 @@ table { width:100%; }
                     json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('received: create sessions success');
-                    console.log(response);
+                    // console.log('received: create sessions success');
+                    // console.log(response);
                     RB.analytics.dequeue('createRdrSessions');
                     RB.analytics.simulate();
                     }
                 });
             },
             sessionPageTimes: function() {
-                console.log('sessionPageTimes');
                 $.ajax({
                 url: RB.analytics.queryHost + '/sessionPageTimes',
                 type: "get",
@@ -636,14 +633,13 @@ table { width:100%; }
                     json: $.toJSON( { temp:RB.group.tempTablePre, gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('received: create sessionPageTimes success');
-                    console.log(response);
+                    // console.log('received: create sessionPageTimes success');
+                    // console.log(response);
                     RB.analytics.dequeue('sessionPageTimes');
                     }
                 });
             },
             getSummaries: function() {
-                console.log('getSummaries');
                 $.ajax({
                 url: RB.analytics.queryHost + '/getSummaries',
                 type: "get",
@@ -651,8 +647,8 @@ table { width:100%; }
                     json: $.toJSON( { gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('received: getSummaries success');
-                    console.log(response);
+                    // console.log('received: getSummaries success');
+                    // console.log(response);
                     readrboardUsageData = response;
                     topSummary();
                     // RB.analytics.dequeue('getSummaries');
@@ -661,7 +657,7 @@ table { width:100%; }
                 });
             },
             getTopPages: function() {
-                console.log('getTopPages');
+                // console.log('getTopPages');
                 // var tempPageOb = { 'pages': [
                 //     {
                 //         'a_pid': "655899",
@@ -740,21 +736,21 @@ table { width:100%; }
                         json: $.toJSON( { gid:RB.group.id } )
                     },
                     success: function(response) {
-                        console.log('received: getTopPages success');
-                        console.log(response);
+                        // console.log('received: getTopPages success');
+                        // console.log(response);
                         pageSummary(response.pages);
                         hotTopics(response.hot_topics);
                         // RB.analytics.dequeue('getSummaries');
 
                     }, error: function(request, status, error) {
-                        console.log('error: ', status, error);
+                        // console.log('error: ', status, error);
                     }, complete:function(request, status) {
-                        console.log('get top pages COMPLETE: '+status);
+                        // console.log('get top pages COMPLETE: '+status);
                     }
                 });
             },
             getTopReferrers: function() {
-                console.log('getTopReferrers');
+                // console.log('getTopReferrers');
                 $.ajax({
                 url: RB.analytics.queryHost + '/getTopReferrers',
                 type: "get",
@@ -768,14 +764,14 @@ table { width:100%; }
                     // RB.analytics.dequeue('getSummaries');
 
                 }, error: function(request, status, error) {
-                    console.log('error: ', status, error);
+                    // console.log('error: ', status, error);
                 }, complete:function(request, status) {
-                    console.log('get top pages COMPLETE: '+status);
+                    // console.log('get top pages COMPLETE: '+status);
                 }
                 });
             },
             getTopReactions: function() {
-                console.log('getTopReactions');
+                // console.log('getTopReactions');
                 $.ajax({
                 url: RB.analytics.queryHost + '/getTopReactions',
                 type: "get",
@@ -783,8 +779,8 @@ table { width:100%; }
                     json: $.toJSON( { gid:RB.group.id } )
                 },
                 success: function(response) {
-                    console.log('received: getTopReactions success');
-                    console.log(response);
+                    // console.log('received: getTopReactions success');
+                    // console.log(response);
 
                     var $temp_popularReactions = $('<div><div class="template"></div></div>');
                     var popularReactions = response.reactions;
@@ -800,7 +796,7 @@ table { width:100%; }
                     // ];
                     var itemNumber = 1;
                     $.each(popularReactions, function(idx, reaction) {
-                        console.log(reaction);
+                        // console.log(reaction);
                         var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
                         // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
                         var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
@@ -815,7 +811,7 @@ table { width:100%; }
                 });
             },
         	updateAll: function() {
-                console.log('group_id: {{ group.id }}');
+                // console.log('group_id: {{ group.id }}');
         	},
             simulate: function() {
                 var readrboardUsageData = {
@@ -834,13 +830,13 @@ table { width:100%; }
                 RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
                 RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
 
-                console.log('RB.analytics.startDate');
-                console.log(RB.analytics.jsStartDate);
-                console.log( moment(RB.analytics.jsStartDate).unix() );
+                // console.log('RB.analytics.startDate');
+                // console.log(RB.analytics.jsStartDate);
+                // console.log( moment(RB.analytics.jsStartDate).unix() );
 
-                console.log('RB.analytics.endDate');
-                console.log(RB.analytics.jsendDate);
-                console.log( moment(RB.analytics.jsendtDate).unix() );
+                // console.log('RB.analytics.endDate');
+                // console.log(RB.analytics.jsendDate);
+                // console.log( moment(RB.analytics.jsendtDate).unix() );
 
     //Oh - another thing - createdAt and updatedAt are now stored in their own columns also - thus you can do time-based queries. 
     // The complication is that they are stored as standard bigint values, being the number of milliseconds since 1970
