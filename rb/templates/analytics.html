@@ -316,6 +316,8 @@ function pageSummary(pages) {
             }
         }
         engagementRateMax = engagementRates.sort().shift();
+        log('page engagementRateMax: '+engagementRateMax);
+        log(engagementRates);
 
         $.each(engagedPages, function(idx, page) {
 
@@ -381,6 +383,8 @@ function refSummary(referrers) {
             }
         }
         engagementRateMax = engagementRates.sort().shift();
+        log('ref engagementRateMax: '+engagementRateMax);
+        log(engagementRates);
 
         $.each(engagedReferrers, function(idx, referrer) {
             var $referrer = $('<tr class="page_card">' +
