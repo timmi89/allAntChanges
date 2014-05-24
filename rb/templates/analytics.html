@@ -42,7 +42,7 @@
 .other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
 .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
 .section { margin-bottom:80px; clear:both; overflow-y: auto; overflow-x:hidden; position: relative;}
-.section h1 { font-size: 32px; color: #616161; font-family: 'Helvetica','RDR_HelveticaBold'; }
+.section h1 { font-size: 28px; color: #616161; font-family: 'Helvetica','RDR_HelveticaBold'; }
 /*.section.readrboard-usage { min-height: 150px; }*/
 /*.section.readrboard-usage h1 {margin-bottom: -32px;}*/
 .column { text-align: center; color:#7f7f7f; font-size:20px; }
@@ -52,7 +52,7 @@
 .header { border-bottom:1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 1rem;}
 .row.even { background:#f0f0f0; }
 /*.row.header:hover { background:transparent; }*/
-.loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute; top:33%; box-sizing: border-box; }
+.loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute; xtop:33%; box-sizing: border-box; }
 .loading div { display: inline-block; }
 .template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
 .template th {color:#616161;}
@@ -167,7 +167,7 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
         summaryHTML.push( '<div class="datapoint articles-read"> ');
             summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.articles_read_count)+'</div> ');
-            summaryHTML.push( '<label>article reads</label> ');
+            summaryHTML.push( '<label>articles read</label> ');
         summaryHTML.push( '</div> ');
     summaryHTML.push( '</div> ');
     summaryHTML.push( '<div class="grid-6 s-grid-whole padded center-column second-column"> ');
@@ -232,7 +232,7 @@ var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'<
     $('.section.summary').html($temp_summarySection).find('.template').animate({'opacity':1},500);
 
     drawSummaryGraphs();
-    $(window).resize(drawSummaryGraphs);
+    $(window).smartresize(drawSummaryGraphs);
 
 }
 
@@ -283,8 +283,8 @@ Morris.Bar({
   barColors:['#92c325','#909090']
 });
 
-var rdr_session_percentage = (Math.round( (readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
-    var session_percentage = (Math.round( (readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100)/100)*100;
+var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2),
+    session_percentage = ((readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2);
 
     Morris.Donut({
       element: 'engaged-sessions',
@@ -430,7 +430,7 @@ a { color:#5ba0bc; }
 .reactions-and-topics .reactions-holder .grid-6 .reaction-tag { height:78px; }
 .reactions-and-topics .reactions-holder .grid-4 .reaction-tag { height:53px; }
 .reactions-and-topics .reactions-holder .grid-3 .reaction-tag { height:39px; }
-.hasLoader {position: relative;}
+.hasLoader {position: relative; min-height: 100px;}
 /*.loading{display:none;}*/
 </style>
     <div class="section reactions-and-topics">
@@ -446,11 +446,9 @@ a { color:#5ba0bc; }
                 <div class="topics-holder">&nbsp;</div>
             </div>
         </div>
-<script>
-
-</script>
     </div>
 <style>
+table { width:100%; }
 .page_card { clear:both; overflow:auto; }
 .page_card:hover { background:#f3f3f3; }
 .page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
@@ -469,9 +467,6 @@ a { color:#5ba0bc; }
         <div class="grid-12 row padded hasLoader">
             <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
         </div>
-<script>
-
-</script>
     </div>
 <style>
 .content-item a { font-weight:normal; font-size:18px; color:#3c3c3c; }
@@ -861,8 +856,8 @@ a { color:#5ba0bc; }
         // RB.group.id = 1660;
         
         $(function(){
-            RB.group.id = 1660;
-            // RB.group.id = {{ group.id }};
+            // RB.group.id = 1660;
+            RB.group.id = {{ group.id }};
 
             RB.analytics.setDates();
 
