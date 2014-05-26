@@ -7765,11 +7765,13 @@ if ( sendData.kind=="page" ) {
                             $container = summary.$container,
                             $indicator_details = summary.$indicator_details;
 
-                        $indicator_details.css({
-                           top: $container.offset().bottom,
-                           left: $container.offset().left,
-                           width:$container.outerWidth()
-                        });
+                        if ($indicator_details.length) {
+                            $indicator_details.css({
+                               top: $container.offset().bottom,
+                               left: $container.offset().left,
+                               width:$container.outerWidth()
+                            });
+                        }
                     },
                     updateMediaTracker: function(hash){
                         //RDR.actions.indicators.utils.updateMediaTracker:
