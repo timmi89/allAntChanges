@@ -175,6 +175,9 @@ class Group(models.Model):
     paragraph_helper = models.BooleanField(default=True)
     media_url_ignore_query = models.BooleanField(default=True)
     
+    # is premium?
+    premium = models.BooleanField(default=False)
+
     # Customization
     call_to_action = models.CharField(max_length=255, default='', blank=True)
     media_display_pref = models.CharField(max_length=25, default='', blank=True)
