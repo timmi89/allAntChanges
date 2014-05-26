@@ -138,6 +138,7 @@ function readrBoard($R){
             //RDR.group:
             //details to be set by RDR.actions.initGroupData which extends defaults
             defaults: {
+                premium: false,
                 img_selector: "img",
                 img_container_selectors:"#primary-photo",
                 active_sections: "body",
@@ -353,7 +354,25 @@ function readrBoard($R){
                         RDR.events.queue.push(params);
                     }
                 }
-            }    
+            },
+            emit: function(eventName, eventValue) {
+                // RDR.events.emit
+                if (RDR.group.premium == true) {
+                    // non-IE
+                    RDR.events.lastEvent = eventName;
+                    RDR.events.lastValue = eventValue;
+
+                    if (document.createEvent) {
+                        evt = document.createEvent("Event");
+                        evt.initEvent(eventName, true, true);
+                        document.dispatchEvent(evt);
+                    } else if (document.createEventObject) { // MSIE
+                        // just change the property 
+                        // this will trigger onpropertychange
+                        document.documentElement[eventName]++;
+                    };
+                }
+            }
         },
         groupSettings: {
             getCustomSettings: function(){
@@ -3053,6 +3072,14 @@ function readrBoard($R){
         },
         toggle: function(){
             $R('body').toggleClass('no-rdr');
+        },
+        getLastEvent: function() {
+            if (RDR.group.premium == true) {
+                return {
+                    'event':(RDR.events.lastEvent) ? RDR.events.lastEvent:'',
+                    'value':(RDR.events.lastValue) ? RDR.events.lastValue:''
+                };
+            }
         },
         session: {
             alertBar: {
@@ -6228,16 +6255,20 @@ if ( sendData.kind=="page" ) {
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
 
+                            var reaction = (tag.body) ? tag.body:tag.tag_body;
+
                             RDR.events.trackEventToCloud({
                                 event_type: 're',
-                                event_value: (tag.body) ? tag.body:tag.tag_body,
-                                reaction_body: (tag.body) ? tag.body:tag.tag_body,
+                                event_value: reaction,
+                                reaction_body: reaction,
                                 container_hash: args.hash,
                                 container_kind: args.kind,
                                 content_location: content_node.location,
                                 content_id: (response.data.content_node) ? response.data.content_node.id:null,
                                 page_id: args.page_id
                             });
+
+                            RDR.events.emit('readrboard.reaction', reaction);
 
                             $('#rdr_loginPanel').remove();
                             
