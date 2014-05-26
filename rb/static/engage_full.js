@@ -3633,7 +3633,7 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = RDR.groupSettings.getCustomSettings();
+                        var custom_group_settings = (RDR.groupSettings) ? RDR.groupSettings.getCustomSettings():{};
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
                         // handle deprecated .blessed_tags, change to .default_reactions
