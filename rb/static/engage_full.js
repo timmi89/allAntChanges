@@ -7765,7 +7765,7 @@ if ( sendData.kind=="page" ) {
                             $container = summary.$container,
                             $indicator_details = summary.$indicator_details;
 
-                        if ($indicator_details.length) {
+                        if (typeof $indicator_details != 'undefined') {
                             $indicator_details.css({
                                top: $container.offset().bottom,
                                left: $container.offset().left,
