@@ -197,7 +197,7 @@ class FrequencyHandler(AnalyticsHandler):
         return periods
             
 
-@requires_admin_super
+# @requires_admin_super
 def analytics_inhouse(request, **kwargs):
     context = {}
     context['fb_client_id'] = FACEBOOK_APP_ID
