@@ -200,8 +200,8 @@ class FrequencyHandler(AnalyticsHandler):
 # @requires_admin_super
 def analytics_inhouse(request, **kwargs):
     context = {}
-    context['fb_client_id'] = FACEBOOK_APP_ID
-    context['cookie_user'] = kwargs['cookie_user']
+    # context['fb_client_id'] = FACEBOOK_APP_ID
+    # context['cookie_user'] = kwargs['cookie_user']
 
     return render_to_response(
         "analytics_inhouse.html",
