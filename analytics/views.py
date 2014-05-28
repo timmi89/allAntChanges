@@ -228,7 +228,7 @@ def inhouse_analytics_request(func):
 
 # [ec] mostly a quick copy of AnalyticsHandler.  Refactor later.
 class InhouseAnalyticsHandler(AnonymousBaseHandler):
-    @requires_admin_super
+    # @requires_admin_super
     @inhouse_analytics_request
     def read(self, request, data, **kwargs):
         interactions = Interaction.objects.all()
