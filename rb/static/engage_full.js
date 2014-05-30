@@ -10090,11 +10090,10 @@ function $RFunctions($R){
                     var page_id = $(this).data('page_id');
 
                     var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                    // RDR.events.track( 'view_summary::'+page_id );
 
                     RDR.events.trackEventToCloud({
                         event_type: 'sb',
-                        event_value: 'show',
+                        event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                         page_id: page_id
                     });
                 };
