@@ -105,15 +105,15 @@
         
 		$(document).ready( function() {			
 			
-			if ( $.cookie('location') && $.cookie('container_hash') ) {
-				RDRAuth.notifyParent({message:false}, "sharedLink|" + $.cookie('container_hash') + "|" + RDRAuth.decodeDjangoCookie( $.cookie('location') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('reaction') ) + "|" + RDRAuth.decodeDjangoCookie( $.cookie('content') ) + "|" + $.cookie('referring_int_id') + "|" + RDRAuth.decodeDjangoCookie( $.cookie('page_hash') ) );
-				$.cookie('container_hash', null, { path: '/' });
-				$.cookie('location', null, { path: '/' });
-				$.cookie('content', null, { path: '/' });
-				$.cookie('reaction', null, { path: '/' });
-				$.cookie('referring_int_id', null, { path: '/' });
-				$.cookie('page_hash', null, { path: '/' });
-			} else if ( !$.cookie('educatedUser') ) {
+			if ( localStorage.getItem('location') && localStorage.getItem('container_hash') ) {
+				RDRAuth.notifyParent({message:false}, "sharedLink|" + localStorage.getItem('container_hash') + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('location') ) + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('reaction') ) + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('content') ) + "|" + localStorage.getItem('referring_int_id') + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('page_hash') ) );
+				localStorage.setItem( 'container_hash' );
+				localStorage.setItem( 'location' );
+				localStorage.setItem( 'content' );
+				localStorage.setItem( 'reaction' );
+				localStorage.setItem( 'referring_int_id' );
+				localStorage.setItem( 'page_hash' );
+			} else if ( !localStorage.getItem('educatedUser') ) {
 				RDRAuth.notifyParent({message:false}, "educate user");
 			}
 

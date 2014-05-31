@@ -293,8 +293,8 @@ function readrBoard($R){
                             gid: RDR.group.id || null,
                             uid: RDR.user.user_id || null,
                             pid: parseInt(page_id),
-                            lts: RDR.user.guid || null,
-                            sts: RDR.user.session || null,
+                            lts: RDR.user.lts || null,
+                            sts: RDR.user.sts || null,
                             ref: referrer_tld || null,
                             cid: params.content_id || null,
                             ah: parseInt(RDR.group.active_section_milestones[100]) || null,
@@ -3063,6 +3063,67 @@ function readrBoard($R){
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
+            },
+            killSessions: function() {
+                //RDR.util.killSessions
+                localStorage.removeItem('rdr_sts');
+                localStorage.removeItem('rdr_lts');
+                RDR.user.sts = null;
+                RDR.user.lts = null;
+            },
+            checkSessions: function() {
+                //RDR.util.checkSessions
+                var rdr_sts = JSON.parse( localStorage.getItem('rdr_sts') );  // short term session
+                var rdr_lts = localStorage.getItem('rdr_lts'); // long term session
+
+                // check/set session localStorages
+                if( !rdr_sts || new Date().getTime() < rdr_sts.expires ) {
+                    var short_session_guid = RDR.user.sts = RDR.util.createGuid();
+                    var short_session_expiretime = new Date();
+                    var minutes = 15;
+                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+
+                    var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime }
+                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                    
+                    $.clog('rs sts 1', short_session_guid );
+                    // $.cookie('rdr_sts', short_session_guid, { expires: short_session_expiretime });
+                } else {
+
+                    RDR.user.sts = rdr_sts.guid;
+
+                    // lets extend the session time 
+                    var minutes = 10;
+                    var short_session_expiretime = new Date();
+                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+                    $.clog('rs sts 2', RDR.user.sts );
+                    // $.cookie('rdr_sts', RDR.user.sts, { expires: short_session_expiretime });
+
+                    var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime }
+                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                }
+
+                if( !rdr_lts ) {
+                    var long_session_guid = RDR.user.lts = RDR.util.createGuid();
+                    // var long_session_expiretime = new Date();
+                    // var days = 180;
+                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    $.clog('rs lts 1', long_session_guid ); 
+                    // $.cookie('rdr_lts', long_session_guid, { expires: long_session_expiretime });
+
+                    // var new_rdr_lts = {guid: long_session_guid, expires: short_session_expiretime }
+                    localStorage.setItem('rdr_lts', long_session_guid );
+                } else {
+                    RDR.user.lts = rdr_lts;
+                    $.clog('rs lts 2', RDR.user.lts ); 
+
+                    //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
+                    // lets extend the session time 
+                    // var days = 180;
+                    // var long_session_expiretime = new Date();
+                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    // $.cookie('rdr_lts', RDR.user.long_session_guid, { expires: long_session_expiretime });
+                }
             }
         },
         debug: function(){
@@ -3160,7 +3221,7 @@ function readrBoard($R){
                     $('div.rdr_indicator_for_media').hide();
                     // RDR.actions.indicators.utils.borderHilites.disengageAll();
                     
-                    // set a cookie in the iframe saying not to show this anymore
+                    // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
                         RDR_baseUrl + "/static/xdm.html",
@@ -3202,7 +3263,7 @@ function readrBoard($R){
             getSharedLinkInfo: function( data ){
                 //some condition
 
-                //TODO: sample data here, fill with info from cookie
+                //TODO: sample data here, fill with info from localStorage
                 // var data = {
                 //     location: "2:10\0542:32",
                 //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
@@ -3213,7 +3274,7 @@ function readrBoard($R){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                if ( $.cookie('content_type') != 'pag' ) {
+                if ( localStorage.getItem('rdr_content_type') != 'pag' ) {
                     
                     // quick fix
                     // todo  - do this better later;
@@ -3244,7 +3305,7 @@ function readrBoard($R){
                 var response = args.response;
                 switch ( response.message ) {
                     case "Error getting user!":
-                        // kill the user object and cookie
+                        // kill the user object and localStorage
                         RDR.session.killUser();
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
@@ -3453,6 +3514,7 @@ function readrBoard($R){
             },
             killUser: function() {
                 RDR.user = {};
+                RDR.util.killSessions();
                 $.postMessage(
                     "killUser",
                     RDR_baseUrl + "/static/xdm.html",
@@ -3922,16 +3984,16 @@ function readrBoard($R){
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
 
-                    // we should handle settings through a JSON cookie.  will do later.
-                    if ( !$.cookie('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
+                    // we should handle settings through localStorage.  will do later.
+                    if ( !localStorage.getItem('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
                         var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>Close this</a>',
                             double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
                             $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#rdr_sandbox');
 
                         $doubleTapMessage.addClass( double_tap_message_position ).on('tap', function() {
-                            // we should handle settings through a JSON cookie.  will do later.
-                            $.cookie('hideDoubleTapMessage', true);
+                            // we should handle settings through localStorage.  will do later.
+                            localStorage.setItem('hideDoubleTapMessage', true);
                             $(this).remove();
                         }).appendTo( $sandbox );
                     }
@@ -4027,43 +4089,7 @@ function readrBoard($R){
                     $('#rdr_sandbox').addClass('isTouchBrowser');
                 }
 
-                // check/set session cookies
-                if( $.cookie('rdr_session') === null ) {
-                    var short_session_guid = RDR.user.session = RDR.util.createGuid();
-                    var short_session_expiretime = new Date();
-                    var minutes = 15;
-                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
-                    $.clog('rs sts 1', short_session_guid );
-                    $.cookie('rdr_session', short_session_guid, { expires: short_session_expiretime });
-                } else {
-                    RDR.user.session = $.cookie('rdr_session');
-
-                    // lets extend the session time 
-                    var minutes = 10;
-                    var short_session_expiretime = new Date();
-                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
-                    $.clog('rs sts 2', RDR.user.session );
-                    $.cookie('rdr_session', RDR.user.session, { expires: short_session_expiretime });
-                }
-
-                if( $.cookie('rdr_user') === null ) {
-                    var long_session_guid = RDR.user.guid = RDR.util.createGuid();
-                    var long_session_expiretime = new Date();
-                    var days = 180;
-                    long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
-                    $.clog('rs lts 1', long_session_guid ); 
-                    $.cookie('rdr_user', long_session_guid, { expires: long_session_expiretime });
-                } else {
-                    RDR.user.guid = $.cookie('rdr_user');
-                    $.clog('rs lts 2', RDR.user.guid ); 
-
-                    //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
-                    // lets extend the session time 
-                    // var days = 180;
-                    // var long_session_expiretime = new Date();
-                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
-                    // $.cookie('rdr_user', RDR.user.long_session_guid, { expires: long_session_expiretime });
-                }
+                RDR.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
@@ -9614,7 +9640,6 @@ function $RFunctions($R){
         plugin_jquery_log($R);
         plugin_jquery_hasAttr($R);
         plugin_jquery_json($R);
-        plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_mustache($R);
         plugin_jquery_enhancedOffset($R);
@@ -9821,70 +9846,6 @@ function $RFunctions($R){
             };
         }
         //end function plugin_jquery_json
-
-        function plugin_jquery_cookie($){
-            /*jslint browser: true */ /*global jQuery: true */
-
-            /**
-            * jQuery Cookie plugin
-            *
-            * Copyright (c) 2010 Klaus Hartl (stilbuero.de)
-            * Dual licensed under the MIT and GPL licenses:
-            * http://www.opensource.org/licenses/mit-license.php
-            * http://www.gnu.org/licenses/gpl.html
-            *
-            */
-
-            /*
-            * Get the value of a cookie with the given key.
-            *
-            * @desc Set the value of a cookie.
-            * @example $.cookie('the_cookie', 'the_value');
-            *
-            * @desc Create a cookie with all available options.
-            * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
-            *
-            * @desc Create a session cookie.
-            * @example $.cookie('the_cookie', 'the_value');
-            *
-            * @desc Delete a cookie by passing null as value.
-            * @example $.cookie('the_cookie', null);
-            *
-            */
-            
-            $.cookie = function (key, value, options) {
-                
-                // key and at least value given, set cookie...
-                if (arguments.length > 1 && String(value) !== "[object Object]") {
-                    options = $.extend({}, options);
-
-                    if (value === null || value === undefined) {
-                        options.expires = -1;
-                    }
-
-                    if (typeof options.expires === 'number') {
-                        var days = options.expires, t = options.expires = new Date();
-                        t.setDate(t.getDate() + days);
-                    }
-                    
-                    value = String(value);
-                    
-                    return (document.cookie = [
-                        encodeURIComponent(key), '=',
-                        options.raw ? value : encodeURIComponent(value),
-                        options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                        options.path ? '; path=' + options.path : '',
-                        options.domain ? '; domain=' + options.domain : '',
-                        options.secure ? '; secure' : ''
-                    ].join(''));
-                }
-
-                // key and possibly options given, get cookie...
-                options = value || {};
-                var result, decode = options.raw ? function (s) { return s; } : decodeURIComponent;
-                return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
-            };
-        }
 
         function plugin_jquery_postMessage($){
             /*
