@@ -4033,6 +4033,7 @@ function readrBoard($R){
                     var short_session_expiretime = new Date();
                     var minutes = 15;
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+                    $.clog('rs sts 1', short_session_guid );
                     $.cookie('rdr_session', short_session_guid, { expires: short_session_expiretime });
                 } else {
                     RDR.user.session = $.cookie('rdr_session');
@@ -4041,6 +4042,7 @@ function readrBoard($R){
                     var minutes = 10;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+                    $.clog('rs sts 2', RDR.user.session );
                     $.cookie('rdr_session', RDR.user.session, { expires: short_session_expiretime });
                 }
 
@@ -4049,9 +4051,11 @@ function readrBoard($R){
                     var long_session_expiretime = new Date();
                     var days = 180;
                     long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    $.clog('rs lts 1', long_session_guid ); 
                     $.cookie('rdr_user', long_session_guid, { expires: long_session_expiretime });
                 } else {
                     RDR.user.guid = $.cookie('rdr_user');
+                    $.clog('rs lts 2', RDR.user.guid ); 
 
                     //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
                     // lets extend the session time 
