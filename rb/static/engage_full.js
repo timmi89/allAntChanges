@@ -3077,13 +3077,13 @@ function readrBoard($R){
                 var rdr_lts = localStorage.getItem('rdr_lts'); // long term session
 
                 // check/set session localStorages
-                if( !rdr_sts || new Date().getTime() < rdr_sts.expires ) {
+                if( !rdr_sts || new Date().getTime() > rdr_sts.expires ) {
                     var short_session_guid = RDR.user.sts = RDR.util.createGuid();
                     var short_session_expiretime = new Date();
                     var minutes = 15;
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
 
-                    var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime }
+                    var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime.getTime() }
                     localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
                     
                     $.clog('rs sts 1', short_session_guid );
@@ -3099,7 +3099,7 @@ function readrBoard($R){
                     $.clog('rs sts 2', RDR.user.sts );
                     // $.cookie('rdr_sts', RDR.user.sts, { expires: short_session_expiretime });
 
-                    var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime }
+                    var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime.getTime() }
                     localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
                 }
 
