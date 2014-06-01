@@ -6097,7 +6097,8 @@ if ( sendData.kind=="page" ) {
                                 'container': hash,
                                 'body': "",
                                 'kind':kind,
-                                'hash':hash
+                                'hash':hash,
+                                'item_type':'page'
                             };
 
                             sendData = {
