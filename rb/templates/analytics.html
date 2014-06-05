@@ -12,10 +12,12 @@
 
 {% endblock %}
 
-{% block mastheadContent %}
+{% block subheaderContent %}
+<section role="subheader">
     {% with "analytics" as activeAdminTab %} 
     {% include "admin/nav_tabs.html" %}
     {% endwith %}
+</section>
 {% endblock %}
 
 {% block wideContent %}

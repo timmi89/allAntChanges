@@ -97,8 +97,7 @@
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user_min.js"></script>
 
-  <div id="page_container">
-    {% block header %}
+  {% block header %}
     <header role="global" class="no-rdr clearfix">
       <section class="content">
         <div id="user_and_search">
@@ -108,10 +107,6 @@
               <i class="fa fa-bars"></i>
               <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/></a>
               <div id="log-out-link">
-                <div class="who_for">
-                  <a href="/publishers/">For Publishers</a>
-                  <a href="/retailers/">For Retailers</a>
-                </div>
                 Welcome, <strong>{{ cookie_user.social_user.full_name }}</strong>
                 <a href="/user/{{ cookie_user.id }}">My Activity</a>
                 <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
@@ -169,13 +164,13 @@
 
           {% block siteSearch %}
           <div id="site_search">
-            <i class="fa fa-search"></i>
             <form method="get" id="searchform" action="">
               <fieldset>
                 <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-                <button class="btn"><i class="fa fa-arrow-circle-o-right"></i></button>
+                <!-- <button class="btn"><i class="fa fa-arrow-circle-o-right"></i></button> -->
               </fieldset>
             </form>
+            <i class="fa fa-search"></i>
           </div>
           <script>
           $('#site_search')
@@ -193,16 +188,16 @@
                   var action = isValidPath ? curPath : defaultPath;
                 
                   $(e.target).attr('action', action);
-              })
+              });
+            $('.fa-search').on('click', function(e){
+              e.preventDefault();
+              $('#searchform').trigger('submit');
+            });
           </script>
           {% endblock siteSearch %}        
         </div>
 
         <a href="/" class="logo"><h1>ReadrBoard</h1></a>
-        <div class="who_for">
-          <a href="/publishers/">Publishers</a>
-          <a href="/retailers/">Retailers</a>
-        </div>
       </section>
 
       {% block headerDisplay %}
@@ -210,24 +205,20 @@
 
       </header>
 
-      <!--
-      <section role="subheader">
-        <div class="content">
-        </div>
-      </section>
-      -->
-
     {% endblock header %}
     
-    <section role="masthead">
-        {% block mastheadContent %}
-        {% endblock %}
+    <!-- <section role="masthead"> -->
+    <!-- <section role="subheader"> -->
+    {% block subheaderContent %}
+    {% endblock %}
+    <!-- </section> -->
+    <!-- </section> -->
+    <section role="wideContent">
+      {% block wideContent %}
+      {% endblock %}
     </section>
+  <div id="page_container">
     <section role="page content" class="clearfix content">
-      <section class="grid-whole">
-        {% block wideContent %}
-        {% endblock %}
-      </section>
       
       {% block afterWideContent %}
           <section role="after wide section">
@@ -249,37 +240,37 @@
     </section>
 
     
-    {% block footer %}
-    <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
-        <div class="footerLinks">
-            <ul class="footerLinksLeft">
-                <li>
-                    <a href="/">Home</a>
-                </li>
-                <li>
-                    <a href="/learn/">About ReadrBoard</a>
-                </li> 
-                <li>
-                    <a href="/stream/">Live Stream</a>
-                </li>
-                <li>
-                    <a href="/privacy/">Privacy</a>
-                </li>
-                <li>
-                    <a href="/terms/">Terms</a>
-                </li>
-                <li>
-                    <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                    
-                </li>
-            </ul>
-            <div class="clearDiv"></div>
-        </div>
-    </footer>
-    {% endblock footer %}
 
   </div> <!-- // page_container -->
+  {% block footer %}
+  <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
+      <div class="footerLinks">
+          <ul class="footerLinksLeft">
+              <li>
+                  <a href="/">Home</a>
+              </li>
+              <li>
+                  <a href="/learn/">About ReadrBoard</a>
+              </li> 
+              <li>
+                  <a href="/stream/">Live Stream</a>
+              </li>
+              <li>
+                  <a href="/privacy/">Privacy</a>
+              </li>
+              <li>
+                  <a href="/terms/">Terms</a>
+              </li>
+              <li>
+                  <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
+                  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                  
+              </li>
+          </ul>
+          <div class="clearDiv"></div>
+      </div>
+  </footer>
+  {% endblock footer %}
 
 <script type="text/javascript">
 

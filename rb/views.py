@@ -52,7 +52,21 @@ def widgetCss(request):
       mimetype = 'text/css')
 
 def home(request):
-    return HttpResponseRedirect('/learn/')
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "home.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+    # return HttpResponseRedirect('/learn/')
 
 def team(request):
     cookie_user = checkCookieToken(request)
@@ -134,20 +148,8 @@ def learn(request):
       context,
       context_instance=RequestContext(request)
     )
-
-def notes(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-    context['hasSubheader'] = True
-
-    return render_to_response(
-      "notes.html",
-      context,
-      context_instance=RequestContext(request)
-    )
+    
+    # return HttpResponseRedirect('/')
 
 def retailers(request):
     cookie_user = checkCookieToken(request)

@@ -5,10 +5,12 @@
 
 {% block title %}{{ cookie_user }} Management{%endblock%}
 
-{% block mastheadContent %}
+{% block subheaderContent %}
+<section role="subheader">
     {% with "manage_reactions" as activeAdminTab %} 
     {% include "admin/nav_tabs.html" %}
     {% endwith %}
+</section>
 {% endblock %}
 
 {% block wideContent %}

@@ -3,12 +3,14 @@
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
 
-{% block mastheadContent %}
+{% block subheaderContent %}
+<section role="subheader">
     {% with group=form.instance %}
     {% with "settings" as activeAdminTab %} 
     {% include "admin/nav_tabs.html" %}
     {% endwith %}
     {% endwith %}
+</section>
 {% endblock %}
 
 {% block wideContent %}

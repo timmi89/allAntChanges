@@ -33,14 +33,19 @@ input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer;ov
 /* 320and up reset.  keeping in since I sort of am using our old styles, here and there. */
 html, body, body div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, figure, footer, header, hgroup, menu, nav, section, time, mark, audio, video {margin: 0;padding: 0;border: 0;outline: 0;font-size: 100%;vertical-align: baseline;background: transparent;}
 
+body, html {
+  height: 100%;
+}
+
 /* global tag definitions */
 body {
 	font-family:Helvetica,'RDR_Helvetica',Arial,sans-serif;
-	padding-top:75px;
+  padding-top:75px;
 }
 body.has_subheader {
-	padding-top:120px;
 }
+
+#page_container {min-height:95%; }
 
 li {}
 p, ol, ul, dl, address {
@@ -62,7 +67,7 @@ a {
 /* end global tag definitions */
 
 header[role="global"] {
-	background: #3c3c3c;
+	background: #fff;
 	color: #dcdcdc;
 	width: 100%;
 	height: 75px;
@@ -79,14 +84,14 @@ header[role="global"] h1        {
 text-indent: 100%;
 white-space: nowrap;
 overflow: hidden;
-	background:url(../images/header_logo.png) top center no-repeat;width:177px; height:75px; padding:0; margin:0; }
-header[role="global"] .who_for	{ position:absolute; top:33px; right:5px; }
-header[role="global"] .who_for	a { font-size: 12px; color:#dcdcdc; text-decoration: none; margin-left:20px;}
+	background:url(/static/images/logotext_mask.png) top center no-repeat #909090; background-size:100%; width:177px; height:34px; padding:0; margin:20px 0 0 0; }
+/*header[role="global"] .who_for	{ position:absolute; top:33px; right:5px; }
+header[role="global"] .who_for	a { font-size: 12px; color:#dcdcdc; text-decoration: none; margin-left:20px;}*/
 
-header[role="global"] #user_and_search	{ position:absolute; top:14px; left:0px; text-align: left; width:auto; z-index:1;}
+header[role="global"] #user_and_search	{ position:absolute; top:14px; right:0px; text-align: left; width:auto; z-index:1;}
 
-header[role="global"] #user       { display:block;float:left; margin:5px 10px 2px;}
-header[role="global"] #user #logged-in      { visibility:hidden; height:37px; font-size:11px;}
+header[role="global"] #user       { display:block;float:right; margin:5px 10px 2px;}
+header[role="global"] #user #logged-in      { visibility:hidden; xheight:37px; font-size:11px;}
 header[role="global"] #user #logged-out     { height:37px;}
 header[role="global"] #user #logged-in img  { float:left; width:45px; height:42px; }
 header[role="global"] #user strong          { }
@@ -103,14 +108,14 @@ header[role="global"] #user #logged-in #log-out-link h5  { color:#ccc; font-size
 header[role="global"] #user #logged-in #log-out-link .who_for { display:none; }
 header[role="global"] #user #logged-in:hover #log-out-link  { display:block; }
 
-header[role="global"] #site_search      									{ margin:13px 10px 0px 10px; display:block;float:left; }
-header[role="global"] #site_search i     									{ font-size:22px; display:inline-block; }
+header[role="global"] #site_search      									{ margin:13px 10px 0px 10px; display:block;float:right; }
+header[role="global"] #site_search i     									{ font-size:22px; display:inline-block; color:#aaa; bottom: -2px; position: relative;}
 header[role="global"] #site_search.rdr_hover i.fa-search,
-header[role="global"] #site_search:hover i.fa-search 			{ color:#65b4e7; }
+header[role="global"] #site_search:hover i.fa-search 			{ color:#65b4e7; cursor:pointer;}
 header[role="global"] #site_search form     							{ font-size:22px; display: inline-block; }
-header[role="global"] #site_search input  								{ background:transparent;color:#ccc;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;font-size:14px;}
+header[role="global"] #site_search input  								{ background:transparent;color:#666;padding:1px 4px;height:24px;width:180px;border-radius:0;box-shadow:none !important;border:none;font-size:14px;}
 header[role="global"] #site_search.rdr_hover input,
-header[role="global"] #site_search:hover input  					{ background:#555;}
+header[role="global"] #site_search:hover input  					{ background:#ddd;}
 header[role="global"] #site_search button 								{ display:none; background: none; border: none; color: #dcdcdc; margin-left: -35px; margin-top: 2px;}
 header[role="global"] #site_search.rdr_hover button,
 header[role="global"] #site_search:hover button 					{ display:inline-block;}
@@ -172,19 +177,31 @@ section[role="subheader"] .content .item a {
 
 section[role="subheader"] i.fa.fa-chevron-right { margin:0 10px; }
 
-
+section[role="wideContent"] {
+  width: 100%;
+  position:relative;
+  /*top:75px;*/
+  z-index:1;
+  overflow: auto;
+}
 
 /*****************************/
 /** Admin subheader and tabs */
 /*****************************/
-section[role="masthead"] {
+section[role="subheader"] {
   position: relative;
   z-index:11;
 }
-section[role="masthead"] + section[role="page content"] {
+
+section[role="page content"] {
+  /*padding-top:75px;*/
+}
+
+/*section[role="masthead"] + section[role="page content"] {
   border-top:1px solid #d5d5d5;
   padding-top:30px;
-}
+}*/
+
 section[role="subheader"].admin {
   background:#94c659;
 }
@@ -229,6 +246,23 @@ section[role="subheader"].admin {
   box-shadow: 0px 0px 4px #999;
 }
 
+/****** know ******/
+.know { background: url(/static/images/congruent_outline.png); }
+.know .message { font-family: 'Helvetica','RDR_Helvetica', sans-serif; color:#fff; font-weight:100; font-size:52px; margin:50px 0 50px 20px; }
+.know .caption { font-family: 'Helvetica','RDR_Helvetica', sans-serif; color:#fff; font-weight:100; font-size:18px; margin-left:20px; width:62%; margin-bottom: 30px; letter-spacing: 0.5px;}
+
+/* ESRG media queries */
+@media (max-width: 480px) {
+  .know .message { font-size:28px; text-align: center; margin:30px auto; width:85%; }
+  .know .caption { font-size:16px; text-align: center; margin:0px auto 40px; width:81%; }
+}
+@media (min-width: 481px) and (max-width: 800px) {
+  .know .message { font-size:38px; text-align: center; margin:30px auto; width:85%; }
+  .know .caption { font-size:18px; text-align: center; margin:0px auto 40px; width:81%; }
+}
+@media (min-width: 801px) and (max-width: 940px) {
+  .reaction-cloud {margin-top:5%;}
+}
 
 /****** learn ******/
 .learn_page .masthead {letter-spacing:-1px; overflow:auto; padding:0;}
@@ -934,17 +968,27 @@ div.breadcrumb {
 
 
 /* media queries for responsiveness */
-@media (max-width: 480px) {
+/*@media (max-width: 480px) {*/
 	/*.retailers_page .new-section.demo iframe { width:300px; height:169px;}*/
+/*}*/
+
+@media (max-width: 480px) {}
+@media (min-width: 481px) and (max-width: 800px) {
+
 }
-@media (max-width: 767px) {
+@media (min-width: 801px){}
+
+@media (max-width: 800px) {
 	body {padding-top:50px;}
-	header[role="global"] { text-align:right; height:50px; }
-	header[role="global"] h1 { margin-top:0px; margin-right:-20px; background-size:125px 53px; }
+  body.has_subheader { padding-top:85px; }
+  #page_container {min-height:inherit;}
+	header[role="global"] { text-align:left; height:50px; }
+	header[role="global"] h1 { margin-top:16px; width:115px; height:22px; left:10px; right:auto;}
 	header[role="global"] a { margin-bottom:10px; }
 	header[role="global"] #user {margin-top:0;}
 	header[role="global"] .who_for {display: none;}
-	header[role="global"] #site_search { margin-top:-1px; }
+  header[role="global"] #site_search  { margin:2px 0px 0 0px; }
+	header[role="global"] #site_search form { position: absolute; right: 11%; top: 55%;}
 	header[role="global"] #site_search i     									{ font-size:16px; }
 	header[role="global"] #site_search input     							{ width:110px; }
 	header[role="global"] #user #logged-in > i { display: block; font-size:21px; margin: 5px 0px 0px 5px; }
@@ -957,7 +1001,7 @@ div.breadcrumb {
 
 	section[role="subheader"] { height:35px; top:50px; }
 	section[role="subheader"] .content .item { font-size:12px; padding-top:10px; }
-	body.has_subheader { padding-top:85px; }
+
 
 	.retailers_page .masthead .average_increase i { font-size:65px; }
 	.retailers_page .masthead .average_increase h2 { font-size:95px; }
@@ -1022,7 +1066,7 @@ div.breadcrumb {
 		margin-right:4%;
 	}
 }
-@media (min-width: 768px) {
+@media (min-width: 801px) {
 	.readrboard_is_better { width:1084px; }
 	.readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
 	.readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
