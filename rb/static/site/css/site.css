@@ -988,14 +988,14 @@ div.breadcrumb {
 	header[role="global"] #user {margin-top:0;}
 	header[role="global"] .who_for {display: none;}
   header[role="global"] #site_search  { margin:2px 0px 0 0px; }
-	header[role="global"] #site_search form { position: absolute; right: 11%; top: 55%;}
+	header[role="global"] #site_search form { position: absolute; right: 11%; top: 25px;}
 	header[role="global"] #site_search i     									{ font-size:16px; }
 	header[role="global"] #site_search input     							{ width:110px; }
 	header[role="global"] #user #logged-in > i { display: block; font-size:21px; margin: 5px 0px 0px 5px; }
 	header[role="global"] #user #logged-in > a { display: none; }
 	header[role="global"] #user #logged-out > a { display: none; }
 	header[role="global"] #user #logged-out > i { display: block; font-size:27px; margin: 5px 0px 0px 5px; }
-	header[role="global"] #user #logged-in #log-out-link	{ top:30px; }
+	header[role="global"] #user #logged-in #log-out-link	{ top:30px; right:10px; left:auto; width:200px; }
 	header[role="global"] #user #logged-in #log-out-link .who_for { display:block; position:static; margin-bottom:5px; padding-bottom:5px; border-bottom: 1px solid #aaa;}
 	header[role="global"] #user #logged-in #log-out-link .who_for a { color:#dcdcdc; margin:0 20px 0 0; display:inline-block; font-family:'RDR_HelveticaBold','HelveticaBold',Helvetica,Arial,sans-serif; }
 
