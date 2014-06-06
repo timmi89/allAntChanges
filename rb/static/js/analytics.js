@@ -217,7 +217,7 @@ function hotTopics(hotTopics) {
             var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
             var charCountModifier = (topic.body.length>20) ? 'smallest':(topic.body.length>14) ? 'smaller':'large';
             // $temp_popularTopics.find('.template').append('<div class="grid-'+gridNum+'"><span class="topic-tag '+charCountModifier+'"><a href="#">'+topic.body+' <span class="counter">'+topic.count+'</span></a></span></div>'); 
-            $temp_popularTopics.find('.template').append('<span class="topic-tag '+size+'"><a href="#" class="'+charCountModifier+'">'+topic.body+'</a></span>'); 
+            $temp_popularTopics.find('.template').append('<span class="topic-tag '+size+'"><a href="javascript:void(0);" class="'+charCountModifier+'">'+topic.body+'</a></span>'); 
             itemNumber++;
         });
 
@@ -247,7 +247,7 @@ function refSummary(referrers) {
 
         $.each(engagedReferrers, function(idx, referrer) {
             var $referrer = $('<tr class="page_card">' +
-                    '<td class="title"><h1 style="background-size:'+ parseInt((referrer.engagement_rate / 100)*100) +'% 30px;"><a href="#">'+referrer.title+'</a></h1></td>' +
+                    '<td class="title"><h1 style="background-size:'+ parseInt((referrer.engagement_rate / 100)*100) +'% 30px;"><a href="javascript:void(0);">'+referrer.title+'</a></h1></td>' +
                     // '<td class="attribute">'+ referrer.hotness +' <label>Engagement</label></td>' +
                     '<td class="attribute">'+ referrer.engagement_rate +'% <label>Engagement</label></td>' +
                     '<td class="attribute">'+ referrer.reaction_count +' <label>Reactions</label></td>' +
@@ -340,10 +340,12 @@ function refSummary(referrers) {
                     var itemNumber = 1;
                     $.each(popularReactions, function(idx, reaction) {
                         // console.log(reaction);
-                        var gridNum = (itemNumber<3) ? '6' : (itemNumber < 9) ? '4' : '3';
+                        var searchUrl = (RB.group.short_name) ? '/group/'+RB.group.short_name+'/':'/stream/';
+                        var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
                         // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
                         var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
-                        $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+RB.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+                        // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+RB.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+                        $temp_popularReactions.find('.template').append('<span class="reaction-tag '+size+'"><a target="_blank" href="'+searchUrl+'?s='+reaction.body+'" class="'+charCountModifier+'">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span>'); 
                         itemNumber++;
                     });
 
