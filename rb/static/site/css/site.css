@@ -45,7 +45,9 @@ body {
 body.has_subheader {
 }
 
-#page_container {min-height:95%; }
+#page_container {
+  /*min-height:95%;*/
+}
 
 li {}
 p, ol, ul, dl, address {
@@ -263,6 +265,154 @@ section[role="subheader"].admin {
 @media (min-width: 801px) and (max-width: 940px) {
   .reaction-cloud {margin-top:5%;}
 }
+
+/*section[role="main"] {
+  padding:20px;
+}*/
+
+.banner {
+  padding:40px 20px;
+  text-align: center;
+  color:#616161;
+}
+.banner.blue {
+  background: #278ac9;
+}
+.banner .caption {
+  font-family: 'Helvetica','RDR_Helvetica', sans-serif; 
+  font-size:18px;
+}
+h1 {
+  color:#616161;
+  font-size:48px;
+  font-weight:700;
+}
+
+.banner.blue h1 {
+  color:#fff;
+}
+
+/***** dashboard ****/
+#analyticsReport .summary.hasLoader {min-height:110px; margin-bottom:0;}
+#analyticsReport .summary .engagement-rate { }
+#analyticsReport .summary .engagement-rate h2 { }
+#analyticsReport .summary .engagement-rate .donut { border-right:1px solid #ccc; width:90%;  }
+#analyticsReport .summary .other-totals {  }
+
+/* http://css-tricks.com/vertically-center-multi-lined-text/ */
+#analyticsReport .other-totals .attribute .data { font-size:48px; font-weight:bold; text-align: center;  display: table-cell; vertical-align: middle; text-align: center; height:200px; }
+#analyticsReport .other-totals label { font-size:16px; font-weight:normal; display:block; text-align: center; }
+#analyticsReport .section { margin-bottom:80px; clear:both; overflow-y: auto; overflow-x:hidden; position: relative;}
+#analyticsReport .section h1 { font-size: 28px; color: #616161; font-family: 'Helvetica','RDR_HelveticaBold'; }
+#analyticsReport .column { text-align: center; color:#7f7f7f; font-size:20px; }
+#analyticsReport .column.left { text-align: left; }
+#analyticsReport .noteworthy { color:#247292; }
+#analyticsReport .row { clear:both; overflow:auto; }
+#analyticsReport .header { border-bottom:1px solid #ccc; padding-bottom: 0.5rem; margin-bottom: 1rem;}
+#analyticsReport .row.even { background:#f0f0f0; }
+#analyticsReport .loading { color:#ccc; font-size:16px; line-height: 35px; height: 35px; width:100%; margin:0 auto; text-align: center; padding:20px; position:absolute; xtop:33%; box-sizing: border-box; }
+#analyticsReport .loading div { display: inline-block; }
+#analyticsReport .template { opacity:0; overflow: auto; z-index: 1; position: relative; background:#fff;}
+#analyticsReport .template th {color:#616161;}
+
+#analyticsReport .datapoint { width:75%; margin:0 auto 5rem; }
+#analyticsReport .datapoint .number { font-family: 'RDR_HelveticaBold'; font-size:64px; color:#616161; }
+#analyticsReport .datapoint .number.medium { font-size:48px; }
+#analyticsReport .datapoint .number.small { font-size:42px; }
+#analyticsReport .datapoint label { display:block; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; padding:0 0.25rem; }
+
+#analyticsReport .datapoint.session-donut { margin-top:-2.5rem; }
+
+#analyticsReport .center-column { text-align:center;  }
+#analyticsReport .center-column .datapoint { margin:0 auto; }
+
+#analyticsReport .dashboard-name { width:85%; margin:0 auto; border:4px solid #aaa; font-family: 'RDR_HelveticaBold'; font-size:42px; color:#616161; text-align: center; overflow: hidden; padding: 1.5rem 0.5rem; }
+#analyticsReport .first-column .dashboard-name { display:none;}
+
+#analyticsReport .legend { }
+#analyticsReport .legend .legend-title { font-family: 'RDR_HelveticaBold'; font-size:21px; color:#616161; }
+#analyticsReport .legend .legend-content { background:#f4f4f4; }
+#analyticsReport .legend .legend-content .legend-value { display:inline-block; margin:0.5rem 0; }
+#analyticsReport .legend .legend-content .legend-value .legend-color { display:inline-block; width:1rem; height:1rem; background:#000; margin-bottom: -2px; }
+#analyticsReport .legend .legend-content .legend-value .legend-label { display:inline-block; color:#000; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:14px; }
+
+#analyticsReport .legend.engagement-legend { margin:2rem auto 1rem; width:70%; }
+#analyticsReport .legend.engagement-legend .legend-content { margin-top: 2rem; margin-bottom: -1rem; }
+#analyticsReport .legend.engagement-legend .legend-color.engaged { background:#92c325; }
+#analyticsReport .legend.engagement-legend .legend-label.engaged { color:#7ba51f; margin-right:2rem; }
+
+#analyticsReport .legend.engagement-legend .legend-color.not-engaged { background:#909090; }
+#analyticsReport .legend.engagement-legend .legend-label.not-engaged { color:#909090; }
+
+#analyticsReport .graph-canvas { height:200px; z-index:1; }
+#analyticsReport .graph-title { margin:1rem 1rem -1rem; font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; color:#616161; }
+#analyticsReport .graph-value { font-family: 'Helvetica','RDR_Helvetica'; font-weight:100; font-size:16px; color:#616161; margin-top:-1.2rem; position: relative; z-index: 2; }
+
+#analyticsReport .morris-hover.morris-default-style { display:none !important; }
+
+@media (min-width: 1px) and (max-width: 960px){
+#analyticsReport .grid-3 .datapoint .number { font-size:42px; }
+#analyticsReport .grid-3 .datapoint .number.medium { font-size:36px; }
+#analyticsReport .grid-3 .datapoint .number.small { font-size:24px; }
+#analyticsReport .dashboard-name { font-size: 32px;  }
+#analyticsReport .graph-title { font-size: 0.75rem; height: 3rem; }
+}
+@media (min-width: 1px) and (max-width: 480px){
+#analyticsReport .dashboard-name { display:none;}
+#analyticsReport .first-column .dashboard-name { display:block; margin-bottom: 2rem; }
+}
+
+#analyticsReport a { color:#5ba0bc; }
+#analyticsReport .reactions-and-topics .hasLoader { min-height:150px; }
+#analyticsReport .topic-tag { display: inline-block; }
+#analyticsReport .topic-tag:hover { background:#f0f0f0; }
+#analyticsReport .topic-tag a { color:#5ba0bc; text-decoration: none;  }
+#analyticsReport .topic-tag.large { font-size:51px; padding:10px 10px; }
+#analyticsReport .topic-tag.medium { font-size:31px; padding:10px 10px; }
+#analyticsReport .topic-tag.small { font-size:20px; padding:10px 10px; }
+#analyticsReport .reaction-tag { border:4px solid #737373; padding:10px 20px; display:block; text-align:center; margin-right:10px; margin-bottom:10px; white-space: nowrap;}
+    #analyticsReport .grid-6 .reaction-tag { font-size:2rem; }
+    #analyticsReport .grid-4 .reaction-tag { font-size:1.25rem; padding:10px; }
+    #analyticsReport .grid-3 .reaction-tag { font-size:14px; padding:10px; }
+    #analyticsReport .topic-tag .mediumer,
+    #analyticsReport .reaction-tag.mediumer a { font-size:90%; }
+    #analyticsReport .topic-tag .smaller,
+    #analyticsReport .reaction-tag.smaller a { font-size:80%; }
+    #analyticsReport .topic-tag .smallest,
+    #analyticsReport .reaction-tag.smallest a { font-size:60%; }
+#analyticsReport .reaction-tag a {  color:#3c3c3c; font-weight:bold; display: inline-block; overflow: hidden; width: 100%;}
+#analyticsReport .reaction-tag .counter { display:block;font-size:16px; }
+#analyticsReport .reactions-and-topics .reactions-holder .grid-6 .reaction-tag { height:78px; }
+#analyticsReport .reactions-and-topics .reactions-holder .grid-4 .reaction-tag { height:53px; }
+#analyticsReport .reactions-and-topics .reactions-holder .grid-3 .reaction-tag { height:39px; }
+#analyticsReport .hasLoader {position: relative; min-height: 100px;}
+
+#analyticsReport table { width:100%; }
+#analyticsReport .page_card { clear:both; overflow:auto; }
+#analyticsReport .page_card:hover { background:#f3f3f3; }
+#analyticsReport .page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
+#analyticsReport .page_card td {padding:10px 0; text-align: center;}
+#analyticsReport .page_card .title { width:40%;  text-align: left; }
+#analyticsReport .page_card .title h1 { font-size:14px; font-weight:normal; background:url(/static/images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
+#analyticsReport .page_card .title h1 a { color:#616161;}
+#analyticsReport .page_card .attribute { font-size:14px; xfont-weight:bold; width:12%; }
+#analyticsReport .page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
+#analyticsReport .page_card .reactions { font-size:11px; font-weight:bold; } 
+
+#analyticsReport .content-item a { font-weight:normal; font-size:18px; color:#3c3c3c; }
+#analyticsReport .content-item .reactions { margin-top:10px;}
+#analyticsReport .content-item .reaction-tag { font-weight:normal; font-size:12px; padding:5px; display:inline-block; border-width:2px;}
+#analyticsReport .via { padding:10px 0; color:#999; font-size:12px; }
+#analyticsReport .via a { font-size:12px; color:#5ba0bc; }
+#analyticsReport .engaged-content {
+    /* until we have a simple iframe that can load the content... */
+    /* <iframe src="readrboard.com/content/ID"></iframe> */
+    display:none;
+}
+
+
+
+
 
 /****** learn ******/
 .learn_page .masthead {letter-spacing:-1px; overflow:auto; padding:0;}
