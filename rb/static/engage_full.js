@@ -243,7 +243,7 @@ function readrBoard($R){
                 RDR.user = RDR.user || {};
                 RDR.events.queue = RDR.events.queue || [];
 
-                if (typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+                if (RDR.events.recordEvents && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
                     var page_id = ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString();
                     
@@ -4141,6 +4141,9 @@ function readrBoard($R){
                         if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
                     }, 250));
                 });
+
+                var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
+                RDR.events.recordEvents = $(".rdr-page-summary" + groupPageSelector).length;
 
 
                 
