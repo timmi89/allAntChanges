@@ -88,7 +88,7 @@ header[role="global"] h1        {
 text-indent: 100%;
 white-space: nowrap;
 overflow: hidden;
-	background:url(/static/images/logotext_mask.png) left center no-repeat #909090; background-size:100%; width:177px; height:34px; padding:0; margin:20px 0 0 0; }
+	background:url(../../images/logotext_mask.png) left center no-repeat #909090; background-size:100%; width:177px; height:34px; padding:0; margin:20px 0 0 0; }
 /*header[role="global"] .who_for	{ position:absolute; top:33px; right:5px; }
 header[role="global"] .who_for	a { font-size: 12px; color:#dcdcdc; text-decoration: none; margin-left:20px;}*/
 
@@ -257,7 +257,7 @@ section[role="subheader"].admin {
 }
 
 /****** know ******/
-.know { background: url(/static/images/congruent_outline.png); }
+.know { background: url(../../images/congruent_outline.png); }
 .know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:50px 0 50px 20px; }
 .know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:100; font-size:18px; margin-left:20px; width:62%; margin-bottom: 30px; letter-spacing: 1px; }
 .know .caption strong a { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:500;color:#fff; font-size:18px; margin-left:0px; letter-spacing: 1px; border-bottom:1px dashed #fff; padding:2px;}
@@ -286,10 +286,10 @@ section[role="subheader"].admin {
   color:#616161;
 }
 .banner.blue {
-  background: url(/static/images/congruent_outline_light.png);
+  background: url(../../images/congruent_outline_light.png);
 }
 .banner.gray {
-  background: url(/static/images/congruent_outline_gray.png);
+  background: url(../../images/congruent_outline_gray.png);
 }
 .home .banner.blue {
   margin-bottom:60px;
@@ -543,7 +543,7 @@ body .analyticsReport .page_card:hover { background:#f3f3f3; }
 body .analyticsReport .page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
 body .analyticsReport .page_card td {padding:10px 0; text-align: center;}
 body .analyticsReport .page_card .title { width:40%;  text-align: left; }
-body .analyticsReport .page_card .title h1 { font-size:14px; font-weight:normal; background:url(/static/images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
+body .analyticsReport .page_card .title h1 { font-size:14px; font-weight:normal; background:url(../../images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
 body .analyticsReport .page_card .title h1 a { color:#616161;}
 body .analyticsReport .page_card .attribute { font-size:14px; xfont-weight:bold; width:12%; }
 body .analyticsReport .page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
