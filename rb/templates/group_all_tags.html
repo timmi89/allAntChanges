@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block extendedHead %}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2">
+<!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2"> -->
 {% endblock %}
 
 {% block title %}{{ cookie_user }} Management{%endblock%}
@@ -17,7 +17,7 @@
 <div class="grid-whole settings">
   <section role="panels" class="content">
 
-	<!-- <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div> -->
+	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
 	<h1>Allowed Reactions</h1>
 	<div class="notice info">
 		<p>These are reactions that have been used on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>

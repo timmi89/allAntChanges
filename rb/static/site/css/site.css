@@ -526,6 +526,9 @@ button.flat:hover {
 .analyticsReport .engaged-referrers h1 a {cursor:text;}
 
 
+.settings table { width:60%; margin: 0 auto; }
+.settings table tr:hover { background:#def; }
+.settings table td { padding:10px; text-align: center }
 
 
 /****** learn ******/

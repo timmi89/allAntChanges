@@ -875,6 +875,7 @@ def admin_approve(request, request_id=None, **kwargs):
     context = {}
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
+    context['hasSubheader'] = True
     
     groups = cookie_user.social_user.admin_groups()
     
@@ -1050,6 +1051,7 @@ def group_blocked_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
+    context['hasSubheader'] = True
     return render_to_response(
         "group_blocked_tags.html",
         context,
