@@ -1147,7 +1147,6 @@ div.rdr.rdr-summary a.rdr_reactions_label {
   color:#5999dc;
   font-size:14px;
   font-family:'Helvetica',Arial,sans-serif;
-  font-weight:bold;
   letter-spacing:0px;
   padding:10px 0 0;
   text-decoration:none;
@@ -2321,6 +2320,7 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_grid .rdr_tag_body{
     top: 45% !important;
     margin-top: -0.5em !important;
     text-align: center;
+    font-weight:normal;
 }
 div.rdr div.rdr_body.rdr_tags_list.rdr_grid .rdr_tag_split .rdr_tag_body{
     margin-top: -1em !important;
