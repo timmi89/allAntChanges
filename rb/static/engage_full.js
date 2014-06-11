@@ -3995,14 +3995,13 @@ function readrBoard($R){
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
 
-                    // we should handle settings through localStorage.  will do later.
                     if ( !localStorage.getItem('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
                         var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>Close this</a>',
                             double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
                             $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#rdr_sandbox');
 
-                        $doubleTapMessage.addClass( double_tap_message_position ).on('tap', function() {
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('singletap', function() {
                             // we should handle settings through localStorage.  will do later.
                             localStorage.setItem('hideDoubleTapMessage', true);
                             $(this).remove();
@@ -4227,26 +4226,40 @@ function readrBoard($R){
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
-                $(document).on('mousedown.rdr',function(event) {
+                if ( !isTouchBrowser ) {
+                    $(document).on('mousedown.rdr',function(event) {
+                        var $mouse_target = $(event.target);
 
-                    var $mouse_target = $(event.target);
+                        if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                            // if ( $('#rdr_loginPanel').length ) {
+                            //     RDR.session.getUser(function() {
+                            //         RDR.util.userLoginState();
+                            //     });
+                            // }
+                            RDR.actions.UIClearState();
 
-                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
-                        // if ( $('#rdr_loginPanel').length ) {
-                        //     RDR.session.getUser(function() {
-                        //         RDR.util.userLoginState();
-                        //     });
-                        // }
-                        RDR.actions.UIClearState();
-
-                        if ( !isTouchBrowser ) {
+                            // if ( !isTouchBrowser ) {
                             $('div.rdr_indicator_details_for_media').each( function() {
                                 RDR.actions.containers.media.onDisengage( $(this).data('container') );
                             });
+                            // }
                         }
-                    }
 
-                });
+                    });
+                } else {
+                    $(document).on('singletap.rdr',function(event) {
+                        var $mouse_target = $(event.target);
+
+                        if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                            // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
+                            
+                            // the container.singletap will handle container state clearing.  sigh.
+                            if ( !$mouse_target.hasAttr('rdr-node') ) {
+                                RDR.actions.UIClearState();
+                            }
+                        }
+                    });
+                }
 
                 //bind an escape keypress to clear it.
                 $(document).on('keyup.rdr', function(event) {
@@ -4300,7 +4313,7 @@ function readrBoard($R){
                 // RDR.actions.reInit:
                 RDR.actions.hashCustomDisplayHashes();
             },
-            UIClearState: function(){
+            UIClearState: function(e){
                 // if (!isTouchBrowser) {
                     //RDR.actions.UIClearState:
                     // clear any errant tooltips
@@ -6843,17 +6856,24 @@ if ( sendData.kind=="page" ) {
                                         }
                                     });
                                 } else {
-                                    if (kind=="text") {
-                                        $container.on('singletap', function(e){
-                                            var $this_container = $('[rdr-hash="'+hash+'"]');
-                                            // var $container = $(e.target);
+                                    // if (kind=="text") {  // redundant, we're already in a kind=='text' conditional
+                                        $container.off('singletap.rdr').on('singletap.rdr', function(e){
 
-                                            var el = $this_container[0]
-                                            $('document').selog('selectEl', el);
+                                            if ( !$('.rdr_window').length ) {
+                                                var $this_container = $('[rdr-hash="'+hash+'"]');
+                                                // var $container = $(e.target);
 
-                                            var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                                var el = $this_container[0]
+                                                $('document').selog('selectEl', el);
+
+                                                var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                            } else {
+                                                RDR.actions.UIClearState();
+                                            }
+
+
                                         });
-                                    }
+                                    // }
                                 }
 
                                 //This will be either a helperIndicator or a hidden indicator
@@ -7038,8 +7058,9 @@ if ( sendData.kind=="page" ) {
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
+                        var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
                         //todo - replace this with the code below - but need to deal with selstate hilites first
-                        if($indicator.$rindow){
+                        if($indicator.$rindow && $indicator.$rindow.hasClass('rdr_'+mode.toLowerCase() ) ){
                             // dont rewrite the window if it already exists...
                             // adding to prevent tagBox text animation.  if this is problematic, just go prevent the animation but let this redraw.
                             if ( $indicator.$rindow.data('container') == hash ) { return; }
@@ -7053,7 +7074,6 @@ if ( sendData.kind=="page" ) {
                         //     summary.$rindow_readmode.remove();
                         // }
                         //end - todo
-                        var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
                         if (mode=="writeMode") {
                             if($container.length){
                                 el = $container[0];
@@ -7062,7 +7082,6 @@ if ( sendData.kind=="page" ) {
                                 var selector = '[rdr-hash="' + hash + '"]';
                                 el = $(selector)[0];
                             }
-
                             $('document').selog('selectEl', el);
                         }
 
