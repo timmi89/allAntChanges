@@ -149,7 +149,7 @@ section[role="subheader"] {
 	font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;
 	font-weight: 100;
 	position:fixed;
-	top:75px;
+	/*top:75px;*/
 	z-index:1;
 }
 
@@ -174,6 +174,7 @@ section[role="subheader"] .content .item {
 	padding-top: 16px;
 	font-size: 14px;
 	font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;
+  letter-spacing: 1px;
 }
 section[role="subheader"] .content .item a {
 	color:#fff;
@@ -187,6 +188,10 @@ section[role="wideContent"] {
   /*top:75px;*/
   z-index:1;
   overflow: auto;
+}
+body.has_subheader section[role="wideContent"] {
+  top:85px;
+  padding-bottom: 85px; /* needed to offset the top value, otherwise content flows into footer */
 }
 
 /*****************************/
@@ -212,6 +217,7 @@ section[role="subheader"].admin {
 
 .admin_tabs {
   overflow:auto;
+  border-bottom: 1px solid #ccc;
 }
 .admin_tabs .padded {
   padding-bottom:0;
@@ -220,8 +226,8 @@ section[role="subheader"].admin {
 .admin_tabs .view_stream {
   display:block;
   float:right;
-  font-size: 14px;
-  margin-top: 45px;
+  font-size:14px;
+  margin-top:30px;
   font-weight:bold;
 }
 .admin_tabs a {
@@ -229,7 +235,7 @@ section[role="subheader"].admin {
 }
 .admin_tabs ol {
   list-style-type: none;
-  margin-top:30px;
+  margin-top:15px;
   margin-bottom: 0;
 }
 
@@ -314,8 +320,16 @@ section[role="subheader"].admin {
 
 h1 {
   color:#616161;
-  font-size:48px;
+  font-size:36px;
   font-weight:500;
+}
+.banner h1 {
+  font-size:48px;
+}
+.settings h1 {
+  font-size:24px;
+  margin: 30px 0 40px;
+  text-align: center;
 }
 
 h2 {
@@ -329,10 +343,30 @@ h3 {
   font-size:28px;
   font-weight:100;
   letter-spacing:1px;
+  line-height: 30px;
 }
 
 .banner.blue h1 {
   color:#fff;
+}
+
+a { color:#5ba0bc; }
+
+button.flat {
+  font-size:36px;
+  background:#ddd;
+  border:4px solid #777;
+  color:#777;
+  font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
+  font-weight:100;
+  letter-spacing: 1px;
+  padding:10px;
+}
+
+button.flat:hover {
+  /*border-color:#ddd;*/
+  background:#777;
+  color:#ddd;
 }
 
 .sample-content { padding:40px 0 0; color:#777; }
@@ -1084,11 +1118,19 @@ table[role="active user table"] .avatar         { width:35px; text-align:left;}
 /* info boxes and notifications and such */
 
 div.notice {
-  padding:10px;
+  padding:20px;
   border-left:5px solid #ccc;
   background:#fafafa;
   margin-bottom:20px;
   line-height: 14px;
+}
+div.notice h1 {
+  font-size: 36px;
+}
+div.notice h3 {
+  margin-bottom:10px;
+  line-height: 24px;
+  font-size:21px;
 }
 div.notice:hover {
   background:#e3f3fc;

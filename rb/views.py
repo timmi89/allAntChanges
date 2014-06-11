@@ -1062,6 +1062,7 @@ def group_all_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
+    context['hasSubheader'] = True
     
     all_set = set(group.all_tags.all())
     blocked_set = set(group.blocked_tags.all())

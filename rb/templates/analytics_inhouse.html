@@ -23,7 +23,9 @@ RB.group.id = "{{ group.id }}";
 {% endblock %}
 
 {% block wideContent %}
-<div class="mostlyWide">
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+
     <section role="datepicker" class="datepicker" style="visibility:hidden;">
         <form>
             <label>Date Range: </label>
@@ -112,5 +114,6 @@ RB.group.id = "{{ group.id }}";
         </div>
 
     </section>
+</section>
 </div>
 {% endblock wideContent %}

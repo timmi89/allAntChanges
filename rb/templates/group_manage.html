@@ -3,7 +3,8 @@
 {% block title %}{{ cookie_user }} Management{%endblock%}
 
 {% block wideContent %}
-<div class="mostlyWide">
+<div class="grid-whole">
+  <section role="panels" class="content">
 
     {% for group in admin_groups %}
         {% block settingsHeader %}    
@@ -64,8 +65,7 @@
           </div>
         {% endblock settingsHeader %}  
     {% endfor %}  
-  
-
+  </section>
 </div>
 {% endblock wideContent %}
  

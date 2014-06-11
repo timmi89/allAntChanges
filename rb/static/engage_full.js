@@ -2687,10 +2687,11 @@ function readrBoard($R){
 
                 // what's in the address bar?
                 // this is outside the conditional b/c it's referenced by the canonical URL conditional, too
-                var page_url = window.location.href.split('#')[0];
+                var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
-                    return $.trim(page_url.toLowerCase());
+                    return page_url;
+                    // return $.trim( page_url.toLowerCase() );
                 }
 
                 // what is the stated canonical?
@@ -2698,11 +2699,21 @@ function readrBoard($R){
                     var canonical_url = $('link[rel="canonical"]').length > 0 ?
                                 $('link[rel="canonical"]').attr('href') : page_url;
                     
-                    canonical_url = canonical_url.toLowerCase();
+                    canonical_url = $.trim( canonical_url.toLowerCase() );
 
                     if (canonical_url == RDR.util.getPageProperty('page_url') ) {
                         canonical_url = "same";
                     }
+
+                    // fastco fix (since they sometimes rewrite their canonical to simply be their TLD.)
+                    // in the case where canonical claims TLD but we're actually on an article... set canonical to be the page_url
+                    var tld = $.trim(window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
+                    if ( canonical_url == tld ) {
+                        if (page_url != tld) {
+                            canonical_url = page_url;
+                        }
+                    }
+
                     return $.trim(canonical_url);
                 }
             },

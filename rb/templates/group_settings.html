@@ -14,7 +14,8 @@
 {% endblock %}
 
 {% block wideContent %}
-<div class="mostlyWide">
+<div class="grid-whole settings">
+  <section role="panels" class="content">
 {% with group=form.instance %}
 
     {% block settingsHeader %}    
@@ -290,14 +291,16 @@
   {{ form.as_p }}
 {% endcomment %}
 
-    <div style="clear:both;"></div>
-    <button class="btn submit" type="submit" style="margin-top:20px;">Submit</button>
+    <div style="clear:both;">
+        <button class="btn submit flat" type="submit">Submit</button>
+    </div>
     <div class="formFeedback" data-saved="{{saved}}" >
         <p style="display: none;" class="errorMsg">Oops, there were some errors with the form, please see the sections highlighted red above.<p>
         <p style="display: none;" class="successMsg" >Changes saved<p>
     </div> 
   </form>
 {% endwith %}
+    </section>
 </div>
 {% endblock wideContent %}
  
