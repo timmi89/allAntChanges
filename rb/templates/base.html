@@ -59,10 +59,14 @@
   {% if group %}
   if ( !RB.group) {
     RB.group = {
-      id:{{ group.id }}
+      id:{{ group.id }},
+      name: '{{ group.name }}',
+      short_name: '{{ group.short_name }}'
     };
   } else {
     RB.group.id = {{ group.id }};
+    RB.group.name = '{{ group.name }}';
+    RB.group.short_name = '{{ group.short_name }}';
   }
   {% endif %}
   {% if profile_user %}
@@ -182,13 +186,13 @@
 
           {% block siteSearch %}
           <div id="site_search">
+            <i class="fa fa-search"></i>
             <form method="get" id="searchform" action="">
               <fieldset>
                 <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
                 <!-- <button class="btn"><i class="fa fa-arrow-circle-o-right"></i></button> -->
               </fieldset>
             </form>
-            <i class="fa fa-search"></i>
           </div>
           <script>
           $('#site_search')

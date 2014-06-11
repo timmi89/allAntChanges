@@ -90,6 +90,10 @@ summaryHTML.push( ' ');
 
 var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'</div>');
 
+if (RB.group.name) {
+$temp_summarySection.find('.dashboard-name').html(RB.group.name);
+}
+
     $('.section.summary').html($temp_summarySection).find('.template').animate({'opacity':1},500);
 
     drawSummaryGraphs();
@@ -275,6 +279,9 @@ function refSummary(referrers) {
                 // TODO animate something
             },
             initAnalytics: function() {
+                if (typeof RB.group == "undefined" || typeof RB.group.id == "undefined") {
+                    RB.group = {};
+                }
                 RB.analytics.getTopPages();
                 RB.analytics.getTopReactions();
                 RB.analytics.getSummaries();

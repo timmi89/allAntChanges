@@ -88,7 +88,7 @@ header[role="global"] h1        {
 text-indent: 100%;
 white-space: nowrap;
 overflow: hidden;
-	background:url(/static/images/logotext_mask.png) top center no-repeat #909090; background-size:100%; width:177px; height:34px; padding:0; margin:20px 0 0 0; }
+	background:url(/static/images/logotext_mask.png) left center no-repeat #909090; background-size:100%; width:177px; height:34px; padding:0; margin:20px 0 0 0; }
 /*header[role="global"] .who_for	{ position:absolute; top:33px; right:5px; }
 header[role="global"] .who_for	a { font-size: 12px; color:#dcdcdc; text-decoration: none; margin-left:20px;}*/
 
@@ -112,8 +112,8 @@ header[role="global"] #user #logged-in #log-out-link h5  { color:#ccc; font-size
 header[role="global"] #user #logged-in #log-out-link .who_for { display:none; }
 header[role="global"] #user #logged-in:hover #log-out-link  { display:block; }
 
-header[role="global"] #site_search      									{ margin:13px 10px 0px 10px; display:block;float:right; }
-header[role="global"] #site_search i     									{ font-size:22px; display:inline-block; color:#aaa; bottom: -2px; position: relative;}
+header[role="global"] #site_search      									{ margin:9px 10px 0px 10px; display:block;float:right; }
+header[role="global"] #site_search i     									{ font-size:22px; display:block; color:#aaa; position: relative; float:right; margin: 7px 0 0 3px;}
 header[role="global"] #site_search.rdr_hover i.fa-search,
 header[role="global"] #site_search:hover i.fa-search 			{ color:#65b4e7; cursor:pointer;}
 header[role="global"] #site_search form     							{ font-size:22px; display: inline-block; }
@@ -318,6 +318,7 @@ section[role="subheader"].admin {
   background:#fff;
 }
 
+
 h1 {
   color:#616161;
   font-size:36px;
@@ -368,6 +369,8 @@ button.flat:hover {
   background:#777;
   color:#ddd;
 }
+.summary-statement {padding-top:40px;}
+.summary-statement .call-out { width:60%; margin:0 auto; }
 
 .sample-content { padding:40px 0 0; color:#777; }
 .sample-content.separator .content { border-top:1px solid #ccc; margin-top:40px; padding-top:40px; }
@@ -380,7 +383,6 @@ button.flat:hover {
 .sample-content a { color:#fc884e; }
 .sample-content div.rdr.rdr-summary { margin-bottom:20px; }
 .sample-content .credit { font-size:11px; font-color:#999; font-style: italic;}
-.sample-content .call-out { width:60%; margin:0 auto; }
 .sample-content h2.call-out { margin-bottom:20px; }
 .sample-content .test-cta { display:inline-block;padding:10px;margin:10px 0;color:#444; border:4px solid #444;  }
 .sample-content .test-cta.read { color:#444; border:4px solid #ddd; background: #ddd;  }
@@ -389,6 +391,39 @@ button.flat:hover {
 .separate-ctas blockquote { margin:60px 40px 10px; }
 
 .vspace { margin-top:40px; clear:both;}
+
+@media (max-width: 480px) {
+  .banner {
+    padding:20px;
+  }
+  .banner .caption {
+    font-size:16px;
+  }
+  .sample-content {
+    padding:20px;
+  }
+  .summary-statement .call-out {
+    width: 90%;
+    margin:0 auto;
+  }
+  .sample-content h1 {
+    font-size:28px;
+  }
+  h2 {
+    font-size:21px;
+  }
+  h3 {
+    font-size:18px;
+    /*line-height: 26px;*/
+  }
+  .sample-content blockquote {
+    margin:10px;
+    padding:20px;
+  }
+  iframe {
+    max-width: 240px;
+  }
+}
 
 /***** dashboard ****/
 .analyticsReport .summary.hasLoader {min-height:110px; margin-bottom:0;}
@@ -423,7 +458,7 @@ button.flat:hover {
 .analyticsReport .datapoint .number { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:64px; color:#616161; }
 .analyticsReport .datapoint .number.medium { font-size:48px; }
 .analyticsReport .datapoint .number.small { font-size:42px; }
-.analyticsReport .datapoint label { display:block; font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; font-weight:100; letter-spacing:1px; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; padding:0 0.25rem; }
+.analyticsReport .datapoint label { display:block; font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; font-weight:300; letter-spacing:1px; font-size:16px; background:#f4f4f4; color:#616161; margin-top: -0.5rem; padding:0 0.25rem; }
 
 .analyticsReport .datapoint.session-donut { margin-top:-2.5rem; }
 
@@ -468,7 +503,7 @@ button.flat:hover {
   .analyticsReport .first-column .dashboard-name { display:block; margin-bottom: 2rem; }
   .analyticsReport .section h1 {font-size: 25px;}
 
-  .banner h1 {font-size:36px; line-height: 38px;}
+  .banner h1 {font-size:32px; line-height: 38px;}
   .analyticsReport .graph-value {font-size:11px; margin-top:-12px;}
   .analyticsReport .graph-canvas {height:125px;}
   .analyticsReport .legend.engagement-legend .legend-content {margin-top:1rem;}
@@ -896,7 +931,7 @@ section[role="subheader"] .circle_button {
   gray text bg:  rgba(60,60,60,0.84)
  */
 .card .main .contentBox { overflow:hidden; }
-.card .main .contentBox blockquote { border:0; margin:0; padding:0; font-size:22px; line-height:28px; color:#3b3b3b; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; font-weight:100;}
+.card .main .contentBox blockquote { border:0; margin:0; padding:0; font-size:22px; line-height:28px; color:#3b3b3b; font-family:'Helvetica',Arial,sans-serif; font-weight:100;}
 .card .main .contentBox blockquote a { color:#3b3b3b; text-decoration: none; }
 .card:hover .main .contentBox blockquote a { color:#65b4e7; }
 .card .main .contentBox blockquote a:hover { text-decoration:none;  }

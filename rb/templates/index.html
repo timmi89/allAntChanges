@@ -10,17 +10,10 @@
 {% include "sidebar.html" %}
 {% endblock %}
 
+
 {% block wideContent %}
-{% if not profile_user and not group and not board and not page %}
-{% if not query_string and not singleton %}
-
-{% endif %}
-{% endif %}
-    
-
-{% endblock wideContent %}
-
-{% block mainContent %}
+<div class="grid-whole">
+  <section role="panels" class="content">
 
 {% if board %}
 <div id="board_header">
@@ -58,7 +51,10 @@
 </div>
 {% endif %}
 
-{% endblock mainContent %}
+</section>
+</div>
+
+{% endblock wideContent %}
 
 {% block pageJS %}
 <script>
