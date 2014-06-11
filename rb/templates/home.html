@@ -29,14 +29,14 @@
     <div class="grid-half m-grid-whole s-grid-whole">
       <div class="message">Know what your readers care about.</div>
       <div class="message">Know why.</div>
-      <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="#">Try it now &raquo;<a/></strong></div>
+      <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="/see">See it now &raquo;</a></strong></div>
     </div>
     <div class="grid-half m-hidden s-hidden reaction-cloud"><img src="/static/images/real_reactions.png"/></div>
   </div>
 </div>
 
-<a id="analyticsReport"/>
-<div class="grid-whole banner">
+<a id="analyticsReport"></a>
+<div class="grid-whole banner what-you-learn">
   <h1>Here's what you will learn</h1>
   <div class="caption">This is an example of what your website's dashboard will look like.</div>
 </div>
@@ -61,6 +61,12 @@
             </div>
         </div>
     </div>
+</section>
+    <div class="grid-whole banner blue">
+      <h1>How does ReadrBoard work?</h1>
+      <div class="caption"><a href="/see">See it now &raquo;</a></div>
+    </div>
+<section role="panels" class="analyticsReport content">
     <div class="section engaged-pages">
         <div class="grid-12 row padded">
             <h1 class="header">Most Engaged Pages</h1>
@@ -74,43 +80,13 @@
         <div class="grid-12 row padded">
             <h1 class="header">Most Engaged Content</h1>
         </div>
-        <div class="grid-12 row padded">
-            <div class="grid-4 padded">
-                <section class="content-item">
-                    <h1><a href="#">All three of us, Ludo, Silvia and myself, are from three different countries. So there all three of us were, speaking different languages, and having fun reading GIFs aloud and comparing in our native tongues, along with different customs and perceptions,” Petrovici says.</a></h1>
-                    <div class="grid-12 via">
-                        <em>via <a href="#">SomeArticle Name</a></em>
-                    </div>
-                    <div class="grid-12">
-                        <div class="reaction-tag">Amazing (29)</div>
-                        <div class="reaction-tag">Crazy (17)</div>
-                    </div>
-                </section>
-            </div>
-            <div class="grid-4 padded">
-                <section class="content-item">
-                    <div class="grid-12 via">
-                        <em>via <a href="#">SomeArticle Name</a></em>
-                    </div>
-                    <div class="grid-12 reactions">
-                        <div class="reaction-tag">Sad (12)</div>
-                        <div class="reaction-tag">Shocking (10)</div>
-                    </div>
-                </section>
-            </div>
-            <div class="grid-4 padded">
-                <section class="content-item">
-                    <div class="grid-12 via">
-                        <em>via <a href="#">SomeArticle Name</a></em>
-                    </div>
-                    <div class="grid-12">
-                        <div class="reaction-tag">LOVE IT (9)</div>
-                        <div class="reaction-tag">Legit (8)</div>
-                    </div>
-                </section>
-            </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Content Engagement...</div></div>
         </div>
     </div>
+
+
+    
     <div class="section engaged-referrers">
         <div class="grid-12 row padded">
             <h1 class="header">Most Engaged Referrers</h1>
@@ -121,29 +97,12 @@
     </div>
 
 </section>
-<div class="grid-whole banner blue">
-  <h1>Here's how</h1>
-  <div class="caption">(this is an example of what your website's dashboard will look like.)</div>
+<div class="grid-whole banner blue last-one">
+  <h1>You should try it out.</h1>
+  <div class="caption"><a href="/see">Right now.  Give us 30 seconds. &raquo;</a></div>
 </div>
 </div>
-
 {% endblock wideContent %}
 
 {% block mainContent %}
-<!-- <br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/>
-<h1>hello world 2</h1>
-<br/><br/><br/><br/><br/><br/><br/><br/><br/> -->
 {% endblock %}

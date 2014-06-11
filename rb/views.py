@@ -66,6 +66,22 @@ def home(request):
       context,
       context_instance=RequestContext(request)
     )
+
+def see(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "see.html",
+      context,
+      context_instance=RequestContext(request)
+    )
     # return HttpResponseRedirect('/learn/')
 
 def team(request):

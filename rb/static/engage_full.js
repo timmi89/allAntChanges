@@ -9573,7 +9573,6 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"css/fonts/helvetica.css" );
         css.push( RDR_staticUrl+"css/fonts/fontawesome.css" );
     }
     if ( $R.browser.msie ) {

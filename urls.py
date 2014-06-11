@@ -31,6 +31,7 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^$', 'rb.views.home'),
+  url(r'^see/$', 'rb.views.see'),
   #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
 
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),

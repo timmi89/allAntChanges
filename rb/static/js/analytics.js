@@ -75,7 +75,7 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
             summaryHTML.push( '</div> ');
         summaryHTML.push( '</div> ');
     summaryHTML.push( '</div> ');
-    summaryHTML.push( '<div class="grid-3 s-grid-whole padded s-center third-column"> ');
+    summaryHTML.push( '<div class="grid-3 s-grid-whole padded left s-center third-column"> ');
         summaryHTML.push( '<div class="datapoint reactions"> ');
             summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.reaction_count)+'</div> ');
             summaryHTML.push( '<label>reactions</label> ');
@@ -422,7 +422,9 @@ function refSummary(referrers) {
             //     return false;
             // });
 
-            RB.analytics.initAnalytics();
+            if ( $('.analyticsReport').length ) {
+                RB.analytics.initAnalytics();
+            }
 
         });
 })();
