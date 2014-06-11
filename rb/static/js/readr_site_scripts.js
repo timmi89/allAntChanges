@@ -7,7 +7,7 @@ var RB = RB ? RB : {};
 
 RB = {
     RDR_offline: RDR_offline,
-    // group: {},
+    group: {},
     querystring: function(key) {
         var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
         var qs_args = [];
