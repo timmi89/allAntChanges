@@ -52,6 +52,26 @@
   <!-- FancyBox -->
   <link rel="stylesheet" href="{{ STATIC_URL }}js/fancybox/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
   <script type="text/javascript" src="{{ STATIC_URL }}js/fancybox/jquery.fancybox.pack.js?v=2.1.4"></script>
+
+  <script>
+  var RB = RB ? RB : {};
+
+  {% if group %}
+  if ( !RB.group) {
+    RB.group = {
+      id:{{ group.id }}
+    };
+  } else {
+    RB.group.id = {{ group.id }};
+  }
+  {% endif %}
+  {% if profile_user %}
+  RB.profile_user = {
+    id:{{ profile_user.id }}
+  };
+  {% endif %}
+
+  </script>
   {% endblock %}
 
   <!-- For favicon -->
@@ -280,21 +300,6 @@ if(!RB.RDR_offline){
     RB.util.loadScript( {src:chartbeat_script}, function() {
     });
 }
-
-{% if group %}
-if ( !RB.group) {
-  RB.group = {
-    id:{{ group.id }}
-  };
-} else {
-  RB.group.id = {{ group.id }};
-}
-{% endif %}
-{% if profile_user %}
-RB.profile_user = {
-  id:{{ profile_user.id }}
-};
-{% endif %}
 </script>
 
 {% block pageJS %}

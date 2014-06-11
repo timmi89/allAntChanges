@@ -500,17 +500,19 @@ button.flat:hover {
 .analyticsReport .reactions-and-topics .reactions-holder .grid-3 .reaction-tag { height:39px; }
 .analyticsReport .hasLoader {position: relative; min-height: 100px;}
 
-.analyticsReport table { width:100%; }
-.analyticsReport .page_card { clear:both; overflow:auto; }
-.analyticsReport .page_card:hover { background:#f3f3f3; }
-.analyticsReport .page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
-.analyticsReport .page_card td {padding:10px 0; text-align: center;}
-.analyticsReport .page_card .title { width:40%;  text-align: left; }
-.analyticsReport .page_card .title h1 { font-size:14px; font-weight:normal; background:url(/static/images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
-.analyticsReport .page_card .title h1 a { color:#616161;}
-.analyticsReport .page_card .attribute { font-size:14px; xfont-weight:bold; width:12%; }
-.analyticsReport .page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
-.analyticsReport .page_card .reactions { font-size:11px; font-weight:bold; } 
+body .analyticsReport table { width:100%; }
+body .analyticsReport table td { padding:2px; }
+body .analyticsReport h1 { margin:0; text-align: left; }
+body .analyticsReport .page_card { clear:both; overflow:auto; }
+body .analyticsReport .page_card:hover { background:#f3f3f3; }
+body .analyticsReport .page_card:nth-child(even) { border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
+body .analyticsReport .page_card td {padding:10px 0; text-align: center;}
+body .analyticsReport .page_card .title { width:40%;  text-align: left; }
+body .analyticsReport .page_card .title h1 { font-size:14px; font-weight:normal; background:url(/static/images/site/green_bar.png) 0 0 no-repeat; padding:0.25rem;}
+body .analyticsReport .page_card .title h1 a { color:#616161;}
+body .analyticsReport .page_card .attribute { font-size:14px; xfont-weight:bold; width:12%; }
+body .analyticsReport .page_card .attribute label { font-size:12px; font-weight:normal; display:none; }
+body .analyticsReport .page_card .reactions { font-size:11px; font-weight:bold; } 
 
 .analyticsReport .content-item a { font-weight:normal; font-size:18px; color:#3c3c3c; }
 .analyticsReport .content-item .reactions { margin-top:10px;}
@@ -529,6 +531,7 @@ button.flat:hover {
 .settings table { width:60%; margin: 0 auto; }
 .settings table tr:hover { background:#def; }
 .settings table td { padding:10px; text-align: center }
+/*.settings .analyticsReport table { width:100%; margin: 0 auto; }*/
 
 
 /****** learn ******/

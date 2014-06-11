@@ -373,33 +373,14 @@ function refSummary(referrers) {
 
                 RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
                 RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
-
-    //Oh - another thing - createdAt and updatedAt are now stored in their own columns also - thus you can do time-based queries. 
-    // The complication is that they are stored as standard bigint values, being the number of milliseconds since 1970
-    //             So for example to get everything in events for the past 1 hour you can do
-    // in your javascript
-    //     var hourAgo = new Date().getTime() - (60 * 60 * 1000);
-    // sql = “select count(*) from events where createdAt >= “ + hourAgo;
             }
 
         };
 
-
-        // defined in template
-        // RB.group.short_name = "{{ group.short_name }}";
-        // RB.group.full_name = "{{ group.name }}";
-        // RB.group.id = "{{ group.id }}";
-        // RB.group.id = 1660;
-        
         $(function(){
-            // RB.group.id = 1660;
-            // RB.group.id = {{ group.id }};
 
             RB.analytics.setDates();
-
-            //init this once so that the destroy function doesn't error when it refreshes this.
-            // $('section[role="tag cloud grid"]').isotope();
-            
+  
             // $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
             var start_date = new Pikaday({ field: $('input[name="start_date"]')[0], format: 'MM/DD/YY' });
@@ -409,7 +390,7 @@ function refSummary(referrers) {
             $('input[name="end_date"]').val( RB.analytics.endDate );
 
             
-            // ***** DATE PICKER: re-enable
+            // ***** DATE PICKER: re-enable soon.
             // $('section[role="datepicker"] form').submit( function() {
 
             //     var startDate = $('input[name="start_date"]').val();
