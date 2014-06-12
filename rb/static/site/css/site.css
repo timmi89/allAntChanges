@@ -78,7 +78,7 @@ header[role="global"] {
   font-weight:bold;
 	position:fixed;
 	top:0;
-	z-index:20;
+	z-index:12000; /* above the 'what do you think' image cta for mobile widget */
   box-shadow: 0px 0px 4px #999;
 }
 .content {position:relative; max-width:1140px; margin:0 auto; clear:both;}

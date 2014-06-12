@@ -3097,7 +3097,7 @@ function readrBoard($R){
                     var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime.getTime() }
                     localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
                     
-                    $.clog('rs sts 1', short_session_guid );
+                    // $.clog('rs sts 1', short_session_guid );
                     // $.cookie('rdr_sts', short_session_guid, { expires: short_session_expiretime });
                 } else {
 
@@ -3107,7 +3107,7 @@ function readrBoard($R){
                     var minutes = 10;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
-                    $.clog('rs sts 2', RDR.user.sts );
+                    // $.clog('rs sts 2', RDR.user.sts );
                     // $.cookie('rdr_sts', RDR.user.sts, { expires: short_session_expiretime });
 
                     var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime.getTime() }
@@ -3119,14 +3119,14 @@ function readrBoard($R){
                     // var long_session_expiretime = new Date();
                     // var days = 180;
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
-                    $.clog('rs lts 1', long_session_guid ); 
+                    // $.clog('rs lts 1', long_session_guid ); 
                     // $.cookie('rdr_lts', long_session_guid, { expires: long_session_expiretime });
 
                     // var new_rdr_lts = {guid: long_session_guid, expires: short_session_expiretime }
                     localStorage.setItem('rdr_lts', long_session_guid );
                 } else {
                     RDR.user.lts = rdr_lts;
-                    $.clog('rs lts 2', RDR.user.lts ); 
+                    // $.clog('rs lts 2', RDR.user.lts ); 
 
                     //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
                     // lets extend the session time 
@@ -3991,7 +3991,7 @@ function readrBoard($R){
                     // init the "indicators" for media objects, on mobile only.
                     // so that the image call-to-action is present and populated
                     // $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
-                    $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+                    $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node],'+RDR.group.anno_whitelist).each( function() {
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
 
@@ -5191,7 +5191,10 @@ function readrBoard($R){
                             this.img(hash, summary);
                         },
                         text: function(hash, summary){
-
+                            if(isTouchBrowser){
+                                RDR.actions.content_nodes.init(hash, function(){});
+                                RDR.actions.indicators.init(hash);
+                            }
                         },
                         custom: function(hash, summary){
 
