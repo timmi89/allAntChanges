@@ -725,18 +725,18 @@ function readrBoard($R){
                 return;
 
                 //this is needed becuase after the tagList updates, the width of panel1 can change.
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
-                var $showPanel = $rindow.find('.rdr_visiblePanel');
-                var $hidePanel = $rindow.find('.rdr_hiddenPanel');
+                // var $panelWrap = $rindow.find('.rdr_body_wrap');
+                // var $showPanel = $rindow.find('.rdr_visiblePanel');
+                // var $hidePanel = $rindow.find('.rdr_hiddenPanel');
 
-                var xOffset = $hidePanel.width();
+                // var xOffset = $hidePanel.width();
 
-                $panelWrap.css({
-                    left: -xOffset
-                });
-                $showPanel.css({
-                    left: xOffset
-                });
+                // $panelWrap.css({
+                //     left: -xOffset
+                // });
+                // $showPanel.css({
+                //     left: xOffset
+                // });
 
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
@@ -4252,9 +4252,9 @@ function readrBoard($R){
 
                         if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
                             // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
-                            
-                            // the container.singletap will handle container state clearing.  sigh.
-                            if ( !$mouse_target.hasAttr('rdr-node') ) {
+
+                            // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
+                            if ( !$mouse_target.hasAttr('rdr-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
                                 RDR.actions.UIClearState();
                             }
                         }
@@ -5085,22 +5085,22 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
-                        var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#rdr_indicator_'+hash),
+                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
 
-                        var hasBeenHashed = $this.hasAttr('rdr-hashed'),
-                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+                        // var hasBeenHashed = $this.hasAttr('rdr-hashed'),
+                        //     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
-                        var containerInfo = RDR.containers[hash];
-                        if ( containerInfo ) {
-                            var $mediaItem = containerInfo.$this;
+                        // var containerInfo = RDR.containers[hash];
+                        // if ( containerInfo ) {
+                        //     var $mediaItem = containerInfo.$this;
 
-                            $mediaItem.data('hover',true).data('hash', hash);
-                            RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            RDR.rindow.mediaRindowShow( $mediaItem );
-                            // $indicator_details.addClass('rdr_has_border');
-                        }
+                        //     $mediaItem.data('hover',true).data('hash', hash);
+                        //     RDR.actions.indicators.utils.updateContainerTracker(hash);
+                        //     RDR.rindow.mediaRindowShow( $mediaItem );
+                        //     // $indicator_details.addClass('rdr_has_border');
+                        // }
 
                         // deprecated - see above
                         // RDR.events.track( 'view_node::'+hash, hash );
@@ -5108,23 +5108,24 @@ function readrBoard($R){
                     onDisengage: function(hash){
                         // deprecated?
                         return;
+
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
-                        var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#rdr_indicator_'+hash),
+                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
 
-                        var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
-                        clearTimeout(timeoutCloseEvt);
+                        // var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
+                        // clearTimeout(timeoutCloseEvt);
 
-                        timeoutCloseEvt = setTimeout(function(){
-                            var containerInfo = RDR.containers[hash];
-                            if ( containerInfo ) {
-                                $mediaItem.data('hover',false).data('hash', hash);
-                                RDR.rindow.mediaRindowHide( $mediaItem );
-                            }
-                        },100);
-                        $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
+                        // timeoutCloseEvt = setTimeout(function(){
+                        //     var containerInfo = RDR.containers[hash];
+                        //     if ( containerInfo ) {
+                        //         $mediaItem.data('hover',false).data('hash', hash);
+                        //         RDR.rindow.mediaRindowHide( $mediaItem );
+                        //     }
+                        // },100);
+                        // $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     },
                     disengageAll: function(){
                         //RDR.actions.containers.media.disengageAll:
