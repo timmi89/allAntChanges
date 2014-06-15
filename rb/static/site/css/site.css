@@ -276,9 +276,26 @@ section[role="subheader"].admin {
   .reaction-cloud {margin-top:5%;}
 }
 
-/*section[role="main"] {
-  padding:20px;
-}*/
+.endorsements .content {
+  padding:40px 0;
+  clear:both;
+  overflow: auto;
+  border-bottom:1px solid #ccc;
+}
+.endorsements .caption {
+  font-size:14px;
+  margin:20px 0;
+}
+.fastco p {
+  text-align: left;
+  color:#777;
+  width:70%;
+  margin:20px auto;
+}
+.fastco em {
+  color:#777;
+}
+
 
 .banner {
   padding:40px 0px;
@@ -298,7 +315,7 @@ section[role="subheader"].admin {
   margin-bottom:-40px;
 }
 
-.banner .caption {
+.caption {
   font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif;
   font-size:18px;
   font-style:italic;
