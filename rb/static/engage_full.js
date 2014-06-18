@@ -2528,7 +2528,8 @@ function readrBoard($R){
         },
         util: {
             bubblingEvents: {
-                'touchend': false
+                'touchend': false,
+                'dragging': false
             },
             windowBlur: function() { /*RDR.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
@@ -4258,6 +4259,7 @@ function readrBoard($R){
                     });
                 } else {
                     $(document).on('touchend.rdr',function(e) {
+                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
                         if (RDR.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
@@ -4272,6 +4274,12 @@ function readrBoard($R){
                         }
 
                         RDR.util.bubblingEvents['touchend'] = false;
+                    });
+                    $(document).on('touchmove.rdr',function(e) {
+                        RDR.util.bubblingEvents['dragging'] = true;
+                    });
+                    $(document).on('touchstart.rdr',function(e) {
+                        RDR.util.bubblingEvents['dragging'] = false;
                     });
                 }
 
@@ -6875,6 +6883,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.rdr').on('touchend.rdr', function(e){
+                                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
                                         if (RDR.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.rdr_window').length ) {
                                                 var $this_container = $('[rdr-hash="'+hash+'"]');
@@ -6944,6 +6953,7 @@ if ( sendData.kind=="page" ) {
                             });
                         } else {
                             $indicator.on('touchend.rdr', function(e){
+                                if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
                                 RDR.util.bubblingEvents['touchend'] = true;
 
                                 _makeRindow();
