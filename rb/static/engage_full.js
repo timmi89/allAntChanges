@@ -4275,6 +4275,8 @@ function readrBoard($R){
 
                         RDR.util.bubblingEvents['touchend'] = false;
                     });
+
+                    // iphone drag fix
                     $(document).on('touchmove.rdr',function(e) {
                         RDR.util.bubblingEvents['dragging'] = true;
                     });

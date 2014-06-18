@@ -149,21 +149,22 @@ def privacy(request):
     )
 
 def learn(request):
-    cookie_user = checkCookieToken(request)
-    context = {
-        'fb_client_id': FACEBOOK_APP_ID,
-        'BASE_URL': BASE_URL
-    }
-    context['hasSubheader'] = True
+    return HttpResponseRedirect('/')
+    # cookie_user = checkCookieToken(request)
+    # context = {
+    #     'fb_client_id': FACEBOOK_APP_ID,
+    #     'BASE_URL': BASE_URL
+    # }
+    # context['hasSubheader'] = True
 
-    if cookie_user:
-        context['cookie_user'] = cookie_user
+    # if cookie_user:
+    #     context['cookie_user'] = cookie_user
 
-    return render_to_response(
-      "learn.html",
-      context,
-      context_instance=RequestContext(request)
-    )
+    # return render_to_response(
+    #   "learn.html",
+    #   context,
+    #   context_instance=RequestContext(request)
+    # )
     
     # return HttpResponseRedirect('/')
 
