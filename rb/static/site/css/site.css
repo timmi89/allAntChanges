@@ -257,20 +257,22 @@ section[role="subheader"].admin {
 }
 
 /****** know ******/
-.know { background: url(../../images/congruent_outline.png); }
-.know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:50px 0 50px 20px; }
-.know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:100; font-size:18px; margin-left:20px; width:62%; margin-bottom: 30px; letter-spacing: 1px; }
+.know { background: url(../../images/world_reactions.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; } 
+.know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:40px 20px 50px 0px; text-align: right;}
+.know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:100; font-size:18px; margin-right:20px; width:62%; float:right; margin-bottom: 30px; letter-spacing: 1px; text-align: right;}
 .know .caption strong a { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:500;color:#fff; font-size:18px; margin-left:0px; letter-spacing: 1px; border-bottom:1px dashed #fff; padding:2px;}
 .know .caption strong a:hover { color:#278ac9; background:#fff; }
 
 /* ESRG media queries */
 @media (max-width: 480px) {
-  .know .message { font-size:28px; text-align: center; margin:30px auto; width:85%; }
-  .know .caption { font-size:16px; text-align: center; margin:0px auto 40px; width:81%; }
+  .know .content { background: rgba(0,0,0,0.2); overflow: auto; }
+  .know .message { font-size:28px; text-align: center; margin:30px auto; width:85%; text-shadow: 0px 0px 8px #5A5A5A;}
+  .know .caption { font-size:16px; text-align: center; margin:0px auto 40px; width:81%; float:none;text-shadow: 0px 0px 8px #5A5A5A;}
 }
 @media (min-width: 481px) and (max-width: 800px) {
-  .know .message { font-size:38px; text-align: center; margin:30px auto; width:85%; }
-  .know .caption { font-size:18px; text-align: center; margin:0px auto 40px; width:81%; }
+  .know .content { background: rgba(0,0,0,0.2); overflow: auto; }
+  .know .message { font-size:38px; text-align: center; margin:30px auto; width:85%; text-shadow: 0px 0px 8px #5A5A5A;}
+  .know .caption { font-size:18px; text-align: center; margin:0px auto 40px; width:81%; float:none;text-shadow: 0px 0px 8px #5A5A5A;}
 }
 @media (min-width: 801px) and (max-width: 940px) {
   .reaction-cloud {margin-top:5%;}

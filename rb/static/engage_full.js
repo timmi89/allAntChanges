@@ -4258,6 +4258,7 @@ function readrBoard($R){
                     });
                 } else {
                     $(document).on('touchend.rdr',function(e) {
+                        console.log('doc touchend');
                         if (RDR.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
@@ -6875,6 +6876,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.rdr').on('touchend.rdr', function(e){
+                                        console.log('container touchend');
                                         if (RDR.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.rdr_window').length ) {
                                                 var $this_container = $('[rdr-hash="'+hash+'"]');
@@ -6945,6 +6947,7 @@ if ( sendData.kind=="page" ) {
                             });
                         } else {
                             $indicator.on('touchend.rdr', function(e){
+                                console.log('indicator touchend');
                                 RDR.util.bubblingEvents['touchend'] = true;
 
                                 _makeRindow();
