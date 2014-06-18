@@ -55,10 +55,10 @@ RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
-    var debugMode = true;
+    var debugMode = false;
 
     if(RDR_offline && debugMode){
-        // [porter]  changing to log so that acceptable, trivial bugs are not blockers in dev.  ugh.
+        // [porter]  changing to log so that acceptable, trivial bugs are not blockers, but do get logged
         console.log(msg);
         // throw msg;
     }
@@ -6902,10 +6902,12 @@ if ( sendData.kind=="page" ) {
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
-
+if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('setup rindow hover 1');
                                     _setupHoverForShowRindow();
                                 }else{
+if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('setup rindow hover 2');
                                     _setupHoverToFetchContentNodes(function(){
+if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover setup');
                                         _setupHoverForShowRindow();
                                         _showRindowAfterLoad();
                                     });
@@ -6937,6 +6939,7 @@ if ( sendData.kind=="page" ) {
 
 
                     function _setupHoverForShowRindow(){
+                        if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('_setupHoverForShowRindow or 4b8a3fd40817e25cf855ec9b70cbf917');
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover.showRindow', function(){
                                 _makeRindow();
@@ -7050,13 +7053,19 @@ if ( sendData.kind=="page" ) {
                         //Setup callback for a successful fetch of the content_nodes for this container
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
 
-                        var showEvent = (isTouchBrowser) ? 'touchend.contentNodeInit':'mouseover.contentNodeInit';
-                        $indicator.on( showEvent , function(){
-                            // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
-                            if ( !$indicator.hasAttr('rdr-item') ) {
+
+                        if (isTouchBrowser) {
+                           if ( !$indicator.hasAttr('rdr-item') ) {
                                 RDR.actions.content_nodes.init(hash, callback);
-                            }
-                        });
+                            } 
+                        } else {
+                            $indicator.on( 'mouseover.contentNodeInit' , function(){
+                                // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
+                                if ( !$indicator.hasAttr('rdr-item') ) {
+                                    RDR.actions.content_nodes.init(hash, callback);
+                                }
+                            });
+                        }
                     }
                     function _showRindowAfterLoad(){
                         $indicator.unbind('mouseover.contentNodeInit');

@@ -1727,6 +1727,8 @@ div.rdr_indicator_for_text{
 }
 body.rdr_touch_browser div.rdr_indicator_for_text {
   display:block;
+  max-width: 120px;
+  padding:4px 0;
 }
 div.rdr_indicator_for_text * {
     display:inline;
