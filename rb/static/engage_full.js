@@ -1803,8 +1803,16 @@ function readrBoard($R){
 
                             // if there is a custom CTA element, override the coordinates with its location
                             if ( typeof settings.$custom_cta != "undefined" ) {
-                                coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
-                                coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
+                                if (isTouchBrowser) {
+                                    var coords = {
+                                        top: settings.$custom_cta.offset().bottom+5,
+                                        left: settings.$custom_cta.left
+                                    };
+                                } else {
+                                    coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
+                                    coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
+                                }
+
                             }
 
                             var $rindow = RDR.rindow.draw({
