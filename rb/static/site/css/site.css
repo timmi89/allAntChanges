@@ -293,6 +293,9 @@ section[role="subheader"].admin {
   width:70%;
   margin:20px auto;
 }
+.fastco img {
+  width:253px;
+}
 .fastco em {
   color:#777;
 }

@@ -51,6 +51,9 @@ var isTouchBrowser = (
     (window.DocumentTouch && document instanceof DocumentTouch)
 );
 
+isTouchBrowser = true;
+$('body').addClass('rdr_touch_browser');
+
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
@@ -58,7 +61,9 @@ RDR.safeThrow = function(msg){
     var debugMode = true;
 
     if(RDR_offline && debugMode){
-        throw msg;
+        // [porter]  changing to log so that acceptable, trivial bugs are not blockers in dev.  ugh.
+        console.log(msg);
+        // throw msg;
     }
 };
 
@@ -341,7 +346,6 @@ function readrBoard($R){
                               unexpected            :   unex
                             */
                         };
-                    
                     var data = $.toJSON( trackData );
 
                     if ( typeof RDR.group.xdmLoaded != 'undefined' && RDR.group.xdmLoaded === true ) {
@@ -2526,6 +2530,9 @@ function readrBoard($R){
             }
         },
         util: {
+            bubblingEvents: {
+                'touchend': false
+            },
             windowBlur: function() { /*RDR.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
             clearWindowInterval: function () {
@@ -3986,11 +3993,17 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
-                
+
                 if(isTouchBrowser){
                     // init the "indicators" for media objects, on mobile only.
                     // so that the image call-to-action is present and populated
                     // $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+
+                    // ensure each text node is hashed and has indicator so that we can engage it
+                    $( RDR.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
+                        RDR.actions.indicators.init( $(node).attr('rdr-hash') );
+                    });
+
                     $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node],'+RDR.group.anno_whitelist).each( function() {
                         RDR.actions.indicators.init( $(this).attr('rdr-hash') );
                     });
@@ -4001,7 +4014,7 @@ function readrBoard($R){
                             $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#rdr_sandbox');
 
-                        $doubleTapMessage.addClass( double_tap_message_position ).on('singletap', function() {
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.rdr', function() {
                             // we should handle settings through localStorage.  will do later.
                             localStorage.setItem('hideDoubleTapMessage', true);
                             $(this).remove();
@@ -4247,17 +4260,21 @@ function readrBoard($R){
 
                     });
                 } else {
-                    $(document).on('singletap.rdr',function(event) {
-                        var $mouse_target = $(event.target);
+                    $(document).on('touchend.rdr',function(e) {
+                        if (RDR.util.bubblingEvents['touchend'] == false) {
+                            var $mouse_target = $(e.target);
 
-                        if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
-                            // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
+                            if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                                // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
 
-                            // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
-                            if ( !$mouse_target.hasAttr('rdr-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
-                                RDR.actions.UIClearState();
+                                // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
+                                if ( !$mouse_target.hasAttr('rdr-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
+                                    RDR.actions.UIClearState();
+                                }
                             }
                         }
+
+                        RDR.util.bubblingEvents['touchend'] = false;
                     });
                 }
 
@@ -4620,7 +4637,7 @@ function readrBoard($R){
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
-                    if ( HTMLkind != 'body' ) {
+                    if ( HTMLkind != 'body' && !isTouchBrowser ) {
                         // // todo: touchHover
                         
                         $this.on('mouseenter', function() {
@@ -6860,9 +6877,8 @@ if ( sendData.kind=="page" ) {
                                         }
                                     });
                                 } else {
-                                    // if (kind=="text") {  // redundant, we're already in a kind=='text' conditional
-                                        $container.off('singletap.rdr').on('singletap.rdr', function(e){
-
+                                    $container.off('touchend.rdr').on('touchend.rdr', function(e){
+                                        if (RDR.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.rdr_window').length ) {
                                                 var $this_container = $('[rdr-hash="'+hash+'"]');
                                                 // var $container = $(e.target);
@@ -6874,10 +6890,8 @@ if ( sendData.kind=="page" ) {
                                             } else {
                                                 RDR.actions.UIClearState();
                                             }
-
-
-                                        });
-                                    // }
+                                        }
+                                    });
                                 }
 
                                 //This will be either a helperIndicator or a hidden indicator
@@ -6924,17 +6938,28 @@ if ( sendData.kind=="page" ) {
 
 
                     function _setupHoverForShowRindow(){
-                        $indicator.on('mouseover.showRindow', function(){
-                            _makeRindow();
-                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                            if( hasHelper ){
-                                // RDR.events.track('paragraph_helper_engage');
-                            }
-                        });
+                        if (!isTouchBrowser) {
+                            $indicator.on('mouseover.showRindow', function(){
+                                _makeRindow();
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if( hasHelper ){
+                                    // RDR.events.track('paragraph_helper_engage');
+                                }
+                            });
+                        } else {
+                            $indicator.on('touchend.rdr', function(e){
+                                RDR.util.bubblingEvents['touchend'] = true;
+
+                                _makeRindow();
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if( hasHelper ){
+                                    // RDR.events.track('paragraph_helper_engage');
+                                }
+                            });
+                        }
                     }
                     function _makeRindow(){
                         //only allow one indicator rindow.
-                        
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow){
                             // dont rewrite the window if it already exists...
@@ -7018,12 +7043,15 @@ if ( sendData.kind=="page" ) {
                         // );
                     }
 
+
                     function _setupHoverToFetchContentNodes(callback){                        
                         //Note that the text indicators still don't have content_node info.
                         //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
                         //Setup callback for a successful fetch of the content_nodes for this container
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                        $indicator.on('mouseover.contentNodeInit', function(){
+
+                        var showEvent = (isTouchBrowser) ? 'touchend.contentNodeInit':'mouseover.contentNodeInit';
+                        $indicator.on( showEvent , function(){
                             // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
                             if ( !$indicator.hasAttr('rdr-item') ) {
                                 RDR.actions.content_nodes.init(hash, callback);
@@ -7033,7 +7061,7 @@ if ( sendData.kind=="page" ) {
                     function _showRindowAfterLoad(){
                         $indicator.unbind('mouseover.contentNodeInit');
                         if (isTouchBrowser) {
-                            $indicator.triggerHandler('touchstart.showRindow');
+                            $indicator.triggerHandler('touchend.showRindow');
                         } else {
                             $indicator.triggerHandler('mouseover.showRindow');
                         }
@@ -7052,7 +7080,7 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.unbind('mouseover.showRindow, touchstart.showRindow').on('mouseover.showRindow, touchstart.showRindow', function(){
+                            $thisCTA.unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
                                 // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                                 // if( hasHelper ){
@@ -7401,6 +7429,7 @@ if ( sendData.kind=="page" ) {
                                 $actionbar = $('rdr_actionbar_'+hash);
 
                             $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
+                            // $indicator.addClass('rdr_indicator_for_text');  //.addClass('rdr_dont_show');
 
                             var startOfTrailingWhiteSpace = RDR.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
@@ -9615,7 +9644,8 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv22" );
+    var widgetCSS = ( RDR_offline ) ? RDR_widgetCssStaticUrl+"widget/css/widget.css" : RDR_widgetCssStaticUrl+"widget/css/widget.min.css?rv23"
+    css.push( widgetCSS );
     // css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
