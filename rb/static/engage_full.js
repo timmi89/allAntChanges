@@ -7793,18 +7793,6 @@ if ( sendData.kind=="page" ) {
                             var lastTagDims = $lastTag.position();
                             var doBreak = false;
 
-                            $lastTag
-                                .addClass('rdr_clear_transform')
-                                .css({
-                                    height: 'auto',
-                                    width: 'auto',
-                                    top: lastTagDims.top,
-                                    left: lastTagDims.left,
-                                    // left: (lastTagDims.left < 160) ? 160:lastTagDims.left, // really confused as to why this calc is not doing what is expected
-                                    bottom: 0,
-                                    right: 0
-                                });  
-
                             //force the position to fill the space.
                             $($boxes.get().reverse()).each(function(){
                                 if(doBreak){
@@ -7813,7 +7801,7 @@ if ( sendData.kind=="page" ) {
                                 
                                 var $thisTag = $(this);
                                 var thisTagDims = $thisTag.position();
-                                    
+
                                 var isLastTag = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
@@ -7846,6 +7834,17 @@ if ( sendData.kind=="page" ) {
                                 // }
 
                             });
+                            
+                            $lastTag
+                                .addClass('rdr_clear_transform')
+                                .css({
+                                    height: 'auto',
+                                    width: 'auto',
+                                    top: lastTagDims.top,
+                                    left: (lastTagDims.left < 160) ? 160:lastTagDims.left,
+                                    bottom: 0,
+                                    right: 0
+                                });  
                         }
 
                     },
