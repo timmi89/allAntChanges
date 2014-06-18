@@ -51,9 +51,6 @@ var isTouchBrowser = (
     (window.DocumentTouch && document instanceof DocumentTouch)
 );
 
-isTouchBrowser = true;
-$('body').addClass('rdr_touch_browser');
-
 RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
