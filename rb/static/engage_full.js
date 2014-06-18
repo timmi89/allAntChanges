@@ -4258,7 +4258,6 @@ function readrBoard($R){
                     });
                 } else {
                     $(document).on('touchend.rdr',function(e) {
-                        console.log('doc touchend');
                         if (RDR.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
@@ -6876,7 +6875,6 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.rdr').on('touchend.rdr', function(e){
-                                        console.log('container touchend');
                                         if (RDR.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.rdr_window').length ) {
                                                 var $this_container = $('[rdr-hash="'+hash+'"]');
@@ -6902,12 +6900,9 @@ if ( sendData.kind=="page" ) {
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
-if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('setup rindow hover 1');
                                     _setupHoverForShowRindow();
                                 }else{
-if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('setup rindow hover 2');
                                     _setupHoverToFetchContentNodes(function(){
-if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover setup');
                                         _setupHoverForShowRindow();
                                         _showRindowAfterLoad();
                                     });
@@ -6939,7 +6934,6 @@ if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover set
 
 
                     function _setupHoverForShowRindow(){
-                        if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('_setupHoverForShowRindow or 4b8a3fd40817e25cf855ec9b70cbf917');
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover.showRindow', function(){
                                 _makeRindow();
@@ -6950,7 +6944,6 @@ if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover set
                             });
                         } else {
                             $indicator.on('touchend.rdr', function(e){
-                                console.log('indicator touchend');
                                 RDR.util.bubblingEvents['touchend'] = true;
 
                                 _makeRindow();
@@ -7782,11 +7775,13 @@ if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover set
                         function isotopeFillGap($tagsListContainer){
                             var $boxes = $tagsListContainer.find('.rdr_box');
                             var $lastTag = $boxes.eq(-1);
-                                
                             
-                            if ( isTouchBrowser ) {
-                                if ( $boxes.index($lastTag) % 2 ==0 ) {
-                                    $lastTag.addClass('rdr_wide');
+                            var $smallBoxes = $tagsListContainer.find('.rdr_box_small');
+                            var $lastSmallTag = $smallBoxes.eq(-1);
+
+                            if ( isTouchBrowser && $smallBoxes.length > 1 ) {
+                                if ( $smallBoxes.index($lastTag) % 2 ==0 ) {
+                                    $lastSmallTag.addClass('rdr_wide');
                                 }
                                 return;
                             }
@@ -7805,6 +7800,7 @@ if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover set
                                     width: 'auto',
                                     top: lastTagDims.top,
                                     left: lastTagDims.left,
+                                    // left: (lastTagDims.left < 160) ? 160:lastTagDims.left, // really confused as to why this calc is not doing what is expected
                                     bottom: 0,
                                     right: 0
                                 });  
@@ -7821,7 +7817,7 @@ if (hash=='4b8a3fd40817e25cf855ec9b70cbf917') console.log('fetch notes hover set
                                 var isLastTag = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
-                                
+
                                 if(!isAdjacentRow && !isAdjacentCol){
                                     doBreak = true;
                                     return;
