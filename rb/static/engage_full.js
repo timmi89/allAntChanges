@@ -1719,6 +1719,7 @@ function readrBoard($R){
 
                                 var newSel;
                                 if ( kind == "text" ) {
+                                    
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
@@ -1743,6 +1744,15 @@ function readrBoard($R){
                                             coords.left = strRight - 14; //with a little padding
                                             coords.top = strBottom + 23;
                                         }
+                                    }
+
+                                    // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
+                                    if (isTouchBrowser) {
+                                        var $container = $('[rdr-hash="'+hash+'"]');
+                                        var coords = {
+                                            top: $container.offset().bottom+5,
+                                            left: $container.offset().left
+                                        };
                                     }
                                 } else {
                                     // draw the window over the actionbar
