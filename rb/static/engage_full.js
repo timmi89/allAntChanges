@@ -7841,7 +7841,7 @@ if ( sendData.kind=="page" ) {
                                     height: 'auto',
                                     width: 'auto',
                                     top: lastTagDims.top,
-                                    left: (lastTagDims.left < 160) ? 160:lastTagDims.left,
+                                    left: (lastTagDims.left > 0 && lastTagDims.left < 160) ? 160:lastTagDims.left,
                                     bottom: 0,
                                     right: 0
                                 });  
