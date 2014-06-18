@@ -7786,7 +7786,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
 
-                            if(!$lastTag.length){
+                            if(!$lastTag.length || $boxes.length == 1){
                                 return;
                             }
 

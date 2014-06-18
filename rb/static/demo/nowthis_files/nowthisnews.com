@@ -1,1 +1,0 @@
-PARSELY.pInit({"apikey":"nowthisnews.com","customizations":null,"bundle":"/code/slim_v04.js","settings":{"debug":false,"widget":false,"tracker":true},"uuid":"26687775-F044-428C-BACB-35DCF2B2C970"});
