@@ -356,12 +356,13 @@ function readrBoard($R){
                     }
                 }
             },
-            emit: function(eventName, eventValue) {
+            emit: function(eventName, eventValue, eventSupplementary) {
                 // RDR.events.emit
                 if (RDR.group.premium == true) {
                     // non-IE
                     RDR.events.lastEvent = eventName;
                     RDR.events.lastValue = eventValue;
+                    RDR.events.lastSupplementary = eventSupplementary;
 
                     if (document.createEvent) {
                         evt = document.createEvent("Event");
@@ -3172,7 +3173,8 @@ function readrBoard($R){
             if (RDR.group.premium == true) {
                 return {
                     'event':(RDR.events.lastEvent) ? RDR.events.lastEvent:'',
-                    'value':(RDR.events.lastValue) ? RDR.events.lastValue:''
+                    'value':(RDR.events.lastValue) ? RDR.events.lastValue:'',
+                    'supplementary':(RDR.events.lastSupplementary) ? RDR.events.lastSupplementary:''
                 };
             }
         },
@@ -6056,6 +6058,8 @@ if ( sendData.kind=="page" ) {
                                 page_id: args.page_id,
                                 reaction_body: args.tag.tag_body
                             });
+
+                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body });
 
                         },
                         remove: function(args){
