@@ -147,7 +147,7 @@ function readrBoard($R){
                 anno_whitelist: "body p",
                 active_sections_with_anno_whitelist:"",
                 media_selector: "embed, video, object, iframe",
-                comment_length: 300,
+                comment_length: 500,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
                 no_readr: "",
@@ -906,6 +906,7 @@ function readrBoard($R){
                                         summary: summary,
                                         hash: hash,
                                         tag: tag,
+                                        kind: kind,
                                         $rindow: $rindow,
                                         selState: content_node.selState || null
                                     }).appendTo( $options );
@@ -952,79 +953,6 @@ function readrBoard($R){
                                 }else{
                                     $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, onAction);
                                 }
-
-                            // } else if ( args.scenario == "reactionExists" ) {
-                                // $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
-                            // }
-
-                            $success.find('.rdr_comment_input').append(
-                                '<div class="rdr_commentBox rdr_inlineCommentBox">'+
-                                    '<div class="rdr_label_icon"></div>'+
-                                    '<textarea class="rdr_add_comment_field rdr_inlineComment">Add a comment or #hashtag</textarea>'+
-                                    '<div class="rdr_clear"></div>'+
-                                '</div>'
-                            );
-
-
-                            // // comment functionality
-                            var $commentInput = $success.find('.rdr_add_comment_field');
-                            $commentInput.focus(function(){
-                                // RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
-                                $(this).addClass('rdr_adding_comment');
-                                if( $(this).val() == 'Add a comment or #hashtag' ){
-                                    $(this).val('');
-                                }
-                            }).blur(function(){
-                                if( $(this).val() === '' ){
-                                    $(this).val( 'Add a comment or #hashtag' );
-                                    $(this).removeClass('rdr_adding_comment');
-                                }
-                            }).on('keyup', {args:args}, function(event) {
-                                var commentText = $commentInput.val();
-                                if (event.keyCode == '27') { //esc
-                                    //return false;
-                                } else if (event.keyCode == '13') { //enter
-                                    _sendComment(event);
-                                } else if ( commentText.length > RDR.group.comment_length ) {
-                                    commentText = commentText.substr(0, RDR.group.comment_length);
-                                    $commentInput.val( commentText );
-                                }
-                            });
-                            
-                            $success.find('button.rdr_add_comment').on('click', {args:args}, function(event) {
-                                _sendComment(event);
-                            });
-
-                            function _sendComment(event){
-
-                                var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
-                                    content_node = args.sendData.content_node_data,
-                                    hash = args.hash,
-                                    page_id = args.page_id,
-                                    $rindow = args.rindow,
-                                    tag = args.tag,
-                                    commentText = $commentInput.val();
-
-                                //keyup doesn't guarentee this, so check again (they could paste in for example);
-                                if ( commentText.length > RDR.group.comment_length ) {
-                                    commentText = commentText.substr(0, RDR.group.comment_length);
-                                    $commentInput.val( commentText );
-                                }
-
-                                if ( commentText != "Add a comment or #hashtag" ) {
-                                    //temp translations..
-                                    //quick fix
-                                    var summary = RDR.summaries[hash];
-                                    content_node.kind = summary.kind;
-
-                                    var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
-                                    //leave parent_id undefined for now - backend will find it.
-                                    RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
-
-                                } else{
-                                    $commentInput.focus();
-                                }
-                            }
 
                             function makeShareLinks(){
 
@@ -2630,14 +2558,6 @@ function readrBoard($R){
                 window.readrboard.public_events = $('#rdr_sandbox');
                 $RDR.dequeue('initAjax');
             },
-            triggerPublicEvent: function(namespace, data){
-                // RDR.util.triggerPublicEvent
-                
-                //also publish a catchall event - especially good for debugging
-                window.readrboard.public_events.trigger('event', data);
-                window.readrboard.public_events.trigger(namespace, data);
-            
-            },
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
                 var summary = {};
@@ -3174,7 +3094,7 @@ function readrBoard($R){
                 return {
                     'event':(RDR.events.lastEvent) ? RDR.events.lastEvent:'',
                     'value':(RDR.events.lastValue) ? RDR.events.lastValue:'',
-                    'supplementary':(RDR.events.lastSupplementary) ? RDR.events.lastSupplementary:''
+                    'supplementary':(RDR.events.lastSupplementary) ? RDR.events.lastSupplementary:{}
                 };
             }
         },
@@ -4919,6 +4839,7 @@ function readrBoard($R){
                         tag = settings.tag,
                         summary = settings.summary,
                         hash = settings.hash,
+                        kind = settings.kind,
                         $rindow = settings.$rindow,
                         selState = settings.selState;
 
@@ -4984,11 +4905,11 @@ function readrBoard($R){
                         helpText = settings.helpText,
                         content_node = settings.content_node,
                         summary = settings.summary,
+                        kind= settings.kind,
                         hash = settings.hash,
                         tag  = settings.tag ,
                         $rindow = settings.$rindow,
                         selState = settings.selState;
-
 
                     var commentText = $commentTextarea.val();
 
@@ -5009,33 +4930,17 @@ function readrBoard($R){
                                 "kind":summary.kind,
                                 "hash":summary.hash
                             };
-                        } else {
-                            // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
 
-                            // see if this is a custom display type
-                            // if so, use that info to set the kind
-                            // i know, this looks bad, is duplicated elsewhere, and looks overlappng with the code in the if() right above
-                            var $node = $('[rdr-hash="'+summary.hash+'"]'),
-                                content_type = $node.attr('rdr-content-type');
-
-                            if ( content_type ) {
-                                if (content_type == "media") { content_node.kind = "media"; }
-                                else if (content_type == "image") { content_node.kind = "img"; }
-                                else { content_node.kind = "text"; }
-                            } else {
-                                content_node.kind = "text";
-                            }
                         }
                         var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
 
                         //leave parent_id undefined for now - backend will find it.
                         RDR.actions.interactions.ajax( args, 'comment', 'create');
 
-                    } else{
+                    } else {
                         $commentTextarea.focus();
                     }
                     return false; //so the page won't reload
-                
                 }
             },
             containers: {
@@ -6047,8 +5952,6 @@ if ( sendData.kind=="page" ) {
                             //     },
                             //     rindow:$rindow
                             // };
-                            
-                            RDR.util.triggerPublicEvent('comment');
 
                             RDR.events.trackEventToCloud({
                                 event_type: "c",
@@ -6059,7 +5962,7 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash });
+                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
@@ -6652,12 +6555,6 @@ if ( sendData.kind=="page" ) {
                                 });
                                 return $shareWrapper;
                             }
-                            
-                            RDR.util.triggerPublicEvent('tag', {
-                                body: args.tag.body,
-                                hash: args.hash,
-                                kind: args.kind
-                            });
                         },
                         remove: function(args){
                             //RDR.actions.interactions.react.onSuccess.remove:
@@ -8823,15 +8720,14 @@ if ( sendData.kind=="page" ) {
                             //temp translations..
                             //quick fix.  images don't get the data all passed through to here correctly.
                             //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
-                            if ($.isEmptyObject(content_node) && summary.kind=="img") {
 
+                            if ($.isEmptyObject(content_node) && summary.kind=="img") {
                                 content_node = {
                                     "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
                             } else {
-
                                 // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
                                 // see if this is a custom display type
                                 // if so, use that info to set the kind

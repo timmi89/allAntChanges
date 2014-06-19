@@ -233,10 +233,10 @@ class CommentHandler(InteractionHandler):
         comment = data['comment']
 
         # Optional interaction id
-        interaction_id = data.get('int_id', None)
+        interaction_id = data['tag'].get('parent_id', None)
 
         # Get or create parent interaction
-        if interaction_id:        
+        if interaction_id:
             try:
                 parent = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
