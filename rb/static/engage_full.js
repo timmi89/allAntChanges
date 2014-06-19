@@ -6059,7 +6059,7 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body });
+                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash });
 
                         },
                         remove: function(args){
