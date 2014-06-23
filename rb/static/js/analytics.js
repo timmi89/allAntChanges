@@ -8,10 +8,6 @@ function numberWithCommas(x) {
     }
 }
 
-RB = (RB)?RB:{};
-RB.group = (RB.group)?RB.group:{};
-RB.group.id=1660;
-
 function topSummary() {
 
 readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
