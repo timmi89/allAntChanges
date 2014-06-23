@@ -1,8 +1,16 @@
 /* I know, I know, this is a horrible, global namespace-polluting, poorly asbtracted POS.  Was in a big hurry. */
 
 function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if (typeof x!='undefined') {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    } else {
+        return '';
+    }
 }
+
+RB = (RB)?RB:{};
+RB.group = (RB.group)?RB.group:{};
+RB.group.id=1660;
 
 function topSummary() {
 
