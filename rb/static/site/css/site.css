@@ -285,23 +285,55 @@ section[role="subheader"].admin {
   overflow: auto;
   border-bottom:1px solid #ccc;
 }
-.endorsements .caption {
+.endorsements .caption,
+.logos .caption {
   font-size:14px;
   margin:20px 0;
 }
-.fastco p {
+.quote p {
   text-align: left;
   color:#777;
   width:70%;
   margin:20px auto;
 }
+.quote em {
+  color:#438CB6;
+}
+
 .fastco img {
   width:253px;
 }
-.fastco em {
-  color:#777;
+
+.alexis .image {
+  margin-top:0rem;
+  margin-bottom:2rem;
+  float: left;
+  width: 7rem;
+  height: 7rem;
+  margin-right: 2%;
+  background: url(https://phaven-prod.s3.amazonaws.com/files/image_part/asset/944382/g-DEOt9ByPbrv1BKO8IBZCiaYfE/medium_Alexis_Ohanian_shot_by_Tanya_Kechichian.jpg);
+  background-size: 225%;
+  background-position: 20% 28%;
+  border-radius: 50%;
 }
 
+.alexis p {
+  margin-top:0;
+}
+
+.logos {
+  margin-bottom: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+@media (max-width: 480px) {
+  .alexis {margin-top:3rem; margin-left:10%; }
+  .alexis .image {width:5rem; height:5rem; }
+}
+@media (min-width: 481px) and (max-width: 800px) {
+  .alexis {margin-top:3rem; margin-left:10%;}
+}
 
 .banner {
   padding:40px 0px;
