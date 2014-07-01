@@ -408,10 +408,10 @@ Sacramento, CA 95816
 document.addEventListener("readrboard.reaction", function(){
   // console.log("readrboard.reaction");
   var lastEvent = readrboard.getLastEvent();
-  // console.log(lastEvent);
+  console.log(lastEvent);
   if (lastEvent.event == 'readrboard.reaction' && lastEvent.value) {
     var cssClassToShow = lastEvent.value.toLowerCase().replace(/\s+/g, '-').replace('\'','').replace('\'','');
-    // console.log(cssClassToShow);
+    console.log(cssClassToShow);
     $('.tell-us-response, .'+cssClassToShow).show(333);
   }
 },false); 
