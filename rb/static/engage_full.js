@@ -358,7 +358,6 @@ function readrBoard($R){
             },
             emit: function(eventName, eventValue, eventSupplementary) {
                 // RDR.events.emit
-                console.log('RDR.events.emit: is premium? ' + RDR.group.premium );
                 if (RDR.group.premium == true) {
                     // non-IE
                     RDR.events.lastEvent = eventName;
