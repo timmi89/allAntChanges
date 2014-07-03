@@ -385,6 +385,7 @@ class GroupForm(forms.ModelForm):
             'hideDoubleTapMessage',
             'doubleTapMessage',
             'doubleTapMessagePosition',
+            'send_notifications',
             'author_selector',
             'author_attribute',
             'topics_selector',

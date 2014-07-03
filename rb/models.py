@@ -177,6 +177,7 @@ class Group(models.Model):
     
     # is premium?
     premium = models.BooleanField(default=False)
+    send_notifications = models.BooleanField(default=True)
 
     # Customization
     call_to_action = models.CharField(max_length=255, default='', blank=True)

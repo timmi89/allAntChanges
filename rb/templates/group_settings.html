@@ -265,6 +265,15 @@
                 }
                 </style>
             </div>
+            {% if group.premium == True %}
+            <div class="formRow">
+                <label for="id_send_notifications">
+                    {{ form.send_notifications}}{{ form.send_notifications.errors }}
+                    <span class="labelTitle">Send Email Notifications?</span>
+                    <span>For users with a ReadrBoard account, send them occasional notices when others react on the same pages they do.  (We don't send them every time, just periodically.)</span>
+                </label>
+            </div>
+            {% endif %}
             <div class="formRow">
                 <label for="id_paragraph_helper">
                     {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
