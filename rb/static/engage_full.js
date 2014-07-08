@@ -42,9 +42,9 @@ RDR_offline = !!(
     RDR.engageScriptSrc.indexOf('local.readrboard2.com') != -1 ||
     document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"//www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"//s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"//s3.amazonaws.com/readrboard/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
