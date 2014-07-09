@@ -130,7 +130,15 @@
                 </label>
                 {{ form.post_href_selector }}{{ form.post_href_selector.errors }}
             </div>
-            <!-- this is too confusing still to expose to the user. -->
+            <div class="formRow">
+                <label for="id_separate_cta">
+                    <span class="labelTitle">Which tags will have a separate call-to-action? (jQuery selector)</span>
+                    <span>ReadrBoard can insert a distinct call-to-action for content on your page.  See <a href="/see/#anotherway" target="_blank">Another way to react" on our demo page</a> to see what we mean.</span>
+                    <span class="formInputExample">Example: <i>iframe,video</i></span>
+                </label>
+                {{ form.separate_cta }}{{ form.separate_cta.errors }}
+            </div>
+            <!-- this is too confusing still to expose to the user. 
             <div class="formRow">
                 <label for="id_br_replace_scope_selector">
                     <span class="labelTitle">BR Tag Replacement (jQuery selector)</span>
@@ -139,6 +147,7 @@
                 </label>
                 {{ form.br_replace_scope_selector }}{{ form.br_replace_scope_selector.errors }}
             </div>
+            -->
             
             {% if hostplatform %}
                 <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />

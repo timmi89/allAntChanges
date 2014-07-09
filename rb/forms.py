@@ -360,6 +360,7 @@ class GroupForm(forms.ModelForm):
             'twitter',
             'active_sections',
             'anno_whitelist',
+            'separate_cta',
             'no_readr',
             'img_whitelist',
             'img_blacklist',
