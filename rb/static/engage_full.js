@@ -4541,30 +4541,63 @@ function readrBoard($R){
                                 iteration++;
                             }
                         }
+
                     }
 
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
-                    if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
-                        var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
-                        RDR.actions.stripRdrNode($parentNodes);
-                    }
+                    // if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
+                    //     var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
+                    //     RDR.actions.stripRdrNode($parentNodes);
+                    // }
                     
+                    // we will use this in the following conditionals
+                    var thisTagName = $this.get(0).nodeName.toLowerCase();
+
                     // check to see if this is an IMG inside a hashed node.  if so, check this thing for siblings.
+                    // if no siblings... make sure the parent does not have a hash or they may be identical
                     // both HTML and text.
-                    // if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
-                    if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !$this.find(RDR.group.anno_whitelist).length ) {
-                        var $parentNodes = $this.parents('[rdr-hash]');
-                        RDR.actions.stripRdrNode($parentNodes);
+                    // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
+                    if ( thisTagName == 'img' ) { 
+                        if ( $this.parents('[rdr-hash]').length && !$this.siblings(RDR.group.anno_whitelist).length ) {
+                            var $parentNodes = $this.parents('[rdr-hash]');
+                            RDR.actions.stripRdrNode($parentNodes);
+                        }
                     }
 
-                    // via http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
-                    function _getTextNodesIn(el) {
-                        return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
-                            return this.nodeType == 3;
+                    // prevent two indicators for content when there are nested block elements
+                    // only hash and insert an indicator for the deepest node
+                    // to begin, check the node we are hasing (hashNode) for any nested elements from the Allowed Tags (anno_whitelist) setting
+                    if ( $this.find(RDR.group.anno_whitelist).length ) {
+                        var dontHash = false;
+
+                        // loop through the Allowed Tags that are nested inside the hashNode
+                        $this.find(RDR.group.anno_whitelist).each(function(idx, childNode) {
+
+
+                            var tagName = childNode.nodeName.toLowerCase(),
+                                embedTagsArray = ['img','iframe','embed'];
+
+                            // if this node, inside the hashNode, is an image, iframe, or embed...
+                            // check to see if ti has any valid siblings (in case, say, the image is floated next to a paragraph)
+                            if ( $.inArray(tagName, embedTagsArray) != -1 ) {
+
+                                var $childNode = $(childNode);
+                                if ($childNode.siblings(RDR.group.anno_whitelist).length ) {
+                                    
+                                }
+
+                            } else {
+                                dontHash = true;
+                            }
                         });
-                    };
+
+                        if (dontHash===true) { 
+                            // RDR.actions.stripRdrNode($this);
+                            return;
+                        }
+                    }
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
