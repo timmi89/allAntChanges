@@ -1738,8 +1738,10 @@ function readrBoard($R){
                                         left: settings.$custom_cta.left
                                     };
                                 } else {
-                                    coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
-                                    coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
+                                    var rdr_offset_x = (settings.$custom_cta.attr('rdr-offset-x')) ? parseInt(settings.$custom_cta.attr('rdr-offset-x')) : 0;
+                                    var rdr_offset_y = (settings.$custom_cta.attr('rdr-offset-y')) ? parseInt(settings.$custom_cta.attr('rdr-offset-y')) : 0;
+                                    coords.top = settings.$custom_cta.offset().top + rdr_offset_y;
+                                    coords.left = settings.$custom_cta.offset().left + rdr_offset_x;
                                 }
 
                             }
@@ -3638,6 +3640,10 @@ function readrBoard($R){
                    //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
+                   that.initSeparateCtas();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
                    that.initHTMLAttributes();
                    //next fired on ajax success
                 });
@@ -4252,6 +4258,26 @@ function readrBoard($R){
                 });
                 $RDR.dequeue('initAjax');
             },
+            initSeparateCtas: function(){
+                // RDR.initSeparateCtas
+                
+                if (RDR.group.separate_cta) {
+                    var separateCtaCount = 0;
+                    $(RDR.group.active_sections).find(RDR.group.separate_cta).each( function(idx, node) {
+                        var $node = $(node);
+                        if ( $node.hasAttr('rdr-item') ) {
+                            var rdrItem = $node.attr('rdr-item');
+                        } else {
+                            var rdrItem = 'rdr-custom-cta-'+separateCtaCount;
+                            $node.attr('rdr-item', rdrItem);
+                        }
+                        $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
+                        separateCtaCount++;
+                    });
+                }
+
+                $RDR.dequeue('initAjax');
+            },
             initHTMLAttributes: function() {
                 // grab rdr-items that have a set of rdr-reactions and add to window.readrboard_extend_per_container
                 $('[rdr-reactions][rdr-item]').each( function () {
@@ -4827,6 +4853,7 @@ function readrBoard($R){
                                     }
                                 });
 
+                                // init the custom display / separate_cta elements
                                 $.each( $('[rdr-item]') , function(idx, node) {
                                     if ( initSomeHashes.indexOf($(node).data('hash')) == -1 ) {
                                         initSomeHashes.push( $(node).data('hash') );

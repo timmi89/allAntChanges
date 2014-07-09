@@ -1020,15 +1020,15 @@ div.rdr_shareWidget div.rdr.rdr-summary {
 }
 
 div.rdr.rdr-summary .rdr_chevron_cta {
-  display: block;
-  float: right;
+  display: none;
+  /*float: right;*/
   /*border-left: 1px solid #ddd;*/
-  height: 30px;
+  /*height: 30px;
   width:26px;
   padding-top: 9px;
   padding-left: 6px;
   margin-left: 6px;
-  text-align: left;
+  text-align: left;*/
 }
 div.rdr.rdr-summary:hover .rdr_chevron_cta i:before,
 div.rdr.rdr-summary.rdr_hover .rdr_chevron_cta i:before {
@@ -2546,6 +2546,13 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount24
 div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount25 .rdr_tag_body { font-size:14px; margin-top:4px; }
 
 /*div.rdr .rdr_hiddenPanel { visibility:hidden; }*/
+
+
+/* default styles auto-generated custom CTA elements */
+.rdr-custom-cta-container { display:block; }
+.rdr-custom-cta-container .rdr-custom-cta { padding:10px 6px; display:inline-block; }
+.rdr-custom-cta-container .rdr-custom-cta.rdr-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
+.rdr-custom-cta-container .rdr-custom-cta.rdr-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
 
 div#rdr_loginPanel {
     z-index: 12101;
