@@ -1000,7 +1000,7 @@ div.rdr.rdr-summary {
     0px -1px 0px rgba(000,000,000,0.1),
     0px 1px 0px rgba(255,255,255,1);*/
   /*without this, the text was jumping down on first load before the styles are cached*/
-  min-width: 124px;
+  min-width: 100px;
 
 }
 
@@ -2325,7 +2325,7 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_grid .rdr_tag_body{
     text-align: center;
     font-weight:normal;
 }
-div.rdr div.rdr_body.rdr_tags_list.rdr_grid .rdr_tag_split .rdr_tag_body{
+div.rdr.rdr_readmode div.rdr_body.rdr_tags_list.rdr_grid .rdr_tag_split .rdr_tag_body{
     margin-top: -1em !important;
 }
 
@@ -2549,8 +2549,8 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount25
 
 
 /* default styles auto-generated custom CTA elements */
-.rdr-custom-cta-container { display:block; }
-.rdr-custom-cta-container .rdr-custom-cta { padding:10px 6px; display:inline-block; }
+.rdr-custom-cta-container { display:block; margin:5px 0;}
+.rdr-custom-cta-container .rdr-custom-cta { padding:3px 5px; display:inline-block; }
 .rdr-custom-cta-container .rdr-custom-cta.rdr-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
 .rdr-custom-cta-container .rdr-custom-cta.rdr-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
 

@@ -2532,10 +2532,6 @@ function readrBoard($R){
                     $(window).on('scrollend', function() {
                         RDR.util.mobileHelperToggle();
                     });
-
-                    //quick'n'dirty way to init the helper indicators for mobile
-                    // mobiletodo do we need this?
-                    // $( RDR.group.active_sections_with_anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
@@ -2742,10 +2738,13 @@ function readrBoard($R){
                 str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
                 binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
             },
-            getCleanText: function($node) {
+            getCleanText: function($domNode) {
                 // RDR.util.getCleanText
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
-                // var $node = $(textNode);
+                
+                var $node = $domNode.clone();
+
+                $node.find('.rdr, .rdr-custom-cta-container').remove();
 
                 //make sure it doesnt alredy have in indicator - it shouldn't.
                 var $indicator = $node.find('.rdr_indicator');
@@ -3711,6 +3710,7 @@ function readrBoard($R){
                         if ( RDR.group.active_sections == "" ) {
                             RDR.group.active_sections = "body";
                         }
+
                         var active_sections = RDR.group.active_sections.split(','),
                             active_sections_with_anno_whitelist = "",
                             anno_whitelist = RDR.group.anno_whitelist.split(',');
@@ -3801,7 +3801,7 @@ function readrBoard($R){
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
 
-                            var $summary_widget = $post.find(RDR.group.summary_widget_selector);
+                            var $summary_widget = $post.find(RDR.group.summary_widget_selector).eq(0);
 
                             if ( $post_href.attr('href') ) {
                                 url = $post_href.attr('href');
@@ -3981,7 +3981,6 @@ function readrBoard($R){
 
                             var minImgWidth = 160;
                             if ( $this.width() >= minImgWidth ) {
-
                                 var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                                     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
@@ -4264,13 +4263,24 @@ function readrBoard($R){
                 if (RDR.group.separate_cta) {
                     var separateCtaCount = 0;
                     $(RDR.group.active_sections).find(RDR.group.separate_cta).each( function(idx, node) {
-                        var $node = $(node);
+                        var $node = $(node),
+                            tagName = node.nodeName.toLowerCase(),
+                            crossPage = '';
+
+                        if ( $node.closest(RDR.group.no_readr).length ) {return;}
                         if ( $node.hasAttr('rdr-item') ) {
                             var rdrItem = $node.attr('rdr-item');
                         } else {
                             var rdrItem = 'rdr-custom-cta-'+separateCtaCount;
                             $node.attr('rdr-item', rdrItem);
                         }
+
+                        // make all media a crosspage container?  
+                        // nah.
+                        // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
+                        //     $node.attr('rdr-crossPageContent', 'true');
+                        // }
+
                         $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
                         separateCtaCount++;
                     });
@@ -4349,7 +4359,7 @@ function readrBoard($R){
                         kind: 'media',
                         $group: null,
                         whiteList: RDR.group.media_selector,
-                        filterParam: 'embed, video, object, iframe',
+                        filterParam: RDR.group.active_sections + ' embed, ' + RDR.group.active_sections + ' video, ' + RDR.group.active_sections + ' object, ' + RDR.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var body = this.src;
                             $(this).data({
@@ -4360,7 +4370,7 @@ function readrBoard($R){
                     {
                         kind: 'img',
                         $group: null,
-                        whiteList: RDR.group.img_selector,
+                        whiteList: RDR.group.active_sections + ' img',
                         filterParam: 'img',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
@@ -4684,6 +4694,7 @@ function readrBoard($R){
                 // RDR.actions.sendHashes:
 
                 $.each(hashesByPageId, function(pageId, hashList){
+
                     
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
@@ -4710,6 +4721,7 @@ function readrBoard($R){
                             //have write mode enabled
                             RDR.actions.indicators.init(thisHash);
                             $node.data('rdr-hashed', true);
+                            // $node.data('rdr-hashed-one', true); // on load.  for debug only.
                         }
                     });
 
@@ -4721,9 +4733,10 @@ function readrBoard($R){
                         }
 
                         var $hashable_node = $('[rdr-hash="' + hash +'"]');
-                        
+
                         if ($hashable_node.length == 1 ) {
-                            $hashable_node.attr('rdr-hashed','true');
+                            $hashable_node.attr('rdr-hashed', true);
+                            // $hashable_node.attr('rdr-hashed-two', true); // on select.  for debug only.
                         }
                     });
                     
@@ -4763,7 +4776,7 @@ function readrBoard($R){
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // RDR.actions.sendHashesForSinglePage:
-                  
+
                     var pageId = sendData.pageID;
                     // send the data!
                     $.ajax({
@@ -5572,8 +5585,10 @@ function readrBoard($R){
                         });
 
                         //throw the content_nodes into the container summary
+
                         RDR.content_nodes[hash] = content_nodes;
                         summary.content_nodes = content_nodes;
+
                         if(summary.kind == "text"){
                         }else{
                             //this is weird because there is only one content_node - the img
@@ -5594,6 +5609,9 @@ function readrBoard($R){
 
                         // add a class so we note that the content summary was retrieved
                         $('[rdr-hash="'+hash+'"]').attr('rdr_summary_loaded', 'true');
+
+                        // fix for rdr-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
+                        RDR.actions.indicators.update(hash);
 
                         // remove from po' man's throttling array
                         // po' man's throttling
@@ -7140,16 +7158,22 @@ if ( sendData.kind=="page" ) {
                 },
                 update: function(hash, shouldReInit){
                     //RDR.actions.indicators.update:
+
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
                     
+                    if ( typeof summary.content_nodes != 'undefined' ) {
+                        $.each( summary.content_nodes, function(idx, content_node) {
+                            summary.counts = $.extend(true, {}, content_node.counts );
+                            summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
+                        });
+                    }
 
                     // for now, separately handle the "custom display" elements
                     if ( $container.hasAttr('rdr-item') ) {
-
                             var customDisplayName = $container.attr('rdr-item'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
@@ -7162,6 +7186,12 @@ if ( sendData.kind=="page" ) {
                             if ( $counter.length ) {
                                 if ( summary.counts.tags > 0 ) {
                                     $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                // } else if ( typeof summary.content_nodes != 'undefined' ) {
+                                    // $.each( summary.content_nodes, function(idx, content_node) {
+                                    //     summary.counts = $.extend(true, {}, content_node.counts );
+                                    //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
+                                    // });
+                                    // $counter.html( RDR.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
                                 } else {
                                     $counter.html('0');
                                 }
@@ -8193,16 +8223,13 @@ if ( sendData.kind=="page" ) {
                         }
                     };
                     //dont save anymore
-                    //RDR.actions.summaries.save(summary);
 
                     return summary;
                 },
                 save: function(summary){
                     //RDR.actions.summaries.save:
-
                     var hash = summary.hash;
-                    if( RDR.summaries.hasOwnProperty(hash) ){
-                    }
+
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
                     summary.$container = $('[rdr-hash="'+hash+'"]');
@@ -9437,7 +9464,16 @@ if ( sendData.kind=="page" ) {
                     // RDR.actions.hashNodes( $container, "nomedia" );
 
                     //todo: can't we use the hashes returned by this function instead?
-                    RDR.actions.hashNodes( $container );
+
+                    // is the post_selector the same node as the active_section?
+                    // determined by seeing if the active_section exists, just not inside the post_selector
+                    if ( RDR.group.post_selector && !$(RDR.group.post_selector).first().find(RDR.group.active_sections).length && $(RDR.group.active_sections).length ) {
+                        // RDR.group.active_sections = '';
+                        // active_sections_with_anno_whitelist = RDR.group.anno_whitelist;
+                        RDR.actions.hashNodes( $container.parent() );
+                    } else {
+                        RDR.actions.hashNodes( $container );
+                    }
 
                     var hashesByPageId = {};
                     if ( page.containers.length > 0 ) {
@@ -9485,7 +9521,7 @@ if ( sendData.kind=="page" ) {
                     widgetSummarySettings.key = key;
                     
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector+'[rdr-page-widget-key="' + key + '"]') ) {
-                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector).eq(0);
                         
                     } else if( $(".rdr-page-summary").length==1 ){
                         widgetSummarySettings.$anchor = $(".rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
