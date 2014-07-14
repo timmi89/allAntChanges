@@ -1000,7 +1000,7 @@ div.rdr.rdr-summary {
     0px -1px 0px rgba(000,000,000,0.1),
     0px 1px 0px rgba(255,255,255,1);*/
   /*without this, the text was jumping down on first load before the styles are cached*/
-  min-width: 100px;
+  min-width: 114px;
 
 }
 
