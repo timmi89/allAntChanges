@@ -7164,8 +7164,8 @@ if ( sendData.kind=="page" ) {
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
-                    
-                    if ( typeof summary.content_nodes != 'undefined' ) {
+
+                    if ( summary.counts.tags === 0 && typeof summary.content_nodes != 'undefined' ) {
                         $.each( summary.content_nodes, function(idx, content_node) {
                             summary.counts = $.extend(true, {}, content_node.counts );
                             summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
