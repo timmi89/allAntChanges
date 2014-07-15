@@ -2013,9 +2013,9 @@ div.rdr_indicator_details_for_media div.rdr_indicator_details_body {
 div.rdr_indicator_for_media {
     /*display:absolute;*/
     display:none;;
-    opacity:1;
-    -moz-opacity:1;
-    -khtml-opacity:1;
+    opacity:1 !important;
+    -moz-opacity:1 !important;
+    -khtml-opacity:1 !important;
 }
 
 div.rdr_indicator_for_media.rdr_live_hover {
