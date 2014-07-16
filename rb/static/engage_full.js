@@ -4777,6 +4777,8 @@ function readrBoard($R){
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // RDR.actions.sendHashesForSinglePage:
 
+                    RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
+
                     var pageId = sendData.pageID;
                     // send the data!
                     $.ajax({
