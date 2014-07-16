@@ -194,17 +194,19 @@ def createInteractionNode(node_id=None, body=None, group=None):
     
     # Body was passed rather than id
     elif body:
-        if group.word_blacklist:
-            # Check body for blacklisted word
-            """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-            #blacklist = ["%r" % word.strip() for word in group.word_blacklist.split(',')]
+        # commenting this out.  
+        # the Interaction Node can have profanity.  we'll set the Interaction to unapproved instead.
+        # if group.word_blacklist:
+        #     # Check body for blacklisted word
+        #     """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
+        #     blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+        #     #blacklist = ["%r" % word.strip() for word in group.word_blacklist.split(',')]
         
-            # For demo search for bad words inside other bad words
-            inside_words = True if group.id == 1 else False
+        #     # For demo search for bad words inside other bad words
+        #     inside_words = True if group.id == 1 else False
         
-            pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
-            body = pf.clean(body)
+        #     pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
+        #     body = pf.clean(body)
         
         
         # No id provided, using body to get_or_create
@@ -272,11 +274,29 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+    approveOnCreate = False if group.requires_approval else True
+
     if kind and kind == 'tag':
         if group and group.blocked_tags:
             for blocked in group.blocked_tags.all():
                 if interaction_node.body == blocked.body:
                     raise JSONException("Group has blocked this tag.")
+
+        if group and group.word_blacklist:
+            # Check body for blacklisted word
+            # if in the blacklist, block it
+            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+
+            # check the whole reaction (i.e. 'f u c k')
+            if interaction_node.body in blacklist:
+                approveOnCreate = False
+
+            # also check individual words, by splitting on a space
+            # also, replace dashes with a space first.  a bit simple but a good start.
+            for word in interaction_node.body.replace('-', ' ').split(' '):
+                if word in blacklist:
+                    approveOnCreate = False
+
          
     # Check to see if user has reached their interaction limit
     tempuser = False
@@ -342,7 +362,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             interaction_node=interaction_node,
             parent=parent,
             rank = int(time.time()*1000),
-            approved = False if group.requires_approval else True
+            approved = approveOnCreate
         )
     except Exception as e:
         raise JSONException(u"Error creating interaction object")
