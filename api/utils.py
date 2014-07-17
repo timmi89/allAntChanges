@@ -494,7 +494,7 @@ def getSinglePageDataDict(page_id):
     tags = InteractionNode.objects.filter(
         interaction__kind='tag',
         interaction__page=current_page,
-        # interaction__approved=True
+        interaction__approved=True
     ).exclude(
         interaction__container__item_type='question'
     )

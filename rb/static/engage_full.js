@@ -6696,7 +6696,6 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     onFail: function(args){
-                      
                         //RDR.actions.interactions.react.onFail:
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
@@ -6716,6 +6715,8 @@ if ( sendData.kind=="page" ) {
                                 //and a close 'x' button.
                                 args.msgType = "existingInteraction";
                                 RDR.session.rindowUserMessage.show( args );
+                        } else if ( response.message.indexOf("blocked this tag") != -1 ) {
+                            alert('This site has blocked "'+args.tag.body+'".\n\nPlease try something that will be more appropriate for this community.');
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( args, function() {

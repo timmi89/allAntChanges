@@ -1002,6 +1002,11 @@ class BlockedTagHandler(AnonymousBaseHandler):
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
         self.clear_caches(existing_interactions)
+
+        if group and group.word_blacklist:
+            group.word_blacklist += ','+i_node.body
+            group.save()
+
         return {"created":True}    
     
         
