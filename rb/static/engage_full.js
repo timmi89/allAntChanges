@@ -6716,7 +6716,7 @@ if ( sendData.kind=="page" ) {
                                 args.msgType = "existingInteraction";
                                 RDR.session.rindowUserMessage.show( args );
                         } else if ( response.message.indexOf("blocked this tag") != -1 ) {
-                            alert('This site has blocked "'+args.tag.body+'".\n\nPlease try something that will be more appropriate for this community.');
+                            alert('This site has blocked "'+args.tag.body+'" from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.');
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( args, function() {
