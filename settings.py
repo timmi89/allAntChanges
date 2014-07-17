@@ -236,7 +236,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'readrboard.rb.middleware.ProfileMiddleware',
+    # 'readrboard.rb.middleware.ProfileMiddleware',  # this will break production
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )

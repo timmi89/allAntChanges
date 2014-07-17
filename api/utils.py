@@ -475,8 +475,9 @@ def searchBoards(search_term, page_num):
 
 
 def getSinglePageDataDict(page_id):
+    print "getSinglePageDataDict - - - - - - - - - - - - -"
     current_page = Page.objects.get(id=page_id)
-    iop = Interaction.objects.filter(page=current_page).exclude(container__item_type='question')
+    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
             
     # Retrieve containers
     containers = Container.objects.filter(id__in=iop.values('container'))
@@ -494,14 +495,14 @@ def getSinglePageDataDict(page_id):
     tags = InteractionNode.objects.filter(
         interaction__kind='tag',
         interaction__page=current_page,
-        interaction__approved=True
+        # interaction__approved=True
     ).exclude(
         interaction__container__item_type='question'
     )
 
     ordered_tags = tags.order_by('body')
     tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-    toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
+    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
 
     # singletagcounts = ordered_tags.annotate(tag_count=Count('interaction')).filter(tag_count__lt=2)
     # singletoptags_with_containers = singletagcounts.values('id','interaction__container')
