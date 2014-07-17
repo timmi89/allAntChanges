@@ -475,7 +475,6 @@ def searchBoards(search_term, page_num):
 
 
 def getSinglePageDataDict(page_id):
-    print "getSinglePageDataDict - - - - - - - - - - - - -"
     current_page = Page.objects.get(id=page_id)
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
             
