@@ -264,6 +264,8 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
+        if len(tag_body) > 35:
+            return
         container_hash = data['hash']
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
