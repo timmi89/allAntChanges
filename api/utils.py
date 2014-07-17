@@ -9,6 +9,8 @@ import random
 import json
 import re
 import time
+import string
+import timeit
 from threading import Thread
 from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
@@ -285,17 +287,28 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         if group and group.word_blacklist:
             # Check body for blacklisted word
             # if in the blacklist, block it
-            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+            blacklist = [word.strip().lower() for word in group.word_blacklist.split(',')]
+            # print "blacklist * * * * * * * * * * "
+            # print blacklist
+            # print interaction_node.body
+            # print interaction_node.body.lower()
 
             # check the whole reaction (i.e. 'f u c k')
-            if interaction_node.body in blacklist:
+            # strip punctuation
+            exclude = set(string.punctuation)
+            table = string.maketrans("","")
+
+            if interaction_node.body.lower() in blacklist:
                 approveOnCreate = False
 
             # also check individual words, by splitting on a space
             # also, replace dashes with a space first.  a bit simple but a good start.
             for word in interaction_node.body.replace('-', ' ').split(' '):
-                if word in blacklist:
+                if word.lower() in blacklist:
                     approveOnCreate = False
+
+            if approveOnCreate == False:
+                raise JSONException("Group has blocked this tag.")
 
          
     # Check to see if user has reached their interaction limit
