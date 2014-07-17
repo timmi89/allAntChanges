@@ -10,7 +10,6 @@ import json
 import re
 import time
 import string
-import timeit
 from threading import Thread
 from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
@@ -288,22 +287,19 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             # Check body for blacklisted word
             # if in the blacklist, block it
             blacklist = [word.strip().lower() for word in group.word_blacklist.split(',')]
-            # print "blacklist * * * * * * * * * * "
-            # print blacklist
-            # print interaction_node.body
-            # print interaction_node.body.lower()
 
-            # check the whole reaction (i.e. 'f u c k')
-            # strip punctuation
-            exclude = set(string.punctuation)
-            table = string.maketrans("","")
 
-            if interaction_node.body.lower() in blacklist:
+            # strip punctuation and whitespace, so that f!u ck is not OK
+            tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', interaction_node.body.lower())
+            tagLowerCased = re.sub('[%s]' % re.escape(string.whitespace), '', tagLowerCased)
+
+            # check the whole reaction (i.e. 'f u c k'), and smash case
+            if tagLowerCased in blacklist:
                 approveOnCreate = False
 
             # also check individual words, by splitting on a space
             # also, replace dashes with a space first.  a bit simple but a good start.
-            for word in interaction_node.body.replace('-', ' ').split(' '):
+            for word in tagLowerCased.replace('-', ' ').split(' '):
                 if word.lower() in blacklist:
                     approveOnCreate = False
 
