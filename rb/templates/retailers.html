@@ -1,77 +1,84 @@
 {% extends "base.html" %}
 
-{% block title %}ReadrBoard{%endblock%}
+{% block title %}ReadrBoard for Ecommerce{%endblock%}
+
 {% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/{% else %}http://www.readrboard.com/{% endif %}">
-<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
 {% block subheaderContent %}
-<section role="subheader">
-  <div class="content">
-    <div class="left">
-      <div class="item">
-        ReadrBoard for Retailers
-      </div>
-    </div>
-  </div>
-</section>
 {% endblock %}
 
 {% block wideContent %}
     <div class="retailers_page">
-        <div class="masthead no-rdr">
-            <div class="">
-                <h1>Increase ecommerce engagement instantly</h1>
-            </div>
-            <div class="grid-half s-grid-whole padded">
-                <p>Retailers know that engaging with visitors<br/>turns them into customers.</p>
-                <p>ReadrBoard is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
-                <p>Capture insights, contact information, and customers.</p>
-            </div>
-            <div class="grid-half s-grid-whole padded">
-                <div class="average_increase">
-                    <i class="rdr_icon-circle-arrow-up"></i>
-                    <h2>12%</h2>
-                    <label>Average Increase in Engagement</label>
+        <div class="grid-whole banner blue">
+          <div class="content left">
+            <h1>More engagement means more dollars.</h1>
+            <div class="caption">We can help retailers engage their customers in on-brand, conversion driving ways.</div>
+          </div>
+        </div>
+        <div class=" grid-whole masthead no-rdr">
+            <div class="content">
+                <div class="">
+                    <h1>Increase ecommerce engagement instantly</h1>
+                </div>
+                <div class="grid-7 s-grid-whole padded">
+                    <p>Retailers know that engaging with visitors<br/>turns them into customers.</p>
+                    <p>ReadrBoard is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
+                    <p>Capture insights, contact information, and customers.</p>
+                </div>
+                <div class="grid-5 s-grid-whole padded">
+                    <div class="average_increase">
+                        <i class="rdr_icon-circle-arrow-up"></i>
+                        <h2>12%</h2>
+                        <label>Average Increase in Engagement</label>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="grid-whole s-grid-whole padded new-section demo">
-            <h2>See how visitors can engage your site with ReadrBoard</h2>
-            <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>
-            <button><a href="/static/demo/logan.html">View live demo.</a></button>
+            <div class="content">
+                <h2>See how visitors can engage your site with ReadrBoard</h2>
+                <button><a href="/static/demo/logan.html">View live demo</a></button>
+                <em>Or, check out this video:</em>
+                <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>
+            </div>
         </div>
         <div class="grid-whole s-grid-whole padded new-section q-and-a">
-            <div class="grid-half s-grid-whole padded">
-                <h2>Ask questions of your shoppers <br/>to gain insight &amp; build community.</h2>
-                <p class="left"><em>And say no to disruptive, off-brand "Your opinion counts!" pop-overs.</em></p>
-                <div class="case_study">
-                    <h3>Case Study</h3>
-                    <hr/>
-                    <p>Online publisher ProPublica launched <a href="http://www.propublica.org/getinvolved/item/who-was-most-to-blame-for-deaths-caused-by-mixing-up-tylenol-products" target="_blank">ReadrBoard Q&amp;A</a>.</p>
-                    <p><strong>Their response rate: 18.9% of visits.</strong></p>
-                    <p><strong>Why?</strong>  ReadrBoard has no barrier to entry, is visually appealing, and is extremely easy to use -- encouraging people to respond.</p>
+            <div class="content">
+                <div class="grid-half s-grid-whole padded">
+                    <h2>Ask questions of your shoppers <br/>to gain insight &amp; build community.</h2>
+                    <p class="left"><em>And say no to disruptive, off-brand "Your opinion counts!" pop-overs.</em></p>
+                    <div class="case_study">
+                        <h3>Case Study</h3>
+                        <hr/>
+                        <p>Online publisher ProPublica launched <a href="http://www.propublica.org/getinvolved/item/who-was-most-to-blame-for-deaths-caused-by-mixing-up-tylenol-products" target="_blank">ReadrBoard Q&amp;A</a>.</p>
+                        <p><strong>Their response rate: 18.9% of visits.</strong></p>
+                        <p><strong>Why?</strong>  ReadrBoard has no barrier to entry, is visually appealing, and is extremely easy to use -- encouraging people to respond.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="grid-half s-grid-whole padded screenshot">
-                <img src="{{ STATIC_URL }}site/images/q-and-a.jpg" />
+                <div class="grid-half s-grid-whole padded screenshot">
+                    <img src="{{ STATIC_URL }}site/images/q-and-a.jpg" />
+                </div>
             </div>
         </div>
         <div class="grid-whole s-grid-whole padded new-section other-features">
-            <h2>But wait,<br/>there's more!</h2>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-envelope-o"></i><h5>Acquire</h5><p>Capture visitor feedback, <br/>capture contact info.</p></div>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-compass"></i><h5>On-Brand</h5><p>You set the tone, by setting the <br/>default responses.</p></div>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-tachometer"></i><h5>Measure Curiosity</h5><p>ReadrBoard tracks when people view responses, so you know what your visitors are curious about.</p></div>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-magnet"></i><h5>Magnetic</h5><p>See how visitor engagement with ReadrBoard impacts conversions and draws people back.</p></div>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-wrench"></i><h5>Simple Installation</h5><p>Installation, configuration, and management on any site need just simple HTML &amp; CSS.  We'll walk you through it, free.</p></div>
-            <div class="grid-third s-grid-whole padded feature"><i class="fa fa-flag"></i><h5>Magnificent Management</h5><p>Managing user feedback on ReadrBoard is far easier &amp; cheaper than any other form of on-site, social feedback.</p></div>
+            <div class="content">
+                <h2>But wait,<br/>there's more!</h2>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-envelope-o"></i><h5>Acquire</h5><p>Capture visitor feedback, <br/>capture contact info.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-compass"></i><h5>On-Brand</h5><p>You set the tone, by setting the <br/>default responses, colors, and more.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-tachometer"></i><h5>Measure Curiosity</h5><p>ReadrBoard tracks when people view responses, so you know what your visitors are curious about.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-magnet"></i><h5>Magnetic</h5><p>See how visitor engagement with ReadrBoard impacts conversions and draws people back.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-wrench"></i><h5>Simple Installation</h5><p>Installation, configuration, and management on any site need just simple HTML &amp; CSS.  We'll walk you through it, free.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-flag"></i><h5>Magnificent Management</h5><p>Managing user feedback on ReadrBoard is far easier &amp; cheaper than any other form of on-site, social feedback.</p></div>
+            </div>
         </div>
         <div class="grid-whole s-grid-whole padded new-section cta">
-            <h1>Setup a Demo!</h1>
-            <h2>Free During Beta</h2>
-            <p>ReadrBoard for Retailers is brand new, and we're offering our service free to ecommerce sites during our beta period, and will be working closely with beta partners to determine a great price with fantastic ROI for retailers of all sizes.</p>
-            <p><a class="contact" href="mailto:team@readrboard.com?subject=ReadrBoard+Ecommerce+Beta+Inquiry">Contact Us Now</a> for information about our ecommerce beta program.</p>
+            <div class="content">
+                <h1>Setup a Demo!</h1>
+                <h2>Free During Beta</h2>
+                <p>ReadrBoard for Retailers is brand new, and we're offering our service free to ecommerce sites during our beta period, and will be working closely with beta partners to determine a great price with fantastic ROI for retailers of all sizes.</p>
+                <p><a class="contact" href="mailto:team@readrboard.com?subject=ReadrBoard+Ecommerce+Beta+Inquiry">Contact Us Now</a> for information about our ecommerce beta program.</p>
+            </div>
         </div>
     </div>
 

@@ -760,6 +760,7 @@ p { font-size:18px; }
 .retailers_page .new-section { margin-top:60px; padding-top:60px; border-top:1px solid #ccc;}
 .retailers_page .new-section.demo button { display: block; padding: 10px 20px; font-size: 24px; color: #fff; background: #e5422b; width: 270px; margin: 0 auto; border:none; font-weight:normal; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; margin-top: 40px; }
 .retailers_page .new-section.demo button a { color:#fff; }
+.retailers_page .new-section.demo em { display:block;margin:50px 0 30px; text-align: center; }
 .retailers_page .new-section h2 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:28px; margin:0px 0 40px; background: transparent; color:#3b3b3b; letter-spacing: 0px; text-align: center; }
 .retailers_page .new-section .grid-third h2,
 .retailers_page .new-section .grid-two-thirds h2,

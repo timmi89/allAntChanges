@@ -174,7 +174,7 @@ def retailers(request):
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
-    context['hasSubheader'] = True
+    # context['hasSubheader'] = True
 
     if cookie_user:
         context['cookie_user'] = cookie_user
