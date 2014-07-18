@@ -4037,6 +4037,9 @@ function readrBoard($R){
                             }
                     });
                 }
+
+                RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
+                
                 function _mediaHoverOff( obj ) {
                     var $this = $(obj),
                         hash = $this.data('hash');
@@ -4776,8 +4779,6 @@ function readrBoard($R){
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // RDR.actions.sendHashesForSinglePage:
-
-                    RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
 
                     var pageId = sendData.pageID;
                     // send the data!
