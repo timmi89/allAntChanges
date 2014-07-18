@@ -155,8 +155,22 @@ def getPage(host, page_request):
     author = page_request.get('author', None)
     topics = page_request.get('topics', None)
     section = page_request.get('section', None)
-    # print "* * * * * * * GETPAGE * * * * * * * " + url + "  ||  " + canonical
-    
+
+    try:
+        site = Site.objects.get(domain=host, group=int(group_id))
+    except Site.DoesNotExist:
+        raise JSONException("Site doesn't exist!")
+    except ValueError:
+        raise JSONException("Bad Group ID!")
+
+    # Remove querystring if it doesn't determine content
+    if not site.querystring_content:
+        url = stripQueryString(url)
+
+    # Handle sites with hash but no bang
+    if '#' in url and '!' not in url:
+        url = url[:url.index('#')]
+
     if canonical:
         if canonical == "same":
             canonical = url
@@ -164,31 +178,6 @@ def getPage(host, page_request):
             url = canonical
     else:
         canonical = ""
-
-    try:
-        site = Site.objects.get(domain=host, group=int(group_id))
-    except Site.DoesNotExist:
-        print "NO SITE"
-        raise JSONException("Site doesn't exist!")
-    except ValueError:
-        print "VALUE ERROR"
-        raise JSONException("Bad Group ID!")
-
-    # Remove querystring if it doesn't determine content
-    useQueryString = False
-    if site.querystring_content:
-        useQueryString = True
-
-    if not useQueryString:
-        url = stripQueryString(url)
-        # print "ignore the querystring - - - - - - - -- -  -- - - - - - - - "
-        # print url
-    # else:
-        # print "WTF - - - - - - - - - - - - - "
-
-    # Handle sites with hash but no bang
-    if '#' in url and '!' not in url:
-        url = url[:url.index('#')]
 
     page = Page.objects.get_or_create(
         url = url,
