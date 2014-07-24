@@ -166,6 +166,7 @@ def getPage(host, page_request):
     # Remove querystring if it doesn't determine content
     if not site.querystring_content:
         url = stripQueryString(url)
+        canonical = stripQueryString(canonical)
 
     # Handle sites with hash but no bang
     if '#' in url and '!' not in url:
