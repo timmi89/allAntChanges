@@ -23,7 +23,8 @@ function getWindowProps(options){
 // var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://69.164.203.230/insert"
 // var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://tracker.readrboard.com/insert"
 // var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://events.readrboard.com/insert"
-var trackingUrl = (document.domain != "local.readrboard.com") ? "http://tracker.readrboard.com/insert" : "http://localnode.com:3000/insert"
+// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://tracker.readrboard.com/insert" : "http://localnode.com:3000/insert"
+var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert"
 
 // var trackingUrl = "http://events.readrboard.com/insert";
 
