@@ -137,7 +137,7 @@ ul.link-list li.active a  { }
 
 .group_settings_menu    { display:block; border-top:1px solid #aaa;margin:5px 0;padding-top:5px;  }
 .group_settings_menu:hover section[role="group panel header"] { display:block; }
-.group_settings_menu h3   { font-weight:normal; font-size:12px; }
+.group_settings_menu h3   { font-weight:normal; font-size:12px; color:#ccc;}
 
 
 section[role="subheader"] {

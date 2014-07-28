@@ -143,23 +143,6 @@ window.RDRAuth = {
 
 
             return;
-            // if (typeof ff_loggedInUser != 'undefined' && typeof ff_loggedInUser.guid != 'undefined') {
-            // ff.postObjToExtension(params, "saveEvent", function(response) {});
-              
-
-            //   // ff.createObjAtUri(params, 'EventsDev',
-              // ff.createObjAtUri(params, 'Events',
-              //   function (data, statusMessage) {
-              //       // successfully created object
-              //       var createdMyStuff = data;
-              //       console.log('createdMyStuff');
-              //       console.log(createdMyStuff);
-              //   },
-              //   function (statusCode, statusMessage) {
-              //       // error occurred
-              //   });
-
-            // }
 
             // Old.  When Using Parse.
             //Record events to 3rd party event tracking.  These parameters match Google's event tracking API.
@@ -183,7 +166,7 @@ window.RDRAuth = {
                 
             if( typeof Parse !== "undefined" ){
                 //uncomment for debugging
-                // console.log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
+                // log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
                 var parseTrackingRepo = RDRAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
                 var ParseTracker = Parse.Object.extend(parseTrackingRepo);
                 var parseTracker = new ParseTracker();
@@ -446,38 +429,37 @@ window.RDRAuth = {
                         $('#logged-out').hide().css('visibility','hidden');
                         FB.api('/me', function(response) {
                             
-                            //update the login menu html
-                            if( !$('#fb-login-button a.logging-in').length ){
-                                return;
-                            }
                             // reload the window only if they had just taken the action of clicking the login button.  janky-ish.
                             if ( $('#fb-login-button a').hasClass('logging-in') ) {
                                 window.location.reload();
                                 return;
                             }
 
-                            // shouldn't need this.  the window reload above removes the need for it.
-                            var $user = $('<a/>'),
-                            $avatar = $('<img/>'),
-                            $name = $('<strong/>');
+                            //update the login menu html, if there was no cookie user for base.html to prepopulate
+                            if( !$('.userSettingsMenu').length ){
+                                var $user = $('<a/>'),
+                                $avatar = $('<img/>'),
+                                $name = $('<strong/>');
 
-                            $user.attr('href', '/user/'+user_id );
-                            $avatar.attr('src', img_url + '?type=square');
-                            $name.text( response.name );
+                                $user.attr('href', '/user/'+user_id );
+                                $avatar.attr('src', img_url + '?type=square');
+                                // $name.text( response.name );
 
-                            $user.append( $avatar, $name );
+                                // $user.append( $avatar, $name );
+                                $user.append( $avatar );
 
-                            var user_id = $.cookie('user_id'),
-                                $user_menu = $('<div id="log-out-link" />');
+                                var user_id = $.cookie('user_id'),
+                                    $user_menu = $('<div id="log-out-link" />');
 
-                            $user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
-                                '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
-                                '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
-                                '<h5>Settings</h5>' +
-                                '<label for="private_profile">' +
-                                  '(Reload the page to edit your setttings.)' +
-                                '</label>');
-                            $('#logged-in').html( $user ).append($user_menu);
+                                $user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
+                                    '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
+                                    '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
+                                    '<h5>Settings</h5>' +
+                                    '<label for="private_profile">' +
+                                      '(Reload the page to edit your setttings.)' +
+                                    '</label>');
+                                $('#logged-in').html( $user ).append($user_menu);
+                            }
                         
                         });
                     } else {

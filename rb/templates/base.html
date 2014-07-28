@@ -117,7 +117,8 @@
             ref.parentNode.insertBefore(js, ref);
         }(document));
     </script>
-    <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user_min.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user_min.js"></script>-->
+    <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
 
   {% block header %}
     <header role="global" class="no-rdr clearfix">
@@ -134,8 +135,8 @@
                 <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
                 <a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>
                 
-                <div class="userSettingsMenu">
                     {% if cookie_user %}
+                <div class="userSettingsMenu">
                         <h5 id="user_settings">Settings</h5>
                         <label for="private_profile">
                           <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
@@ -155,8 +156,8 @@
                             <a href="javascript:void(0);" onclick="RDRAuth.openRbAvatarUploadWindow();">Upload Profile Picture</a>
                             <a href="javascript:void(0);" onclick="RDRAuth.openChangePasswordWindow();">Change your password</a>
                         {% endif %}
-                    {% endif %}
                 </div>
+                    {% endif %}
 
                 <div class="group_settings_menu">
                 {% include "group_nav.html" %}
