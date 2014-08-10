@@ -473,6 +473,7 @@ div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link a{
     width: 100%;
     padding: 7px;
     text-align: right;
+    font-size:12px;
 }
 div.rdr.rdr_window div.rdr_rindowMenu .rdr_linkWrap .rdr_link a:hover{
     background: #f3f3f3;
