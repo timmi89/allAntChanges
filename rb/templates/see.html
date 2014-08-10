@@ -171,7 +171,10 @@ Public sentiment is everything. With public sentiment, nothing can fail; without
 http://www.bartleby.com/268/9/23.html
 -->
 <script>
-  document.addEventListener("readrboard.hashed_nodes",function(){console.log("readrboard.hashed_nodes"); console.log( readrboard.getLastEvent() );},false);
+  document.addEventListener("readrboard.hashed_nodes",function(){
+    if (typeof console != 'undefined' && typeof console.log != 'undefined')
+    console.log("readrboard.hashed_nodes"); console.log( readrboard.getLastEvent() );
+  },false);
 </script>
 
 <script defer src="/static/engage_full.js"></script>
