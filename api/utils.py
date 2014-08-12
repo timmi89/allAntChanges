@@ -487,8 +487,6 @@ def searchBoards(search_term, page_num):
 def getSinglePageDataDict(page_id):
     current_page = Page.objects.get(id=page_id)
     urlhash = hashlib.md5( current_page.url ).hexdigest()
-    print "- - - - - - - - - - - - "
-    print urlhash
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
             
     # Retrieve containers
