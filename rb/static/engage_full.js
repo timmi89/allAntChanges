@@ -3752,7 +3752,6 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
-
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
           
@@ -3777,7 +3776,6 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
-
                 var pagesArr = [],
                     urlsArr = [],
                     thisPage,
@@ -3789,12 +3787,16 @@ function readrBoard($R){
                 // temp used as a helper to get the pageurl.
                 var pageDict = {};
 
+                var num_posts = 0;
+
                 // if multiple posts, add additional "pages"
                 if (   
                         RDR.group.post_selector !== "" &&
                         RDR.group.post_href_selector !== "" && 
                         RDR.group.summary_widget_selector !== ""
                     ) {
+
+                        num_posts = $(RDR.group.post_selector).length;
                         //if $(RDR.group.post_selector).length is 0, this will just do nothing
                         $(RDR.group.post_selector).each( function(){
                             var key = pagesArr.length;
@@ -3803,7 +3805,27 @@ function readrBoard($R){
 
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector).eq(0);
 
-                            if ( $post_href.attr('href') ) {
+                            function nearWindow($thisPost) {
+
+                                var offsets = $thisPost.offset();
+                                var w = window,
+                                    d = document,
+                                    e = d.documentElement,
+                                    g = d.getElementsByTagName('body')[0],
+                                    x = w.innerWidth || e.clientWidth || g.clientWidth,
+                                    y = w.innerHeight|| e.clientHeight|| g.clientHeight,
+                                    top = (d && d.scrollTop  || g && g.scrollTop  || 0),
+                                    almostInView = y+top+300;
+
+                                if ( offsets.top < almostInView ) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+
+                            }
+                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('rdr-page-checked') ) {
+                                $post.attr('rdr-page-checked', true);
                                 url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
@@ -3842,8 +3864,8 @@ function readrBoard($R){
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 var pageUrl = RDR.util.getPageProperty('page_url');
-                if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
-                    
+                
+                if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     canonical_url = RDR.util.getPageProperty('canonical_url');
                     title = RDR.util.getPageProperty('title');
 
@@ -3881,55 +3903,57 @@ function readrBoard($R){
                         }
                     }
                 }
-
                 var sendData = {
                     pages: pagesArr
                 };
 
-                //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
-                //might not want to send canonical, or, send it separately if/only if it's different than URL
-                $.ajax({
-                    url: RDR_baseUrl+"/api/page/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: { json: $.toJSON(sendData) },
-                    success: function(response) {
-                        // RDR.events.track( 'load' );
+                if (pagesArr.length) {
 
-                        var load_event_value = '';
-                        if (RDR.group.useDefaultSummaryBar){
-                            load_event_value = 'def';
-                        } else {
-                            if (response.data.length === 1) {
-                                load_event_value = 'si';
-                            } else if (response.data.length > 1) {
-                                load_event_value = 'mu'
+                    //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
+                    //might not want to send canonical, or, send it separately if/only if it's different than URL
+                    $.ajax({
+                        url: RDR_baseUrl+"/api/page/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: $.toJSON(sendData) },
+                        success: function(response) {
+                            // RDR.events.track( 'load' );
+
+                            var load_event_value = '';
+                            if (RDR.group.useDefaultSummaryBar){
+                                load_event_value = 'def';
                             } else {
-                                load_event_value = 'unex';
+                                if (response.data.length === 1) {
+                                    load_event_value = 'si';
+                                } else if (response.data.length > 1) {
+                                    load_event_value = 'mu'
+                                } else {
+                                    load_event_value = 'unex';
+                                }
                             }
+
+                            $.each( response.data, function(key,page){
+                                //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
+                                page.key = key;
+                                page.url = pageDict[key].url;
+                                RDR.actions.pages.save(page.id, page);
+                                RDR.actions.pages.initPageContainer(page.id);
+                            });
+
+                            RDR.events.trackEventToCloud({
+                                event_type: 'wl',
+                                event_value: load_event_value,
+                                page_id: RDR.util.getPageProperty('id')
+                            });
+
+                            $RDR.dequeue('initAjax');
+                        },
+                        error: function(response) {
+                            //for now, ignore error and carry on with mockup
                         }
-
-                        $.each( response.data, function(key,page){
-                            //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
-                            page.key = key;
-                            page.url = pageDict[key].url;
-                            RDR.actions.pages.save(page.id, page);
-                            RDR.actions.pages.initPageContainer(page.id);
-                        });
-
-                        RDR.events.trackEventToCloud({
-                            event_type: 'wl',
-                            event_value: load_event_value,
-                            page_id: RDR.util.getPageProperty('id')
-                        });
-
-                        $RDR.dequeue('initAjax');
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                    }
-                });
+                    });
+                }
 
             },
             runPostPageInit: function(){
@@ -4109,6 +4133,8 @@ function readrBoard($R){
                         if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
                         if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
                     }, 250));
+                    
+                    RDR.actions.initPageData();
                 });
 
                 var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
