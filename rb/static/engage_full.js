@@ -3796,10 +3796,11 @@ function readrBoard($R){
                         RDR.group.summary_widget_selector !== ""
                     ) {
 
-                        num_posts = $(RDR.group.post_selector).length;
+                        var $posts = $(RDR.group.post_selector),
+                            num_posts = $posts.length;
                         //if $(RDR.group.post_selector).length is 0, this will just do nothing
-                        $(RDR.group.post_selector).each( function(){
-                            var key = pagesArr.length;
+                        $posts.each( function(){
+                            // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
 
@@ -3842,6 +3843,11 @@ function readrBoard($R){
                                     }
                                 }
 
+                                var urlHash = RDR.util.md5.hex_md5(url);
+                                if ( !$post.hasAttr('rdr-page-container') ) {
+                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',urlHash);
+                                }
+                                $summary_widget.attr('rdr-page-widget-key',urlHash);
 
                                 urlsArr.push(url);
 
@@ -3854,10 +3860,10 @@ function readrBoard($R){
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
-                                if ( !$post.hasAttr('rdr-page-container') ) {
-                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
-                                }
-                                $summary_widget.attr('rdr-page-widget-key',key);
+                                // if ( !$post.hasAttr('rdr-page-container') ) {
+                                //     $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                                // }
+                                // $summary_widget.attr('rdr-page-widget-key',key);
                             }
                         });
                 }
@@ -3885,7 +3891,8 @@ function readrBoard($R){
                     RDR.group.thisPage = thisPage;
 
                     pagesArr.push(thisPage);
-                    key = pagesArr.length-1;
+                    // key = pagesArr.length-1;
+                    key = RDR.util.md5.hex_md5(pageUrl);
                     pageDict[key] = thisPage;
 
                     if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
@@ -3933,10 +3940,10 @@ function readrBoard($R){
                                 }
                             }
 
-                            $.each( response.data, function(key,page){
+                            $.each( response.data, function(idx,page){
                                 //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
-                                page.key = key;
                                 page.url = pageDict[key].url;
+                                page.key = RDR.util.md5.hex_md5(page.url);
                                 RDR.actions.pages.save(page.id, page);
                                 RDR.actions.pages.initPageContainer(page.id);
                             });

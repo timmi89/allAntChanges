@@ -15,6 +15,7 @@ from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
 import traceback
 import logging
+import hashlib
 logger = logging.getLogger('rb.standard')
 
 blacklist = ['fuck','shit','poop','cock','cunt']
@@ -185,7 +186,6 @@ def getPage(host, page_request):
         canonical_url = canonical,
         defaults = {'site': site, 'title':title}
     )
-        
     return page[0]
     
 def createInteractionNode(node_id=None, body=None, group=None):
@@ -486,6 +486,9 @@ def searchBoards(search_term, page_num):
 
 def getSinglePageDataDict(page_id):
     current_page = Page.objects.get(id=page_id)
+    urlhash = hashlib.md5( current_page.url ).hexdigest()
+    print "- - - - - - - - - - - - "
+    print urlhash
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
             
     # Retrieve containers
@@ -533,6 +536,7 @@ def getSinglePageDataDict(page_id):
             # singletoptags_with_containers=singletoptags_with_containers,
             # topusers=topusers,
             # topshares=topshares,
+            urlhash = urlhash,
             containers=containers
             # parents = par_con
         )

@@ -556,6 +556,14 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             raise JSONException(u"container_id was expected but was not sent")
         
         page_id = data['page_id']
+
+        # hash = data['hash']
+        # print "- - - - - - - - - "
+        # print "contentSummaryHandler:  page_id is: " + str(page_id)
+        # print "- - - - - - - - - - - - - - - - - - - - - - - - - - - "
+        # print data
+
+
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
         # Force queryset evaluation by making lists - reduces interaction queries to 1
@@ -589,6 +597,8 @@ class PageDataHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data, pageid=None):
+        print "api page * * * * * * * * * * * * * * * * "
+        # print data
         requested_pages = data['pages']
         host = getHost(request)
         
