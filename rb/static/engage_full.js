@@ -2583,46 +2583,40 @@ function readrBoard($R){
 
                 if (prop == "id") {
                     var page_id;
-console.log('get page id A');
+
                     //hack to accomodate the dirty - hash=="page"
                     if(hashOrObject == "page"){
                         // hack salvage data
                         page_id = $('.rdr_window').data('container').attr('rdr-page-id');
-console.log('get page id A1');
                         return parseInt(page_id, 10);
                     }
-console.log('get page id B');
+
                     // this code is to accommodate passing in either a hash (string) or jquery element to 
                     if (typeof hashOrObject == "object") {
-console.log('get page id B1');
                         // if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
                         if ( $(hashOrObject).closest('[rdr-page-container]').length ) {
-console.log('get page id B1.1');
                             return parseInt( $(hashOrObject).closest('[rdr-page-container]').attr('rdr-page-container') );
                         }
                     } else if (!hashOrObject) {
-console.log('get page id B2');
                         // whiskey tango foxtrot
                         // return false;
                         // return $('[rdr-page-container]').eq(0).data('page_id');
                         return $('[rdr-page-container]').eq(0).attr('rdr-page-container');
                     }
-console.log('get page id C');                    
+
                     if ( typeof hashOrObject == "string" ) {
                         var hash = hashOrObject;
                         var $objWithHash = $('[rdr-hash="'+hash+'"]');
                     }
-console.log('get page id D');                    
+
                     // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                     // so foxtrot ugly
                     var page_id = ( $objWithHash.data('page_id') ) ? $objWithHash.data('page_id') : ( $objWithHash.closest('[rdr-page-container]').length ) ? $objWithHash.closest('[rdr-page-container]').attr('rdr-page-container'):$('body').attr('rdr-page-container');
-console.log('get page id E');
+
                     // store the page_id on this node to prevent walking-up again later
                     if ( $objWithHash.hasAttr('rdr-page-container') && !$objWithHash.data('page_id') ) {
-console.log('get page id E1');
                         $objWithHash.data('page_id', page_id);
                     }
-console.log('get page id F');
                     return parseInt( page_id );
                 }
                 if (prop == "title") {
@@ -9508,19 +9502,17 @@ if ( sendData.kind=="page" ) {
                 },
                 initPageContainer: function(pageId){
                     // RDR.actions.pages.initPageContainer
-console.log('initPageContainer 1');
                     var page = RDR.pages[pageId],
                         key = page.urlhash; //todo: consider phasing out - use id instead
                         // key = page.key; //todo: consider phasing out - use id instead   
-console.log('initPageContainer 2. key is ' + key);
+
                     var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key]');
-console.log('initPageContainer 3: '+$container.length);
+
                     if ( $container.length !== 1 ) return;
                     //else
-console.log('initPageContainer 4');
                     $container.removeAttr( 'rdr-page-key' );
                     $container.attr( 'rdr-page-container' , pageId );
-console.log('initPageContainer 5: ' + pageId );
+
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
