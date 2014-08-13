@@ -2554,7 +2554,7 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount25
 
 
 /* default styles auto-generated custom CTA elements */
-.rdr-custom-cta-container { display:block; margin:0;}
+.rdr-custom-cta-container { display:block; margin:0; color: #777; }
 .rdr-custom-cta-container .rdr-custom-cta { padding:3px 5px; display:inline-block; }
 /*.rdr-custom-cta-container .rdr-custom-cta.rdr-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}*/
 /*.rdr-custom-cta-container .rdr-custom-cta.rdr-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; }*/

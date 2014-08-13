@@ -4317,7 +4317,7 @@ function readrBoard($R){
                         //     $node.attr('rdr-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">Your Reaction?</span></div> </div>');
+                        $node.after('<div class="rdr-custom-cta-container" rdr-tag-type="'+tagName+'"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">Your Reaction?</span></div> </div>');
                         // $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
                         separateCtaCount++;
                     });
@@ -7150,7 +7150,13 @@ if ( sendData.kind=="page" ) {
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
-                        var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
+                        // see if this is a read+write mode cta, or just one "mode"
+                        if ( $cta.attr('rdr-mode').indexOf('write') != -1 && $cta.attr('rdr-mode').indexOf('read') != -1 ) {
+                            var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
+                        } else {
+                            var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
+                        }
+
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow && $indicator.$rindow.hasClass('rdr_'+mode.toLowerCase() ) ){
                             // dont rewrite the window if it already exists...
