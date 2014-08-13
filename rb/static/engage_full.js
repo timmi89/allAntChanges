@@ -4317,7 +4317,8 @@ function readrBoard($R){
                         //     $node.attr('rdr-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
+                        $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">Your Reaction?</span></div> </div>');
+                        // $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
                         separateCtaCount++;
                     });
                 }
@@ -7139,7 +7140,7 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
+                            $thisCTA.attr('rdr-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
                                 // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                                 // if( hasHelper ){
@@ -7149,7 +7150,7 @@ if ( sendData.kind=="page" ) {
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
-                        var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
+                        var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow && $indicator.$rindow.hasClass('rdr_'+mode.toLowerCase() ) ){
                             // dont rewrite the window if it already exists...
@@ -7191,16 +7192,18 @@ if ( sendData.kind=="page" ) {
 
                         // RDR.events.track( 'view_node::'+hash, hash );
                         // RDR.events.track('start_react_text');
-                        RDR.events.trackEventToCloud({
-                            // category: "engage",
-                            // action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
-                            // opt_label: "kind: text, hash: " + hash,
-                            event_type: 'rs',
-                            event_value: event_value,
-                            container_hash: hash,
-                            container_kind: "text",
-                            page_id: page_id
-                        });
+
+                        // wtf is this here for?
+                        // RDR.events.trackEventToCloud({
+                        //     // category: "engage",
+                        //     // action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
+                        //     // opt_label: "kind: text, hash: " + hash,
+                        //     event_type: 'rs',
+                        //     event_value: event_value,
+                        //     container_hash: hash,
+                        //     container_kind: "text",
+                        //     page_id: page_id
+                        // });
 
                     }
                 },
@@ -7225,6 +7228,7 @@ if ( sendData.kind=="page" ) {
                             var customDisplayName = $container.attr('rdr-item'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
+                            $label = $('[rdr-reactions-label-for="'+customDisplayName+'"]'),
                             $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                             $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
 
@@ -7233,6 +7237,7 @@ if ( sendData.kind=="page" ) {
                             // if there is a counter on the page
                             if ( $counter.length ) {
                                 if ( summary.counts.tags > 0 ) {
+                                    if ( summary.counts.tags > 1 ) { $label.text('Reactions'); } else { $label.text('Reaction'); }
                                     $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
                                 // } else if ( typeof summary.content_nodes != 'undefined' ) {
                                     // $.each( summary.content_nodes, function(idx, content_node) {
@@ -7240,8 +7245,8 @@ if ( sendData.kind=="page" ) {
                                     //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
                                     // });
                                     // $counter.html( RDR.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
-                                } else {
-                                    $counter.html('0');
+                                // } else {
+                                //     $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
@@ -7652,16 +7657,15 @@ if ( sendData.kind=="page" ) {
 
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode && !isTouchBrowser) {
+                        if ( !isTouchBrowser) {
                             $rindow.on( 'mouseleave', function(e) {
-
                                 var $this = $(this),
                                     timeoutCloseEvt;
 
                                 timeoutCloseEvt = setTimeout(function(){
-                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                    // if ( $this.hasClass('rdr_rewritable') ) {
                                         $this.remove();
-                                    }
+                                    // }
                                 },300);
 
                                 $(this).data('timeoutCloseEvt', timeoutCloseEvt);
@@ -8092,116 +8096,116 @@ if ( sendData.kind=="page" ) {
                         },
                         update: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.update:
-                            var Section = RDR.actions.indicators.utils.borderHilites;
+                            // var Section = RDR.actions.indicators.utils.borderHilites;
 
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('[rdr-hash="'+hash+'"]'),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            // var $indicator = $('#rdr_indicator_'+hash),
+                            //     $container = $('[rdr-hash="'+hash+'"]'),
+                            //     $container_tracker = $('#rdr_container_tracker_'+hash),
+                            //     $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
                             
-                            if( !$mediaBorderWrap.length ){
-                                //failsafe that shouldnt be needed.
-                                if( this.makeAttempt > 1 ) return;
-                                this.makeAttempt ++;
-                                RDR.actions.indicators.utils.borderHilites.make(hash);
-                                //just return here.  the make function will call this update function again and this will be bypassed.
-                                return;
-                            }
-                            //else
-                            this.makeAttempt = 0;
+                            // if( !$mediaBorderWrap.length ){
+                            //     //failsafe that shouldnt be needed.
+                            //     if( this.makeAttempt > 1 ) return;
+                            //     this.makeAttempt ++;
+                            //     RDR.actions.indicators.utils.borderHilites.make(hash);
+                            //     //just return here.  the make function will call this update function again and this will be bypassed.
+                            //     return;
+                            // }
+                            // //else
+                            // this.makeAttempt = 0;
 
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                            // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
-                                }
-                            };
+                            // var borders = {
+                            //     'top': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'right': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'bottom': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'left': {
+                            //         $side: null,
+                            //         css: {}
+                            //     }
+                            // };
                             
-                            //hiliteDesignEdit
-                            // var hiliteThickness = 2,
-                            var hiliteThickness = 
-                                Section.designVersion === 1 ? 2 : 
-                                Section.designVersion === 2 ? 3 : 
-                                2;
+                            // //hiliteDesignEdit
+                            // // var hiliteThickness = 2,
+                            // var hiliteThickness = 
+                            //     Section.designVersion === 1 ? 2 : 
+                            //     Section.designVersion === 2 ? 3 : 
+                            //     2;
                             
-                            var containerWidth,
-                                containerHeight;
+                            // var containerWidth,
+                            //     containerHeight;
 
-                            var hasBorder = false;
-                            //for checking if it has a border.
-                            //If so we'll use outerWidth and outerHeight to take it into account.
-                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                            // var hasBorder = false;
+                            // //for checking if it has a border.
+                            // //If so we'll use outerWidth and outerHeight to take it into account.
+                            // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
 
-                            $.each( borders, function(side, data){
-                                //set the value in the object using the key's string as a helper
-                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                            // $.each( borders, function(side, data){
+                            //     //set the value in the object using the key's string as a helper
+                            //     var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
                       
-                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                                if( !data.$side.length ){
-                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                                }
+                            //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                            //     if( !data.$side.length ){
+                            //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                            //     }
 
-                                //if any side has a border - set hasBorder to true
-                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                                    hasBorder = true;
-                                }
+                            //     //if any side has a border - set hasBorder to true
+                            //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                            //         hasBorder = true;
+                            //     }
 
-                            });
+                            // });
                             
-                            //figure out dims
-                            if(hasBorder){
-                                containerWidth = $container.outerWidth();
-                                containerHeight = $container.outerHeight();
-                            }else{
-                                containerWidth = $container.width();
-                                containerHeight = $container.height();
-                            }
+                            // //figure out dims
+                            // if(hasBorder){
+                            //     containerWidth = $container.outerWidth();
+                            //     containerHeight = $container.outerHeight();
+                            // }else{
+                            //     containerWidth = $container.width();
+                            //     containerHeight = $container.height();
+                            // }
 
-                            //use dims to make the css rules for each border side
-                            var widthCap = 2*hiliteThickness;
+                            // //use dims to make the css rules for each border side
+                            // var widthCap = 2*hiliteThickness;
 
-                            borders.top.css = {
-                                width: containerWidth+widthCap+'px',
-                                height: 0+'px',
-                                top: -hiliteThickness+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.right.css = {
-                                width:0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: containerWidth+'px'
-                            };
-                            borders.bottom.css = {
-                                width: containerWidth+widthCap+'px',
-                                height: 0+'px',
-                                top: containerHeight+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.left.css = {
-                                width: 0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: -hiliteThickness+'px'
-                            };
+                            // borders.top.css = {
+                            //     width: containerWidth+widthCap+'px',
+                            //     height: 0+'px',
+                            //     top: -hiliteThickness+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
+                            // borders.right.css = {
+                            //     width:0+'px',
+                            //     height: containerHeight+'px',
+                            //     top: 0+'px',
+                            //     left: containerWidth+'px'
+                            // };
+                            // borders.bottom.css = {
+                            //     width: containerWidth+widthCap+'px',
+                            //     height: 0+'px',
+                            //     top: containerHeight+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
+                            // borders.left.css = {
+                            //     width: 0+'px',
+                            //     height: containerHeight+'px',
+                            //     top: 0+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
 
-                            $.each( borders, function( side, data ){
-                                RDR.util.cssSuperImportant( data.$side, data.css, true );
-                            });                       
+                            // $.each( borders, function( side, data ){
+                            //     RDR.util.cssSuperImportant( data.$side, data.css, true );
+                            // });                       
                     
                         },
                         engage: function(hash, isShareLink){

@@ -1109,12 +1109,16 @@ div.rdr.rdr-summary div.rdr-this-is-readrboard {
     float: left;
     display: inline-block;
 }
+div.rdr-custom-cta-container .rdr-logo,
 div.rdr.rdr-summary .rdr-logo{
     margin:3px 2px -5px 0px;
     background:url("../images/readrboard_logo.png") no-repeat scroll 0 1px transparent;
     height: 20px;
     width: 13px;
     display: inline-block;
+}
+div.rdr-custom-cta-container .rdr-logo {
+  margin:-1px 0px -6px 2px;
 }
 
 div.rdr.rdr-summary div {
@@ -2550,10 +2554,11 @@ div.rdr div.rdr_body.rdr_tags_list.rdr_horizontal_bars .rdr_box .rdr_charCount25
 
 
 /* default styles auto-generated custom CTA elements */
-.rdr-custom-cta-container { display:block; margin:5px 0;}
+.rdr-custom-cta-container { display:block; margin:0;}
 .rdr-custom-cta-container .rdr-custom-cta { padding:3px 5px; display:inline-block; }
-.rdr-custom-cta-container .rdr-custom-cta.rdr-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
-.rdr-custom-cta-container .rdr-custom-cta.rdr-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}
+/*.rdr-custom-cta-container .rdr-custom-cta.rdr-write { border:3px solid #777; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif;}*/
+/*.rdr-custom-cta-container .rdr-custom-cta.rdr-read { border:3px solid #fff; font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; }*/
+.rdr-custom-cta-container .rdr-custom-cta { font-size:12px; font-family:'Helvetica Neue','Helvetica',Arial, sans-serif; background:rgba(255,255,255,0.4); padding:4px;}
 
 div#rdr_loginPanel {
     z-index: 12101;
