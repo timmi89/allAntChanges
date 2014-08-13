@@ -3904,8 +3904,8 @@ console.log('get page id F');
                         pageDict[key] = thisPage;
 
                         if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                            $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);
-                            // $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
+                            // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);
+                            $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
 
                             if ( $('.rdr-page-summary').length == 1 ) {
                                 $('.rdr-page-summary').attr('rdr-page-widget-key',key);
@@ -9508,18 +9508,19 @@ if ( sendData.kind=="page" ) {
                 },
                 initPageContainer: function(pageId){
                     // RDR.actions.pages.initPageContainer
-
+console.log('initPageContainer 1');
                     var page = RDR.pages[pageId],
                         key = page.urlhash; //todo: consider phasing out - use id instead
                         // key = page.key; //todo: consider phasing out - use id instead   
-
+console.log('initPageContainer 2');
                     var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
-
+console.log('initPageContainer 3');
                     if ( $container.length !== 1 ) return;
                     //else
+console.log('initPageContainer 4');
                     $container.removeAttr( 'rdr-page-key' );
                     $container.attr( 'rdr-page-container' , pageId );
-
+console.log('initPageContainer 5: ' + pageId );
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
                     var hash = RDR.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
