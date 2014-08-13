@@ -128,19 +128,20 @@ window.RDRAuth = {
         },
         trackEventToCloud: function(params){
             // RDRAuth.events.trackEventToCloud
-            $.ajax({
-                url: trackingUrl,
-                type: "get",
-                contentType: "application/json",
-                dataType: "jsonp",
-                data: {
-                    json: $.toJSON( params )
-                },
-                success : function(response)
-                {
-                }
-            });
-
+            if ( trackingUrl.indexOf('localnode') == -1 ) {
+                $.ajax({
+                    url: trackingUrl,
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: {
+                        json: $.toJSON( params )
+                    },
+                    success : function(response)
+                    {
+                    }
+                });
+            }
 
             return;
 
