@@ -3891,8 +3891,8 @@ function readrBoard($R){
                         RDR.group.thisPage = thisPage;
 
                         pagesArr.push(thisPage);
-                        // key = pagesArr.length-1;
-                        key = RDR.util.md5.hex_md5(pageUrl);
+                        key = pagesArr.length-1;
+                        // key = RDR.util.md5.hex_md5(pageUrl);
                         pageDict[key] = thisPage;
 
                         if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
