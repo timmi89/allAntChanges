@@ -9512,9 +9512,9 @@ console.log('initPageContainer 1');
                     var page = RDR.pages[pageId],
                         key = page.urlhash; //todo: consider phasing out - use id instead
                         // key = page.key; //todo: consider phasing out - use id instead   
-console.log('initPageContainer 2');
-                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
-console.log('initPageContainer 3');
+console.log('initPageContainer 2. key is ' + key);
+                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key]');
+console.log('initPageContainer 3: '+$container.length);
                     if ( $container.length !== 1 ) return;
                     //else
 console.log('initPageContainer 4');
