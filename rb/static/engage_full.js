@@ -4128,18 +4128,19 @@ function readrBoard($R){
 
         
                 $(window).on('scroll.rdr', function() {
-                    clearTimeout($.data(this, 'rdr_scrollTimer'));
-                    $.data(this, 'rdr_scrollTimer', setTimeout(function() {
+                    // disable scroll event tracking.
+                    // clearTimeout($.data(this, 'rdr_scrollTimer'));
+                    // $.data(this, 'rdr_scrollTimer', setTimeout(function() {
 
-                        var scrolltop = $(window).scrollTop();
-                        var windowHeight = $(window).height();
+                    //     var scrolltop = $(window).scrollTop();
+                    //     var windowHeight = $(window).height();
 
-                        if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
-                        if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
-                        if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
-                        if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
-                        if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
-                    }, 250));
+                    //     if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
+                    // }, 250));
                     
                     RDR.actions.initPageData();
                 });
@@ -4730,7 +4731,6 @@ function readrBoard($R){
                 // RDR.actions.sendHashes:
 
                 $.each(hashesByPageId, function(pageId, hashList){
-
                     
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
@@ -4739,7 +4739,8 @@ function readrBoard($R){
                         return;
                     }
 
-                    $.each( $('[rdr-item]'), function( idx, node ) {
+                    var $pageContainer = $('[rdr-page-container="'+pageId+'"]');
+                    $.each( $pageContainer.find('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
 
                         if ( typeof $node.data('rdr-hashed') == "undefined" ) {
@@ -4767,12 +4768,17 @@ function readrBoard($R){
                             RDR.safeThrow("why is your hash not a string!?");
                             return;
                         }
-
-                        var $hashable_node = $('[rdr-hash="' + hash +'"]');
+                        var $hashable_node = $pageContainer.find('[rdr-hash="' + hash +'"]');
 
                         if ($hashable_node.length == 1 ) {
                             $hashable_node.attr('rdr-hashed', true);
                             // $hashable_node.attr('rdr-hashed-two', true); // on select.  for debug only.
+                        } else if ( !$hashable_node.length ) {
+                            // remove the hash, it is not in this 'page'
+                            var removeIndex = hashList.indexOf(hash);
+                            if (removeIndex > -1) {
+                                hashList.splice(removeIndex, 1);
+                            }
                         }
                     });
                     
@@ -4814,6 +4820,7 @@ function readrBoard($R){
                 // RDR.actions.sendHashesForSinglePage:
 
                     var pageId = sendData.pageID;
+
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -5075,6 +5082,7 @@ function readrBoard($R){
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
+
                     // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
@@ -9475,7 +9483,8 @@ if ( sendData.kind=="page" ) {
                     // RDR.actions.pages.initPageContainer
 
                     var page = RDR.pages[pageId],
-                        key = page.key; //todo: consider phasing out - use id instead
+                        key = page.urlhash; //todo: consider phasing out - use id instead
+                        // key = page.key; //todo: consider phasing out - use id instead   
 
                     var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
 

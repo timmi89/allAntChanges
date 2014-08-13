@@ -94,6 +94,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
+        # comment-out to re-enable the bad reaction emails
         social_user = SocialUser.objects.get(user = interaction.user)
         group = Group.objects.get(id = group_id)
         
@@ -112,6 +113,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
         
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
+    # comment-out to re-enable the bad reaction emails
     except SocialUser.DoesNotExist:
         logger.info("NO SOCIAL USER")
     except Exception, ex:
