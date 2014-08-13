@@ -3904,8 +3904,8 @@ console.log('get page id F');
                         pageDict[key] = thisPage;
 
                         if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                            // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
-                            $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
+                            $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);
+                            // $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
 
                             if ( $('.rdr-page-summary').length == 1 ) {
                                 $('.rdr-page-summary').attr('rdr-page-widget-key',key);
