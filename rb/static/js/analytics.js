@@ -53,7 +53,7 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
             summaryHTML.push( '</div> ');
         summaryHTML.push( '</div> ');
         summaryHTML.push( '<div class="row engagement-bar-graphs"> ');
-            summaryHTML.push( '<div class="grid-4 graphset pageview-graphset"> ');
+            summaryHTML.push( '<div class="grid-6 graphset pageview-graphset"> ');
                 summaryHTML.push( '<div class="graph-title">Pageviews<br/>per Session</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="pageview-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
@@ -61,7 +61,7 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
                 summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_pageviews+'</div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
-            summaryHTML.push( '<div class="grid-4 graphset time-graphset"> ');
+            summaryHTML.push( '<div class="grid-6 graphset time-graphset"> ');
                 summaryHTML.push( '<div class="graph-title">Time<br/>on Content</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="time-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
@@ -69,14 +69,14 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
                 summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_time+'</div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
-            summaryHTML.push( '<div class="grid-4 graphset scroll-depth-graphset"> ');
-                summaryHTML.push( '<div class="graph-title">Scroll<br/>Depth</div> ');
-                summaryHTML.push( '<div class="graph-canvas" id="scroll-depth-graph"></div> ');
-                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_scroll_depth+'%</div> ');
-                summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-            summaryHTML.push( '</div> ');
+            // summaryHTML.push( '<div class="grid-4 graphset scroll-depth-graphset"> ');
+            //     summaryHTML.push( '<div class="graph-title">Scroll<br/>Depth</div> ');
+            //     summaryHTML.push( '<div class="graph-canvas" id="scroll-depth-graph"></div> ');
+            //     summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+            //     summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div> ');
+            //     summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_scroll_depth+'%</div> ');
+            //     summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
+            // summaryHTML.push( '</div> ');
         summaryHTML.push( '</div> ');
     summaryHTML.push( '</div> ');
     summaryHTML.push( '<div class="grid-3 s-grid-whole padded left s-center third-column"> ');
@@ -139,18 +139,18 @@ Morris.Bar({
   axes:false,
   barColors:['#92c325','#909090']
 });
-Morris.Bar({
-  element: 'scroll-depth-graph',
-  data: [
-    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_scroll_depth, b: readrboardUsageData.avg_scroll_depth }
-  ],
-  xkey: 'datatype',
-  ykeys: ['a', 'b'],
-  labels: ['', ''],
-  grid:false,
-  axes:false,
-  barColors:['#92c325','#909090']
-});
+// Morris.Bar({
+//   element: 'scroll-depth-graph',
+//   data: [
+//     { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_scroll_depth, b: readrboardUsageData.avg_scroll_depth }
+//   ],
+//   xkey: 'datatype',
+//   ykeys: ['a', 'b'],
+//   labels: ['', ''],
+//   grid:false,
+//   axes:false,
+//   barColors:['#92c325','#909090']
+// });
 
 var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2),
     session_percentage = ((readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2);
@@ -172,7 +172,8 @@ function numOrdDesc(a, b){ return (b-a); }
 
 function pageSummary(pages) {
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
+    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    // var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof pages != 'undefined') {
         var pageNum = (pages.length > 30) ? 30 : pages.length;
@@ -182,8 +183,9 @@ function pageSummary(pages) {
         for (var i=0;i<30;i++) {
             if (typeof pages[i] != 'undefined' ) {
                 var engagement_rate = Math.round(((pages[i].a_reaction_count + pages[i].a_reaction_view_count)/pages[i].a_wl_count)*10000)/100;
-                var scroll_rate = Math.round(pages[i].b_median_scroll*100)/100;
-                engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness, page_url:pages[i].a_pu } );
+                // var scroll_rate = Math.round(pages[i].b_median_scroll*100)/100;
+                engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness, page_url:pages[i].a_pu } );
+                // engagedPages.push( { title:pages[i].a_pt, reaction_count:pages[i].a_reaction_count, reaction_view_count:pages[i].a_reaction_view_count, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:pages[i].a_wl_count, hotness:pages[i].hotness, page_url:pages[i].a_pu } );
                 engagementRates.push(engagement_rate);
             }
         }
@@ -197,7 +199,7 @@ function pageSummary(pages) {
                     '<td class="attribute">'+ page.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ page.reaction_view_count +' <label>Reaction View Count</label></td>' +
                     '<td class="attribute">'+ page.wl_count +' <label>Reads</label></td>' +
-                    '<td class="attribute">'+ page.avg_scroll +'% <label>Avg Scroll</label></td>' +
+                    // '<td class="attribute">'+ page.avg_scroll +'% <label>Avg Scroll</label></td>' +
             '</tr>');
 
             $table.append($page);
@@ -235,7 +237,8 @@ function hotTopics(hotTopics) {
 
 function refSummary(referrers) {
     var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
+    var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    // var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof referrers != 'undefined') {
 
@@ -246,8 +249,9 @@ function refSummary(referrers) {
             if (typeof referrers[i] != 'undefined') {
                 // var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*100);
                 var engagement_rate = Math.round(((referrers[i].a_reaction_count + referrers[i].a_reaction_view_count)/referrers[i].a_wl_count)*10000)/100;
-                var scroll_rate = Math.round(referrers[i].b_median_scroll*100)/100;
-                engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:referrers[i].a_wl_count } );
+                // var scroll_rate = Math.round(referrers[i].b_median_scroll*100)/100;
+                engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, engagement_rate:engagement_rate, wl_count:referrers[i].a_wl_count } );
+                // engagedReferrers.push( { title:referrers[i].a_ref, reaction_count:referrers[i].a_reaction_count, reaction_view_count:referrers[i].a_reaction_view_count, hotness:referrers[i].hotness, engagement_rate:engagement_rate, avg_scroll:scroll_rate, wl_count:referrers[i].a_wl_count } );
                 engagementRates.push(engagement_rate);
             }
         }
@@ -261,7 +265,7 @@ function refSummary(referrers) {
                     '<td class="attribute">'+ referrer.reaction_count +' <label>Reactions</label></td>' +
                     '<td class="attribute">'+ referrer.reaction_view_count +' <label>Reaction View Count</label></td>' +
                     '<td class="attribute">'+ referrer.wl_count +' <label>Reads</label></td>' +
-                    '<td class="attribute">'+ referrer.avg_scroll +'% <label>Avg Scroll</label></td>' +
+                    // '<td class="attribute">'+ referrer.avg_scroll +'% <label>Avg Scroll</label></td>' +
             '</tr>');
 
             $table.append($referrer);
@@ -371,8 +375,11 @@ function refSummary(referrers) {
             simulate: function() {
                 var readrboardUsageData = {
                     // sessions, pageviews, scroll, time
-                    rb_last_30:[14984,2.55,58.1,'4:42'],
-                    no_rb:[149510,1.56,58.55,'3:48']
+                    // rb_last_30:[14984,2.55,58.1,'4:42'],
+                    // no_rb:[149510,1.56,58.55,'3:48']
+                    // sessions, pageviews, NO scroll, time
+                    rb_last_30:[14984,2.55,'4:42'],
+                    no_rb:[149510,1.56,'3:48']
                 };
                 topSummary( readrboardUsageData );
             },
