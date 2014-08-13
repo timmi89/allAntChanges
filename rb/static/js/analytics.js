@@ -8,6 +8,14 @@ function numberWithCommas(x) {
     }
 }
 
+function notUndefined(x) {
+    if ( typeof x =='undefined') {
+        return 'Data not returned';
+    } else {
+        return x;
+    }
+}
+
 function topSummary() {
 
 readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
@@ -57,16 +65,16 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
                 summaryHTML.push( '<div class="graph-title">Pageviews<br/>per Session</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="pageview-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_pageviews+'</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_pageviews+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.rdr_avg_pageviews)+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.avg_pageviews)+'</div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
             summaryHTML.push( '<div class="grid-6 graphset time-graphset"> ');
                 summaryHTML.push( '<div class="graph-title">Time<br/>on Content</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="time-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_time+'</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_time+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.rdr_avg_time)+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.avg_time)+'</div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
             // summaryHTML.push( '<div class="grid-4 graphset scroll-depth-graphset"> ');
@@ -161,7 +169,7 @@ var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboard
         {label: "Engaged ReadrBoard", value: rdr_session_percentage },
         {label: "Other Sessions", value: session_percentage }
       ],
-      formatter: function (y) { return y + "%" }
+      formatter: function (y) { if ( isNaN(y) ) return "Data not returned"; else return y + "%" }
     }).select(0);
 
 
