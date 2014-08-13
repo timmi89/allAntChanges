@@ -9733,7 +9733,7 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( RDR_offline ) ? RDR_widgetCssStaticUrl+"widget/css/widget.css" : RDR_widgetCssStaticUrl+"widget/css/widget.min.css?rv24"
+    var widgetCSS = ( RDR_offline ) ? RDR_widgetCssStaticUrl+"widget/css/widget.css" : RDR_widgetCssStaticUrl+"widget/css/widget.min.css?rv25"
     css.push( widgetCSS );
     // css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
