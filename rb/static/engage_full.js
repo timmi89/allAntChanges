@@ -3752,6 +3752,7 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
+
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
           
@@ -3776,6 +3777,7 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
+
                 var pagesArr = [],
                     urlsArr = [],
                     thisPage,
@@ -3787,46 +3789,21 @@ function readrBoard($R){
                 // temp used as a helper to get the pageurl.
                 var pageDict = {};
 
-                var num_posts = 0;
-
                 // if multiple posts, add additional "pages"
                 if (   
                         RDR.group.post_selector !== "" &&
                         RDR.group.post_href_selector !== "" && 
                         RDR.group.summary_widget_selector !== ""
                     ) {
-
-                        var $posts = $(RDR.group.post_selector),
-                            num_posts = $posts.length;
                         //if $(RDR.group.post_selector).length is 0, this will just do nothing
-                        $posts.each( function(){
-                            // var key = pagesArr.length;
+                        $(RDR.group.post_selector).each( function(){
+                            var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
 
                             var $summary_widget = $post.find(RDR.group.summary_widget_selector).eq(0);
 
-                            function nearWindow($thisPost) {
-
-                                var offsets = $thisPost.offset();
-                                var w = window,
-                                    d = document,
-                                    e = d.documentElement,
-                                    g = d.getElementsByTagName('body')[0],
-                                    x = w.innerWidth || e.clientWidth || g.clientWidth,
-                                    y = w.innerHeight|| e.clientHeight|| g.clientHeight,
-                                    top = (d && d.scrollTop  || g && g.scrollTop  || 0),
-                                    almostInView = y+top+300;
-
-                                if ( offsets.top < almostInView ) {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-
-                            }
-                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('rdr-page-checked') ) {
-                                $post.attr('rdr-page-checked', true);
+                            if ( $post_href.attr('href') ) {
                                 url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
@@ -3843,11 +3820,6 @@ function readrBoard($R){
                                     }
                                 }
 
-                                var urlHash = RDR.util.md5.hex_md5(url);
-                                if ( !$post.hasAttr('rdr-page-container') ) {
-                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',urlHash);
-                                }
-                                $summary_widget.attr('rdr-page-widget-key',urlHash);
 
                                 urlsArr.push(url);
 
@@ -3860,18 +3832,18 @@ function readrBoard($R){
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
-                                // if ( !$post.hasAttr('rdr-page-container') ) {
-                                //     $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
-                                // }
-                                // $summary_widget.attr('rdr-page-widget-key',key);
+                                if ( !$post.hasAttr('rdr-page-container') ) {
+                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                                }
+                                $summary_widget.attr('rdr-page-widget-key',key);
                             }
                         });
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 var pageUrl = RDR.util.getPageProperty('page_url');
-                
-                if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
+                if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
+                    
                     canonical_url = RDR.util.getPageProperty('canonical_url');
                     title = RDR.util.getPageProperty('title');
 
@@ -3891,8 +3863,7 @@ function readrBoard($R){
                     RDR.group.thisPage = thisPage;
 
                     pagesArr.push(thisPage);
-                    // key = pagesArr.length-1;
-                    key = RDR.util.md5.hex_md5(pageUrl);
+                    key = pagesArr.length-1;
                     pageDict[key] = thisPage;
 
                     if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
@@ -3910,57 +3881,55 @@ function readrBoard($R){
                         }
                     }
                 }
+
                 var sendData = {
                     pages: pagesArr
                 };
 
-                if (pagesArr.length) {
+                //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
+                //might not want to send canonical, or, send it separately if/only if it's different than URL
+                $.ajax({
+                    url: RDR_baseUrl+"/api/page/",
+                    type: "get",
+                    contentType: "application/json",
+                    dataType: "jsonp",
+                    data: { json: $.toJSON(sendData) },
+                    success: function(response) {
+                        // RDR.events.track( 'load' );
 
-                    //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
-                    //might not want to send canonical, or, send it separately if/only if it's different than URL
-                    $.ajax({
-                        url: RDR_baseUrl+"/api/page/",
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: { json: $.toJSON(sendData) },
-                        success: function(response) {
-                            // RDR.events.track( 'load' );
-
-                            var load_event_value = '';
-                            if (RDR.group.useDefaultSummaryBar){
-                                load_event_value = 'def';
+                        var load_event_value = '';
+                        if (RDR.group.useDefaultSummaryBar){
+                            load_event_value = 'def';
+                        } else {
+                            if (response.data.length === 1) {
+                                load_event_value = 'si';
+                            } else if (response.data.length > 1) {
+                                load_event_value = 'mu'
                             } else {
-                                if (response.data.length === 1) {
-                                    load_event_value = 'si';
-                                } else if (response.data.length > 1) {
-                                    load_event_value = 'mu'
-                                } else {
-                                    load_event_value = 'unex';
-                                }
+                                load_event_value = 'unex';
                             }
-
-                            $.each( response.data, function(idx,page){
-                                //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
-                                page.url = pageDict[key].url;
-                                page.key = RDR.util.md5.hex_md5(page.url);
-                                RDR.actions.pages.save(page.id, page);
-                                RDR.actions.pages.initPageContainer(page.id);
-                            });
-
-                            RDR.events.trackEventToCloud({
-                                event_type: 'wl',
-                                event_value: load_event_value,
-                                page_id: RDR.util.getPageProperty('id')
-                            });
-
-                            $RDR.dequeue('initAjax');
-                        },
-                        error: function(response) {
-                            //for now, ignore error and carry on with mockup
                         }
-                    });
-                }
+
+                        $.each( response.data, function(key,page){
+                            //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
+                            page.key = key;
+                            page.url = pageDict[key].url;
+                            RDR.actions.pages.save(page.id, page);
+                            RDR.actions.pages.initPageContainer(page.id);
+                        });
+
+                        RDR.events.trackEventToCloud({
+                            event_type: 'wl',
+                            event_value: load_event_value,
+                            page_id: RDR.util.getPageProperty('id')
+                        });
+
+                        $RDR.dequeue('initAjax');
+                    },
+                    error: function(response) {
+                        //for now, ignore error and carry on with mockup
+                    }
+                });
 
             },
             runPostPageInit: function(){
@@ -4128,21 +4097,18 @@ function readrBoard($R){
 
         
                 $(window).on('scroll.rdr', function() {
-                    // disable scroll event tracking.
-                    // clearTimeout($.data(this, 'rdr_scrollTimer'));
-                    // $.data(this, 'rdr_scrollTimer', setTimeout(function() {
+                    clearTimeout($.data(this, 'rdr_scrollTimer'));
+                    $.data(this, 'rdr_scrollTimer', setTimeout(function() {
 
-                    //     var scrolltop = $(window).scrollTop();
-                    //     var windowHeight = $(window).height();
+                        var scrolltop = $(window).scrollTop();
+                        var windowHeight = $(window).height();
 
-                    //     if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
-                    // }, 250));
-                    
-                    RDR.actions.initPageData();
+                        if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
+                        if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
+                        if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
+                        if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
+                        if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
+                    }, 250));
                 });
 
                 var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
@@ -4731,6 +4697,7 @@ function readrBoard($R){
                 // RDR.actions.sendHashes:
 
                 $.each(hashesByPageId, function(pageId, hashList){
+
                     
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
@@ -4739,8 +4706,7 @@ function readrBoard($R){
                         return;
                     }
 
-                    var $pageContainer = $('[rdr-page-container="'+pageId+'"]');
-                    $.each( $pageContainer.find('[rdr-item]'), function( idx, node ) {
+                    $.each( $('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
 
                         if ( typeof $node.data('rdr-hashed') == "undefined" ) {
@@ -4768,17 +4734,12 @@ function readrBoard($R){
                             RDR.safeThrow("why is your hash not a string!?");
                             return;
                         }
-                        var $hashable_node = $pageContainer.find('[rdr-hash="' + hash +'"]');
+
+                        var $hashable_node = $('[rdr-hash="' + hash +'"]');
 
                         if ($hashable_node.length == 1 ) {
                             $hashable_node.attr('rdr-hashed', true);
                             // $hashable_node.attr('rdr-hashed-two', true); // on select.  for debug only.
-                        } else if ( !$hashable_node.length ) {
-                            // remove the hash, it is not in this 'page'
-                            var removeIndex = hashList.indexOf(hash);
-                            if (removeIndex > -1) {
-                                hashList.splice(removeIndex, 1);
-                            }
                         }
                     });
                     
@@ -4820,7 +4781,6 @@ function readrBoard($R){
                 // RDR.actions.sendHashesForSinglePage:
 
                     var pageId = sendData.pageID;
-
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -5082,7 +5042,6 @@ function readrBoard($R){
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
-
                     // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
@@ -9483,8 +9442,7 @@ if ( sendData.kind=="page" ) {
                     // RDR.actions.pages.initPageContainer
 
                     var page = RDR.pages[pageId],
-                        key = page.urlhash; //todo: consider phasing out - use id instead
-                        // key = page.key; //todo: consider phasing out - use id instead   
+                        key = page.key; //todo: consider phasing out - use id instead
 
                     var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
 
