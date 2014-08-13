@@ -3871,40 +3871,42 @@ function readrBoard($R){
                 var pageUrl = RDR.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
-                    canonical_url = RDR.util.getPageProperty('canonical_url');
-                    title = RDR.util.getPageProperty('title');
+                    if ( !$( 'body' ).hasAttr('rdr-page-checked') ) {
+                        canonical_url = RDR.util.getPageProperty('canonical_url');
+                        title = RDR.util.getPageProperty('title');
 
-                    // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
-                    // if (canonical_url.indexOf('//') === 0) {
-                        // canonical_url = canonical_url.substr(2);
-                        // canonical_url = window.location.protocol + canonical_url;
-                    // }
+                        // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
+                        // if (canonical_url.indexOf('//') === 0) {
+                            // canonical_url = canonical_url.substr(2);
+                            // canonical_url = window.location.protocol + canonical_url;
+                        // }
 
-                    thisPage = {
-                        group_id: parseInt(RDR.group.id, 10),
-                        url: pageUrl,
-                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
-                        title: title
-                    };
+                        thisPage = {
+                            group_id: parseInt(RDR.group.id, 10),
+                            url: pageUrl,
+                            canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
+                            title: title
+                        };
 
-                    RDR.group.thisPage = thisPage;
+                        RDR.group.thisPage = thisPage;
 
-                    pagesArr.push(thisPage);
-                    // key = pagesArr.length-1;
-                    key = RDR.util.md5.hex_md5(pageUrl);
-                    pageDict[key] = thisPage;
+                        pagesArr.push(thisPage);
+                        // key = pagesArr.length-1;
+                        key = RDR.util.md5.hex_md5(pageUrl);
+                        pageDict[key] = thisPage;
 
-                    if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                        // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
-                        $( 'body' ).attr('rdr-page-key',key);
+                        if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
+                            // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                            $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
 
-                        if ( $('.rdr-page-summary').length == 1 ) {
-                            $('.rdr-page-summary').attr('rdr-page-widget-key',key);
-                        } else {
-                            var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
-                            // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
-                            if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
-                                $widget_key_last.attr('rdr-page-widget-key', key);
+                            if ( $('.rdr-page-summary').length == 1 ) {
+                                $('.rdr-page-summary').attr('rdr-page-widget-key',key);
+                            } else {
+                                var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
+                                // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
+                                if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
+                                    $widget_key_last.attr('rdr-page-widget-key', key);
+                                }
                             }
                         }
                     }
@@ -4142,6 +4144,10 @@ function readrBoard($R){
                     // }, 250));
                     
                     RDR.actions.initPageData();
+                    // return RDR.util._.throttle(
+                    //     RDR.actions.initPageData,
+                    // 100
+                    // );
                 });
 
                 var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
