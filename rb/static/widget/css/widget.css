@@ -1859,7 +1859,7 @@ div.rdr_indicator_details img.rdr_pin {
 
 .no-rdr div.rdr_indicator,
 body.no-rdr div.rdr-summary,
-.no-rdr div.rdr-summary,
+/*.no-rdr div.rdr-summary,*/
 .no-rdr.rdr_live_hover div.rdr_indicator,
 .no-rdr .rdr_live_hover div.rdr_indicator,
 .no-rdr .rdr_live_hover div.rdr_indicator.rdr_indicator_for_text {
