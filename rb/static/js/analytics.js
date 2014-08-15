@@ -20,7 +20,7 @@ function topSummary() {
 
 readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
 
-var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
+// var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
 
     var summaryHTML = [];
     summaryHTML.push( '<div class="grid-3 s-grid-whole padded right s-center first-column"> ');
@@ -65,16 +65,16 @@ var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
                 summaryHTML.push( '<div class="graph-title">Pageviews<br/>per Session</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="pageview-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.rdr_avg_pageviews)+'</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.avg_pageviews)+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="rdr_avg_pageviews"></div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="avg_pageviews"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
             summaryHTML.push( '<div class="grid-6 graphset time-graphset"> ');
                 summaryHTML.push( '<div class="graph-title">Time<br/>on Content</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="time-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.rdr_avg_time)+'</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value">'+notUndefined(readrboardUsageData.avg_time)+'</div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="rdr_avg_time"></div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="avg_time"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
             // summaryHTML.push( '<div class="grid-4 graphset scroll-depth-graphset"> ');
@@ -102,15 +102,29 @@ summaryHTML.push( ' ');
 
 var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'</div>');
 
-if (RB.group.name) {
-$temp_summarySection.find('.dashboard-name').html(RB.group.name);
-}
+    if (RB.group.name) {
+        $temp_summarySection.find('.dashboard-name').html(RB.group.name);
+    }
 
     $('.section.summary').html($temp_summarySection).find('.template').animate({'opacity':1},500);
 
-    drawSummaryGraphs();
-    $(window).smartresize(drawSummaryGraphs);
+}
 
+function timeSummary() {
+    if (typeof timeData != 'undefined') {
+        $('#rdr_avg_time').text( notUndefined(timeData.rdr_avg_time) );
+        $('#avg_time').text( notUndefined(timeData.avg_time) );
+        drawSummaryGraphs();
+        $(window).smartresize(drawSummaryGraphs);
+    }
+}
+function pageviewSummary() {
+    if (typeof pageviewData != 'undefined') {
+        $('#rdr_avg_pageviews').text ( notUndefined(pageviewData.rdr_avg_pageviews) );
+        $('#avg_pageviews').text ( notUndefined(pageviewData.avg_pageviews) );
+        drawSummaryGraphs();
+        $(window).smartresize(drawSummaryGraphs);
+    }
 }
 
 function timeStringToSeconds(timeString) {
@@ -122,10 +136,11 @@ function timeStringToSeconds(timeString) {
 
 function drawSummaryGraphs() {
     $('.graph-canvas').html('');
+if (typeof pageviewData != 'undefined') {
 Morris.Bar({
   element: 'pageview-graph',
   data: [
-    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_pageviews, b: readrboardUsageData.avg_pageviews }
+    { datatype: 'Pageviews', a: pageviewData.rdr_avg_pageviews, b: pageviewData.avg_pageviews }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -134,11 +149,13 @@ Morris.Bar({
   axes:false,
   barColors:['#92c325','#909090']
 });
+}
 
+if (typeof timeData != 'undefined') {
 Morris.Bar({
   element: 'time-graph',
   data: [
-    { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_time, b: readrboardUsageData.avg_time }
+    { datatype: 'Session Time', a: timeData.rdr_avg_time, b: timeData.avg_time }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -147,6 +164,7 @@ Morris.Bar({
   axes:false,
   barColors:['#92c325','#909090']
 });
+}
 // Morris.Bar({
 //   element: 'scroll-depth-graph',
 //   data: [
@@ -300,8 +318,10 @@ function refSummary(referrers) {
                 }
                 RB.analytics.getTopPages();
                 RB.analytics.getTopReactions();
-                RB.analytics.getSummaries();
                 RB.analytics.getTopReferrers();
+                RB.analytics.getSummaries();
+                RB.analytics.getTime();
+                RB.analytics.getPageviews();
             },
             getSummaries: function() {
                 $.ajax({
@@ -313,6 +333,34 @@ function refSummary(referrers) {
                 success: function(response) {
                     readrboardUsageData = response;
                     topSummary();
+                    timeSummary();
+                    pageviewSummary();
+                    }
+                });
+            },
+            getTime: function() {
+                $.ajax({
+                url: RB.analytics.queryHost + '/getTime',
+                type: "get",
+                data: {
+                    json: $.toJSON( { gid:RB.group.id } )
+                },
+                success: function(response) {
+                    timeData = response;
+                    timeSummary();
+                    }
+                });
+            },
+            getPageviews: function() {
+                $.ajax({
+                url: RB.analytics.queryHost + '/getPageviews',
+                type: "get",
+                data: {
+                    json: $.toJSON( { gid:RB.group.id } )
+                },
+                success: function(response) {
+                    pageviewData = response;
+                    pageviewSummary();
                     }
                 });
             },
@@ -333,7 +381,6 @@ function refSummary(referrers) {
                 });
             },
             getTopReferrers: function() {
-                // console.log('getTopReferrers');
                 $.ajax({
                 url: RB.analytics.queryHost + '/getTopReferrers',
                 type: "get",
@@ -362,7 +409,6 @@ function refSummary(referrers) {
 
                     var itemNumber = 1;
                     $.each(popularReactions, function(idx, reaction) {
-                        // console.log(reaction);
                         var searchUrl = (RB.group.short_name) ? '/group/'+RB.group.short_name+'/':'/stream/';
                         var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
                         // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
@@ -378,7 +424,6 @@ function refSummary(referrers) {
                 });
             },
             updateAll: function() {
-                // console.log('group_id: {{ group.id }}');
             },
             simulate: function() {
                 var readrboardUsageData = {
@@ -428,6 +473,7 @@ function refSummary(referrers) {
             //     RB.analytics.updateAll();
             //     return false;
             // });
+// RB.group.id = 2352;
 
             if ( $('.analyticsReport').length ) {
                 RB.analytics.initAnalytics();
