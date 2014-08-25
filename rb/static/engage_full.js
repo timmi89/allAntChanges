@@ -1526,6 +1526,8 @@ function readrBoard($R){
                         $clickOverlay.hide();
                         $customSubmit.show();
 
+                        $rindow.removeClass('rdr_rewritable');
+
                     }).blur( function() {
                         var $input = $(this);
                         if ( $input.val() === "" ) {
@@ -7249,6 +7251,7 @@ if ( sendData.kind=="page" ) {
                         }
 
                         var $rindow = RDR.rindow.make( mode, {hash:hash, '$custom_cta':$cta } );
+                        $rindow.addClass('rdr_rewritable');
                         var page_id = RDR.util.getPageProperty('id', hash );
 
                         //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
@@ -7734,9 +7737,9 @@ if ( sendData.kind=="page" ) {
                                     timeoutCloseEvt;
 
                                 timeoutCloseEvt = setTimeout(function(){
-                                    // if ( $this.hasClass('rdr_rewritable') ) {
+                                    if ( $this.hasClass('rdr_rewritable') ) {
                                         $this.remove();
-                                    // }
+                                    }
                                 },300);
 
                                 $(this).data('timeoutCloseEvt', timeoutCloseEvt);
