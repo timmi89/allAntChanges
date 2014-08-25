@@ -153,12 +153,13 @@ function readrBoard($R){
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
-                call_to_action: "What do you think?",
+                // call_to_action: RDR.t('main_cta'),
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
                 media_url_ignore_query: true,
                 summary_widget_method: 'after',
+                language: 'es',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -528,10 +529,10 @@ function readrBoard($R){
                         '<div class="rdr_linkWrap">'+
                             '<ul>'+
                                 '<li class="rdr_link">'+
-                                    '<a href="javascript:void(0);" class="rdr_undo_link">Remove reaction</a>'+
+                                    '<a href="javascript:void(0);" class="rdr_undo_link">'+RDR.t('remove_reaction')+'</a>'+
                                 '</li>'+
                                 '<li class="rdr_link">'+
-                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">View at ReadrBoard</a>'+
+                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">'+RDR.t('view_on_site')+'</a>'+
                                 '</li>'+
                             '</ul>'+
                         '</div>'
@@ -556,12 +557,12 @@ function readrBoard($R){
 
                 if( kind == "text" ){
                     if ( $rindow.data('mode') == "writeMode" ) {
-                        headerText = "What do you think?";
+                        headerText = RDR.t('main_cta');
                     } else {
                         if (kind=="text") {
-                            headerText = 'Reactions';
+                            headerText = RDR.t('reactions');
                         } else {
-                            headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions";
+                            headerText = (summary.counts.tags>0) ? summary.counts.tags + RDR.t('reactions') : RDR.t('reactions');
                         }
                     }
 
@@ -571,10 +572,10 @@ function readrBoard($R){
                     //confirm if we still need this.
                     var modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0;
                     headerText = (summary.counts.tags>0) ? 
-                            summary.counts.tags + " Reactions" :
+                            summary.counts.tags + " " + RDR.t('reactions') :
                             ($rindow.width()>=(175+modForIE)) ? 
-                                "What do you think?":
-                                "React:";
+                                RDR.t('main_cta'):
+                                RDR.t('react')+":";
                 }
 
                 return headerText;
@@ -913,7 +914,7 @@ function readrBoard($R){
                                 }
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
@@ -956,7 +957,7 @@ function readrBoard($R){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<div class="rdr_shareLinks">Share your reaction: <ul></ul></div>'),
+                                var $shareLinks = $('<div class="rdr_shareLinks">'+RDR.t('share_reaction')+': <ul></ul></div>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
@@ -1202,14 +1203,14 @@ function readrBoard($R){
                         var HeaderTxt = (tag.tag_count <= 0) ? 
                             "no reactions" :
                                 (tag.tag_count == 1) ?
-                                "1 reaction" :
-                                tag.tag_count + " reactions";
+                                "1 " + RDR.t('single_reaction') :
+                                tag.tag_count + " " + RDR.t('plural_reaction');
                         var $header = RDR.rindow.makeHeader( HeaderTxt );
                             $rindow.find('.rdr_header').replaceWith($header)
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">Close X</div>');
+                        var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
                         $backButton.on('click.rdr, touchend.rdr', function() {
 
 
@@ -1235,10 +1236,10 @@ function readrBoard($R){
                         if ( counts && counts.page && counts.page > 0 ) {
                             var page_reaction_text =
                                 (counts.page == 1 ) ?
-                                "1 reaction" :
-                                counts.page + " reactions";
+                                "1 " + RDR.t('single_reaction') :
+                                counts.page + " " + RDR.t('plural_reaction');
 
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> to this <strong>page</strong></td>');
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+RDR.t('to_page')+'</td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
@@ -1266,7 +1267,7 @@ function readrBoard($R){
                                         thing = RDR.interaction_data[ tag.id ][ int_id ];
 
                                     if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
-                                        var reaction_word = (thing.interaction.count>1) ? "reactions":"reaction";
+                                        var reaction_word = (thing.interaction.count>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
                                         $tr.append('<td class="rdr_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
                                         .data('count', thing.interaction.count)//chain
                                         .data('tag', tag)//chain
@@ -1499,7 +1500,7 @@ function readrBoard($R){
 
                 if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
+                        helpText = "+ " + RDR.t('add_custom');
 
                     // add custom tag
                     var $clickOverlay = $('<div class="rdr_click_overlay"></div>').appendTo($container);
@@ -1973,7 +1974,7 @@ function readrBoard($R){
 
               if(isView){
 
-                var $header = RDR.rindow.makeHeader( 'Reactions' );
+                var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
                     $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.updateFooter( $rindow );
 
@@ -2216,7 +2217,7 @@ function readrBoard($R){
                     
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Close</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">'+RDR.t('thanks_for_comment')+' <a href="javascript:void(0);">'+RDR.t('close')+'</a></span> ');
                     
 
 
@@ -2313,7 +2314,7 @@ function readrBoard($R){
                 var items = [
                     {
                         "item":"reaction",
-                        "tipText":"What do you think?",
+                        "tipText":RDR.t('main_cta'),
                         "onclick":function(){
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
@@ -2357,7 +2358,7 @@ function readrBoard($R){
                     $indicatorAnchor = $(
                         '<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">'+
                             '<span class="rdr rdr_react_icon">'+val.item+'</span>'+
-                            '<span class="rdr rdr_react_label">What do you think?</span>'+
+                            '<span class="rdr rdr_react_label">'+RDR.t('main_cta')+'</span>'+
                             '<div class="rdr_clear"></div>'+
                         '</a>'
                     );
@@ -2473,6 +2474,57 @@ function readrBoard($R){
             closeAll: function(){
                 var $actionbars = $('div.rdr_actionbar');
                 this.close($actionbars);
+            }
+        },
+        t: function(phrase) {
+            return ( typeof RDR.lang[ RDR.group.language ][phrase] != 'undefined' ) ? RDR.lang[ RDR.group.language ][phrase] : '###';
+        },
+        lang: {
+            en : {
+                main_cta : 'What do you think?',
+                your_reaction : 'Your Reaction?',
+                react: 'React',
+                add_custom : 'Add Your Own',
+                reactions : 'Reactions',
+                okay : 'Okay',
+                single_reaction : 'reaction',
+                plural_reaction : 'reactions',
+                to_page : 'to this <strong>page</strong>',
+                close : 'Close',
+                thanks : 'Thanks For Your Reaction!',
+                already_done_that : 'You\'ve already reacted to this',
+                remove_reaction : 'Remove reaction',
+                view_on_site : 'View at Readrboad',
+                add_comment : 'Add comments or #hashtags',
+                characters_left : 'NNN characters left',
+                comment: 'Comment',
+                comments: 'Comments',
+                thanks_for_comment : 'Thanks for your comment!',
+                share_reaction : 'Share your reaction',
+                bad_language_warning : 'This site has blocked that from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.'
+            },
+            es : {
+                main_cta : '¿Qué piensas?',
+                your_reaction : '¿Reacción tuyo?',
+                react : 'Reaccionar',
+                add_custom : 'Añade lo tuyo',
+                reactions : 'Reacciones',
+                okay : 'Bien',
+                single_reaction : 'reacción',
+                plural_reaction : 'reacciones',
+                to_page : 'a esta <strong>página</strong>',
+                close : 'cerrar',
+                thanks : 'Gracias por tu reacción',
+                already_done_that : 'Ya reaccionaste a esto',
+                remove_reaction : 'Remover reacción',
+                view_on_site : 'Ver en Readrboad',
+                add_comment : 'Añade comentarios o #hashtags',
+                characters_left : 'Quedan NNN caracteres ',
+                comment: ' Comenta',
+                comments: ' Comentas',
+                thanks_for_comment : 'Gracias por tu comentario',
+                share_reaction : 'Comparte tu reacción',
+                bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
             }
         },
         util: {
@@ -2900,6 +2952,7 @@ function readrBoard($R){
                     var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
                     $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
+                    // no t()
                     $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
                     $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
                 }
@@ -3124,12 +3177,12 @@ function readrBoard($R){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img[rdr-hash="'+data.container_hash+'"]').length == 1 ) {
-                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 ' <a class="rdr_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
                                 ' <strong class="seeItLinkText rdr_blue">Show it on the page</strong></a></div>');
                         } else {
                             //put a better message here
-                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 '<strong>"</strong><em>' + decodedContent.substr(0,140) + '...</em><strong>"</strong>'+
                                 '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
@@ -3143,6 +3196,7 @@ function readrBoard($R){
                     }
                     if( whichAlert == "showMorePins"){
                         //put a better message here
+                        // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
                         $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
@@ -3516,6 +3570,7 @@ function readrBoard($R){
                                     RDR.session.showLoginPanel( args );
                                 });
 
+                                // no t()
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
 
                                 $tmpUserMsg.empty().append('<span>'+tmpUserMsg+'</span>');
@@ -3523,9 +3578,9 @@ function readrBoard($R){
 
                                 break;
 
-                            case "existingInteraction":
-                                userMsg = "You have already given that reaction for this.";
-                                break;
+                            // case "existingInteraction":
+                            //     userMsg = "You have already given that reaction for this.";
+                            //     break;
                                 
 
                             case "interactionSuccess":
@@ -3535,6 +3590,7 @@ function readrBoard($R){
                                     $tmpUserMsg.empty();
                                 }else{
 
+                                    // no t()
                                     userMsg = (interactionInfo.type == 'tag') ?
                                         "You have tagged this <em>"+interactionInfo.body+"</em>." :
                                     (interactionInfo.type == 'comment') ?
@@ -3546,6 +3602,7 @@ function readrBoard($R){
                                 var click_args = args;
                                 if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
                                     $inlineTempMsg = $('<div />');
+                                    // no t()
                                     $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+RDR_staticUrl+'widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
                                     $inlineTempMsg.find('a').click( function() {
                                         RDR.session.showLoginPanel( click_args );
@@ -3987,7 +4044,8 @@ function readrBoard($R){
                     });
 
                     if ( !localStorage.getItem('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
-                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>Close this</a>',
+                        // no t()
+                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+RDR.t('close')+'</a>',
                             double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
                             $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#rdr_sandbox');
@@ -4325,8 +4383,7 @@ function readrBoard($R){
                         //     $node.attr('rdr-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="rdr-custom-cta-container" rdr-tag-type="'+tagName+'"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">Your Reaction?</span></div> </div>');
-                        // $node.after('<div class="rdr-custom-cta-container"><div class="rdr-custom-cta rdr-write" rdr-cta-for="'+rdrItem+'" rdr-mode="write">Your Reaction?</div> <div class="rdr-custom-cta rdr-read" rdr-cta-for="'+rdrItem+'" rdr-mode="read"><span rdr-counter-for="'+rdrItem+'"></span> Reactions</div></div>');
+                        $node.after('<div class="rdr-custom-cta-container" rdr-tag-type="'+tagName+'"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">'+RDR.t('your_reaction')+'</span></div> </div>');
                         separateCtaCount++;
                     });
                 }
@@ -4973,18 +5030,18 @@ function readrBoard($R){
 
                     options = options || {};
 
-                    var helpText = options.helpText || "Add comments or #hashtags";
+                    var helpText = options.helpText || RDR.t('add_comment');
                     
                     //not used any more
-                    var cta = options.cta || "Leave a comment";
+                    var cta = options.cta || RDR.t('comment');
 
                     var $commentBox = $('<div class="rdr_commentBox rdr_clearfix"></div>');
 
                     //todo: combine this with the other make comments code
                     var $commentDiv =  $('<div class="rdr_comment">'),
                         $commentTextarea = $('<textarea class="rdr_default_msg">' +helpText+ '</textarea>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
+                        $rdr_charCount =  $('<div class="rdr_charCount">'+ RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
@@ -5010,7 +5067,7 @@ function readrBoard($R){
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -5045,7 +5102,7 @@ function readrBoard($R){
                     if ( commentText.length > RDR.group.comment_length ) {
                         commentText = commentText.substr(0, RDR.group.comment_length);
                         $commentTextarea.val( commentText );
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     }
 
                     if ( commentText != helpText ) {
@@ -5142,7 +5199,7 @@ function readrBoard($R){
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="rdr rdr_window rdr_inline w'+reactionViewWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_grid rdr_clearfix"></div></div>');
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="rdr rdr_window rdr_inline w'+reactionViewWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>'+RDR.t('reactions')+'</h1></div><div class="rdr rdr_body_wrap rdr_grid rdr_clearfix"></div></div>');
                                     RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
                                     RDR.actions.content_nodes.init(hash);
@@ -5970,8 +6027,8 @@ if ( sendData.kind=="page" ) {
 
                                 var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
                                 
-                                var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
-                                var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
+                                var $responseMsg = $('<span class="success_msg" >'+RDR.t('thanks_for_comment')+' </span>');
+                                var $doneButton = $('<a class="rdr_doneButton" href="#">'+RDR.t('close')+'</a>')
                                     .click(function(e){
                                         e.preventDefault();
 
@@ -6770,7 +6827,7 @@ if ( sendData.kind=="page" ) {
                                 args.msgType = "existingInteraction";
                                 RDR.session.rindowUserMessage.show( args );
                         } else if ( response.message.indexOf("blocked this tag") != -1 ) {
-                            alert('This site has blocked "'+args.tag.body+'" from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.');
+                            alert( RDR.t('bad_language_warning') );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( args, function() {
@@ -7082,7 +7139,7 @@ if ( sendData.kind=="page" ) {
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader("What do you think?");
+                        var $header = RDR.rindow.makeHeader( RDR.t('main_cta') );
                         $rindow.addClass('rdr_helper_rindow');
                         $rindow.find('.rdr_header').replaceWith($header);
                         $header.append('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
@@ -7295,7 +7352,7 @@ if ( sendData.kind=="page" ) {
                             $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
                             hasReactions = summary.counts.tags > 0;
 
-                        var reactionLabel = (summary.counts.tags>1) ? "Reactions" : "Reaction";
+                        var reactionLabel = (summary.counts.tags>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
                         if ( hasReactions ) {
                             if (isText) {
                                 $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
@@ -7303,13 +7360,13 @@ if ( sendData.kind=="page" ) {
                             } else {
                                 $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
                             }
-                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " " + RDR.t('plural_reaction') );
 
                             RDR.actions.indicators.show(hash);
                             
                         } else {
                             $indicator.addClass('rdr_no_reactions');
-                            $count.html( '<span class="rdr_react_label">What do you think?</span>' );
+                            $count.html( '<span class="rdr_react_label">'+RDR.t('main_cta')+'</span>' );
                             
                             if(isText){
                                 if(RDR.group.paragraph_helper){
@@ -7611,14 +7668,14 @@ if ( sendData.kind=="page" ) {
                                 // RDR.actions.summaries.sortByTags(page.toptags);
 
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_cta_msg').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                             } else {
                                 // write page-level tags: writemode
-                                var $header = RDR.rindow.makeHeader( 'What do you think?' ),
+                                var $header = RDR.rindow.makeHeader( RDR.t('main_cta') ),
                                     isWriteMode = true;
                                 $rindow.find('.rdr_header').replaceWith($header);
                                 writeTagBoxes(default_reactions);
@@ -7640,7 +7697,7 @@ if ( sendData.kind=="page" ) {
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
                                     if ( !summary.crossPage ) {
-                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                             $rindow.remove();
                                             var $container = $('[rdr-hash="'+hash+'"]');
@@ -7650,13 +7707,14 @@ if ( sendData.kind=="page" ) {
                                         });
                                     }
                                 } else {
-                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                     $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                         $rindow.remove();
                                         $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     });
                                 }
                             } else {
+                                // no t() not used?
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_no_reactions_msg rdr_clearfix">No reactions yet!</span>' );
                             }
                         }
@@ -7664,7 +7722,6 @@ if ( sendData.kind=="page" ) {
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
                             var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                         }
@@ -8698,7 +8755,7 @@ if ( sendData.kind=="page" ) {
 
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more').find('.rdr_footer').hide();
                 //temp tie-over
-                var headerText = ( args.scenario == "reactionSuccess" ) ? "Thanks for your reaction!":"You've already reacted to this";
+                var headerText = ( args.scenario == "reactionSuccess" ) ? RDR.t('thanks') : RDR.t('already_done_that');
 
                 var isPage = args.kind == "page";
                 if(isPage){
@@ -8822,6 +8879,7 @@ if ( sendData.kind=="page" ) {
                 //helper functions
                 function _makeCommentBox() {
 
+                    // no t()
                     var $commentBox = $('<div class="rdr_commentBox rdr_innerWrap"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
@@ -8829,8 +8887,9 @@ if ( sendData.kind=="page" ) {
                     var helpText = "Add a comment or #hashtag",
                         $commentDiv =  $('<div class="rdr_comment rdr_clearfix">'),
                         $commentTextarea = $('<textarea class="commentTextArea rdr_default_msg">' +helpText+ '</textarea>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
+                        // $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                        $rdr_charCount =  $('<div class="rdr_charCount">' + RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
@@ -8857,7 +8916,8 @@ if ( sendData.kind=="page" ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -8866,7 +8926,8 @@ if ( sendData.kind=="page" ) {
                         if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
-                            $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                            // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                            $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                         }
 
                         if ( commentText != helpText ) {
@@ -8914,7 +8975,7 @@ if ( sendData.kind=="page" ) {
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
                     $backButton.click( function() {
     
                         //temp fix because the rindow scrollpane re-init isnt working
@@ -8924,7 +8985,7 @@ if ( sendData.kind=="page" ) {
                             return;
                         }
 
-                        var $header = RDR.rindow.makeHeader( 'Reactions' );
+                        var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
                         $rindow.find('.rdr_header').replaceWith($header)
                         RDR.rindow.updateTagPanel( $rindow );
                     });
@@ -8960,7 +9021,7 @@ if ( sendData.kind=="page" ) {
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
-                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
+                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) '+RDR.t('comments')+':</h4></div>');
                     $otherComments.append($header);
 
                     $.each(comments, function(idx, this_comment){
@@ -9120,6 +9181,7 @@ if ( sendData.kind=="page" ) {
                         var imageQueryP = "";
                         var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
                         var mainShareText = "";
+                        // no t()
                         var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
                         switch ( args.container_kind ) {
@@ -9208,77 +9270,77 @@ if ( sendData.kind=="page" ) {
                                 '&text='+encodeURI(mainShareText);
                     break;
 
-                    case "tumblr":
+                    // case "tumblr":
                         
-                        var mainShareText = "";
+                    //     var mainShareText = "";
 
-                        switch ( args.container_kind ) {
-                            case "txt":
-                            case "text":
-                                //tumblr adds quotes for us - don't pass true to quote it.
-                                var footerShareText = _wrapTag(args.reaction, true) +
-                                    '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                    //     switch ( args.container_kind ) {
+                    //         case "txt":
+                    //         case "text":
+                    //             //tumblr adds quotes for us - don't pass true to quote it.
+                    //             var footerShareText = _wrapTag(args.reaction, true) +
+                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
                                 
-                                content_length = 300;
-                                contentStr = _shortenContentIfNeeded(content, content_length);
-                                share_url = 'http://www.tumblr.com/share/quote?'+
-                                'quote='+encodeURIComponent(contentStr)+
-                                '&source='+encodeURIComponent(footerShareText);
+                    //             content_length = 300;
+                    //             contentStr = _shortenContentIfNeeded(content, content_length);
+                    //             share_url = 'http://www.tumblr.com/share/quote?'+
+                    //             'quote='+encodeURIComponent(contentStr)+
+                    //             '&source='+encodeURIComponent(footerShareText);
 
-                            break;
+                    //         break;
 
-                            case "img":
-                            case "image":
-                                                            //for testing offline
-                                if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
-                                    content = content.replace("localhost:8081", "www.readrboard.com");
-                                }
+                    //         case "img":
+                    //         case "image":
+                    //                                         //for testing offline
+                    //             if(RDR_offline){
+                    //                 content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                    //                 content = content.replace("localhost:8081", "www.readrboard.com");
+                    //             }
 
-                                mainShareText = _wrapTag(args.reaction, true);
+                    //             mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
 
-                                share_url = 'http://www.tumblr.com/share/photo?'+
-                                    'source='+encodeURIComponent(content)+
-                                    '&caption='+encodeURIComponent(mainShareText + footerShareText )+
-                                    '&click_thru='+encodeURIComponent(args.short_url);
-                            break;
+                    //             share_url = 'http://www.tumblr.com/share/photo?'+
+                    //                 'source='+encodeURIComponent(content)+
+                    //                 '&caption='+encodeURIComponent(mainShareText + footerShareText )+
+                    //                 '&click_thru='+encodeURIComponent(args.short_url);
+                    //         break;
 
-                            case "media":
-                            case "med":
-                            case "video":
-                                //todo: - I haven't gone back to try this yet...
+                    //         case "media":
+                    //         case "med":
+                    //         case "video":
+                    //             //todo: - I haven't gone back to try this yet...
 
-                                //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
-                                var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
+                    //             //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
+                    //             var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
 
-                                mainShareText = _wrapTag(args.reaction, true);
+                    //             mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
 
-                                //todo: get the urlencode right and put the link back in
-                                var readrLink = mainShareText + footerShareText;
-                                share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
-                            break;
+                    //             //todo: get the urlencode right and put the link back in
+                    //             var readrLink = mainShareText + footerShareText;
+                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                    //         break;
 
-                            case "page":
-                                var footerShareText = _wrapTag(args.reaction, true) +
-                                    '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
+                    //         case "page":
+                    //             var footerShareText = _wrapTag(args.reaction, true) +
+                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
                                 
-                                content_length = 300;
-                                contentStr = _shortenContentIfNeeded(content, content_length);
-                                share_url = 'http://www.tumblr.com/share/link?'+
-                                'url='+encodeURIComponent(args.short_url)+
-                                '&description='+encodeURIComponent(footerShareText);
+                    //             content_length = 300;
+                    //             contentStr = _shortenContentIfNeeded(content, content_length);
+                    //             share_url = 'http://www.tumblr.com/share/link?'+
+                    //             'url='+encodeURIComponent(args.short_url)+
+                    //             '&description='+encodeURIComponent(footerShareText);
 
-                            break;
+                    //         break;
 
-                        }
-                    break;
+                    //     }
+                    // break;
 
-                    case "linkedin":
-                    break;
+                    // case "linkedin":
+                    // break;
                 }
                 if ( share_url !== "" ) {
                     if ( RDR.shareWindow ) {
@@ -10259,10 +10321,10 @@ function $RFunctions($R){
                 }
 
                 var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" Reactions" :
+                    total_reactions+" " + RDR.t('plural_reaction') :
                         ( total_reactions > 0 ) ? 
-                            total_reactions+" Reaction" :
-                            "Reactions";
+                            total_reactions+" " + RDR.t('single_reaction') :
+                            RDR.t('plural_reaction');
                 $summary_widget.append(
                     '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
                 );

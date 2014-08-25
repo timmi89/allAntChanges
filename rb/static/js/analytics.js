@@ -52,7 +52,7 @@ readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_co
             summaryHTML.push( '<div class="legend-content"> ');
                 summaryHTML.push( '<div class="legend-value"> ');
                     summaryHTML.push( '<div class="legend-color engaged"></div> ');
-                    summaryHTML.push( '<div class="legend-label engaged">Used ReadrBoard</div> ');
+                    summaryHTML.push( '<div class="legend-label engaged">Used Antenna</div> ');
                 summaryHTML.push( '</div> ');
                 summaryHTML.push( '<div class="legend-value"> ');
                     summaryHTML.push( '<div class="legend-color not-engaged"></div> ');
@@ -184,7 +184,7 @@ var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboard
     Morris.Donut({
       element: 'engaged-sessions',
       data: [
-        {label: "Engaged ReadrBoard", value: rdr_session_percentage },
+        {label: "Engaged Antenna", value: rdr_session_percentage },
         {label: "Other Sessions", value: session_percentage }
       ],
       formatter: function (y) { if ( isNaN(y) ) return "Data not returned"; else return y + "%" }
