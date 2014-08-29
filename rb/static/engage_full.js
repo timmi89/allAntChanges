@@ -3994,9 +3994,9 @@ function readrBoard($R){
                                 load_event_value = 'def';
                             } else {
                                 if (response.data.length === 1) {
-                                    load_event_value = 'si';
+                                    load_event_value = 'si'; // single page load
                                 } else if (response.data.length > 1) {
-                                    load_event_value = 'mu'
+                                    load_event_value = 'mu' // multiple pages loaded
                                 } else {
                                     load_event_value = 'unex';
                                 }
