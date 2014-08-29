@@ -19,7 +19,7 @@
 
   {% block css %}
   <link rel="stylesheet" href="{{ STATIC_URL }}site/css/esrg_grid.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20140825">
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20140828">
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
   {% endblock %}
@@ -128,7 +128,11 @@
             {% block userStatus %}
             <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
               <i class="fa fa-bars"></i>
+              {% if not cookie_user.social_user.img_url %}
+              <a href="/user/{{ cookie_user.id }}" class="settings-link">Settings</a>
+              {% else %}
               <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/></a>
+              {% endif %}
               <div id="log-out-link">
                 Welcome, <strong>{{ cookie_user.social_user.full_name }}</strong>
                 <a href="/user/{{ cookie_user.id }}">My Activity</a>

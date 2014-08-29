@@ -106,6 +106,7 @@ header[role="global"] #user_and_search	{ position:absolute; top:14px; right:0px;
 
 header[role="global"] #user       { display:block;float:right; margin:5px 10px 2px;}
 header[role="global"] #user #logged-in      { visibility:hidden; xheight:37px; font-size:11px;}
+header[role="global"] #user #logged-in .settings-link     { padding: 15px 0;display: block;}
 header[role="global"] #user #logged-out     { height:37px;}
 header[role="global"] #user #logged-in img  { float:left; width:45px; height:42px; }
 header[role="global"] #user strong          { }
@@ -121,6 +122,10 @@ header[role="global"] #user #logged-in #log-out-link label  { font-size:14px; di
 header[role="global"] #user #logged-in #log-out-link h5  { color:#ccc; font-size:10px;text-transform:uppercase;border-top:1px solid #aaa;margin:5px 0;padding-top:5px; }
 header[role="global"] #user #logged-in #log-out-link .who_for { display:none; }
 header[role="global"] #user #logged-in:hover #log-out-link  { display:block; }
+
+@media (max-width: 480px) {
+  header[role="global"] #user #logged-in .settings-link     { display: none;}
+}
 
 header[role="global"] #site_search      									{ margin:9px 10px 0px 10px; display:block;float:right; }
 header[role="global"] #site_search i     									{ font-size:22px; display:block; color:#aaa; position: relative; float:right; margin: 7px 0 0 3px;}
