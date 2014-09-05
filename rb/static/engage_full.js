@@ -216,7 +216,7 @@ function readrBoard($R){
                     //     });
                     // }
                     RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.5;
-                    console.log(RDR.events.focusedSeconds);
+
                     // if (RDR.events.justFocused === false ) {
                     //     RDR.events.focusedSeconds++;
                     // } else {
@@ -261,6 +261,12 @@ function readrBoard($R){
                     var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                     var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
                     var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
+
+                    // use the content_attributes field to determine if they are in a test group
+                    var content_attributes = '';
+                    if ( RDR.group.ab_test_impact === true ) {
+                        content_attributes = ( RDR.util.activeAB() ) ? 'A':'B';
+                    }
 
                     // if (params.event_type == 'widget_load') {
                         var trackData = {
@@ -313,7 +319,8 @@ function readrBoard($R){
                             cu: RDR.util.getPageProperty('canonical_url') || null,
                             pu: RDR.util.getPageProperty('page_url') || null,
                             ru: referrer_url || null,
-                            ca: params.content_attributes || null,  // what is this for?
+                            // ca: params.content_attributes || null,  // what is this for?
+                            ca: content_attributes || null,
                             cl: params.content_location || null,  
                             ptop: RDR.group.topics || null,
                             a: RDR.group.author || null,
@@ -4318,8 +4325,6 @@ function readrBoard($R){
 
                 // onunload, fire the page time total
                 $( window ).on('beforeunload.rdr',function() {
-                    console.log(11111111112);
-                    // console.log('page time is  '+RDR.events.focusedSeconds);
                     RDR.events.trackEventToCloud({
                         event_type: 'pt',
                         event_value: RDR.events.focusedSeconds,
