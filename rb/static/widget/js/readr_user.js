@@ -128,7 +128,7 @@ window.RDRAuth = {
         },
         trackEventToCloud: function(params){
             // RDRAuth.events.trackEventToCloud
-            if ( trackingUrl.indexOf('localnode') == -1 ) {
+            // if ( trackingUrl.indexOf('localnode') == -1 ) {
                 $.ajax({
                     url: trackingUrl,
                     type: "get",
@@ -141,7 +141,7 @@ window.RDRAuth = {
                     {
                     }
                 });
-            }
+            // }
 
             return;
 

@@ -159,7 +159,9 @@ function readrBoard($R){
                 paragraph_helper: true,
                 media_url_ignore_query: true,
                 summary_widget_method: 'after',
-                language: 'es',
+                language: 'en',
+                ab_test_impact: true,
+                ab_test_sample_percentage: 10,
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -246,10 +248,12 @@ function readrBoard($R){
                 RDR.user = RDR.user || {};
                 RDR.events.queue = RDR.events.queue || [];
 
-                if (RDR.events.recordEvents && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+                // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
+                // which will not have all of the PAGE data loaded yet.
+                if ( (RDR.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
-                    var page_id = ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString();
-                    
+                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString() );
+
                     var referrer_url_array = document.referrer.split('/');
                     var referrer_url = referrer_url_array.splice(2).join('/');
                     
@@ -295,12 +299,12 @@ function readrBoard($R){
                             ev: params.event_value,
                             gid: RDR.group.id || null,
                             uid: RDR.user.user_id || null,
-                            pid: parseInt(page_id),
+                            pid: page_id,
                             lts: RDR.user.lts || null,
                             sts: RDR.user.sts || null,
                             ref: referrer_tld || null,
                             cid: params.content_id || null,
-                            ah: parseInt(RDR.group.active_section_milestones[100]) || null,
+                            ah: (params.event_type == 'sl') ? 'na' : parseInt(RDR.group.active_section_milestones[100]) || null,
                             ch: params.container_hash || null,
                             ck: params.container_kind || null,
                             r: params.reaction_body || null,
@@ -2530,6 +2534,32 @@ function readrBoard($R){
             }
         },
         util: {
+            // cookies: {
+            //     create: function(name,value,days) {
+            //         if (days) {
+            //             var date = new Date();
+            //             date.setTime(date.getTime()+(days*24*60*60*1000));
+            //             var expires = "; expires="+date.toGMTString();
+            //         }
+            //         else var expires = "";
+            //         document.cookie = name+"="+value+expires+"; path=/";
+            //     },
+
+            //     read: function(name) {
+            //         var nameEQ = name + "=";
+            //         var ca = document.cookie.split(';');
+            //         for(var i=0;i < ca.length;i++) {
+            //             var c = ca[i];
+            //             while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            //             if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            //         }
+            //         return null;
+            //     },
+
+            //     erase: function(name) {
+            //         createCookie(name,"",-1);
+            //     }
+            // },
             bubblingEvents: {
                 'touchend': false,
                 'dragging': false
@@ -2580,7 +2610,7 @@ function readrBoard($R){
             initTouchBrowserSettings: function(){
                 // RDR.util.initTouchBrowserSettings
                 
-                if(isTouchBrowser){
+                if(isTouchBrowser && RDR.util.activeAB() ){
                     $('body').addClass('rdr_touch_browser');
                     // mobiletodo: DO WE NEED
                     $(window).on('scrollend', function() {
@@ -3083,6 +3113,35 @@ function readrBoard($R){
                 localStorage.removeItem('rdr_lts');
                 RDR.user.sts = null;
                 RDR.user.lts = null;
+            },
+            activeAB: function() {
+                //RDR.util.activeAB
+
+                var isActive = true;
+                var rdr_ab = JSON.parse( localStorage.getItem('rdr_ab') );  // ab test candidate.  true = sees Antenna
+
+                if( RDR.group.ab_test_impact === true && (!rdr_ab || new Date().getTime() > rdr_ab.expires) ) {
+                    // calculate whether or not they are in the active pool
+                    var p=(10*RDR.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
+
+                    // generate a random number.  if the number is lower than P, they will NOT see the widget
+                    if ( Math.floor(Math.random() * 1000 ) <= p ) {
+                        isActive = false;
+                    }
+                    
+
+                    // set time for 'cookie' to expire
+                    var ab_session_expiretime = new Date();
+                    var days = 30;
+                    ab_session_expiretime.setTime(ab_session_expiretime.getTime() + (days * 1440 * 60 * 1000));
+
+                    var new_rdr_ab = {active: isActive, expires: ab_session_expiretime.getTime() }
+                    localStorage.setItem('rdr_ab', JSON.stringify(new_rdr_ab) );
+                } else {
+                    isActive = rdr_ab.active;
+                }
+
+                return isActive;
             },
             checkSessions: function() {
                 //RDR.util.checkSessions
@@ -3687,6 +3746,7 @@ function readrBoard($R){
                 $RDR = $(RDR);
                 window.readrboard_extend_per_container = window.readrboard_extend_per_container || {};
                 $RDR.queue('initAjax', function(next){
+                    RDR.util.checkSessions();
                     that.initGroupData(RDR.group.short_name);
                     //next fired on ajax success
                 });
@@ -3746,6 +3806,19 @@ function readrBoard($R){
                         var group_settings = response.data;
                         var custom_group_settings = (RDR.groupSettings) ? RDR.groupSettings.getCustomSettings():{};
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
+
+                        var a_or_b_or_not = '';
+                        if ( RDR.group.ab_test_impact === true ) {
+                            a_or_b_or_not = ( RDR.util.activeAB ) ? 'A':'B';
+                        }
+
+                        // ABImpact();
+                        RDR.util.activeAB();
+                        RDR.events.trackEventToCloud({
+                            event_type: 'sl',
+                            event_value: a_or_b_or_not,
+                            page_id: RDR.util.getPageProperty('id')
+                        });
 
                         // handle deprecated .blessed_tags, change to .default_reactions
                         if ( typeof RDR.group.blessed_tags != 'undefined' ) {
@@ -3989,6 +4062,20 @@ function readrBoard($R){
                         success: function(response) {
                             // RDR.events.track( 'load' );
 
+                            // var load_event_value = '',
+                            //     pages_count = $(RDR.group.post_selector).length;
+                            // if (RDR.group.useDefaultSummaryBar){
+                            //     load_event_value = 'def';
+                            // } else {
+                            //     if (pages_count === 1) {
+                            //         load_event_value = 'si'; // single page load
+                            //     } else if (pages_count > 1) {
+                            //         load_event_value = 'mu' // multiple pages loaded
+                            //     } else {
+                            //         load_event_value = 'unex';
+                            //     }
+                            // }
+
                             var load_event_value = '';
                             if (RDR.group.useDefaultSummaryBar){
                                 load_event_value = 'def';
@@ -4059,7 +4146,7 @@ function readrBoard($R){
                         }).appendTo( $sandbox );
                     }
 
-                }else{
+                }else if ( RDR.util.activeAB() )  {
                     $(RDR.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
@@ -4132,6 +4219,7 @@ function readrBoard($R){
                     });
                 }
 
+                if (!RDR.util.activeAB()) return;
                 RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
                 
                 function _mediaHoverOff( obj ) {
@@ -4152,7 +4240,7 @@ function readrBoard($R){
                     $('#rdr_sandbox').addClass('isTouchBrowser');
                 }
 
-                RDR.util.checkSessions();
+                // RDR.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
@@ -4348,23 +4436,25 @@ function readrBoard($R){
             handleDeprecated: function() {
                 //rdr-content-type ????  could be come rdr-content-attributes="question"
                 // rewrite some deprecated ReadrBoard attributes into their newer versions
-                $('[rdr-custom-display]').each( function() {
-                    var $this = $(this);
-                    $this.attr('rdr-item', $this.attr('rdr-custom-display') );
-                    $this.removeAttr('rdr-custom-display');
-                });
+                if (!RDR.util.activeAB()) {
+                    $('[rdr-custom-display]').each( function() {
+                        var $this = $(this);
+                        $this.attr('rdr-item', $this.attr('rdr-custom-display') );
+                        $this.removeAttr('rdr-custom-display');
+                    });
 
-                $('[rdr-grid-for]').each( function() {
-                    var $this = $(this);
-                    $this.attr('rdr-view-reactions-for', $this.attr('rdr-grid-for') );
-                    $this.removeAttr('rdr-grid-for');
-                });
+                    $('[rdr-grid-for]').each( function() {
+                        var $this = $(this);
+                        $this.attr('rdr-view-reactions-for', $this.attr('rdr-grid-for') );
+                        $this.removeAttr('rdr-grid-for');
+                    });
+                }
                 $RDR.dequeue('initAjax');
             },
             initSeparateCtas: function(){
                 // RDR.initSeparateCtas
                 
-                if (RDR.group.separate_cta) {
+                if (RDR.group.separate_cta && RDR.util.activeAB() ) {
                     var separateCtaCount = 0;
                     $(RDR.group.active_sections).find(RDR.group.separate_cta).each( function(idx, node) {
                         var $node = $(node),
@@ -4394,22 +4484,24 @@ function readrBoard($R){
             },
             initHTMLAttributes: function() {
                 // grab rdr-items that have a set of rdr-reactions and add to window.readrboard_extend_per_container
-                $('[rdr-reactions][rdr-item]').each( function () {
-                    var $this = $(this),
-                        itemName = $this.attr('rdr-item'),
-                        reactions = $this.attr('rdr-reactions');
+                if (RDR.util.activeAB()) {
+                    $('[rdr-reactions][rdr-item]').each( function () {
+                        var $this = $(this),
+                            itemName = $this.attr('rdr-item'),
+                            reactions = $this.attr('rdr-reactions');
 
-                    if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
-                        var itemDefinition = {};
-                        itemDefinition.default_reactions = [];
+                        if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
+                            var itemDefinition = {};
+                            itemDefinition.default_reactions = [];
 
-                        $.each(reactions.split(';'), function(idx, tag) {
-                            itemDefinition.default_reactions.push( $.trim(tag) );
-                        });
+                            $.each(reactions.split(';'), function(idx, tag) {
+                                itemDefinition.default_reactions.push( $.trim(tag) );
+                            });
 
-                        window.readrboard_extend_per_container[itemName] = itemDefinition;
-                    }
-                });
+                            window.readrboard_extend_per_container[itemName] = itemDefinition;
+                        }
+                    });
+                }
 
                 $RDR.dequeue('initAjax');
             },
@@ -4454,7 +4546,7 @@ function readrBoard($R){
                 //RDR.actions.hashNodes:
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" ) { return; }
+                if ( typeof $node==="undefined" || (!RDR.util.activeAB()) ) { return; }
 
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
@@ -8321,6 +8413,7 @@ if ( sendData.kind=="page" ) {
             },
             summaries:{
                 init: function(hash){
+                    if (!RDR.util.activeAB()) return;
                     //RDR.actions.summaries.init:
 
                     if ( typeof RDR.summaries[hash] == 'object' ) {
@@ -9645,6 +9738,8 @@ if ( sendData.kind=="page" ) {
                     }
 
                     RDR.actions.sendHashes( hashesByPageId );
+
+                    if (!RDR.util.activeAB()) return;
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
