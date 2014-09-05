@@ -3809,11 +3809,9 @@ function readrBoard($R){
 
                         var a_or_b_or_not = '';
                         if ( RDR.group.ab_test_impact === true ) {
-                            a_or_b_or_not = ( RDR.util.activeAB ) ? 'A':'B';
+                            a_or_b_or_not = ( RDR.util.activeAB() ) ? 'A':'B';
                         }
 
-                        // ABImpact();
-                        RDR.util.activeAB();
                         RDR.events.trackEventToCloud({
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
