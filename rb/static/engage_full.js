@@ -209,13 +209,14 @@ function readrBoard($R){
             },
             checkTime: function() {
                 if ( document.hasFocus() === true ){
-                    if ( RDR.events.focusedSeconds > 0 && RDR.events.focusedSeconds % 20 == 0 ) {  // && RDR.events.justFocused === false 
-                        RDR.events.trackEventToCloud({
-                            event_type: 'ti',
-                            event_value: RDR.events.focusedSeconds.toString()
-                        });
-                    }
-                    RDR.events.focusedSeconds++;
+                    // if ( RDR.events.focusedSeconds > 0 ) {  // && RDR.events.justFocused === false 
+                    //     RDR.events.trackEventToCloud({
+                    //         event_type: 'ti',
+                    //         event_value: RDR.events.focusedSeconds.toString()
+                    //     });
+                    // }
+                    RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.5;
+                    console.log(RDR.events.focusedSeconds);
                     // if (RDR.events.justFocused === false ) {
                     //     RDR.events.focusedSeconds++;
                     // } else {
@@ -2572,7 +2573,7 @@ function readrBoard($R){
             setWindowInterval: function () {
                 $.data(this, 'rdr_intervalTimer', setInterval(function() {
                     if (typeof RDR.events != 'undefined') { RDR.events.checkTime(); }
-                }, 1000));
+                }, 500));
             },
             checkForSelectedTextAndLaunchRindow: function(){
                 //RDR.util.checkForSelectedTextAndLaunchRindow
@@ -4312,8 +4313,19 @@ function readrBoard($R){
                     // });
                 // });
 
-                // ReadrBoard Timer?  unsure
+                // time on page timer.  should only be incrementing when they are focused on the page.
                 RDR.util.setWindowInterval();
+
+                // onunload, fire the page time total
+                $( window ).on('beforeunload.rdr',function() {
+                    console.log(11111111112);
+                    // console.log('page time is  '+RDR.events.focusedSeconds);
+                    RDR.events.trackEventToCloud({
+                        event_type: 'pt',
+                        event_value: RDR.events.focusedSeconds,
+                        page_id: RDR.util.getPageProperty('id')
+                    });
+                });
 
                 RDR.util.fixBodyBorderOffsetIssue();
                 
