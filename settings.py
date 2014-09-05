@@ -5,7 +5,9 @@ if uname()[1] == "hat" : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
-
+if not DEBUG:
+    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
+    
 # Server e-mail account
 if DEBUG:
     SERVER_EMAIL = "devserver@readrboard.com"
@@ -107,10 +109,10 @@ if DEBUG:
     
 
 else:
-    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com"]
-    URL_NO_PROTO = 'www.readrboard.com'
-    BASE_URL = 'http://www.readrboard.com'
-    BASE_URL_SECURE = 'https://www.readrboard.com'
+    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com", "www.antenna.is", "antenna.is", "static.antenna.is"]
+    URL_NO_PROTO = 'www.antenna.is'
+    BASE_URL = 'http://www.antenna.is'
+    BASE_URL_SECURE = 'https://www.antenna.is'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
@@ -118,52 +120,102 @@ else:
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
     
-    DATABASES = {
-      'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      },
-      'readonly1': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'readr',
-        'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      },
-      'readonly2': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'readr',
-        'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
-        }
-      }
-      
-    }
-    """
     
-    """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':300
+    
+    if not ANTENNA_ARRAY:
+        DATABASES = {
+          'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly1': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly2': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          }
+          
         }
-    }
+        """
+        
+        """
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'LOCATION': '50.116.59.190:11211',
+                'TIMEOUT':300
+            }
+        }
+    else:
+        DATABASES = {
+          'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '69.164.209.143',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly1': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly2': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          }
+          
+        }
+        """
+        
+        """
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'LOCATION': 'localhost:11211',
+                'TIMEOUT':300
+            }
+        }
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
@@ -259,14 +311,14 @@ EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 if DEBUG:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello-dev@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+    EMAIL_HOST_USER = 'hello@antenna.is'
+    EMAIL_HOST_PASSWORD = 'br04dc45t'
     EMAIL_PORT = 587
 else:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+    EMAIL_HOST_USER = 'hello@antenna.is'
+    EMAIL_HOST_PASSWORD = 'br04dc45t'
     EMAIL_PORT = 587
 
 
