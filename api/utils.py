@@ -1,6 +1,6 @@
-from readrboard.rb.models import *
-from readrboard.rb.profanity_filter import ProfanitiesFilter
-from readrboard.chronos.jobs import *
+from antenna.rb.models import *
+from antenna.rb.profanity_filter import ProfanitiesFilter
+from antenna.chronos.jobs import *
 from django.db.models import Q
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.forms.models import model_to_dict

@@ -1,5 +1,5 @@
-from readrboard.rb.models import *
-from readrboard import settings
+from antenna.rb.models import *
+from antenna import settings
 from datetime import datetime, timedelta
 import base64
 import uuid

@@ -1,4 +1,4 @@
-from readrboard.rb.models import *
+from antenna.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
 from extras.facebook import GraphAPI, GraphAPIError
