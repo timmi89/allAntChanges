@@ -1,0 +1,758 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }} Analytics{%endblock%}
+
+
+{% block extendedHead %}
+<script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script>
+<script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
+<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
+<link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2">
+<script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
+<style>
+    section[role="datepicker"] button {
+        position: relative;
+        top:-4px;
+    }
+</style>
+{% endblock %}
+
+{% block wideContent %}
+
+<script type="text/javascript">
+//don't depend on Parse
+if(typeof Parse !== "undefined"){
+    Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+}
+</script>
+
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+  <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
+
+
+<h1>{{ group.name }} Analytics</h1>
+<section role="datepicker" class="datepicker">
+	<form>
+        <label>Date Range: </label>
+    	<input type="text" name="start_date" />
+    	<label>to</label>
+    	<input type="text" name="end_date" />
+    	<button class="btn" type="submit" >Update</button>
+    </form>
+</section>
+<section id="analyticsReport" role="panels">
+
+	<div class="section_content">
+        
+        <div id="interactionBigStats">
+            <div id="interactionBigStatsInner">
+        		<div id="interactionWriteCount" role="total interactions" class="bigStat">
+        			<h1>0</h1>
+        			<h4>Reactions</h4>
+        		</div>
+                <div id="interactionReadCount" role="total reaction views" class="bigStat">
+                    <h1>0</h1>
+                    <h4>Reaction Views</h4>
+                </div>
+            </div>
+        </div>
+        <div class="reactions" style="width:960px;overflow:hidden;margin:0 auto;">
+            <h1 style="margin:40px 0 0;text-align:center;width:960x;">Reactions</h1>
+            <div id="tag_cloud_container">
+                <section role="tag cloud grid">
+                    <!-- this will get dynamically populated -->
+                </section>
+            </div>
+        </div>  
+    </div>
+	
+    <section>
+
+		<section role="interaction frequency">
+			<div role="frequency chart" id="frequency_chart">
+				<h5>frequency chart</h5>
+			</div>
+		</section> <!-- / interaction frequency -->
+
+		<section role="most active pages" class="analyticsReportTable">
+			<h3>Most Active Pages</h3>
+			<table role="active pages table" cellpadding="0" cellspacing="0" border="0">
+				<thead>
+					<tr>
+						<td role="url">URL</td>
+						<td role="title">Title</td>
+						<td role="reactions">Reactions</td>
+                        <td role="reactionViews">Reaction Views</td>
+						<td role="shares">Shares</td>
+						<td role="comments">Comments</td>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</section><!-- /most popular tags -->
+
+        <section role="most active readers" class="analyticsReportTable">
+            <h3>Most Active Readers</h3>
+            <table id="userTable" role="active user table" cellpadding="0" cellspacing="0" border="0">
+                <thead>
+                    <tr>
+                        <!-- <td role="via">via</td> -->
+                        <td role="content">Reader</td>
+                        <td role="reactions">Reactions</td>
+                        <td role="reactionViews">Reaction Views</td>
+                        <td role="shares">Shares</td>
+                        <td role="comments">Comments</td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section> <!-- / most active readers -->
+
+		<section role="most active content" class="analyticsReportTable">
+			<h3>Most Active Content</h3>
+			<table role="active content table" cellpadding="0" cellspacing="0" border="0">
+				<thead>
+					<tr>
+						<!-- <td role="via">via</td> -->
+						<td role="content">Content</td>
+						<td role="reactions">Reactions</td>
+						<td role="shares">Shares</td>
+						<td role="comments">Comments</td>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</section> <!-- /most active content -->
+		
+		<section role="recent pages" style="display:none;" class="analyticsReportTable">
+			<h3>Recently Active Pages</h3>
+			<table role="recent pages table" cellpadding="0" cellspacing="0" border="0">
+				<tbody></tbody>
+			</table>
+		</section> <!-- / most popular bookmarks -->
+
+		<section role="most popular shares" class="analyticsReportTable">
+			<h3>Popular Shared Content</h3>
+			<table role="popular shares" cellpadding="0" cellspacing="0" border="0">
+				<tbody></tbody>
+			</table>
+		</section> <!-- / most popular shares -->
+
+		<!-- 
+		<section role="most popular bookmarks" class="analyticsReportTable">
+			<h3>Popular Bookmarked Content</h3>
+			<table role="popular bookmarks" cellpadding="0" cellspacing="0" border="0">
+				<tbody></tbody>
+			</table>
+		</section>
+		/ most popular bookmarks -->
+
+	</section>
+</section>
+</div>
+
+</section>
+</div>
+<script>
+(function(){
+
+        // Radialize the colors
+        Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
+            return {
+                radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                stops: [
+                    [0, color],
+                    [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                ]
+            };
+        });
+
+        // put in external file...
+        RB.analytics = {
+        	mostPopular: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "tags";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
+
+        		$.ajax({
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/popular/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				if (type == "tags") {
+        					$('section[role="tag cloud grid"]').isotope('destroy').html('<section role="tag cloud grid"/>');
+
+        					function SortByTagCount(a,b) { return b.count - a.count; }
+        	                var sorted_interactions = [];
+
+        	                $.each( response, function(idx, reaction_data) {
+        	                    sorted_interactions.push( { body:reaction_data.interaction_node__body, count:reaction_data.count } );
+        	                });
+
+        	                sorted_interactions.sort( SortByTagCount ); // each as a .body and a .count
+
+        	                // do tag cloud logic
+        	                // render the tag cloud
+        	                // medium, small, small, big
+        	                var boxSizes = [ "medium", "small", "small", "big" ],
+        	                    currentBoxSize = 0,
+        	                    colorInt = 1,
+        	                    $tagCloud = $('section[role="tag cloud grid"]');
+
+        	                $tagCloud.html('').removeAttr('style').removeClass('isotope');
+        	                while ( sorted_interactions.length ) {
+        	                    if ( boxSizes[ currentBoxSize ] == "medium" ) {
+        	                        var median = Math.floor(sorted_interactions.length/2);
+        	                        var $thisBox = $( '<a href="/stream/?s='+sorted_interactions[ median ].body+'"><div class="color'+colorInt+' box2 box"><div class="tag">'+sorted_interactions[ median ].body+'<br/><span class="count">'+sorted_interactions[ median ].count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                        sorted_interactions.splice( median, 1 );
+        	                    } else if ( boxSizes[ currentBoxSize ] == "small" ) {
+        	                        var thisTag = sorted_interactions.pop(),
+        	                            $thisBox = $( '<a href="/stream/?s='+thisTag.body+'"><div class="color'+colorInt+' box3 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                    } else if ( boxSizes[ currentBoxSize ] == "big" ) {
+        	                        var thisTag = sorted_interactions.shift(),
+        	                            $thisBox = $( '<a href="/stream/?s='+thisTag.body+'"><div class="color'+colorInt+' box1 box"><div class="tag">'+thisTag.body+'<br/><span class="count">'+thisTag.count+'</span></div></div></a>' );
+        	                        $tagCloud.append( $thisBox );
+        	                    }
+        	                    
+        	                    // set next color and box size
+        	                    colorInt++;
+        	                    currentBoxSize++;
+        	                    if ( colorInt == 6 ) colorInt = 1;
+        	                    if ( currentBoxSize == 4 ) currentBoxSize = 0;
+        	                }
+
+        	                // isotope and bigtext the cloud
+        	                $('section[role="tag cloud grid"]').isotope({
+        	                  layoutMode: 'masonryHorizontal',
+        	                  masonryHorizontal: {
+        	                    rowHeight: 70
+        	                  }
+        	                }, function() {
+        	                    $('.box').bigtext();
+        	                    var tagBoxesCount = $('section[role="tag cloud grid"] a').length,
+        	                        currentTagBoxAnimating = 0;
+        	                    var animationQueue = setInterval( animateNextBox, 100 );
+
+        	                    function animateNextBox() {
+        	                        var $thisBox = $('section[role="tag cloud grid"] a:eq('+currentTagBoxAnimating+') .box');
+        	                        if ( $thisBox.hasClass('box1') ) {
+        	                            $thisBox.find('div.tag').animate( {bottom:'0%'}, { queue:false, duration: 333 } );
+        	                        } else {
+        	                            $thisBox.find('div.tag').animate( {top:'0%'}, { queue:false, duration: 333 } );
+        	                        }
+        	                        currentTagBoxAnimating++;
+        	                        if ( currentTagBoxAnimating > tagBoxesCount ) {
+        	                            clearInterval( animationQueue );
+        	                        	if ( $('#tag_cloud_container').jScrollPane().data().jsp ) { $('#tag_cloud_container').jScrollPane().data().jsp.destroy(); }
+        	                            initHorizontalScrollbar();
+        	                        }
+        	                    }
+        	                    function initHorizontalScrollbar(){
+        	                        $('#tag_cloud_container').jScrollPane();
+        	                    }
+        	                });
+        				} else if (type=="shares") {
+
+        					var shareHtml = "";
+        					for ( var i in response ) {
+        						var share = response[i];
+        						shareHtml += '<tr><td role="content">('+share[0].count+') '+share[0].content__body+'</td></tr><tr><td><strong>Reactions: </strong>';
+        						for ( var j in share[1].related_reactions ) {
+        							var reaction = share[1].related_reactions[j];
+        							shareHtml += '('+reaction.count+') '+reaction.interaction_node__body;
+        							if ( j < share[1].related_reactions.length - 1 ) shareHtml += ", ";
+        						}
+        						shareHtml += '</td></tr><tr>'; 
+        						// shareHtml += '<tr><td role="via"><em>View <a href="#" target="_blank">On your site <img src="/static/site/images/external_link_icon.gif" /></a> | <a href="#" target="_blank">Page Info</a></em></td></tr>';
+        					}
+
+        					$('table[role="popular shares"] tbody').html( $(shareHtml) );
+        				}
+        				
+        			}
+        		});
+        	},
+        	mostActive: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
+
+        		$.ajax({
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/active/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+
+                        if ( type == "pages" ) {
+                           
+                            var pageHtml = "";
+
+        					for ( var i in response) {
+                                var pageId = response[i].page.id;
+        						var tagCount = (response[i].counts.tag) ? response[i].counts.tag:0;
+        						var shrCount = (response[i].counts.shr) ? response[i].counts.shr:0;
+        						var comCount = (response[i].counts.com) ? response[i].counts.com:0;
+
+        						pageHtml += '<tr data-page_id="'+pageId+'"><td role="url"><div><a href="'+response[i].page.canonical_url+'" target="_blank">'+response[i].page.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+        						+'<td role="title"><a href="/page/'+response[i].page.id+'" target="_blank">'+response[i].page.title+'</td>'
+        						+'<td role="reactions">'+tagCount+'</td>'
+                                +'<td role="reactionViews" class="reactionViews"></td>'
+        						+'<td role="shares">'+shrCount+'</td>'
+        						+'<td role="comments">'+comCount+'</td></tr>';
+                            }
+
+                            $('table[role="active pages table"] tbody').html( pageHtml );
+
+                            //this will send off ajax to parse and fill in the reactionViews
+                            RB.analytics.parse.updateReactionViewsForPages();
+
+        				} else if ( type == "users" ) {
+                        	var userHtml = "";
+        					for ( var i in response) {
+                                var img_url = response[i].user.img_url;
+                                var full_name = response[i].user.full_name;
+        						if ( img_url ) {
+                                    //fix this construction.
+
+                                    //what?  seems that the user model suddenly changed?  Look into this later.
+                                    var userId = 
+                                        (response[i].user && response[i].user.user) 
+                                        ? response[i].user.user.id 
+                                        : response[i].user.user_id;
+                                    
+        							userHtml += '<tr data-user_id="'+userId+'">'
+                                        + '<td role="user">'
+                                            + '<div class="avatar"><a href="/user/'+user.id+'" target="_blank"><img src="'+img_url+'" /></a></div>'
+                                            + '<div class="userName"><a href="/user/'+user.id+'" target="_blank">'+full_name+'</a></div>'
+                                        + '</td>'
+        								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                                        + '<td role="reactionViews" class="reactionViews">'
+                                            + RB.analytics.parse.getReactionViewsPerUser(user.id) 
+                                        +'</td>'
+        								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
+        								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
+        							+ '</tr>';
+        						}
+        					}
+        					$('table[role="active user table"] tbody').html( userHtml );
+
+                            //this will send off ajax to parse and fill in the reactionViews
+                            RB.analytics.parse.updateReactionViewsForUsers();
+
+                        } else if ( type == "content" ) {
+
+                            var contentHtml = "";
+                            var contentId = null;
+
+                            for ( var i in response) {
+                                contentId = response[i].content.id;
+
+                                contentHtml += '<tr>'; // TODO add back in:  <td role="via"><div><a href="'+response[i].content.canonical_url+'" target="_blank">'+response[i].content.canonical_url+'&nbsp;&nbsp;<img src="/static/site/images/external_link_icon.gif" /></a>&nbsp;&nbsp;</div></td>'
+                                if ( response[i].content.kind == "img" ) {
+                                    contentHtml += '<td role="content"><img src="'+response[i].content.body+'" /></td>'
+                                } else if ( response[i].content.kind == "txt" ) {
+                                    contentHtml += '<td role="content">'+response[i].content.body+'</td>'
+                                } else if ( response[i].content.kind == "med" ) {
+                                    contentHtml += '<td role="content">[ Video ] <a href="javascript:void(0);" onclick="$(this).next().toggle();">See It</a><div style="display:none;" class="video"><iframe src="'+response[i].content.body+'" width="200" frameborder="0"/></div></td>'
+                                }else{
+                                    //this seemed to be happedning sometimes.  And the formatting gets messed up.
+                                    contentHtml += '<td role="content"></td>';
+                                }
+                                contentHtml += 
+                                '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
+                                +'<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
+                                +'<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td></tr>';
+                            }
+
+                            $('table[role="active content table"] tbody').html( contentHtml );
+            			}
+                    }
+        		});
+        	},
+        	recentlyActive: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
+
+        		$.ajax({
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/recent/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				var recentHtml = "";
+        				for (var i in response) {
+        					// recentHtml += '<tr><td><strong>'+response[0].title+'</strong></td></tr><tr>';
+        					recentHtml += '<tr><td><strong><a href="/page/'+response[0].id+'" target="_blank">'+response[0].title+'</a></strong></td></tr><tr>';
+        					// TODO make above line link to page profile
+        				}
+
+        				$('table[role="recent pages table"] tbody').html( recentHtml );
+        			}
+        		});
+        	},
+            debugError: function(error){
+                if(!RB.RDR_offline){
+                    return;
+                }
+                alert("Error: " + error.code + " " + error.message);
+            },
+            parse: {
+                _hasInited: false,
+                repo: null,
+                collection: null,
+                loadingHTML: "loading",
+                init: function(){
+
+                    //todo: using Self convention for now. Convert this to use an actual constucter/instance pattern
+                    var Self = RB.analytics.parse;
+
+                    if( typeof Parse === "undefined" ){
+                        return;
+                    }
+                    var repoName = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
+                    Self.repo = Parse.Object.extend(repoName);
+                    Self._hasInited = true;
+                },
+                update: function(){
+
+                    var Self = RB.analytics.parse;
+
+                    if( typeof Parse === "undefined" ){
+                        return;
+                    }
+                    if(!Self._hasInited){
+                        Self.init();
+                    }
+
+                    Self.getReactionViewCount(Self.repo, {
+                        success: function(count) {
+                            $('#interactionReadCount h1').text(count);
+                        },
+                        error: function(error) {
+                            RB.analytics.debugError(error);
+                        }
+                    });
+
+                    //todo: do something with this data!
+                    // Self.getAllData(Self.repo, {
+                    //     success: function(results) {
+                    //         // debugger;
+                    //         RB.analytics.mostActive({type:'users'});
+                    //     },
+                    //     error: function(error) {
+                    //         RB.analytics.debugError(error);
+                    //     }
+                    // });
+
+                },
+                getAllData: function(Table, callbacks){
+                    var Self = RB.analytics.parse;
+
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    //arbitary number...  This needs to be made more efficient later.
+                    query.limit(300);
+                    Self.collection = query.collection();
+                    Self.collection.fetch(callbacks);
+                },
+
+                getReactionViewCount: function(Table, callbacks){
+                    var Self = RB.analytics.parse;
+
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    query.count(callbacks);
+                },
+                
+                getReactionViewPerPageCount: function(pageId, callbacks){
+                    var Self = RB.analytics.parse;
+                    var options = {
+                        id: pageId,
+                        key: "page_id",
+                        callbacks: callbacks
+                    }
+                    Self._getReactionViewPerCount(Self.repo, options);
+                },
+                getReactionViewPerUserCount: function(userId, callbacks){
+                    var Self = RB.analytics.parse;
+                    var options = {
+                        id: userId,
+                        key: "user_id",
+                        callbacks: callbacks
+                    }
+                    Self._getReactionViewPerCount(Self.repo, options);
+                },
+                _getReactionViewPerCount: function(Table, options){
+                    var Self = RB.analytics.parse;
+
+                    var id = options.id;
+                    var key = options.key;
+                    var callbacks = options.callbacks;
+
+                    var query = new Parse.Query(Table);
+                    query = Self._setQueryDefaults(query);
+                    query
+                        .equalTo(key, id)
+                        .count(callbacks);
+                },
+                //todo: not the prettiest way to do this, improve later.
+                updateReactionViewsForPages: function(){
+                    //todo: this should be optimized later.
+                    var Self = RB.analytics.parse;
+
+                    $('table[role="active pages table"] tbody tr').each(function(){
+                        var $this = $(this);
+                        var pageId = $this.data('page_id');
+
+                        Self.getReactionViewPerPageCount(pageId, {
+                            success: function(count) {
+                                $this.find('.reactionViews').html(count);
+                            },
+                            error: function(error) {
+                                RB.analytics.debugError(error);
+                            }
+                        });
+
+                    });
+                },
+                //todo: not the prettiest way to do this, improve later.
+                updateReactionViewsForUsers: function(){
+                    //todo: this should be optimized later.
+                    var Self = RB.analytics.parse;
+
+                    $('table[role="active user table"] tbody tr').each(function(){
+                        var $this = $(this);
+                        var userId = $this.data('user_id');
+
+                        Self.getReactionViewPerUserCount(userId, {
+                            success: function(count) {
+                                $this.find('.reactionViews').html(count);
+                            },
+                            error: function(error) {
+                                RB.analytics.debugError(error);
+                            }
+                        });
+
+                    });
+                },
+                getReactionViewsPerPage: function(pageId){
+                    var Self = RB.analytics.parse;
+                    return Self._getCountPerId(pageId, "page_id");
+                },
+
+                getReactionViewsPerUser: function(userId){
+                    var Self = RB.analytics.parse;
+                    return Self._getCountPerId(userId, "user_id");
+                },
+                _getCountPerId: function(id, fieldName){
+
+                    if(!id || !RB.analytics.parse.collection){
+                        return RB.analytics.parse.loadingHTML;
+                    }
+
+                    return RB.analytics.parse.collection.filter(function(model){
+                        return model.get(fieldName) == id;
+                    }).length;
+                },
+                _setQueryDefaults: function(query){
+                    return query
+                        .greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate)
+                        .lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate)
+                        .containedIn("action", ["rindow_shown_readmode", "rindow_shown_summarybar"])
+                        .equalTo("group_id", RB.group.id);
+                }
+            },
+
+        	interactionFrequency: function( args ) {
+        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
+        		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
+
+        		var querystring = "?" +
+        			"start="+start +
+        			"&end="+end +
+        			"&max_count="+max_count;
+
+        		$.ajax({
+        			url: '/group/'+RB.group.short_name+'/analytics_v1/frequency/'+querystring,
+        			type: "get",
+        			contentType: "application/json",
+        			dataType: "jsonp",
+        			success: function(response){
+        				var tags = 0,
+        					shares = 0,
+        					comments = 0,
+        					bookmarks = 0;
+
+        				for ( var i in response ) {
+        					for ( var j in response[i]) {
+        						if ( response[i][j].tag ) tags += response[i][j].tag;
+        						if ( response[i][j].shr ) shares += response[i][j].shr;
+        						if ( response[i][j].com ) comments += response[i][j].com;
+        						if ( response[i][j].bkm ) bookmarks += response[i][j].bkm;
+        					}
+        				}
+
+        				var total = tags + shares + comments + bookmarks;
+
+        				$('div[role="total interactions"] h1').text( total );
+
+        				// make chart
+        				// keep this chart for now
+        				var chart;
+        				chart = new Highcharts.Chart({
+        					chart: {
+        						renderTo: 'frequency_chart',
+        						defaultSeriesType: 'bar',
+        						height:'200'
+        					},
+        					title: {
+        						text: 'Interaction Distribution'
+        					},
+        					xAxis: {
+        						labels: {enabled:false}
+        					},
+        					yAxis: {
+        						min: 0,
+        						title: {text:null}
+        					},
+        					legend: {
+        						backgroundColor: '#FFFFFF',
+        						reversed: true
+        					},
+        					tooltip: {
+        						formatter: function() {
+        							return ''+
+        							this.series.name +': '+ this.y +'';
+        						}
+        					},
+        					plotOptions: {
+        						series: {
+        							stacking: 'normal'
+        						}
+        					},
+        					series: [{
+        					// 	name: 'Bookmarks',
+        					// 	data: [bookmarks]
+        					// }, {
+        						name: 'Comments',
+        						data: [comments]
+        					}, {
+        						name: 'Shares',
+        						data: [shares]
+        					}, {
+        						name: 'Reactions',
+        						data: [tags]
+        					}]
+        				});
+        			}
+        		});
+        	}, 
+        	updateAll: function() {
+                
+                RB.analytics.setDates();
+        		
+                RB.analytics.interactionFrequency();
+
+        		RB.analytics.mostPopular();
+        		RB.analytics.mostPopular( {type:'bookmarks'} );
+        		RB.analytics.mostPopular( {type:'shares'} );
+
+        		RB.analytics.mostActive();
+        		RB.analytics.mostActive({type:'users'});
+        		RB.analytics.mostActive({type:'content'});
+
+        		RB.analytics.recentlyActive();
+
+                RB.analytics.parse.update();
+        	},
+            setDates: function(){
+
+                var nowDate = moment().format("MM/DD/YY");
+                RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
+                RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+
+                RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
+                RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+            }
+
+        };
+
+
+        // defined in template
+        RB.group.short_name = "{{ group.short_name }}";
+        RB.group.full_name = "{{ group.name }}";
+        
+        $(function(){
+
+            RB.analytics.setDates();
+
+            //init this once so that the destroy function doesn't error when it refreshes this.
+            $('section[role="tag cloud grid"]').isotope();
+            
+            $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
+            $('input[name="start_date"]').val( RB.analytics.startDate );
+            $('input[name="end_date"]').val( RB.analytics.endDate );
+
+            $('section[role="datepicker"] form').submit( function() {
+
+                var startDate = $('input[name="start_date"]').val();
+                var endDate = $('input[name="end_date"]').val();
+                
+                RB.util.setHashValue('start', startDate );
+                RB.util.setHashValue('end', endDate );
+
+                RB.analytics.updateAll();
+                return false;
+            });
+
+            RB.analytics.updateAll();
+
+        });
+
+        /* for links:
+
+        http://local.readrboard.com:8081/page/3/?s=not+sure
+
+        http://local.readrboard.com:8081/group/demo/
+        http://local.readrboard.com:8081/group/demo/tags/?s=not+sure
+        http://local.readrboard.com:8081/group/demo/shares/?s=not+sure
+
+        http://local.readrboard.com:8081/user/2/
+
+        Aanlytics links
+        Profile stream links (interactions.html)
+        Sidebar links
+
+        Ajaxify the dashboard QS.
+        */
+
+})();
+</script>
+{% endblock wideContent %}

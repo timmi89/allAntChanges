@@ -36,13 +36,13 @@ class ProfileAdmin(admin.ModelAdmin):
     )
 
 class RBGroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required')
+    list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required', 'premium', 'send_notifications')
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required')
+            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required', 'premium', 'send_notifications')
         }),
         ('Advanced', {
-            'fields': ('custom_css', 'active_sections', 'anno_whitelist', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
+            'fields': ('custom_css', 'active_sections', 'anno_whitelist', 'separate_cta', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist')
         }),
         ('Logos', {
             'fields': ('logo_url_sm', 'logo_url_med' , 'logo_url_lg')
@@ -51,10 +51,10 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('share', 'rate' , 'comment', 'search', 'bookmark', 'twitter')
         }),
         ('Selectors', {
-            'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector', 'br_replace_scope_selector')
+            'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector', 'summary_widget_method', 'br_replace_scope_selector')
         }),
         ('JQuery', {
-            'fields': ('inline_selector', 'inline_func')
+            'fields': ('inline_selector', 'inline_func', 'author_selector', 'author_attribute', 'topics_selector', 'topics_attribute', 'section_selector', 'section_attribute')
         }),
         ('Customization', {
             'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 

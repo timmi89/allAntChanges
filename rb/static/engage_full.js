@@ -42,9 +42,9 @@ RDR_offline = !!(
     RDR.engageScriptSrc.indexOf('local.readrboard2.com') != -1 ||
     document.domain == "local.readrboard.com" //shouldn't need this line anymore
 ),
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081":window.location.protocol + "//www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
@@ -55,10 +55,12 @@ RDR.safeThrow = function(msg){
     //this will never actually throw in production (if !RDR_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
-    var debugMode = true;
+    var debugMode = false;
 
     if(RDR_offline && debugMode){
-        throw msg;
+        // [porter]  changing to log so that acceptable, trivial bugs are not blockers, but do get logged
+        console.log(msg);
+        // throw msg;
     }
 };
 
@@ -69,7 +71,7 @@ function test_readrboard_extend(){
         return;
     }
     window.readrboard_extend = {
-        blessed_tags: [
+        default_reactions: [
             "Love It",
             "Hate It",
             "Heeeeeey"
@@ -77,14 +79,14 @@ function test_readrboard_extend(){
     };
     window.readrboard_extend_per_container = {
         "question1": {
-            blessed_tags: [
+            default_reactions: [
                 "tag1",
                 "tag2",
                 "tag3"
             ]
         },
         "question2": {
-            blessed_tags: [
+            default_reactions: [
                 "tag3",
                 "tag4",
                 "tag5",
@@ -138,24 +140,28 @@ function readrBoard($R){
             //RDR.group:
             //details to be set by RDR.actions.initGroupData which extends defaults
             defaults: {
+                premium: false,
                 img_selector: "img",
                 img_container_selectors:"#primary-photo",
                 active_sections: "body",
                 anno_whitelist: "body p",
                 active_sections_with_anno_whitelist:"",
                 media_selector: "embed, video, object, iframe",
-                // iframe_whitelist: ["youtube.com","twitter.com","hulu.com","funnyordie.com","vimeo.com","mtvnservices.com","dailycandy.com", "trutv.com"],
-                comment_length: 300,
+                comment_length: 500,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
-                call_to_action: "What do you think?",
+                // call_to_action: RDR.t('main_cta'),
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
                 media_url_ignore_query: true,
+                summary_widget_method: 'after',
+                language: 'en',
+                ab_test_impact: true,
+                ab_test_sample_percentage: 10,
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -183,63 +189,242 @@ function readrBoard($R){
         styles: {
         },
         events: {
-            track : function( data, hash ) {
-                // RDR.events.track:
-                
-                var standardData = "",
-                    timestamp = new Date().getTime();
-                
-                RDR.user = RDR.user || {};
-                
-                if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
-                if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
-                if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
-                if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
-
-                var eventSrc = data+standardData,
-                    $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
-
-                $('#rdr_event_pixels').append($event);
-
-            },
-            trackEventToCloud: function( params ) {
-                // RDR.events.trackEventToCloud
-                
-                RDR.user = RDR.user || {};
-
-                var data = $.toJSON({
-                    category: params.category,
-                    action: params.action,
-                    opt_label: params.opt_label || null,
-                    opt_value: params.opt_value || null,
-                    opt_noninteraction: params.opt_noninteraction || null,
-                    
-                    shareNetwork: params.shareNetwork || null,
-                    container_hash: params.container_hash || null,
-                    container_kind: params.container_kind || null,
-                    page_id: params.page_id || null,
-                    tag_body: params.tag_body || null,
-                    user_id: RDR.user.user_id || null,
-                    group_id: RDR.group.id || null
+            focusedSeconds:0,
+            fireScrollEvent: function(milestone) {
+                if (milestone.indexOf('more') != -1) {
+                    var event_type = 'scroll_more';
+                } else {
+                    var event_type = 'sc';
+                }
+                RDR.events.trackEventToCloud({
+                    event_type: event_type,
+                    event_value: milestone
                 });
 
-                $.postMessage(
-                    "register-event::"+data,
-                    RDR_baseUrl + "/static/xdm.html",
-                    window.frames['rdr-xdm-hidden']
-                );
-            }    
+            },
+            fireEventQueue: function() {
+                $.each( RDR.events.queue, function(idx, event_params) {
+                    RDR.events.trackEventToCloud(event_params);
+                });
+            },
+            checkTime: function() {
+                if ( document.hasFocus() === true ){
+                    // if ( RDR.events.focusedSeconds > 0 ) {  // && RDR.events.justFocused === false 
+                    //     RDR.events.trackEventToCloud({
+                    //         event_type: 'ti',
+                    //         event_value: RDR.events.focusedSeconds.toString()
+                    //     });
+                    // }
+                    RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.5;
+
+                    // if (RDR.events.justFocused === false ) {
+                    //     RDR.events.focusedSeconds++;
+                    // } else {
+                    //     RDR.events.justFocused = false;
+                    // }
+                }
+            },
+            // track : function( data, hash ) {
+                // RDR.events.track:
+                
+                // var standardData = "",
+                //     timestamp = new Date().getTime();
+                
+                // RDR.user = RDR.user || {};
+                
+                // if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
+                // if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
+                // if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
+                // if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
+
+                // var eventSrc = data+standardData,
+                //     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+
+                // $('#rdr_event_pixels').append($event);
+
+            // },
+            trackEventToCloud: function( params ) {
+                // RDR.events.trackEventToCloud
+
+                RDR.user = RDR.user || {};
+                RDR.events.queue = RDR.events.queue || [];
+
+                // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
+                // which will not have all of the PAGE data loaded yet.
+                if ( (RDR.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+
+                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString() );
+
+                    var referrer_url_array = document.referrer.split('/');
+                    var referrer_url = referrer_url_array.splice(2).join('/');
+                    
+                    var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
+                    var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
+                    var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
+
+                    // use the content_attributes field to determine if they are in a test group
+                    var content_attributes = '';
+                    if ( RDR.group.ab_test_impact === true ) {
+                        content_attributes = ( RDR.util.activeAB() ) ? 'A':'B';
+                    }
+
+                    // if (params.event_type == 'widget_load') {
+                        var trackData = {
+                            /*
+
+                            et : event_type
+                            ev : event_value
+                            gid : group_id
+                            uid : user_id
+                            pid : page_id
+                            lts : long_term_session
+                            sts : short_term_session
+                            ref : referrer_tld
+                            cid : content_id
+                            ah : article_height
+                            ch : container_hash
+                            ck : container_kind
+                            r : reaction_body
+                            pt : page_title
+                            cu : canonical_url
+                            pu : page_url
+                            ru : referrer_url
+                            ca : content_attributes
+                            cl : content_location
+                            ptop : page_topics
+                            a : author
+                            sec : site_section
+                            it : isTouchBrowser
+                            sw : screen_width
+                            sh : screen_height
+                            pd : pixel_density
+                            ua : user_agent
+
+                            */
+                            // for all events
+                            et: params.event_type,
+                            ev: params.event_value,
+                            gid: RDR.group.id || null,
+                            uid: RDR.user.user_id || null,
+                            pid: page_id,
+                            lts: RDR.user.lts || null,
+                            sts: RDR.user.sts || null,
+                            ref: referrer_tld || null,
+                            cid: params.content_id || null,
+                            ah: (params.event_type == 'sl') ? 'na' : parseInt(RDR.group.active_section_milestones[100]) || null,
+                            ch: params.container_hash || null,
+                            ck: params.container_kind || null,
+                            r: params.reaction_body || null,
+                            pt: RDR.util.getPageProperty('title') || null,
+                            cu: RDR.util.getPageProperty('canonical_url') || null,
+                            pu: RDR.util.getPageProperty('page_url') || null,
+                            ru: referrer_url || null,
+                            // ca: params.content_attributes || null,  // what is this for?
+                            ca: content_attributes || null,
+                            cl: params.content_location || null,  
+                            ptop: RDR.group.topics || null,
+                            a: RDR.group.author || null,
+                            sec: RDR.group.section || null,
+                            it: isTouchBrowser || false,
+                            sw:  screen.width,
+                            sh:  screen.height,
+                            pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                            ua:  navigator.userAgent
+
+                            /*
+                            value abbreviations
+                            event_type
+                              share         :     sh
+                              summary bar   :     sb
+                              rindow_show   :     rs
+                              scroll        :     sc
+                              widget_load   :     wl
+                              comment       :     c
+                              reaction      :     re
+                              time          :     t
+
+                            event_value
+                              view content    :   vc
+                              view comments   :   vcom
+                              view reactions  :   vr
+                              writemode       :   wr
+                              readmode        :   rd
+
+                              default summary bar   :   def
+                              single summary bar    :   si
+                              multiple pages        :   mu
+                              unexpected            :   unex
+                            */
+                        };
+                    var data = $.toJSON( trackData );
+
+                    if ( typeof RDR.group.xdmLoaded != 'undefined' && RDR.group.xdmLoaded === true ) {
+                        $.postMessage(
+                            "register-event::"+data,
+                            RDR_baseUrl + "/static/xdm.html",
+                            window.frames['rdr-xdm-hidden']
+                        );
+                    } else {
+                        RDR.events.queue.push(params);
+                    }
+                }
+            },
+            emit: function(eventName, eventValue, eventSupplementary) {
+                // RDR.events.emit
+                if (RDR.group.premium == true) {
+                    // non-IE
+                    RDR.events.lastEvent = eventName;
+                    RDR.events.lastValue = eventValue;
+                    RDR.events.lastSupplementary = eventSupplementary;
+
+                    if (document.createEvent) {
+                        evt = document.createEvent("Event");
+                        evt.initEvent(eventName, true, true);
+                        document.dispatchEvent(evt);
+                    } else if (document.createEventObject) { // MSIE
+                        // just change the property 
+                        // this will trigger onpropertychange
+                        document.documentElement[eventName]++;
+                    };
+                }
+            }
         },
         groupSettings: {
             getCustomSettings: function(){
                 //RDR.groupSettings.getCustomSettings:
-                var group_extentions = window.readrboard_extend || {};
+
+                // grab anything on the page
+                var group_extensions = window.readrboard_extend || {};
+
+                // handle deprecated "blessed_tags"
+                if ( typeof group_extensions.blessed_tags != 'undefined' ) {
+                    // use .slice() to copy by value
+                    // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                    group_extensions.default_reactions = group_extensions.blessed_tags.slice();
+                    delete group_extensions.blessed_tags;
+                }
+
+                // grab anything from the URL
+                // example usage:  rdr_hideOnMobile=false&rdr_doubleTapMessage=%27hello%20world%27
+                var qs = RDR.util.getQueryParams(),
+                    group_qs_extensions = {};
+
+                $.each(qs, function(key, val){
+                    if ( key.indexOf('rdr_') === 0 ) {
+                        key = key.substr(4);
+                        group_qs_extensions[key] = val;
+                    }
+                });       
+
+                group_extensions = $.extend({}, group_extensions, group_qs_extensions );
+
                 //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
-                return RDR.groupSettings._translate(group_extentions);
+                return RDR.groupSettings._translate(group_extensions);
             },
             translators: {
-                blessed_tags: function(tagsList){
+                default_reactions: function(tagsList){
                     // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
+                    // modified to reference 'default_reactions' instead of 'blessed_tags'
                     return $.map(tagsList, function(val, idx){
                         return {body: val};
                     });
@@ -247,7 +432,6 @@ function readrBoard($R){
             },
             _translate: function(settings){
                 //RDR.groupSettings._translate:
-
                 var ret_settings = {};
                 var translators = RDR.groupSettings.translators;
                 $.each(settings, function(key, val){
@@ -257,23 +441,37 @@ function readrBoard($R){
             },
             getBlessedTags: function(hash){
                 //RDR.groupSettings.getBlessedTags:
+
+                // return blessed tags for this hash, if they exist...
                 var perContainerSettings = window.readrboard_extend_per_container;
                 if(hash && perContainerSettings){
-                    var name = getCustomDisplayContainers(hash);
+                    var name = getCustomRDRItems(hash);
                     var perContainerExtentions = perContainerSettings[name];
-                    if(perContainerExtentions && perContainerExtentions.blessed_tags){
+
+                    // handle deprecated "blessed_tags"
+                    // if ( typeof perContainerExtentions.blessed_tags != 'undefined' ) {
+                    if (perContainerExtentions && perContainerExtentions.blessed_tags) {
+                        // use .slice() to copy by value
+                        // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                        perContainerExtentions.default_reactions = perContainerExtentions.blessed_tags.slice();
+                        delete perContainerExtentions.blessed_tags;
+                    }
+
+                    if(perContainerExtentions && perContainerExtentions.default_reactions){
                         var settings = RDR.groupSettings._translate(perContainerExtentions);
-                        return settings.blessed_tags;
+                        return settings.default_reactions;
                     }
                 }
 
-                function getCustomDisplayContainers(hash){
+                function getCustomRDRItems(hash){
                     var $el = $('[rdr-hash="' + hash + '"]');
-                    var name = $el.attr('rdr-custom-display');
+                    var name = $el.attr('rdr-item');
                     return name;
                 }
 
-                return RDR.group.blessed_tags;
+                // otherwise, return the reactions that are set on the page
+                // via Admin or via window.readrboard_extend object
+                return RDR.group.default_reactions;
             }
         },
         rindow: {
@@ -302,6 +500,7 @@ function readrBoard($R){
                             '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
                         '</div>'+
                         '<div class="rdr_loader"></div>'+
+                        '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
                         '<div class="rdr_indicator_stats">'+
                             '<img class="no-rdr rdr_pin" src="{{RDR_staticUrl}}widget/images/blank.png">'+
                             '<span class="rdr_count"></span>'+
@@ -327,15 +526,7 @@ function readrBoard($R){
                 var $menuActions = makeActionList();
                 $menuDropdownActions.append($menuActions);
 
-                var $menuDropdownShare = $(
-                    '<div class="rdr_menuDropDown rdr_menu_share">'+
-                        '<span class="rdr_icon-share rdr_icon-share-override rdr_menuTrigger"></span>'+
-                    '</div>'
-                );
-                var $menuShares = makeShareList();
-                $menuDropdownShare.append($menuShares);
-
-                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions, $menuDropdownShare);
+                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
                     $menu.on('tap', '.rdr_menuDropDown', function(){
@@ -350,20 +541,12 @@ function readrBoard($R){
                         '<div class="rdr_linkWrap">'+
                             '<ul>'+
                                 '<li class="rdr_link">'+
-                                    '<a href="javascript:void(0);" class="rdr_undo_link">Remove reaction</a>'+
+                                    '<a href="javascript:void(0);" class="rdr_undo_link">'+RDR.t('remove_reaction')+'</a>'+
                                 '</li>'+
                                 '<li class="rdr_link">'+
-                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">View at ReadrBoard</a>'+
+                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">'+RDR.t('view_on_site')+'</a>'+
                                 '</li>'+
                             '</ul>'+
-                        '</div>'
-                    );
-                    return $links;
-                }
-
-                function makeShareList(){
-                    var $links = $(
-                        '<div class="rdr_linkWrap">'+
                         '</div>'
                     );
                     return $links;
@@ -386,12 +569,12 @@ function readrBoard($R){
 
                 if( kind == "text" ){
                     if ( $rindow.data('mode') == "writeMode" ) {
-                        headerText = "What do you think?";
+                        headerText = RDR.t('main_cta');
                     } else {
                         if (kind=="text") {
-                            headerText = 'Reactions';
+                            headerText = RDR.t('reactions');
                         } else {
-                            headerText = (summary.counts.tags>0) ? summary.counts.tags + " Reactions":"Reactions";
+                            headerText = (summary.counts.tags>0) ? summary.counts.tags + RDR.t('reactions') : RDR.t('reactions');
                         }
                     }
 
@@ -401,10 +584,10 @@ function readrBoard($R){
                     //confirm if we still need this.
                     var modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0;
                     headerText = (summary.counts.tags>0) ? 
-                            summary.counts.tags + " Reactions" :
+                            summary.counts.tags + " " + RDR.t('reactions') :
                             ($rindow.width()>=(175+modForIE)) ? 
-                                "What do you think?":
-                                "React:";
+                                RDR.t('main_cta'):
+                                RDR.t('react')+":";
                 }
 
                 return headerText;
@@ -498,7 +681,7 @@ function readrBoard($R){
                       if (callback) callback();
                       if ( $rindow.data('jsp') ) {
                           var API = $rindow.data('jsp');
-                          // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                          // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                           API.reinitialise();
                       } else {
                           $rindow.jScrollPane({ showArrows:true });
@@ -541,7 +724,7 @@ function readrBoard($R){
                     
                     if ( $rindow.data('jsp') ) {
                         var API = $rindow.data('jsp');
-                        // why can't i make this fucking use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
+                        // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
                         $rindow.jScrollPane({ showArrows:true });
@@ -557,18 +740,18 @@ function readrBoard($R){
                 return;
 
                 //this is needed becuase after the tagList updates, the width of panel1 can change.
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
-                var $showPanel = $rindow.find('.rdr_visiblePanel');
-                var $hidePanel = $rindow.find('.rdr_hiddenPanel');
+                // var $panelWrap = $rindow.find('.rdr_body_wrap');
+                // var $showPanel = $rindow.find('.rdr_visiblePanel');
+                // var $hidePanel = $rindow.find('.rdr_hiddenPanel');
 
-                var xOffset = $hidePanel.width();
+                // var xOffset = $hidePanel.width();
 
-                $panelWrap.css({
-                    left: -xOffset
-                });
-                $showPanel.css({
-                    left: xOffset
-                });
+                // $panelWrap.css({
+                //     left: -xOffset
+                // });
+                // $showPanel.css({
+                //     left: xOffset
+                // });
 
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
@@ -728,18 +911,22 @@ function readrBoard($R){
                                     $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
-                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success ),
-                                    $sayMore = RDR.actions.comments.makeCommentBox({
+                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success );
+                                
+                                if ( args.kind != 'page' ) {
+                                    var $sayMore = RDR.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
                                         hash: hash,
                                         tag: tag,
+                                        kind: kind,
                                         $rindow: $rindow,
                                         selState: content_node.selState || null
                                     }).appendTo( $options );
+                                }
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
@@ -780,90 +967,16 @@ function readrBoard($R){
                                     $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, onAction);
                                 }
 
-                            // } else if ( args.scenario == "reactionExists" ) {
-                                // $nextSteps.append('<div class="rdr_reactionMessage">You have already given that reaction.</div>' );
-                            // }
-
-                            $success.find('.rdr_comment_input').append(
-                                '<div class="rdr_commentBox rdr_inlineCommentBox">'+
-                                    '<div class="rdr_label_icon"></div>'+
-                                    '<textarea class="rdr_add_comment_field rdr_inlineComment">Add a comment or #hashtag</textarea>'+
-                                    '<div class="rdr_clear"></div>'+
-                                '</div>'
-                            );
-
-
-
-                            // // comment functionality
-                            var $commentInput = $success.find('.rdr_add_comment_field');
-                            $commentInput.focus(function(){
-                                // RDR.events.track('start_comment_sm::'+args.response.data.interaction.id);
-                                $(this).addClass('rdr_adding_comment');
-                                if( $(this).val() == 'Add a comment or #hashtag' ){
-                                    $(this).val('');
-                                }
-                            }).blur(function(){
-                                if( $(this).val() === '' ){
-                                    $(this).val( 'Add a comment or #hashtag' );
-                                    $(this).removeClass('rdr_adding_comment');
-                                }
-                            }).on('keyup', {args:args}, function(event) {
-                                var commentText = $commentInput.val();
-                                if (event.keyCode == '27') { //esc
-                                    //return false;
-                                } else if (event.keyCode == '13') { //enter
-                                    _sendComment(event);
-                                } else if ( commentText.length > RDR.group.comment_length ) {
-                                    commentText = commentText.substr(0, RDR.group.comment_length);
-                                    $commentInput.val( commentText );
-                                }
-                            });
-                            
-                            $success.find('button.rdr_add_comment').on('click', {args:args}, function(event) {
-                                _sendComment(event);
-                            });
-
-                            function _sendComment(event){
-
-                                var args = (event.data.args.args)?event.data.args.args:event.data.args, // weird
-                                    content_node = args.sendData.content_node_data,
-                                    hash = args.hash,
-                                    page_id = args.page_id,
-                                    $rindow = args.rindow,
-                                    tag = args.tag,
-                                    commentText = $commentInput.val();
-
-                                //keyup doesn't guarentee this, so check again (they could paste in for example);
-                                if ( commentText.length > RDR.group.comment_length ) {
-                                    commentText = commentText.substr(0, RDR.group.comment_length);
-                                    $commentInput.val( commentText );
-                                }
-
-                                if ( commentText != "Add a comment or #hashtag" ) {
-                                    //temp translations..
-                                    //quick fix
-                                    var summary = RDR.summaries[hash];
-                                    content_node.kind = summary.kind;
-
-                                    var newArgs = {  hash:hash, page_id:page_id,content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow}; // , selState:selState
-                                    //leave parent_id undefined for now - backend will find it.
-                                    RDR.actions.interactions.ajax( newArgs, 'comment', 'create');
-
-                                } else{
-                                    $commentInput.focus();
-                                }
-                            }
-
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<ul class="rdr_shareLinks"></ul>'),
+                                var $shareLinks = $('<div class="rdr_shareLinks">'+RDR.t('share_reaction')+': <ul></ul></div>'),
                                 // sns sharing links
-                                socialNetworks = ["facebook","twitter", "tumblr"]; //,"tumblr","linkedin"];
+                                socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
-                                    $shareLinks.append($link);
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="rdr_icon-'+val+'"></i></a></li>');
+                                    $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
                                         var tag_body = args.tag.tag_body || args.tag.body;
@@ -874,13 +987,12 @@ function readrBoard($R){
                                         }
 
                                         RDR.events.trackEventToCloud({
-                                            category: "share",
-                                            action: "share_open_attempt",
-                                            opt_label: "which: "+val+", kind: "+args.kind+", hash: "+hash+", tag: "+tag_body,
+                                            event_type: "sh",
+                                            event_value: val,
                                             container_hash: hash,
                                             container_kind: args.kind,
                                             page_id: args.page_id,
-                                            tag_body: tag_body
+                                            reaction_body: tag_body
                                         });
 
                                         var summary = RDR.summaries[hash];
@@ -903,7 +1015,8 @@ function readrBoard($R){
                                 return $shareLinks;
                             }
 
-                            var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
+                            // var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
+                            var $shareSocialWrap = $('.rdr_nextActions');
                             $shareSocialWrap.append( makeShareLinks() );
                         }
 
@@ -934,7 +1047,7 @@ function readrBoard($R){
                         var $this = $(this);
 
                         if( !$this.hasClass('jspScrollable') ){
-                            // IE.  for some reason, THIS fires the scrollstop event.  WTF:
+                            // IE.  for some reason, THIS fires the scrollend event.  WTF:
                             $(this).jScrollPane({ showArrows:true });
                         }else{
                             var API = $(this).data('jsp');
@@ -963,19 +1076,36 @@ function readrBoard($R){
                         boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
                         $rindow = ( params.$rindow ) ? params.$rindow : null,
                         $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$rindow ) ? params.$rindow.find('div.rdr_body.rdr_tags_list') : null,
+                        reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
+                        tagPercent = 0,
+                        tagWidth = '',
                         colorInt = ( params.colorInt ) ? params.colorInt:1,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $rindow.data('kind'),
                         hash = ($rindow.data('hash')) ? $rindow.data('hash'):$rindow.data('container'),
                         summary = RDR.summaries[hash],
+                        totalReactions = (typeof summary != 'undefined')?summary.counts.tags:0,
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
+                        // later, we'll allow rendering percentages on grids/etc, as an option
+                    var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
+                    if (renderPercentages===true) {
+                        tagPercent = parseInt(tagCount/totalReactions*100);
+                        tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
+                    }
+
+                    // if (content_node_id == 'undefined'){
+                        // return;
+                    // }
                     if ( content_node_id ) {
                         content_node.id = content_node_id;
                     }
+
+                    // NB: a bunch of the following junk is grid-specific, but is sort of ignored in CSS
+                    // for ex,
 
                     // this can go away if we change CSS class names
                     var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
@@ -986,6 +1116,9 @@ function readrBoard($R){
                       tagBodyCrazyHtml = "",
                       tagIsSplitClass = "";
 
+                    
+                    if (typeof tagBodyRaw == 'undefined') { return; }
+                    
                     // abstract this when we abstract the same thing in the previous function.
                     if ( kind == "page" ) {
                         message = (isWriteMode) ? '+1 '+tagBodyRaw :'';
@@ -1001,7 +1134,7 @@ function readrBoard($R){
                     
                     var charCountText = ""
                     //split long tag onto two lines.
-                    if ( tagBodyRaw.length < 16 ) {
+                    if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'rdr_charCount'+tagBodyRaw.length;
                         tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
@@ -1011,7 +1144,7 @@ function readrBoard($R){
                             charCountText = 'rdr_charCount15';
                             tagBodyCrazyHtml = 
                             '<div class="rdr_tag_body rdr_tag_lineone">' + 
-                            tagBodyRaw.substr(0,15) + '-<br>' + tagBodyRaw.substr(15) + '</div>';
+                            tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "rdr_box_small" ) {
                             //     boxSize = "rdr_box_medium";
                             // }
@@ -1032,16 +1165,17 @@ function readrBoard($R){
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
+                    var tagCountDisplay = (renderPercentages===true) ? tagPercent+'%':tagCount;
                     var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
                         "" : 
                         '<span class="rdr_plusOne">+1</span>';
 
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
-                        '<span class="rdr_count">'+tagCount+'</span>' +
+                        '<span class="rdr_count">'+tagCountDisplay+'</span>' +
                         '<i class="rdr_icon-search rdr_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'">'+
+                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
                             '<div '+
                                 'class="rdr_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -1081,20 +1215,20 @@ function readrBoard($R){
                         var HeaderTxt = (tag.tag_count <= 0) ? 
                             "no reactions" :
                                 (tag.tag_count == 1) ?
-                                "1 reaction" :
-                                tag.tag_count + " reactions";
+                                "1 " + RDR.t('single_reaction') :
+                                tag.tag_count + " " + RDR.t('plural_reaction');
                         var $header = RDR.rindow.makeHeader( HeaderTxt );
                             $rindow.find('.rdr_header').replaceWith($header)
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">Close X</div>');
-                        $backButton.click( function() {
+                        var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
+                        $backButton.on('click.rdr, touchend.rdr', function() {
 
 
                             //temp fix because the rindow scrollpane re-init isnt working
-                            var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                            if(!isGridForRindow){
+                            var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                            if(!isViewForRindow){
                                 RDR.rindow.close($rindow);
                                 return;
                             }
@@ -1114,10 +1248,10 @@ function readrBoard($R){
                         if ( counts && counts.page && counts.page > 0 ) {
                             var page_reaction_text =
                                 (counts.page == 1 ) ?
-                                "1 reaction" :
-                                counts.page + " reactions";
+                                "1 " + RDR.t('single_reaction') :
+                                counts.page + " " + RDR.t('plural_reaction');
 
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> to this <strong>page</strong></td>');
+                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+RDR.t('to_page')+'</td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
@@ -1145,7 +1279,7 @@ function readrBoard($R){
                                         thing = RDR.interaction_data[ tag.id ][ int_id ];
 
                                     if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
-                                        var reaction_word = (thing.interaction.count>1) ? "reactions":"reaction";
+                                        var reaction_word = (thing.interaction.count>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
                                         $tr.append('<td class="rdr_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
                                         .data('count', thing.interaction.count)//chain
                                         .data('tag', tag)//chain
@@ -1159,13 +1293,19 @@ function readrBoard($R){
                                             $tr.append('<td class="rdr_content"><img src="'+RDR_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
                                         }
 
-                                        $tr.click( function(e) {
+                                        $tr.on('click.rdr, touchend.rdr', function(e) {
                                             e.preventDefault();
                                             var data = {
                                                 container_hash:thing.hash,
                                                 location:thing.content_node.location
                                             };
                                             RDR.session.revealSharedContent(data);
+
+                                            RDR.events.trackEventToCloud({
+                                                event_type: 'sb',
+                                                event_value: 'vc',
+                                                page_id: thisPageId
+                                            });
                                         });
 
                                         // insert the new content into the right place, ordered by count
@@ -1194,10 +1334,13 @@ function readrBoard($R){
                         if ( isWriteMode == false ) {
                             
                             var clickFunc = function(){
+
+
                                 RDR.rindow.hideFooter($rindow);
                                 $rindow.removeClass('rdr_rewritable');
 
-                                var page = RDR.pages[ RDR.util.getPageProperty('id', hash) ],
+                                var page_id = RDR.util.getPageProperty('id', hash),
+                                    page = RDR.pages[ page_id ],
                                     tag_count = tag.tag_count,
                                     counts = {
                                         "img":0,
@@ -1205,6 +1348,15 @@ function readrBoard($R){
                                         "media":0,
                                         "page":(tag_count=="+")?0:tag_count
                                     };
+                                
+
+                                RDR.events.trackEventToCloud({
+                                    event_type: 'sb',
+                                    event_value: 'vr',
+                                    page_id: page_id
+                                });
+
+
                                 $.each( page.containers, function( idx, container ) {
                                     if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
                                         if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
@@ -1222,13 +1374,13 @@ function readrBoard($R){
                                 $this.addClass('rdr_live_hover');
                             };
 
-                            $tagBox.click(function(){
+                            $tagBox.on('click.rdr, touchend.rdr', function(){
                                 clickFunc();
                             });
 
 
                         } else {
-                            $tagBox.click( function() {
+                            $tagBox.on('click.rdr, touchend.rdr', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
                                 var hash = $rindow.data('container');
@@ -1238,6 +1390,8 @@ function readrBoard($R){
                         }
                     } else {
                         if(isTouchBrowser){
+                            // mobiletodo.  simulate hover and a css class.
+                            // check for class, and if present, simulate click
                             $tagBox.bind('tap', function() {
                                 $(this).addClass('rdr_tagged');
                                 $rindow.removeClass('rdr_rewritable');
@@ -1358,7 +1512,7 @@ function readrBoard($R){
 
                 if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText =  ( actionType=="react" ) ? "+ Add your own" : "+ Add tag...";
+                        helpText = "+ " + RDR.t('add_custom');
 
                     // add custom tag
                     var $clickOverlay = $('<div class="rdr_click_overlay"></div>').appendTo($container);
@@ -1383,6 +1537,8 @@ function readrBoard($R){
 
                         $clickOverlay.hide();
                         $customSubmit.show();
+
+                        $rindow.removeClass('rdr_rewritable');
 
                     }).blur( function() {
                         var $input = $(this);
@@ -1452,6 +1608,7 @@ function readrBoard($R){
                     make: function(settings){
                         //RDR.rindow._rindowTypes.writeMode.make:
                         //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
+
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.rdr-summary-'+page.id),
@@ -1493,9 +1650,11 @@ function readrBoard($R){
 
                                 // RDR.events.track('start_react_text');
                                 RDR.events.trackEventToCloud({
-                                    category: "engage",
-                                    action: "rindow_shown_writemode",
-                                    opt_label: "kind: text, hash: " + hash,
+                                    // category: "engage",
+                                    // action: "rindow_shown_writemode",
+                                    event_type: 'rs',
+                                    event_value: 'wr',
+                                    // opt_label: "kind: text, hash: " + hash,
                                     container_hash: hash,
                                     container_kind: kind,
                                     page_id: page_id
@@ -1504,6 +1663,7 @@ function readrBoard($R){
 
                                 var newSel;
                                 if ( kind == "text" ) {
+                                    
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
@@ -1528,6 +1688,15 @@ function readrBoard($R){
                                             coords.left = strRight - 14; //with a little padding
                                             coords.top = strBottom + 23;
                                         }
+                                    }
+
+                                    // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
+                                    if (isTouchBrowser) {
+                                        var $container = $('[rdr-hash="'+hash+'"]');
+                                        var coords = {
+                                            top: $container.offset().bottom+5,
+                                            left: $container.offset().left
+                                        };
                                     }
                                 } else {
                                     // draw the window over the actionbar
@@ -1561,9 +1730,11 @@ function readrBoard($R){
                                     //log media readmode
                                     // RDR.events.track( 'view_node::'+hash, hash );
                                     RDR.events.trackEventToCloud({
-                                        category: "engage",
-                                        action: "rindow_shown_readmode",
-                                        opt_label: "kind: "+kind+", hash: " + hash,
+                                        // category: "engage",
+                                        // action: "rindow_shown_readmode",
+                                        // opt_label: "kind: "+kind+", hash: " + hash,
+                                        event_type: 'rs',
+                                        event_value: 'rd',
                                         container_hash: hash,
                                         container_kind: kind,
                                         page_id: page_id
@@ -1576,8 +1747,18 @@ function readrBoard($R){
 
                             // if there is a custom CTA element, override the coordinates with its location
                             if ( typeof settings.$custom_cta != "undefined" ) {
-                                coords.top = settings.$custom_cta.offset().top + parseInt(settings.$custom_cta.attr('rdr-offset-y'));
-                                coords.left = settings.$custom_cta.offset().left + parseInt(settings.$custom_cta.attr('rdr-offset-x'));
+                                if (isTouchBrowser) {
+                                    var coords = {
+                                        top: settings.$custom_cta.offset().bottom+5,
+                                        left: settings.$custom_cta.left
+                                    };
+                                } else {
+                                    var rdr_offset_x = (settings.$custom_cta.attr('rdr-offset-x')) ? parseInt(settings.$custom_cta.attr('rdr-offset-x')) : 0;
+                                    var rdr_offset_y = (settings.$custom_cta.attr('rdr-offset-y')) ? parseInt(settings.$custom_cta.attr('rdr-offset-y')) : 0;
+                                    coords.top = settings.$custom_cta.offset().top + rdr_offset_y;
+                                    coords.left = settings.$custom_cta.offset().left + rdr_offset_x;
+                                }
+
                             }
 
                             var $rindow = RDR.rindow.draw({
@@ -1753,6 +1934,7 @@ function readrBoard($R){
                         '<div class="rdr rdr_header">'+
                             '<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="rdr_loader"></div>'+
+                            '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
                         '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
                         '<div class="rdr rdr_footer"></div>'
@@ -1760,13 +1942,21 @@ function readrBoard($R){
 
                     if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();  // haha.  let's manipulate the DOM twice.  (Add then remove.)
 
-                    $new_rindow.draggable({
-                        handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
-                        containment:'document',
-                        stack:'.rdr_window',
-                        start:function() {
-                            $(this).removeClass('rdr_rewritable');
-                        }
+                    // $new_rindow.draggable({
+                    //     handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
+                    //     containment:'document',
+                    //     stack:'.rdr_window',
+                    //     start:function() {
+                    //         $(this).removeClass('rdr_rewritable');
+                    //     }
+                    // });
+                    $new_rindow.drags({
+                        handle:'.rdr_header' //todo: move the header_overlay inside the header so we don't need this hack
+                        // containment:'document',
+                        // stack:'.rdr_window',
+                        // start:function() {
+                            // $(this).removeClass('rdr_rewritable');
+                        // }
                     });
                 }
 
@@ -1794,11 +1984,11 @@ function readrBoard($R){
             safeClose: function( $rindow ) {
               //RDR.rindow.safeClose:
 
-              var isGrid = !!$rindow.attr('rdr-grid-for');
+              var isView = !!$rindow.attr('rdr-view-reactions-for');
 
-              if(isGrid){
+              if(isView){
 
-                var $header = RDR.rindow.makeHeader( 'Reactions' );
+                var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
                     $rindow.find('.rdr_header').replaceWith($header);
                     RDR.rindow.updateFooter( $rindow );
 
@@ -2041,7 +2231,7 @@ function readrBoard($R){
                     
                     var $linkToComment = $('<span class="rdr_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">Thanks for your comment! <a href="javascript:void(0);">Close</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">'+RDR.t('thanks_for_comment')+' <a href="javascript:void(0);">'+RDR.t('close')+'</a></span> ');
                     
 
 
@@ -2138,7 +2328,7 @@ function readrBoard($R){
                 var items = [
                     {
                         "item":"reaction",
-                        "tipText":"What do you think?",
+                        "tipText":RDR.t('main_cta'),
                         "onclick":function(){
                             RDR.rindow.make( 'writeMode', {
                                 "hash": hash,
@@ -2165,20 +2355,24 @@ function readrBoard($R){
                     */
                 ];
                 // RDR.events.track( 'show_action_bar::'+content );
-                RDR.events.trackEventToCloud({
-                    category: "actonbar",
-                    action: "actionbar_shown",
-                    opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
-                    container_hash: hash,
-                    container_kind: kind,
-                    page_id: page_id
-                });
+
+                // not sure this is valuable and it adds network chatter
+                // RDR.events.trackEventToCloud({
+                //     // category: "actonbar",
+                //     // action: "actionbar_shown",
+                //     // opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
+                //     event_type: 'actionbar',
+                //     event_value: 'show',
+                //     container_hash: hash,
+                //     container_kind: kind,
+                //     page_id: page_id
+                // });
                 $.each( items, function(idx, val){
                     var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
                     $indicatorAnchor = $(
                         '<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">'+
                             '<span class="rdr rdr_react_icon">'+val.item+'</span>'+
-                            '<span class="rdr rdr_react_label">What do you think?</span>'+
+                            '<span class="rdr rdr_react_label">'+RDR.t('main_cta')+'</span>'+
                             '<div class="rdr_clear"></div>'+
                         '</a>'
                     );
@@ -2296,7 +2490,98 @@ function readrBoard($R){
                 this.close($actionbars);
             }
         },
+        t: function(phrase) {
+            return ( typeof RDR.lang[ RDR.group.language ][phrase] != 'undefined' ) ? RDR.lang[ RDR.group.language ][phrase] : '###';
+        },
+        lang: {
+            en : {
+                main_cta : 'What do you think?',
+                your_reaction : 'Your Reaction?',
+                react: 'React',
+                add_custom : 'Add Your Own',
+                reactions : 'Reactions',
+                okay : 'Okay',
+                single_reaction : 'reaction',
+                plural_reaction : 'reactions',
+                to_page : 'to this <strong>page</strong>',
+                close : 'Close',
+                thanks : 'Thanks For Your Reaction!',
+                already_done_that : 'You\'ve already reacted to this',
+                remove_reaction : 'Remove reaction',
+                view_on_site : 'View at Readrboad',
+                add_comment : 'Add comments or #hashtags',
+                characters_left : 'NNN characters left',
+                comment: 'Comment',
+                comments: 'Comments',
+                thanks_for_comment : 'Thanks for your comment!',
+                share_reaction : 'Share your reaction',
+                bad_language_warning : 'This site has blocked that from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.'
+            },
+            es : {
+                main_cta : '¿Qué piensas?',
+                your_reaction : '¿Reacción tuyo?',
+                react : 'Reaccionar',
+                add_custom : 'Añade lo tuyo',
+                reactions : 'Reacciones',
+                okay : 'Bien',
+                single_reaction : 'reacción',
+                plural_reaction : 'reacciones',
+                to_page : 'a esta <strong>página</strong>',
+                close : 'cerrar',
+                thanks : 'Gracias por tu reacción',
+                already_done_that : 'Ya reaccionaste a esto',
+                remove_reaction : 'Remover reacción',
+                view_on_site : 'Ver en Readrboad',
+                add_comment : 'Añade comentarios o #hashtags',
+                characters_left : 'Quedan NNN caracteres ',
+                comment: ' Comenta',
+                comments: ' Comentas',
+                thanks_for_comment : 'Gracias por tu comentario',
+                share_reaction : 'Comparte tu reacción',
+                bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
+            }
+        },
         util: {
+            // cookies: {
+            //     create: function(name,value,days) {
+            //         if (days) {
+            //             var date = new Date();
+            //             date.setTime(date.getTime()+(days*24*60*60*1000));
+            //             var expires = "; expires="+date.toGMTString();
+            //         }
+            //         else var expires = "";
+            //         document.cookie = name+"="+value+expires+"; path=/";
+            //     },
+
+            //     read: function(name) {
+            //         var nameEQ = name + "=";
+            //         var ca = document.cookie.split(';');
+            //         for(var i=0;i < ca.length;i++) {
+            //             var c = ca[i];
+            //             while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            //             if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            //         }
+            //         return null;
+            //     },
+
+            //     erase: function(name) {
+            //         createCookie(name,"",-1);
+            //     }
+            // },
+            bubblingEvents: {
+                'touchend': false,
+                'dragging': false
+            },
+            windowBlur: function() { /*RDR.util.clearWindowInterval();*/ return; },
+            windowFocus: function() { return; },
+            clearWindowInterval: function () {
+                // clearInterval($.data(this, 'rdr_intervalTimer'));
+            },
+            setWindowInterval: function () {
+                $.data(this, 'rdr_intervalTimer', setInterval(function() {
+                    if (typeof RDR.events != 'undefined') { RDR.events.checkTime(); }
+                }, 500));
+            },
             checkForSelectedTextAndLaunchRindow: function(){
                 //RDR.util.checkForSelectedTextAndLaunchRindow
                     
@@ -2333,62 +2618,27 @@ function readrBoard($R){
             initTouchBrowserSettings: function(){
                 // RDR.util.initTouchBrowserSettings
                 
-                if(isTouchBrowser){
-                    $(window).on('scrollstop', function() {
+                if(isTouchBrowser && RDR.util.activeAB() ){
+                    $('body').addClass('rdr_touch_browser');
+                    // mobiletodo: DO WE NEED
+                    $(window).on('scrollend', function() {
                         RDR.util.mobileHelperToggle();
                     });
-                    //quick'n'dirty way to init the helper indicators for mobile
-                    $( RDR.group.active_sections_with_anno_whitelist + ', ' + RDR.group.media_selector ).trigger('mouseover').trigger('mouseout');
                 }
 
                 $RDR.dequeue('initAjax');
             },
             mobileHelperToggle: function() {
                 // RDR.util.mobileHelperToggle
-                var foundFirstTextNode = false;
-                $('[rdr-node="true"]').each( function() {
+                $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
 
                     var $this = $(this),
-                        nodeTop = $this.offset().top - $(window).scrollTop();
+                        hash = $this.data('hash');
 
-                    if ( nodeTop > 30 && foundFirstTextNode == false ) {
-
-                        var mediaSelector = 'img,' + RDR.group.media_selector;
-                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
-                            var hash = $this.data('hash');
-                            
-                            if (hash) {
-                                $this.addClass('rdr_live_hover');
-                                if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                    $('#rdr_indicator_' + hash).show();
-                                    // RDR.actions.indicators.utils.borderHilites.engage(hash);
-                                }
-
-                                RDR.actions.content_nodes.init(hash, function(){});
-                            }
-                        } else {
-                            $this.addClass('rdr_live_hover');
-                            foundFirstTextNode = true;
-                        }
-
-
-                    } else {
-                        $this.removeClass('rdr_live_hover');
-                        $('.rdr_helper_rindow').hide();
-                        
-                        var mediaSelector = 'img,' + RDR.group.media_selector;
-                        if ( mediaSelector.indexOf( $this.get(0).nodeName.toLowerCase() ) != -1 ) {
-                            if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
-                                // _mediaHoverOff( $this )
-                                // var $this = $(obj),
-                                var hash = $this.data('hash');
-
-                                $this.removeClass('rdr_live_hover');
-                                $('#rdr_indicator_' + hash).hide();
-                            }
-                        }
-                    }
+                    RDR.actions.indicators.init(hash);
+                    $this.addClass('rdr_live_hover');
                 });
+
                 
             },
             initPublicEvents: function(){
@@ -2397,14 +2647,6 @@ function readrBoard($R){
                 //we're using the rdr_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
                 window.readrboard.public_events = $('#rdr_sandbox');
                 $RDR.dequeue('initAjax');
-            },
-            triggerPublicEvent: function(namespace, data){
-                // RDR.util.triggerPublicEvent
-                
-                //also publish a catchall event - especially good for debugging
-                window.readrboard.public_events.trigger('event', data);
-                window.readrboard.public_events.trigger(namespace, data);
-            
             },
             makeEmptySummary : function(hash, kind) {
             // RDR.util.makeEmptySummary( hash )
@@ -2425,40 +2667,91 @@ function readrBoard($R){
             },
             getPageProperty: function( prop, hashOrObject ) {
             //RDR.util.getPageProperty
+
             // goal is, generally, to get the Page ID integer.
                 if (!prop) {
                     prop = "id";
                 }
-                var page_id;
 
-                //hack to accomodate the dirty - hash=="page"
-                if(hashOrObject == "page"){
-                    // hack salvage data
-                    page_id = $('.rdr_window').data('container').attr('rdr-page-id');
-                    return parseInt(page_id, 10);
-                }
+                if (prop == "id") {
+                    var page_id;
 
-                // this code is to accommodate passing in either a hash (string) or jquery element to 
-                if (typeof hashOrObject == "object") {
-                    if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
-                        return parseInt( $(hashOrObject).closest('[rdr-page-container]').data('page_id') );
+                    //hack to accomodate the dirty - hash=="page"
+                    if(hashOrObject == "page"){
+                        // hack salvage data
+                        page_id = $('.rdr_window').data('container').attr('rdr-page-id');
+                        return parseInt(page_id, 10);
                     }
-                } else if (!hashOrObject) {
-                    // whiskey tango foxtrot
-                    // return false;
-                    return $('[rdr-page-container]').eq(0).data('page_id');
-                }
-                if ( typeof hashOrObject == "string" ) {
-                    var hash = hashOrObject;
-                }
-                // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
-                var page_id = ( $('[rdr-hash="'+hash+'"]').data('page_id') ) ? $('[rdr-hash="'+hash+'"]').data('page_id') : ( $('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id') ) ?$('[rdr-hash="'+hash+'"]').closest('[rdr-page-container]').data('page_id'):$('body').data('page_id');
 
-                // store the page_id on this node to prevent walking-up again later
-                if ( $('[rdr-hash="'+hash+'"]').hasAttr('rdr-page-container') && !$('[rdr-hash="'+hash+'"]').data('page_id') ) {
-                    $('[rdr-hash="'+hash+'"]').data('page_id', page_id);
+                    // this code is to accommodate passing in either a hash (string) or jquery element to 
+                    if (typeof hashOrObject == "object") {
+                        // if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
+                        if ( $(hashOrObject).closest('[rdr-page-container]').length ) {
+                            return parseInt( $(hashOrObject).closest('[rdr-page-container]').attr('rdr-page-container') );
+                        }
+                    } else if (!hashOrObject) {
+                        // whiskey tango foxtrot
+                        // return false;
+                        // return $('[rdr-page-container]').eq(0).data('page_id');
+                        return $('[rdr-page-container]').eq(0).attr('rdr-page-container');
+                    }
+
+                    if ( typeof hashOrObject == "string" ) {
+                        var hash = hashOrObject;
+                        var $objWithHash = $('[rdr-hash="'+hash+'"]');
+                    }
+
+                    // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
+                    // so foxtrot ugly
+                    var page_id = ( $objWithHash.data('page_id') ) ? $objWithHash.data('page_id') : ( $objWithHash.closest('[rdr-page-container]').length ) ? $objWithHash.closest('[rdr-page-container]').attr('rdr-page-container'):$('body').attr('rdr-page-container');
+
+                    // store the page_id on this node to prevent walking-up again later
+                    if ( $objWithHash.hasAttr('rdr-page-container') && !$objWithHash.data('page_id') ) {
+                        $objWithHash.data('page_id', page_id);
+                    }
+                    return parseInt( page_id );
                 }
-                return parseInt( page_id );
+                if (prop == "title") {
+                    var title = $('meta[property="og:title"]').attr('content') ?
+                            $('meta[property="og:title"]').attr('content') :
+                                $('title').text() ?
+                                $('title').text() : "";
+
+                    return $.trim(title);
+                }
+                
+
+                // what's in the address bar?
+                // this is outside the conditional b/c it's referenced by the canonical URL conditional, too
+                var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
+            
+                if (prop == "page_url") {
+                    return page_url;
+                    // return $.trim( page_url.toLowerCase() );
+                }
+
+                // what is the stated canonical?
+                if (prop == "canonical_url") {
+                    var canonical_url = $('link[rel="canonical"]').length > 0 ?
+                                $('link[rel="canonical"]').attr('href') : page_url;
+                    
+                    canonical_url = $.trim( canonical_url.toLowerCase() );
+
+                    if (canonical_url == RDR.util.getPageProperty('page_url') ) {
+                        canonical_url = "same";
+                    }
+
+                    // fastco fix (since they sometimes rewrite their canonical to simply be their TLD.)
+                    // in the case where canonical claims TLD but we're actually on an article... set canonical to be the page_url
+                    var tld = $.trim(window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
+                    if ( canonical_url == tld ) {
+                        if (page_url != tld) {
+                            canonical_url = page_url;
+                        }
+                    }
+
+                    return $.trim(canonical_url);
+                }
             },
             buildInteractionData: function() {
                 //RDR.util.buildInteractionData
@@ -2539,9 +2832,13 @@ function readrBoard($R){
                 str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
                 binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
             },
-            getCleanText: function(textNode) {
+            getCleanText: function($domNode) {
+                // RDR.util.getCleanText
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
-                var $node = $(textNode);
+                
+                var $node = $domNode.clone();
+
+                $node.find('.rdr, .rdr-custom-cta-container').remove();
 
                 //make sure it doesnt alredy have in indicator - it shouldn't.
                 var $indicator = $node.find('.rdr_indicator');
@@ -2555,7 +2852,7 @@ function readrBoard($R){
                 // TODO: <br> tags and block-level tags can screw up words.  ex:
                 // hello<br>how are you?   here becomes
                 // hellohow are you?    <-- no space where the <br> was.  bad.
-                var node_text = $node.html().replace(/< *br *\/?>/gi, '\n');
+                var node_text = $.trim( $node.html().replace(/< *br *\/?>/gi, ' ') );
                 var body = $.trim( $( "<div>" + node_text + "</div>" ).text().toLowerCase() );
 
                 if( body && typeof body == "string" && body !== "" ) {
@@ -2617,9 +2914,9 @@ function readrBoard($R){
             
             fixBrTags: function(){
                 // RDR.util.fixBrTags:
-                
+
                 //find the $sections through br tags that are in the scoped section.
-                var $sections = $(RDR.group.br_replace_scope_selector).find('br').parent();
+                var $sections = $(RDR.group.br_replace_scope_selector).find('> br').parent();
 
                 if(!$sections.length){
                     return;
@@ -2634,7 +2931,7 @@ function readrBoard($R){
                     var $dummySection = $('<p></p>');
 
                     //use jquery's parser not regex to find <br> tags (http://bit.ly/3x9sQX)
-                    $clone.find('br').each(function(){
+                    $clone.find('> br').each(function(){
                         $(this).replaceWith(marker);
                     });
                     var sections = $clone.html().split(marker);
@@ -2642,13 +2939,14 @@ function readrBoard($R){
                     for(var i = 0; i < sections.length; i++) {
                         var innerText = sections[i];
                         
-                        //use this rarely-used html5 element as a conveninent wrapper
+                        //use a div rarely-used html5 element as a conveninent wrapper
                         //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
-                        $dummySection.append('<rt>'+innerText+'</rt>');
+                        // update:  no, dont.  running into CSS and browser support issues.
+                        $dummySection.append('<div class="rdr_br_replaced">'+innerText+'</div>');
                     }
 
                     $this
-                      .addClass('rdr_br_replaced')
+                      .addClass('rdr_br_replaced_section')
                       .html($dummySection.html());
                 });
             },
@@ -2694,6 +2992,7 @@ function readrBoard($R){
                     var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
                     $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
+                    // no t()
                     $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
                     $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
                 }
@@ -2808,10 +3107,104 @@ function readrBoard($R){
                     hrefQuery = url.slice(qIndex);
                 }
                 return hrefQuery;
+            },
+            createGuid: function() {
+                //RDR.util.createGuid
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            },
+            killSessions: function() {
+                //RDR.util.killSessions
+                localStorage.removeItem('rdr_sts');
+                localStorage.removeItem('rdr_lts');
+                RDR.user.sts = null;
+                RDR.user.lts = null;
+            },
+            activeAB: function() {
+                //RDR.util.activeAB
+
+                var isActive = true;
+                var rdr_ab = JSON.parse( localStorage.getItem('rdr_ab') );  // ab test candidate.  true = sees Antenna
+
+                if( RDR.group.ab_test_impact === true && (!rdr_ab || new Date().getTime() > rdr_ab.expires) ) {
+                    // calculate whether or not they are in the active pool
+                    var p=(10*RDR.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
+
+                    // generate a random number.  if the number is lower than P, they will NOT see the widget
+                    if ( Math.floor(Math.random() * 1000 ) <= p ) {
+                        isActive = false;
+                    }
+                    
+
+                    // set time for 'cookie' to expire
+                    var ab_session_expiretime = new Date();
+                    var days = 30;
+                    ab_session_expiretime.setTime(ab_session_expiretime.getTime() + (days * 1440 * 60 * 1000));
+
+                    var new_rdr_ab = {active: isActive, expires: ab_session_expiretime.getTime() }
+                    localStorage.setItem('rdr_ab', JSON.stringify(new_rdr_ab) );
+                } else {
+                    isActive = rdr_ab.active;
+                }
+
+                return isActive;
+            },
+            checkSessions: function() {
+                //RDR.util.checkSessions
+                var rdr_sts = JSON.parse( localStorage.getItem('rdr_sts') );  // short term session
+                var rdr_lts = localStorage.getItem('rdr_lts'); // long term session
+
+                // check/set session localStorages
+                if( !rdr_sts || new Date().getTime() > rdr_sts.expires ) {
+                    var short_session_guid = RDR.user.sts = RDR.util.createGuid();
+                    var short_session_expiretime = new Date();
+                    var minutes = 15;
+                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+
+                    var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime.getTime() }
+                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                    
+                    // $.clog('rs sts 1', short_session_guid );
+                    // $.cookie('rdr_sts', short_session_guid, { expires: short_session_expiretime });
+                } else {
+
+                    RDR.user.sts = rdr_sts.guid;
+
+                    // lets extend the session time 
+                    var minutes = 10;
+                    var short_session_expiretime = new Date();
+                    short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
+                    // $.clog('rs sts 2', RDR.user.sts );
+                    // $.cookie('rdr_sts', RDR.user.sts, { expires: short_session_expiretime });
+
+                    var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime.getTime() }
+                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                }
+
+                if( !rdr_lts ) {
+                    var long_session_guid = RDR.user.lts = RDR.util.createGuid();
+                    // var long_session_expiretime = new Date();
+                    // var days = 180;
+                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    // $.clog('rs lts 1', long_session_guid ); 
+                    // $.cookie('rdr_lts', long_session_guid, { expires: long_session_expiretime });
+
+                    // var new_rdr_lts = {guid: long_session_guid, expires: short_session_expiretime }
+                    localStorage.setItem('rdr_lts', long_session_guid );
+                } else {
+                    RDR.user.lts = rdr_lts;
+                    // $.clog('rs lts 2', RDR.user.lts ); 
+
+                    //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
+                    // lets extend the session time 
+                    // var days = 180;
+                    // var long_session_expiretime = new Date();
+                    // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
+                    // $.cookie('rdr_lts', RDR.user.long_session_guid, { expires: long_session_expiretime });
+                }
             }
-
-
-
         },
         debug: function(){
             window.RDR = window.READRBOARDCOM;
@@ -2820,6 +3213,15 @@ function readrBoard($R){
         },
         toggle: function(){
             $R('body').toggleClass('no-rdr');
+        },
+        getLastEvent: function() {
+            if (RDR.group.premium == true) {
+                return {
+                    'event':(RDR.events.lastEvent) ? RDR.events.lastEvent:'',
+                    'value':(RDR.events.lastValue) ? RDR.events.lastValue:'',
+                    'supplementary':(RDR.events.lastSupplementary) ? RDR.events.lastSupplementary:{}
+                };
+            }
         },
         session: {
             alertBar: {
@@ -2844,12 +3246,12 @@ function readrBoard($R){
                         $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
 
                         if ( $('img[rdr-hash="'+data.container_hash+'"]').length == 1 ) {
-                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 ' <a class="rdr_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
                                 ' <strong class="seeItLinkText rdr_blue">Show it on the page</strong></a></div>');
                         } else {
                             //put a better message here
-                            $msg2 = $('<div><strong class="reactionText">Reaction: <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 '<strong>"</strong><em>' + decodedContent.substr(0,140) + '...</em><strong>"</strong>'+
                                 '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
@@ -2863,6 +3265,7 @@ function readrBoard($R){
                     }
                     if( whichAlert == "showMorePins"){
                         //put a better message here
+                        // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
                         $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
 
@@ -2900,7 +3303,7 @@ function readrBoard($R){
                     $('div.rdr_indicator_for_media').hide();
                     // RDR.actions.indicators.utils.borderHilites.disengageAll();
                     
-                    // set a cookie in the iframe saying not to show this anymore
+                    // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
                         RDR_baseUrl + "/static/xdm.html",
@@ -2942,7 +3345,7 @@ function readrBoard($R){
             getSharedLinkInfo: function( data ){
                 //some condition
 
-                //TODO: sample data here, fill with info from cookie
+                //TODO: sample data here, fill with info from localStorage
                 // var data = {
                 //     location: "2:10\0542:32",
                 //     container_hash: "c9676b4da28e1e005a1b27676e8b2847"
@@ -2953,7 +3356,7 @@ function readrBoard($R){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                if ( $.cookie('content_type') != 'pag' ) {
+                if ( localStorage.getItem('rdr_content_type') != 'pag' ) {
                     
                     // quick fix
                     // todo  - do this better later;
@@ -2973,6 +3376,7 @@ function readrBoard($R){
                 } else if ( callback ) {
                     RDR.session.receiveMessage( false, callback );
                 }
+
                 $.postMessage(
                     "getUser",
                     RDR_baseUrl + "/static/xdm.html",
@@ -2983,7 +3387,7 @@ function readrBoard($R){
                 var response = args.response;
                 switch ( response.message ) {
                     case "Error getting user!":
-                        // kill the user object and cookie
+                        // kill the user object and localStorage
                         RDR.session.killUser();
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
@@ -3020,7 +3424,6 @@ function readrBoard($R){
                 }
             },
             createXDMframe: function() {
-
                 RDR.session.receiveMessage({}, function() {
                     RDR.util.userLoginState();
                 });
@@ -3044,7 +3447,9 @@ function readrBoard($R){
                 //The only side effect is that it adds a user property to args ( args[user] ).
                 $.receiveMessage(
                     function(e){
+                        
                         var message = $.evalJSON( e.data );
+                        
                         if ( message.status ) {
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
@@ -3077,6 +3482,9 @@ function readrBoard($R){
 
                                 RDR.util.userLoginState();
 
+                            } else if ( message.status == "xdm loaded" ) {
+                                RDR.group.xdmLoaded = true;
+                                RDR.events.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
@@ -3188,6 +3596,7 @@ function readrBoard($R){
             },
             killUser: function() {
                 RDR.user = {};
+                RDR.util.killSessions();
                 $.postMessage(
                     "killUser",
                     RDR_baseUrl + "/static/xdm.html",
@@ -3230,6 +3639,7 @@ function readrBoard($R){
                                     RDR.session.showLoginPanel( args );
                                 });
 
+                                // no t()
                                 var tmpUserMsg = 'You can react or comment <strong>' + num_interactions_left + ' more times</strong> before you must ';
 
                                 $tmpUserMsg.empty().append('<span>'+tmpUserMsg+'</span>');
@@ -3237,9 +3647,9 @@ function readrBoard($R){
 
                                 break;
 
-                            case "existingInteraction":
-                                userMsg = "You have already given that reaction for this.";
-                                break;
+                            // case "existingInteraction":
+                            //     userMsg = "You have already given that reaction for this.";
+                            //     break;
                                 
 
                             case "interactionSuccess":
@@ -3249,6 +3659,7 @@ function readrBoard($R){
                                     $tmpUserMsg.empty();
                                 }else{
 
+                                    // no t()
                                     userMsg = (interactionInfo.type == 'tag') ?
                                         "You have tagged this <em>"+interactionInfo.body+"</em>." :
                                     (interactionInfo.type == 'comment') ?
@@ -3260,6 +3671,7 @@ function readrBoard($R){
                                 var click_args = args;
                                 if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
                                     $inlineTempMsg = $('<div />');
+                                    // no t()
                                     $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+RDR_staticUrl+'widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
                                     $inlineTempMsg.find('a').click( function() {
                                         RDR.session.showLoginPanel( click_args );
@@ -3340,13 +3752,27 @@ function readrBoard($R){
                 //RDR.actions.init:
                 var that = this;
                 $RDR = $(RDR);
+                window.readrboard_extend_per_container = window.readrboard_extend_per_container || {};
                 $RDR.queue('initAjax', function(next){
+                    RDR.util.checkSessions();
                     that.initGroupData(RDR.group.short_name);
                     //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
                    //run this before initPageData.  There was a race condition
                    that.initEnvironment();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.handleDeprecated();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.initSeparateCtas();
+                   //next fired on ajax success
+                });
+                $RDR.queue('initAjax', function(next){
+                   that.initHTMLAttributes();
                    //next fired on ajax success
                 });
                 $RDR.queue('initAjax', function(next){
@@ -3386,18 +3812,45 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = RDR.groupSettings.getCustomSettings();
+                        var custom_group_settings = (RDR.groupSettings) ? RDR.groupSettings.getCustomSettings():{};
                         RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
 
-                        $(RDR.group.active_sections).find(RDR.group.no_readr).each( function() {
-                            $(this).addClass('no-rdr');
-                            $(this).find('img').addClass('no-rdr');
+                        var a_or_b_or_not = '';
+                        if ( RDR.group.ab_test_impact === true ) {
+                            a_or_b_or_not = ( RDR.util.activeAB() ) ? 'A':'B';
+                        }
+
+                        RDR.events.trackEventToCloud({
+                            event_type: 'sl',
+                            event_value: a_or_b_or_not,
+                            page_id: RDR.util.getPageProperty('id')
+                        });
+
+                        // handle deprecated .blessed_tags, change to .default_reactions
+                        if ( typeof RDR.group.blessed_tags != 'undefined' ) {
+                            // use .slice() to copy by value
+                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                            RDR.group.default_reactions = RDR.group.blessed_tags.slice();
+                            delete RDR.group.blessed_tags;
+                        }
+
+                        if (RDR.group.hideOnMobile === true && isTouchBrowser) {
+                            return false;
+                        }
+
+                        RDR.group.anno_whitelist += ',div.rdr_br_replaced';
+
+                        $(RDR.group.no_readr).each( function() {
+                            var $this = $(this);
+                            $this.addClass('no-rdr');
+                            $this.find('img').addClass('no-rdr');
                         });
 
                         // setup the active sections + anno_whitelist (i.e. allowed tags)
                         if ( RDR.group.active_sections == "" ) {
                             RDR.group.active_sections = "body";
                         }
+
                         var active_sections = RDR.group.active_sections.split(','),
                             active_sections_with_anno_whitelist = "",
                             anno_whitelist = RDR.group.anno_whitelist.split(',');
@@ -3439,18 +3892,17 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
-
                 var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
                 RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
           
-                var useDefaultSummaryBar = (
+                RDR.group.useDefaultSummaryBar = (
                     RDR.engageScriptParams.bookmarklet &&
                     !$('.rdr-page-summary').length &&
                     // !$(RDR.group.post_selector).length &&
                     !$(RDR.group.summary_widget_selector).length
                 );
                 
-                if (useDefaultSummaryBar){
+                if (RDR.group.useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added rdr-page-summary
                     //and not a publisher added one.
                     $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar"/>').appendTo('body');
@@ -3464,7 +3916,6 @@ function readrBoard($R){
                 // make one call for the page unless post_selector, post_href_selector, summary_widget_selector are all set to not-an-empty-string AND are present on page
 
                 // defaults for just one page / main page
-
                 var pagesArr = [],
                     urlsArr = [],
                     thisPage,
@@ -3476,22 +3927,67 @@ function readrBoard($R){
                 // temp used as a helper to get the pageurl.
                 var pageDict = {};
 
+                var num_posts = 0;
+
                 // if multiple posts, add additional "pages"
                 if (   
                         RDR.group.post_selector !== "" &&
                         RDR.group.post_href_selector !== "" && 
                         RDR.group.summary_widget_selector !== ""
                     ) {
+
+                        var $posts = $(RDR.group.post_selector),
+                            num_posts = $posts.length;
                         //if $(RDR.group.post_selector).length is 0, this will just do nothing
-                        $(RDR.group.post_selector).each( function(){
-                            var key = pagesArr.length;
+                        $posts.each( function(){
+                            // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(RDR.group.post_href_selector);
 
-                            var $summary_widget = $post.find(RDR.group.summary_widget_selector);
+                            var $summary_widget = $post.find(RDR.group.summary_widget_selector).eq(0);
 
-                            if ( $post_href.attr('href') ) {
+                            function nearWindow($thisPost) {
+                                var offsets = $thisPost.offset();
+                                var w = window,
+                                    d = document,
+                                    e = d.documentElement,
+                                    g = d.getElementsByTagName('body')[0],
+                                    x = w.innerWidth || e.clientWidth || g.clientWidth,
+                                    y = w.innerHeight|| e.clientHeight|| g.clientHeight,
+                                    top = (d && d.scrollTop  || g && g.scrollTop  || 0),
+                                    almostInView = y+top+300;
+
+                                if ( offsets.top < almostInView ) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+
+                            }
+                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('rdr-page-checked') ) {
+                                $post.attr('rdr-page-checked', true);
                                 url = $post_href.attr('href');
+
+                                // IE fix for window.location.origin
+                                if (!window.location.origin) {
+                                    window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+                                }
+
+                                // does this URL have the origin on it?  or does it just begin with a relative path?
+                                if ( url.indexOf(window.location.origin) == -1 ) {
+                                    if ( url.substr(0,1) == "/" ) {
+                                        url = window.location.origin + url;
+                                    } else {
+                                        url = window.location.origin + window.location.pathname + url;
+                                    }
+                                }
+
+                                var urlHash = RDR.util.md5.hex_md5(url);
+                                if ( !$post.hasAttr('rdr-page-container') ) {
+                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',urlHash);
+                                }
+                                $summary_widget.attr('rdr-page-widget-key',urlHash);
+
                                 urlsArr.push(url);
 
                                 thisPage = {
@@ -3503,79 +3999,123 @@ function readrBoard($R){
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
-                                if ( !$post.hasAttr('rdr-page-container') ) {
-                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
-                                }
-                                $summary_widget.attr('rdr-page-widget-key',key);
+                                // if ( !$post.hasAttr('rdr-page-container') ) {
+                                //     $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                                // }
+                                // $summary_widget.attr('rdr-page-widget-key',key);
                             }
                         });
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                var pageUrl = window.location.href;
-                if ( $.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0 ) {
-                    canonical_url = $('link[rel="canonical"]').length > 0 ?
-                                $('link[rel="canonical"]').attr('href') : pageUrl;
-                    title = $('meta[property="og:title"]').attr('content') ?
-                            $('meta[property="og:title"]').attr('content') :
-                                $('title').text() ?
-                                $('title').text() : "";
+                var pageUrl = RDR.util.getPageProperty('page_url');
+                
+                if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
+                    if ( !$( 'body' ).hasAttr('rdr-page-checked') ) {
+                        canonical_url = RDR.util.getPageProperty('canonical_url');
+                        title = RDR.util.getPageProperty('title');
 
-                    thisPage = {
-                        group_id: parseInt(RDR.group.id, 10),
-                        url: pageUrl,
-                        canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
-                        title: title
-                    };
+                        // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
+                        // if (canonical_url.indexOf('//') === 0) {
+                            // canonical_url = canonical_url.substr(2);
+                            // canonical_url = window.location.protocol + canonical_url;
+                        // }
 
-                    pagesArr.push(thisPage);
-                    key = pagesArr.length-1;
-                    pageDict[key] = thisPage;
+                        thisPage = {
+                            group_id: parseInt(RDR.group.id, 10),
+                            url: pageUrl,
+                            canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
+                            title: title
+                        };
 
-                    if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                        $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                        RDR.group.thisPage = thisPage;
 
-                        if ( $('.rdr-page-summary').length == 1 ) {
-                            $('.rdr-page-summary').attr('rdr-page-widget-key',key);
-                        } else {
-                            var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
-                            // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
-                            if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
-                                $widget_key_last.attr('rdr-page-widget-key', key);
+                        pagesArr.push(thisPage);
+                        key = pagesArr.length-1;
+                        // key = RDR.util.md5.hex_md5(pageUrl);
+                        pageDict[key] = thisPage;
+
+                        if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
+                            // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);
+                            $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
+
+                            if ( $('.rdr-page-summary').length == 1 ) {
+                                $('.rdr-page-summary').attr('rdr-page-widget-key',key);
+                            } else {
+                                var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
+                                // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
+                                if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
+                                    $widget_key_last.attr('rdr-page-widget-key', key);
+                                }
                             }
                         }
                     }
                 }
-
                 var sendData = {
                     pages: pagesArr
                 };
 
-                //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
-                //might not want to send canonical, or, send it separately if/only if it's different than URL
-                $.ajax({
-                    url: RDR_baseUrl+"/api/page/",
-                    type: "get",
-                    contentType: "application/json",
-                    dataType: "jsonp",
-                    data: { json: $.toJSON(sendData) },
-                    success: function(response) {
-                        // RDR.events.track( 'load' );
+                if (pagesArr.length) {
 
-                        $.each( response.data, function(key,page){
-                            //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
-                            page.key = key;
-                            page.url = pageDict[key].url;
-                            RDR.actions.pages.save(page.id, page);
-                            RDR.actions.pages.initPageContainer(page.id);
-                        });
+                    //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
+                    //might not want to send canonical, or, send it separately if/only if it's different than URL
+                    $.ajax({
+                        url: RDR_baseUrl+"/api/page/",
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: { json: $.toJSON(sendData) },
+                        success: function(response) {
+                            // RDR.events.track( 'load' );
 
-                        $RDR.dequeue('initAjax');
-                    },
-                    error: function(response) {
-                        //for now, ignore error and carry on with mockup
-                    }
-                });
+                            // var load_event_value = '',
+                            //     pages_count = $(RDR.group.post_selector).length;
+                            // if (RDR.group.useDefaultSummaryBar){
+                            //     load_event_value = 'def';
+                            // } else {
+                            //     if (pages_count === 1) {
+                            //         load_event_value = 'si'; // single page load
+                            //     } else if (pages_count > 1) {
+                            //         load_event_value = 'mu' // multiple pages loaded
+                            //     } else {
+                            //         load_event_value = 'unex';
+                            //     }
+                            // }
+
+                            var load_event_value = '';
+                            if (RDR.group.useDefaultSummaryBar){
+                                load_event_value = 'def';
+                            } else {
+                                if (response.data.length === 1) {
+                                    load_event_value = 'si'; // single page load
+                                } else if (response.data.length > 1) {
+                                    load_event_value = 'mu' // multiple pages loaded
+                                } else {
+                                    load_event_value = 'unex';
+                                }
+                            }
+
+                            $.each( response.data, function(idx,page){
+                                //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
+                                page.url = pageDict[key].url;
+                                page.key = RDR.util.md5.hex_md5(page.url);
+                                RDR.actions.pages.save(page.id, page);
+                                RDR.actions.pages.initPageContainer(page.id);
+                            });
+
+                            RDR.events.trackEventToCloud({
+                                event_type: 'wl',
+                                event_value: load_event_value,
+                                page_id: RDR.util.getPageProperty('id')
+                            });
+
+                            $RDR.dequeue('initAjax');
+                        },
+                        error: function(response) {
+                            //for now, ignore error and carry on with mockup
+                        }
+                    });
+                }
 
             },
             runPostPageInit: function(){
@@ -3583,11 +4123,36 @@ function readrBoard($R){
 
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
-                
+
                 if(isTouchBrowser){
-                    //this can't work until the container_id is registered anyway, just do it on that callback.
-                    //#touchBrowserMediaInit
-                }else{
+                    // init the "indicators" for media objects, on mobile only.
+                    // so that the image call-to-action is present and populated
+                    // $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+
+                    // ensure each text node is hashed and has indicator so that we can engage it
+                    $( RDR.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
+                        RDR.actions.indicators.init( $(node).attr('rdr-hash') );
+                    });
+
+                    $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node],'+RDR.group.anno_whitelist).each( function() {
+                        RDR.actions.indicators.init( $(this).attr('rdr-hash') );
+                    });
+
+                    if ( !localStorage.getItem('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
+                        // no t()
+                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+RDR.t('close')+'</a>',
+                            double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
+                            $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
+                            $sandbox = $('#rdr_sandbox');
+
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.rdr', function() {
+                            // we should handle settings through localStorage.  will do later.
+                            localStorage.setItem('hideDoubleTapMessage', true);
+                            $(this).remove();
+                        }).appendTo( $sandbox );
+                    }
+
+                }else if ( RDR.util.activeAB() )  {
                     $(RDR.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
@@ -3603,7 +4168,6 @@ function readrBoard($R){
 
                             var minImgWidth = 160;
                             if ( $this.width() >= minImgWidth ) {
-
                                 var hasBeenHashed = $this.hasAttr('rdr-hashed'),
                                     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
@@ -3660,6 +4224,10 @@ function readrBoard($R){
                             }
                     });
                 }
+
+                if (!RDR.util.activeAB()) return;
+                RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
+                
                 function _mediaHoverOff( obj ) {
                     var $this = $(obj),
                         hash = $this.data('hash');
@@ -3677,7 +4245,92 @@ function readrBoard($R){
                 if(isTouchBrowser){
                     $('#rdr_sandbox').addClass('isTouchBrowser');
                 }
+
+                // RDR.util.checkSessions();
+
+                // get author, topics, tags from publisher-defined tags
+                var page_attributes = ['topics', 'author', 'section'];
+                $.each(page_attributes, function(idx, trait){
+                    if ( RDR.group[trait+'_selector'] != 'undefined' && RDR.group[trait+'_attribute'] != 'undefined' && $( RDR.group[trait+'_selector'] ).length ){
+                        RDR.group[trait] = '';
+                        $(RDR.group[trait+'_selector']).each( function() {
+                            RDR.group[trait] += $(this).attr(RDR.group[trait+'_attribute']) + ',';
+                        });
+                        RDR.group[trait] = RDR.group[trait].substr(0, RDR.group[trait].length-1);
+                    }
+                });
+
+                // setup a scroll event detector
+                /**/
+
+                var active_section_offsets = $(RDR.group.active_sections+':eq(0)').offset();
+                RDR.group.active_section_top = active_section_offsets.top;
+                RDR.group.active_section_bottom = active_section_offsets.bottom;
+                RDR.group.active_section_height = active_section_offsets.bottom - active_section_offsets.top;
+                RDR.group.active_section_milestones = {
+                    '0':RDR.group.active_section_top,
+                    '20':((RDR.group.active_section_height/5)+RDR.group.active_section_top),
+                    '40':((RDR.group.active_section_height/5*2)+RDR.group.active_section_top),
+                    '60':((RDR.group.active_section_height/5*3)+RDR.group.active_section_top),
+                    '80':((RDR.group.active_section_height/5*4)+RDR.group.active_section_top),
+                    '100':RDR.group.active_section_bottom,
+                    'fired':0
+                    // 'fired_0':true,  // this should never fire
+                    // 'fired_20':false,
+                    // 'fired_40':false,
+                    // 'fired_60':false,
+                    // 'fired_80':false,
+                    // 'fired_100':false
+                };
+
+        
+                $(window).on('scroll.rdr', function() {
+                    // disable scroll event tracking.
+                    // clearTimeout($.data(this, 'rdr_scrollTimer'));
+                    // $.data(this, 'rdr_scrollTimer', setTimeout(function() {
+
+                    //     var scrolltop = $(window).scrollTop();
+                    //     var windowHeight = $(window).height();
+
+                    //     if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
+                    //     if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
+                    // }, 250));
+                    
+                    RDR.actions.initPageData();
+                    // return RDR.util._.throttle(
+                    //     RDR.actions.initPageData,
+                    // 100
+                    // );
+                });
+
+                var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
+                RDR.events.recordEvents = $(".rdr-page-summary" + groupPageSelector).length;
+
+
                 
+                // this does not seem to work!
+                // $(window).on('beforeunload.rdr',function(event) {
+                    // RDR.events.trackEventToCloud({
+                    //     event_type: 'page_exit',
+                    //     event_value: '',
+                    //     page_id: RDR.util.getPageProperty('id')
+                    // });
+                // });
+
+                // time on page timer.  should only be incrementing when they are focused on the page.
+                RDR.util.setWindowInterval();
+
+                // onunload, fire the page time total
+                $( window ).on('beforeunload.rdr',function() {
+                    RDR.events.trackEventToCloud({
+                        event_type: 'pt',
+                        event_value: RDR.events.focusedSeconds,
+                        page_id: RDR.util.getPageProperty('id')
+                    });
+                });
 
                 RDR.util.fixBodyBorderOffsetIssue();
                 
@@ -3736,24 +4389,53 @@ function readrBoard($R){
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
-                $(document).on('click.rdr',function(event) {
+                if ( !isTouchBrowser ) {
+                    $(document).on('mousedown.rdr',function(event) {
+                        var $mouse_target = $(event.target);
 
-                    var $mouse_target = $(event.target);
+                        if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                            // if ( $('#rdr_loginPanel').length ) {
+                            //     RDR.session.getUser(function() {
+                            //         RDR.util.userLoginState();
+                            //     });
+                            // }
+                            RDR.actions.UIClearState();
 
-                    if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
-                        // if ( $('#rdr_loginPanel').length ) {
-                        //     RDR.session.getUser(function() {
-                        //         RDR.util.userLoginState();
-                        //     });
-                        // }
-                        RDR.actions.UIClearState();
+                            // if ( !isTouchBrowser ) {
+                            $('div.rdr_indicator_details_for_media').each( function() {
+                                RDR.actions.containers.media.onDisengage( $(this).data('container') );
+                            });
+                            // }
+                        }
 
-                        $('div.rdr_indicator_details_for_media').each( function() {
-                            RDR.actions.containers.media.onDisengage( $(this).data('container') );
-                        });
-                    }
+                    });
+                } else {
+                    $(document).on('touchend.rdr',function(e) {
+                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
+                        if (RDR.util.bubblingEvents['touchend'] == false) {
+                            var $mouse_target = $(e.target);
 
-                });
+                            if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
+                                // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
+
+                                // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
+                                if ( !$mouse_target.hasAttr('rdr-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
+                                    RDR.actions.UIClearState();
+                                }
+                            }
+                        }
+
+                        RDR.util.bubblingEvents['touchend'] = false;
+                    });
+
+                    // iphone drag fix
+                    $(document).on('touchmove.rdr',function(e) {
+                        RDR.util.bubblingEvents['dragging'] = true;
+                    });
+                    $(document).on('touchstart.rdr',function(e) {
+                        RDR.util.bubblingEvents['dragging'] = false;
+                    });
+                }
 
                 //bind an escape keypress to clear it.
                 $(document).on('keyup.rdr', function(event) {
@@ -3766,29 +4448,108 @@ function readrBoard($R){
 
                 $RDR.dequeue('initAjax');
             },
+            handleDeprecated: function() {
+                //rdr-content-type ????  could be come rdr-content-attributes="question"
+                // rewrite some deprecated ReadrBoard attributes into their newer versions
+                if (!RDR.util.activeAB()) {
+                    $('[rdr-custom-display]').each( function() {
+                        var $this = $(this);
+                        $this.attr('rdr-item', $this.attr('rdr-custom-display') );
+                        $this.removeAttr('rdr-custom-display');
+                    });
+
+                    $('[rdr-grid-for]').each( function() {
+                        var $this = $(this);
+                        $this.attr('rdr-view-reactions-for', $this.attr('rdr-grid-for') );
+                        $this.removeAttr('rdr-grid-for');
+                    });
+                }
+                $RDR.dequeue('initAjax');
+            },
+            initSeparateCtas: function(){
+                // RDR.initSeparateCtas
+                
+                if (RDR.group.separate_cta && RDR.util.activeAB() ) {
+                    var separateCtaCount = 0;
+                    $(RDR.group.active_sections).find(RDR.group.separate_cta).each( function(idx, node) {
+                        var $node = $(node),
+                            tagName = node.nodeName.toLowerCase(),
+                            crossPage = '';
+
+                        if ( $node.closest(RDR.group.no_readr).length ) {return;}
+                        if ( $node.hasAttr('rdr-item') ) {
+                            var rdrItem = $node.attr('rdr-item');
+                        } else {
+                            var rdrItem = 'rdr-custom-cta-'+separateCtaCount;
+                            $node.attr('rdr-item', rdrItem);
+                        }
+
+                        // make all media a crosspage container?  
+                        // nah.
+                        // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
+                        //     $node.attr('rdr-crossPageContent', 'true');
+                        // }
+
+                        $node.after('<div class="rdr-custom-cta-container" rdr-tag-type="'+tagName+'"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">'+RDR.t('your_reaction')+'</span></div> </div>');
+                        separateCtaCount++;
+                    });
+                }
+
+                $RDR.dequeue('initAjax');
+            },
+            initHTMLAttributes: function() {
+                // grab rdr-items that have a set of rdr-reactions and add to window.readrboard_extend_per_container
+                if (RDR.util.activeAB()) {
+                    $('[rdr-reactions][rdr-item]').each( function () {
+                        var $this = $(this),
+                            itemName = $this.attr('rdr-item'),
+                            reactions = $this.attr('rdr-reactions');
+
+                        if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
+                            var itemDefinition = {};
+                            itemDefinition.default_reactions = [];
+
+                            $.each(reactions.split(';'), function(idx, tag) {
+                                itemDefinition.default_reactions.push( $.trim(tag) );
+                            });
+
+                            window.readrboard_extend_per_container[itemName] = itemDefinition;
+                        }
+                    });
+                }
+
+                $RDR.dequeue('initAjax');
+            },
             reInit: function() {
                 // RDR.actions.reInit:
                 RDR.actions.hashCustomDisplayHashes();
             },
-            UIClearState: function(){
-                //RDR.actions.UIClearState:
-                // clear any errant tooltips
-                $('div.rdr_twtooltip').remove();
+            UIClearState: function(e){
+                // if (!isTouchBrowser) {
+                    //RDR.actions.UIClearState:
+                    // clear any errant tooltips
+                    $('div.rdr_twtooltip').remove();
 
-                RDR.rindow.closeAll();
-                RDR.actionbar.closeAll();
-                RDR.actions.containers.media.disengageAll();
-                // RDR.actions.indicators.utils.borderHilites.disengageAll();
-                $('div.rdr_indicator_for_media').hide();
-                $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+                    RDR.rindow.closeAll();
+                    RDR.actionbar.closeAll();
+                    RDR.actions.containers.media.disengageAll();
+                    // RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+                    
+                    if (!isTouchBrowser) { 
+                        $('div.rdr_indicator_for_media').hide();
+                    }
 
-                $().selog('hilite', true, 'off');
+                    $().selog('hilite', true, 'off');
 
-                //clear a share alert if it exists - do this better later.
-                var shareBoxExists = $('.rdr_fromShareLink').length;
-                if( shareBoxExists ){
-                    RDR.session.alertBar.close( 'fromShareLink' );
-                }
+                    //clear a share alert if it exists - do this better later.
+                    var shareBoxExists = $('.rdr_fromShareLink').length;
+                    if( shareBoxExists ){
+                        RDR.session.alertBar.close( 'fromShareLink' );
+                    }
+                // } else {
+
+                // }
             },
             catchRangyErrors: function(errorMsg){
                 //RDR.actions.catchRangyErrors:
@@ -3800,7 +4561,7 @@ function readrBoard($R){
                 //RDR.actions.hashNodes:
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" ) { return; }
+                if ( typeof $node==="undefined" || (!RDR.util.activeAB()) ) { return; }
 
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
@@ -3809,7 +4570,7 @@ function readrBoard($R){
                         kind: 'media',
                         $group: null,
                         whiteList: RDR.group.media_selector,
-                        filterParam: 'embed, video, object, iframe',
+                        filterParam: RDR.group.active_sections + ' embed, ' + RDR.group.active_sections + ' video, ' + RDR.group.active_sections + ' object, ' + RDR.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var body = this.src;
                             $(this).data({
@@ -3820,7 +4581,7 @@ function readrBoard($R){
                     {
                         kind: 'img',
                         $group: null,
-                        whiteList: RDR.group.img_selector,
+                        whiteList: RDR.group.active_sections + ' img',
                         filterParam: 'img',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
@@ -3838,14 +4599,18 @@ function readrBoard($R){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
                             //proves it has text (so ellminates images for example.) //the !! is just a convention indicating it's used as a bool.
-                            if ( $(node).text() != $(node).parent().text() ) {
+                            var $node = $(node),
+                                node_text = $node.text(),
+                                node_parent_text = $node.parent().text();
+                            if ( node_text != node_parent_text ) {
                                 // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
-                                return !!$(node).text();
+                                return !!node_text;
                             }
                         },
                         setupFunc: function(){
-                            var body = RDR.util.getCleanText(this);
-                            $(this).data('body',body);
+                            var $this = $(this),
+                                body = RDR.util.getCleanText($this);
+                            $this.data('body',body);
                         }
 
                     },
@@ -3888,7 +4653,7 @@ function readrBoard($R){
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
                     if(!!RDR.group.br_replace_scope_selector && (group.kind == "text")){
-                        $group = $group.add( $node.find( '.rdr_br_replaced rt' ) );
+                        $group = $group.add( $node.find( '.rdr_br_replaced' ) );
                     }
 
                     //take out prev categorized nodes (text is last, so we default to that)
@@ -3946,14 +4711,17 @@ function readrBoard($R){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
-                        
+
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = RDR.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
+                        // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
+
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
-                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{3,}|[-\w]+\.[-\w]{2})$/i;
+                        // modified to support 2 character suffixes, like .fm or .io
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                         var srcArray = hashBody.split('/');
 
                         srcArray.splice(0,2);
@@ -3979,6 +4747,16 @@ function readrBoard($R){
                             hashBody = match[0] + '/' + filename;
                         }
 
+                        var queryStringDomains = [
+                            'soundcloud.com'
+                        ];
+
+                        $.each(queryStringDomains, function(idx, domain) {
+                            if (hashBody.indexOf(domain) != -1) {
+                                RDR.group.media_url_ignore_query = false;   
+                            }
+
+                        });
                         if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
                             hashBody = hashBody.split('?')[0];
                         }
@@ -3994,35 +4772,79 @@ function readrBoard($R){
                         }
 
                     } else {
-                        
                         if(!body){
                           return;
                         }
+
                         hashText = "rdr-"+kind+"-"+body;
                         hash = RDR.util.md5.hex_md5( hashText );
+
+                        if ( !$this.hasAttr('rdr-hash') )  {
+
+                            var iteration = 1;
+                            while ( typeof RDR.summaries[hash] != 'undefined' ) {
+                                hashText = "rdr-"+kind+"-"+body+"-"+iteration;
+                                hash = RDR.util.md5.hex_md5( hashText );
+                                iteration++;
+                            }
+                        }
+
                     }
 
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
-                    if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
-                        var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
-                        RDR.actions.stripRdrNode($parentNodes);
-                    }
+                    // if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
+                    //     var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
+                    //     RDR.actions.stripRdrNode($parentNodes);
+                    // }
                     
+                    // we will use this in the following conditionals
+                    var thisTagName = $this.get(0).nodeName.toLowerCase();
+
                     // check to see if this is an IMG inside a hashed node.  if so, check this thing for siblings.
+                    // if no siblings... make sure the parent does not have a hash or they may be identical
                     // both HTML and text.
-                    if ( $this.get(0).nodeName.toLowerCase() == 'img' && $this.parents('[rdr-hash]').length && !_getTextNodesIn( $this.parents('[rdr-hash]:first')).length ) {
-                        var $parentNodes = $this.parents('[rdr-hash]');
-                        RDR.actions.stripRdrNode($parentNodes);
+                    // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
+                    if ( thisTagName == 'img' ) { 
+                        if ( $this.parents('[rdr-hash]').length && !$this.siblings(RDR.group.anno_whitelist).length ) {
+                            var $parentNodes = $this.parents('[rdr-hash]');
+                            RDR.actions.stripRdrNode($parentNodes);
+                        }
                     }
 
-                    // via http://stackoverflow.com/questions/298750/how-do-i-select-text-nodes-with-jquery
-                    function _getTextNodesIn(el) {
-                        return $(el).find(":not(iframe)").andSelf().contents().filter(function() {
-                            return this.nodeType == 3;
+                    // prevent two indicators for content when there are nested block elements
+                    // only hash and insert an indicator for the deepest node
+                    // to begin, check the node we are hasing (hashNode) for any nested elements from the Allowed Tags (anno_whitelist) setting
+                    if ( $this.find(RDR.group.anno_whitelist).length ) {
+                        var dontHash = false;
+
+                        // loop through the Allowed Tags that are nested inside the hashNode
+                        $this.find(RDR.group.anno_whitelist).each(function(idx, childNode) {
+
+
+                            var tagName = childNode.nodeName.toLowerCase(),
+                                embedTagsArray = ['img','iframe','embed'];
+
+                            // if this node, inside the hashNode, is an image, iframe, or embed...
+                            // check to see if ti has any valid siblings (in case, say, the image is floated next to a paragraph)
+                            if ( $.inArray(tagName, embedTagsArray) != -1 ) {
+
+                                var $childNode = $(childNode);
+                                if ($childNode.siblings(RDR.group.anno_whitelist).length ) {
+                                    
+                                }
+
+                            } else {
+                                dontHash = true;
+                            }
                         });
-                    };
+
+                        if (dontHash===true) { 
+                            // RDR.actions.stripRdrNode($this);
+                            return;
+                        }
+                    }
 
                     // add an object with the text and hash to the RDR.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
@@ -4042,8 +4864,9 @@ function readrBoard($R){
                     $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
-                    if ( HTMLkind != 'body' ) {
-                        // todo: touchHover
+                    if ( HTMLkind != 'body' && !isTouchBrowser ) {
+                        // // todo: touchHover
+                        
                         $this.on('mouseenter', function() {
                             RDR.actions.indicators.init(hash);
                             $(this).addClass('rdr_live_hover');
@@ -4061,7 +4884,7 @@ function readrBoard($R){
                     var summary = RDR.actions.summaries.init(hash);
                     RDR.actions.summaries.save(summary);
 
-                    indicatorInitQueue.push(hash);
+                    // indicatorInitQueue.push(hash);
 
                     var page_id = RDR.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
@@ -4081,6 +4904,7 @@ function readrBoard($R){
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
                 // RDR.actions.sendHashes:
 
+                var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
                     
                     //might not need to protect against this anymore.
@@ -4090,7 +4914,9 @@ function readrBoard($R){
                         return;
                     }
 
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                    var $pageContainer = $('[rdr-page-container="'+pageId+'"]');
+
+                    $.each( $pageContainer.find('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
 
                         if ( typeof $node.data('rdr-hashed') == "undefined" ) {
@@ -4100,26 +4926,37 @@ function readrBoard($R){
                               return value != thisHash;
                             });
 
-                            hashList.push( thisHash );
+                            if (typeof thisHash != 'undefined') {
+                                hashList.push( thisHash );
+                            }
 
                             //init the cross page containers so even the ones that come back with 0 reactions will
                             //have write mode enabled
                             RDR.actions.indicators.init(thisHash);
                             $node.data('rdr-hashed', true);
+                            // $node.data('rdr-hashed-one', true); // on load.  for debug only.
                         }
                     });
 
                     $.each(hashList, function(idx, hash){
+
                         //might not need to protect against this anymore.
                         if (typeof hash != "string" ){
                             RDR.safeThrow("why is your hash not a string!?");
                             return;
                         }
 
-                        var $hashable_node = $('[rdr-hash="' + hash +'"]');
-                        
+                        var $hashable_node = $pageContainer.find('[rdr-hash="' + hash +'"]');
+
                         if ($hashable_node.length == 1 ) {
-                            $hashable_node.attr('rdr-hashed','true');
+                            $hashable_node.attr('rdr-hashed', true);
+                            // $hashable_node.attr('rdr-hashed-two', true); // on select.  for debug only.
+                        } else {
+                            // remove the hash, it is not in this 'page'
+                            var removeIndex = hashList.indexOf(hash);
+                            if (removeIndex > -1) {
+                                hashList.splice(removeIndex, 1);
+                            }
                         }
                     });
                     
@@ -4159,8 +4996,9 @@ function readrBoard($R){
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // RDR.actions.sendHashesForSinglePage:
-                  
+
                     var pageId = sendData.pageID;
+
                     // send the data!
                     $.ajax({
                         url: RDR_baseUrl+"/api/summary/containers/",
@@ -4244,11 +5082,16 @@ function readrBoard($R){
 
                                 var initSomeHashes = [];
                                 $.each( response.data.crossPageKnown , function(idx, hashObject) {
-                                    initSomeHashes.push(hashObject.hash);
+                                    if ( initSomeHashes.indexOf(hashObject.hash) == -1 ) {
+                                        initSomeHashes.push(hashObject.hash);
+                                    }
                                 });
 
-                                $.each( $('[rdr-custom-display]') , function(idx, node) {
-                                    initSomeHashes.push( $(node).data('hash') );
+                                // init the custom display / separate_cta elements
+                                $.each( $('[rdr-item]') , function(idx, node) {
+                                    if ( initSomeHashes.indexOf($(node).data('hash')) == -1 ) {
+                                        initSomeHashes.push( $(node).data('hash') );
+                                    }
                                 });
 
                                 RDR.actions.containers.initCustomDisplayHashes( initSomeHashes );
@@ -4266,10 +5109,10 @@ function readrBoard($R){
                 
                 pageCustomDisplays[ pageId ] = [];
                 
-                if ( $('[rdr-custom-display]').length ) {
+                if ( $('[rdr-item]').length ) {
 
                     // should we find custom-display nodes and add to the hashList here?
-                    $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                    $.each( $('[rdr-item]'), function( idx, node ) {
                         var $node = $(node);
                         RDR.actions.hashNodes( $node );
                         var thisHash = $node.attr('rdr-hash');
@@ -4290,28 +5133,29 @@ function readrBoard($R){
                         tag = settings.tag,
                         summary = settings.summary,
                         hash = settings.hash,
+                        kind = settings.kind,
                         $rindow = settings.$rindow,
                         selState = settings.selState;
 
                     options = options || {};
 
-                    var helpText = options.helpText || "Add comments or #hashtags";
+                    var helpText = options.helpText || RDR.t('add_comment');
                     
                     //not used any more
-                    var cta = options.cta || "Leave a comment";
+                    var cta = options.cta || RDR.t('comment');
 
                     var $commentBox = $('<div class="rdr_commentBox rdr_clearfix"></div>');
 
                     //todo: combine this with the other make comments code
                     var $commentDiv =  $('<div class="rdr_comment">'),
                         $commentTextarea = $('<textarea class="rdr_default_msg">' +helpText+ '</textarea>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
+                        $rdr_charCount =  $('<div class="rdr_charCount">'+ RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        // RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         $(this).removeClass('rdr_default_msg');
                         if( $(this).val() == helpText ){
                             $(this).val('');
@@ -4332,7 +5176,7 @@ function readrBoard($R){
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -4355,11 +5199,11 @@ function readrBoard($R){
                         helpText = settings.helpText,
                         content_node = settings.content_node,
                         summary = settings.summary,
+                        kind= settings.kind,
                         hash = settings.hash,
                         tag  = settings.tag ,
                         $rindow = settings.$rindow,
                         selState = settings.selState;
-
 
                     var commentText = $commentTextarea.val();
 
@@ -4367,7 +5211,7 @@ function readrBoard($R){
                     if ( commentText.length > RDR.group.comment_length ) {
                         commentText = commentText.substr(0, RDR.group.comment_length);
                         $commentTextarea.val( commentText );
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     }
 
                     if ( commentText != helpText ) {
@@ -4380,33 +5224,17 @@ function readrBoard($R){
                                 "kind":summary.kind,
                                 "hash":summary.hash
                             };
-                        } else {
-                            // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
 
-                            // see if this is a custom display type
-                            // if so, use that info to set the kind
-                            // i know, this looks bad, is duplicated elsewhere, and looks overlappng with the code in the if() right above
-                            var $node = $('[rdr-hash="'+summary.hash+'"]'),
-                                content_type = $node.attr('rdr-content-type');
-
-                            if ( content_type ) {
-                                if (content_type == "media") { content_node.kind = "media"; }
-                                else if (content_type == "image") { content_node.kind = "img"; }
-                                else { content_node.kind = "text"; }
-                            } else {
-                                content_node.kind = "text";
-                            }
                         }
                         var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
 
                         //leave parent_id undefined for now - backend will find it.
                         RDR.actions.interactions.ajax( args, 'comment', 'create');
 
-                    } else{
+                    } else {
                         $commentTextarea.focus();
                     }
                     return false; //so the page won't reload
-                
                 }
             },
             containers: {
@@ -4421,8 +5249,8 @@ function readrBoard($R){
                     RDR.actions.indicators.init(hash);
 
                     var $container = $('[rdr-hash="'+hash+'"]'),
-                        customDisplayName = $container.attr('rdr-custom-display'),
-                        $grid = $('[rdr-grid-for="'+customDisplayName+'"]');
+                        customDisplayName = $container.attr('rdr-item'),
+                        $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]');
 
                     if ($grid.length) {
                         RDR.actions.content_nodes.init(hash, function() {
@@ -4432,9 +5260,11 @@ function readrBoard($R){
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
-                    // go ahead and initialize the content nodes for cross-page containers
+
+                    // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
-                    // basically, this has to be done if the TAG GRID is open on load.
+                    // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
+
                     $.each( hashesToInit, function(idx, hash) {
                         var $node = $('[rdr-hash="'+hash+'"]');
 
@@ -4443,38 +5273,49 @@ function readrBoard($R){
                             RDR.actions.indicators.init(hash);
                             RDR.summaries[hash].crossPage=true;
 
-                            // init a tag grid for an open custom display thing.
+                            // init a reaction-view for an open custom display thing.
                             // i know, this should be abstracted.  it's too ProPublica specific.  
                             // needs abstraction, and conditionals to determine what to do based on the display properties.
                             var $container = $('[rdr-hash="'+hash+'"]'),
-                                customDisplayName = $container.attr('rdr-custom-display'),
+                                customDisplayName = $container.attr('rdr-item'),
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
-                                gridWidth = $grid.width(),
-                                gridHeight = $grid.height();
+                                $reactionView = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
+                                reactionViewStyle = $reactionView.attr('rdr-view-style') || 'grid',
+                                reactionViewWidth = $reactionView.width(),
+                                reactionViewHeight = $reactionView.height();
 
-                            // if the grid has no height specified, give it one
-                            // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
-                            if ( gridHeight < 200 ) { gridHeight = 200; $grid.height(gridHeight); }
+                            $reactionView.data('hash', hash).data('container', hash).addClass('no-rdr');
 
-                            RDR.util.cssSuperImportant( $grid, { height:gridHeight+"px" });
+                            if ( reactionViewStyle == "grid" ) {
 
-                            if ($grid.length) {
-                                // since currently, our grid needs to have a width that's a factor of 160... force that:
-                                var statedWidthDividedBy160 = parseInt( gridWidth / 160 );
-                                
-                                gridWidth = statedWidthDividedBy160 * 160;
-                                if ( gridWidth > 960 ) { gridWidth=960; }
+                                // if the reactionView grid has no height specified, give it one
+                                // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
+                                if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
 
-                                // RDR.util.cssSuperImportant( $grid, { width:gridWidth+"px" });
-                                if ( !$grid.closest('.rdr_grid_wrapper').length ) {
-                                    $grid.wrap('<div class="rdr_grid_wrapper" style="width:'+gridWidth+'px;height:'+gridHeight+'px;"></div>')
+                                RDR.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
+
+                                if ($reactionView.length) {
+                                    // since currently, our reactionView needs to have a width that's a factor of 160... force that:
+                                    var statedWidthDividedBy160 = parseInt( reactionViewWidth / 160 );
+                                    
+                                    reactionViewWidth = statedWidthDividedBy160 * 160;
+                                    if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
+
+                                    // RDR.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
+                                    if ( !$reactionView.closest('.rdr_reactionView_wrapper').length ) {
+                                        $reactionView.wrap('<div class="rdr_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
+                                    }
+
+                                    // can the header stuff be optional?
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="rdr rdr_window rdr_inline w'+reactionViewWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>'+RDR.t('reactions')+'</h1></div><div class="rdr rdr_body_wrap rdr_grid rdr_clearfix"></div></div>');
+                                    RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                } else {
+                                    RDR.actions.content_nodes.init(hash);
                                 }
-                                $grid.data('hash', hash).data('container', hash).addClass('w'+gridWidth).html('<div class="rdr rdr_window rdr_inline w'+gridWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>Reactions</h1></div><div class="rdr rdr_body_wrap rdr_clearfix"></div></div>');
-                                RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $grid, false ); $grid.jScrollPane({ showArrows:true }); } );
-                            } else {
-                                RDR.actions.content_nodes.init(hash);
+                            } else if ( reactionViewStyle == "horizontal_bars" ) {
+                                $reactionView.html('<div class="rdr rdr_inline rdr_body_wrap rdr_horizontal_bars rdr_clearfix"></div>'); // gotta insert the rdr_body_wrap or there is no container to attach to in makeTagsListForInline 
+                                RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
                             }
                         }
                     });
@@ -4488,22 +5329,22 @@ function readrBoard($R){
                         //RDR.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
-                        var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#rdr_indicator_'+hash),
+                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
 
-                        var hasBeenHashed = $this.hasAttr('rdr-hashed'),
-                            isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+                        // var hasBeenHashed = $this.hasAttr('rdr-hashed'),
+                        //     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
 
-                        var containerInfo = RDR.containers[hash];
-                        if ( containerInfo ) {
-                            var $mediaItem = containerInfo.$this;
+                        // var containerInfo = RDR.containers[hash];
+                        // if ( containerInfo ) {
+                        //     var $mediaItem = containerInfo.$this;
 
-                            $mediaItem.data('hover',true).data('hash', hash);
-                            RDR.actions.indicators.utils.updateContainerTracker(hash);
-                            RDR.rindow.mediaRindowShow( $mediaItem );
-                            // $indicator_details.addClass('rdr_has_border');
-                        }
+                        //     $mediaItem.data('hover',true).data('hash', hash);
+                        //     RDR.actions.indicators.utils.updateContainerTracker(hash);
+                        //     RDR.rindow.mediaRindowShow( $mediaItem );
+                        //     // $indicator_details.addClass('rdr_has_border');
+                        // }
 
                         // deprecated - see above
                         // RDR.events.track( 'view_node::'+hash, hash );
@@ -4511,23 +5352,24 @@ function readrBoard($R){
                     onDisengage: function(hash){
                         // deprecated?
                         return;
+
                         //RDR.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
-                        var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                            $indicator = $('#rdr_indicator_'+hash),
-                            $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#rdr_indicator_'+hash),
+                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
 
-                        var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
-                        clearTimeout(timeoutCloseEvt);
+                        // var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
+                        // clearTimeout(timeoutCloseEvt);
 
-                        timeoutCloseEvt = setTimeout(function(){
-                            var containerInfo = RDR.containers[hash];
-                            if ( containerInfo ) {
-                                $mediaItem.data('hover',false).data('hash', hash);
-                                RDR.rindow.mediaRindowHide( $mediaItem );
-                            }
-                        },100);
-                        $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
+                        // timeoutCloseEvt = setTimeout(function(){
+                        //     var containerInfo = RDR.containers[hash];
+                        //     if ( containerInfo ) {
+                        //         $mediaItem.data('hover',false).data('hash', hash);
+                        //         RDR.rindow.mediaRindowHide( $mediaItem );
+                        //     }
+                        // },100);
+                        // $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     },
                     disengageAll: function(){
                         //RDR.actions.containers.media.disengageAll:
@@ -4586,6 +5428,7 @@ function readrBoard($R){
                             //#touchBrowserMediaInit
                             if(isTouchBrowser){
                                 RDR.actions.content_nodes.init(hash, function(){});
+                                RDR.actions.indicators.init(hash);
                             }
                         },
                         media: function(hash, summary){
@@ -4593,7 +5436,10 @@ function readrBoard($R){
                             this.img(hash, summary);
                         },
                         text: function(hash, summary){
-
+                            if(isTouchBrowser){
+                                RDR.actions.content_nodes.init(hash, function(){});
+                                RDR.actions.indicators.init(hash);
+                            }
                         },
                         custom: function(hash, summary){
 
@@ -4906,6 +5752,7 @@ function readrBoard($R){
                     }
 
                     var pageId = RDR.util.getPageProperty('id', hash);
+
                     //quick fix add pageId to summary becuase we need it in the summary widget content lookup
                     // todo: #summaryContentByPageFix
                     summary.pageId = pageId;
@@ -4920,6 +5767,7 @@ function readrBoard($R){
                     //use an assetLoader that returns a deferred to ensure it gets loaded only once
                     //and callbacks will run on success - or immediately if it has already returned.
                     var assetLoader = RDR.assetLoaders.content_nodes[container_id];
+
                     if(!assetLoader){
                         assetLoader = $.ajax({
                             url: RDR_baseUrl+"/api/summary/container/content/",
@@ -4935,7 +5783,6 @@ function readrBoard($R){
                     //todo: also remove redundant callbacks from the summary widget.
                     //we still need the onSuccessCallbacks to run though.
                     assetLoader.then(function(response) {
-
                         if ( response.status !== "success" ) {
                             return false;
                         }
@@ -4947,7 +5794,9 @@ function readrBoard($R){
                         //todo: think about this more later:
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
+
                             var $container = $('[rdr-hash="'+hash+'"]');
+
                             try{
                                 node.selState = $container.selog('save', { 'serialRange': node.location });
                             }
@@ -4958,8 +5807,10 @@ function readrBoard($R){
                         });
 
                         //throw the content_nodes into the container summary
+
                         RDR.content_nodes[hash] = content_nodes;
                         summary.content_nodes = content_nodes;
+
                         if(summary.kind == "text"){
                         }else{
                             //this is weird because there is only one content_node - the img
@@ -4980,6 +5831,9 @@ function readrBoard($R){
 
                         // add a class so we note that the content summary was retrieved
                         $('[rdr-hash="'+hash+'"]').attr('rdr_summary_loaded', 'true');
+
+                        // fix for rdr-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
+                        RDR.actions.indicators.update(hash);
 
                         // remove from po' man's throttling array
                         // po' man's throttling
@@ -5109,6 +5963,7 @@ function readrBoard($R){
                     // take care of pre-ajax stuff, mostly UI stuff
                     RDR.actions.interactions[int_type].preAjax(args, action_type);
                     //get user and only procceed on success of that.
+
                     RDR.session.getUser( args, function(newArgs){
                         var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
                             customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
@@ -5281,8 +6136,8 @@ if ( sendData.kind=="page" ) {
 
                                 var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
                                 
-                                var $responseMsg = $('<span class="success_msg" >Thanks for your comment! </span>');
-                                var $doneButton = $('<a class="rdr_doneButton" href="#">Close</a>')
+                                var $responseMsg = $('<span class="success_msg" >'+RDR.t('thanks_for_comment')+' </span>');
+                                var $doneButton = $('<a class="rdr_doneButton" href="#">'+RDR.t('close')+'</a>')
                                     .click(function(e){
                                         e.preventDefault();
 
@@ -5397,8 +6252,17 @@ if ( sendData.kind=="page" ) {
                             //     },
                             //     rindow:$rindow
                             // };
-                            
-                            RDR.util.triggerPublicEvent('comment');
+
+                            RDR.events.trackEventToCloud({
+                                event_type: "c",
+                                event_value: interaction.interaction_node.body,
+                                container_hash: hash,
+                                container_kind: content_node.kind,
+                                page_id: args.page_id,
+                                reaction_body: args.tag.tag_body
+                            });
+
+                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
@@ -5499,6 +6363,7 @@ if ( sendData.kind=="page" ) {
 
                         var hash = args.hash,
                             summary = RDR.summaries[hash],
+                            $container = $('[rdr-hash="'+hash+'"]'),
                             kind,
                             tag,
                             sendData;
@@ -5512,7 +6377,8 @@ if ( sendData.kind=="page" ) {
                                 'container': hash,
                                 'body': "",
                                 'kind':kind,
-                                'hash':hash
+                                'hash':hash,
+                                'item_type':'page'
                             };
 
                             sendData = {
@@ -5548,7 +6414,8 @@ if ( sendData.kind=="page" ) {
                                     'body': $container.attr('rdr-src'),
                                     'kind':'media',
                                     'location': $container.get(0).nodeName.toLowerCase(), // trying to store the tagName, so we can convert to a media type later...???
-                                    'hash':hash
+                                    'hash':hash,
+                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                 };
 
                             } else if(kind == 'img' || kind == 'media' || kind == 'med'){
@@ -5588,7 +6455,8 @@ if ( sendData.kind=="page" ) {
                                     'body': hashBody,
                                     'kind':kind,
                                     // 'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
-                                    'hash':hash
+                                    'hash':hash,
+                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                 };
 
                                 //add dims
@@ -5604,21 +6472,57 @@ if ( sendData.kind=="page" ) {
                                         'body': content_node.body,
                                         'location': content_node.location,
                                         'kind':kind,
-                                        'id':content_node.id
+                                        'id':content_node.id,
+                                        'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
                                     };
                                 }else{
-                                    var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
-                                        selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
-                                        if(!selState){
-                                            RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
-                                            return;
-                                        }
-                                    content_node_data = {
-                                        'container': rindow.data('container'),
-                                        'body': selState.text,
-                                        'location': selState.serialRange,
-                                        'kind': kind
-                                    };
+
+                                    // is it a rdr-item?  if so, let's force the content_node info, if already known
+                                    // UGHUGHUGHUGHUGHUGHUGHUGHUGHUGH
+                                    // i don't foxtrot think this is a doing a fucking thing.  
+                                    if ( $container.hasAttr('rdr-item') && typeof RDR.summaries[hash].content_nodes != 'undefined' && RDR.summaries[hash].content_nodes.length ) {
+                                        $.each( RDR.summaries[hash].content_nodes, function(content_node_id, node) {
+                                            // grab the first one that is not 'undefined'
+                                            if ( content_node_id != 'undefined' ) {
+                                                content_node = node;
+                                            }
+                                        });
+                                        content_node_data = {
+                                            'container': rindow.data('container'),
+                                            'body': content_node.body,
+                                            'location': content_node.location,
+                                            'kind':kind,
+                                            'id':content_node.id,
+                                            'item_type': $container.attr('rdr-item-type')
+                                        };
+                                    } else {
+                                        var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
+                                            selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
+                                            if(!selState){
+                                                RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
+                                                return;
+                                            }
+                                        content_node_data = {
+                                            'container': rindow.data('container'),
+                                            'body': selState.text,
+                                            'location': selState.serialRange,
+                                            'kind': kind,
+                                            'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                        };
+                                    }
+
+                                }
+
+                                // now correct this 0/0:0,0/2:6 bug
+                                // unsure why this occurs, i have not replicated it consistently
+                                // but it causes the Q&A breakage where the same content appears different to the back-end, due to location being
+                                // something like 0/0:0,0/2:6 rather than 0:0,2:6
+                                if ( content_node_data.location.indexOf('/') != -1 ) {
+                                    var newLocationArray = content_node_data.location.split(','),
+                                        newLocation = '';
+
+                                    newLocation = newLocationArray[0].split('/')[1] + ',' + newLocationArray[1].split('/')[1];
+                                    content_node_data.location = newLocation;
                                 }
                             }
 
@@ -5661,6 +6565,22 @@ if ( sendData.kind=="page" ) {
 
                                 tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag,
                                 int_id = response.data.interaction.id;
+
+                            var reaction = (tag.body) ? tag.body:tag.tag_body;
+
+                            RDR.events.trackEventToCloud({
+                                event_type: 're',
+                                event_value: reaction,
+                                reaction_body: reaction,
+                                container_hash: args.hash,
+                                container_kind: args.kind,
+                                content_location: content_node.location,
+                                content_id: (response.data.content_node) ? response.data.content_node.id:null,
+                                page_id: args.page_id
+                            });
+
+                            RDR.events.emit('readrboard.reaction', reaction);
+
                             $('#rdr_loginPanel').remove();
                             
                             //clear loader
@@ -5914,10 +6834,10 @@ if ( sendData.kind=="page" ) {
                                     $shareWrapper.find('a.rdr_share_link:last').click( function() {
                                         
                                         RDR.events.trackEventToCloud({
-                                            category: "share",
-                                            action: "share_open_attempt",
-                                            opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
-                                            shareNetwork: val,
+                                            // action: "share_open_attempt",
+                                            // opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
+                                            event_type: "sh",
+                                            event_value: val,
                                             container_kind: args.kind,
                                             page_id: args.page_id
                                         });
@@ -5935,12 +6855,6 @@ if ( sendData.kind=="page" ) {
                                 });
                                 return $shareWrapper;
                             }
-                            
-                            RDR.util.triggerPublicEvent('tag', {
-                                body: args.tag.body,
-                                hash: args.hash,
-                                kind: args.kind
-                            });
                         },
                         remove: function(args){
                             //RDR.actions.interactions.react.onSuccess.remove:
@@ -6002,7 +6916,6 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     onFail: function(args){
-                      
                         //RDR.actions.interactions.react.onFail:
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
@@ -6022,6 +6935,8 @@ if ( sendData.kind=="page" ) {
                                 //and a close 'x' button.
                                 args.msgType = "existingInteraction";
                                 RDR.session.rindowUserMessage.show( args );
+                        } else if ( response.message.indexOf("blocked this tag") != -1 ) {
+                            alert( RDR.t('bad_language_warning') );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
                             RDR.session.handleGetUserFail( args, function() {
@@ -6108,12 +7023,12 @@ if ( sendData.kind=="page" ) {
 
                         $container.attr('rdr-hasIndicator', 'true');
 
-                        if ( $container.hasAttr('rdr-custom-display') ) {
+                        if ( $container.hasAttr('rdr-item') ) {
 
-                            var customDisplayName = $container.attr('rdr-custom-display'),
+                            var customDisplayName = $container.attr('rdr-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                                $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                                 $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
 
                             // some init.  does this make sense here?
@@ -6139,6 +7054,9 @@ if ( sendData.kind=="page" ) {
                             $('#rdr_container_tracker_'+hash).remove();
                             $('#rdr_indicator_details_'+hash).remove();
 
+                            if ($('#rdr_indicator_'+hash).length) {
+                                return;
+                            }
                             var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
@@ -6156,6 +7074,19 @@ if ( sendData.kind=="page" ) {
 
                             //todo: combine this with the kindSpecificSetup above right?
                             if (kind == 'text'){
+                                function _getTextNodesIn(el) {
+                                    return $(el).find(":not(iframe,noscript)").andSelf().contents().filter(function() {
+                                        return this.nodeType == 3;
+                                    });
+                                }
+
+                                if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
+                                    RDR.actions.stripRdrNode($container);
+                                    return;
+                                }
+
+
+
                                 $container.unbind('.rdr_helper');
                                 // todo: touchHover
                                 
@@ -6172,6 +7103,23 @@ if ( sendData.kind=="page" ) {
                                             RDR.actions.indicators.helpers.out($indicator);
                                         }
                                     });
+                                } else {
+                                    $container.off('touchend.rdr').on('touchend.rdr', function(e){
+                                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
+                                        if (RDR.util.bubblingEvents['touchend'] == false) {
+                                            if ( !$('.rdr_window').length ) {
+                                                var $this_container = $('[rdr-hash="'+hash+'"]');
+                                                // var $container = $(e.target);
+
+                                                var el = $this_container[0]
+                                                $('document').selog('selectEl', el);
+
+                                                var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                            } else {
+                                                RDR.actions.UIClearState();
+                                            }
+                                        }
+                                    });
                                 }
 
                                 //This will be either a helperIndicator or a hidden indicator
@@ -6183,7 +7131,6 @@ if ( sendData.kind=="page" ) {
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
-
                                     _setupHoverForShowRindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
@@ -6196,7 +7143,7 @@ if ( sendData.kind=="page" ) {
                             //of course, don't pass true for shouldReInit here.
                             RDR.actions.indicators.update(hash);
 
-                        } // /else of if (rdr-custom-display) conditional
+                        } // /else of if (rdr-item) conditional
                     }
 
                     /*helper functions */
@@ -6208,7 +7155,8 @@ if ( sendData.kind=="page" ) {
                             .appendTo($indicator)
                             .append(
                                 '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                                '<span class="rdr_count" />' //the count will get added automatically later, and on every update.
+                                '<span class="rdr_count" />', //the count will get added automatically later, and on every update.
+                                '<span class="rdr_count_label" />' 
                             );
 
                         $indicator.css('visibility','visible');
@@ -6217,17 +7165,29 @@ if ( sendData.kind=="page" ) {
 
 
                     function _setupHoverForShowRindow(){
-                        $indicator.on('mouseover.showRindow', function(){
-                            _makeRindow();
-                            var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
-                            if( hasHelper ){
-                                // RDR.events.track('paragraph_helper_engage');
-                            }
-                        });
+                        if (!isTouchBrowser) {
+                            $indicator.on('mouseover.showRindow', function(){
+                                _makeRindow();
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if( hasHelper ){
+                                    // RDR.events.track('paragraph_helper_engage');
+                                }
+                            });
+                        } else {
+                            $indicator.on('touchend.rdr', function(e){
+                                if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
+                                RDR.util.bubblingEvents['touchend'] = true;
+
+                                _makeRindow();
+                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                if( hasHelper ){
+                                    // RDR.events.track('paragraph_helper_engage');
+                                }
+                            });
+                        }
                     }
                     function _makeRindow(){
                         //only allow one indicator rindow.
-                        
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$rindow){
                             // dont rewrite the window if it already exists...
@@ -6259,20 +7219,26 @@ if ( sendData.kind=="page" ) {
                             _updateRindowForHelperIndicator();
 
                             // RDR.events.track('paragraph_helper_show');
-                            RDR.events.trackEventToCloud({
-                                category: "engage",
-                                action: "rindow_shown_indicatorhelper",
-                                opt_label: "kind: text, hash: " + hash,
-                                container_hash: hash,
-                                container_kind: "text",
-                                page_id: page_id
-                            });
+
+                            // DONT FIRE... too many events
+                            // RDR.events.trackEventToCloud({
+                            //     // category: "engage",
+                            //     // action: "rindow_shown_indicatorhelper",
+                            //     // opt_label: "kind: text, hash: " + hash,
+                            //     event_type: 'rindow_show',
+                            //     event_value: 'indicator_helper',
+                            //     container_hash: hash,
+                            //     container_kind: "text",
+                            //     page_id: page_id
+                            // });
                         }else{
                             // RDR.events.track( 'view_node::'+hash, hash );
                             RDR.events.trackEventToCloud({
-                                category: "engage",
-                                action: "rindow_shown_readmode",
-                                opt_label: "kind: text, hash: " + hash,
+                                // category: "engage",
+                                // action: "rindow_shown_readmode",
+                                // opt_label: "kind: text, hash: " + hash,
+                                event_type: 'rs',
+                                event_value: 'rd',
                                 container_hash: hash,
                                 container_kind: "text",
                                 page_id: page_id
@@ -6282,14 +7248,14 @@ if ( sendData.kind=="page" ) {
                     }
                     function _updateRindowForHelperIndicator(){
                         var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader("What do you think?");
+                        var $header = RDR.rindow.makeHeader( RDR.t('main_cta') );
                         $rindow.addClass('rdr_helper_rindow');
                         $rindow.find('.rdr_header').replaceWith($header);
                         $header.append('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
                         $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
                         $rindowBody.html('');
                         $rindow.find('div.rdr_body_wrap').append($rindowBody);
-                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Respond to this</span>' );
+                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Click to respond</span>' );
                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                             $rindow.remove();
                             var $container = $('[rdr-hash="'+hash+'"]');
@@ -6305,21 +7271,34 @@ if ( sendData.kind=="page" ) {
                         // );
                     }
 
+
                     function _setupHoverToFetchContentNodes(callback){                        
                         //Note that the text indicators still don't have content_node info.
                         //The content_nodes will only be populated and shown after hitting the server for details triggered by $indicator mouseover.
                         //Setup callback for a successful fetch of the content_nodes for this container
                         //bind the hover event that will only be run once.  It gets removed on the success callback above.
-                        $indicator.on('mouseover.contentNodeInit', function(){
-                            // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
-                            if ( !$indicator.hasAttr('rdr-custom-display') ) {
+
+
+                        if (isTouchBrowser) {
+                           if ( !$indicator.hasAttr('rdr-item') ) {
                                 RDR.actions.content_nodes.init(hash, callback);
-                            }
-                        });
+                            } 
+                        } else {
+                            $indicator.on( 'mouseover.contentNodeInit' , function(){
+                                // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
+                                if ( !$indicator.hasAttr('rdr-item') ) {
+                                    RDR.actions.content_nodes.init(hash, callback);
+                                }
+                            });
+                        }
                     }
                     function _showRindowAfterLoad(){
                         $indicator.unbind('mouseover.contentNodeInit');
-                        $indicator.triggerHandler('mouseover.showRindow');
+                        if (isTouchBrowser) {
+                            $indicator.triggerHandler('touchend.showRindow');
+                        } else {
+                            $indicator.triggerHandler('mouseover.showRindow');
+                        }
                     }
 
                     function _customDisplaySetupHoverForShowRindow($cta){
@@ -6335,7 +7314,7 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.on('mouseover.showRindow', function(){
+                            $thisCTA.attr('rdr-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
                                 // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
                                 // if( hasHelper ){
@@ -6345,8 +7324,15 @@ if ( sendData.kind=="page" ) {
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
+                        // see if this is a read+write mode cta, or just one "mode"
+                        if ( $cta.attr('rdr-mode').indexOf('write') != -1 && $cta.attr('rdr-mode').indexOf('read') != -1 ) {
+                            var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
+                        } else {
+                            var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
+                        }
+
                         //todo - replace this with the code below - but need to deal with selstate hilites first
-                        if($indicator.$rindow){
+                        if($indicator.$rindow && $indicator.$rindow.hasClass('rdr_'+mode.toLowerCase() ) ){
                             // dont rewrite the window if it already exists...
                             // adding to prevent tagBox text animation.  if this is problematic, just go prevent the animation but let this redraw.
                             if ( $indicator.$rindow.data('container') == hash ) { return; }
@@ -6360,8 +7346,6 @@ if ( sendData.kind=="page" ) {
                         //     summary.$rindow_readmode.remove();
                         // }
                         //end - todo
-
-                        var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
                         if (mode=="writeMode") {
                             if($container.length){
                                 el = $container[0];
@@ -6370,10 +7354,11 @@ if ( sendData.kind=="page" ) {
                                 var selector = '[rdr-hash="' + hash + '"]';
                                 el = $(selector)[0];
                             }
-
                             $('document').selog('selectEl', el);
                         }
+
                         var $rindow = RDR.rindow.make( mode, {hash:hash, '$custom_cta':$cta } );
+                        $rindow.addClass('rdr_rewritable');
                         var page_id = RDR.util.getPageProperty('id', hash );
 
                         //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
@@ -6383,34 +7368,49 @@ if ( sendData.kind=="page" ) {
                         }
 
                         $indicator.$rindow = $rindow;
-                        
+
+                        var event_value = ($cta.attr('rdr-mode')=="write") ? 'wr':'rd';
+
                         // RDR.events.track( 'view_node::'+hash, hash );
                         // RDR.events.track('start_react_text');
-                        RDR.events.trackEventToCloud({
-                            category: "engage",
-                            action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
-                            opt_label: "kind: text, hash: " + hash,
-                            container_hash: hash,
-                            container_kind: "text",
-                            page_id: page_id
-                        });
+
+                        // wtf is this here for?
+                        // RDR.events.trackEventToCloud({
+                        //     // category: "engage",
+                        //     // action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
+                        //     // opt_label: "kind: text, hash: " + hash,
+                        //     event_type: 'rs',
+                        //     event_value: event_value,
+                        //     container_hash: hash,
+                        //     container_kind: "text",
+                        //     page_id: page_id
+                        // });
 
                     }
                 },
                 update: function(hash, shouldReInit){
                     //RDR.actions.indicators.update:
+
                     var scope = this;
                     var summary = RDR.summaries[hash],
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
-                    // for now, separately handle the "custom display" elements
-                    if ( $container.hasAttr('rdr-custom-display') ) {
 
-                            var customDisplayName = $container.attr('rdr-custom-display'),
+                    if ( summary.counts.tags === 0 && typeof summary.content_nodes != 'undefined' ) {
+                        $.each( summary.content_nodes, function(idx, content_node) {
+                            summary.counts = $.extend(true, {}, content_node.counts );
+                            summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
+                        });
+                    }
+
+                    // for now, separately handle the "custom display" elements
+                    if ( $container.hasAttr('rdr-item') ) {
+                            var customDisplayName = $container.attr('rdr-item'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
                             $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                            $grid = $('[rdr-grid-for="'+customDisplayName+'"]'),
+                            $label = $('[rdr-reactions-label-for="'+customDisplayName+'"]'),
+                            $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
                             $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
 
                         // some init.  does this make sense here?
@@ -6418,9 +7418,16 @@ if ( sendData.kind=="page" ) {
                             // if there is a counter on the page
                             if ( $counter.length ) {
                                 if ( summary.counts.tags > 0 ) {
+                                    if ( summary.counts.tags > 1 ) { $label.text('Reactions'); } else { $label.text('Reaction'); }
                                     $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
-                                } else {
-                                    $counter.html('0');
+                                // } else if ( typeof summary.content_nodes != 'undefined' ) {
+                                    // $.each( summary.content_nodes, function(idx, content_node) {
+                                    //     summary.counts = $.extend(true, {}, content_node.counts );
+                                    //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
+                                    // });
+                                    // $counter.html( RDR.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
+                                // } else {
+                                //     $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
@@ -6451,22 +7458,25 @@ if ( sendData.kind=="page" ) {
 
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
                         var $count = $indicator_body.find('.rdr_count'),
+                            $count_label = $indicator_body.find('.rdr_count_label'),
                             $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
                             hasReactions = summary.counts.tags > 0;
 
+                        var reactionLabel = (summary.counts.tags>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
                         if ( hasReactions ) {
                             if (isText) {
                                 $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                $count_label.text(reactionLabel);
                             } else {
-                                var reactionLabel = (summary.counts.tags>1) ? " Reactions" : " Reaction";
-                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + reactionLabel );
+                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
                             }
-                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " Reactions" );
+                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " " + RDR.t('plural_reaction') );
 
                             RDR.actions.indicators.show(hash);
                             
                         } else {
-                            $count.html( '<span class="rdr_react_label">What do you think?</span>' );
+                            $indicator.addClass('rdr_no_reactions');
+                            $count.html( '<span class="rdr_react_label">'+RDR.t('main_cta')+'</span>' );
                             
                             if(isText){
                                 if(RDR.group.paragraph_helper){
@@ -6575,6 +7585,16 @@ if ( sendData.kind=="page" ) {
                                 indicatorDetailsId = 'rdr_indicator_details_'+hash,
                                 page_id = RDR.util.getPageProperty('id', hash );
 
+                            if( $container.width() < 160 ){
+                                RDR.safeThrow('Too small to init.');
+                                return;
+                            }
+
+                            if( $container.css('display') == 'none' || $container.css('visibility') == 'hidden' ){
+                                RDR.safeThrow('not visible: ');
+                                return;
+                            }
+
                             var $existing = $('#rdr_container_tracker_'+hash);
                             if($existing.length){
                                 RDR.safeThrow('Images are not expected to get re-inited.');
@@ -6644,7 +7664,8 @@ if ( sendData.kind=="page" ) {
                                     }
                                 );
 
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
+                                // $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
+                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body'); // .append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
                                 if(isTouchBrowser){
                                     $indicator.bind('tap', function(){
                                         $(this).toggleClass('rdr_hover');
@@ -6665,6 +7686,7 @@ if ( sendData.kind=="page" ) {
                                 $actionbar = $('rdr_actionbar_'+hash);
 
                             $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
+                            // $indicator.addClass('rdr_indicator_for_text');  //.addClass('rdr_dont_show');
 
                             var startOfTrailingWhiteSpace = RDR.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
@@ -6723,13 +7745,15 @@ if ( sendData.kind=="page" ) {
                         //RDR.actions.indicators.utils.makeTagsListForInline:
                         // page is the page object, not a boolean
 
-                        var hash = $rindow.data('hash');
+                        var hash = $rindow.data('hash') || $rindow.attr('rdr-hash');
                         
                         var isPage = !hash || hash == "page";
 
                         var summary = !isPage ? RDR.summaries[hash] : {};
                         
-                        var blessed_tags = RDR.groupSettings.getBlessedTags(hash);
+                        var default_reactions = RDR.groupSettings.getBlessedTags(hash);
+
+                        var reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid';
 
                         // For IE8 and earlier version.
                         if (!Date.now) {
@@ -6737,10 +7761,9 @@ if ( sendData.kind=="page" ) {
                             return new Date().valueOf();
                           }
                         }
-                        
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now()),
-                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());
+                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list rdr_'+reactionViewStyle+'" />').data('now', Date.now()),
+                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $rindow.find('.rdr_tags_list');
                         $rindow.find('.rdr_body_wrap').append($tagsListContainer);
@@ -6755,34 +7778,36 @@ if ( sendData.kind=="page" ) {
                                 // RDR.actions.summaries.sortByTags(page.toptags);
 
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                 $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_cta_msg').click( function() {
                                     $rindow.remove();
                                     $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                             } else {
                                 // write page-level tags: writemode
-                                var $header = RDR.rindow.makeHeader( 'What do you think?' ),
+                                var $header = RDR.rindow.makeHeader( RDR.t('main_cta') ),
                                     isWriteMode = true;
                                 $rindow.find('.rdr_header').replaceWith($header);
-                                writeTagBoxes(blessed_tags);
+                                writeTagBoxes(default_reactions);
                                 var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
                             // write inline tags: writemode
-                            writeTagBoxes(blessed_tags);
+                            writeTagBoxes(default_reactions);
                         } else if(isPage){
                             //do nothing
+                            // whiskey tango...?
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
+
                                 // write inline tags: readmode, for all content types (kind)
                                 RDR.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
                                     if ( !summary.crossPage ) {
-                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                         $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                             $rindow.remove();
                                             var $container = $('[rdr-hash="'+hash+'"]');
@@ -6792,13 +7817,14 @@ if ( sendData.kind=="page" ) {
                                         });
                                     }
                                 } else {
-                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">What do you think?</span>' );
+                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
                                     $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
                                         $rindow.remove();
                                         $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
                                     });
                                 }
                             } else {
+                                // no t() not used?
                                 RDR.rindow.updateFooter( $rindow, '<span class="rdr_no_reactions_msg rdr_clearfix">No reactions yet!</span>' );
                             }
                         }
@@ -6806,17 +7832,14 @@ if ( sendData.kind=="page" ) {
                         // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            // var custom_tag = {count:0, id:"custom", body:"Add your own"},
                             var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
                                 $rindow.removeClass('rdr_rewritable');
                         }
 
 
                         // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
-                        if ( !isWriteMode && !isTouchBrowser) {
-
+                        if ( !isTouchBrowser) {
                             $rindow.on( 'mouseleave', function(e) {
-
                                 var $this = $(this),
                                     timeoutCloseEvt;
 
@@ -6868,8 +7891,7 @@ if ( sendData.kind=="page" ) {
                         // $tagsListContainer.append($tag_table);
                         // RDR.rindow.jspUpdate($rindow);
                         // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
-
-                        if ( $rindow.attr('rdr-grid-type') != "flow" ) {
+                        if ( reactionViewStyle == "grid" || isWriteMode ) {
                             isotopeTags( $tagsListContainer );
                             isotopeFillGap($tagsListContainer);
                         } else {
@@ -6895,7 +7917,6 @@ if ( sendData.kind=="page" ) {
                         // sort a list of tags into their buckets
                         // private function, but could be a RDR.util or RDR.tagBox function
                         function createTagBuckets( tagList ) {
-
                             // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
@@ -6935,27 +7956,29 @@ if ( sendData.kind=="page" ) {
 
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
+
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
                                 colorInt = 1;
 
-                            // size the rindow based on # of reactions
-                            if ( bucketTotal > 6 && !isWriteMode ) {
-                                if(isTouchBrowser){
+                            // if a grid, size the rindow based on # of reactions
+                            if ( reactionViewStyle == 'grid') {
+                                if ( bucketTotal > 6 && !isWriteMode ) {
+                                    if(isTouchBrowser){
+                                        RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                                    }else{
+                                        RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                    }
+                                } else if ( typeof page != "undefined" && isWriteMode ) {
                                     RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                                }else{
-                                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                } else if ( tagList.length > 1 ) {
+                                    if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                    if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                    if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
                                 }
-                            } else if ( typeof page != "undefined" && isWriteMode ) {
-                                RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                            } else if ( tagList.length > 1 ) {
-                                if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                            } 
+                            }
 
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
-
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
                                   RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
@@ -7006,32 +8029,23 @@ if ( sendData.kind=="page" ) {
                         function isotopeFillGap($tagsListContainer){
                             var $boxes = $tagsListContainer.find('.rdr_box');
                             var $lastTag = $boxes.eq(-1);
-                                
                             
-                            if ( isTouchBrowser ) {
-                                if ( $boxes.index($lastTag) % 2 ==0 ) {
-                                    $lastTag.addClass('rdr_wide');
+                            var $smallBoxes = $tagsListContainer.find('.rdr_box_small');
+                            var $lastSmallTag = $smallBoxes.eq(-1);
+
+                            if ( isTouchBrowser && $smallBoxes.length > 1 ) {
+                                if ( $smallBoxes.index($lastTag) % 2 ==0 ) {
+                                    $lastSmallTag.addClass('rdr_wide');
                                 }
                                 return;
                             }
 
-                            if(!$lastTag.length){
+                            if(!$lastTag.length || $boxes.length == 1){
                                 return;
                             }
 
                             var lastTagDims = $lastTag.position();
                             var doBreak = false;
-
-                            $lastTag
-                                .addClass('rdr_clear_transform')
-                                .css({
-                                    height: 'auto',
-                                    width: 'auto',
-                                    top: lastTagDims.top,
-                                    left: lastTagDims.left,
-                                    bottom: 0,
-                                    right: 0
-                                });  
 
                             //force the position to fill the space.
                             $($boxes.get().reverse()).each(function(){
@@ -7041,11 +8055,11 @@ if ( sendData.kind=="page" ) {
                                 
                                 var $thisTag = $(this);
                                 var thisTagDims = $thisTag.position();
-                                    
+
                                 var isLastTag = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
                                 var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
-                                
+
                                 if(!isAdjacentRow && !isAdjacentCol){
                                     doBreak = true;
                                     return;
@@ -7074,6 +8088,17 @@ if ( sendData.kind=="page" ) {
                                 // }
 
                             });
+                            
+                            $lastTag
+                                .addClass('rdr_clear_transform')
+                                .css({
+                                    height: 'auto',
+                                    width: 'auto',
+                                    top: lastTagDims.top,
+                                    left: (lastTagDims.left > 0 && lastTagDims.left < 160) ? 160:lastTagDims.left,
+                                    bottom: 0,
+                                    right: 0
+                                });  
                         }
 
                     },
@@ -7126,11 +8151,13 @@ if ( sendData.kind=="page" ) {
                             $container = summary.$container,
                             $indicator_details = summary.$indicator_details;
 
-                        $indicator_details.css({
-                           top: $container.offset().bottom,
-                           left: $container.offset().left,
-                           width:$container.outerWidth()
-                        });
+                        if (typeof $indicator_details != 'undefined') {
+                            $indicator_details.css({
+                               top: $container.offset().bottom,
+                               left: $container.offset().left,
+                               width:$container.outerWidth()
+                            });
+                        }
                     },
                     updateMediaTracker: function(hash){
                         //RDR.actions.indicators.utils.updateMediaTracker:
@@ -7250,116 +8277,116 @@ if ( sendData.kind=="page" ) {
                         },
                         update: function(hash){
                             //RDR.actions.indicators.utils.borderHilites.update:
-                            var Section = RDR.actions.indicators.utils.borderHilites;
+                            // var Section = RDR.actions.indicators.utils.borderHilites;
 
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('[rdr-hash="'+hash+'"]'),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            // var $indicator = $('#rdr_indicator_'+hash),
+                            //     $container = $('[rdr-hash="'+hash+'"]'),
+                            //     $container_tracker = $('#rdr_container_tracker_'+hash),
+                            //     $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
                             
-                            if( !$mediaBorderWrap.length ){
-                                //failsafe that shouldnt be needed.
-                                if( this.makeAttempt > 1 ) return;
-                                this.makeAttempt ++;
-                                RDR.actions.indicators.utils.borderHilites.make(hash);
-                                //just return here.  the make function will call this update function again and this will be bypassed.
-                                return;
-                            }
-                            //else
-                            this.makeAttempt = 0;
+                            // if( !$mediaBorderWrap.length ){
+                            //     //failsafe that shouldnt be needed.
+                            //     if( this.makeAttempt > 1 ) return;
+                            //     this.makeAttempt ++;
+                            //     RDR.actions.indicators.utils.borderHilites.make(hash);
+                            //     //just return here.  the make function will call this update function again and this will be bypassed.
+                            //     return;
+                            // }
+                            // //else
+                            // this.makeAttempt = 0;
 
-                            $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                            // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                            var borders = {
-                                'top': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'right': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'bottom': {
-                                    $side: null,
-                                    css: {}
-                                },
-                                'left': {
-                                    $side: null,
-                                    css: {}
-                                }
-                            };
+                            // var borders = {
+                            //     'top': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'right': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'bottom': {
+                            //         $side: null,
+                            //         css: {}
+                            //     },
+                            //     'left': {
+                            //         $side: null,
+                            //         css: {}
+                            //     }
+                            // };
                             
-                            //hiliteDesignEdit
-                            // var hiliteThickness = 2,
-                            var hiliteThickness = 
-                                Section.designVersion === 1 ? 2 : 
-                                Section.designVersion === 2 ? 3 : 
-                                2;
+                            // //hiliteDesignEdit
+                            // // var hiliteThickness = 2,
+                            // var hiliteThickness = 
+                            //     Section.designVersion === 1 ? 2 : 
+                            //     Section.designVersion === 2 ? 3 : 
+                            //     2;
                             
-                            var containerWidth,
-                                containerHeight;
+                            // var containerWidth,
+                            //     containerHeight;
 
-                            var hasBorder = false;
-                            //for checking if it has a border.
-                            //If so we'll use outerWidth and outerHeight to take it into account.
-                            //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                            // var hasBorder = false;
+                            // //for checking if it has a border.
+                            // //If so we'll use outerWidth and outerHeight to take it into account.
+                            // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
 
-                            $.each( borders, function(side, data){
-                                //set the value in the object using the key's string as a helper
-                                var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                            // $.each( borders, function(side, data){
+                            //     //set the value in the object using the key's string as a helper
+                            //     var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
                       
-                                data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                                if( !data.$side.length ){
-                                    data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                                }
+                            //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                            //     if( !data.$side.length ){
+                            //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                            //     }
 
-                                //if any side has a border - set hasBorder to true
-                                if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                                    hasBorder = true;
-                                }
+                            //     //if any side has a border - set hasBorder to true
+                            //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                            //         hasBorder = true;
+                            //     }
 
-                            });
+                            // });
                             
-                            //figure out dims
-                            if(hasBorder){
-                                containerWidth = $container.outerWidth();
-                                containerHeight = $container.outerHeight();
-                            }else{
-                                containerWidth = $container.width();
-                                containerHeight = $container.height();
-                            }
+                            // //figure out dims
+                            // if(hasBorder){
+                            //     containerWidth = $container.outerWidth();
+                            //     containerHeight = $container.outerHeight();
+                            // }else{
+                            //     containerWidth = $container.width();
+                            //     containerHeight = $container.height();
+                            // }
 
-                            //use dims to make the css rules for each border side
-                            var widthCap = 2*hiliteThickness;
+                            // //use dims to make the css rules for each border side
+                            // var widthCap = 2*hiliteThickness;
 
-                            borders.top.css = {
-                                width: containerWidth+widthCap+'px',
-                                height: 0+'px',
-                                top: -hiliteThickness+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.right.css = {
-                                width:0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: containerWidth+'px'
-                            };
-                            borders.bottom.css = {
-                                width: containerWidth+widthCap+'px',
-                                height: 0+'px',
-                                top: containerHeight+'px',
-                                left: -hiliteThickness+'px'
-                            };
-                            borders.left.css = {
-                                width: 0+'px',
-                                height: containerHeight+'px',
-                                top: 0+'px',
-                                left: -hiliteThickness+'px'
-                            };
+                            // borders.top.css = {
+                            //     width: containerWidth+widthCap+'px',
+                            //     height: 0+'px',
+                            //     top: -hiliteThickness+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
+                            // borders.right.css = {
+                            //     width:0+'px',
+                            //     height: containerHeight+'px',
+                            //     top: 0+'px',
+                            //     left: containerWidth+'px'
+                            // };
+                            // borders.bottom.css = {
+                            //     width: containerWidth+widthCap+'px',
+                            //     height: 0+'px',
+                            //     top: containerHeight+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
+                            // borders.left.css = {
+                            //     width: 0+'px',
+                            //     height: containerHeight+'px',
+                            //     top: 0+'px',
+                            //     left: -hiliteThickness+'px'
+                            // };
 
-                            $.each( borders, function( side, data ){
-                                RDR.util.cssSuperImportant( data.$side, data.css, true );
-                            });                       
+                            // $.each( borders, function( side, data ){
+                            //     RDR.util.cssSuperImportant( data.$side, data.css, true );
+                            // });                       
                     
                         },
                         engage: function(hash, isShareLink){
@@ -7401,6 +8428,7 @@ if ( sendData.kind=="page" ) {
             },
             summaries:{
                 init: function(hash){
+                    if (!RDR.util.activeAB()) return;
                     //RDR.actions.summaries.init:
 
                     if ( typeof RDR.summaries[hash] == 'object' ) {
@@ -7429,16 +8457,13 @@ if ( sendData.kind=="page" ) {
                         }
                     };
                     //dont save anymore
-                    //RDR.actions.summaries.save(summary);
 
                     return summary;
                 },
                 save: function(summary){
                     //RDR.actions.summaries.save:
-
                     var hash = summary.hash;
-                    if( RDR.summaries.hasOwnProperty(hash) ){
-                    }
+
                     //save the summary and add the $container as a property
                     RDR.summaries[hash] = summary;
                     summary.$container = $('[rdr-hash="'+hash+'"]');
@@ -7750,6 +8775,7 @@ if ( sendData.kind=="page" ) {
 
                     var summary = RDR.summaries[hash];
                     summary.interaction_order = [];
+                    summary.counts.highest_tag_count = 0;
 
                     var isText = summary.kind == "text" || summary.kind == "txt";
                     //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
@@ -7760,12 +8786,14 @@ if ( sendData.kind=="page" ) {
                             $.each( summary.content_nodes, function( node_id, node_data ) {
                                 $.each( node_data.top_interactions.tags, function( tag_id, tag_data ) {
                                     summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                                    setHighestTagCount(tag_data.count);
                                 });
                             });
-                        // has no content node obj?  i.e. is text that is probably a rdr-custom-display.
+                        // has no content node obj?  i.e. is text that is probably a rdr-item.
                         } else {
                             $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                                setHighestTagCount(tag_data.count);
                             });
                         }
                     } else if ( !$.isEmptyObject( summary.top_interactions ) && !$.isEmptyObject( summary.content_nodes) ) {
@@ -7773,9 +8801,16 @@ if ( sendData.kind=="page" ) {
                         var node_id = $.map( summary.content_nodes, function(value, key) {return key;})[0];
                         $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                             summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
+                            setHighestTagCount(tag_data.count);
                         });
                     }
                     summary.interaction_order.sort( SortByTagCount );
+
+                    function setHighestTagCount(tag_count) {
+                        if (tag_count > summary.counts.highest_tag_count ) {
+                            summary.counts.highest_tag_count = tag_count;
+                        }
+                    }
                     
                 },
                 sortPopularTextContainers: function() {
@@ -7831,7 +8866,7 @@ if ( sendData.kind=="page" ) {
 
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more').find('.rdr_footer').hide();
                 //temp tie-over
-                var headerText = ( args.scenario == "reactionSuccess" ) ? "Thanks for your reaction!":"You've already reacted to this";
+                var headerText = ( args.scenario == "reactionSuccess" ) ? RDR.t('thanks') : RDR.t('already_done_that');
 
                 var isPage = args.kind == "page";
                 if(isPage){
@@ -7870,7 +8905,9 @@ if ( sendData.kind=="page" ) {
                     var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
-                    RDR.actions.containers.updateCrossPageHash(hash);
+                    if (args.scenario != "reactionExists") {
+                        RDR.actions.containers.updateCrossPageHash(hash);
+                    }
 
                     $tagsListContainer.addClass('rdr_hiddenPanel');
                     var className = "rdr_tags_list";
@@ -7895,6 +8932,15 @@ if ( sendData.kind=="page" ) {
                 var tag = args.tag,
                     $rindow = args.rindow,
                     content_node = args.content_node;
+
+                RDR.events.trackEventToCloud({
+                    event_type: "vcom",
+                    event_value: '',
+                    container_hash: args.hash,
+                    container_kind: args.content_node.kind,
+                    page_id: RDR.util.getPageProperty('id'),
+                    reaction_body: args.tag.tag_body
+                });
 
                 $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more');
                 RDR.rindow.tagBox.setWidth( $rindow, 320 );
@@ -7944,6 +8990,7 @@ if ( sendData.kind=="page" ) {
                 //helper functions
                 function _makeCommentBox() {
 
+                    // no t()
                     var $commentBox = $('<div class="rdr_commentBox rdr_innerWrap"></div>').html(
                         '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
@@ -7951,8 +8998,9 @@ if ( sendData.kind=="page" ) {
                     var helpText = "Add a comment or #hashtag",
                         $commentDiv =  $('<div class="rdr_comment rdr_clearfix">'),
                         $commentTextarea = $('<textarea class="commentTextArea rdr_default_msg">' +helpText+ '</textarea>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">Comment</button>');
+                        // $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
+                        $rdr_charCount =  $('<div class="rdr_charCount">' + RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
 
@@ -7979,7 +9027,8 @@ if ( sendData.kind=="page" ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -7988,22 +9037,22 @@ if ( sendData.kind=="page" ) {
                         if ( commentText.length > RDR.group.comment_length ) {
                             commentText = commentText.substr(0, RDR.group.comment_length);
                             $commentTextarea.val( commentText );
-                            $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                            // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
+                            $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
                         }
 
                         if ( commentText != helpText ) {
                             //temp translations..
                             //quick fix.  images don't get the data all passed through to here correctly.
                             //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
-                            if ($.isEmptyObject(content_node) && summary.kind=="img") {
 
+                            if ($.isEmptyObject(content_node) && summary.kind=="img") {
                                 content_node = {
                                     "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
                             } else {
-
                                 // more kludginess.  how did this sometimes get set to "txt" and sometimes "text"
                                 // see if this is a custom display type
                                 // if so, use that info to set the kind
@@ -8037,17 +9086,17 @@ if ( sendData.kind=="page" ) {
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">Close X</div>');
+                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
                     $backButton.click( function() {
     
                         //temp fix because the rindow scrollpane re-init isnt working
-                        var isGridForRindow = !!$rindow.attr('rdr-grid-for');
-                        if(!isGridForRindow){
+                        var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                        if(!isViewForRindow){
                             RDR.rindow.close($rindow);
                             return;
                         }
 
-                        var $header = RDR.rindow.makeHeader( 'Reactions' );
+                        var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
                         $rindow.find('.rdr_header').replaceWith($header)
                         RDR.rindow.updateTagPanel( $rindow );
                     });
@@ -8083,7 +9132,7 @@ if ( sendData.kind=="page" ) {
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
-                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) Comments:</h4></div>');
+                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) '+RDR.t('comments')+':</h4></div>');
                     $otherComments.append($header);
 
                     $.each(comments, function(idx, this_comment){
@@ -8243,6 +9292,7 @@ if ( sendData.kind=="page" ) {
                         var imageQueryP = "";
                         var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
                         var mainShareText = "";
+                        // no t()
                         var footerShareText = "A ReadrBoard Reaction on " + groupName;
 
                         switch ( args.container_kind ) {
@@ -8259,8 +9309,8 @@ if ( sendData.kind=="page" ) {
 
                                 //for testing offline
                                 if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                    content = content.replace("localhost:8080", "www.readrboard.com");
+                                    content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                    content = content.replace("localhost:8081", "www.readrboard.com");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -8283,7 +9333,7 @@ if ( sendData.kind=="page" ) {
                         share_url = 'http://www.facebook.com/sharer.php?s=100' +
                                         '&p[title]='+encodeURI( mainShareText )+
                                         '&p[url]='+args.short_url+
-                                        '&p[summary]='+encodeURI(footerShareText)+
+                                        '&p[summary]='+encodeURI(mainShareText)+
                                         //these will just be "" if not relevant
                                         imageQueryP+
                                         videoQueryP;
@@ -8331,77 +9381,77 @@ if ( sendData.kind=="page" ) {
                                 '&text='+encodeURI(mainShareText);
                     break;
 
-                    case "tumblr":
+                    // case "tumblr":
                         
-                        var mainShareText = "";
+                    //     var mainShareText = "";
 
-                        switch ( args.container_kind ) {
-                            case "txt":
-                            case "text":
-                                //tumblr adds quotes for us - don't pass true to quote it.
-                                var footerShareText = _wrapTag(args.reaction, true) +
-                                    '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                    //     switch ( args.container_kind ) {
+                    //         case "txt":
+                    //         case "text":
+                    //             //tumblr adds quotes for us - don't pass true to quote it.
+                    //             var footerShareText = _wrapTag(args.reaction, true) +
+                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
                                 
-                                content_length = 300;
-                                contentStr = _shortenContentIfNeeded(content, content_length);
-                                share_url = 'http://www.tumblr.com/share/quote?'+
-                                'quote='+encodeURIComponent(contentStr)+
-                                '&source='+encodeURIComponent(footerShareText);
+                    //             content_length = 300;
+                    //             contentStr = _shortenContentIfNeeded(content, content_length);
+                    //             share_url = 'http://www.tumblr.com/share/quote?'+
+                    //             'quote='+encodeURIComponent(contentStr)+
+                    //             '&source='+encodeURIComponent(footerShareText);
 
-                            break;
+                    //         break;
 
-                            case "img":
-                            case "image":
-                                                            //for testing offline
-                                if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                    content = content.replace("localhost:8080", "www.readrboard.com");
-                                }
+                    //         case "img":
+                    //         case "image":
+                    //                                         //for testing offline
+                    //             if(RDR_offline){
+                    //                 content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                    //                 content = content.replace("localhost:8081", "www.readrboard.com");
+                    //             }
 
-                                mainShareText = _wrapTag(args.reaction, true);
+                    //             mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
 
-                                share_url = 'http://www.tumblr.com/share/photo?'+
-                                    'source='+encodeURIComponent(content)+
-                                    '&caption='+encodeURIComponent(mainShareText + footerShareText )+
-                                    '&click_thru='+encodeURIComponent(args.short_url);
-                            break;
+                    //             share_url = 'http://www.tumblr.com/share/photo?'+
+                    //                 'source='+encodeURIComponent(content)+
+                    //                 '&caption='+encodeURIComponent(mainShareText + footerShareText )+
+                    //                 '&click_thru='+encodeURIComponent(args.short_url);
+                    //         break;
 
-                            case "media":
-                            case "med":
-                            case "video":
-                                //todo: - I haven't gone back to try this yet...
+                    //         case "media":
+                    //         case "med":
+                    //         case "video":
+                    //             //todo: - I haven't gone back to try this yet...
 
-                                //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
-                                var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
+                    //             //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
+                    //             var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
 
-                                mainShareText = _wrapTag(args.reaction, true);
+                    //             mainShareText = _wrapTag(args.reaction, true);
 
-                                var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
 
-                                //todo: get the urlencode right and put the link back in
-                                var readrLink = mainShareText + footerShareText;
-                                share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
-                            break;
+                    //             //todo: get the urlencode right and put the link back in
+                    //             var readrLink = mainShareText + footerShareText;
+                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                    //         break;
 
-                            case "page":
-                                var footerShareText = _wrapTag(args.reaction, true) +
-                                    '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
+                    //         case "page":
+                    //             var footerShareText = _wrapTag(args.reaction, true) +
+                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
                                 
-                                content_length = 300;
-                                contentStr = _shortenContentIfNeeded(content, content_length);
-                                share_url = 'http://www.tumblr.com/share/link?'+
-                                'url='+encodeURIComponent(args.short_url)+
-                                '&description='+encodeURIComponent(footerShareText);
+                    //             content_length = 300;
+                    //             contentStr = _shortenContentIfNeeded(content, content_length);
+                    //             share_url = 'http://www.tumblr.com/share/link?'+
+                    //             'url='+encodeURIComponent(args.short_url)+
+                    //             '&description='+encodeURIComponent(footerShareText);
 
-                            break;
+                    //         break;
 
-                        }
-                    break;
+                    //     }
+                    // break;
 
-                    case "linkedin":
-                    break;
+                    // case "linkedin":
+                    // break;
                 }
                 if ( share_url !== "" ) {
                     if ( RDR.shareWindow ) {
@@ -8432,7 +9482,7 @@ if ( sendData.kind=="page" ) {
                             //use >>
                             doHTMLEscape ? 
                                 "&raquo;" :
-                                "Â»"
+                                "»"
                         ;
 
 
@@ -8463,7 +9513,7 @@ if ( sendData.kind=="page" ) {
                 //RDR.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
-                if ( $mouse_target.hasAttr('rdr-custom-display') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-custom-display')+'"]').length ) { 
+                if ( $mouse_target.hasAttr('rdr-item') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-item')+'"]').length ) { 
                     return; 
                 }
 
@@ -8615,7 +9665,7 @@ if ( sendData.kind=="page" ) {
             },
             stripRdrNode: function($els) {
                 //RDR.actions.stripRdrNode
-                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash');
+                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash').find('.rdr_indicator').remove();
             },
             pages: {
                 //RDR.actions.pages:
@@ -8625,11 +9675,11 @@ if ( sendData.kind=="page" ) {
                 },
                 initPageContainer: function(pageId){
                     // RDR.actions.pages.initPageContainer
-
                     var page = RDR.pages[pageId],
-                        key = page.key; //todo: consider phasing out - use id instead
+                        key = page.urlhash; //todo: consider phasing out - use id instead
+                        // key = page.key; //todo: consider phasing out - use id instead   
 
-                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key="'+key+'"]');
+                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key]');
 
                     if ( $container.length !== 1 ) return;
                     //else
@@ -8653,21 +9703,32 @@ if ( sendData.kind=="page" ) {
                     // RDR.actions.hashNodes( $container, "nomedia" );
 
                     //todo: can't we use the hashes returned by this function instead?
-                    RDR.actions.hashNodes( $container );
+
+                    // is the post_selector the same node as the active_section?
+                    // determined by seeing if the active_section exists, just not inside the post_selector
+                    if ( RDR.group.post_selector && !$(RDR.group.post_selector).first().find(RDR.group.active_sections).length && $(RDR.group.active_sections).length ) {
+                        // RDR.group.active_sections = '';
+                        // active_sections_with_anno_whitelist = RDR.group.anno_whitelist;
+                        RDR.actions.hashNodes( $container.parent() );
+                    } else {
+                        RDR.actions.hashNodes( $container );
+                    }
 
                     var hashesByPageId = {};
                     if ( page.containers.length > 0 ) {
                         hashesByPageId[ page.id ] = [];
                         $.each( page.containers, function(idx, container) {
-                            if ( typeof container.hash != "undefined") hashesByPageId[ page.id ].push( container.hash );
+                            if ( typeof container.hash != "undefined") {
+                                hashesByPageId[ page.id ].push( container.hash );
+                            }
                         });
 
                         // RDR.actions.sendHashes( hashesByPageId );
                     // } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
                     }
 
-                    if ( page && $('[rdr-custom-display]').length ) {
-                        // [pb] should this be $('[rdr-custom-display]') instead of crossPageContent??
+                    if ( page && $container.find('[rdr-item]').length ) {
+                        // [pb] should this be $('[rdr-item]') instead of crossPageContent??
                         // [pb] 10/2013: methinks yes, b/c we want to ensure a custom display is visible. 
                         //               see comment right below:
 
@@ -8676,29 +9737,32 @@ if ( sendData.kind=="page" ) {
                         //    // not exactly pretty, but i don't want to grab them all, b/c later we get them all and then also remove cross-page ones from the
                         //    // known_hash list, to prevent some duplication.
                         // var hashesByPageId = {};
-                        hashesByPageId[ page.id ] = [];
+                        hashesByPageId[ page.id ] = hashesByPageId[ page.id ] || [];
 
                         // should we find custom-display nodes and add to the hashList here?
-                        $.each( $('[rdr-custom-display]'), function( idx, node ) {
+                        $.each( $container.find('[rdr-item]'), function( idx, node ) {
                             RDR.actions.hashNodes( $(node) );
                             var thisHash = $(node).attr('rdr-hash');
-                            hashesByPageId[ page.id ].push( thisHash );
+
+                            if (typeof thisHash != 'undefined') {
+                                hashesByPageId[ page.id ].push( thisHash );
+                            }
                         });
-                        // hashesByPageId[ page.id ].push( $('[rdr-custom-display="true"]:eq(0)').attr('rdr-hash') );
+                        // hashesByPageId[ page.id ].push( $('[rdr-item="true"]:eq(0)').attr('rdr-hash') );
                         // RDR.actions.sendHashes( hashesByPageId );
                     }
 
                     RDR.actions.sendHashes( hashesByPageId );
 
+                    if (!RDR.util.activeAB()) return;
+
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
-                    widgetSummarySettings.jqFunc = "append";
                     widgetSummarySettings.key = key;
                     
                     if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector+'[rdr-page-widget-key="' + key + '"]') ) {
-                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector);
-                        widgetSummarySettings.jqFunc = "after";
+                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector).eq(0);
                         
                     } else if( $(".rdr-page-summary").length==1 ){
                         widgetSummarySettings.$anchor = $(".rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
@@ -8765,10 +9829,13 @@ RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
-    "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+    RDR_staticUrl+"global/js/jquery-1.10.2.min.js" :
+    // RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+    // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
+    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js";
 
-RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
+// dont think we use this -- we embedded it below.
+// RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
 
 // RDR_scriptPaths.jqueryUI = RDR_offline ?
 //     RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
@@ -8783,8 +9850,6 @@ RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js"
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
 rdr_loadScript({src:RDR_scriptPaths.jquery}, function(){
-
-    load_jquery_ui_partial(jQuery);
     
     if(isTouchBrowser){
         load_mobileEvents(jQuery);
@@ -8798,7 +9863,25 @@ function jquery_onload(jQuery){
     $R = jQuery.noConflict(true);
     var $ = $R;
 
-    if ( $.browser.msie  && parseInt($.browser.version, 10) < 8 ) {
+    // add $.browser functionality back since we're using a newer version of jQuery, but some of our code + older plugins rely on it.
+    /*!
+     * jQuery Browser Plugin 0.0.5
+     * https://github.com/gabceb/jquery-browser-plugin
+     *
+     * Original jquery-browser code Copyright 2005, 2013 jQuery Foundation, Inc. and other contributors
+     * http://jquery.org/license
+     *
+     * Modifications Copyright 2014 Gabriel Cebrian
+     * https://github.com/gabceb
+     *
+     * Released under the MIT license
+     *
+     * Date: 05-01-2014
+     */
+    !function(a,b){"use strict";var c,d;if(a.uaMatch=function(a){a=a.toLowerCase();var b=/(opr)[\/]([\w.]+)/.exec(a)||/(chrome)[ \/]([\w.]+)/.exec(a)||/(version)[ \/]([\w.]+).*(safari)[ \/]([\w.]+)/.exec(a)||/(webkit)[ \/]([\w.]+)/.exec(a)||/(opera)(?:.*version|)[ \/]([\w.]+)/.exec(a)||/(msie) ([\w.]+)/.exec(a)||a.indexOf("trident")>=0&&/(rv)(?::| )([\w.]+)/.exec(a)||a.indexOf("compatible")<0&&/(mozilla)(?:.*? rv:([\w.]+)|)/.exec(a)||[],c=/(ipad)/.exec(a)||/(iphone)/.exec(a)||/(android)/.exec(a)||/(windows phone)/.exec(a)||/(win)/.exec(a)||/(mac)/.exec(a)||/(linux)/.exec(a)||[];return{browser:b[3]||b[1]||"",version:b[2]||"0",platform:c[0]||""}},c=a.uaMatch(b.navigator.userAgent),d={},c.browser&&(d[c.browser]=!0,d.version=c.version,d.versionNumber=parseInt(c.version)),c.platform&&(d[c.platform]=!0),(d.chrome||d.opr||d.safari)&&(d.webkit=!0),d.rv){var e="msie";c.browser=e,d[e]=!0}if(d.opr){var f="opera";c.browser=f,d[f]=!0}if(d.safari&&d.android){var g="android";c.browser=g,d[g]=!0}d.name=c.browser,d.platform=c.platform,a.browser=d}($,window);
+
+
+    if ( $.browser.msie  && parseInt($.browser.version, 10) < 9 ) {
         return false;
     }
     if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
@@ -8813,14 +9896,6 @@ function jquery_onload(jQuery){
 function load_mobileEvents(jQuery){
     (function(e){function d(){var e=o();if(e!==u){u=e;i.trigger("orientationchange")}}function E(t,n,r,i){var s=r.type;r.type=n;e.event.dispatch.call(t,r,i);r.type=s}e.attrFn=e.attrFn||{};var t=navigator.userAgent.toLowerCase(),n=t.indexOf("chrome")>-1&&(t.indexOf("windows")>-1||t.indexOf("macintosh")>-1||t.indexOf("linux")>-1)&&t.indexOf("chrome")<0,r={swipe_h_threshold:50,swipe_v_threshold:50,taphold_threshold:750,doubletap_int:500,touch_capable:"ontouchstart"in document.documentElement&&!n,orientation_support:"orientation"in window&&"onorientationchange"in window,startevent:"ontouchstart"in document.documentElement&&!n?"touchstart":"mousedown",endevent:"ontouchstart"in document.documentElement&&!n?"touchend":"mouseup",moveevent:"ontouchstart"in document.documentElement&&!n?"touchmove":"mousemove",tapevent:"ontouchstart"in document.documentElement&&!n?"tap":"click",scrollevent:"ontouchstart"in document.documentElement&&!n?"touchmove":"scroll",hold_timer:null,tap_timer:null};e.isTouchCapable=function(){return r.touch_capable};e.getStartEvent=function(){return r.startevent};e.getEndEvent=function(){return r.endevent};e.getMoveEvent=function(){return r.moveevent};e.getTapEvent=function(){return r.tapevent};e.getScrollEvent=function(){return r.scrollevent};e.each(["tapstart","tapend","tap","singletap","doubletap","taphold","swipe","swipeup","swiperight","swipedown","swipeleft","swipeend","scrollstart","scrollend","orientationchange"],function(t,n){e.fn[n]=function(e){return e?this.bind(n,e):this.trigger(n)};e.attrFn[n]=true});e.event.special.tapstart={setup:function(){var t=this,n=e(t);n.bind(r.startevent,function(e){n.data("callee",arguments.callee);if(e.which&&e.which!==1){return false}var i=e.originalEvent,s={position:{x:r.touch_capable?i.touches[0].screenX:e.screenX,y:r.touch_capable?i.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.touches[0].pageX-i.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.touches[0].pageY-i.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tapstart",e,s);return true})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee)}};e.event.special.tapend={setup:function(){var t=this,n=e(t);n.bind(r.endevent,function(e){n.data("callee",arguments.callee);var i=e.originalEvent;var s={position:{x:r.touch_capable?i.changedTouches[0].screenX:e.screenX,y:r.touch_capable?i.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.changedTouches[0].pageX-i.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.changedTouches[0].pageY-i.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tapend",e,s);return true})},remove:function(){e(this).unbind(r.endevent,e(this).data.callee)}};e.event.special.taphold={setup:function(){var t=this,n=e(t),i,s,o={x:0,y:0};n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{n.data("tapheld",false);i=e.target;var s=e.originalEvent;var u=(new Date).getTime(),a={x:r.touch_capable?s.touches[0].screenX:e.screenX,y:r.touch_capable?s.touches[0].screenY:e.screenY},f={x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:e.offsetY};o.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;o.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;r.hold_timer=window.setTimeout(function(){var l=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX,c=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;if(e.target==i&&o.x==l&&o.y==c){n.data("tapheld",true);var h=(new Date).getTime(),p={x:r.touch_capable?s.touches[0].screenX:e.screenX,y:r.touch_capable?s.touches[0].screenY:e.screenY},d={x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:e.offsetY};duration=h-u;var v={startTime:u,endTime:h,startPosition:a,startOffset:f,endPosition:p,endOffset:d,duration:duration,target:e.target};n.data("callee1",arguments.callee);E(t,"taphold",e,v)}},r.taphold_threshold);return true}}).bind(r.endevent,function(){n.data("callee2",arguments.callee);n.data("tapheld",false);window.clearTimeout(r.hold_timer)})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.doubletap={setup:function(){var t=this,n=e(t),i,s,o,u;n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{n.data("doubletapped",false);i=e.target;n.data("callee1",arguments.callee);u=e.originalEvent;o={position:{x:r.touch_capable?u.touches[0].screenX:e.screenX,y:r.touch_capable?u.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?u.touches[0].pageX-u.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?u.touches[0].pageY-u.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};return true}}).bind(r.endevent,function(e){var a=(new Date).getTime();var f=n.data("lastTouch")||a+1;var l=a-f;window.clearTimeout(s);n.data("callee2",arguments.callee);if(l<r.doubletap_int&&l>0&&e.target==i&&l>100){n.data("doubletapped",true);window.clearTimeout(r.tap_timer);var c={position:{x:r.touch_capable?u.touches[0].screenX:e.screenX,y:r.touch_capable?u.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?u.touches[0].pageX-u.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?u.touches[0].pageY-u.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};var h={firstTap:o,secondTap:c,interval:c.time-o.time};E(t,"doubletap",e,h)}else{n.data("lastTouch",a);s=window.setTimeout(function(e){window.clearTimeout(s)},r.doubletap_int,[e])}n.data("lastTouch",a)})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.singletap={setup:function(){var t=this,n=e(t),i=null,s=null,o={x:0,y:0};n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{s=(new Date).getTime();i=e.target;n.data("callee1",arguments.callee);o.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;o.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;return true}}).bind(r.endevent,function(e){n.data("callee2",arguments.callee);if(e.target==i){end_pos_x=e.originalEvent.changedTouches?e.originalEvent.changedTouches[0].pageX:e.pageX;end_pos_y=e.originalEvent.changedTouches?e.originalEvent.changedTouches[0].pageY:e.pageY;r.tap_timer=window.setTimeout(function(){if(!n.data("doubletapped")&&!n.data("tapheld")&&o.x==end_pos_x&&o.y==end_pos_y){var i=e.originalEvent;var u={position:{x:r.touch_capable?i.changedTouches[0].screenX:e.screenX,y:r.touch_capable?i.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.changedTouches[0].pageX-i.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.changedTouches[0].pageY-i.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};if(u.time-s<r.taphold_threshold){E(t,"singletap",e,u)}}},r.doubletap_int)}})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.tap={setup:function(){var t=this,n=e(t),i=false,s=null,o,u={x:0,y:0};n.bind(r.startevent,function(e){n.data("callee1",arguments.callee);if(e.which&&e.which!==1){return false}else{i=true;u.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;u.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;o=(new Date).getTime();s=e.target;return true}}).bind(r.endevent,function(e){n.data("callee2",arguments.callee);var a=e.originalEvent.targetTouches?e.originalEvent.changedTouches[0].pageX:e.pageX,f=e.originalEvent.targetTouches?e.originalEvent.changedTouches[0].pageY:e.pageY;if(s==e.target&&i&&(new Date).getTime()-o<r.taphold_threshold&&u.x==a&&u.y==f){var l=e.originalEvent;var c={position:{x:r.touch_capable?l.changedTouches[0].screenX:e.screenX,y:r.touch_capable?l.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?l.changedTouches[0].pageX-l.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?l.changedTouches[0].pageY-l.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tap",e,c)}})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.swipe={setup:function(){function f(t){n=e(t.target);n.data("callee1",arguments.callee);o.x=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageX:t.pageX;o.y=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageY:t.pageY;u.x=o.x;u.y=o.y;i=true;var s=t.originalEvent;a={position:{x:r.touch_capable?s.touches[0].screenX:t.screenX,y:r.touch_capable?s.touches[0].screenY:t.screenY},offset:{x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};var f=new Date;while(new Date-f<100){}}function l(t){n=e(t.target);n.data("callee2",arguments.callee);u.x=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageX:t.pageX;u.y=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageY:t.pageY;window.clearTimeout(r.hold_timer);var f;var l=n.data("xthreshold"),c=n.data("ythreshold"),h=typeof l!=="undefined"&&l!==false&&parseInt(l)?parseInt(l):r.swipe_h_threshold,p=typeof c!=="undefined"&&c!==false&&parseInt(c)?parseInt(c):r.swipe_v_threshold;if(o.y>u.y&&o.y-u.y>p){f="swipeup"}if(o.x<u.x&&u.x-o.x>h){f="swiperight"}if(o.y<u.y&&u.y-o.y>p){f="swipedown"}if(o.x>u.x&&o.x-u.x>h){f="swipeleft"}if(f!=undefined&&i){o.x=0;o.y=0;u.x=0;u.y=0;i=false;var d=t.originalEvent;endEvnt={position:{x:r.touch_capable?d.touches[0].screenX:t.screenX,y:r.touch_capable?d.touches[0].screenY:t.screenY},offset:{x:r.touch_capable?d.touches[0].pageX-d.touches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?d.touches[0].pageY-d.touches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};var v=Math.abs(a.position.x-endEvnt.position.x),m=Math.abs(a.position.y-endEvnt.position.y);var g={startEvnt:a,endEvnt:endEvnt,direction:f.replace("swipe",""),xAmount:v,yAmount:m,duration:endEvnt.time-a.time};s=true;n.trigger("swipe",g).trigger(f,g)}}function c(t){n=e(t.target);var o="";n.data("callee3",arguments.callee);if(s){var u=n.data("xthreshold"),f=n.data("ythreshold"),l=typeof u!=="undefined"&&u!==false&&parseInt(u)?parseInt(u):r.swipe_h_threshold,c=typeof f!=="undefined"&&f!==false&&parseInt(f)?parseInt(f):r.swipe_v_threshold;var h=t.originalEvent;endEvnt={position:{x:r.touch_capable?h.changedTouches[0].screenX:t.screenX,y:r.touch_capable?h.changedTouches[0].screenY:t.screenY},offset:{x:r.touch_capable?h.changedTouches[0].pageX-h.changedTouches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?h.changedTouches[0].pageY-h.changedTouches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};if(a.position.y>endEvnt.position.y&&a.position.y-endEvnt.position.y>c){o="swipeup"}if(a.position.x<endEvnt.position.x&&endEvnt.position.x-a.position.x>l){o="swiperight"}if(a.position.y<endEvnt.position.y&&endEvnt.position.y-a.position.y>c){o="swipedown"}if(a.position.x>endEvnt.position.x&&a.position.x-endEvnt.position.x>l){o="swipeleft"}var p=Math.abs(a.position.x-endEvnt.position.x),d=Math.abs(a.position.y-endEvnt.position.y);var v={startEvnt:a,endEvnt:endEvnt,direction:o.replace("swipe",""),xAmount:p,yAmount:d,duration:endEvnt.time-a.time};n.trigger("swipeend",v)}i=false;s=false}var t=this,n=e(t),i=false,s=false,o={x:0,y:0},u={x:0,y:0},a;n.bind(r.startevent,f);n.bind(r.moveevent,l);n.bind(r.endevent,c)},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.moveevent,e(this).data.callee2).unbind(r.endevent,e(this).data.callee3)}};e.event.special.scrollstart={setup:function(){function o(e,n){i=n;E(t,i?"scrollstart":"scrollend",e)}var t=this,n=e(t),i,s;n.bind(r.scrollevent,function(e){n.data("callee",arguments.callee);if(!i){o(e,true)}clearTimeout(s);s=setTimeout(function(){o(e,false)},50)})},remove:function(){e(this).unbind(r.scrollevent,e(this).data.callee)}};var i=e(window),s,o,u,a,f,l={0:true,180:true};if(r.orientation_support){var c=window.innerWidth||e(window).width(),h=window.innerHeight||e(window).height(),p=50;a=c>h&&c-h>p;f=l[window.orientation];if(a&&f||!a&&!f){l={"-90":true,90:true}}}e.event.special.orientationchange=s={setup:function(){if(r.orientation_support){return false}u=o();i.bind("throttledresize",d);return true},teardown:function(){if(r.orientation_support){return false}i.unbind("throttledresize",d);return true},add:function(e){var t=e.handler;e.handler=function(e){e.orientation=o();return t.apply(this,arguments)}}};e.event.special.orientationchange.orientation=o=function(){var e=true,t=document.documentElement;if(r.orientation_support){e=l[window.orientation]}else{e=t&&t.clientWidth/t.clientHeight<1.1}return e?"portrait":"landscape"};e.event.special.throttledresize={setup:function(){e(this).bind("resize",m)},teardown:function(){e(this).unbind("resize",m)}};var v=250,m=function(){b=(new Date).getTime();w=b-g;if(w>=v){g=b;e(this).trigger("throttledresize")}else{if(y){window.clearTimeout(y)}y=window.setTimeout(d,v-w)}},g=0,y,b,w;e.each({scrollend:"scrollstart",swipeup:"swipe",swiperight:"swipe",swipedown:"swipe",swipeleft:"swipe",swipeend:"swipe"},function(t,n,r){e.event.special[t]={setup:function(){e(this).bind(n,e.noop)}}})})(jQuery);
 }
-function load_jquery_ui_partial(jQuery){
-    /*! jQuery UI - v1.10.3 - 2013-10-28
-    * http://jqueryui.com
-    * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.draggable.js
-    * Copyright 2013 jQuery Foundation and other contributors; Licensed MIT */
-
-    (function(e,t){function i(t,i){var s,n,r,o=t.nodeName.toLowerCase();return"area"===o?(s=t.parentNode,n=s.name,t.href&&n&&"map"===s.nodeName.toLowerCase()?(r=e("img[usemap=#"+n+"]")[0],!!r&&a(r)):!1):(/input|select|textarea|button|object/.test(o)?!t.disabled:"a"===o?t.href||i:i)&&a(t)}function a(t){return e.expr.filters.visible(t)&&!e(t).parents().addBack().filter(function(){return"hidden"===e.css(this,"visibility")}).length}var s=0,n=/^ui-id-\d+$/;e.ui=e.ui||{},e.extend(e.ui,{version:"1.10.3",keyCode:{BACKSPACE:8,COMMA:188,DELETE:46,DOWN:40,END:35,ENTER:13,ESCAPE:27,HOME:36,LEFT:37,NUMPAD_ADD:107,NUMPAD_DECIMAL:110,NUMPAD_DIVIDE:111,NUMPAD_ENTER:108,NUMPAD_MULTIPLY:106,NUMPAD_SUBTRACT:109,PAGE_DOWN:34,PAGE_UP:33,PERIOD:190,RIGHT:39,SPACE:32,TAB:9,UP:38}}),e.fn.extend({focus:function(t){return function(i,a){return"number"==typeof i?this.each(function(){var t=this;setTimeout(function(){e(t).focus(),a&&a.call(t)},i)}):t.apply(this,arguments)}}(e.fn.focus),scrollParent:function(){var t;return t=e.ui.ie&&/(static|relative)/.test(this.css("position"))||/absolute/.test(this.css("position"))?this.parents().filter(function(){return/(relative|absolute|fixed)/.test(e.css(this,"position"))&&/(auto|scroll)/.test(e.css(this,"overflow")+e.css(this,"overflow-y")+e.css(this,"overflow-x"))}).eq(0):this.parents().filter(function(){return/(auto|scroll)/.test(e.css(this,"overflow")+e.css(this,"overflow-y")+e.css(this,"overflow-x"))}).eq(0),/fixed/.test(this.css("position"))||!t.length?e(document):t},zIndex:function(i){if(i!==t)return this.css("zIndex",i);if(this.length)for(var a,s,n=e(this[0]);n.length&&n[0]!==document;){if(a=n.css("position"),("absolute"===a||"relative"===a||"fixed"===a)&&(s=parseInt(n.css("zIndex"),10),!isNaN(s)&&0!==s))return s;n=n.parent()}return 0},uniqueId:function(){return this.each(function(){this.id||(this.id="ui-id-"+ ++s)})},removeUniqueId:function(){return this.each(function(){n.test(this.id)&&e(this).removeAttr("id")})}}),e.extend(e.expr[":"],{data:e.expr.createPseudo?e.expr.createPseudo(function(t){return function(i){return!!e.data(i,t)}}):function(t,i,a){return!!e.data(t,a[3])},focusable:function(t){return i(t,!isNaN(e.attr(t,"tabindex")))},tabbable:function(t){var a=e.attr(t,"tabindex"),s=isNaN(a);return(s||a>=0)&&i(t,!s)}}),e("<a>").outerWidth(1).jquery||e.each(["Width","Height"],function(i,a){function s(t,i,a,s){return e.each(n,function(){i-=parseFloat(e.css(t,"padding"+this))||0,a&&(i-=parseFloat(e.css(t,"border"+this+"Width"))||0),s&&(i-=parseFloat(e.css(t,"margin"+this))||0)}),i}var n="Width"===a?["Left","Right"]:["Top","Bottom"],r=a.toLowerCase(),o={innerWidth:e.fn.innerWidth,innerHeight:e.fn.innerHeight,outerWidth:e.fn.outerWidth,outerHeight:e.fn.outerHeight};e.fn["inner"+a]=function(i){return i===t?o["inner"+a].call(this):this.each(function(){e(this).css(r,s(this,i)+"px")})},e.fn["outer"+a]=function(t,i){return"number"!=typeof t?o["outer"+a].call(this,t):this.each(function(){e(this).css(r,s(this,t,!0,i)+"px")})}}),e.fn.addBack||(e.fn.addBack=function(e){return this.add(null==e?this.prevObject:this.prevObject.filter(e))}),e("<a>").data("a-b","a").removeData("a-b").data("a-b")&&(e.fn.removeData=function(t){return function(i){return arguments.length?t.call(this,e.camelCase(i)):t.call(this)}}(e.fn.removeData)),e.ui.ie=!!/msie [\w.]+/.exec(navigator.userAgent.toLowerCase()),e.support.selectstart="onselectstart"in document.createElement("div"),e.fn.extend({disableSelection:function(){return this.bind((e.support.selectstart?"selectstart":"mousedown")+".ui-disableSelection",function(e){e.preventDefault()})},enableSelection:function(){return this.unbind(".ui-disableSelection")}}),e.extend(e.ui,{plugin:{add:function(t,i,a){var s,n=e.ui[t].prototype;for(s in a)n.plugins[s]=n.plugins[s]||[],n.plugins[s].push([i,a[s]])},call:function(e,t,i){var a,s=e.plugins[t];if(s&&e.element[0].parentNode&&11!==e.element[0].parentNode.nodeType)for(a=0;s.length>a;a++)e.options[s[a][0]]&&s[a][1].apply(e.element,i)}},hasScroll:function(t,i){if("hidden"===e(t).css("overflow"))return!1;var a=i&&"left"===i?"scrollLeft":"scrollTop",s=!1;return t[a]>0?!0:(t[a]=1,s=t[a]>0,t[a]=0,s)}})})(jQuery);(function(e,t){var i=0,s=Array.prototype.slice,a=e.cleanData;e.cleanData=function(t){for(var i,s=0;null!=(i=t[s]);s++)try{e(i).triggerHandler("remove")}catch(n){}a(t)},e.widget=function(i,s,a){var n,r,o,h,l={},u=i.split(".")[0];i=i.split(".")[1],n=u+"-"+i,a||(a=s,s=e.Widget),e.expr[":"][n.toLowerCase()]=function(t){return!!e.data(t,n)},e[u]=e[u]||{},r=e[u][i],o=e[u][i]=function(e,i){return this._createWidget?(arguments.length&&this._createWidget(e,i),t):new o(e,i)},e.extend(o,r,{version:a.version,_proto:e.extend({},a),_childConstructors:[]}),h=new s,h.options=e.widget.extend({},h.options),e.each(a,function(i,a){return e.isFunction(a)?(l[i]=function(){var e=function(){return s.prototype[i].apply(this,arguments)},t=function(e){return s.prototype[i].apply(this,e)};return function(){var i,s=this._super,n=this._superApply;return this._super=e,this._superApply=t,i=a.apply(this,arguments),this._super=s,this._superApply=n,i}}(),t):(l[i]=a,t)}),o.prototype=e.widget.extend(h,{widgetEventPrefix:r?h.widgetEventPrefix:i},l,{constructor:o,namespace:u,widgetName:i,widgetFullName:n}),r?(e.each(r._childConstructors,function(t,i){var s=i.prototype;e.widget(s.namespace+"."+s.widgetName,o,i._proto)}),delete r._childConstructors):s._childConstructors.push(o),e.widget.bridge(i,o)},e.widget.extend=function(i){for(var a,n,r=s.call(arguments,1),o=0,h=r.length;h>o;o++)for(a in r[o])n=r[o][a],r[o].hasOwnProperty(a)&&n!==t&&(i[a]=e.isPlainObject(n)?e.isPlainObject(i[a])?e.widget.extend({},i[a],n):e.widget.extend({},n):n);return i},e.widget.bridge=function(i,a){var n=a.prototype.widgetFullName||i;e.fn[i]=function(r){var o="string"==typeof r,h=s.call(arguments,1),l=this;return r=!o&&h.length?e.widget.extend.apply(null,[r].concat(h)):r,o?this.each(function(){var s,a=e.data(this,n);return a?e.isFunction(a[r])&&"_"!==r.charAt(0)?(s=a[r].apply(a,h),s!==a&&s!==t?(l=s&&s.jquery?l.pushStack(s.get()):s,!1):t):e.error("no such method '"+r+"' for "+i+" widget instance"):e.error("cannot call methods on "+i+" prior to initialization; "+"attempted to call method '"+r+"'")}):this.each(function(){var t=e.data(this,n);t?t.option(r||{})._init():e.data(this,n,new a(r,this))}),l}},e.Widget=function(){},e.Widget._childConstructors=[],e.Widget.prototype={widgetName:"widget",widgetEventPrefix:"",defaultElement:"<div>",options:{disabled:!1,create:null},_createWidget:function(t,s){s=e(s||this.defaultElement||this)[0],this.element=e(s),this.uuid=i++,this.eventNamespace="."+this.widgetName+this.uuid,this.options=e.widget.extend({},this.options,this._getCreateOptions(),t),this.bindings=e(),this.hoverable=e(),this.focusable=e(),s!==this&&(e.data(s,this.widgetFullName,this),this._on(!0,this.element,{remove:function(e){e.target===s&&this.destroy()}}),this.document=e(s.style?s.ownerDocument:s.document||s),this.window=e(this.document[0].defaultView||this.document[0].parentWindow)),this._create(),this._trigger("create",null,this._getCreateEventData()),this._init()},_getCreateOptions:e.noop,_getCreateEventData:e.noop,_create:e.noop,_init:e.noop,destroy:function(){this._destroy(),this.element.unbind(this.eventNamespace).removeData(this.widgetName).removeData(this.widgetFullName).removeData(e.camelCase(this.widgetFullName)),this.widget().unbind(this.eventNamespace).removeAttr("aria-disabled").removeClass(this.widgetFullName+"-disabled "+"ui-state-disabled"),this.bindings.unbind(this.eventNamespace),this.hoverable.removeClass("ui-state-hover"),this.focusable.removeClass("ui-state-focus")},_destroy:e.noop,widget:function(){return this.element},option:function(i,s){var a,n,r,o=i;if(0===arguments.length)return e.widget.extend({},this.options);if("string"==typeof i)if(o={},a=i.split("."),i=a.shift(),a.length){for(n=o[i]=e.widget.extend({},this.options[i]),r=0;a.length-1>r;r++)n[a[r]]=n[a[r]]||{},n=n[a[r]];if(i=a.pop(),s===t)return n[i]===t?null:n[i];n[i]=s}else{if(s===t)return this.options[i]===t?null:this.options[i];o[i]=s}return this._setOptions(o),this},_setOptions:function(e){var t;for(t in e)this._setOption(t,e[t]);return this},_setOption:function(e,t){return this.options[e]=t,"disabled"===e&&(this.widget().toggleClass(this.widgetFullName+"-disabled ui-state-disabled",!!t).attr("aria-disabled",t),this.hoverable.removeClass("ui-state-hover"),this.focusable.removeClass("ui-state-focus")),this},enable:function(){return this._setOption("disabled",!1)},disable:function(){return this._setOption("disabled",!0)},_on:function(i,s,a){var n,r=this;"boolean"!=typeof i&&(a=s,s=i,i=!1),a?(s=n=e(s),this.bindings=this.bindings.add(s)):(a=s,s=this.element,n=this.widget()),e.each(a,function(a,o){function h(){return i||r.options.disabled!==!0&&!e(this).hasClass("ui-state-disabled")?("string"==typeof o?r[o]:o).apply(r,arguments):t}"string"!=typeof o&&(h.guid=o.guid=o.guid||h.guid||e.guid++);var l=a.match(/^(\w+)\s*(.*)$/),u=l[1]+r.eventNamespace,c=l[2];c?n.delegate(c,u,h):s.bind(u,h)})},_off:function(e,t){t=(t||"").split(" ").join(this.eventNamespace+" ")+this.eventNamespace,e.unbind(t).undelegate(t)},_delay:function(e,t){function i(){return("string"==typeof e?s[e]:e).apply(s,arguments)}var s=this;return setTimeout(i,t||0)},_hoverable:function(t){this.hoverable=this.hoverable.add(t),this._on(t,{mouseenter:function(t){e(t.currentTarget).addClass("ui-state-hover")},mouseleave:function(t){e(t.currentTarget).removeClass("ui-state-hover")}})},_focusable:function(t){this.focusable=this.focusable.add(t),this._on(t,{focusin:function(t){e(t.currentTarget).addClass("ui-state-focus")},focusout:function(t){e(t.currentTarget).removeClass("ui-state-focus")}})},_trigger:function(t,i,s){var a,n,r=this.options[t];if(s=s||{},i=e.Event(i),i.type=(t===this.widgetEventPrefix?t:this.widgetEventPrefix+t).toLowerCase(),i.target=this.element[0],n=i.originalEvent)for(a in n)a in i||(i[a]=n[a]);return this.element.trigger(i,s),!(e.isFunction(r)&&r.apply(this.element[0],[i].concat(s))===!1||i.isDefaultPrevented())}},e.each({show:"fadeIn",hide:"fadeOut"},function(t,i){e.Widget.prototype["_"+t]=function(s,a,n){"string"==typeof a&&(a={effect:a});var r,o=a?a===!0||"number"==typeof a?i:a.effect||i:t;a=a||{},"number"==typeof a&&(a={duration:a}),r=!e.isEmptyObject(a),a.complete=n,a.delay&&s.delay(a.delay),r&&e.effects&&e.effects.effect[o]?s[t](a):o!==t&&s[o]?s[o](a.duration,a.easing,n):s.queue(function(i){e(this)[t](),n&&n.call(s[0]),i()})}})})(jQuery);(function(e){var t=!1;e(document).mouseup(function(){t=!1}),e.widget("ui.mouse",{version:"1.10.3",options:{cancel:"input,textarea,button,select,option",distance:1,delay:0},_mouseInit:function(){var t=this;this.element.bind("mousedown."+this.widgetName,function(e){return t._mouseDown(e)}).bind("click."+this.widgetName,function(i){return!0===e.data(i.target,t.widgetName+".preventClickEvent")?(e.removeData(i.target,t.widgetName+".preventClickEvent"),i.stopImmediatePropagation(),!1):undefined}),this.started=!1},_mouseDestroy:function(){this.element.unbind("."+this.widgetName),this._mouseMoveDelegate&&e(document).unbind("mousemove."+this.widgetName,this._mouseMoveDelegate).unbind("mouseup."+this.widgetName,this._mouseUpDelegate)},_mouseDown:function(i){if(!t){this._mouseStarted&&this._mouseUp(i),this._mouseDownEvent=i;var s=this,a=1===i.which,n="string"==typeof this.options.cancel&&i.target.nodeName?e(i.target).closest(this.options.cancel).length:!1;return a&&!n&&this._mouseCapture(i)?(this.mouseDelayMet=!this.options.delay,this.mouseDelayMet||(this._mouseDelayTimer=setTimeout(function(){s.mouseDelayMet=!0},this.options.delay)),this._mouseDistanceMet(i)&&this._mouseDelayMet(i)&&(this._mouseStarted=this._mouseStart(i)!==!1,!this._mouseStarted)?(i.preventDefault(),!0):(!0===e.data(i.target,this.widgetName+".preventClickEvent")&&e.removeData(i.target,this.widgetName+".preventClickEvent"),this._mouseMoveDelegate=function(e){return s._mouseMove(e)},this._mouseUpDelegate=function(e){return s._mouseUp(e)},e(document).bind("mousemove."+this.widgetName,this._mouseMoveDelegate).bind("mouseup."+this.widgetName,this._mouseUpDelegate),i.preventDefault(),t=!0,!0)):!0}},_mouseMove:function(t){return e.ui.ie&&(!document.documentMode||9>document.documentMode)&&!t.button?this._mouseUp(t):this._mouseStarted?(this._mouseDrag(t),t.preventDefault()):(this._mouseDistanceMet(t)&&this._mouseDelayMet(t)&&(this._mouseStarted=this._mouseStart(this._mouseDownEvent,t)!==!1,this._mouseStarted?this._mouseDrag(t):this._mouseUp(t)),!this._mouseStarted)},_mouseUp:function(t){return e(document).unbind("mousemove."+this.widgetName,this._mouseMoveDelegate).unbind("mouseup."+this.widgetName,this._mouseUpDelegate),this._mouseStarted&&(this._mouseStarted=!1,t.target===this._mouseDownEvent.target&&e.data(t.target,this.widgetName+".preventClickEvent",!0),this._mouseStop(t)),!1},_mouseDistanceMet:function(e){return Math.max(Math.abs(this._mouseDownEvent.pageX-e.pageX),Math.abs(this._mouseDownEvent.pageY-e.pageY))>=this.options.distance},_mouseDelayMet:function(){return this.mouseDelayMet},_mouseStart:function(){},_mouseDrag:function(){},_mouseStop:function(){},_mouseCapture:function(){return!0}})})(jQuery);(function(e,t){function i(e,t,i){return[parseFloat(e[0])*(p.test(e[0])?t/100:1),parseFloat(e[1])*(p.test(e[1])?i/100:1)]}function s(t,i){return parseInt(e.css(t,i),10)||0}function a(t){var i=t[0];return 9===i.nodeType?{width:t.width(),height:t.height(),offset:{top:0,left:0}}:e.isWindow(i)?{width:t.width(),height:t.height(),offset:{top:t.scrollTop(),left:t.scrollLeft()}}:i.preventDefault?{width:0,height:0,offset:{top:i.pageY,left:i.pageX}}:{width:t.outerWidth(),height:t.outerHeight(),offset:t.offset()}}e.ui=e.ui||{};var n,r=Math.max,o=Math.abs,h=Math.round,l=/left|center|right/,u=/top|center|bottom/,c=/[\+\-]\d+(\.[\d]+)?%?/,d=/^\w+/,p=/%$/,f=e.fn.position;e.position={scrollbarWidth:function(){if(n!==t)return n;var i,s,a=e("<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>"),r=a.children()[0];return e("body").append(a),i=r.offsetWidth,a.css("overflow","scroll"),s=r.offsetWidth,i===s&&(s=a[0].clientWidth),a.remove(),n=i-s},getScrollInfo:function(t){var i=t.isWindow?"":t.element.css("overflow-x"),s=t.isWindow?"":t.element.css("overflow-y"),a="scroll"===i||"auto"===i&&t.width<t.element[0].scrollWidth,n="scroll"===s||"auto"===s&&t.height<t.element[0].scrollHeight;return{width:n?e.position.scrollbarWidth():0,height:a?e.position.scrollbarWidth():0}},getWithinInfo:function(t){var i=e(t||window),s=e.isWindow(i[0]);return{element:i,isWindow:s,offset:i.offset()||{left:0,top:0},scrollLeft:i.scrollLeft(),scrollTop:i.scrollTop(),width:s?i.width():i.outerWidth(),height:s?i.height():i.outerHeight()}}},e.fn.position=function(t){if(!t||!t.of)return f.apply(this,arguments);t=e.extend({},t);var n,p,m,g,v,y,b=e(t.of),_=e.position.getWithinInfo(t.within),x=e.position.getScrollInfo(_),k=(t.collision||"flip").split(" "),w={};return y=a(b),b[0].preventDefault&&(t.at="left top"),p=y.width,m=y.height,g=y.offset,v=e.extend({},g),e.each(["my","at"],function(){var e,i,s=(t[this]||"").split(" ");1===s.length&&(s=l.test(s[0])?s.concat(["center"]):u.test(s[0])?["center"].concat(s):["center","center"]),s[0]=l.test(s[0])?s[0]:"center",s[1]=u.test(s[1])?s[1]:"center",e=c.exec(s[0]),i=c.exec(s[1]),w[this]=[e?e[0]:0,i?i[0]:0],t[this]=[d.exec(s[0])[0],d.exec(s[1])[0]]}),1===k.length&&(k[1]=k[0]),"right"===t.at[0]?v.left+=p:"center"===t.at[0]&&(v.left+=p/2),"bottom"===t.at[1]?v.top+=m:"center"===t.at[1]&&(v.top+=m/2),n=i(w.at,p,m),v.left+=n[0],v.top+=n[1],this.each(function(){var a,l,u=e(this),c=u.outerWidth(),d=u.outerHeight(),f=s(this,"marginLeft"),y=s(this,"marginTop"),D=c+f+s(this,"marginRight")+x.width,T=d+y+s(this,"marginBottom")+x.height,M=e.extend({},v),S=i(w.my,u.outerWidth(),u.outerHeight());"right"===t.my[0]?M.left-=c:"center"===t.my[0]&&(M.left-=c/2),"bottom"===t.my[1]?M.top-=d:"center"===t.my[1]&&(M.top-=d/2),M.left+=S[0],M.top+=S[1],e.support.offsetFractions||(M.left=h(M.left),M.top=h(M.top)),a={marginLeft:f,marginTop:y},e.each(["left","top"],function(i,s){e.ui.position[k[i]]&&e.ui.position[k[i]][s](M,{targetWidth:p,targetHeight:m,elemWidth:c,elemHeight:d,collisionPosition:a,collisionWidth:D,collisionHeight:T,offset:[n[0]+S[0],n[1]+S[1]],my:t.my,at:t.at,within:_,elem:u})}),t.using&&(l=function(e){var i=g.left-M.left,s=i+p-c,a=g.top-M.top,n=a+m-d,h={target:{element:b,left:g.left,top:g.top,width:p,height:m},element:{element:u,left:M.left,top:M.top,width:c,height:d},horizontal:0>s?"left":i>0?"right":"center",vertical:0>n?"top":a>0?"bottom":"middle"};c>p&&p>o(i+s)&&(h.horizontal="center"),d>m&&m>o(a+n)&&(h.vertical="middle"),h.important=r(o(i),o(s))>r(o(a),o(n))?"horizontal":"vertical",t.using.call(this,e,h)}),u.offset(e.extend(M,{using:l}))})},e.ui.position={fit:{left:function(e,t){var i,s=t.within,a=s.isWindow?s.scrollLeft:s.offset.left,n=s.width,o=e.left-t.collisionPosition.marginLeft,h=a-o,l=o+t.collisionWidth-n-a;t.collisionWidth>n?h>0&&0>=l?(i=e.left+h+t.collisionWidth-n-a,e.left+=h-i):e.left=l>0&&0>=h?a:h>l?a+n-t.collisionWidth:a:h>0?e.left+=h:l>0?e.left-=l:e.left=r(e.left-o,e.left)},top:function(e,t){var i,s=t.within,a=s.isWindow?s.scrollTop:s.offset.top,n=t.within.height,o=e.top-t.collisionPosition.marginTop,h=a-o,l=o+t.collisionHeight-n-a;t.collisionHeight>n?h>0&&0>=l?(i=e.top+h+t.collisionHeight-n-a,e.top+=h-i):e.top=l>0&&0>=h?a:h>l?a+n-t.collisionHeight:a:h>0?e.top+=h:l>0?e.top-=l:e.top=r(e.top-o,e.top)}},flip:{left:function(e,t){var i,s,a=t.within,n=a.offset.left+a.scrollLeft,r=a.width,h=a.isWindow?a.scrollLeft:a.offset.left,l=e.left-t.collisionPosition.marginLeft,u=l-h,c=l+t.collisionWidth-r-h,d="left"===t.my[0]?-t.elemWidth:"right"===t.my[0]?t.elemWidth:0,p="left"===t.at[0]?t.targetWidth:"right"===t.at[0]?-t.targetWidth:0,f=-2*t.offset[0];0>u?(i=e.left+d+p+f+t.collisionWidth-r-n,(0>i||o(u)>i)&&(e.left+=d+p+f)):c>0&&(s=e.left-t.collisionPosition.marginLeft+d+p+f-h,(s>0||c>o(s))&&(e.left+=d+p+f))},top:function(e,t){var i,s,a=t.within,n=a.offset.top+a.scrollTop,r=a.height,h=a.isWindow?a.scrollTop:a.offset.top,l=e.top-t.collisionPosition.marginTop,u=l-h,c=l+t.collisionHeight-r-h,d="top"===t.my[1],p=d?-t.elemHeight:"bottom"===t.my[1]?t.elemHeight:0,f="top"===t.at[1]?t.targetHeight:"bottom"===t.at[1]?-t.targetHeight:0,m=-2*t.offset[1];0>u?(s=e.top+p+f+m+t.collisionHeight-r-n,e.top+p+f+m>u&&(0>s||o(u)>s)&&(e.top+=p+f+m)):c>0&&(i=e.top-t.collisionPosition.marginTop+p+f+m-h,e.top+p+f+m>c&&(i>0||c>o(i))&&(e.top+=p+f+m))}},flipfit:{left:function(){e.ui.position.flip.left.apply(this,arguments),e.ui.position.fit.left.apply(this,arguments)},top:function(){e.ui.position.flip.top.apply(this,arguments),e.ui.position.fit.top.apply(this,arguments)}}},function(){var t,i,s,a,n,r=document.getElementsByTagName("body")[0],o=document.createElement("div");t=document.createElement(r?"div":"body"),s={visibility:"hidden",width:0,height:0,border:0,margin:0,background:"none"},r&&e.extend(s,{position:"absolute",left:"-1000px",top:"-1000px"});for(n in s)t.style[n]=s[n];t.appendChild(o),i=r||document.documentElement,i.insertBefore(t,i.firstChild),o.style.cssText="position: absolute; left: 10.7432222px;",a=e(o).offset().left,e.support.offsetFractions=a>10&&11>a,t.innerHTML="",i.removeChild(t)}()})(jQuery);(function(e){e.widget("ui.draggable",e.ui.mouse,{version:"1.10.3",widgetEventPrefix:"drag",options:{addClasses:!0,appendTo:"parent",axis:!1,connectToSortable:!1,containment:!1,cursor:"auto",cursorAt:!1,grid:!1,handle:!1,helper:"original",iframeFix:!1,opacity:!1,refreshPositions:!1,revert:!1,revertDuration:500,scope:"default",scroll:!0,scrollSensitivity:20,scrollSpeed:20,snap:!1,snapMode:"both",snapTolerance:20,stack:!1,zIndex:!1,drag:null,start:null,stop:null},_create:function(){"original"!==this.options.helper||/^(?:r|a|f)/.test(this.element.css("position"))||(this.element[0].style.position="relative"),this.options.addClasses&&this.element.addClass("ui-draggable"),this.options.disabled&&this.element.addClass("ui-draggable-disabled"),this._mouseInit()},_destroy:function(){this.element.removeClass("ui-draggable ui-draggable-dragging ui-draggable-disabled"),this._mouseDestroy()},_mouseCapture:function(t){var i=this.options;return this.helper||i.disabled||e(t.target).closest(".ui-resizable-handle").length>0?!1:(this.handle=this._getHandle(t),this.handle?(e(i.iframeFix===!0?"iframe":i.iframeFix).each(function(){e("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>").css({width:this.offsetWidth+"px",height:this.offsetHeight+"px",position:"absolute",opacity:"0.001",zIndex:1e3}).css(e(this).offset()).appendTo("body")}),!0):!1)},_mouseStart:function(t){var i=this.options;return this.helper=this._createHelper(t),this.helper.addClass("ui-draggable-dragging"),this._cacheHelperProportions(),e.ui.ddmanager&&(e.ui.ddmanager.current=this),this._cacheMargins(),this.cssPosition=this.helper.css("position"),this.scrollParent=this.helper.scrollParent(),this.offsetParent=this.helper.offsetParent(),this.offsetParentCssPosition=this.offsetParent.css("position"),this.offset=this.positionAbs=this.element.offset(),this.offset={top:this.offset.top-this.margins.top,left:this.offset.left-this.margins.left},this.offset.scroll=!1,e.extend(this.offset,{click:{left:t.pageX-this.offset.left,top:t.pageY-this.offset.top},parent:this._getParentOffset(),relative:this._getRelativeOffset()}),this.originalPosition=this.position=this._generatePosition(t),this.originalPageX=t.pageX,this.originalPageY=t.pageY,i.cursorAt&&this._adjustOffsetFromHelper(i.cursorAt),this._setContainment(),this._trigger("start",t)===!1?(this._clear(),!1):(this._cacheHelperProportions(),e.ui.ddmanager&&!i.dropBehaviour&&e.ui.ddmanager.prepareOffsets(this,t),this._mouseDrag(t,!0),e.ui.ddmanager&&e.ui.ddmanager.dragStart(this,t),!0)},_mouseDrag:function(t,i){if("fixed"===this.offsetParentCssPosition&&(this.offset.parent=this._getParentOffset()),this.position=this._generatePosition(t),this.positionAbs=this._convertPositionTo("absolute"),!i){var a=this._uiHash();if(this._trigger("drag",t,a)===!1)return this._mouseUp({}),!1;this.position=a.position}return this.options.axis&&"y"===this.options.axis||(this.helper[0].style.left=this.position.left+"px"),this.options.axis&&"x"===this.options.axis||(this.helper[0].style.top=this.position.top+"px"),e.ui.ddmanager&&e.ui.ddmanager.drag(this,t),!1},_mouseStop:function(t){var i=this,a=!1;return e.ui.ddmanager&&!this.options.dropBehaviour&&(a=e.ui.ddmanager.drop(this,t)),this.dropped&&(a=this.dropped,this.dropped=!1),"original"!==this.options.helper||e.contains(this.element[0].ownerDocument,this.element[0])?("invalid"===this.options.revert&&!a||"valid"===this.options.revert&&a||this.options.revert===!0||e.isFunction(this.options.revert)&&this.options.revert.call(this.element,a)?e(this.helper).animate(this.originalPosition,parseInt(this.options.revertDuration,10),function(){i._trigger("stop",t)!==!1&&i._clear()}):this._trigger("stop",t)!==!1&&this._clear(),!1):!1},_mouseUp:function(t){return e("div.ui-draggable-iframeFix").each(function(){this.parentNode.removeChild(this)}),e.ui.ddmanager&&e.ui.ddmanager.dragStop(this,t),e.ui.mouse.prototype._mouseUp.call(this,t)},cancel:function(){return this.helper.is(".ui-draggable-dragging")?this._mouseUp({}):this._clear(),this},_getHandle:function(t){return this.options.handle?!!e(t.target).closest(this.element.find(this.options.handle)).length:!0},_createHelper:function(t){var i=this.options,a=e.isFunction(i.helper)?e(i.helper.apply(this.element[0],[t])):"clone"===i.helper?this.element.clone().removeAttr("id"):this.element;return a.parents("body").length||a.appendTo("parent"===i.appendTo?this.element[0].parentNode:i.appendTo),a[0]===this.element[0]||/(fixed|absolute)/.test(a.css("position"))||a.css("position","absolute"),a},_adjustOffsetFromHelper:function(t){"string"==typeof t&&(t=t.split(" ")),e.isArray(t)&&(t={left:+t[0],top:+t[1]||0}),"left"in t&&(this.offset.click.left=t.left+this.margins.left),"right"in t&&(this.offset.click.left=this.helperProportions.width-t.right+this.margins.left),"top"in t&&(this.offset.click.top=t.top+this.margins.top),"bottom"in t&&(this.offset.click.top=this.helperProportions.height-t.bottom+this.margins.top)},_getParentOffset:function(){var t=this.offsetParent.offset();return"absolute"===this.cssPosition&&this.scrollParent[0]!==document&&e.contains(this.scrollParent[0],this.offsetParent[0])&&(t.left+=this.scrollParent.scrollLeft(),t.top+=this.scrollParent.scrollTop()),(this.offsetParent[0]===document.body||this.offsetParent[0].tagName&&"html"===this.offsetParent[0].tagName.toLowerCase()&&e.ui.ie)&&(t={top:0,left:0}),{top:t.top+(parseInt(this.offsetParent.css("borderTopWidth"),10)||0),left:t.left+(parseInt(this.offsetParent.css("borderLeftWidth"),10)||0)}},_getRelativeOffset:function(){if("relative"===this.cssPosition){var e=this.element.position();return{top:e.top-(parseInt(this.helper.css("top"),10)||0)+this.scrollParent.scrollTop(),left:e.left-(parseInt(this.helper.css("left"),10)||0)+this.scrollParent.scrollLeft()}}return{top:0,left:0}},_cacheMargins:function(){this.margins={left:parseInt(this.element.css("marginLeft"),10)||0,top:parseInt(this.element.css("marginTop"),10)||0,right:parseInt(this.element.css("marginRight"),10)||0,bottom:parseInt(this.element.css("marginBottom"),10)||0}},_cacheHelperProportions:function(){this.helperProportions={width:this.helper.outerWidth(),height:this.helper.outerHeight()}},_setContainment:function(){var t,i,a,s=this.options;return s.containment?"window"===s.containment?(this.containment=[e(window).scrollLeft()-this.offset.relative.left-this.offset.parent.left,e(window).scrollTop()-this.offset.relative.top-this.offset.parent.top,e(window).scrollLeft()+e(window).width()-this.helperProportions.width-this.margins.left,e(window).scrollTop()+(e(window).height()||document.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top],undefined):"document"===s.containment?(this.containment=[0,0,e(document).width()-this.helperProportions.width-this.margins.left,(e(document).height()||document.body.parentNode.scrollHeight)-this.helperProportions.height-this.margins.top],undefined):s.containment.constructor===Array?(this.containment=s.containment,undefined):("parent"===s.containment&&(s.containment=this.helper[0].parentNode),i=e(s.containment),a=i[0],a&&(t="hidden"!==i.css("overflow"),this.containment=[(parseInt(i.css("borderLeftWidth"),10)||0)+(parseInt(i.css("paddingLeft"),10)||0),(parseInt(i.css("borderTopWidth"),10)||0)+(parseInt(i.css("paddingTop"),10)||0),(t?Math.max(a.scrollWidth,a.offsetWidth):a.offsetWidth)-(parseInt(i.css("borderRightWidth"),10)||0)-(parseInt(i.css("paddingRight"),10)||0)-this.helperProportions.width-this.margins.left-this.margins.right,(t?Math.max(a.scrollHeight,a.offsetHeight):a.offsetHeight)-(parseInt(i.css("borderBottomWidth"),10)||0)-(parseInt(i.css("paddingBottom"),10)||0)-this.helperProportions.height-this.margins.top-this.margins.bottom],this.relative_container=i),undefined):(this.containment=null,undefined)},_convertPositionTo:function(t,i){i||(i=this.position);var a="absolute"===t?1:-1,s="absolute"!==this.cssPosition||this.scrollParent[0]!==document&&e.contains(this.scrollParent[0],this.offsetParent[0])?this.scrollParent:this.offsetParent;return this.offset.scroll||(this.offset.scroll={top:s.scrollTop(),left:s.scrollLeft()}),{top:i.top+this.offset.relative.top*a+this.offset.parent.top*a-("fixed"===this.cssPosition?-this.scrollParent.scrollTop():this.offset.scroll.top)*a,left:i.left+this.offset.relative.left*a+this.offset.parent.left*a-("fixed"===this.cssPosition?-this.scrollParent.scrollLeft():this.offset.scroll.left)*a}},_generatePosition:function(t){var i,a,s,n,r=this.options,o="absolute"!==this.cssPosition||this.scrollParent[0]!==document&&e.contains(this.scrollParent[0],this.offsetParent[0])?this.scrollParent:this.offsetParent,l=t.pageX,h=t.pageY;return this.offset.scroll||(this.offset.scroll={top:o.scrollTop(),left:o.scrollLeft()}),this.originalPosition&&(this.containment&&(this.relative_container?(a=this.relative_container.offset(),i=[this.containment[0]+a.left,this.containment[1]+a.top,this.containment[2]+a.left,this.containment[3]+a.top]):i=this.containment,t.pageX-this.offset.click.left<i[0]&&(l=i[0]+this.offset.click.left),t.pageY-this.offset.click.top<i[1]&&(h=i[1]+this.offset.click.top),t.pageX-this.offset.click.left>i[2]&&(l=i[2]+this.offset.click.left),t.pageY-this.offset.click.top>i[3]&&(h=i[3]+this.offset.click.top)),r.grid&&(s=r.grid[1]?this.originalPageY+Math.round((h-this.originalPageY)/r.grid[1])*r.grid[1]:this.originalPageY,h=i?s-this.offset.click.top>=i[1]||s-this.offset.click.top>i[3]?s:s-this.offset.click.top>=i[1]?s-r.grid[1]:s+r.grid[1]:s,n=r.grid[0]?this.originalPageX+Math.round((l-this.originalPageX)/r.grid[0])*r.grid[0]:this.originalPageX,l=i?n-this.offset.click.left>=i[0]||n-this.offset.click.left>i[2]?n:n-this.offset.click.left>=i[0]?n-r.grid[0]:n+r.grid[0]:n)),{top:h-this.offset.click.top-this.offset.relative.top-this.offset.parent.top+("fixed"===this.cssPosition?-this.scrollParent.scrollTop():this.offset.scroll.top),left:l-this.offset.click.left-this.offset.relative.left-this.offset.parent.left+("fixed"===this.cssPosition?-this.scrollParent.scrollLeft():this.offset.scroll.left)}},_clear:function(){this.helper.removeClass("ui-draggable-dragging"),this.helper[0]===this.element[0]||this.cancelHelperRemoval||this.helper.remove(),this.helper=null,this.cancelHelperRemoval=!1},_trigger:function(t,i,a){return a=a||this._uiHash(),e.ui.plugin.call(this,t,[i,a]),"drag"===t&&(this.positionAbs=this._convertPositionTo("absolute")),e.Widget.prototype._trigger.call(this,t,i,a)},plugins:{},_uiHash:function(){return{helper:this.helper,position:this.position,originalPosition:this.originalPosition,offset:this.positionAbs}}}),e.ui.plugin.add("draggable","connectToSortable",{start:function(t,i){var a=e(this).data("ui-draggable"),s=a.options,n=e.extend({},i,{item:a.element});a.sortables=[],e(s.connectToSortable).each(function(){var i=e.data(this,"ui-sortable");i&&!i.options.disabled&&(a.sortables.push({instance:i,shouldRevert:i.options.revert}),i.refreshPositions(),i._trigger("activate",t,n))})},stop:function(t,i){var a=e(this).data("ui-draggable"),s=e.extend({},i,{item:a.element});e.each(a.sortables,function(){this.instance.isOver?(this.instance.isOver=0,a.cancelHelperRemoval=!0,this.instance.cancelHelperRemoval=!1,this.shouldRevert&&(this.instance.options.revert=this.shouldRevert),this.instance._mouseStop(t),this.instance.options.helper=this.instance.options._helper,"original"===a.options.helper&&this.instance.currentItem.css({top:"auto",left:"auto"})):(this.instance.cancelHelperRemoval=!1,this.instance._trigger("deactivate",t,s))})},drag:function(t,i){var a=e(this).data("ui-draggable"),s=this;e.each(a.sortables,function(){var n=!1,r=this;this.instance.positionAbs=a.positionAbs,this.instance.helperProportions=a.helperProportions,this.instance.offset.click=a.offset.click,this.instance._intersectsWith(this.instance.containerCache)&&(n=!0,e.each(a.sortables,function(){return this.instance.positionAbs=a.positionAbs,this.instance.helperProportions=a.helperProportions,this.instance.offset.click=a.offset.click,this!==r&&this.instance._intersectsWith(this.instance.containerCache)&&e.contains(r.instance.element[0],this.instance.element[0])&&(n=!1),n})),n?(this.instance.isOver||(this.instance.isOver=1,this.instance.currentItem=e(s).clone().removeAttr("id").appendTo(this.instance.element).data("ui-sortable-item",!0),this.instance.options._helper=this.instance.options.helper,this.instance.options.helper=function(){return i.helper[0]},t.target=this.instance.currentItem[0],this.instance._mouseCapture(t,!0),this.instance._mouseStart(t,!0,!0),this.instance.offset.click.top=a.offset.click.top,this.instance.offset.click.left=a.offset.click.left,this.instance.offset.parent.left-=a.offset.parent.left-this.instance.offset.parent.left,this.instance.offset.parent.top-=a.offset.parent.top-this.instance.offset.parent.top,a._trigger("toSortable",t),a.dropped=this.instance.element,a.currentItem=a.element,this.instance.fromOutside=a),this.instance.currentItem&&this.instance._mouseDrag(t)):this.instance.isOver&&(this.instance.isOver=0,this.instance.cancelHelperRemoval=!0,this.instance.options.revert=!1,this.instance._trigger("out",t,this.instance._uiHash(this.instance)),this.instance._mouseStop(t,!0),this.instance.options.helper=this.instance.options._helper,this.instance.currentItem.remove(),this.instance.placeholder&&this.instance.placeholder.remove(),a._trigger("fromSortable",t),a.dropped=!1)})}}),e.ui.plugin.add("draggable","cursor",{start:function(){var t=e("body"),i=e(this).data("ui-draggable").options;t.css("cursor")&&(i._cursor=t.css("cursor")),t.css("cursor",i.cursor)},stop:function(){var t=e(this).data("ui-draggable").options;t._cursor&&e("body").css("cursor",t._cursor)}}),e.ui.plugin.add("draggable","opacity",{start:function(t,i){var a=e(i.helper),s=e(this).data("ui-draggable").options;a.css("opacity")&&(s._opacity=a.css("opacity")),a.css("opacity",s.opacity)},stop:function(t,i){var a=e(this).data("ui-draggable").options;a._opacity&&e(i.helper).css("opacity",a._opacity)}}),e.ui.plugin.add("draggable","scroll",{start:function(){var t=e(this).data("ui-draggable");t.scrollParent[0]!==document&&"HTML"!==t.scrollParent[0].tagName&&(t.overflowOffset=t.scrollParent.offset())},drag:function(t){var i=e(this).data("ui-draggable"),a=i.options,s=!1;i.scrollParent[0]!==document&&"HTML"!==i.scrollParent[0].tagName?(a.axis&&"x"===a.axis||(i.overflowOffset.top+i.scrollParent[0].offsetHeight-t.pageY<a.scrollSensitivity?i.scrollParent[0].scrollTop=s=i.scrollParent[0].scrollTop+a.scrollSpeed:t.pageY-i.overflowOffset.top<a.scrollSensitivity&&(i.scrollParent[0].scrollTop=s=i.scrollParent[0].scrollTop-a.scrollSpeed)),a.axis&&"y"===a.axis||(i.overflowOffset.left+i.scrollParent[0].offsetWidth-t.pageX<a.scrollSensitivity?i.scrollParent[0].scrollLeft=s=i.scrollParent[0].scrollLeft+a.scrollSpeed:t.pageX-i.overflowOffset.left<a.scrollSensitivity&&(i.scrollParent[0].scrollLeft=s=i.scrollParent[0].scrollLeft-a.scrollSpeed))):(a.axis&&"x"===a.axis||(t.pageY-e(document).scrollTop()<a.scrollSensitivity?s=e(document).scrollTop(e(document).scrollTop()-a.scrollSpeed):e(window).height()-(t.pageY-e(document).scrollTop())<a.scrollSensitivity&&(s=e(document).scrollTop(e(document).scrollTop()+a.scrollSpeed))),a.axis&&"y"===a.axis||(t.pageX-e(document).scrollLeft()<a.scrollSensitivity?s=e(document).scrollLeft(e(document).scrollLeft()-a.scrollSpeed):e(window).width()-(t.pageX-e(document).scrollLeft())<a.scrollSensitivity&&(s=e(document).scrollLeft(e(document).scrollLeft()+a.scrollSpeed)))),s!==!1&&e.ui.ddmanager&&!a.dropBehaviour&&e.ui.ddmanager.prepareOffsets(i,t)}}),e.ui.plugin.add("draggable","snap",{start:function(){var t=e(this).data("ui-draggable"),i=t.options;t.snapElements=[],e(i.snap.constructor!==String?i.snap.items||":data(ui-draggable)":i.snap).each(function(){var i=e(this),a=i.offset();this!==t.element[0]&&t.snapElements.push({item:this,width:i.outerWidth(),height:i.outerHeight(),top:a.top,left:a.left})})},drag:function(t,i){var a,s,n,r,o,l,h,u,d,c,p=e(this).data("ui-draggable"),f=p.options,m=f.snapTolerance,g=i.offset.left,v=g+p.helperProportions.width,y=i.offset.top,b=y+p.helperProportions.height;for(d=p.snapElements.length-1;d>=0;d--)o=p.snapElements[d].left,l=o+p.snapElements[d].width,h=p.snapElements[d].top,u=h+p.snapElements[d].height,o-m>v||g>l+m||h-m>b||y>u+m||!e.contains(p.snapElements[d].item.ownerDocument,p.snapElements[d].item)?(p.snapElements[d].snapping&&p.options.snap.release&&p.options.snap.release.call(p.element,t,e.extend(p._uiHash(),{snapItem:p.snapElements[d].item})),p.snapElements[d].snapping=!1):("inner"!==f.snapMode&&(a=m>=Math.abs(h-b),s=m>=Math.abs(u-y),n=m>=Math.abs(o-v),r=m>=Math.abs(l-g),a&&(i.position.top=p._convertPositionTo("relative",{top:h-p.helperProportions.height,left:0}).top-p.margins.top),s&&(i.position.top=p._convertPositionTo("relative",{top:u,left:0}).top-p.margins.top),n&&(i.position.left=p._convertPositionTo("relative",{top:0,left:o-p.helperProportions.width}).left-p.margins.left),r&&(i.position.left=p._convertPositionTo("relative",{top:0,left:l}).left-p.margins.left)),c=a||s||n||r,"outer"!==f.snapMode&&(a=m>=Math.abs(h-y),s=m>=Math.abs(u-b),n=m>=Math.abs(o-g),r=m>=Math.abs(l-v),a&&(i.position.top=p._convertPositionTo("relative",{top:h,left:0}).top-p.margins.top),s&&(i.position.top=p._convertPositionTo("relative",{top:u-p.helperProportions.height,left:0}).top-p.margins.top),n&&(i.position.left=p._convertPositionTo("relative",{top:0,left:o}).left-p.margins.left),r&&(i.position.left=p._convertPositionTo("relative",{top:0,left:l-p.helperProportions.width}).left-p.margins.left)),!p.snapElements[d].snapping&&(a||s||n||r||c)&&p.options.snap.snap&&p.options.snap.snap.call(p.element,t,e.extend(p._uiHash(),{snapItem:p.snapElements[d].item})),p.snapElements[d].snapping=a||s||n||r||c)}}),e.ui.plugin.add("draggable","stack",{start:function(){var t,i=this.data("ui-draggable").options,a=e.makeArray(e(i.stack)).sort(function(t,i){return(parseInt(e(t).css("zIndex"),10)||0)-(parseInt(e(i).css("zIndex"),10)||0)});a.length&&(t=parseInt(e(a[0]).css("zIndex"),10)||0,e(a).each(function(i){e(this).css("zIndex",t+i)}),this.css("zIndex",t+a.length))}}),e.ui.plugin.add("draggable","zIndex",{start:function(t,i){var a=e(i.helper),s=e(this).data("ui-draggable").options;a.css("zIndex")&&(s._zIndex=a.css("zIndex")),a.css("zIndex",s.zIndex)},stop:function(t,i){var a=e(this).data("ui-draggable").options;a._zIndex&&e(i.helper).css("zIndex",a._zIndex)}})})(jQuery);
-}
 
 function $RFunctions($R){
     //called after our version of jQuery ($R) is loaded
@@ -8832,7 +9907,6 @@ function $RFunctions($R){
     var css = [];
 
     if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"css/fonts/helvetica.css" );
         css.push( RDR_staticUrl+"css/fonts/fontawesome.css" );
     }
     if ( $R.browser.msie ) {
@@ -8841,7 +9915,8 @@ function $RFunctions($R){
         css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
     }
 
-    css.push( RDR_widgetCssStaticUrl+"widget/css/widget.css?rv20" );
+    var widgetCSS = ( RDR_offline ) ? RDR_widgetCssStaticUrl+"widget/css/widget.css" : RDR_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
+    css.push( widgetCSS );
     // css.push( RDR_scriptPaths.jqueryUI_CSS );
     css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
@@ -8903,12 +9978,11 @@ function $RFunctions($R){
         plugin_jquery_log($R);
         plugin_jquery_hasAttr($R);
         plugin_jquery_json($R);
-        plugin_jquery_cookie($R);
         plugin_jquery_postMessage($R);
         plugin_jquery_mustache($R);
         plugin_jquery_enhancedOffset($R);
+        plugin_jquery_drags($R);
         plugin_jquery_mousewheel($R);
-        plugin_jquery_scrollStartAndStop($R);
         plugin_jquery_isotope($R);
         plugin_jquery_jScrollPane($R);
         plugin_jquery_twitterTip($R);
@@ -9111,70 +10185,6 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_json
 
-        function plugin_jquery_cookie($){
-            /*jslint browser: true */ /*global jQuery: true */
-
-            /**
-            * jQuery Cookie plugin
-            *
-            * Copyright (c) 2010 Klaus Hartl (stilbuero.de)
-            * Dual licensed under the MIT and GPL licenses:
-            * http://www.opensource.org/licenses/mit-license.php
-            * http://www.gnu.org/licenses/gpl.html
-            *
-            */
-
-            /*
-            * Get the value of a cookie with the given key.
-            *
-            * @desc Set the value of a cookie.
-            * @example $.cookie('the_cookie', 'the_value');
-            *
-            * @desc Create a cookie with all available options.
-            * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
-            *
-            * @desc Create a session cookie.
-            * @example $.cookie('the_cookie', 'the_value');
-            *
-            * @desc Delete a cookie by passing null as value.
-            * @example $.cookie('the_cookie', null);
-            *
-            */
-            
-            $.cookie = function (key, value, options) {
-                
-                // key and at least value given, set cookie...
-                if (arguments.length > 1 && String(value) !== "[object Object]") {
-                    options = $.extend({}, options);
-
-                    if (value === null || value === undefined) {
-                        options.expires = -1;
-                    }
-
-                    if (typeof options.expires === 'number') {
-                        var days = options.expires, t = options.expires = new Date();
-                        t.setDate(t.getDate() + days);
-                    }
-                    
-                    value = String(value);
-                    
-                    return (document.cookie = [
-                        encodeURIComponent(key), '=',
-                        options.raw ? value : encodeURIComponent(value),
-                        options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                        options.path ? '; path=' + options.path : '',
-                        options.domain ? '; domain=' + options.domain : '',
-                        options.secure ? '; secure' : ''
-                    ].join(''));
-                }
-
-                // key and possibly options given, get cookie...
-                options = value || {};
-                var result, decode = options.raw ? function (s) { return s; } : decodeURIComponent;
-                return (result = new RegExp('(?:^|; )' + encodeURIComponent(key) + '=([^;]*)').exec(document.cookie)) ? decode(result[1]) : null;
-            };
-        }
-
         function plugin_jquery_postMessage($){
             /*
              * jQuery postMessage - v0.5 - 9/11/2009
@@ -9188,6 +10198,62 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_postMessage
 
+        function plugin_jquery_drags(a){
+            // replace jquery UI draggable
+            // Simple JQuery Draggable Plugin
+            // https://plus.google.com/108949996304093815163/about
+            // Usage: $(selector).drags();
+            // THIS HAS BEEN CUSTOMIZED FOR READRBOARD
+            $.fn.drags = function(opt) {
+
+                opt = $.extend({
+                    handle: ""
+                    // cursor: "move",
+                    // draggableClass: "draggable",
+                    // activeHandleClass: "active-handle"
+                }, opt);
+
+
+                var $selected = $(this);
+                // var $elements = (opt.handle === "") ? $selected : $selected.find(opt.handle);
+                // var $elements = (opt.handle === "") ? this : this.find(opt.handle);
+                // FOR SOME REASON, the last two lines tried using the handle as the click handler, and failed.  so instead, below,
+                // i see if the click is inside the handle and exit out if not.  
+                // which seems less efficient, but works.
+                var $elements = $selected;
+
+
+                $elements.on('mousedown', function(e) {
+
+                    if ( (opt.handle !== "" ) && !$(e.target).closest('.rdr_header').length ) {
+                        // has a handle, but the handle is not clicked
+                        return;
+                    }
+
+                    $selected.removeClass("rdr_rewritable");
+
+                    var drg_h = $selected.outerHeight(),
+                        drg_w = $selected.outerWidth(),
+                        offsets = $selected.offset(), // cache
+                        pos_y = offsets.top + drg_h - e.pageY,
+                        pos_x = offsets.left + drg_w - e.pageX;
+
+                    $(document).on("mousemove.rdr_drag", function(e) {
+                        $selected.offset({
+                            top: e.pageY + pos_y - drg_h,
+                            left: e.pageX + pos_x - drg_w
+                        });
+                    }).on("mouseup", function() {
+                        $(this).off("mousemove.rdr_drag"); // Unbind events from document
+                    });
+
+                    e.preventDefault(); // disable selection
+                });
+
+                return this;
+
+            };
+        }
         function plugin_jquery_enhancedOffset($){
             /**
              * Enhanced .offset()
@@ -9299,9 +10365,11 @@ function $RFunctions($R){
                     page_key:page.key
                 });
 
+                var summaryWidgetInsertionMethod = ( RDR.group.summary_widget_method != "" ) ? RDR.group.summary_widget_method : "after";
+
                 //page.jqFunc would be something like 'append' or 'after',
                 //so this would read $summary_widget_parent.append($summary_widget);
-                $summary_widget_parent[page.jqFunc]($summary_widget);
+                $summary_widget_parent[ summaryWidgetInsertionMethod ]($summary_widget);
 
                 var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
                 $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
@@ -9325,12 +10393,10 @@ function $RFunctions($R){
                     var page_id = $(this).data('page_id');
 
                     var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-                    // RDR.events.track( 'view_summary::'+page_id );
 
                     RDR.events.trackEventToCloud({
-                        category: "summarybar",
-                        action: "rindow_shown_summarybar",
-                        opt_label: "page: "+page_id,
+                        event_type: 'sb',
+                        event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                         page_id: page_id
                     });
                 };
@@ -9368,10 +10434,10 @@ function $RFunctions($R){
                 }
 
                 var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" Reactions" :
+                    total_reactions+" " + RDR.t('plural_reaction') :
                         ( total_reactions > 0 ) ? 
-                            total_reactions+" Reaction" :
-                            "Reactions";
+                            total_reactions+" " + RDR.t('single_reaction') :
+                            RDR.t('plural_reaction');
                 $summary_widget.append(
                     '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
                 );
@@ -10077,33 +11143,22 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_mousewheel
 
-        function plugin_jquery_scrollStartAndStop(jQuery){
-            var $ = jQuery;
-            /**
-            * jQuery scrollstart and scrollstop
-            * @author james padolsey
-            * @version ??
-            */
-            var a=jQuery.event.special,b="D"+ +(new Date),c="D"+(+(new Date)+1);a.scrollstart={setup:function(){var c,d=function(b){var d=this,e=arguments;if(c){clearTimeout(c)}else{b.type="scrollstart";jQuery.event.handle.apply(d,e)}c=setTimeout(function(){c=null},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(b,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(b))}};a.scrollstop={latency:300,setup:function(){var b,d=function(c){var d=this,e=arguments;if(b){clearTimeout(b)}b=setTimeout(function(){b=null;c.type="scrollstop";jQuery.event.handle.apply(d,e)},a.scrollstop.latency)};jQuery(this).bind("scroll",d).data(c,d)},teardown:function(){jQuery(this).unbind("scroll",jQuery(this).data(c))}}
-        }
-
         function plugin_jquery_isotope($){
             /**
-             * Isotope v1.5.25
+             * Isotope v1.5.26
              * An exquisite jQuery plugin for magical layouts
              * http://isotope.metafizzy.co
              *
-             * Commercial use requires one-time license fee
-             * http://metafizzy.co/#licenses
+             * Commercial use requires one-time purchase of a commercial license
+             * http://isotope.metafizzy.co/docs/license.html
              *
-             * Copyright 2012 David DeSandro / Metafizzy
+             * Non-commercial use is licensed under the MIT License
+             *
+             * Copyright 2014 Metafizzy
              */
-            //fix minifier quirks
-            var b = $,
-            a = window,
-            c = undefined;
-            "use strict";
-            var d=a.document,e=a.Modernizr,f=function(a){return a.charAt(0).toUpperCase()+a.slice(1)},g="Moz Webkit O Ms".split(" "),h=function(a){var b=d.documentElement.style,c;if(typeof b[a]=="string")return a;a=f(a);for(var e=0,h=g.length;e<h;e++){c=g[e]+a;if(typeof b[c]=="string")return c}},i=h("transform"),j=h("transitionProperty"),k={csstransforms:function(){return!!i},csstransforms3d:function(){var a=!!h("perspective");if(a){var c=" -o- -moz- -ms- -webkit- -khtml- ".split(" "),d="@media ("+c.join("transform-3d),(")+"modernizr)",e=b("<style>"+d+"{#modernizr{height:3px}}"+"</style>").appendTo("head"),f=b('<div id="modernizr" />').appendTo("html");a=f.height()===3,f.remove(),e.remove()}return a},csstransitions:function(){return!!j}},l;if(e)for(l in k)e.hasOwnProperty(l)||e.addTest(l,k[l]);else{e=a.Modernizr={_version:"1.6ish: miniModernizr for Isotope"};var m=" ",n;for(l in k)n=k[l](),e[l]=n,m+=" "+(n?"":"no-")+l;b("html").addClass(m)}if(e.csstransforms){var o=e.csstransforms3d?{translate:function(a){return"translate3d("+a[0]+"px, "+a[1]+"px, 0) "},scale:function(a){return"scale3d("+a+", "+a+", 1) "}}:{translate:function(a){return"translate("+a[0]+"px, "+a[1]+"px) "},scale:function(a){return"scale("+a+") "}},p=function(a,c,d){var e=b.data(a,"isoTransform")||{},f={},g,h={},j;f[c]=d,b.extend(e,f);for(g in e)j=e[g],h[g]=o[g](j);var k=h.translate||"",l=h.scale||"",m=k+l;b.data(a,"isoTransform",e),a.style[i]=m};b.cssNumber.scale=!0,b.cssHooks.scale={set:function(a,b){p(a,"scale",b)},get:function(a,c){var d=b.data(a,"isoTransform");return d&&d.scale?d.scale:1}},b.fx.step.scale=function(a){b.cssHooks.scale.set(a.elem,a.now+a.unit)},b.cssNumber.translate=!0,b.cssHooks.translate={set:function(a,b){p(a,"translate",b)},get:function(a,c){var d=b.data(a,"isoTransform");return d&&d.translate?d.translate:[0,0]}}}var q,r;e.csstransitions&&(q={WebkitTransitionProperty:"webkitTransitionEnd",MozTransitionProperty:"transitionend",OTransitionProperty:"oTransitionEnd otransitionend",transitionProperty:"transitionend"}[j],r=h("transitionDuration"));var s=b.event,t=b.event.handle?"handle":"dispatch",u;s.special.smartresize={setup:function(){b(this).bind("resize",s.special.smartresize.handler)},teardown:function(){b(this).unbind("resize",s.special.smartresize.handler)},handler:function(a,b){var c=this,d=arguments;a.type="smartresize",u&&clearTimeout(u),u=setTimeout(function(){s[t].apply(c,d)},b==="execAsap"?0:100)}},b.fn.smartresize=function(a){return a?this.bind("smartresize",a):this.trigger("smartresize",["execAsap"])},b.Isotope=function(a,c,d){this.element=b(c),this._create(a),this._init(d)};var v=["width","height"],w=b(a);b.Isotope.settings={resizable:!0,layoutMode:"masonry",containerClass:"isotope",itemClass:"isotope-item",hiddenClass:"isotope-hidden",hiddenStyle:{opacity:0,scale:.001},visibleStyle:{opacity:1,scale:1},containerStyle:{position:"relative",overflow:"hidden"},animationEngine:"best-available",animationOptions:{queue:!1,duration:800},sortBy:"original-order",sortAscending:!0,resizesContainer:!0,transformsEnabled:!0,itemPositionDataEnabled:!1},b.Isotope.prototype={_create:function(a){this.options=b.extend({},b.Isotope.settings,a),this.styleQueue=[],this.elemCount=0;var c=this.element[0].style;this.originalStyle={};var d=v.slice(0);for(var e in this.options.containerStyle)d.push(e);for(var f=0,g=d.length;f<g;f++)e=d[f],this.originalStyle[e]=c[e]||"";this.element.css(this.options.containerStyle),this._updateAnimationEngine(),this._updateUsingTransforms();var h={"original-order":function(a,b){return b.elemCount++,b.elemCount},random:function(){return Math.random()}};this.options.getSortData=b.extend(this.options.getSortData,h),this.reloadItems(),this.offset={left:parseInt(this.element.css("padding-left")||0,10),top:parseInt(this.element.css("padding-top")||0,10)};var i=this;setTimeout(function(){i.element.addClass(i.options.containerClass)},0),this.options.resizable&&w.bind("smartresize.isotope",function(){i.resize()}),this.element.delegate("."+this.options.hiddenClass,"click",function(){return!1})},_getAtoms:function(a){var b=this.options.itemSelector,c=b?a.filter(b).add(a.find(b)):a,d={position:"absolute"};return c=c.filter(function(a,b){return b.nodeType===1}),this.usingTransforms&&(d.left=0,d.top=0),c.css(d).addClass(this.options.itemClass),this.updateSortData(c,!0),c},_init:function(a){this.$filteredAtoms=this._filter(this.$allAtoms),this._sort(),this.reLayout(a)},option:function(a){if(b.isPlainObject(a)){this.options=b.extend(!0,this.options,a);var c;for(var d in a)c="_update"+f(d),this[c]&&this[c]()}},_updateAnimationEngine:function(){var a=this.options.animationEngine.toLowerCase().replace(/[ _\-]/g,""),b;switch(a){case"css":case"none":b=!1;break;case"jquery":b=!0;break;default:b=!e.csstransitions}this.isUsingJQueryAnimation=b,this._updateUsingTransforms()},_updateTransformsEnabled:function(){this._updateUsingTransforms()},_updateUsingTransforms:function(){var a=this.usingTransforms=this.options.transformsEnabled&&e.csstransforms&&e.csstransitions&&!this.isUsingJQueryAnimation;a||(delete this.options.hiddenStyle.scale,delete this.options.visibleStyle.scale),this.getPositionStyles=a?this._translate:this._positionAbs},_filter:function(a){var b=this.options.filter===""?"*":this.options.filter;if(!b)return a;var c=this.options.hiddenClass,d="."+c,e=a.filter(d),f=e;if(b!=="*"){f=e.filter(b);var g=a.not(d).not(b).addClass(c);this.styleQueue.push({$el:g,style:this.options.hiddenStyle})}return this.styleQueue.push({$el:f,style:this.options.visibleStyle}),f.removeClass(c),a.filter(b)},updateSortData:function(a,c){var d=this,e=this.options.getSortData,f,g;a.each(function(){f=b(this),g={};for(var a in e)!c&&a==="original-order"?g[a]=b.data(this,"isotope-sort-data")[a]:g[a]=e[a](f,d);b.data(this,"isotope-sort-data",g)})},_sort:function(){var a=this.options.sortBy,b=this._getSorter,c=this.options.sortAscending?1:-1,d=function(d,e){var f=b(d,a),g=b(e,a);return f===g&&a!=="original-order"&&(f=b(d,"original-order"),g=b(e,"original-order")),(f>g?1:f<g?-1:0)*c};this.$filteredAtoms.sort(d)},_getSorter:function(a,c){return b.data(a,"isotope-sort-data")[c]},_translate:function(a,b){return{translate:[a,b]}},_positionAbs:function(a,b){return{left:a,top:b}},_pushPosition:function(a,b,c){b=Math.round(b+this.offset.left),c=Math.round(c+this.offset.top);var d=this.getPositionStyles(b,c);this.styleQueue.push({$el:a,style:d}),this.options.itemPositionDataEnabled&&a.data("isotope-item-position",{x:b,y:c})},layout:function(a,b){var c=this.options.layoutMode;this["_"+c+"Layout"](a);if(this.options.resizesContainer){var d=this["_"+c+"GetContainerSize"]();this.styleQueue.push({$el:this.element,style:d})}this._processStyleQueue(a,b),this.isLaidOut=!0},_processStyleQueue:function(a,c){var d=this.isLaidOut?this.isUsingJQueryAnimation?"animate":"css":"css",f=this.options.animationOptions,g=this.options.onLayout,h,i,j,k;i=function(a,b){b.$el[d](b.style,f)};if(this._isInserting&&this.isUsingJQueryAnimation)i=function(a,b){h=b.$el.hasClass("no-transition")?"css":d,b.$el[h](b.style,f)};else if(c||g||f.complete){var l=!1,m=[c,g,f.complete],n=this;j=!0,k=function(){if(l)return;var b;for(var c=0,d=m.length;c<d;c++)b=m[c],typeof b=="function"&&b.call(n.element,a,n);l=!0};if(this.isUsingJQueryAnimation&&d==="animate")f.complete=k,j=!1;else if(e.csstransitions){var o=0,p=this.styleQueue[0],s=p&&p.$el,t;while(!s||!s.length){t=this.styleQueue[o++];if(!t)return;s=t.$el}var u=parseFloat(getComputedStyle(s[0])[r]);u>0&&(i=function(a,b){b.$el[d](b.style,f).one(q,k)},j=!1)}}b.each(this.styleQueue,i),j&&k(),this.styleQueue=[]},resize:function(){this["_"+this.options.layoutMode+"ResizeChanged"]()&&this.reLayout()},reLayout:function(a){this["_"+this.options.layoutMode+"Reset"](),this.layout(this.$filteredAtoms,a)},addItems:function(a,b){var c=this._getAtoms(a);this.$allAtoms=this.$allAtoms.add(c),b&&b(c)},insert:function(a,b){this.element.append(a);var c=this;this.addItems(a,function(a){var d=c._filter(a);c._addHideAppended(d),c._sort(),c.reLayout(),c._revealAppended(d,b)})},appended:function(a,b){var c=this;this.addItems(a,function(a){c._addHideAppended(a),c.layout(a),c._revealAppended(a,b)})},_addHideAppended:function(a){this.$filteredAtoms=this.$filteredAtoms.add(a),a.addClass("no-transition"),this._isInserting=!0,this.styleQueue.push({$el:a,style:this.options.hiddenStyle})},_revealAppended:function(a,b){var c=this;setTimeout(function(){a.removeClass("no-transition"),c.styleQueue.push({$el:a,style:c.options.visibleStyle}),c._isInserting=!1,c._processStyleQueue(a,b)},10)},reloadItems:function(){this.$allAtoms=this._getAtoms(this.element.children())},remove:function(a,b){this.$allAtoms=this.$allAtoms.not(a),this.$filteredAtoms=this.$filteredAtoms.not(a);var c=this,d=function(){a.remove(),b&&b.call(c.element)};a.filter(":not(."+this.options.hiddenClass+")").length?(this.styleQueue.push({$el:a,style:this.options.hiddenStyle}),this._sort(),this.reLayout(d)):d()},shuffle:function(a){this.updateSortData(this.$allAtoms),this.options.sortBy="random",this._sort(),this.reLayout(a)},destroy:function(){var a=this.usingTransforms,b=this.options;this.$allAtoms.removeClass(b.hiddenClass+" "+b.itemClass).each(function(){var b=this.style;b.position="",b.top="",b.left="",b.opacity="",a&&(b[i]="")});var c=this.element[0].style;for(var d in this.originalStyle)c[d]=this.originalStyle[d];this.element.unbind(".isotope").undelegate("."+b.hiddenClass,"click").removeClass(b.containerClass).removeData("isotope"),w.unbind(".isotope")},_getSegments:function(a){var b=this.options.layoutMode,c=a?"rowHeight":"columnWidth",d=a?"height":"width",e=a?"rows":"cols",g=this.element[d](),h,i=this.options[b]&&this.options[b][c]||this.$filteredAtoms["outer"+f(d)](!0)||g;h=Math.floor(g/i),h=Math.max(h,1),this[b][e]=h,this[b][c]=i},_checkIfSegmentsChanged:function(a){var b=this.options.layoutMode,c=a?"rows":"cols",d=this[b][c];return this._getSegments(a),this[b][c]!==d},_masonryReset:function(){this.masonry={},this._getSegments();var a=this.masonry.cols;this.masonry.colYs=[];while(a--)this.masonry.colYs.push(0)},_masonryLayout:function(a){var c=this,d=c.masonry;a.each(function(){var a=b(this),e=Math.ceil(a.outerWidth(!0)/d.columnWidth);e=Math.min(e,d.cols);if(e===1)c._masonryPlaceBrick(a,d.colYs);else{var f=d.cols+1-e,g=[],h,i;for(i=0;i<f;i++)h=d.colYs.slice(i,i+e),g[i]=Math.max.apply(Math,h);c._masonryPlaceBrick(a,g)}})},_masonryPlaceBrick:function(a,b){var c=Math.min.apply(Math,b),d=0;for(var e=0,f=b.length;e<f;e++)if(b[e]===c){d=e;break}var g=this.masonry.columnWidth*d,h=c;this._pushPosition(a,g,h);var i=c+a.outerHeight(!0),j=this.masonry.cols+1-f;for(e=0;e<j;e++)this.masonry.colYs[d+e]=i},_masonryGetContainerSize:function(){var a=Math.max.apply(Math,this.masonry.colYs);return{height:a}},_masonryResizeChanged:function(){return this._checkIfSegmentsChanged()},_fitRowsReset:function(){this.fitRows={x:0,y:0,height:0}},_fitRowsLayout:function(a){var c=this,d=this.element.width(),e=this.fitRows;a.each(function(){var a=b(this),f=a.outerWidth(!0),g=a.outerHeight(!0);e.x!==0&&f+e.x>d&&(e.x=0,e.y=e.height),c._pushPosition(a,e.x,e.y),e.height=Math.max(e.y+g,e.height),e.x+=f})},_fitRowsGetContainerSize:function(){return{height:this.fitRows.height}},_fitRowsResizeChanged:function(){return!0},_cellsByRowReset:function(){this.cellsByRow={index:0},this._getSegments(),this._getSegments(!0)},_cellsByRowLayout:function(a){var c=this,d=this.cellsByRow;a.each(function(){var a=b(this),e=d.index%d.cols,f=Math.floor(d.index/d.cols),g=(e+.5)*d.columnWidth-a.outerWidth(!0)/2,h=(f+.5)*d.rowHeight-a.outerHeight(!0)/2;c._pushPosition(a,g,h),d.index++})},_cellsByRowGetContainerSize:function(){return{height:Math.ceil(this.$filteredAtoms.length/this.cellsByRow.cols)*this.cellsByRow.rowHeight+this.offset.top}},_cellsByRowResizeChanged:function(){return this._checkIfSegmentsChanged()},_straightDownReset:function(){this.straightDown={y:0}},_straightDownLayout:function(a){var c=this;a.each(function(a){var d=b(this);c._pushPosition(d,0,c.straightDown.y),c.straightDown.y+=d.outerHeight(!0)})},_straightDownGetContainerSize:function(){return{height:this.straightDown.y}},_straightDownResizeChanged:function(){return!0},_masonryHorizontalReset:function(){this.masonryHorizontal={},this._getSegments(!0);var a=this.masonryHorizontal.rows;this.masonryHorizontal.rowXs=[];while(a--)this.masonryHorizontal.rowXs.push(0)},_masonryHorizontalLayout:function(a){var c=this,d=c.masonryHorizontal;a.each(function(){var a=b(this),e=Math.ceil(a.outerHeight(!0)/d.rowHeight);e=Math.min(e,d.rows);if(e===1)c._masonryHorizontalPlaceBrick(a,d.rowXs);else{var f=d.rows+1-e,g=[],h,i;for(i=0;i<f;i++)h=d.rowXs.slice(i,i+e),g[i]=Math.max.apply(Math,h);c._masonryHorizontalPlaceBrick(a,g)}})},_masonryHorizontalPlaceBrick:function(a,b){var c=Math.min.apply(Math,b),d=0;for(var e=0,f=b.length;e<f;e++)if(b[e]===c){d=e;break}var g=c,h=this.masonryHorizontal.rowHeight*d;this._pushPosition(a,g,h);var i=c+a.outerWidth(!0),j=this.masonryHorizontal.rows+1-f;for(e=0;e<j;e++)this.masonryHorizontal.rowXs[d+e]=i},_masonryHorizontalGetContainerSize:function(){var a=Math.max.apply(Math,this.masonryHorizontal.rowXs);return{width:a}},_masonryHorizontalResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_fitColumnsReset:function(){this.fitColumns={x:0,y:0,width:0}},_fitColumnsLayout:function(a){var c=this,d=this.element.height(),e=this.fitColumns;a.each(function(){var a=b(this),f=a.outerWidth(!0),g=a.outerHeight(!0);e.y!==0&&g+e.y>d&&(e.x=e.width,e.y=0),c._pushPosition(a,e.x,e.y),e.width=Math.max(e.x+f,e.width),e.y+=g})},_fitColumnsGetContainerSize:function(){return{width:this.fitColumns.width}},_fitColumnsResizeChanged:function(){return!0},_cellsByColumnReset:function(){this.cellsByColumn={index:0},this._getSegments(),this._getSegments(!0)},_cellsByColumnLayout:function(a){var c=this,d=this.cellsByColumn;a.each(function(){var a=b(this),e=Math.floor(d.index/d.rows),f=d.index%d.rows,g=(e+.5)*d.columnWidth-a.outerWidth(!0)/2,h=(f+.5)*d.rowHeight-a.outerHeight(!0)/2;c._pushPosition(a,g,h),d.index++})},_cellsByColumnGetContainerSize:function(){return{width:Math.ceil(this.$filteredAtoms.length/this.cellsByColumn.rows)*this.cellsByColumn.columnWidth}},_cellsByColumnResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_straightAcrossReset:function(){this.straightAcross={x:0}},_straightAcrossLayout:function(a){var c=this;a.each(function(a){var d=b(this);c._pushPosition(d,c.straightAcross.x,0),c.straightAcross.x+=d.outerWidth(!0)})},_straightAcrossGetContainerSize:function(){return{width:this.straightAcross.x}},_straightAcrossResizeChanged:function(){return!0}},b.fn.imagesLoaded=function(a){function h(){a.call(c,d)}function i(a){var c=a.target;c.src!==f&&b.inArray(c,g)===-1&&(g.push(c),--e<=0&&(setTimeout(h),d.unbind(".imagesLoaded",i)))}var c=this,d=c.find("img").add(c.filter("img")),e=d.length,f="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",g=[];return e||h(),d.bind("load.imagesLoaded error.imagesLoaded",i).each(function(){var a=this.src;this.src=f,this.src=a}),c};var x=function(b){a.console&&a.console.error(b)};b.fn.isotope=function(a,c){if(typeof a=="string"){var d=Array.prototype.slice.call(arguments,1);this.each(function(){var c=b.data(this,"isotope");if(!c){x("cannot call methods on isotope prior to initialization; attempted to call method '"+a+"'");return}if(!b.isFunction(c[a])||a.charAt(0)==="_"){x("no such method '"+a+"' for isotope instance");return}c[a].apply(c,d)})}else this.each(function(){var d=b.data(this,"isotope");d?(d.option(a),d._init(c)):b.data(this,"isotope",new b.Isotope(a,this,c))});return this}
+
+             /* PB: added a check for o.addTest since it's undefined when an older version of Modernizr is already on the page.  grumble. */
+            !function(t,i){"use strict";var s,e=t.document,n=e.documentElement,o=t.Modernizr,r=function(t){return t.charAt(0).toUpperCase()+t.slice(1)},a="Moz Webkit O Ms".split(" "),h=function(t){var i,s=n.style;if("string"==typeof s[t])return t;t=r(t);for(var e=0,o=a.length;o>e;e++)if(i=a[e]+t,"string"==typeof s[i])return i},l=h("transform"),u=h("transitionProperty"),c={csstransforms:function(){return!!l},csstransforms3d:function(){var t=!!h("perspective");if(t&&"webkitPerspective"in n.style){var s=i("<style>@media (transform-3d),(-webkit-transform-3d){#modernizr{height:3px}}</style>").appendTo("head"),e=i('<div id="modernizr" />').appendTo("html");t=3===e.height(),e.remove(),s.remove()}return t},csstransitions:function(){return!!u}};if(o)for(s in c)o.hasOwnProperty(s)||(o.addTest && o.addTest(s,c[s]));else{o=t.Modernizr={_version:"1.6ish: miniModernizr for Isotope"};var d,f=" ";for(s in c)d=c[s](),o[s]=d,f+=" "+(d?"":"no-")+s;i("html").addClass(f)}if(o.csstransforms){var m=o.csstransforms3d?{translate:function(t){return"translate3d("+t[0]+"px, "+t[1]+"px, 0) "},scale:function(t){return"scale3d("+t+", "+t+", 1) "}}:{translate:function(t){return"translate("+t[0]+"px, "+t[1]+"px) "},scale:function(t){return"scale("+t+") "}},p=function(t,s,e){var n,o,r=i.data(t,"isoTransform")||{},a={},h={};a[s]=e,i.extend(r,a);for(n in r)o=r[n],h[n]=m[n](o);var u=h.translate||"",c=h.scale||"",d=u+c;i.data(t,"isoTransform",r),t.style[l]=d};i.cssNumber.scale=!0,i.cssHooks.scale={set:function(t,i){p(t,"scale",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.scale?s.scale:1}},i.fx.step.scale=function(t){i.cssHooks.scale.set(t.elem,t.now+t.unit)},i.cssNumber.translate=!0,i.cssHooks.translate={set:function(t,i){p(t,"translate",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.translate?s.translate:[0,0]}}}var y,g;o.csstransitions&&(y={WebkitTransitionProperty:"webkitTransitionEnd",MozTransitionProperty:"transitionend",OTransitionProperty:"oTransitionEnd otransitionend",transitionProperty:"transitionend"}[u],g=h("transitionDuration"));var v,_=i.event,A=i.event.handle?"handle":"dispatch";_.special.smartresize={setup:function(){i(this).bind("resize",_.special.smartresize.handler)},teardown:function(){i(this).unbind("resize",_.special.smartresize.handler)},handler:function(t,i){var s=this,e=arguments;t.type="smartresize",v&&clearTimeout(v),v=setTimeout(function(){_[A].apply(s,e)},"execAsap"===i?0:100)}},i.fn.smartresize=function(t){return t?this.bind("smartresize",t):this.trigger("smartresize",["execAsap"])},i.Isotope=function(t,s,e){this.element=i(s),this._create(t),this._init(e)};var w=["width","height"],C=i(t);i.Isotope.settings={resizable:!0,layoutMode:"masonry",containerClass:"isotope",itemClass:"isotope-item",hiddenClass:"isotope-hidden",hiddenStyle:{opacity:0,scale:.001},visibleStyle:{opacity:1,scale:1},containerStyle:{position:"relative",overflow:"hidden"},animationEngine:"best-available",animationOptions:{queue:!1,duration:800},sortBy:"original-order",sortAscending:!0,resizesContainer:!0,transformsEnabled:!0,itemPositionDataEnabled:!1},i.Isotope.prototype={_create:function(t){this.options=i.extend({},i.Isotope.settings,t),this.styleQueue=[],this.elemCount=0;var s=this.element[0].style;this.originalStyle={};var e=w.slice(0);for(var n in this.options.containerStyle)e.push(n);for(var o=0,r=e.length;r>o;o++)n=e[o],this.originalStyle[n]=s[n]||"";this.element.css(this.options.containerStyle),this._updateAnimationEngine(),this._updateUsingTransforms();var a={"original-order":function(t,i){return i.elemCount++,i.elemCount},random:function(){return Math.random()}};this.options.getSortData=i.extend(this.options.getSortData,a),this.reloadItems(),this.offset={left:parseInt(this.element.css("padding-left")||0,10),top:parseInt(this.element.css("padding-top")||0,10)};var h=this;setTimeout(function(){h.element.addClass(h.options.containerClass)},0),this.options.resizable&&C.bind("smartresize.isotope",function(){h.resize()}),this.element.delegate("."+this.options.hiddenClass,"click",function(){return!1})},_getAtoms:function(t){var i=this.options.itemSelector,s=i?t.filter(i).add(t.find(i)):t,e={position:"absolute"};return s=s.filter(function(t,i){return 1===i.nodeType}),this.usingTransforms&&(e.left=0,e.top=0),s.css(e).addClass(this.options.itemClass),this.updateSortData(s,!0),s},_init:function(t){this.$filteredAtoms=this._filter(this.$allAtoms),this._sort(),this.reLayout(t)},option:function(t){if(i.isPlainObject(t)){this.options=i.extend(!0,this.options,t);var s;for(var e in t)s="_update"+r(e),this[s]&&this[s]()}},_updateAnimationEngine:function(){var t,i=this.options.animationEngine.toLowerCase().replace(/[ _\-]/g,"");switch(i){case"css":case"none":t=!1;break;case"jquery":t=!0;break;default:t=!o.csstransitions}this.isUsingJQueryAnimation=t,this._updateUsingTransforms()},_updateTransformsEnabled:function(){this._updateUsingTransforms()},_updateUsingTransforms:function(){var t=this.usingTransforms=this.options.transformsEnabled&&o.csstransforms&&o.csstransitions&&!this.isUsingJQueryAnimation;t||(delete this.options.hiddenStyle.scale,delete this.options.visibleStyle.scale),this.getPositionStyles=t?this._translate:this._positionAbs},_filter:function(t){var i=""===this.options.filter?"*":this.options.filter;if(!i)return t;var s=this.options.hiddenClass,e="."+s,n=t.filter(e),o=n;if("*"!==i){o=n.filter(i);var r=t.not(e).not(i).addClass(s);this.styleQueue.push({$el:r,style:this.options.hiddenStyle})}return this.styleQueue.push({$el:o,style:this.options.visibleStyle}),o.removeClass(s),t.filter(i)},updateSortData:function(t,s){var e,n,o=this,r=this.options.getSortData;t.each(function(){e=i(this),n={};for(var t in r)n[t]=s||"original-order"!==t?r[t](e,o):i.data(this,"isotope-sort-data")[t];i.data(this,"isotope-sort-data",n)})},_sort:function(){var t=this.options.sortBy,i=this._getSorter,s=this.options.sortAscending?1:-1,e=function(e,n){var o=i(e,t),r=i(n,t);return o===r&&"original-order"!==t&&(o=i(e,"original-order"),r=i(n,"original-order")),(o>r?1:r>o?-1:0)*s};this.$filteredAtoms.sort(e)},_getSorter:function(t,s){return i.data(t,"isotope-sort-data")[s]},_translate:function(t,i){return{translate:[t,i]}},_positionAbs:function(t,i){return{left:t,top:i}},_pushPosition:function(t,i,s){i=Math.round(i+this.offset.left),s=Math.round(s+this.offset.top);var e=this.getPositionStyles(i,s);this.styleQueue.push({$el:t,style:e}),this.options.itemPositionDataEnabled&&t.data("isotope-item-position",{x:i,y:s})},layout:function(t,i){var s=this.options.layoutMode;if(this["_"+s+"Layout"](t),this.options.resizesContainer){var e=this["_"+s+"GetContainerSize"]();this.styleQueue.push({$el:this.element,style:e})}this._processStyleQueue(t,i),this.isLaidOut=!0},_processStyleQueue:function(t,s){var e,n,r,a,h=this.isLaidOut?this.isUsingJQueryAnimation?"animate":"css":"css",l=this.options.animationOptions,u=this.options.onLayout;if(n=function(t,i){i.$el[h](i.style,l)},this._isInserting&&this.isUsingJQueryAnimation)n=function(t,i){e=i.$el.hasClass("no-transition")?"css":h,i.$el[e](i.style,l)};else if(s||u||l.complete){var c=!1,d=[s,u,l.complete],f=this;if(r=!0,a=function(){if(!c){for(var i,s=0,e=d.length;e>s;s++)i=d[s],"function"==typeof i&&i.call(f.element,t,f);c=!0}},this.isUsingJQueryAnimation&&"animate"===h)l.complete=a,r=!1;else if(o.csstransitions){for(var m,p=0,v=this.styleQueue[0],_=v&&v.$el;!_||!_.length;){if(m=this.styleQueue[p++],!m)return;_=m.$el}var A=parseFloat(getComputedStyle(_[0])[g]);A>0&&(n=function(t,i){i.$el[h](i.style,l).one(y,a)},r=!1)}}i.each(this.styleQueue,n),r&&a(),this.styleQueue=[]},resize:function(){this["_"+this.options.layoutMode+"ResizeChanged"]()&&this.reLayout()},reLayout:function(t){this["_"+this.options.layoutMode+"Reset"](),this.layout(this.$filteredAtoms,t)},addItems:function(t,i){var s=this._getAtoms(t);this.$allAtoms=this.$allAtoms.add(s),i&&i(s)},insert:function(t,i){this.element.append(t);var s=this;this.addItems(t,function(t){var e=s._filter(t);s._addHideAppended(e),s._sort(),s.reLayout(),s._revealAppended(e,i)})},appended:function(t,i){var s=this;this.addItems(t,function(t){s._addHideAppended(t),s.layout(t),s._revealAppended(t,i)})},_addHideAppended:function(t){this.$filteredAtoms=this.$filteredAtoms.add(t),t.addClass("no-transition"),this._isInserting=!0,this.styleQueue.push({$el:t,style:this.options.hiddenStyle})},_revealAppended:function(t,i){var s=this;setTimeout(function(){t.removeClass("no-transition"),s.styleQueue.push({$el:t,style:s.options.visibleStyle}),s._isInserting=!1,s._processStyleQueue(t,i)},10)},reloadItems:function(){this.$allAtoms=this._getAtoms(this.element.children())},remove:function(t,i){this.$allAtoms=this.$allAtoms.not(t),this.$filteredAtoms=this.$filteredAtoms.not(t);var s=this,e=function(){t.remove(),i&&i.call(s.element)};t.filter(":not(."+this.options.hiddenClass+")").length?(this.styleQueue.push({$el:t,style:this.options.hiddenStyle}),this._sort(),this.reLayout(e)):e()},shuffle:function(t){this.updateSortData(this.$allAtoms),this.options.sortBy="random",this._sort(),this.reLayout(t)},destroy:function(){var t=this.usingTransforms,i=this.options;this.$allAtoms.removeClass(i.hiddenClass+" "+i.itemClass).each(function(){var i=this.style;i.position="",i.top="",i.left="",i.opacity="",t&&(i[l]="")});var s=this.element[0].style;for(var e in this.originalStyle)s[e]=this.originalStyle[e];this.element.unbind(".isotope").undelegate("."+i.hiddenClass,"click").removeClass(i.containerClass).removeData("isotope"),C.unbind(".isotope")},_getSegments:function(t){var i,s=this.options.layoutMode,e=t?"rowHeight":"columnWidth",n=t?"height":"width",o=t?"rows":"cols",a=this.element[n](),h=this.options[s]&&this.options[s][e]||this.$filteredAtoms["outer"+r(n)](!0)||a;i=Math.floor(a/h),i=Math.max(i,1),this[s][o]=i,this[s][e]=h},_checkIfSegmentsChanged:function(t){var i=this.options.layoutMode,s=t?"rows":"cols",e=this[i][s];return this._getSegments(t),this[i][s]!==e},_masonryReset:function(){this.masonry={},this._getSegments();var t=this.masonry.cols;for(this.masonry.colYs=[];t--;)this.masonry.colYs.push(0)},_masonryLayout:function(t){var s=this,e=s.masonry;t.each(function(){var t=i(this),n=Math.ceil(t.outerWidth(!0)/e.columnWidth);if(n=Math.min(n,e.cols),1===n)s._masonryPlaceBrick(t,e.colYs);else{var o,r,a=e.cols+1-n,h=[];for(r=0;a>r;r++)o=e.colYs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryPlaceBrick(t,h)}})},_masonryPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=this.masonry.columnWidth*e,a=s;this._pushPosition(t,r,a);var h=s+t.outerHeight(!0),l=this.masonry.cols+1-o;for(n=0;l>n;n++)this.masonry.colYs[e+n]=h},_masonryGetContainerSize:function(){var t=Math.max.apply(Math,this.masonry.colYs);return{height:t}},_masonryResizeChanged:function(){return this._checkIfSegmentsChanged()},_fitRowsReset:function(){this.fitRows={x:0,y:0,height:0}},_fitRowsLayout:function(t){var s=this,e=this.element.width(),n=this.fitRows;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.x&&o+n.x>e&&(n.x=0,n.y=n.height),s._pushPosition(t,n.x,n.y),n.height=Math.max(n.y+r,n.height),n.x+=o})},_fitRowsGetContainerSize:function(){return{height:this.fitRows.height}},_fitRowsResizeChanged:function(){return!0},_cellsByRowReset:function(){this.cellsByRow={index:0},this._getSegments(),this._getSegments(!0)},_cellsByRowLayout:function(t){var s=this,e=this.cellsByRow;t.each(function(){var t=i(this),n=e.index%e.cols,o=Math.floor(e.index/e.cols),r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByRowGetContainerSize:function(){return{height:Math.ceil(this.$filteredAtoms.length/this.cellsByRow.cols)*this.cellsByRow.rowHeight+this.offset.top}},_cellsByRowResizeChanged:function(){return this._checkIfSegmentsChanged()},_straightDownReset:function(){this.straightDown={y:0}},_straightDownLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,0,s.straightDown.y),s.straightDown.y+=t.outerHeight(!0)})},_straightDownGetContainerSize:function(){return{height:this.straightDown.y}},_straightDownResizeChanged:function(){return!0},_masonryHorizontalReset:function(){this.masonryHorizontal={},this._getSegments(!0);var t=this.masonryHorizontal.rows;for(this.masonryHorizontal.rowXs=[];t--;)this.masonryHorizontal.rowXs.push(0)},_masonryHorizontalLayout:function(t){var s=this,e=s.masonryHorizontal;t.each(function(){var t=i(this),n=Math.ceil(t.outerHeight(!0)/e.rowHeight);if(n=Math.min(n,e.rows),1===n)s._masonryHorizontalPlaceBrick(t,e.rowXs);else{var o,r,a=e.rows+1-n,h=[];for(r=0;a>r;r++)o=e.rowXs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryHorizontalPlaceBrick(t,h)}})},_masonryHorizontalPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=s,a=this.masonryHorizontal.rowHeight*e;this._pushPosition(t,r,a);var h=s+t.outerWidth(!0),l=this.masonryHorizontal.rows+1-o;for(n=0;l>n;n++)this.masonryHorizontal.rowXs[e+n]=h},_masonryHorizontalGetContainerSize:function(){var t=Math.max.apply(Math,this.masonryHorizontal.rowXs);return{width:t}},_masonryHorizontalResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_fitColumnsReset:function(){this.fitColumns={x:0,y:0,width:0}},_fitColumnsLayout:function(t){var s=this,e=this.element.height(),n=this.fitColumns;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.y&&r+n.y>e&&(n.x=n.width,n.y=0),s._pushPosition(t,n.x,n.y),n.width=Math.max(n.x+o,n.width),n.y+=r})},_fitColumnsGetContainerSize:function(){return{width:this.fitColumns.width}},_fitColumnsResizeChanged:function(){return!0},_cellsByColumnReset:function(){this.cellsByColumn={index:0},this._getSegments(),this._getSegments(!0)},_cellsByColumnLayout:function(t){var s=this,e=this.cellsByColumn;t.each(function(){var t=i(this),n=Math.floor(e.index/e.rows),o=e.index%e.rows,r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByColumnGetContainerSize:function(){return{width:Math.ceil(this.$filteredAtoms.length/this.cellsByColumn.rows)*this.cellsByColumn.columnWidth}},_cellsByColumnResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_straightAcrossReset:function(){this.straightAcross={x:0}},_straightAcrossLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,s.straightAcross.x,0),s.straightAcross.x+=t.outerWidth(!0)})},_straightAcrossGetContainerSize:function(){return{width:this.straightAcross.x}},_straightAcrossResizeChanged:function(){return!0}},i.fn.imagesLoaded=function(t){function s(){t.call(n,o)}function e(t){var n=t.target;n.src!==a&&-1===i.inArray(n,h)&&(h.push(n),--r<=0&&(setTimeout(s),o.unbind(".imagesLoaded",e)))}var n=this,o=n.find("img").add(n.filter("img")),r=o.length,a="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",h=[];return r||s(),o.bind("load.imagesLoaded error.imagesLoaded",e).each(function(){var t=this.src;this.src=a,this.src=t}),n};var z=function(i){t.console&&t.console.error(i)};i.fn.isotope=function(t,s){if("string"==typeof t){var e=Array.prototype.slice.call(arguments,1);this.each(function(){var s=i.data(this,"isotope");return s?i.isFunction(s[t])&&"_"!==t.charAt(0)?void s[t].apply(s,e):void z("no such method '"+t+"' for isotope instance"):void z("cannot call methods on isotope prior to initialization; attempted to call method '"+t+"'")})}else this.each(function(){var e=i.data(this,"isotope");e?(e.option(t),e._init(s)):i.data(this,"isotope",new i.Isotope(t,this,s))});return this}}(window,$);
         }
 
         function plugin_jquery_jScrollPane($){

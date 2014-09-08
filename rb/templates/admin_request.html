@@ -2,6 +2,10 @@
 {% block title %}{{ group.name }} Administrative Access{%endblock%}
 {% block bodyClass %}wide{% endblock %}
 {% block mainContent %}
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+
+
 <h1>{{ group.name }} Administrative Access</h1>
 <div class="container">
 <section role="panels">
@@ -15,6 +19,9 @@
     </form>
   {% endif %}
  </section>
+</section>
+</div>
+
 </section>
 </div>
 {% endblock mainContent %}

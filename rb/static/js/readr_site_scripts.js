@@ -1,7 +1,7 @@
 var RDR_offline = (window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8080/static/":"http://s3.amazonaws.com/readrboard/";
+RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"http://www.readrboard.com",
+RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/",
+RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/";
 
 var RB = RB ? RB : {};
 
@@ -239,12 +239,12 @@ RB = {
                     if ( data.type == "brd") {
                         var follower_count = parseInt($('#board_follower_count').text() ) + 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
-                        $('#board_follow_button').unbind().text('Stop following this board').click( function() {
+                        $('#board_follow_button').unbind().html('<i class="fa fa-minus"></i>').click( function() {
                             RB.follow.remove(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
-                        $('#follow_action').text( 'Stop following this '+person_or_group ).unbind().click( function() {
+                        $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
                             var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                             RB.follow.remove( id, type );
                         });
@@ -274,12 +274,12 @@ RB = {
                     if ( data.type == "brd") {
                         var follower_count = parseInt($('#board_follower_count').text() ) - 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
-                        $('#board_follow_button').unbind().text('Follow this board').click( function() {
+                        $('#board_follow_button').unbind().html('<i class="fa fa-plus"></i>').click( function() {
                             RB.follow.add(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
-                        $('#follow_action').text( 'Follow this '+person_or_group ).unbind().click( function() {
+                        $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
                             var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
                             RB.follow.add( id, type );
                         });
@@ -312,20 +312,21 @@ RB = {
                 success: function(response) {
                     if ( data.types.length == 1 && $.inArray('brd', data.types) != -1 ) {
                         
+                        // 1/13/2014:  I'm disabling Boards for now!  -- pb.
                         // abstract this
-                        var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
-                        $.each( response.data.paginated_follows, function(idx, followed_item) {
-                            var board_id = followed_item.brd.id;
-                            $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
-                        });
-                        var boards_width = $('#content').width() + $('#pages').width();
-                        $boards.width( boards_width );
-                        if ( boards_width < 570 ) {
-                            $boards.find('ul').width(285);
-                        } else if ( boards_width < 855 ) {
-                            $boards.find('ul').width(570);
-                        }
-                        $('#cards').before( $boards );
+                        // var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
+                        // $.each( response.data.paginated_follows, function(idx, followed_item) {
+                        //     var board_id = followed_item.brd.id;
+                        //     $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
+                        // });
+                        // var boards_width = $('#content').width() + $('#pages').width();
+                        // $boards.width( boards_width );
+                        // if ( boards_width < 570 ) {
+                        //     $boards.find('ul').width(285);
+                        // } else if ( boards_width < 855 ) {
+                        //     $boards.find('ul').width(570);
+                        // }
+                        // $('#cards').before( $boards );
 
                     } else {
                         
@@ -388,11 +389,11 @@ RB = {
                         var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
                             person_or_group = (data.entity_type=="usr") ? "person":"group";
                         if ( response.data.user_is_follower ) {
-                            $('#follow_action').text( 'Stop following this ' + person_or_group ).unbind().click( function() {
+                            $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
                                 RB.follow.remove( id, type );
                             });
                         } else {
-                            $('#follow_action').text( 'Follow this ' + person_or_group ).unbind().click( function() {
+                            $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
                                 RB.follow.add( id, type );
                             });
                         }
@@ -494,6 +495,9 @@ RB = {
         },
         searchBoards : function(search_term) {
             // RB.interactions.searchBoards
+
+            // DO NOT DO THIS RIGHT NOW.
+            return;
 
             var sendData = {"search_term":search_term, "page_num":1};
 
@@ -914,8 +918,8 @@ RB = {
 
                             //for testing offline
                             if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                content = content.replace("localhost:8080", "www.readrboard.com");
+                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                content = content.replace("localhost:8081", "www.readrboard.com");
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -999,8 +1003,8 @@ RB = {
                         case "image":
                                                         //for testing offline
                             if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8080", "www.readrboard.com");
-                                content = content.replace("localhost:8080", "www.readrboard.com");
+                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
+                                content = content.replace("localhost:8081", "www.readrboard.com");
                             }
 
                             mainShareText = _wrapTag(interaction_body, true);
@@ -1097,4 +1101,34 @@ window.log = function(){
 
 
 // place any jQuery/helper plugins in here, instead of separate, slower script files.
+
+// debounce the window resize
+// via http://www.paulirish.com/2009/throttled-smartresize-jquery-event-handler/
+(function($,sr){
+
+  // debouncing function from John Hann
+  // http://unscriptable.com/index.php/2009/03/20/debouncing-javascript-methods/
+  var debounce = function (func, threshold, execAsap) {
+      var timeout;
+
+      return function debounced () {
+          var obj = this, args = arguments;
+          function delayed () {
+              if (!execAsap)
+                  func.apply(obj, args);
+              timeout = null;
+          };
+
+          if (timeout)
+              clearTimeout(timeout);
+          else if (execAsap)
+              func.apply(obj, args);
+
+          timeout = setTimeout(delayed, threshold || 100);
+      };
+  }
+  // smartresize 
+  jQuery.fn[sr] = function(fn){  return fn ? this.bind('resize', debounce(fn)) : this.trigger(sr); };
+
+})(jQuery,'smartresize');
 

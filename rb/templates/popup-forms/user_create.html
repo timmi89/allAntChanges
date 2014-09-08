@@ -15,26 +15,30 @@
     <form class="popupForm" action="/user_create/" enctype="multipart/form-data" method="post" class="in-page">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        
+        <!--
+        <div class="engagement_today grid-whole no-rdr">
+            <h2 class="grid-whole padded">Content engagement today falls short.</h2>
+            <div class="engagement_column grid-third s-grid-whole padded">
+        -->
         <div class="formBody clearfix">
-            <div class='formBodyColSection'>
-                <div class='formBodySection'>
-              		<label for="id_username">User Name </label>
-              		{{ form.username.errors }}{{ form.username }}
+            <div class='formBodyColSection '>
+                <div class='formBodySection grid-whole'>
+              		<div class="grid-half"><label for="id_username">User Name </label></div>
+              		<div class="grid-half">{{ form.username.errors }}{{ form.username }}</div>
               	</div>
-              	<div class='formBodySection'>
-                	<label for="id_email">Email </label>
-                	{{ form.email.errors }}{{ form.email }}
+              	<div class='formBodySection grid-whole'>
+                	<div class="grid-half"><label for="id_email">Email </label></div>
+                	<div class="grid-half">{{ form.email.errors }}{{ form.email }}</div>
                 </div>
           	</div>
             <div class='formBodyColSection'>
-                <div class='formBodySection'>
-                    <label for="id_password1">Password</label>
-                    {{ form.password1.errors }}{{ form.password1 }}
+                <div class='formBodySection grid-whole'>
+                    <div class="grid-half"><label for="id_password1">Password</label></div>
+                    <div class="grid-half">{{ form.password1.errors }}{{ form.password1 }}</div>
               	</div>
-              	<div class='formBodySection'>
-                    <label for="id_password2">Confirm Password</label>
-                    {{ form.password2.errors }}{{ form.password2 }}
+              	<div class='formBodySection grid-whole'>
+                    <div class="grid-half"><label for="id_password2">Confirm Password</label></div>
+                    <div class="grid-half">{{ form.password2.errors }}{{ form.password2 }}</div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,20 @@
+<section role="subheader" class="admin">
+  <div class="content">
+    <div class="left">
+      <div class="item">
+        {{ group.name }} Administration
+      </div>
+    </div>
+  </div>
+</section>
+<div class="admin_tabs content">
+    <div class="grid-whole padded">
+        <a href="/group/{{ group.short_name }}/" class="view_stream">View your stream of reactions &raquo;</a>
+        <ol>
+            <li class="{% if activeAdminTab == 'settings' %}active{%endif%}"><a href="/group/{{ group.short_name }}/settings/">Settings</a></li>
+            <li class="{% if activeAdminTab == 'analytics' %}active{%endif%}"><a href="/group/{{ group.short_name }}/analytics/">Analytics</a></li>
+            <li class="{% if activeAdminTab == 'manage_reactions' %}active{%endif%}"><a href="/group/{{ group.short_name }}/all_reactions/">Manage Reactions</a></li>
+            <li class="{% if activeAdminTab == 'admin_requests' %}active{%endif%}"><a href="/group/{{ group.short_name }}/admin_approve/">Admin Requests</a></li>
+        </ol>
+    </div>
+</div>

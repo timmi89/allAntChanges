@@ -31,6 +31,7 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^$', 'rb.views.home'),
+  url(r'^see/$', 'rb.views.see'),
   #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
 
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
@@ -69,6 +70,7 @@ urlpatterns = patterns('',
   url(r'^page/(?P<page_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^page/(?P<page_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^page/(?P<page_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
+  url(r'^page/(?P<page_id>\d+)/reset/$', 'rb.views.resetPageData' ),
 
   # Specific site
   url(r'^site/(?P<site_id>\d+)/$', 'rb.views.main'),
@@ -96,6 +98,7 @@ urlpatterns = patterns('',
   url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
   url(r'^publishers/$','rb.views.learn'),
+  url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
   url(r'^learn/$','rb.views.learn'),
   
@@ -131,7 +134,9 @@ urlpatterns = patterns('',
   url(r'^signup_wordpress/$', 'rb.views.create_group_wordpress'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_all_tags'),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$', 'rb.views.group_all_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('readrboard.analytics.urls_v1')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
@@ -139,6 +144,7 @@ urlpatterns = patterns('',
 
   #inhouse
   url(r'^analytics', include('readrboard.analytics.urls')),
+  url(r'^analytics_v1', include('readrboard.analytics.urls_v1')),
 
 
   # Plugin Settings
@@ -149,6 +155,7 @@ urlpatterns = patterns('',
   url(r'^user_create/$', 'rb.views.create_rb_user'),
   url(r'^confirmemail/$', 'rb.views.confirm_rb_user'),
   url(r'^reset_password/$', 'rb.views.reset_rb_password'),
+  url(r'^change_password/$', 'rb.views.change_rb_password'),
   url(r'^request_password/$', 'rb.views.request_password_reset'),
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   

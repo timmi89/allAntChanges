@@ -1,72 +1,95 @@
 <!DOCTYPE html>
-
-<!-- 
-320 and Up boilerplate extension
-Author: Andy Clarke
-Version: 0.9b
-URL: http://stuffandnonsense.co.uk/projects/320andup 
--->
-
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 7 ]><html class="no-js ie6" lang="en"><![endif]-->
-<!--[if IE 7 ]><html class="no-js ie7" lang="en"><![endif]-->
-<!--[if IE 8 ]><html class="no-js ie8" lang="en"><![endif]-->
-<!--[if (gte IE 9)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
-<meta charset="utf-8">
-<title>{% block title %}ReadrBoard{% endblock %}</title>
-<meta name="description" content="How the web reacts">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
 
-{% block css %}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/fonts/helvetica.css">
-<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=1">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/site.css?v=2">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
-{% endblock %}
+  <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
+      <script src="js/vendor/respond.min.js"></script>
+  <![endif]-->
 
-{% block topjavascript %}
-<script>httpProtocol = window.location.protocol;</script>
-<!-- Pulled from http://code.google.com/p/html5shiv/ -->
-<!--[if lt IE 9]>
-<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
-<script src="{{ STATIC_URL }}js/jquery-1.9.0.min.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.mustache.min.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.isotope.min.js"></script>
-<script src="{{ STATIC_URL }}js/waypoints.min.js"></script>
-<script src="{{ STATIC_URL }}js/waypoints-sticky.min.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.jscrollpane.min.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.browser_detect.js"></script>
-<script src="{{ STATIC_URL }}js/jquery.mousewheel.js"></script>
-<script src="{{ STATIC_URL }}js/readr_site_scripts.js?v=2"></script>
-<script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
-<script src="{{ STATIC_URL }}js/moment.js"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
+  <title>{% block title %}Antenna{% endblock %}</title>
+  <meta name="description" content="How the web reacts">
 
-<!--[if (lt IE 9) & (!IEMobile)]>
-<script src="{{ STATIC_URL }}js/selectivizr-min.js.js"></script>
-<![endif]-->
+  {% block css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/esrg_grid.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20140828">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
+  {% endblock %}
 
-<!-- FancyBox -->
-<link rel="stylesheet" href="{{ STATIC_URL }}js/fancybox/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
-<script type="text/javascript" src="{{ STATIC_URL }}js/fancybox/jquery.fancybox.pack.js?v=2.1.4"></script>
-{% endblock %}
+  {% block topjavascript %}
+  <script>httpProtocol = window.location.protocol;</script>
+  <!-- Pulled from http://code.google.com/p/html5shiv/ -->
+  <!--[if lt IE 9]>
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script src="{{ STATIC_URL }}site/js/jquery.masonry.new.min.js"></script>
+  <!--
+  <script src="{{ STATIC_URL }}js/waypoints.min.js"></script>
+  <script src="{{ STATIC_URL }}js/waypoints-sticky.min.js"></script>
+  -->
+  <script src="{{ STATIC_URL }}js/jquery.jscrollpane.min.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery.browser_detect.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery.mousewheel.js"></script>
+  <script src="{{ STATIC_URL }}js/readr_site_scripts.js?v=2"></script>
+  <script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
+  <script src="{{ STATIC_URL }}js/moment.js"></script>
+  <script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
+  <script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
 
-<!-- For favicon -->
-<link rel=”shortcut icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
-<link rel=”icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
+  <!--[if (lt IE 9) & (!IEMobile)]>
+  <script src="{{ STATIC_URL }}js/selectivizr-min.js.js"></script>
+  <![endif]-->
 
-<!-- extendedHeader -->
-{% block extendedHead %}
-{% endblock %}
+  <!-- FancyBox -->
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/fancybox/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
+  <script type="text/javascript" src="{{ STATIC_URL }}js/fancybox/jquery.fancybox.pack.js?v=2.1.4"></script>
+
+  <script>
+  var RB = RB ? RB : {};
+
+  {% if group %}
+  if ( !RB.group) {
+    RB.group = {
+      id:{{ group.id }},
+      name: '{{ group.name }}',
+      short_name: '{{ group.short_name }}'
+    };
+  } else {
+    RB.group.id = {{ group.id }};
+    RB.group.name = '{{ group.name }}';
+    RB.group.short_name = '{{ group.short_name }}';
+  }
+  {% endif %}
+  {% if profile_user %}
+  RB.profile_user = {
+    id:{{ profile_user.id }}
+  };
+  {% endif %}
+
+  </script>
+  {% endblock %}
+
+  <!-- For favicon -->
+  <link rel=”shortcut icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
+  <link rel=”icon” href=”{{ STATIC_URL }}site/images/favicon.ico” type=”image/x-icon”>
+
+  <!-- extendedHeader -->
+  {% block extendedHead %}
+  {% endblock %}
 
 </head>
 
-<body class="clearfix {% block bodyClass %}{% endblock %} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
+<body class="{% block bodyClass %}{% endblock %} {% if hasSubheader %}has_subheader{%endif%} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
     <div id="fb-root"></div>
-
     <script>
 
         window.fb_loader = $.Deferred();
@@ -94,152 +117,184 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
             ref.parentNode.insertBefore(js, ref);
         }(document));
     </script>
-
-
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user_min.js"></script>-->
     <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
-<div id="page_container">
+
   {% block header %}
-  <header role="banner" class="no-rdr clearfix">
-
-    {% block headerDisplay %}
-    {% endblock headerDisplay %}
-
-    <div id="user">
-        {% block userStatus %}
-        <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/><strong>{{ cookie_user.social_user.full_name }}</strong></a>
-          <div id="log-out-link">
-            <a href="/user/{{ cookie_user.id }}">My Activity</a>
-            <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
-            <a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>
-            
-            <div class="userSettingsMenu">
-                {% if cookie_user %}
-                    <h5 id="user_settings">Settings</h5>
-                    <!-- <label for="private_profile">
-                      <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
-                      Profile is private
-                    </label> -->
-                    <label for="follow_email">
-                      <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
-                      Send me email when someone follows my activity.
-                    </label>
-                    <label for="activity_notifications">
-                      <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
-                      Send me activity notifications.
-                    </label>
-                    
-                    {% if cookie_user.social_user.provider == "Readrboard" %}
-                        <hr/>
-                        <a href="javascript:void(0);" onclick="RDRAuth.openRbAvatarUploadWindow();">Upload Profile Picture</a>
+    <header role="global" class="no-rdr clearfix">
+      <section class="content">
+        <div id="user_and_search">
+          <div id="user">
+            {% block userStatus %}
+            <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
+              <i class="fa fa-bars"></i>
+              {% if not cookie_user.social_user.img_url %}
+              <a href="/user/{{ cookie_user.id }}" class="settings-link">Settings</a>
+              {% else %}
+              <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/></a>
+              {% endif %}
+              <div id="log-out-link">
+                Welcome, <strong>{{ cookie_user.social_user.full_name }}</strong>
+                <a href="/user/{{ cookie_user.id }}">My Activity</a>
+                <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
+                <a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>
+                
+                    {% if cookie_user %}
+                <div class="userSettingsMenu">
+                        <h5 id="user_settings">Settings</h5>
+                        <label for="private_profile">
+                          <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
+                          Profile is private
+                        </label>
+                        <label for="follow_email">
+                          <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
+                          Send me email when someone follows my activity.
+                        </label>
+                        <label for="activity_notifications">
+                          <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
+                          Send me activity notifications.
+                        </label>
+                        
+                        {% if cookie_user.social_user.provider == "Readrboard" %}
+                            <hr/>
+                            <a href="javascript:void(0);" onclick="RDRAuth.openRbAvatarUploadWindow();">Upload Profile Picture</a>
+                            <a href="javascript:void(0);" onclick="RDRAuth.openChangePasswordWindow();">Change your password</a>
+                        {% endif %}
+                </div>
                     {% endif %}
-                {% endif %}
-            </div>
 
-          </div>
-        </div>
-        <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-          <a href="javascript:void(0);" style="margin-left:5px;" onclick="RDRAuth.openRbLoginWindow();">Log In / Sign Up</a>
-          <div id="login-options" style="overflow:auto;">
-            <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
-              <div id="fb-login-button">
-                <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
+                <div class="group_settings_menu">
+                {% include "group_nav.html" %}
+                </div>
+
               </div>
             </div>
-            <div style="float:left;padding-left:6px;">
-              <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+            <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
+              <a href="javascript:void(0);" style="margin-left:5px;" onclick="RDRAuth.openRbLoginWindow();">Log In / Sign Up</a>
+              <i class="fa fa-sign-in"></i>
+              <div id="login-options" style="overflow:auto;">
+                <div style="margin-bottom:10px;">
+                  <div id="fb-login-button">
+                    <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
+                  </div>
+                </div>
+                <div style="float:left;padding-left:6px;">
+                  <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+                </div>
+                <div style="clear:both;margin-top:45px;padding-top:5px;border-top:1px solid #ccc;">
+                  <a style="font-weight:100;font-size:11px;font-family:Arial;display:block;text-align:center;color:rgb(0,0,238);font-style:italic;" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+                </div>
+              </div>    
             </div>
-          </div>    
+            {% endblock %}
+          </div>
+
+          {% block siteSearch %}
+          <div id="site_search">
+            <i class="fa fa-search"></i>
+            <form method="get" id="searchform" action="">
+              <fieldset>
+                <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
+                <!-- <button class="btn"><i class="fa fa-arrow-circle-o-right"></i></button> -->
+              </fieldset>
+            </form>
+          </div>
+          <script>
+          $('#site_search')
+              .on('mouseenter', function() { $(this).addClass('rdr_hover').find('input').focus() })//chain
+              .on('mouseleave', function() {
+                if ( !$(this).find('input').val().length ) {
+                  $(this).removeClass('rdr_hover').find('input').blur();
+                }
+              })
+              .find('form').on('submit', function(e) {
+                  var validPaths = /^\/(stream|group|user|site|page).*$/;
+                  var defaultPath = "/stream/";
+                  var curPath = window.location.pathname;
+                  var isValidPath = validPaths.test(curPath);
+                  var action = isValidPath ? curPath : defaultPath;
+                
+                  $(e.target).attr('action', action);
+              });
+            $('.fa-search').on('click', function(e){
+              e.preventDefault();
+              $('#searchform').trigger('submit');
+            });
+          </script>
+          {% endblock siteSearch %}        
         </div>
-        {% endblock %}
-      </div>
 
-      <div id="group_settings_menu">
-      {% include "group_nav.html" %}
-      </div>
+        <a href="/" class="logo"><h1>Antenna</h1></a>
+        <!-- <div class="see" style="display: inline-block; font-weight: 100; font-family: 'Helvetica'; top: -0.33rem; position: relative; color: #aaa; margin-left: 3rem;">See It <span style="font-size:11px;padding:0 10px;">&bull;</span> Use It</div> -->
+      </section>
 
+      {% block headerDisplay %}
+      {% endblock headerDisplay %}
+
+      </header>
+
+    {% endblock header %}
     
-    <a href="/" class="logo"><h1>ReadrBoard</h1></a>
-    {% block siteSearch %}
-    <div id="site_search">
-      <form method="get" id="searchform" action="">
-        <fieldset>
-          <button class="btn">Search</button>
-          <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-        </fieldset>
-      </form>
-    </div>
-    <script>
-    $('#searchform')
-        .on('mouseenter', function() { $(this).find('input').focus() })//chain
-        .on('mouseleave', function() {
-          if ( !$(this).find('input').val().length ) {
-            $(this).find('input').blur();
-          }
-        })
-        .on('submit', function(e) {
-            debugger;
-            var validPaths = /^\/(stream|group|user|site|page).*$/;
-            var defaultPath = "/stream/";
-            var curPath = window.location.pathname;
-            var isValidPath = validPaths.test(curPath);
-            var action = isValidPath ? curPath : defaultPath;
-          
-            $(e.target).attr('action', action);
-
-        })
-    </script>
-    {% endblock siteSearch %}
-    
-  </header>
-  {% endblock header %}
-  
-  <section role="content" class="clearfix">
-    <section role="wide section">
+    <!-- <section role="masthead"> -->
+    <!-- <section role="subheader"> -->
+    {% block subheaderContent %}
+    {% endblock %}
+    <!-- </section> -->
+    <!-- </section> -->
+    <section role="wideContent">
+      <div class="rebranding">
+        ReadrBoard has changed our name to <strong>Antenna!</strong>
+        Bear with us as we tidy up.
+      </div>
       {% block wideContent %}
       {% endblock %}
     </section>
-    
-    {% block afterWideContent %}
-        <section role="after wide section">
-          {% if not board %}
-          
-          {% block complementarySection %}
-              {% block sidebarContent %}
-              {% endblock %}
-          {% endblock %}
+  <div id="page_container">
+    <section role="page content" class="clearfix content">
+      
+      {% block afterWideContent %}
+          <section role="after wide section">
+            {% if not board %}
+            
+            {% block complementarySection %}
+                {% block sidebarContent %}
+                {% endblock %}
+            {% endblock %}
 
-          {% endif %}
+            {% endif %}
 
-          <section role="main">
-          {% block mainContent %}
-          {% endblock mainContent %}
+            <section role="main">
+            {% block mainContent %}
+            {% endblock mainContent %}
+            </section>
           </section>
-        </section>
-    {% endblock %}
-  </section>
+      {% endblock %}
+    </section>
 
-  
+    
+
+  </div> <!-- // page_container -->
   {% block footer %}
-  <footer role="contentinfo" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
+  <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
       <div class="footerLinks">
           <ul class="footerLinksLeft">
               <li>
-                  <a href="/"><strong>Home</strong></a>
+                  <a href="mailto:team@readrboard.com?Subject=Hello,%20ReadrBoard!">Contact Us</a>
               </li>
-              <!-- 
               <li>
-                  <a href="/learn/"><strong>About ReadrBoard</strong></a>
+                  <a href="/">Home</a>
+              </li>
+              <li>
+                  <a href="/team/">About Antenna</a>
               </li> 
-              -->
               <li>
-                  <a href="/stream/"><strong>Live Stream</strong></a>
+                  <a href="/stream/">Live Stream</a>
               </li>
               <li>
-                  <a href="/privacy/"><strong>Privacy</strong></a>
+                  <a href="/privacy/">Privacy</a>
               </li>
               <li>
-                  <a href="/terms/"><strong>Terms</strong></a>
+                  <a href="/terms/">Terms</a>
               </li>
               <li>
                   <a href="https://twitter.com/ReadrBoard" class="twitter-follow-button" data-show-count="false">Follow @ReadrBoard</a>
@@ -252,32 +307,15 @@ URL: http://stuffandnonsense.co.uk/projects/320andup
   </footer>
   {% endblock footer %}
 
-</div> <!-- // page_container -->
-
 <script type="text/javascript">
 
-var _sf_async_config={uid:26845,domain:"readrboard.com"};
-var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
+// var _sf_async_config={uid:26845,domain:"readrboard.com"};
+// var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
 
-if(!RB.RDR_offline){
-    RB.util.loadScript( {src:chartbeat_script}, function() {
-    });
-}
-
-{% if group %}
-if ( !RB.group) {
-  RB.group = {
-    id:{{ group.id }}
-  };
-} else {
-  RB.group.id = {{ group.id }};
-}
-{% endif %}
-{% if profile_user %}
-RB.profile_user = {
-  id:{{ profile_user.id }}
-};
-{% endif %}
+// if(!RB.RDR_offline){
+//     RB.util.loadScript( {src:chartbeat_script}, function() {
+//     });
+// }
 </script>
 
 {% block pageJS %}
@@ -300,7 +338,7 @@ RB.profile_user = {
                   json: JSON.stringify(sendData)
                 },
             success: function(response) {
-                $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
+                $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
             }
         });
       });
@@ -318,7 +356,7 @@ RB.profile_user = {
                 json: JSON.stringify(sendData)
               },
             success: function(response) {
-                $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
+                $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
             }
         });
       });
@@ -337,7 +375,7 @@ RB.profile_user = {
                 json: JSON.stringify(sendData)
               },
             success: function(response) {
-                $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#4b8ac8;">Saved</strong>');
+                $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
             }
         });
       });
@@ -360,12 +398,13 @@ if(!RDR_offline){
 }
 </script>
 <!-- Parse JS SDK -->
-<script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
+<!--<script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
 <script type="text/javascript">
     //don't depend on Parse
-    if(typeof Parse !== "undefined"){
-        Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
-    }
+    // if(typeof Parse !== "undefined"){
+    //     Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+    // }
 </script>
+-->
 </body>
 </html>

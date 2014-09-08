@@ -1,23 +1,20 @@
 {% load static %}
 
-{% if query_string %}
-<div id="searchFor">
-  <h2>
-    <em>Search for <br/></em>
-    <div><strong>{{ query_string }}</strong></div>
-  </h2>
-</div>
-{% endif %}
 {% if group %}
-<div id="avatar">
-  <div class="name_and_info">
-    <h2><div>{{ group.name }}</div></h2>
-    <div id="follow_info">
-      <a id="follower_count" href="#follower_list" class="fancybox"></a>
-      <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+
+
+<div class="masthead group profile background">
+    <div class="message content">
+      <div class="subtitle"><h2>Reactions at</h2></div>
+      <div><h1>{{ group.name }}</h1></div>
     </div>
-  </div>
 </div>
+
+<!-- <div id="avatar">
+  <div class="name_and_info">
+
+  </div>
+</div> -->
 <script>
 $(document).ready( function() {
   RB.follow.followers({{ group.id }},'grp');
@@ -42,60 +39,93 @@ $(document).ready( function() {
     <a href="/react/">&rarr; Get the Reaction Button</a>
   </div> -->
 <!-- </div> -->
+
+<div class="masthead main background">
+    <div class="message content">
+        <h1>React to anything on the web.</h1>
+        <h2>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h2>
+    </div>
+</div>
+
+
 {% endif %}
 
 {% if profile_user %}
 
-  {% csrf_token %}
-    <div id="avatar">
-      <div class="name_and_info">
-        <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} <div>{{ profile_user.social_user.full_name }}</div></h2>
+  <div class="content">
+    <div class="grid-third left">
+      <div class="item">
+        <div id="avatar">
+          {% csrf_token %}
+          <div class="name_and_info">
+            {% if not profile_user.social_user %} Unregistered User {% endif %}
+            <h2>{% if profile_user.social_user.img_url and profile_user.social_user.img_url != "None" %}<img src="{{ profile_user.social_user.img_url }}?type=small">{% endif %} <div>{{ profile_user.social_user.full_name }}</div></h2>
+          </div>
 
+        <script>
+        $(document).ready( function() {
+          RB.follow.followers({{ profile_user.id }},'usr');
+          RB.follow.following({{ profile_user.id }},1);
+        });
+        </script>
+
+        </div>
+      </div>
+    </div>
+    <div class="grid-third center">
+      <div id="which_content" class="item">
+          {% if cookie_user and profile_user.id == cookie_user.id %}
+            <ul>
+                {% if not on_follow_page %}
+                <li>My Activity <i class="fa fa-chevron-down"></i></li>
+                <li><a href="/follows/{{profile_user.id}}">Activity that I Follow</a></li>
+                {% else %}
+                <li>Activity that I Follow</li>
+                <li><a href="/user/{{profile_user.id}}">My Activity</a>
+                {% endif %} 
+            </ul>
+          {% else %}
+            <ul>
+              {% if not on_follow_page %}
+              <li>Activity for {{profile_user.social_user.full_name}} <i class="fa fa-chevron-down"></i></li>
+              <li><a href="/follows/{{profile_user.id}}">Activity that {{profile_user.social_user.full_name}} follows</a></li>
+              {% else %}
+              <li>Activity that {{profile_user.social_user.full_name}} follows <i class="fa fa-chevron-down"></i></li>
+              <li><a href="/user/{{profile_user.id}}">Activity for {{profile_user.social_user.full_name}}</a>
+              {% endif %} 
+            </ul>
+          {% endif %} 
+        </div>
+    </div>
+    <div class="grid-third right">
+      <div id="follow_info" class="item">
         <div id="follow_info">
           <a id="follower_count" href="#follower_list" class="fancybox"></a>
           <a id="following_count" href="#following_list" class="fancybox"></a>
           {% if cookie_user and profile_user.id != cookie_user.id %}
-            <a id="follow_action" class="btn" href="javascript:void(0);"></a>
+            <a id="follow_action" class="circle_button" href="javascript:void(0);"><i class="fa fa-plus"></i></a>
           {% endif %}
+          <!-- <a id="follower_count" href="#follower_list" class="fancybox"></a>
+          <a id="follow_action" class="circle_button" href="javascript:void(0);"><i class="fa fa-plus"></i></a> -->
         </div>
       </div>
-
-    <script>
-    $(document).ready( function() {
-      RB.follow.followers({{ profile_user.id }},'usr');
-      RB.follow.following({{ profile_user.id }},1);
-    });
-    </script>
-
     </div>
-    <div id="which_content">
-        {% if cookie_user and profile_user.id == cookie_user.id %}
-            {% if on_follow_page %}
-                <a href="/user/{{profile_user.id}}">My Activity</a>
-            {% else %}
-                <strong>My Activity</strong>
-            {% endif %} 
+  </div>
 
-            {% if not on_follow_page %}
-                <a href="/follows/{{profile_user.id}}">Activity that I Follow</a>
-            {% else %}
-                <strong>Activity that I Follow</strong>
-            {% endif %}
-        {% else %}
-            {% if on_follow_page %}
-                <a href="/user/{{profile_user.id}}">Activity for {{profile_user.social_user.full_name}}</a>
-            {% else %}
-                <strong>Activity for {{profile_user.social_user.full_name}}</strong>
-            {% endif %} 
-
-            {% if not on_follow_page %}
-                <a href="/follows/{{profile_user.id}}">Activity that {{profile_user.social_user.full_name}} follows</a>
-            {% else %}
-                <strong>Activity that {{profile_user.social_user.full_name}} follows</strong>
-            {% endif %}
-        {% endif %} 
-
+{% if profile_user.social_user %}
+<div class="masthead group profile background">
+    <div class="message content">
+      {% if not on_follow_page %}
+      <div class="subtitle"><h2>Reactions by</h2></div>
+      {% else %}
+      <div class="subtitle"><h2>Reactions followed by</h2></div>
+      {% endif %}
+      <div><h1>{{ profile_user.social_user.full_name }}</h1></div>
     </div>
+</div>
+{% endif %}
+
+
 {% endif %}
 
 <script>

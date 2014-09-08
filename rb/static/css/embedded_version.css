@@ -20,7 +20,7 @@
         border:none;
     }
 
-    .embeddedVersion #group_settings_menu{
+    .embeddedVersion .group_settings_menu{
         display: none;
     }
     

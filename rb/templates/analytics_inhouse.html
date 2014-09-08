@@ -1,154 +1,119 @@
 {% extends "base.html" %}
-{% block title %}In-house Analytics{%endblock%}
+{% block title %}Network Analytics{%endblock%}
 
 
 {% block extendedHead %}
-<script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script>
-<script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
-<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
-<link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
-<style>
-    section[role="datepicker"] button {
-        position: relative;
-        top:-4px;
-    }
-    #sites_chart_raw{
-        font-size: 10px;
-    }
-</style>
+<script>
+// RB.group.short_name = "{{ group.short_name }}";
+// RB.group.full_name = "{{ group.name }}";
+RB.group.id = "{{ group.id }}";
+// RB.group.id = 1660;
+</script>
+<link rel="stylesheet" href="/static/components/morris/morris.css">
+<link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="/static/js/analytics.js"></script>
+<script src="/static/components/morris/morris.js"></script>
+<script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
+
+{% endblock %}
+
+{% block subheaderContent %}
+
 {% endblock %}
 
 {% block wideContent %}
-<div class="mostlyWide">
-    <h1>In-house Analytics</h1>
-    <section role="datepicker" class="datepicker">
-    	<form>
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+
+    <section role="datepicker" class="datepicker" style="visibility:hidden;">
+        <form>
             <label>Date Range: </label>
-        	<input type="text" name="start_date" />
-        	<label>to</label>
-        	<input type="text" name="end_date" />
-        	<button class="btn" type="submit" >Update</button>
+            <input type="text" name="start_date" />
+            <label>to</label>
+            <input type="text" name="end_date" />
+            <button class="btn" type="submit" >Update</button>
         </form>
     </section>
+
     <section id="analyticsReport" role="panels">
-      
-        <section class="sites panel">
-            <h2>Sites</h2>
-            <div id="sites_chart">
+        <div class="grid-12 section summary hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
+        </div>
+        <div class="section reactions-and-topics">
+            <div class="grid-12 padded">
+                <div class="grid-6 s-grid-whole hasLoader">
+                    <h1 class="header">Most Popular Reactions</h1> 
+                    <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Counting Reactions...</div></div>
+                    <div class="reactions-holder">&nbsp;</div>
+                </div>
+                <div class="grid-6 s-grid-whole hasLoader">
+                    <h1 class="header">Most Engaged Topics</h1>
+                    <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Topics...</div></div>
+                    <div class="topics-holder">&nbsp;</div>
+                </div>
             </div>
-        </section>
-        <section class="sites_raw_json panel">
-            <h5>response JSON</h5>
-            <div id="sites_chart_raw">
+        </div>
+        <div class="section engaged-pages">
+            <div class="grid-12 row padded">
+                <h1 class="header">Most Engaged Pages</h1>
             </div>
-        </section>
+            <div class="grid-12 row padded hasLoader">
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
+            </div>
+        </div>
+
+        <div class="section engaged-content">
+            <div class="grid-12 row padded">
+                <h1 class="header">Most Engaged Content</h1>
+            </div>
+            <div class="grid-12 row padded">
+                <div class="grid-4 padded">
+                    <section class="content-item">
+                        <h1><a href="#">All three of us, Ludo, Silvia and myself, are from three different countries. So there all three of us were, speaking different languages, and having fun reading GIFs aloud and comparing in our native tongues, along with different customs and perceptions,” Petrovici says.</a></h1>
+                        <div class="grid-12 via">
+                            <em>via <a href="#">SomeArticle Name</a></em>
+                        </div>
+                        <div class="grid-12">
+                            <div class="reaction-tag">Amazing (29)</div>
+                            <div class="reaction-tag">Crazy (17)</div>
+                        </div>
+                    </section>
+                </div>
+                <div class="grid-4 padded">
+                    <section class="content-item">
+                        <div class="grid-12 via">
+                            <em>via <a href="#">SomeArticle Name</a></em>
+                        </div>
+                        <div class="grid-12 reactions">
+                            <div class="reaction-tag">Sad (12)</div>
+                            <div class="reaction-tag">Shocking (10)</div>
+                        </div>
+                    </section>
+                </div>
+                <div class="grid-4 padded">
+                    <section class="content-item">
+                        <div class="grid-12 via">
+                            <em>via <a href="#">SomeArticle Name</a></em>
+                        </div>
+                        <div class="grid-12">
+                            <div class="reaction-tag">LOVE IT (9)</div>
+                            <div class="reaction-tag">Legit (8)</div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div class="section engaged-referrers">
+            <div class="grid-12 row padded">
+                <h1 class="header">Most Engaged Referrers</h1>
+            </div>
+            <div class="grid-12 row padded hasLoader">
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Referrer Engagement...</div></div>
+            </div>
+        </div>
 
     </section>
+</section>
 </div>
-<script>
-(function(){
-
-    // Radialize the colors
-    Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function(color) {
-        return {
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-            stops: [
-                [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    });
-
-    // put in external file...
-    RB.analytics = {
-        newGroups: function( args ) {},
-        debugError: function(error){
-            if(!RB.RDR_offline){
-                return;
-            }
-            alert("Error: " + error.code + " " + error.message);
-        },
-        parse: {},
-
-        test: function( args ) {
-            var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-            var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
-            var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
-            var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
-
-            var querystring = "?" +
-                "start="+start +
-                "&end="+end +
-                "&max_count="+max_count;
-
-            $.ajax({
-                url: '/analytics/inhouse/test/'+querystring,
-                type: "get",
-                contentType: "application/json",
-                dataType: "jsonp",
-                success: function(response){
-                    var sites = response;
-                    var defaultMsg = "No sites";
-                    var $ret;
-                    if(sites && sites.length){
-                        $ret = $('<ul></ul>');
-                        $.each(sites, function(idx, site){
-                            var $li = $('<li>'+site.domain+'</li>');
-                            $ret.append($li);
-                        });
-                    }else{
-                        $ret = defaultMsg;
-                    }
-                    var rawJSON = JSON.stringify(response);
-                    $('#sites_chart_raw').html(rawJSON);
-                    $('#sites_chart').html($ret);
-                }
-            });
-        }, 
-        updateAll: function() {
-            
-            RB.analytics.setDates();
-            
-            RB.analytics.test();
-        },
-        setDates: function(){
-
-            var nowDate = moment().format("MM/DD/YY");
-            RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-            RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
-
-            RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-            RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
-        }
-
-    };
-
-    $(function(){
-
-        RB.analytics.setDates();
-
-        //init this once so that the destroy function doesn't error when it refreshes this.
-        $('section[role="tag cloud grid"]').isotope();
-        
-        $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
-        $('input[name="start_date"]').val( RB.analytics.startDate );
-        $('input[name="end_date"]').val( RB.analytics.endDate );
-
-        $('section[role="datepicker"] form').submit( function() {
-
-            var startDate = $('input[name="start_date"]').val();
-            var endDate = $('input[name="end_date"]').val();
-            
-            RB.util.setHashValue('start', startDate );
-            RB.util.setHashValue('end', endDate );
-
-            RB.analytics.updateAll();
-            return false;
-        });
-
-        RB.analytics.updateAll();
-
-    });
-})();
-</script>
 {% endblock wideContent %}

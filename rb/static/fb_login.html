@@ -22,18 +22,18 @@
         window.RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false;
             
         window.RDR_baseUrl = ( RDR_offline ) ?
-                prot+"//local.readrboard.com:8080" :
+                prot+"//local.readrboard.com:8081" :
                 prot+"//www.readrboard.com";
 
         window.RDR_staticUrl = ( RDR_offline ) ?
-                prot+"//local.readrboard.com:8080/static/" :
+                prot+"//local.readrboard.com:8081/static/" :
                 prot+"//s3.amazonaws.com/readrboard/";
         
         document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
         document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/readr_user.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/readr_user_min.js" type="text/javascript"%3E%3C/script%3E' ) );
 
     })();
     </script>
@@ -85,9 +85,9 @@
             window._gaq = window._gaq || [];
         }
     </script>
-
+    <!-- 
     <script src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
-
+ -->
    </head>
    <body>
    	      
@@ -166,9 +166,9 @@
 
     <script type="text/javascript">
         //don't depend on Parse
-        if(typeof Parse !== "undefined"){
-            Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
-        }
+        // if(typeof Parse !== "undefined"){
+        //     Parse.initialize("XVdaSK4bXLAR1N7afWx9HMxQUVXRkwI4cyUKGyWe", "MDsu5IiLRKVgBvPvEwRRSWMxfibi3f1SElmofE22");
+        // }
     </script>
 
     <script type="text/javascript">

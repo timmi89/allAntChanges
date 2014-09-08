@@ -233,10 +233,10 @@ class CommentHandler(InteractionHandler):
         comment = data['comment']
 
         # Optional interaction id
-        interaction_id = data.get('int_id', None)
+        interaction_id = data['tag'].get('parent_id', None)
 
         # Get or create parent interaction
-        if interaction_id:        
+        if interaction_id:
             try:
                 parent = Interaction.objects.get(id=interaction_id)
             except Interaction.DoesNotExist, Interaction.MultipleObjectsReturned:
@@ -264,6 +264,8 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
+        if len(tag_body) > 35:
+            return
         container_hash = data['hash']
         container_kind = data['container_kind']
         content_node_data = data['content_node_data']
@@ -289,7 +291,7 @@ class TagHandler(InteractionHandler):
         # Get the container
         container = Container.objects.get_or_create(
             hash = container_hash,
-            defaults = {'kind': container_kind,}
+            defaults = {'kind': container_kind,'item_type':content_node_data['item_type']}
         )[0]
 
         if parent_id is not None:
@@ -510,18 +512,18 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
-            logger.info("PAGE CONTAINERS CACHE")
+            #logger.info("PAGE CONTAINERS CACHE")
             cached_result = cache.get('page_containers' + str(page))
         
         if cached_result is not None:
-            logger.info("returning cached container summary results: " + str(cached_result))
+            #logger.info("returning cached container summary results: " + str(cached_result))
             return cached_result
         else:
             # Force evaluation by making lists
             #logger.info("knownUnknown started " + str(page))
 
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
-            logger.info(cacheable_result)
+            #logger.info(cacheable_result)
 
             #logger.info("knownUnknown done " + str(page))
             try:
@@ -554,6 +556,14 @@ class ContentSummaryHandler(AnonymousBaseHandler):
             raise JSONException(u"container_id was expected but was not sent")
         
         page_id = data['page_id']
+
+        # hash = data['hash']
+        # print "- - - - - - - - - "
+        # print "contentSummaryHandler:  page_id is: " + str(page_id)
+        # print "- - - - - - - - - - - - - - - - - - - - - - - - - - - "
+        # print data
+
+
         # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
 
         # Force queryset evaluation by making lists - reduces interaction queries to 1
@@ -587,6 +597,8 @@ class PageDataHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data, pageid=None):
+        print "api page * * * * * * * * * * * * * * * * "
+        # print data
         requested_pages = data['pages']
         host = getHost(request)
         
@@ -1002,6 +1014,11 @@ class BlockedTagHandler(AnonymousBaseHandler):
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = False)
         self.clear_caches(existing_interactions)
+
+        if group and group.word_blacklist:
+            group.word_blacklist += ','+i_node.body
+            group.save()
+
         return {"created":True}    
     
         

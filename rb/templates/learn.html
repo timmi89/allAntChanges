@@ -2,337 +2,262 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/{% else %}http://www.readrboard.com/{% endif %}">
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
+{% block subheaderContent %}
+<section role="subheader">
+  <div class="content">
+    <div class="left">
+      <div class="item">
+        About ReadrBoard <i class="fa fa-chevron-right"></i> ReadrBoard for Publishers
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
 {% block wideContent %}
-    <div class="no-rdr">
-        <div class="masthead main">
-            <div class="message">
-                <h2>Learn what readers care about, and why</h2>
-                <!-- <h2>Publishers, meet your readers.</h2> -->
-                <!-- <h3>Boost engagement and gather sentiment from your readers. -->
-                <h3>ReadrBoard is a free tool for publishers that boosts reader engagement
-                <br/>With just a click.</h3>
+        <div class="learn_page">
+        <div class="no-rdr">
+
+            <div class="masthead">
+                <div class="grid-half s-grid-whole padded">
+                <!-- <div class="masthead_column headlines" style="float:left;width:45%;"> -->
+                    <h1>The future of content engagement</h1>
+                    <p>ReadrBoard captures reader reactions to any phrase, image, video, or whole page.  <strong>With just a click.</strong></p>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                <!-- <div class="masthead_column" style="float:right;width:55%;padding-top:30px;"> -->
+                    <iframe src="//player.vimeo.com/video/73596125?autoplay=1" class="readrboard_learn" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>
             </div>
         </div>
 
-        <div class="masthead">
-            <div class="masthead_column" style="float:right;width:55%;padding-top:30px;">
-                <iframe src="//player.vimeo.com/video/73596125?autoplay=1" width="594" height="334" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        <div class="engagement_today grid-whole no-rdr">
+            <h2 class="grid-whole padded">Content engagement today falls short.</h2>
+            <div class="engagement_column grid-third s-grid-whole padded">
+                <i class="fa fa-twitter"></i>
+                <p>When people discuss on Twitter, your readers don’t see it.</p>
             </div>
-            <div class="masthead_column headlines" style="float:left;width:45%;">
-                <h1>The future of content engagement</h1>
-                <p>ReadrBoard captures reader reactions to any phrase, image, video, or whole page.  <strong>With just a click.</strong></p>
+            <div class="engagement_column grid-third s-grid-whole padded">
+                <i class="fa fa-facebook-square"></i>
+                <p>What does a Like on a page tell you?  Not enough.</p>
             </div>
-        </div>
-    </div>
-
-    <div class="engagement_today no-rdr">
-        <h2>Content engagement today falls short.</h2>
-        <div class="engagement_column">
-            <i class="icon-twitter"></i>
-            <p>When people discuss on Twitter, your readers don’t see it.</p>
-        </div>
-        <div class="engagement_column">
-            <i class="icon-facebook-sign"></i>
-            <p>What does a Like on a page tell you?  Not enough.</p>
-        </div>
-        <div class="engagement_column">
-            <i class="icon-comments-alt"></i>
-            <p>Comments can be great, but they are too much work to read &amp; write.</p>
-        </div>
-    </div>
-
-    <style>
-    .readrboard_is_better { padding:20px; background:#9DD55E; clear:both; color:#446024; width:1140px; }
-    .readrboard_is_better i { font-size: 40px; display: block; float: left; margin-right: 10px; margin-bottom:20px; }
-    .readrboard_is_better p { font-family: 'Helvetica','RDR_Helvetica'; font-size:21px; color:#446024; margin:0; }
-    .readrboard_is_better p strong { font-family: 'RDR_HelveticaBold'; font-size:24px; font-weight:100; display:block;}
-    .readrboard_is_better p a { color:#446024; text-decoration: underline; }
-
-    .readrboard_is_better.stuck { position:fixed; top:41px; z-index:100000; padding:10px; }
-    .readrboard_is_better.stuck i { font-size:30px; }
-    .readrboard_is_better.stuck p { font-size:16px; }
-    .readrboard_is_better.stuck p strong { font-size:20px; }
-
-    .get_readrboard_form { xheight:0; overflow:hidden; display:none; }
-    </style>
-    <div class="readrboard_is_better no-rdr">
-        <i class="icon-check-sign"></i>
-        <p>
-            <strong>ReadrBoard is a smarter, more satisfying way to engage, discuss, &amp; share.</strong>
-            <!-- <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Add ReadrBoard to your site or blog now.</a>  For free. -->
-            <a href="javascript:void(0);" class="get_readrboard">Add ReadrBoard to your site or blog now.</a>  For free.
-        </p>
-        <div class="get_readrboard_form">
-            <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" style="background:none;" frameborder="0"></iframe>
-        </div>
-    </div>
-
-    <style>
-    .use_it { text-align:center; padding:100px; }
-    .use_it h2 { font-family: 'RDR_HelveticaBold'; font-size:28px; font-weight:100;  }
-    .use_it h1 { font-family: 'RDR_HelveticaBold'; font-size:78px; font-weight:100;  }
-    </style>
-    <div class="use_it no-rdr">
-        <h2>Do people use it?</h2>
-        <h1>Yep.</h1>
-    </div>
-
-    <style>
-    @font-face {
-    /* this is just 3kb... */
-    font-family: 'moreicons';
-        src: url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAAPcAAsAAAAABawAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAABCAAAALUAAADTkz0AgkZGVE0AAAHAAAAAGgAAABxmJf4qR0RFRgAAAdwAAAAdAAAAIAAwAARPUy8yAAAB/AAAAEsAAABgL+3cAGNtYXAAAAJIAAAAOgAAAVLgI/LNaGVhZAAAAoQAAAAuAAAANv27z7VoaGVhAAACtAAAAB4AAAAkBBD/5GhtdHgAAALUAAAADAAAAAwDwAAAbWF4cAAAAuAAAAAGAAAABgADUABuYW1lAAAC6AAAAOYAAAGbItSRiXBvc3QAAAPQAAAADAAAACAAAwAAeJxFjc0JwkAUhOeZlYQQo4YNKKwBO4hnQU/agHYgHoJoQGMJorjX7WorsQHzIAF/UPQ038xhPoIQICJ/m+/X2SrfHUANECY8aHDicE/owNGBSHz0F9FD6x8Ert6w4aKpcGoroKNw7Sp4CjaCeH94aKOH4XGXzdM0fcUsHY1+nr8QoDNd4BCJ1richlyI2rBxwztLLuLa2FeplpWMa2lZfrAytvyulbSldEMty1usA/8JMzpEIQAAAHicY2BgYGQAgpOd+YYg+pyfew2MBgA+cwWyAAB4nGNgZGBg4ANiCQYQYGJgBEIQyQLmMQAABGAANQAAAHicY2BmPMA4gYGVgYPRhzGNgYHBHUp/ZZBkaGFgYGJgZWaAAwEEkyEgzTWFweGB4AcGxgf/HzDoMT5gUGhgYGCEK1AAQkYAV7MM7wB4nGNgYGBmgGAZBkYGEPAB8hjBfBYGAyDNAYRMIIkHgh8Y/v9HZsl/FGCE6gIDRjYGZO6IBADvVgm+AAB4nGNgZGBgAOKvZobr4vltvjJwMzGAwDk/9xoE/f8BEwPjAyCXgwEsDQAiKgpDAAB4nGNgZGBgfPD/AYMeEwMDwz8GIAkUQQHMAG3nA/YAAAIAAAAAAAAAAcAAAAAAUAAAAwAAeJyFj0FKw0AUhr+0aaUoLkRcyizcJiSRCu0Biusuui9lCIE2A9N231P0Bh7CtcfwAB7CjX/iw42gA4/38b9//nkDXHEmoTsJE26NB1yQGw954GScyvNqPOKSd+Ox9E85k3Qi5aa/1fGAa+6NhzzzZJzK82I84o4347H0D3YEIp6GjahlD7sQfbMJrXCpSc2RLWu5WPr6uF0LFr330Pcoh8dR6ReF+lz1O/Vbn5IxU1VyljwqKLSHRYi1d1VeuLn7eVs8zWZZVZRy/b3kSpMorelnTsHdIqx83DehdWVe/JPwBXz8QN4AAHicY2BmwAsAAH0ABA==) format('woff'),
-             url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAANAIAAAwBQRkZUTWYl/ioAAAWAAAAAHEdERUYAMgAGAAAFYAAAACBPUy8yL8vb3wAAAVgAAABWY21hcOAl89QAAAHEAAABUmdhc3D//wADAAAFWAAAAAhnbHlm1fEjVAAAAyQAAABcaGVhZP27z7UAAADcAAAANmhoZWEEEP/mAAABFAAAACRobXR4BGoAAAAAAbAAAAAUbG9jYQAOAC4AAAMYAAAADG1heHAASwATAAABOAAAACBuYW1lItSRiQAAA4AAAAGbcG9zdJtVPzgAAAUcAAAAPAABAAAAAQAAjsJQjV8PPPUACwIAAAAAAM5OR3wAAAAAzk5HfAAA/+ACAAHgAAAACAACAAAAAAAAAAEAAAHg/+AALgIAAAD+AAIAAAEAAAAAAAAAAAAAAAAAAAAFAAEAAAAFABAABAAAAAAAAgAAAAEAAQAAAEAAAAAAAAAAAQHAAZAABQAIAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAIABQMAAAAAAAAAAAAAEAAAAAAAAAAAAAAAUGZFZABA4BHwAAHg/+AALgHgACCAAAABAAAAAAAAAgAAAAAAAAAAqgAAAAAAAAHAAAAAAAADAAAAAwAAABwAAQAAAAAATAADAAEAAAAcAAQAMAAAAAgACAACAAAAAOAR8AD//wAAAADgEfAA//8AAB/zEAMAAQAAAAAAAAAAAAABBgAAAQAAAAAAAAABAgAAAAIAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAuAAEAAP/gAgAB4AACAAARASECAP4AAeD+AAAAAAAEAAD/4AHAAeAAAwAHAAsADwAAATMRIwMzESMDMxEjJzMVIwGAQECAQECAQECAQEAB4P4AAYD+gAEA/wCAgAAAAAAMAJYAAQAAAAAAAQAJABQAAQAAAAAAAgAHAC4AAQAAAAAAAwAkAIAAAQAAAAAABAAJALkAAQAAAAAABQALANsAAQAAAAAABgAJAPsAAwABBAkAAQASAAAAAwABBAkAAgAOAB4AAwABBAkAAwBIADYAAwABBAkABAASAKUAAwABBAkABQAWAMMAAwABBAkABgASAOcAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAUgBlAGcAdQBsAGEAcgAAUmVndWxhcgAARgBvAG4AdABGAG8AcgBnAGUAIAAyAC4AMAAgADoAIABtAG8AcgBlAGkAYwBvAG4AcwAgADoAIAA1AC0AOQAtADIAMAAxADMAAEZvbnRGb3JnZSAyLjAgOiBtb3JlaWNvbnMgOiA1LTktMjAxMwAAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAVgBlAHIAcwBpAG8AbgAgADEALgAwAABWZXJzaW9uIDEuMAAAbQBvAHIAZQBpAGMAbwBuAHMAAG1vcmVpY29ucwAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAEAAgECAQMHdW5pRjAwMAd1bmlFMDExAAAAAf//AAIAAQAAAA4AAAAYAAAAAAACAAEAAwAEAAEABAAAAAIAAAAAAAEAAAAAyYlvMQAAAADOTkd8AAAAAM5OR3w=) format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-    .icon-bars-alt {
-        font-family: 'moreicons';
-        speak: none;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        -webkit-font-smoothing: antialiased;
-    }
-    .icon-bars-alt:before {
-        content: "\e011";
-    }
-
-    .stats { background:url(/static/site/images/stats_bg.jpg) center center no-repeat; padding:55px 0 0; color:#fff; height:262px;}
-    .stats .column { display: inline-block;  }
-    .stats .column.one { width:35%; margin:0 5%; text-align: center; }
-    .stats .column.one i { font-size: 70px; font-weight: bold; display: block; float: left; margin-top: 46px; }
-    .stats .column.one p { font-family: 'Helvetica','RDR_Helvetica'; font-size:24px;  }
-    .stats .column.one h1 { font-family: 'RDR_HelveticaBold'; font-size: 150px; font-weight: 100; color: #fff; display: inline-block; margin: 0px 0px 0px 0px; line-height: 130px;  }
-    .stats .column.two { width:50%; font-size:22px; font-weight:200;  }
-    </style>
-    <div class="stats no-rdr">
-        <div class="column one">
-            <div>
-                <i class="icon-bars-alt"></i>
-                <h1>15%</h1>
-            </div>
-            <div>
-                <p>Engagement Rate</p>
+            <div class="engagement_column grid-third s-grid-whole padded">
+                <i class="fa fa-comments-o"></i>
+                <p>Comments can be great, but they are too much work to read &amp; write.</p>
             </div>
         </div>
-        <div class="column two">
-            <div>1 out of every 100 readers react to content.</div>
-            <div>14 out of 100 readers actively view others' reactions.</div>
-            <div style="margin-top:40px;">That’s the <strong>average</strong>.</div>
-            <div>And it will go up as more readers discover ReadrBoard.</div>
-        </div>
-    </div>
 
-    <div class="masthead secondary" style="padding-bottom:0;">
-        <h4><i class="icon-group"></i>&nbsp;See the <a href="/stream/">live stream</a> of reactions on ReadrBoard</h4>
-    </div>
-
-    <style>
-    .stats-part-two {}
-    .stats-part-two .stats_box { width:277px;box-sizing:border-box; background:#9DD55E; margin-right:6px;display:inline-block; padding:20px; overflow:auto;}
-    .stats-part-two .stats_box:last-child { margin-right:0; float:right; }
-    .stats-part-two em { display:block; margin-bottom:20px; }
-    .stats-part-two .stats_box i { color:#446024; font-size:45px; margin:5px 10px 0 0; float:left; }
-    .stats-part-two .stats_box h2 { color:#fff; font-size:45px; margin:0; }
-    .stats-part-two .stats_box label { color:#fff; font-family:'Helvetica','RDR_Helvetica'; font-size:22px; font-weight:100;}
-    .stats-part-two .stats_box div { display:inline-block; float:left; }
-    </style>
-    <div class="stats-part-two">
-        <h3 class="new_section">30 Days Before/After</h3>
-        <em><a href="http://dukechronicle.com" target="_blank">The Duke Chronicle</a>, an independent university paper widely read by Duke students, alumni, and the Durham community, compared their website KPIs during the 30 days before and after installing ReadrBoard.  Here is what they found:</em>
-        <div class="stats_box">
-            <i class="rdr_icon-circle-arrow-up"></i>
-            <div>
-                <h2>13.97%</h2>
-                <label>Avg. Visit Duration</label>
-            </div>
-        </div>
-        <div class="stats_box">
-            <i class="rdr_icon-circle-arrow-up"></i>
-            <div>
-                <h2>7.46%</h2>
-                <label>Pages / Visit</label>
-            </div>
-        </div>
-        <div class="stats_box">
-            <i class="rdr_icon-circle-arrow-down"></i>
-            <div>
-                <h2>3.57%</h2>
-                <label>Bounce Rate</label>
-            </div>
-        </div>
-        <div class="stats_box">
-            <i class="rdr_icon-circle-arrow-down"></i>
-            <div>
-                <h2>6.94%</h2>
-                <label>Exit Rate</label>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .try_it_body{
-            width: 700px;
-            margin: 0 auto;
-        }
-        .rdr-page-summary{
-            padding-left:5px;
-            display: inline-block;
-            float: left;
-        }
-        #rdr-page-summary-explanation{
-            margin-left:15px;
-            margin-top:9px;
-            display:inline-block;
-            background:#f0f0f0;
-            padding:8px 16px 8px 12px;
-            font-size:12px;
-        }
-        .indent_span{
-            margin-left: 15px;
-        }
-        .centered{
-          text-align: center;
-        }
-
-    </style>
-    <div class="try_it">
-        <h3 class="new_section centered">Try it out!</h3>
-        <div class="try_it_body">
-            <h4 style="margin:0 0 10px 0;">Engage the page</h4>
-            <div class="rdr-page-summary" style="padding-left:5px;display:inline-block;"></div>
-            <div id="rdr-page-summary-explanation">
-                <i class="icon-arrow-left"></i>
-                <span>
-                    This is the "summary button" 
-                </span>
-                <span class="indent_span">
-                    <br>It displays a summary of all reactions on the page.  
-                </span>
-                <span class="indent_span">
-                    <br><strong>Also</strong>, it lets you cast a reaction to this entire page.
-                </span>
-            </div>
-            <h4 style="margin:40px 0 10px 0;">Engage text</h4>
-            <em>
-                Select some text in this paragraph, and react.
-                <br>After reacting, you can also share or leave a longer, in-line comment.
-            </em>
-            <div class="try-on-text" style="font-family:Georgia;width:600px;background:#f0f4f9;margin:20px auto;padding:20px;">
+        <div class="readrboard_is_better no-rdr">
+            <div class="better_wrapper">
                 <p>
-                    New York is the most populous city in the United States and the center of the New York Metropolitan Area, one of the most populous urban agglomerations in the world. The city is referred to as New York City or the City of New York to distinguish it from the State of New York, of which it is a part. A global power city, New York exerts a significant impact upon commerce, finance, media, art, fashion, research, technology, education, and entertainment. The home of the United Nations Headquarters, New York is an important center for international diplomacy and has been described as the cultural capital of the world.
-                    <span style="background: #f0f0f0;padding: 2px 4px;font-size: 12px;margin-right: 55px;display: inline-block;float: right;margin-left: 140px;margin-top: -25px;">
-                        <i class="icon-arrow-left"></i>
-                        <em>This icon appears when there are reactions in this paragraph. You can limit how often it appears.</em>
-                    </span>
+                    <i class="fa fa-check-square"></i>
+                    <strong>ReadrBoard is a smarter, more satisfying way to engage, discuss, &amp; share.</strong>
+                    <!-- <a href="http://porterbayne.wufoo.com/forms/m7x3k1/" onclick="window.open(this.href,  null, 'height=510, width=775, toolbar=0, location=0, status=1, scrollbars=1, resizable=1'); return false" title="Tell me more about ReadrBoard!!">Add ReadrBoard to your site or blog now.</a>  For free. -->
+                    <a href="javascript:void(0);" class="get_readrboard">Add ReadrBoard to your site or blog now.</a>  For free.
                 </p>
-                <p><em>via <a href="http://en.wikipedia.org/wiki/New_York_City" target="_blank">Wikipedia.org</a></em></p>
+                <div class="get_readrboard_form">
+                    <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" style="background:none;" frameborder="0"></iframe>
+                </div>
             </div>
-            <h4 style="margin:40px 0 10px 0;">Engage images and video</h4>
-            <em>Roll your mouse over this image, and look in the lower left hand corner.</em>
-            <div class="try-on-image" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
-                <p>
-                    <!-- <img src="{{STATIC_URL}}images/site/tryit_puppy.jpg" /> -->
-                    <img src="{{STATIC_URL}}images/site/tryit_building.jpg" style="margin-bottom:10px;" />
-                </p>
-                <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
-            </div>
-            <em>Works great for videos too.</em>
-            <div class="try-on-video" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
-                <iframe src="//player.vimeo.com/video/75532980?title=0&amp;byline=0&amp;portrait=0&amp;color=cc6f1a" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                <br>
-                <br>
-                <p><em>via <a href="https://vimeo.com/channels/staffpicks" target="_blank">Vimeo</a></em></p>
-            </div>
+        </div>
 
-            <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
-            <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  <strong>Contact us to find out more!</strong></em>
-            <!-- <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
-            <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
-                <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;" rdr-crossPageContent="true" />
-                <div rdr-grid-for="unsplash2" style="width:640px;height:200px;background:white;"></div>
-                <div rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2" style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;">Your reaction to this picture?</div>
-                <div id="rdr-custom-explanation" style="margin-left:-15px;display:inline-block;background:#f0f0f0;padding:4px 8px;font-size:12px;">
+        <div class="use_it no-rdr">
+            <h2>Do people use it?</h2>
+            <h1>Yep.</h1>
+        </div>
+
+        <div class="stats no-rdr">
+            <div class="column one s-grid-whole">
+                <div>
+                    <i class="icon-bars-alt"></i>
+                    <h1>15%</h1>
+                </div>
+                <div>
+                    <p>Engagement Rate</p>
+                </div>
+            </div>
+            <div class="column two s-grid-whole">
+                <div class="point first">1 out of every 100 readers react to content.</div>
+                <div class="point second">14 out of 100 readers actively view others' reactions.</div>
+                <div class="point third">That’s the <strong>average</strong>.</div>
+                <div class="point fourth">And it will go up as more readers discover ReadrBoard.</div>
+            </div>
+        </div>
+
+        <div class="masthead secondary" style="padding-bottom:0;">
+            <h4><i class="fa fa-group"></i>&nbsp;See the <a href="/stream/">live stream</a> of reactions on ReadrBoard</h4>
+        </div>
+
+        <div class="stats-part-two">
+            <h3 class="new_section">30 Days Before/After</h3>
+            <em><a href="http://dukechronicle.com" target="_blank">The Duke Chronicle</a>, an independent university paper widely read by Duke students, alumni, and the Durham community, compared their website KPIs during the 30 days before and after installing ReadrBoard.  Here is what they found:</em>
+            <div class="stats_box s-grid-whole grid-quarter">
+                <div class="stats_box_content">
+                    <i class="rdr_icon-circle-arrow-up"></i>
+                    <div>
+                        <h2>13.97%</h2>
+                        <label>Avg. Visit Duration</label>
+                    </div>
+                </div>
+            </div>
+            <div class="stats_box s-grid-whole grid-quarter">
+                <div class="stats_box_content">
+                    <i class="rdr_icon-circle-arrow-up"></i>
+                    <div>
+                        <h2>7.46%</h2>
+                        <label>Pages / Visit</label>
+                    </div>
+                </div>
+            </div>
+            <div class="stats_box s-grid-whole grid-quarter">
+                <div class="stats_box_content">
+                    <i class="rdr_icon-circle-arrow-down"></i>
+                    <div>
+                        <h2>3.57%</h2>
+                        <label>Bounce Rate</label>
+                    </div>
+                </div>
+            </div>
+            <div class="stats_box s-grid-whole grid-quarter">
+                <div class="stats_box_content">
+                    <i class="rdr_icon-circle-arrow-down"></i>
+                    <div>
+                        <h2>6.94%</h2>
+                        <label>Exit Rate</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="try_it grid-whole">
+            <h3 class="new_section centered">Try it out!</h3>
+            <div class="try_it_body">
+                <h4 style="margin:0 0 10px 0;">Engage the page</h4>
+                <div class="rdr-page-summary"></div>
+                <div id="rdr-page-summary-explanation">
                     <i class="icon-arrow-left"></i>
-                    This can be any HTML element or image, styled however you want!
+                    <span>
+                        This is the "summary button".
+                    </span>
+                    <div class="indent_span">
+                        It displays a summary of all reactions on the page.  
+                    </div>
+                    <div class="indent_span">
+                        <strong>Also</strong>, it lets you cast a reaction to this entire page.
+                    </div>
+                </div>
+                <h4 style="margin:40px 0 10px 0;">Engage text</h4>
+                <em>
+                    Select some text in this paragraph, and react.
+                    <br>After reacting, you can also share or leave a longer, in-line comment.
+                </em>
+                <div class="try-on-text">
+                    <p>
+                        New York is the most populous city in the United States and the center of the New York Metropolitan Area, one of the most populous urban agglomerations in the world. The city is referred to as New York City or the City of New York to distinguish it from the State of New York, of which it is a part. A global power city, New York exerts a significant impact upon commerce, finance, media, art, fashion, research, technology, education, and entertainment. The home of the United Nations Headquarters, New York is an important center for international diplomacy and has been described as the cultural capital of the world.
+                        <span class="explanation">
+                            <i class="fa fa-arrow-left"></i>
+                            <em>This icon appears when there are reactions in this paragraph. You can limit how often it appears.</em>
+                        </span>
+                    </p>
+                    <p><em>via <a href="http://en.wikipedia.org/wiki/New_York_City" target="_blank">Wikipedia.org</a></em></p>
+                </div>
+                <h4 style="margin:40px 0 10px 0;">Engage images and video</h4>
+                <em>Roll your mouse over this image, and look in the lower left hand corner.</em>
+                <div class="try-on-image">
+                    <p>
+                        <!-- <img src="{{STATIC_URL}}images/site/tryit_puppy.jpg" /> -->
+                        <img src="{{STATIC_URL}}images/site/tryit_building.jpg" style="margin-bottom:10px;" />
+                    </p>
+                    <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p>
+                </div>
+                <em>Works great for videos too.</em>
+                <div class="try-on-video">
+                    <iframe src="//player.vimeo.com/video/75532980?title=0&amp;byline=0&amp;portrait=0&amp;color=cc6f1a" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                    <br>
+                    <br>
+                    <p><em>via <a href="https://vimeo.com/channels/staffpicks" target="_blank">Vimeo</a></em></p>
+                </div>
+
+                <h4 style="margin:40px 0 10px 0;">Customize the look and feel!</h4>
+                <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  <strong>Contact us to find out more!</strong></em>
+                <!-- <em>Publishers customize what ReadrBoard looks like for content on their pages -- including colors, the reactions, and where ReadrBoard sits on a page.  Here's one example, where the grid of reactions is placed in a custom spot using a little custom HTML:</em>
+                <div class="try-on-custom" style="font-family:Georgia;width:680px;background:#f0f4f9;margin:20px auto;padding:20px;">
+                    <img src="{{STATIC_URL}}images/site/tryit_building.jpg" rdr-custom-display="unsplash2" style="margin-bottom:10px;" rdr-crossPageContent="true" />
+                    <div rdr-grid-for="unsplash2" style="width:640px;height:200px;background:white;"></div>
+                    <div rdr-mode="write" rdr-offset-x="0" rdr-offset-y="0" rdr-cta-for="unsplash2" style="box-shadow:0 0 4px #888;display:inline-block;background:#fff;margin:10px 20px 10px 0;padding:10px;cursor:pointer;">Your reaction to this picture?</div>
+                    <div id="rdr-custom-explanation" style="margin-left:-15px;display:inline-block;background:#f0f0f0;padding:4px 8px;font-size:12px;">
+                        <i class="icon-arrow-left"></i>
+                        This can be any HTML element or image, styled however you want!
+                </div>
+                    <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p> -->
             </div>
-                <p><em>via <a href="http://unsplash.com" target="_blank">Unsplash</a></em></p> -->
+        </div>
+
+        <h3 class="new_section grid-whole">A few of our favorite publishing partners</h3>
+
+        <div class="partner_logos no-rdr">
+            <img src="{{STATIC_URL}}site/images/fastcolabs.png" />
+            <img src="{{STATIC_URL}}site/images/propublica.png" />
+            <img src="{{STATIC_URL}}site/images/logo_dailycandy.png" />
+            <img src="{{STATIC_URL}}site/images/thestream.png" />
+            <img src="{{STATIC_URL}}site/images/civilbeat.png" />
+            <img src="{{STATIC_URL}}site/images/logo_chronicle.png" />
+            <img src="{{STATIC_URL}}site/images/logo_thedp.png" />
+            <img src="{{STATIC_URL}}site/images/towcenter.png" />
+            <img src="{{STATIC_URL}}site/images/bangor.png" />
+            <img src="{{STATIC_URL}}site/images/bigroundtable.png" />
+            <img src="{{STATIC_URL}}site/images/as-seen-on/content-strategist.png" style="height:40px;" />
+            <img src="{{STATIC_URL}}site/images/logo_civic_mit.png" style="height:60px;" />
+            <img src="{{STATIC_URL}}site/images/logo_racialicious.png" />
+            <img src="{{STATIC_URL}}site/images/logo_gazette.png" />
+            <img src="{{STATIC_URL}}site/images/logo_altweeklies.png" style="height:60px;" />
+            <img src="{{STATIC_URL}}site/images/logos_modern_nomad.png" />
+            <img src="{{STATIC_URL}}site/images/logo_college_media.png" />
+        </div>
+        
+        <div class="grid-whole">
+            <h3 class="new_section">The future web will be an annotated web.</h3>
+            <p>
+                Readers want to say something specific, about something specific -- whether citing sources 
+                in a policy debate or reacting “LOL!” to a cat pic.  That’s why forwarding-thinking sites like
+                <a href="http://medium.com" target="_blank">Medium</a>, <a href="http://qz.com" target="_blank">Quartz</a>, and <a href="http://rapgenius.com" target="_blank">RapGenius</a> are experimenting with inline comments.
+            </p>
+
+            <p>
+                But it’s more than just annotation.  ReadrBoard enables understanding how different people
+                and communities feel about the same content on the web.  Our goal is to be THE tool
+                people use to react to everything.
+            </p>
+            <h3 class="new_section">ReadrBoard is the best annotation platform ever made.</h3>
+            <p>
+                OK, that's ridiculous.  But, we're passionate about making it simple for people to engage whatever 
+                grabs them in as simple a way possible.  Since no annotation platform has really caught on outside
+                of a single community, we think it's a smart place to start.</p>
+
+            <p>ReadrBoard is different from other approaches to annotation in two key ways.</p>
+
+            <p><strong>First</strong>, reacting is simply easier than commenting.  Sure, we let readers also leave a full, in-line 
+            comment if they want, but over 98% of people find a reaction does the trick.  This means it's not only easy to 
+            say something... but it's really easy and fast to see what other people think.</p>
+
+            <p><strong>Second</strong>, we enable responding to images and video, too!</p>
+
+            <p>Oh, and a third thing:  <strong>we’re a platform</strong>.  A free one.  You can <a href="javascript:void(0);" class="get_readrboard">install ReadrBoard right now</a>.</p>
+
+            <p>ReadrBoard’s getting used on 15% of pageviews for our partners -- and sometimes over 200% -- 
+            so we think hope we're starting to “catch on”.  With your help, maybe we can make it the best annotation platform ever made.</p>
+
+            <p>Try it out, and give us your feedback.  This a process, and we want you to be a part of it.  
+            With your help, we can make the web more dynamic, and more aware of how people
+            think and feel about great content.</p>
+
+            <br/><br/><br/>
         </div>
     </div>
-
-    <h3 class="new_section">A few of our favorite publishing partners</h3>
-    <style>
-    div.rdr.rdr_inline div.rdr_header h1 {margin-top:5px !important;}
-    .new_section { font-size:34px; margin-top:60px; padding-top:20px; border-top:1px solid #343434; }
-    /*.partner_logos {text-align: center;}*/
-    .partner_logos img { margin:0 10px 10px 0; }
-    p { font-size:18px; }
-    .img_line{
-        margin: 5px 0;
-    }
-    </style>
-    <div class="partner_logos no-rdr">
-        <img src="{{STATIC_URL}}site/images/propublica.png" />
-        <img src="{{STATIC_URL}}site/images/logo_dailycandy.png" />
-    
-        <img src="{{STATIC_URL}}site/images/logo_chronicle.png" />
-        <img src="{{STATIC_URL}}site/images/logo_thedp.png" />
-    
-        <img src="{{STATIC_URL}}site/images/as-seen-on/content-strategist.png" style="height:40px;" />
-        <img src="{{STATIC_URL}}site/images/logo_civic_mit.png" style="height:60px;" />
-    
-        <img src="{{STATIC_URL}}site/images/logo_racialicious.png" />
-        <img src="{{STATIC_URL}}site/images/logo_gazette.png" />
-    
-        <img src="{{STATIC_URL}}site/images/logo_altweeklies.png" style="height:60px;" />
-        <img src="{{STATIC_URL}}site/images/logos_modern_nomad.png" />
-    
-        <img src="{{STATIC_URL}}site/images/logo_college_media.png" />
-    </div>
-    
-    
-
-    <h3 class="new_section">The future web will be an annotated web.</h3>
-    <p>
-        Readers want to say something specific, about something specific -- whether citing sources 
-        in a policy debate or reacting “LOL!” to a cat pic.  That’s why forwarding-thinking sites like
-        <a href="http://medium.com" target="_blank">Medium</a>, <a href="http://qz.com" target="_blank">Quartz</a>, and <a href="http://rapgenius.com" target="_blank">RapGenius</a> are experimenting with inline comments.
-    </p>
-
-    <p>
-        But it’s more than just annotation.  ReadrBoard enables understanding how different people
-        and communities feel about the same content on the web.  Our goal is to be THE tool
-        people use to react to everything.
-    </p>
-    <h3 class="new_section">ReadrBoard is the best annotation platform ever made.</h3>
-    <p>OK, that sounds ridiculous.  We said it to ourselves as a joke.  But then we remembered:  
-    no annotation platform has actually caught on outside of a single community.</p>
-
-    <p>ReadrBoard is different from others in two key ways.</p>
-
-    <p><strong>First</strong>, reacting is simply easier than commenting.  Sure, we let readers also leave a full, in-line 
-    comment if they want, but over 98% of people find a reaction does the trick.</p>
-
-    <p><strong>Second</strong>, we enable responding to images and video, too!</p>
-
-    <p>Oh, and a third thing:  <strong>we’re a platform</strong>.  A free one.  You can <a href="javascript:void(0);" class="get_readrboard">install ReadrBoard right now</a>.</p>
-
-    <p>Since ReadrBoard’s getting used on 15% of pageviews for our partners -- and sometimes over 200% -- 
-    we think that’s starting to “catch on”.  Maybe it is the best annotation platform ever made?</p>
-
-    <p>Try it out, and give us your feedback.  This a process, and we want you to be a part of it.  
-    With your help, we can make the web more dynamic, and more aware of how people
-    think and feel about great content.</p>
-
-
-    <br/><br/><br/>
 
 
 
@@ -341,7 +266,8 @@
     $('.get_readrboard').click( function() {
         $('.get_readrboard_form').toggle(200);
     });
-    $('.readrboard_is_better').waypoint('sticky', { offset: 41 });
+
+    $('.readrboard_is_better').waypoint('sticky', { offset: 75 });
     </script>
 
 

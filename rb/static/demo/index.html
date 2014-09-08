@@ -2,16 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
   <title>ReadrBoard Demo</title>
-  <link rel="canonical" href="http://local.readrboard.com:8080/static/demo/index.html" />
+  <link rel="canonical" href="//local.readrboard.com:8080/static/demo/index.html" />
   <link rel="stylesheet" href="/static/demo/readrboard-demo/style_002.css" type="text/css" media="screen" />
 
   <link rel="stylesheet" href="/static/demo/readrboard-demo/global.css" type="text/css" />
   <link rel="stylesheet" id="admin-bar-css" href="/static/demo/readrboard-demo/admin-bar.css" type="text/css" media="all" />
   <link rel="stylesheet" id="highlander-comments-css" href="/static/demo/readrboard-demo/style.css" type="text/css" media="all" />
-<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+      <meta content="text/html; charset=utf-8" http-equiv="content-type" />
       <meta http-equiv="X-UA-Compatible" content="chrome=1" />
       <meta name="width" content="500" />
       <meta name="generator" content="Posterous" />
+
+
+      <meta name="author" content="Porter" />
+      <meta name="topic" content="football" />
+      <meta name="topic" content="putin" />
+      <meta name="topic" content="ophthalmology" />
+      <meta name="section" content="Politics" />
+      <meta name="section" content="Wellness" />
+
+
+
 <script src="/static/engage.js" defer type="text/javascript"></script>
   <style type="text/css">
 /*div.rdr.rdr-summary { max-width:400px; }*/
@@ -181,17 +192,20 @@
         <div class="postarea">
           <div class="second-area">
             <!-- <p id="crosstest" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p> -->
-            <p id="crosstest" rdr-custom-display="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
-            
-            <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"> Reactions</div>
-            <!-- <div rdr-grid-for="question1" style="width:1000px;height:400px;"></div> -->
-            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
-            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question1"></span> reactions</div>
 
+<!--
+            <p id="crosstest" rdr-item="question1" rdr-crossPageContent="true">Here is some crossPageContainer test content.  This container can appear across different pages.</p>
+            <div rdr-view-reactions-for="question1" rdr-view-style="grid" style="margin-bottom:10px;"></div>
+            <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">What's your reaction?</div>
+-->
+            <!-- <div style="padding:10px;margin:10px 0;background:#444;color:#fff;width:100px;" rdr-cta-for="question1" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question1"></span> reactions</div> -->
+
+            <!-- <div style="width:100px;box-shadow:0 0 5px #ccc;padding:10px;font-size:12px;"> Reactions</div> -->
             <p>here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. here is a paragraph that is not inside the .post class. </p>
             <img src="http://dummyimage.com/400x200/447799/99bbcc&text=not+inside+.post" />
           </div>
 
+            
           
           <div id="post-1" class="post-1 post type-post status-publish format-standard hentry category-uncategorized">
           
@@ -205,7 +219,7 @@
             <!-- start content  -->
 
             <br>
-            <div id="rdr-summary-wrap" class="rdr"></div>
+            <!-- <div class="rdr rdr-page-summary"></div> -->
 
 
             <div class="rdr-demo-block rdr-tooltip" title="this is a tooltip">
@@ -213,6 +227,59 @@
                 "If you ask 20 different readers why they read, they will all be right." -<span>Teresa Nielsen Hayden</span>
               </blockquote>
             </div>
+            <iframe src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/140560293&amp;color=ff4200&amp;auto_play=false&amp;hide_related=false&amp;show_artwork=true" height="166" width="100%" frameborder="no" scrolling="no"></iframe>
+            
+            <!--
+            -->
+            <h1 style="margin:50px 50px 20px 50px;" rdr-item="question2" rdr-content-attributes="question" rdr-reactions="because;it just is; what??; lulz">Why is it like that?</h1>
+            <div rdr-view-reactions-for="question2" rdr-view-style="horizontal_bars" style="margin-bottom:10px;max-width:300px;margin-left:50px;" class="no-rdr"></div>
+            <div style="padding:10px;margin:0px 0 30px 50px;background:#444;color:#fff;width:100px;" rdr-cta-for="question2" rdr-mode="write" rdr-offset-x="100" rdr-offset-y="50">Your Answer?</div>
+            <!-- <div style="padding:10px;margin:0px 0 30px 50px;background:#444;color:#fff;width:100px;" rdr-cta-for="question2" rdr-mode="read" rdr-offset-x="100" rdr-offset-y="50">View <span rdr-counter-for="question2"></span> reactions</div> -->
+            
+
+
+            <script>
+            window.readrboard_extend_per_container = {
+              "question1": {
+                  blessed_tags: [
+                      "tag1",
+                      "tag2",
+                      "tag3"
+                  ]
+              } //,
+              // "question2": {
+              //     blessed_tags: [
+              //         "tag1a",
+              //         "tag2a",
+              //         "tag3a"
+              //     ]
+              // }
+            };
+            </script>
+<!--
+              <div class="rdr"> 
+              <div class="rdr_body_wrap">
+              <div class="rdr_body rdr_tags_list">
+
+                <div class="rdr_box rdr_color1 xrdr_box_small  rdr_clear_transform rdr_animated">
+                  <div class="rdr_tag rdr_charCount4">
+                    <div class="rdr_tag_body rdr_tag_lineone">Test</div>
+                    <span class="rdr_count">1</span>
+                    <i class="rdr_icon-search rdr_tag_read_icon"></i>
+                    <span class="rdr_plusOne">+1</span>
+                  </div>
+                </div>
+
+              </div>
+              </div>
+              </div>
+
+-->
+
+            </div>
+
+
+
             <img style="width:450px;" class="contentImg alignright size-medium wp-image-18 rdr-tooltip" title="readrboard-widget" src="/static/demo/readrboard-demo/readrboard-widget-3.png" alt="" />
               <p>EntrepreneurOnFire is downloaded over 120,000 unique times every month in over 100 countries, with Dumas signing up 30 to 40 new subscribers per day. Recent interviewees have included Barbara Corcoran from TV&#8217;s &#8220;Shark Tank,&#8221; as well as social media gurus Gary Vaynerchuck and Seth Godin.</p>
               
@@ -376,9 +443,108 @@
 //     domain = match[0];
 //     console.log(match);
 // }
+</script>
+
+<script type="text/javascript">
+// var ff = new FatFractal(),
+//     loggedInUser;
+
+// ff.setDebug(true);
+// ff.setSimulateCookies(true);
+// ff.setBaseUrl("http://readrboard.fatfractal.com/eventsdev2");
+// ff.login('readrWidget', 'G0g0g04w4y', function(responseUser) {
+
+//   // shows a valid user
+//   console.log(responseUser)
+
+
+    // models
+  // function GroupsTest(data) {
+  //     if (data) {
+  //         this.clazz = data.clazz;
+  //         this.guid = data.guid;
+  //         this.short_name = data.short_name;
+  //     } else {
+  //         this.clazz = "GroupsTest";
+  //         this.guid = null;
+  //         this.short_name = null;
+  //     }
+  //     return this;
+  // }
+
+  // function PagesTest(data) {
+  //     if (data) {
+  //         this.clazz = data.clazz;
+  //         this.guid = data.guid;
+  //         this.url = data.url;
+  //     } else {
+  //         this.clazz = "PagesTest";
+  //         this.guid = null;
+  //         this.url = null;
+  //     }
+  //     return this;
+  // }
+
+
+  // var group = new GroupsTest();
+  // group.short_name = "theguardian";
+  // group.name = "The Guardian US";
+
+  // var page = new PagesTest();
+  // page.url = "http://theguardian.com/world/2014/jan/27/obama-state-union-address-middle-class-mobility";
+  // page.title = "Obama's State of the Union Address &amp; Middle Class Mobility";
+
+  // persist page
+//   ff.createObjAtUri(page, "/GroupsTest",
+//       function (obj, statusMessage) {
+//           var savedGroup = obj;
+
+//           console.log('saved group');
+//           console.log(obj);
+
+//           page.group = savedGroup;
+   
+//           // persist dad
+//           ff.createObjAtUri(page, "/PagesTest",
+//               function (obj, statusMessage) {
+//                   var savedPage = obj;
+
+//                   console.log('saved page');
+//                   console.log(obj);
+
+//               }
+//           );
+//       }
+//   );
+  // ff.getObjFromExtension("/ff/ext/ExtensionTest?user=porter",
+//   var postData = {
+//     foo:'bar',
+//     userTest:'el portero',
+//     pageUrl:'http://theguardian.com/world/2014/jan/27/obama-state-union-address-middle-class-mobility'
+//   };
+  
+//   ff.postObjToExtension(postData, 'ExtensionTest',
+//       function(testObject) {
+//         console.log('testObject');
+//         console.log(testObject);
+//         // console.log( JSON.parse(testObject.sentJson) );
+//           // self.showLoading(false);
+//           // m_ratingCountLabel.innerHTML = statsObject.totalRatings;
+//           // m_userCountLabel.innerHTML = statsObject.totalUsers;
+//           // m_celebrityCountLabel.innerHTML = statsObject.totalCelebrities;
+//           // m_yourRatingCountLabel.innerHTML = statsObject.yourRatings;
+//       }, function(statusCode, responseText){
+//           // self.showLoading(false);
+//           console.error("Error "+ statusCode + ": " + JSON.parse(responseText).statusMessage);
+//       }
+//   );
+// }, function(failResponse) {console.log(failResponse)});
+
 
 
 </script>
+
+
   </div>
 </body>
 </html>

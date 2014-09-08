@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Antenna{%endblock%}
+{% block extendedHead %}
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/{% else %}http://www.antenna.is/{% endif %}">
+<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
+
+<link rel="stylesheet" href="/static/components/morris/morris.css">
+<link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="/static/components/morris/morris.js"></script>
+<script src="/static/js/analytics.js"></script>
+<script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
+
+{%endblock%}
+
+{% block subheaderContent %}
+{% endblock %}
+
+{% block wideContent %}
+<div class="know grid-whole">
+  <div class="content">
+    <div class="grid-half m-hidden s-hidden reaction-cloud">&nbsp;</div>
+    <div class="grid-half m-grid-whole s-grid-whole">
+      <div class="message">Know what your visitors care about.</div>
+      <div class="message">Know why.</div>
+      <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="/see">See it now &raquo;</a></strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-whole endorsements">
+    <div class="content">
+        <div class="grid-half m-grid-whole s-grid-whole center fastco quote">
+            <a href="/group/fastcolabs.com/"><img src="/static/images/fastcolabs.png"/></a>
+            <p>"With Antenna, we're able to see which parts of our articles readers really value.</p>
+            <p>That helps us promote our content and gives us a sharper angle on future stories."</p>
+            <em>- Chris Dannen, Sr. Editor, Fast Company</em>
+        </div>
+        <div class="grid-half m-grid-whole s-grid-whole alexis quote">
+            <div class="image">&nbsp;</div>
+            <p>"Antenna shows exactly what readers are thinking without the hurdles or noise of traditional commenting sections. That's huge."</p> 
+            <em>- Alexis Ohanian, reddit cofounder & Antenna Adviser</em>
+        </div>
+    </div>
+</div>
+<div class="grid-whole center logos">
+    <!-- <div class="grid-half s-grid-whole center"> -->
+        <div class="caption">Selected Antenna partners</div>
+        <a href="/stream/"><img src="/static/images/partners.png"/></a>
+    <!-- </div> -->
+</div>
+
+<a id="analyticsReport"></a>
+<div class="grid-whole banner what-you-learn">
+  <h1>Here's what you will learn</h1>
+  <div class="caption">This is an example of what your website's dashboard will look like.</div>
+</div>
+
+<div class="grid-whole banner">
+<section role="panels" class="analyticsReport content">
+    <div class="grid-12 section summary hasLoader">
+        <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div>
+    </div>
+
+    <div class="section reactions-and-topics">
+        <div class="grid-12 padded">
+            <div class="grid-6 s-grid-whole hasLoader">
+                <h1 class="header">Most Popular Reactions</h1> 
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Counting Reactions...</div></div>
+                <div class="reactions-holder">&nbsp;</div>
+            </div>
+            <div class="grid-6 s-grid-whole hasLoader">
+                <h1 class="header">Most Engaged Topics</h1>
+                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Topics...</div></div>
+                <div class="topics-holder">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+</section>
+    <div class="grid-whole banner blue">
+      <h1>How does Antenna work?</h1>
+      <div class="caption"><a href="/see">See it now &raquo;</a></div>
+    </div>
+<section role="panels" class="analyticsReport content">
+    <div class="section engaged-pages">
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Pages</h1>
+        </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
+        </div>
+    </div>
+
+    <div class="section engaged-content">
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Content</h1>
+        </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Content Engagement...</div></div>
+        </div>
+    </div>
+
+
+    
+    <div class="section engaged-referrers">
+        <div class="grid-12 row padded">
+            <h1 class="header">Most Engaged Referrers</h1>
+        </div>
+        <div class="grid-12 row padded hasLoader">
+            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Referrer Engagement...</div></div>
+        </div>
+    </div>
+
+</section>
+<div class="grid-whole banner blue last-one">
+  <h1>You should try it out.</h1>
+  <div class="caption"><a href="/see">Right now.  Just takes a minute. &raquo;</a></div>
+</div>
+</div>
+{% endblock wideContent %}
+
+{% block mainContent %}
+{% endblock %}

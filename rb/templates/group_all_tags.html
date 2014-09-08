@@ -1,9 +1,22 @@
 {% extends "base.html" %}
+{% block extendedHead %}
+<!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2"> -->
+{% endblock %}
 
 {% block title %}{{ cookie_user }} Management{%endblock%}
 
+{% block subheaderContent %}
+<section role="subheader">
+    {% with "manage_reactions" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+</section>
+{% endblock %}
+
 {% block wideContent %}
-<div class="mostlyWide">
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+
 	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
 	<h1>Allowed Reactions</h1>
 	<div class="notice info">
@@ -27,7 +40,7 @@
 		</tbody>
 	</table>
   
-
+</section>
 </div>
 
 <script>

@@ -29,6 +29,10 @@ from django.views.decorators.vary import vary_on_headers
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils import simplejson
+# for the page reset thing...  hacky, i know:
+from django.core.cache import cache
+from chronos.jobs import *
+from threading import Thread
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -48,7 +52,37 @@ def widgetCss(request):
       mimetype = 'text/css')
 
 def home(request):
-    return HttpResponseRedirect('/learn/')
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "home.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+
+def see(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+
+    return render_to_response(
+      "see.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+    # return HttpResponseRedirect('/learn/')
 
 def team(request):
     cookie_user = checkCookieToken(request)
@@ -115,17 +149,38 @@ def privacy(request):
     )
 
 def learn(request):
+    return HttpResponseRedirect('/')
+    # cookie_user = checkCookieToken(request)
+    # context = {
+    #     'fb_client_id': FACEBOOK_APP_ID,
+    #     'BASE_URL': BASE_URL
+    # }
+    # context['hasSubheader'] = True
+
+    # if cookie_user:
+    #     context['cookie_user'] = cookie_user
+
+    # return render_to_response(
+    #   "learn.html",
+    #   context,
+    #   context_instance=RequestContext(request)
+    # )
+    
+    # return HttpResponseRedirect('/')
+
+def retailers(request):
     cookie_user = checkCookieToken(request)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
+    # context['hasSubheader'] = True
 
     if cookie_user:
         context['cookie_user'] = cookie_user
 
     return render_to_response(
-      "learn.html",
+      "retailers.html",
       context,
       context_instance=RequestContext(request)
     )
@@ -224,6 +279,19 @@ def group(request):
 # @cache_page(60)
 # @vary_on_cookie
 @vary_on_headers('Cookie')
+
+def resetPageData(request, page_id=None, **kwargs):
+    try:
+        cache_updater = PageDataCacheUpdater(method="delete", page_id=page_id)
+        t = Thread(target=cache_updater, kwargs={})
+        t.start()
+
+    except Exception, e:
+        logger.warning(traceback.format_exc(50))
+
+    context = {}
+    return render_to_response("pagereset.html", context, context_instance=RequestContext(request))
+
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, interaction_id=None, **kwargs):
     page_num = request.GET.get('page_num', 1)
     context = main_helper(request, user_id, short_name, **kwargs)
@@ -250,6 +318,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     # Interactions for user profile
     if user_id:
         interactions = user_helper(user_id, interactions, context)
+        context['hasSubheader'] = True
     else:
         # If not viewing a user profile, remove bookmarks from interaction set
         interactions = interactions.exclude(kind="bkm")
@@ -259,6 +328,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
     # Interactions for group profile
     if short_name:
         interactions = group_helper(short_name, interactions, context)
+        context['hasSubheader'] = True
         
     if interaction_id:
         interactions = singleton_helper(interaction_id, interactions, context)
@@ -653,6 +723,46 @@ def request_password_reset(request):
     
     return response   
 
+def change_rb_password(request):
+    data = {}
+    context = {}
+    cookie_user = checkCookieToken(request)
+    # cookies = request.COOKIES
+    # data['user_id'] = cookies.get('user_id', None)
+    # data['readr_token'] = cookies.get('readr_token', None)
+
+    if not cookie_user: return HttpResponseRedirect('/')
+
+    if request.method == 'GET':
+        form = ChangePasswordWhileLoggedInForm(initial={'uid' : cookie_user.id })
+
+    elif request.method == 'POST':
+        try:
+            user_id = request.POST['uid']
+        except KeyError, ke:
+            context['message']  = 'There was a problem with your request.  Looks like you are not logged in.'
+            logger.warning(str(ke))
+    
+        form = ChangePasswordWhileLoggedInForm(request.POST)
+        # is_valid_token = validatePasswordToken(user_id, password_token)
+        
+        if form.is_valid():
+            logger.info("resetting password for " + str(user_id))
+            user = form.save(True)            
+            context['requested'] = True
+    
+
+    context['form'] = form
+    
+    response =  render_to_response(
+        "popup-forms/password_change_loggedin.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+    return response
+        
+
 def reset_rb_password(request):
     context = {}
     if request.method == 'GET':
@@ -696,6 +806,7 @@ def settings(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['cookie_user'] = kwargs['cookie_user']
+    context['hasSubheader'] = True
 
     # todo move wordpress stuff
     if request.method == 'POST':
@@ -765,6 +876,7 @@ def admin_approve(request, request_id=None, **kwargs):
     context = {}
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
+    context['hasSubheader'] = True
     
     groups = cookie_user.social_user.admin_groups()
     
@@ -890,6 +1002,8 @@ def follow_interactions(request, user_id):
         'BASE_URL': BASE_URL
     }
 
+    context['hasSubheader'] = True
+
     if cookie_user:
         context['cookie_user'] = cookie_user
         # Look for a better way to do this
@@ -938,6 +1052,7 @@ def group_blocked_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
+    context['hasSubheader'] = True
     return render_to_response(
         "group_blocked_tags.html",
         context,
@@ -950,6 +1065,7 @@ def group_all_tags(request, **kwargs):
     context = kwargs.get('context', {})
     group = Group.objects.get(short_name=kwargs['short_name'])
     context['group'] = group
+    context['hasSubheader'] = True
     
     all_set = set(group.all_tags.all())
     blocked_set = set(group.blocked_tags.all())

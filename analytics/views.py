@@ -17,6 +17,7 @@ def analytics(request, short_name=None, **kwargs):
     context['group'] = Group.objects.get(short_name=short_name)
     context['fb_client_id'] = FACEBOOK_APP_ID
     context['cookie_user'] = kwargs['cookie_user']
+    context['hasSubheader'] = True
 
     return render_to_response(
         "analytics.html",
@@ -196,11 +197,11 @@ class FrequencyHandler(AnalyticsHandler):
         return periods
             
 
-@requires_admin_super
+# @requires_admin_super
 def analytics_inhouse(request, **kwargs):
     context = {}
-    context['fb_client_id'] = FACEBOOK_APP_ID
-    context['cookie_user'] = kwargs['cookie_user']
+    # context['fb_client_id'] = FACEBOOK_APP_ID
+    # context['cookie_user'] = kwargs['cookie_user']
 
     return render_to_response(
         "analytics_inhouse.html",
@@ -227,7 +228,7 @@ def inhouse_analytics_request(func):
 
 # [ec] mostly a quick copy of AnalyticsHandler.  Refactor later.
 class InhouseAnalyticsHandler(AnonymousBaseHandler):
-    @requires_admin_super
+    # @requires_admin_super
     @inhouse_analytics_request
     def read(self, request, data, **kwargs):
         interactions = Interaction.objects.all()

@@ -44,8 +44,12 @@ def agree(request, interaction_id = None, **kwargs):
         new_rank = interaction.rank + MILLI_RANK_INC 
         interaction.rank = new_rank
         interaction.save()
-        logger.info("CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
-        if social_user.notification_email_option:
+        group = interaction.page.site.group
+
+        logger.info("agree: CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
+        logger.info("agree: CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
+        if social_user.notification_email_option and group.send_notifications:
+        # if social_user.notification_email_option:
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'agreethreshold')
@@ -90,6 +94,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
+        # comment-out to re-enable the bad reaction emails
         social_user = SocialUser.objects.get(user = interaction.user)
         group = Group.objects.get(id = group_id)
         
@@ -108,6 +113,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
         
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
+    # comment-out to re-enable the bad reaction emails
     except SocialUser.DoesNotExist:
         logger.info("NO SOCIAL USER")
     except Exception, ex:
@@ -131,7 +137,10 @@ def comment(request, interaction_id = None, **kwargs):
         new_rank = interaction.rank + MILLI_RANK_INC * 2 
         interaction.rank = new_rank
         interaction.save()
-        if social_user.notification_email_option:
+        group = interaction.page.site.group
+        logger.info("comment: CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
+        if social_user.notification_email_option and group.send_notifications:
+        # if social_user.notification_email_option:
             child_interactions = Interaction.objects.exclude(user=interaction.user).filter(parent = interaction, kind = 'com').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'commentthreshold')
@@ -177,6 +186,7 @@ def page(request, interaction_id = None, **kwargs):
         interaction = Interaction.objects.get(id = interaction_id)
         page = interaction.page
         page_interactions_list = list(page.interactions().order_by('-created'))
+        group = page.site.group
         user_set = set()
         distance = 1
         for p_i in page_interactions_list:
@@ -188,7 +198,9 @@ def page(request, interaction_id = None, **kwargs):
                 try:
                     social_user = SocialUser.objects.get(user = p_i.user)
                     logger.info("CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
-                    if social_user.notification_email_option:
+                    logger.info("CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
+                    if social_user.notification_email_option and group.send_notifications:
+                    # if social_user.notification_email_option:
                         for threshold in page_rules:
                             if (
                                 threshold.passes(count=distance, exact=True)

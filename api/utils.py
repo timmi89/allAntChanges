@@ -9,11 +9,13 @@ import random
 import json
 import re
 import time
+import string
 from threading import Thread
 from exceptions import FBException, JSONException
 from urlparse import urlsplit, urlunsplit
 import traceback
 import logging
+import hashlib
 logger = logging.getLogger('rb.standard')
 
 blacklist = ['fuck','shit','poop','cock','cunt']
@@ -150,14 +152,10 @@ def getPage(host, page_request):
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
-
-    if canonical:
-        if canonical == "same":
-            canonical = url
-        else:
-            url = canonical
-    else:
-        canonical = ""
+    
+    author = page_request.get('author', None)
+    topics = page_request.get('topics', None)
+    section = page_request.get('section', None)
 
     try:
         site = Site.objects.get(domain=host, group=int(group_id))
@@ -169,17 +167,25 @@ def getPage(host, page_request):
     # Remove querystring if it doesn't determine content
     if not site.querystring_content:
         url = stripQueryString(url)
+        canonical = stripQueryString(canonical)
 
     # Handle sites with hash but no bang
     if '#' in url and '!' not in url:
         url = url[:url.index('#')]
+
+    if canonical:
+        if canonical == "same":
+            canonical = url
+        else:
+            url = canonical
+    else:
+        canonical = ""
 
     page = Page.objects.get_or_create(
         url = url,
         canonical_url = canonical,
         defaults = {'site': site, 'title':title}
     )
-        
     return page[0]
     
 def createInteractionNode(node_id=None, body=None, group=None):
@@ -190,17 +196,19 @@ def createInteractionNode(node_id=None, body=None, group=None):
     
     # Body was passed rather than id
     elif body:
-        if group.word_blacklist:
-            # Check body for blacklisted word
-            """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-            blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-            #blacklist = ["%r" % word.strip() for word in group.word_blacklist.split(',')]
+        # commenting this out.  
+        # the Interaction Node can have profanity.  we'll set the Interaction to unapproved instead.
+        # if group.word_blacklist:
+        #     # Check body for blacklisted word
+        #     """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
+        #     blacklist = [word.strip() for word in group.word_blacklist.split(',')]
+        #     #blacklist = ["%r" % word.strip() for word in group.word_blacklist.split(',')]
         
-            # For demo search for bad words inside other bad words
-            inside_words = True if group.id == 1 else False
+        #     # For demo search for bad words inside other bad words
+        #     inside_words = True if group.id == 1 else False
         
-            pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
-            body = pf.clean(body)
+        #     pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
+        #     body = pf.clean(body)
         
         
         # No id provided, using body to get_or_create
@@ -268,11 +276,37 @@ def deleteInteraction(interaction, user):
         raise JSONException("Missing interaction or user")
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+    approveOnCreate = False if group.requires_approval else True
+
     if kind and kind == 'tag':
         if group and group.blocked_tags:
             for blocked in group.blocked_tags.all():
                 if interaction_node.body == blocked.body:
                     raise JSONException("Group has blocked this tag.")
+
+        if group and group.word_blacklist:
+            # Check body for blacklisted word
+            # if in the blacklist, block it
+            blacklist = [word.strip().lower() for word in group.word_blacklist.split(',')]
+
+
+            # strip punctuation and whitespace, so that f!u ck is not OK
+            tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', interaction_node.body.lower())
+            tagLowerCased = re.sub('[%s]' % re.escape(string.whitespace), '', tagLowerCased)
+
+            # check the whole reaction (i.e. 'f u c k'), and smash case
+            if tagLowerCased in blacklist:
+                approveOnCreate = False
+
+            # also check individual words, by splitting on a space
+            # also, replace dashes with a space first.  a bit simple but a good start.
+            for word in tagLowerCased.replace('-', ' ').split(' '):
+                if word.lower() in blacklist:
+                    approveOnCreate = False
+
+            if approveOnCreate == False:
+                raise JSONException("Group has blocked this tag.")
+
          
     # Check to see if user has reached their interaction limit
     tempuser = False
@@ -338,7 +372,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             interaction_node=interaction_node,
             parent=parent,
             rank = int(time.time()*1000),
-            approved = False if group.requires_approval else True
+            approved = approveOnCreate
         )
     except Exception as e:
         raise JSONException(u"Error creating interaction object")
@@ -452,7 +486,8 @@ def searchBoards(search_term, page_num):
 
 def getSinglePageDataDict(page_id):
     current_page = Page.objects.get(id=page_id)
-    iop = Interaction.objects.filter(page=current_page)
+    urlhash = hashlib.md5( current_page.url ).hexdigest()
+    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
             
     # Retrieve containers
     containers = Container.objects.filter(id__in=iop.values('container'))
@@ -471,10 +506,16 @@ def getSinglePageDataDict(page_id):
         interaction__kind='tag',
         interaction__page=current_page,
         interaction__approved=True
+    ).exclude(
+        interaction__container__item_type='question'
     )
+
     ordered_tags = tags.order_by('body')
     tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-    toptags = tagcounts.order_by('-tag_count')[:10].values('id','tag_count','body')
+    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
+
+    # singletagcounts = ordered_tags.annotate(tag_count=Count('interaction')).filter(tag_count__lt=2)
+    # singletoptags_with_containers = singletagcounts.values('id','interaction__container')
   
     # ---Find top 10 shares on a give page---
     # content = Content.objects.filter(interaction__page=current_page.id)
@@ -490,8 +531,10 @@ def getSinglePageDataDict(page_id):
             id=current_page.id,
             summary=summary,
             toptags=toptags,
+            # singletoptags_with_containers=singletoptags_with_containers,
             # topusers=topusers,
             # topshares=topshares,
+            urlhash = urlhash,
             containers=containers
             # parents = par_con
         )

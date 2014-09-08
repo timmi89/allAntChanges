@@ -1,8 +1,27 @@
 {% extends "base.html" %}
 {% block title %}{{ group.name }} Approve Administrators{%endblock%}
 {% block bodyClass %}wide{% endblock %}
-{% block mainContent %}
+
+{% block subheaderContent %}
+<section role="subheader">
+    {% with group=form.instance %}
+    {% with "" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+</section>
+{% endblock %}
+
+{% block wideContent %}
+
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+  <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
+
 <h1>{{ group.name }} Approve Administrators</h1>
+<div class="notice info">
+To have someone request Admin access to {{group.name}}, have them create a ReadrBoard account and then send them to <a href="www.readrboard.com/{{group.short_name}}/admin_request/" target="_blank">www.readrboard.com/{{group.short_name}}/admin_request/</a>.
+</div>
 <div class="container">
 <section role="panels">
   <section role="wide panels">
@@ -20,4 +39,7 @@
   </section>
 </section>
 </div>
-{% endblock mainContent %}
+
+</section>
+</div>
+{% endblock wideContent %}

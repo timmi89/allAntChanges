@@ -2,32 +2,18 @@
 
 {% block title %}ReadrBoard{%endblock%}
 {% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8080/{% else %}http://www.readrboard.com/{% endif %}">
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/{% else %}http://www.readrboard.com/{% endif %}">
 <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
 {%endblock%}
 
-{% block wideContent %}
-{% if not profile_user and not group and not board and not page %}
-{% if not query_string and not singleton %}
-
-<div class="masthead main">
-    <div class="message">
-        <h2>React to anything on the web.</h2>
-        <h3>Say what you think about any phrase, image, video, or article online.<br/>With just a click.</h3>
-    </div>
-</div>
-<div class="masthead secondary">
-    <!-- <h4><i class="icon-dashboard"></i> Publishers: &nbsp;ReadrBoard will increase your KPIs up to 15%. &nbsp;And it’s free.  &nbsp;<a href="/learn/">Learn more</a>.</h4> -->
-    <h4><i class="icon-dashboard"></i> Publishers: &nbsp;Install ReadrBoard to get more readers engaging than ever before. &nbsp;For free.  &nbsp;<a href="/learn/">Learn more</a>.</h4>
-</div>
-{% endif %}
-{% endif %}
-    
+{% block subheaderContent %}
 {% include "sidebar.html" %}
+{% endblock %}
 
-{% endblock wideContent %}
 
-{% block mainContent %}
+{% block wideContent %}
+<div class="grid-whole">
+  <section role="panels" class="content">
 
 {% if board %}
 <div id="board_header">
@@ -65,18 +51,28 @@
 </div>
 {% endif %}
 
-{% endblock mainContent %}
+</section>
+</div>
+
+{% endblock wideContent %}
 
 {% block pageJS %}
 <script>
 (function($){
     $(function(){
 
-        $('#cards').isotope({
-          itemSelector:'.cardWrap',
-          masonry: {
-            columnWidth: 530
-          }
+        // $('#cards').isotope({
+        //   itemSelector:'.cardWrap',
+        //   masonry: {
+        //     columnWidth: 530
+        //   }
+        // });
+
+        var container = document.querySelector('#cards');
+        var msnry = new Masonry( container, {
+          // options
+          // columnWidth: 300,
+          itemSelector: '.card'
         });
 
         {% if board %}

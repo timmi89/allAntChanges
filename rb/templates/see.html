@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Antenna{%endblock%}
+{% block extendedHead %}
+<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
+
+<script>
+// RB.group.short_name = "{{ group.short_name }}";
+// RB.group.full_name = "{{ group.name }}";
+// RB.group.id = "{{ group.id }}";
+// RB.group.id = 1660;
+</script>
+<link rel="stylesheet" href="/static/components/morris/morris.css">
+<link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script src="/static/components/morris/morris.js"></script>
+<script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
+
+{%endblock%}
+
+{% block subheaderContent %}
+{% endblock %}
+
+{% block wideContent %}
+<div class="grid-whole banner blue">
+  <div class="content left">
+    <h1>This is Antenna.</h1>
+    <div class="caption">Learn why we built Antenna. Try it out, too &#8212; we are in beta.</div>
+  </div>
+</div>
+<div class="grid-whole summary-statement">
+  <div class="content">
+    <div class="grid-whole banner gray">
+      <h2 class="call-out">Antenna enables your audience to react to any text, image, video, audio, or article on your site.</h2>
+      <h3 class="call-out">With just a click.</h3>
+    </div>
+  </div>
+</div>
+<div class="grid-whole sample-content">
+  <div class="content">
+    <p class="center no-rdr">Roll your mouse over almost everything to react.</p>
+  </div>
+</div>
+<div class="grid-whole sample-content">
+  <div class="content">
+    <div class="rdr rdr-page-summary"></div>
+    <h1>Ever wonder, "What are they thinking?"</h1>
+    <div class="grid-7 s-grid-whole">
+      <p>We think an online audience has some pretty interesting parallels with live audiences.  When you go listen to a band, or a speaker, or see a play &#8212; there’s not a whole lot of feedback from the audience during the show.  Often, the performer (as well as members of their audience) wish there was more &#8212; so long as it's unobtrusive.</p>
+      <p>Take an author speaking on book tour.  After she concludes her speech, a small number of exceptionally brave or passionate people ask questions in front of the audience. Then, maybe a handful stick around to discuss the talk, and ask more questions of the author.  These are like your online commenters.</p>
+      <!-- <blockquote><img src="https://media.giphy.com/media/HI0Pp2ZgJbKaA/giphy.gif" style="float:left;"/></blockquote> -->
+      <!-- <blockquote><p><img src="https://media.giphy.com/media/HI0Pp2ZgJbKaA/giphy.gif" style="float:left;"/> "But what about everyone else who just... left?"</p></blockquote> -->
+      <blockquote>"But what about everyone else who just... left?"</blockquote>
+      <p>"What about everyone else who did not have time to stick around?  Did they like my talk?  What did they like?  What surprised them?  Did they laugh at my story?  What did they agree with?  What did they learn from?"</p>
+      <p>How can she really find out?</p>
+      <p></p>
+    </div>
+    <div class="grid-5 s-grid-whole right s-center">
+      <img src="/static/images/photos/what-are-they-thinking.jpg"/>
+      <div class="credit">photo by <a href="https://www.flickr.com/photos/boo-x/8468293074" target="_blank">Marc Cornelis</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-whole sample-content">
+  <div class="content">
+    <div class="grid-5 s-hidden">
+      <img src="/static/images/meaningful.png" class="xno-shadow" />
+    </div>
+    <div class="grid-7 s-grid-whole">
+      <p>Online audiences are very similar.  As we read or watch or listen, something strikes us.  We want someone to know what we thought about <em>that thing right there</em>.  And it needs to be easy -- for us to say, and for others to hear and make sense of.</p>
+      <p>Antenna is built to address this very real problem.  Whether it’s a recipe, an academic talk, a breakdown of last night’s football game, photos from a fashion show, or a new music video, we want it to be simple, meaningful, and measurable for people to give a little input.</p>
+      <p>If it's simple, people will do it.
+      If it's measurable, then together, the audience has an impact.
+      That makes it meaningful.</p>
+    </div>
+  </div>
+</div>
+
+<div class="grid-whole sample-content separator">
+  <div class="content">
+    <h1>Images, Video, Audio, Oh my.</h1>
+    <div class="grid-whole s-grid-whole">
+      <p>It's easy to imagine using a tool like this on text, but we see readers react to images and video even more than text!</p>
+      <p>Roll your mouse over these examples to react.</p>
+    </div>
+    <div class="grid-third s-grid-whole center">
+      <img src="http://okp-cdn.okayplayer.com/wp-content/uploads/2014/05/michael-jackson-blue-gangsta-loving-you-mp3-main.jpg"/>
+      <div class="credit center">via Antenna partner, <a href="http://www.okayplayer.com/news/michael-jackson-blue-gangsta-loving-you-mp3.html" target="_blank">OkayPlayer</a></div>
+    </div>
+    <div class="grid-third s-grid-whole center">
+      <iframe class="contentBody" xwidth="300" xheight="220" frameborder="0" src="http://www.fastcompany.com/embed/6c586b29396bf"></iframe>
+      <div class="credit center">via Antenna partner, <a href="http://www.fastcolabs.com/3031728/why-you-should-let-your-creative-employees-roam" target="_blank">Fast Company Labs</a></div>
+    </div>
+    <div class="grid-third s-grid-whole center">
+      <a href="http://bop.fm/s/the-guess-who/american-woman" data-bop-link>The Guess Who &#8211; American Woman</a><script src="http://assets.bop.fm/embed.js" async=""></script>
+      <div class="credit center">via Antenna partner, <a href="http://burtoncummings.com/lyrics/american-woman/" target="_blank">BurtonCummings.com</a></div>
+    </div>
+  </div>
+</div>
+
+<a name="anotherway"></a>
+<div class="grid-whole sample-content separator separate-ctas">
+  <div class="content">
+    <h1>Another way to react</h1>
+    <div class="grid-half s-grid-whole">
+      <p>Out of the box, your readers can simply roll their mouse over an image, video, audio embed, or text to start reacting with Antenna.</p>
+      <p>You can make it even easier.  You can easily create a custom call-to-action for <strong>any</strong> piece of content.</p>
+      <p><strong>You can even customize the reactions for each piece of content.</strong></p>
+      <p>All it takes are a few custom HTML attributes.  This means your CMS can easily power these custom implementations.</p>
+      <blockquote rdr-item="is-it-useful" rdr-reactions="Yes;Maybe;No;">Is this a useful feature?</blockquote>
+      <div class="center">
+        <div class="center test-cta-2" rdr-cta-for="is-it-useful" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="50">Your Response</div>
+        <div class="center test-cta-2 read" rdr-cta-for="is-it-useful" rdr-mode="read" rdr-offset-x="0" rdr-offset-y="50">View <span rdr-counter-for="is-it-useful"></span> Responses</div>
+      </div>
+    </div>
+    <div class="grid-half s-grid-whole center">
+      <img src="/static/images/photos/brooklyn_bridge.jpg" rdr-item="image1" rdr-reactions="Breathaking;Been there;Want to visit!;I've seen better" /> 
+      <div class="center test-cta" rdr-cta-for="image1" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="50">What do you think of this photo?</div>
+      <div class="center test-cta read" rdr-cta-for="image1" rdr-mode="read" rdr-offset-x="0" rdr-offset-y="50">View <span rdr-counter-for="image1"></span> Responses</div>
+      <div class="credit center">photo by <a href="https://dribbble.com/p_kwiatkowski" target="_blank">Piotr Kwiatkowski</a>, via <a href="http://unsplash.com/" target="_blank">Unsplash</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-whole banner blue no-rdr vspace">
+  <h1>Join our beta</h1>
+  <div class="caption"><a class="get_readrboard" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
+  <div class="get_readrboard_form">
+      <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" allowTransparency="true" style="background:transparent;" frameborder="0"></iframe>
+  </div>
+</div>
+
+<div class="grid-whole sample-content">
+  <div class="content">
+    <h1>Easy to speak, easier to listen.</h1>
+    <div class="grid-7 s-grid-whole">
+      <p>There is a major movement towards web annotation right now.</p>
+      <p>There is a <a href="http://www.openannotation.org/" target="_blank">maturing specification</a> for it.  Medium, Quartz, and RapGenius have popularized it.  LiveFyre launched their own annotation tool this year, which has been installed on a <a href="https://wordpress.org/plugins/livefyre-sidenotes/" target="_blank">few hundred sites</a>.</p>
+      <p>We think it's all just a bit too much work.  For you, and your readers.  Check out an excerpt from <a href="https://medium.com/human-parts/coming-out-as-biracial-c25d6ae8f2af" target="_blank">this (fantastic) piece</a> at Medium.</p>
+      <img src="/static/images/medium-work.png" />
+      <p>The inline comments are great.  But there are 25 of them!  If each comment is 10 words, your reader has to comb through another 250 words to see what the community thinks. And that's more for you to moderate.</p>
+      <!-- <p>Even worse? In-line comments can go off-topic, too.</p> -->
+      <p>Compare that to this excerpt from <a href="http://www.fastcolabs.com/3027786/your-5-minute-guide-to-ux-from-squarespace-and-mailchimp" target="_blank">this Fast Company Labs piece</a> using Antenna.</p>
+      <div class="s-center"><img src="/static/images/fastco-grid.png"  /></div>
+      <div class="credit center" style="margin:-20px 0 20px;">Notice that they customized the colors and font!  It's easy.</div>
+      <p>There are <strong>22 reactions</strong>, yet in an instant, you understand the community's range of sentiment.</p>
+      <p>And each reaction is to the content.  Not someone else's content.</p>
+      <p>Don't get us wrong. We're not anti-comment, we just think comments aren't always needed to understand the main reason someone cares about something. As you see in that Fast Company article, some of the reactions do have inline comments.  Antenna lets people elaborate on their reaction with a comment, and we show those comments by adding a comment icon next to a reaction.</p>
+      <p>This means your readers easily skip the discussions they're not interested in.  Don't care about the comment someone left after reacting <strong>Duh</strong>?  No problem.  Just click on the comments by the <strong>Clever</strong>, and read those instead.</p>
+      <p>We see reactions more than 100x as much as inline comments on our platform, so we think it's striking a chord with our communities.</p>
+    </div>
+  </div>
+</div>
+
+<div class="grid-whole banner blue no-rdr">
+  <h1>Join our beta</h1>
+  <div class="caption"><a class="get_readrboard" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
+  <div class="get_readrboard_form">
+      <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" allowTransparency="true" style="background:transparent;" frameborder="0"></iframe>
+  </div>
+</div>
+<script>
+    $('.get_readrboard').click( function() {
+        $(this).parents('.grid-whole').find('.get_readrboard_form').toggle(200);
+    });
+</script>
+<!--
+lincoln quote 
+Public sentiment is everything. With public sentiment, nothing can fail; without it, nothing can succeed.
+http://www.bartleby.com/268/9/23.html
+-->
+<script>
+  document.addEventListener("readrboard.hashed_nodes",function(){
+    if (typeof console != 'undefined' && typeof console.log != 'undefined')
+    console.log("readrboard.hashed_nodes"); console.log( readrboard.getLastEvent() );
+  },false);
+</script>
+
+<script defer src="/static/engage_full.js"></script>
+{% endblock wideContent %}
+
+{% block mainContent %}
+<!-- <br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<h1>hello world 2</h1>
+<br/><br/><br/><br/><br/><br/><br/><br/><br/> -->
+{% endblock %}

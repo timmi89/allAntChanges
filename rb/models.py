@@ -129,6 +129,40 @@ class SocialUser(models.Model):
     class Meta:
         unique_together = ('provider', 'uid', 'username')
 
+class Product(models.Model):
+    # just using text fields.  postgre does not care (http://stackoverflow.com/questions/7354588/django-charfield-vs-textfield) and mysql, well, whatever  -- pb.
+    # all from schema.org ProductModel -- http://schema.org/ProductModel
+    additionalType              = models.TextField(blank=True, null=True)
+    alternateName               = models.TextField(blank=True, null=True)
+    description                 = models.TextField(blank=True, null=True)
+    image                       = models.TextField(blank=True, null=True)
+    name                        = models.TextField(blank=True, null=True)
+    sameAs                      = models.TextField(blank=True, null=True)
+    url                         = models.TextField(blank=True, null=True)
+    aggregateRating_ratingValue             = models.TextField(blank=True, null=True)
+    brand_name                       = models.TextField(blank=True, null=True)
+    color                       = models.TextField(blank=True, null=True)
+    gtin13                      = models.TextField(blank=True, null=True)
+    gtin14                      = models.TextField(blank=True, null=True)
+    gtin8                       = models.TextField(blank=True, null=True)
+    logo                        = models.TextField(blank=True, null=True)
+    manufacturer                = models.TextField(blank=True, null=True)
+    model                       = models.TextField(blank=True, null=True)
+    mpn                         = models.TextField(blank=True, null=True)
+    offers_price                      = models.TextField(blank=True, null=True)
+    offers_priceCurrency                      = models.TextField(blank=True, null=True)
+    productID                   = models.TextField(blank=True, null=True)
+    releaseDate                 = models.TextField(blank=True, null=True)
+    sku                         = models.TextField(blank=True, null=True)
+    weight                      = models.TextField(blank=True, null=True)
+    width                       = models.TextField(blank=True, null=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+    # class Meta:
+    #     ordering = ['name']
+
 class Group(models.Model):
     name = models.CharField(max_length=250)
     short_name = models.CharField(max_length=50, unique=True)
@@ -141,6 +175,10 @@ class Group(models.Model):
     paragraph_helper = models.BooleanField(default=True)
     media_url_ignore_query = models.BooleanField(default=True)
     
+    # is premium?
+    premium = models.BooleanField(default=False)
+    send_notifications = models.BooleanField(default=True)
+
     # Customization
     call_to_action = models.CharField(max_length=255, default='', blank=True)
     media_display_pref = models.CharField(max_length=25, default='', blank=True)
@@ -148,6 +186,20 @@ class Group(models.Model):
     # Jquery settings
     inline_selector = models.CharField(max_length=100, default='', blank=True)
     inline_func = models.CharField(max_length=25, default='', blank=True)
+
+    # new attributes for data dashboard.  all are form fields to support page settings.
+    author_selector = models.CharField(max_length=255, blank=True) # jquery()
+    author_attribute = models.CharField(max_length=255, blank=True) # jquery .attr()
+    topics_selector = models.CharField(max_length=255, blank=True) # jquery()
+    topics_attribute = models.CharField(max_length=255, blank=True) # jquery .attr()
+    section_selector = models.CharField(max_length=255, blank=True)  # jquery()
+    section_attribute = models.CharField(max_length=255, blank=True)  # jquery .attr()
+
+    # mobile settings
+    hideOnMobile = models.BooleanField(default=False)
+    hideDoubleTapMessage = models.BooleanField(default=False)
+    doubleTapMessage = models.TextField(blank=True)
+    doubleTapMessagePosition = models.CharField(max_length=25, default='bottom')
     
     # Many to many relations
     admins = models.ManyToManyField(SocialUser, through='GroupAdmin')
@@ -166,7 +218,9 @@ class Group(models.Model):
     post_selector = models.CharField(max_length=255, blank=True)
     post_href_selector = models.CharField(max_length=255, blank=True)
     summary_widget_selector = models.CharField(max_length=255, blank=True)
+    summary_widget_method = models.CharField(max_length=255, blank=True)
     br_replace_scope_selector = models.CharField(max_length=255, blank=True)
+    separate_cta = models.CharField(max_length=255, blank=True)
     
     # logo fields
     logo_url_sm = models.CharField(max_length=200, blank=True)
@@ -304,6 +358,11 @@ class Page(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=255, blank=True)
     canonical_url = models.URLField(blank=True)
+    
+    # new for data dashboard v2
+    author = models.CharField(max_length=255, blank=True) # text, i.e. "John Dear"
+    topics = models.CharField(max_length=255, blank=True) # comma-delimited, i.e. "politics, healthcare, lovin"
+    section = models.CharField(max_length=255, blank=True)  # publisher defined, i.e. "Politics"
 
     def interactions(self):
         return Interaction.objects.filter(page=self)
@@ -344,6 +403,7 @@ class Container(models.Model):
     hash = models.CharField(max_length=32, unique=True, db_index=True)
     body = models.TextField()
     kind = models.CharField(max_length=25)
+    item_type = models.CharField(max_length=64, blank=True, db_index=True)
 
     def __unicode__(self):
         return unicode(self.id) + " : " + self.hash

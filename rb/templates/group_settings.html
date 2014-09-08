@@ -1,9 +1,22 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
 
+{% block subheaderContent %}
+<section role="subheader">
+    {% with group=form.instance %}
+    {% with "settings" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+    {% endwith %}
+</section>
+{% endblock %}
+
 {% block wideContent %}
-<div class="mostlyWide">
+<div class="grid-whole settings">
+  <section role="panels" class="content">
+  <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
 {% with group=form.instance %}
 
     {% block settingsHeader %}    
@@ -36,17 +49,17 @@
     		{{ form.language }}{{ form.language.errors }}
     		</div> -->
     		<div class="formRow">
-    			<label for="id_temp_interact"><span class="labelTitle">Temporary Interactions </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
+    			<label for="id_temp_interact"><span class="labelTitle">Anonymous Reaction Limit </span><span>How many times someone can react, comment &amp; share before logging in.</span></label>
     			{{ form.temp_interact }}{{ form.temp_interact.errors }}
     		</div>
 
     	</section>
 
-        <section class="configuarationSection">
-            <h3>Configuring Your Site</h3>
+        <section class="configurationSection">
+            <h3>Where ReadrBoard Interacts</h3>
             <h4>Customize ReadrBoard by defining these <a href="http://api.jquery.com/category/selectors/" target="_blank">jQuery selectors</a>.</h4>
             <div class="formRow">
-                <label for="id_no_readr">
+                <label for="id_active_sections">
                     <span class="labelTitle">Active Sections (jQuery selector)</span>
                     <span>Tell ReadrBoard where the content its allowed to interact with can be found.  For example, if you're using WordPress, you may just want people to interact with your article content -- typically all found inside the <code>.post</code> element.  Multiple elements allowed.</span>
                     <span class="formInputExample">Example: <i>article.post, #slideshow</i></span>
@@ -84,6 +97,25 @@
                 {{ form.img_blacklist }}{{ form.img_blacklist.errors }}
             </div>
             -->
+            <div class="formRow">
+                <label for="id_summary_widget_selector">
+                    <span class="labelTitle">Summary Widget Selector (jQuery selector)</span>
+                    <span>Looks in each post to find where to append the summary bar widget.</span>
+                </label>
+                {{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_summary_widget_method">
+                    <span class="labelTitle">Summary Widget Insertion Method</span>
+                    <span>Should ReadrBoard insert the Summary Widget before, inside, or after the Summary Widget Selector.  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                </label>
+                {{ form.summary_widget_method.as_hidden }}{{ form.summary_widget_method.errors }}
+                <select id="summary_widget_method_selector">
+                    <option {% if group.summary_widget_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                    <option {% if group.summary_widget_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                    <option {% if group.summary_widget_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                </select>
+            </div>
             <div class="formRow wordpressKeepDefaults">
                 <label for="id_post_selector">
                     <span class="labelTitle">Post Selector (jQuery selector)</span>
@@ -99,25 +131,60 @@
                 {{ form.post_href_selector }}{{ form.post_href_selector.errors }}
             </div>
             <div class="formRow">
-                <label for="id_summary_widget_selector">
-                    <span class="labelTitle">Summary Widget Selector (jQuery selector)</span>
-                    <span>Looks in each post to find where to append the summary bar widget.</span>
+                <label for="id_separate_cta">
+                    <span class="labelTitle">Which tags will have a separate call-to-action? (jQuery selector)</span>
+                    <span>ReadrBoard can insert a distinct call-to-action for content on your page.  See <a href="/see/#anotherway" target="_blank">Another way to react" on our demo page</a> to see what we mean.</span>
+                    <span class="formInputExample">Example: <i>iframe,video</i></span>
                 </label>
-                {{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
+                {{ form.separate_cta }}{{ form.separate_cta.errors }}
             </div>
-            <!-- this is too confusing still to expose to the user. -->
-            <div class="formRow" style="display:none;">
+            <!-- this is too confusing still to expose to the user. 
+            <div class="formRow">
                 <label for="id_br_replace_scope_selector">
-                    <span class="labelTitle">BR Replace Scope Selector (jQuery selector)</span>
-                    <span>An optional scope in which to look for BR tags and replace them with wrapped sections.</span>
+                    <span class="labelTitle">BR Tag Replacement (jQuery selector)</span>
+                    <span>Some platforms, like Blogspot, separate paragraphs with a BR HTML tag, rather than P tags.  This is a problem, since there is a limit to how long a single piece of content can be for ReadrBoard.  If your CMS does this, ReadrBoard can replace the BR tags and wrap your content inside a tag. <strong>Most websites do not have this problem, so if you are unsure, just leave this empty!</strong></span>
+                    <span class="formInputExample">Example: <i>.article</i></span>
                 </label>
                 {{ form.br_replace_scope_selector }}{{ form.br_replace_scope_selector.errors }}
             </div>
+            -->
             
             {% if hostplatform %}
                 <input type="hidden" id="id_hostplatform" type="text" name="hostplatform" value="{{ hostplatform }}" maxlength="100" />
             {% endif %}
-
+        </section>
+        <section class="configurationSection">
+            <h3>Page Attributes</h3>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Author(s)</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.author_selector|cssClass:'selector' }}').attr('{{ form.author_attribute|cssClass:'attribute' }}');
+                {{ form.author_selector.errors }}
+                {{ form.author_attribute.errors }}
+            </div>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Topics</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain topic tags.  If there is more than one tag, we'll iterate through and generated a comma-separated list of topic tags. We assume a jQuery selector for the tag, and that the tag is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.topics_selector|cssClass:'selector' }}').attr('{{ form.topics_attribute|cssClass:'attribute' }}');
+                {{ form.topics_selector.errors }}
+                {{ form.topics_attribute.errors }}
+            </div>
+            <div class="formRow">
+                <label for="">
+                    <span class="labelTitle">Site Section(s)</span>
+                    <span>Tell ReadrBoard which HTML tags on your page contain the site section(s) this article is in, such as Politics or News.  If there is more than one tag, we'll iterate through and generated a comma-separated list of sections. We assume a jQuery selector for the tag, and that the section name is in an attribute.</span>
+                    <span class="formInputExample"><i>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</i></span>
+                </label>
+                $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
+                {{ form.section_selector.errors }}
+                {{ form.section_attribute.errors }}
+            </div>
         </section>
     </div>
     <div class="rightColumn column">
@@ -138,7 +205,7 @@
 
                 <label for="id_word_blacklist">
                     <span class="labelTitle">Censored Word List</span>
-                    <span>Comma separated list of words that will be automatically censored and replaced with ***</span>
+                    <span>Comma separated list of words that will be automatically <strong>blocked</strong>.  Only exact matches will be blocked.</span>
                 </label>
                 <div id="toggle_word_blacklist_wrap">
                     <label>
@@ -159,6 +226,34 @@
             
         </section>
         <section class="">
+            <h3>Mobile Settings</h3>
+            <div class="formRow" style="margin: 10px 0;">
+                {{ form.hideOnMobile }}{{ form.hideOnMobile.errors }}
+                <label for="id_hideOnMobile"><span class="labelTitle">Hide ReadrBoard on Mobile? </span><span>Hide ReadrBoard completely on mobile/touchscreen devices.</span></label>
+            </div>
+
+            <div class="formRow" style="margin: 10px 0;">    
+                {{ form.hideDoubleTapMessage }}{{ form.hideDoubleTapMessage.errors }}
+                <label for="id_hideDoubleTapMessage"><span class="labelTitle">Hide the mobile helper message? </span><span>There is a message telling your visitors that they can double-tap a paragraph on mobile to react to it.  They can easily close this message.  Check this box to <strong>hide</strong> this message for them.</span></label>
+            </div>
+            <div class="formRow" style="margin: 10px 0;">
+                <label for="id_doubleTapMessage"><span class="labelTitle">Double Tap Message </span><span>ReadrBoard has a default message telling your visitors that they can double-tap a paragraph to react to it.  You can change it here. <br/><strong>HTML is OK.  Leave blank to use our default message</strong>.</span></label>
+                {{ form.doubleTapMessage }}{{ form.doubleTapMessage.errors }}
+            </div>
+
+            <div class="formRow" style="margin: 10px 0;">
+                <label for="id_doubleTapMessagePosition">
+                    <span class="labelTitle">Double-tap Message Position</span>
+                    <span>The message telling readers that they can double-tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
+                </label>
+                {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
+                <select id="doubleTapMessagePosition_selector">
+                    <option {% if group.doubleTapMessagePosition == "bottom" %}selected="selected"{% endif %} value="bottom">Bottom</option>
+                    <option {% if group.doubleTapMessagePosition == "top" %}selected="selected"{% endif %} value="top">Top</option>
+                </select>
+            </div>
+        </section>
+        <section class="">
             <h3>Miscellaneous</h3>
             <div class="formRow">
                 <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
@@ -173,10 +268,21 @@
                     font-family: 'Courier', 'Courier New';
                     font-size: 12px;
                     color: #777;
+                }
+                #id_custom_css {
                     height:350px;
                 }
                 </style>
             </div>
+            {% if group.premium == True %}
+            <div class="formRow">
+                <label for="id_send_notifications">
+                    {{ form.send_notifications}}{{ form.send_notifications.errors }}
+                    <span class="labelTitle">Send Email Notifications?</span>
+                    <span>For users with a ReadrBoard account, send them occasional notices when others react on the same pages they do.  (We don't send them every time, just periodically.)</span>
+                </label>
+            </div>
+            {% endif %}
             <div class="formRow">
                 <label for="id_paragraph_helper">
                     {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
@@ -204,14 +310,16 @@
   {{ form.as_p }}
 {% endcomment %}
 
-    <div style="clear:both;"></div>
-    <button class="btn submit" type="submit" style="margin-top:20px;">Submit</button>
+    <div style="clear:both;">
+        <button class="btn submit flat" type="submit">Submit</button>
+    </div>
     <div class="formFeedback" data-saved="{{saved}}" >
         <p style="display: none;" class="errorMsg">Oops, there were some errors with the form, please see the sections highlighted red above.<p>
         <p style="display: none;" class="successMsg" >Changes saved<p>
     </div> 
   </form>
 {% endwith %}
+    </section>
 </div>
 {% endblock wideContent %}
  
@@ -244,6 +352,14 @@
                     $(this).toggleClass('hidden');
                 });
                 return false;
+            });
+
+            $('#summary_widget_method_selector').change( function() {
+                $('#id_summary_widget_method').val( $(this).val() );
+            });
+
+            $('#doubleTapMessagePosition_selector').change( function() {
+                $('#id_doubleTapMessagePosition').val( $(this).val() );
             });
 
         });

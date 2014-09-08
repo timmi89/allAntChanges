@@ -1,5 +1,22 @@
 {% load custom_filters %}
-
+{% block subheaderContent %}
+<!--
+  <div class="content">
+    <div class="grid-third left">
+      <div class="item">
+        {{ group.name }}
+      </div>
+    </div>
+    <div class="grid-third center">&nbsp;</div>
+    <div class="grid-third right">
+      <div id="follow_info" class="item">
+        <a id="follower_count" href="#follower_list" class="fancybox"></a>
+        <a id="follow_action" class="circle_button" href="javascript:void(0);"><i class="fa fa-plus"></i></a>
+      </div>
+    </div>
+  </div>
+  -->
+{% endblock %}
 
 <script>
 var comments = [],
@@ -17,7 +34,17 @@ $('#cards').addClass('user_profile');
 {% endif %}
 </script>
 
-<div class="cardsWrap">
+{% if query_string %}
+<div id="searchFor">
+  <h2>
+    <em>Search for <br/></em>
+    <div><strong>{{ query_string }}</strong></div>
+  </h2>
+</div>
+{% endif %}
+
+
+<div class="cardsWrap grid-whole">
     <div id="cards">
     {% regroup current_page.object_list by page as pi %}
     {% for page in pi %}
@@ -25,35 +52,13 @@ $('#cards').addClass('user_profile');
             {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
             
             <div class="cardWrap">
-            <section class="card interaction_{{ interaction.id }} color{% cycle '1' '2' '3' '4' '5' %}" 
+            <section class="card interaction_{{ interaction.id }}" 
                 data-interaction-id="{{ interaction.id }}" 
                 data-interaction-body="{{ interaction.interaction_node.body }}" 
                 data-kind="{{ interaction.content.kind }}"
                 data-user-name="{{ interaction.user.social_user.full_name }}"
                 data-group-name="{{ page.grouper.site.group.short_name }}"
             >
-                {% if cookie_user %}
-                <div class="buttons">
-                          {% if interaction.user.id == cookie_user.id %}
-                            <a rel="tooltip" title="Undo this reaction" class="tag_remove" href="javascript:void(0);">-1</a>
-                          {% endif %}
-                          {% if interaction.user.id != cookie_user.id %}
-                            <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too" href="javascript:void(0);">+1</a>
-                          {% endif %}
-                          <a rel="tooltip" title="Add new reaction" class="add_new_reaction"></a>
-                          <a rel="tooltip" title="Add a comment" class="add_new_comment" href="javascript:void(0);"><i class="icon-comment"></i></a>
-                          <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="icon-bookmark"></i></a>
-                        
-                        {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
-                        <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="{% if interaction.approved %}icon-remove-sign{% else %}icon-ok{% endif %}"></i></a>
-                        {% endif %}
-
-                        <!-- board add/delete ? -->
-                </div>
-                {% endif %}
-                {% if not cookie_user %}
-                    <!-- add a not-logged-in state here -->
-                {% endif %}
 
                 <div class="meta">
                     <div class="avatar">
@@ -74,13 +79,35 @@ $('#cards').addClass('user_profile');
                         </a>
                         {% endif %}
                     </div>
+                    <h1><a href="/stream/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
+                    {% if cookie_user %}
+                    <div class="buttons">
+                      {% if interaction.user.id == cookie_user.id %}
+                        <a rel="tooltip" title="Undo this reaction" class="tag_remove circle_button" href="javascript:void(0);"><i class="fa fa-minus"></i></a>
+                      {% endif %}
+                      {% if interaction.user.id != cookie_user.id %}
+                        <a rel="tooltip" title="+1 '{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}'" class="me_too circle_button" href="javascript:void(0);">+1</a>
+                      {% endif %}
+                      <a rel="tooltip" title="Add new reaction" class="add_new_reaction circle_button"></a>
+                      <a rel="tooltip" title="Add a comment" class="add_new_comment circle_button" href="javascript:void(0);"><i class="fa fa-comment"></i></a>
+                      <!-- <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="fa fa-bookmark"></i></a> -->
+                    
+                      {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
+                      <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" class="circle_button" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="fa {% if interaction.approved %}fa-times{% else %}fa-check{% endif %}"></i></a>
+                      {% endif %}
+
+                            <!-- board add/delete ? -->
+                    </div>
+                    {% endif %}
+                    {% if not cookie_user %}
+                        <!-- add a not-logged-in state here -->
+                    {% endif %}
                     <!-- <div class="date">
                         {{ interaction.created|date:"M d, Y"|escape }}
                     </div> -->
                 </div>
                 <div class="me_too_outcome"></div>
                 <div class="main">
-                    <h1><a href="/stream/?s={% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body|escape }}{% else %}{{ interaction.human_kind|escape }}{% endif %}">{% if interaction.kind == 'tag' or interaction.kind == 'bkm' %}{{interaction.interaction_node.body }}{% else %}{{ interaction.human_kind }}{% endif %}</a></h1>
                     <div class="contentBox {{ interaction.content.kind }}">
                         {% if interaction.content.kind == "img" %}
                         <!--

@@ -8,4 +8,4 @@ LOGFILE=/home/tbrock/readrboard/logs/gunicorn.log
 USER=tbrock
 GROUP=tbrock
 cd /home/tbrock/readrboard/
-exec /usr/local/bin/gunicorn_django -w $NUM_WORKERS --max-requests=200 --user=$USER --group=$GROUP --log-level=DEBUG --log-file=$LOGFILE 2>>$LOGFILE
+exec /usr/local/bin/gunicorn_django -w $NUM_WORKERS --max-requests=2000 --user=$USER --group=$GROUP --log-level=WARN --log-file=$LOGFILE 2>>$LOGFILE

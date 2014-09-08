@@ -51,10 +51,10 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8080'
-    BASE_URL = 'http://local.readrboard.com:8080'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8080'
-    STATIC_URL = '//local.readrboard.com:8080/static/'
+    URL_NO_PROTO = 'local.readrboard.com:8081'
+    BASE_URL = 'http://local.readrboard.com:8081'
+    BASE_URL_SECURE = 'https://local.readrboard.com:8081'
+    STATIC_URL = '//local.readrboard.com:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
@@ -206,6 +206,7 @@ else:
           }
           
         }
+<<<<<<< HEAD
         """
         
         """
@@ -215,6 +216,19 @@ else:
                 'LOCATION': 'localhost:11211',
                 'TIMEOUT':300
             }
+=======
+      }
+      
+    }
+    """
+    
+    """
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '50.116.59.190:11211',
+            'TIMEOUT':2500000
+>>>>>>> master
         }
 
 # Facebook shit
@@ -288,6 +302,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # 'readrboard.rb.middleware.ProfileMiddleware',  # this will break production
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )

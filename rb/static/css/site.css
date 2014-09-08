@@ -1,3 +1,13 @@
+/************
+
+
+DEPRECATED
+
+
+************/
+
+
+
 /* ReadrBoard */
 /* styles for different layouts */
 
@@ -38,15 +48,6 @@ a { color:#008be4; }
 
 /* HEADER */
 section[role="group panel header"],
-header[role="banner"] #user #logged-in #log-out-link{
-    background:#fff;
-    top:33px;
-    position:absolute;
-    padding:5px;
-    border:1px solid #aaa;
-    width:150px;
-    text-align:left;
-}
 .menu_home_link{
     background:#ddd;
     font-weight: bold;
@@ -56,6 +57,7 @@ header[role="banner"] {height:41px;background:#343434;color:#ccc;position:fixed;
 header[role="banner"] a.logo    { display:block; float:left; }
 header[role="banner"] h1        { text-indent:-9999px; background:url(../images/site/logo_gray_sm.png) top center no-repeat;width:178px; height:41px; }
 
+header[role="banner"] #user #logged-in #log-out-link { background:#fff;top:33px; position:absolute; padding:5px; border:1px solid #aaa; width:150px; text-align:left; }
 header[role="banner"] #user       { float:right;margin:5px 10px 2px;}
 header[role="banner"] #user #logged-in      { visibility:hidden; height:37px; font-size:11px;}
 header[role="banner"] #user #logged-out     { height:37px;}
@@ -208,7 +210,7 @@ form.big-form label     { display:block; margin: 5px 0;}
 form.big-form label span    { display:block; font-style:italic; font-size:12px; }
 form.big-form label span.labelTitle {font-style:normal; font-weight: bold; margin-top: 1px; color:#008be4; font-size:14px;}
 form.big-form label span.formInputExample {color: #999;}
-form.big-form .configuarationSection h4     {
+form.big-form .configurationSection h4     {
     font-size: 14px;
     margin-bottom: 10px;
 }
