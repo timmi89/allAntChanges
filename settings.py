@@ -5,8 +5,9 @@ if uname()[1] == "hat" : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
-if not DEBUG:
-    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
+if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
+#if not DEBUG:
+#    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
     
 # Server e-mail account
 if DEBUG:
@@ -36,13 +37,11 @@ FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
     ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
     ('Michael Shaw', 'michael@readrboard.com')
 )
 
 RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
-    'erchaves@gmail.com',
     'michael@readrboard.com',
 ]
 
@@ -109,7 +108,7 @@ if DEBUG:
     
 
 else:
-    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com", "www.antenna.is", "antenna.is", "static.antenna.is"]
+    ALLOWED_HOSTS = ["127.0.0.1", "www.readrboard.com","readrboard.com","static.readrboard.com", "www.antenna.is", "antenna.is", "static.antenna.is"]
     URL_NO_PROTO = 'www.antenna.is'
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
@@ -174,7 +173,7 @@ else:
           'default': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
-            'USER':     'readr',
+            'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '69.164.209.143',
             'PORT':     '3306',
@@ -185,7 +184,7 @@ else:
           'readonly1': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
-            'USER':     'readr',
+            'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
@@ -196,7 +195,7 @@ else:
           'readonly2': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
-            'USER':     'readr',
+            'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
@@ -206,7 +205,6 @@ else:
           }
           
         }
-<<<<<<< HEAD
         """
         
         """
@@ -216,20 +214,9 @@ else:
                 'LOCATION': 'localhost:11211',
                 'TIMEOUT':300
             }
-=======
       }
       
-    }
-    """
-    
-    """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':2500000
->>>>>>> master
-        }
+
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
@@ -307,7 +294,10 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
-ROOT_URLCONF = 'readrboard.urls'
+if not ANTENNA_ARRAY:
+    ROOT_URLCONF = 'readrboard.urls'
+else:
+    ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
