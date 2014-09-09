@@ -3,7 +3,7 @@
     "model": "rb.Group",
     "pk": 1,
     "fields":{
-      "name": "ReadrBoard Default",
+      "name": "Antenna Default",
       "short_name": "default",
       "share": 1,
       "comment": 1,
@@ -13,7 +13,7 @@
       "secret": "secret123%awesome%test!",
       "logo_url_sm": "demo/images/rb_logo_sm.png",
       "logo_url_lg": "demo/images/rb_logo_lg.png",
-      "twitter": "ReadrBoard",
+      "twitter": "Antenna",
       "word_blacklist": "fuck, shit, cock, cunt, balls, nigger, asshole",
       "requires_approval": "False"
     }

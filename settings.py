@@ -1,4 +1,4 @@
-# Django settings for readrboard project.
+# Django settings for antenna project.
 from os import uname
 
 if uname()[1] == "hat" : DEBUG = True
@@ -8,9 +8,9 @@ else: DEBUG = True
 
 # Server e-mail account
 if DEBUG:
-    SERVER_EMAIL = "devserver@readrboard.com"
+    SERVER_EMAIL = "devserver@antenna.is"
 else:
-    SERVER_EMAIL = "server@readrboard.com"
+    SERVER_EMAIL = "server@antenna.is"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -34,14 +34,12 @@ FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
     ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
     ('Michael Shaw', 'michael@readrboard.com')
 )
 
 RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
-    'erchaves@gmail.com',
-    'michael@readrboard.com',
+    'michael@readrboard.com'
 ]
 
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
@@ -49,10 +47,10 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8081'
-    BASE_URL = 'http://local.readrboard.com:8081'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8081'
-    STATIC_URL = '//local.readrboard.com:8081/static/'
+    URL_NO_PROTO = 'local.antenna.is:8081'
+    BASE_URL = 'http://local.antenna.is:8081'
+    BASE_URL_SECURE = 'https://local.antenna.is:8081'
+    STATIC_URL = '//local.antenna.is:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
@@ -107,10 +105,10 @@ if DEBUG:
     
 
 else:
-    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com"]
-    URL_NO_PROTO = 'www.readrboard.com'
-    BASE_URL = 'http://www.readrboard.com'
-    BASE_URL_SECURE = 'https://www.readrboard.com'
+    ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
+    URL_NO_PROTO = 'www.antenna.is'
+    BASE_URL = 'http://www.antenna.is'
+    BASE_URL_SECURE = 'https://www.antenna.is'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
@@ -348,7 +346,7 @@ DEBUG_TOOLBAR_CONFIG = {
 #SOCIAL_AUTH_EXPIRATION = 'expires'
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
-#SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
+#SESSION_COOKIE_DOMAIN = '.local.antenna.is'
 
 LOGGING = {
     'version': 1,

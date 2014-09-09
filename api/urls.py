@@ -13,7 +13,7 @@ MeToo = Resource(handler=MeTooHandler)
 TagRemove = Resource(handler=TagRemoveHandler)
 Comment = Resource(handler=CommentHandler)
 FBLogin = Resource(handler=FBHandler)
-RBLogin = Resource(handler=RBHandler)
+ANTLogin = Resource(handler=ANTHandler)
 Deauthorize = Resource(handler=Deauthorize)
 TempUser = Resource(handler=TempUserHandler)
 Content = Resource(handler=ContentSummaryHandler)
@@ -57,7 +57,7 @@ urlpatterns = patterns('',
     
     # Facebook
     url(r'^fb/$', FBLogin),
-    url(r'^rb/$', RBLogin),
+    url(r'^ant/$', ANTLogin),
     
     # Auth
     url(r'^deauthorize/$', Deauthorize),

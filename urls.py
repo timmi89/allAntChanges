@@ -159,8 +159,8 @@ urlpatterns = patterns('',
   url(r'^request_password/$', 'rb.views.request_password_reset'),
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   
-  url(r'^rb_login/$', 'rb.views.rb_login'),
-  url(r'^rb_login_success/$', 'rb.views.rb_login_success'),
+  url(r'^ant_login/$', 'rb.views.ant_login'),
+  url(r'^ant_login_success/$', 'rb.views.ant_login_success'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )

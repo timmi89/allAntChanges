@@ -33,18 +33,17 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
-    ('Michael Shaw', 'michael@readrboard.com')
+    ('Porter Bayne', 'porter@antenna.is'),
+    ('Michael Shaw', 'michael@antenna.is')
 )
 
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
     
-    BASE_URL = 'http://local.readrboard.com:8080'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8080'
-    STATIC_URL = '//local.readrboard.com:8080/static/'
+    BASE_URL = 'http://local.antenna.is:8080'
+    BASE_URL_SECURE = 'https://local.antenna.is:8080'
+    STATIC_URL = '//local.antenna.is:8080/static/'
     DATABASE_ROUTERS = ['rb.routers.SyncRouter']
     
     DATABASES = {
@@ -78,8 +77,8 @@ if DEBUG:
 
 else:
 
-    BASE_URL = 'http://www.readrboard.com'
-    BASE_URL_SECURE = 'https://www.readrboard.com'
+    BASE_URL = 'http://www.antenna.is'
+    BASE_URL_SECURE = 'https://www.antenna.is'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
@@ -201,7 +200,7 @@ EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'accounts@readrboard.com'
+EMAIL_HOST_USER = 'accounts@antenna.is'
 EMAIL_HOST_PASSWORD = 'readr4acc0unts'
 EMAIL_PORT = 587
 
@@ -284,7 +283,7 @@ DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 #SOCIAL_AUTH_EXPIRATION = 'expires'
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
-#SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
+#SESSION_COOKIE_DOMAIN = '.local.antenna.is'
 
 LOGGING = {
     'version': 1,

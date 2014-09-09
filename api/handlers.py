@@ -726,7 +726,7 @@ class FollowHandler(InteractionHandler):
         )
         if follow.user is not None and follow.user.social_user.follow_email_option:
             follow_email = generateFollowEmail(owner)
-            msg = EmailMessage("Someone just followed you on ReadrBoard!", follow_email, "hello@readrboard.com", [follow.user.email])
+            msg = EmailMessage("Someone just followed you on Antenna!", follow_email, "hello@antenna.is", [follow.user.email])
             msg.content_subtype='html'
             msg.send(False)
         return follow_dict

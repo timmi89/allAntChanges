@@ -39,7 +39,7 @@
   <script src="{{ STATIC_URL }}js/jquery.jscrollpane.min.js"></script>
   <script src="{{ STATIC_URL }}js/jquery.browser_detect.js"></script>
   <script src="{{ STATIC_URL }}js/jquery.mousewheel.js"></script>
-  <script src="{{ STATIC_URL }}js/readr_site_scripts.js?v=2"></script>
+  <script src="{{ STATIC_URL }}js/ant_site_scripts.js?v=2"></script>
   <script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
   <script src="{{ STATIC_URL }}js/moment.js"></script>
   <script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
@@ -54,23 +54,23 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/fancybox/jquery.fancybox.pack.js?v=2.1.4"></script>
 
   <script>
-  var RB = RB ? RB : {};
+  var ANTsite = ANTsite ? ANTsite : {};
 
   {% if group %}
-  if ( !RB.group) {
-    RB.group = {
+  if ( !ANTsite.group) {
+    ANTsite.group = {
       id:{{ group.id }},
       name: '{{ group.name }}',
       short_name: '{{ group.short_name }}'
     };
   } else {
-    RB.group.id = {{ group.id }};
-    RB.group.name = '{{ group.name }}';
-    RB.group.short_name = '{{ group.short_name }}';
+    ANTsite.group.id = {{ group.id }};
+    ANTsite.group.name = '{{ group.name }}';
+    ANTsite.group.short_name = '{{ group.short_name }}';
   }
   {% endif %}
   {% if profile_user %}
-  RB.profile_user = {
+  ANTsite.profile_user = {
     id:{{ profile_user.id }}
   };
   {% endif %}
@@ -97,7 +97,7 @@
 
             FB.init({
               appId      : '163759626987948', // App ID
-              channelUrl : window.RDR_staticUrl+'fb_channel.html', // Channel File
+              channelUrl : window.ANT_staticUrl+'fb_channel.html', // Channel File
               status     : true, // check login status
               cookie     : true, // enable cookies to allow the server to access the session
               xfbml      : true  // parse XFBML
@@ -117,11 +117,11 @@
             ref.parentNode.insertBefore(js, ref);
         }(document));
     </script>
-    <!--<script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user_min.js"></script>-->
-    <script type="text/javascript" src="{{ STATIC_URL }}widget/js/readr_user.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}widget/js/ant_user_min.js"></script>-->
+    <script type="text/javascript" src="{{ STATIC_URL }}widget/js/ant_user.js"></script>
 
   {% block header %}
-    <header role="global" class="no-rdr clearfix">
+    <header role="global" class="no-ant clearfix">
       <section class="content">
         <div id="user_and_search">
           <div id="user">
@@ -137,7 +137,7 @@
                 Welcome, <strong>{{ cookie_user.social_user.full_name }}</strong>
                 <a href="/user/{{ cookie_user.id }}">My Activity</a>
                 <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
-                <a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>
+                <a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a>
                 
                     {% if cookie_user %}
                 <div class="userSettingsMenu">
@@ -157,8 +157,8 @@
                         
                         {% if cookie_user.social_user.provider == "Readrboard" %}
                             <hr/>
-                            <a href="javascript:void(0);" onclick="RDRAuth.openRbAvatarUploadWindow();">Upload Profile Picture</a>
-                            <a href="javascript:void(0);" onclick="RDRAuth.openChangePasswordWindow();">Change your password</a>
+                            <a href="javascript:void(0);" onclick="ANTAuth.openAtnAvatarUploadWindow();">Upload Profile Picture</a>
+                            <a href="javascript:void(0);" onclick="ANTAuth.openChangePasswordWindow();">Change your password</a>
                         {% endif %}
                 </div>
                     {% endif %}
@@ -170,19 +170,19 @@
               </div>
             </div>
             <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-              <a href="javascript:void(0);" style="margin-left:5px;" onclick="RDRAuth.openRbLoginWindow();">Log In / Sign Up</a>
+              <a href="javascript:void(0);" style="margin-left:5px;" onclick="ANTAuth.openAtnLoginWindow();">Log In / Sign Up</a>
               <i class="fa fa-sign-in"></i>
               <div id="login-options" style="overflow:auto;">
                 <div style="margin-bottom:10px;">
                   <div id="fb-login-button">
-                    <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
+                    <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
                   </div>
                 </div>
                 <div style="float:left;padding-left:6px;">
-                  <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+                  <a href="javascript:void(0);" onclick="ANTAuth.openAtnLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
                 </div>
                 <div style="clear:both;margin-top:45px;padding-top:5px;border-top:1px solid #ccc;">
-                  <a style="font-weight:100;font-size:11px;font-family:Arial;display:block;text-align:center;color:rgb(0,0,238);font-style:italic;" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+                  <a style="font-weight:100;font-size:11px;font-family:Arial;display:block;text-align:center;color:rgb(0,0,238);font-style:italic;" href="javascript:void(0);" onclick="ANTAuth.openAtnCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
                 </div>
               </div>    
             </div>
@@ -201,10 +201,10 @@
           </div>
           <script>
           $('#site_search')
-              .on('mouseenter', function() { $(this).addClass('rdr_hover').find('input').focus() })//chain
+              .on('mouseenter', function() { $(this).addClass('ant_hover').find('input').focus() })//chain
               .on('mouseleave', function() {
                 if ( !$(this).find('input').val().length ) {
-                  $(this).removeClass('rdr_hover').find('input').blur();
+                  $(this).removeClass('ant_hover').find('input').blur();
                 }
               })
               .find('form').on('submit', function(e) {
@@ -242,10 +242,6 @@
     <!-- </section> -->
     <!-- </section> -->
     <section role="wideContent">
-      <div class="rebranding">
-        ReadrBoard has changed our name to <strong>Antenna!</strong>
-        Bear with us as we tidy up.
-      </div>
       {% block wideContent %}
       {% endblock %}
     </section>
@@ -275,11 +271,11 @@
 
   </div> <!-- // page_container -->
   {% block footer %}
-  <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-rdr">
+  <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-ant">
       <div class="footerLinks">
           <ul class="footerLinksLeft">
               <li>
-                  <a href="mailto:team@readrboard.com?Subject=Hello,%20ReadrBoard!">Contact Us</a>
+                  <a href="mailto:team@antenna.is?Subject=Hello,%20Antenna!">Contact Us</a>
               </li>
               <li>
                   <a href="/">Home</a>
@@ -312,8 +308,8 @@
 // var _sf_async_config={uid:26845,domain:"readrboard.com"};
 // var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
 
-// if(!RB.RDR_offline){
-//     RB.util.loadScript( {src:chartbeat_script}, function() {
+// if(!ANTsite.ANT_offline){
+//     ANTsite.util.loadScript( {src:chartbeat_script}, function() {
 //     });
 // }
 </script>
@@ -327,8 +323,8 @@
       $('#private_profile').click( function() {
         $('label[for="private_profile"] span').remove();
         var sendData = {
-          user_id:RDRAuth.rdr_user.user_id, 
-          readr_token:RDRAuth.rdr_user.readr_token,
+          user_id:ANTAuth.ant_user.user_id, 
+          ant_token:ANTAuth.ant_user.ant_token,
           group_id:1
         };
         $.ajax({
@@ -345,8 +341,8 @@
       $('#follow_email').click( function() {
         $('label[for="follow_email"] span').remove();
         var sendData = {
-            user_id:RDRAuth.rdr_user.user_id, 
-            readr_token:RDRAuth.rdr_user.readr_token,
+            user_id:ANTAuth.ant_user.user_id, 
+            ant_token:ANTAuth.ant_user.ant_token,
             group_id:1
         };
         $.ajax({
@@ -364,8 +360,8 @@
       $('#activity_notifications').click( function() {
         $('label[for="activity_notifications"] span').remove();
         var sendData = {
-            user_id:RDRAuth.rdr_user.user_id, 
-            readr_token:RDRAuth.rdr_user.readr_token,
+            user_id:ANTAuth.ant_user.user_id, 
+            ant_token:ANTAuth.ant_user.ant_token,
             group_id:1
         };
         $.ajax({
@@ -382,7 +378,7 @@
     </script>
 
 <script type="text/javascript">
-if(!RDR_offline){
+if(!ANT_offline){
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-24372992-1']);
   _gaq.push(['_trackPageview']);

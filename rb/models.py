@@ -48,7 +48,7 @@ class UserAwareModel(models.Model):
         abstract = True
 
 """
-ReadrBoard Models
+Antenna Models
 """
 class InteractionNode(models.Model):
     body = models.TextField()
