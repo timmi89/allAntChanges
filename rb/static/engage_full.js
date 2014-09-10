@@ -262,7 +262,7 @@ function readrBoard($R){
                     // use the content_attributes field to determine if they are in a test group
                     var content_attributes = '';
                     if ( RDR.group.ab_test_impact === true ) {
-                        content_attributes = ( RDR.util.activeAB() ) ? 'A1':'B1';
+                        content_attributes = ( RDR.util.activeAB() ) ? 'A2':'B2';
                     }
 
                     // if (params.event_type == 'widget_load') {
@@ -4329,7 +4329,7 @@ function readrBoard($R){
                 $( window ).on('beforeunload.rdr',function() {
                     RDR.events.trackEventToCloud({
                         event_type: 'pt',
-                        event_value: RDR.events.focusedTime(),
+                        event_value: RDR.events.focusedSeconds,
                         page_id: RDR.util.getPageProperty('id')
                     });
                 });
