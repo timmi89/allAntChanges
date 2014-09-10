@@ -9829,10 +9829,10 @@ RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.10.2.min.js" :
+    RDR_staticUrl+"global/js/jquery-1.11.1.min.js" :
     // RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
-    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js";
+    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
 // dont think we use this -- we embedded it below.
 // RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
