@@ -11,9 +11,9 @@ if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
     
 # Server e-mail account
 if DEBUG:
-    SERVER_EMAIL = "devserver@readrboard.com"
+    SERVER_EMAIL = "devserver@antenna.is"
 else:
-    SERVER_EMAIL = "server@readrboard.com"
+    SERVER_EMAIL = "server@antenna.is"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -36,8 +36,8 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
-    ('Porter Bayne', 'porter@readrboard.com'),
-    ('Michael Shaw', 'michael@readrboard.com')
+    ('Porter Bayne', 'porter@antenna.is'),
+    ('Michael Shaw', 'michael@antenna.is')
 )
 
 RB_SOCIAL_ADMINS = [
@@ -305,7 +305,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     #todo: make this an absolute path as recommended. Using rel paths for now
     # so it's compatible on all our local machines
-    "readrboard/rb/templates"
+    "antenna/rb/templates"
 )
 
 import os
