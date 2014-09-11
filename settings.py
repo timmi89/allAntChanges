@@ -6,6 +6,7 @@ elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
 if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
+else: ANTENNA_ARRAY = False
 #if not DEBUG:
 #    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
     
