@@ -190,6 +190,9 @@ function readrBoard($R){
         },
         events: {
             focusedSeconds:0,
+            elapsedTime: function() {
+                return ( Date.now() - RDR.startTime ) / 1000;
+            },
             fireScrollEvent: function(milestone) {
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
@@ -202,11 +205,6 @@ function readrBoard($R){
                 });
 
             },
-            fireEventQueue: function() {
-                $.each( RDR.events.queue, function(idx, event_params) {
-                    RDR.events.trackEventToCloud(event_params);
-                });
-            },
             checkTime: function() {
                 if ( document.hasFocus() === true ){
                     // if ( RDR.events.focusedSeconds > 0 ) {  // && RDR.events.justFocused === false 
@@ -215,7 +213,7 @@ function readrBoard($R){
                     //         event_value: RDR.events.focusedSeconds.toString()
                     //     });
                     // }
-                    RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.5;
+                    RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.2;
 
                     // if (RDR.events.justFocused === false ) {
                     //     RDR.events.focusedSeconds++;
@@ -247,7 +245,6 @@ function readrBoard($R){
                 // RDR.events.trackEventToCloud
 
                 RDR.user = RDR.user || {};
-                RDR.events.queue = RDR.events.queue || [];
 
                 // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
                 // which will not have all of the PAGE data loaded yet.
@@ -265,7 +262,7 @@ function readrBoard($R){
                     // use the content_attributes field to determine if they are in a test group
                     var content_attributes = '';
                     if ( RDR.group.ab_test_impact === true ) {
-                        content_attributes = ( RDR.util.activeAB() ) ? 'A':'B';
+                        content_attributes = ( RDR.util.activeAB() ) ? 'A2':'B2';
                     }
 
                     // if (params.event_type == 'widget_load') {
@@ -328,7 +325,9 @@ function readrBoard($R){
                             it: isTouchBrowser || false,
                             sw:  screen.width,
                             sh:  screen.height,
-                            pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                            // pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
+                            // co-opting this for A/B testing for now.  PD is now going to hold the seconds
+                            pd:  RDR.events.elapsedTime() || 0,
                             ua:  navigator.userAgent
 
                             /*
@@ -358,15 +357,22 @@ function readrBoard($R){
                         };
                     var data = $.toJSON( trackData );
 
-                    if ( typeof RDR.group.xdmLoaded != 'undefined' && RDR.group.xdmLoaded === true ) {
-                        $.postMessage(
-                            "register-event::"+data,
-                            RDR_baseUrl + "/static/xdm.html",
-                            window.frames['rdr-xdm-hidden']
-                        );
-                    } else {
-                        RDR.events.queue.push(params);
-                    }
+                    // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
+                    var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
+
+                    $.ajax({
+                        url: trackingUrl,
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: data
+                        },
+                        success : function(response)
+                        {
+                        }
+                    });
+
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
@@ -2580,7 +2586,7 @@ function readrBoard($R){
             setWindowInterval: function () {
                 $.data(this, 'rdr_intervalTimer', setInterval(function() {
                     if (typeof RDR.events != 'undefined') { RDR.events.checkTime(); }
-                }, 500));
+                }, 200));
             },
             checkForSelectedTextAndLaunchRindow: function(){
                 //RDR.util.checkForSelectedTextAndLaunchRindow
@@ -3484,7 +3490,6 @@ function readrBoard($R){
 
                             } else if ( message.status == "xdm loaded" ) {
                                 RDR.group.xdmLoaded = true;
-                                RDR.events.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.rdr-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
@@ -4319,9 +4324,6 @@ function readrBoard($R){
                     //     page_id: RDR.util.getPageProperty('id')
                     // });
                 // });
-
-                // time on page timer.  should only be incrementing when they are focused on the page.
-                RDR.util.setWindowInterval();
 
                 // onunload, fire the page time total
                 $( window ).on('beforeunload.rdr',function() {
@@ -9829,10 +9831,10 @@ RDR.rdr_loadScript = rdr_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
 RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.10.2.min.js" :
+    RDR_staticUrl+"global/js/jquery-1.11.1.min.js" :
     // RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
-    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js";
+    "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
 // dont think we use this -- we embedded it below.
 // RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
@@ -9940,6 +9942,11 @@ function $RFunctions($R){
 
     //load our main scripts
     readrBoard($R);
+
+    RDR.startTime = Date.now();
+
+    // time on page timer.  should only be incrementing when they are focused on the page.
+    RDR.util.setWindowInterval();
 
     //run init functions
     RDR.actions.init();
