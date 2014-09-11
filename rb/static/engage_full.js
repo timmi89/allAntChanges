@@ -1,19 +1,19 @@
 ;(function(){
 //dont bother indenting this top level anonymous function
 
-var ANTN = {};
-if(window.ANTNENNAIS && window.ANTNENNAIS.hasLoaded){
-    window.ANTNENNAIS.actions.reInit();
+var ANT = {};
+if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
+    window.ANTENNAIS.actions.reInit();
     return;
 }
 
-//ANTNENNAIS and antenna will now be the only things in the global namespace
-window.ANTNENNAIS = window.antenna = ANTN;
+//ANTENNAIS and antenna will now be the only things in the global namespace
+window.ANTENNAIS = window.antenna = ANT;
 
-ANTN.hasLoaded = true;
+ANT.hasLoaded = true;
 
 /*some constants that we need for now*/
-ANTN.C = {
+ANT.C = {
     /*tied to div.ant div.ant_tag height*/
     // summaryWidgetMaxHeight: 68,
      //+ header height + extra padding;
@@ -28,36 +28,36 @@ ANTN.C = {
     }
 }
 
-ANTN.engageScript = document.getElementById("antennascript") || findEngageScript();
-ANTN.engageScriptSrc = ANTN.engageScript.src;
+ANT.engageScript = document.getElementById("antennascript") || findEngageScript();
+ANT.engageScriptSrc = ANT.engageScript.src;
 
 //todo: clean these up
-var $ANTN, //our global $ANTN object (jquerified ANTN object for attaching data and queues and such)
+var $ANT, //our global $ANT object (jquerified ANT object for attaching data and queues and such)
 $A, //init var: our clone of jQuery
-ANTN_scriptPaths = {},
+ANT_scriptPaths = {},
 //check if this script is the offline version
-//note that the other ANTN_offline vars in our iframes should check window.location for local.antenna.is instead
-ANTN_offline = !!(
-    ANTN.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
-    ANTN.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
+//note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
+ANT_offline = !!(
+    ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
+    ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-ANTN_baseUrl = ( ANTN_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-ANTN_staticUrl = ( ANTN_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/",
-ANTN_widgetCssStaticUrl = ( ANTN_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
     (window.DocumentTouch && document instanceof DocumentTouch)
 );
 
-ANTN.safeThrow = function(msg){
-    //this will never actually throw in production (if !ANTN_offline)
+ANT.safeThrow = function(msg){
+    //this will never actually throw in production (if !ANT_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
     var debugMode = false;
 
-    if(ANTN_offline && debugMode){
+    if(ANT_offline && debugMode){
         // [porter]  changing to log so that acceptable, trivial bugs are not blockers, but do get logged
         console.log(msg);
         // throw msg;
@@ -67,7 +67,7 @@ ANTN.safeThrow = function(msg){
 //temp for testing
 function test_antenna_extend(){
     //for saftey
-    if(!ANTN_offline){
+    if(!ANT_offline){
         return;
     }
     window.antenna_extend = {
@@ -119,7 +119,7 @@ function findEngageScript(){
 function antenna($A){
     var $ = $A;
 
-    $.extend(ANTN, {
+    $.extend(ANT, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
         // used to store jQuery deffered objects for assets that should be loaded only once per page load.
@@ -137,8 +137,8 @@ function antenna($A){
         containers:{},
         pages:{},
         group: {
-            //ANTN.group:
-            //details to be set by ANTN.actions.initGroupData which extends defaults
+            //ANT.group:
+            //details to be set by ANT.actions.initGroupData which extends defaults
             defaults: {
                 premium: false,
                 img_selector: "img",
@@ -153,7 +153,7 @@ function antenna($A){
                 no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
-                // call_to_action: ANTN.t('main_cta'),
+                // call_to_action: ANT.t('main_cta'),
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
@@ -196,63 +196,63 @@ function antenna($A){
                 } else {
                     var event_type = 'sc';
                 }
-                ANTN.events.trackEventToCloud({
+                ANT.events.trackEventToCloud({
                     event_type: event_type,
                     event_value: milestone
                 });
 
             },
             fireEventQueue: function() {
-                $.each( ANTN.events.queue, function(idx, event_params) {
-                    ANTN.events.trackEventToCloud(event_params);
+                $.each( ANT.events.queue, function(idx, event_params) {
+                    ANT.events.trackEventToCloud(event_params);
                 });
             },
             checkTime: function() {
                 if ( document.hasFocus() === true ){
-                    if ( ANTN.events.focusedSeconds > 0 && ANTN.events.focusedSeconds % 20 == 0 ) {  // && ANTN.events.justFocused === false 
-                        ANTN.events.trackEventToCloud({
+                    if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
+                        ANT.events.trackEventToCloud({
                             event_type: 'ti',
-                            event_value: ANTN.events.focusedSeconds.toString()
+                            event_value: ANT.events.focusedSeconds.toString()
                         });
                     }
-                    ANTN.events.focusedSeconds++;
-                    // if (ANTN.events.justFocused === false ) {
-                    //     ANTN.events.focusedSeconds++;
+                    ANT.events.focusedSeconds++;
+                    // if (ANT.events.justFocused === false ) {
+                    //     ANT.events.focusedSeconds++;
                     // } else {
-                    //     ANTN.events.justFocused = false;
+                    //     ANT.events.justFocused = false;
                     // }
                 }
             },
             // track : function( data, hash ) {
-                // ANTN.events.track:
+                // ANT.events.track:
                 
                 // var standardData = "",
                 //     timestamp = new Date().getTime();
                 
-                // ANTN.user = ANTN.user || {};
+                // ANT.user = ANT.user || {};
                 
-                // if ( ANTN.user && ANTN.user.user_id ) standardData += "||uid::"+ANTN.user.user_id;
-                // if ( hash && ANTN.util.getPageProperty('id', hash) ) standardData += "||pid::"+ANTN.util.getPageProperty('id', hash);
-                // if ( ANTN.group && ANTN.group.id ) standardData += "||gid::"+ANTN.group.id;
-                // if ( ANTN.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
+                // if ( ANT.user && ANT.user.user_id ) standardData += "||uid::"+ANT.user.user_id;
+                // if ( hash && ANT.util.getPageProperty('id', hash) ) standardData += "||pid::"+ANT.util.getPageProperty('id', hash);
+                // if ( ANT.group && ANT.group.id ) standardData += "||gid::"+ANT.group.id;
+                // if ( ANT.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
 
                 // var eventSrc = data+standardData,
-                //     $event = $('<img src="'+ANTN_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                //     $event = $('<img src="'+ANT_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
                 // $('#ant_event_pixels').append($event);
 
             // },
             trackEventToCloud: function( params ) {
-                // ANTN.events.trackEventToCloud
+                // ANT.events.trackEventToCloud
 
-                ANTN.user = ANTN.user || {};
-                ANTN.events.queue = ANTN.events.queue || [];
+                ANT.user = ANT.user || {};
+                ANT.events.queue = ANT.events.queue || [];
 
                 // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
                 // which will not have all of the PAGE data loaded yet.
-                if ( (ANTN.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+                if ( (ANT.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
-                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : ANTN.util.getPageProperty('id') ).toString() );
+                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : ANT.util.getPageProperty('id') ).toString() );
 
                     var referrer_url_array = document.referrer.split('/');
                     var referrer_url = referrer_url_array.splice(2).join('/');
@@ -297,26 +297,26 @@ function antenna($A){
                             // for all events
                             et: params.event_type,
                             ev: params.event_value,
-                            gid: ANTN.group.id || null,
-                            uid: ANTN.user.user_id || null,
+                            gid: ANT.group.id || null,
+                            uid: ANT.user.user_id || null,
                             pid: page_id,
-                            lts: ANTN.user.lts || null,
-                            sts: ANTN.user.sts || null,
+                            lts: ANT.user.lts || null,
+                            sts: ANT.user.sts || null,
                             ref: referrer_tld || null,
                             cid: params.content_id || null,
-                            ah: (params.event_type == 'sl') ? 'na' : parseInt(ANTN.group.active_section_milestones[100]) || null,
+                            ah: (params.event_type == 'sl') ? 'na' : parseInt(ANT.group.active_section_milestones[100]) || null,
                             ch: params.container_hash || null,
                             ck: params.container_kind || null,
                             r: params.reaction_body || null,
-                            pt: ANTN.util.getPageProperty('title') || null,
-                            cu: ANTN.util.getPageProperty('canonical_url') || null,
-                            pu: ANTN.util.getPageProperty('page_url') || null,
+                            pt: ANT.util.getPageProperty('title') || null,
+                            cu: ANT.util.getPageProperty('canonical_url') || null,
+                            pu: ANT.util.getPageProperty('page_url') || null,
                             ru: referrer_url || null,
                             ca: params.content_attributes || null,  // what is this for?
                             cl: params.content_location || null,  
-                            ptop: ANTN.group.topics || null,
-                            a: ANTN.group.author || null,
-                            sec: ANTN.group.section || null,
+                            ptop: ANT.group.topics || null,
+                            a: ANT.group.author || null,
+                            sec: ANT.group.section || null,
                             it: isTouchBrowser || false,
                             sw:  screen.width,
                             sh:  screen.height,
@@ -350,24 +350,24 @@ function antenna($A){
                         };
                     var data = $.toJSON( trackData );
 
-                    if ( typeof ANTN.group.xdmLoaded != 'undefined' && ANTN.group.xdmLoaded === true ) {
+                    if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
                         $.postMessage(
                             "register-event::"+data,
-                            ANTN_baseUrl + "/static/xdm.html",
+                            ANT_baseUrl + "/static/xdm.html",
                             window.frames['ant-xdm-hidden']
                         );
                     } else {
-                        ANTN.events.queue.push(params);
+                        ANT.events.queue.push(params);
                     }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
-                // ANTN.events.emit
-                if (ANTN.group.premium == true) {
+                // ANT.events.emit
+                if (ANT.group.premium == true) {
                     // non-IE
-                    ANTN.events.lastEvent = eventName;
-                    ANTN.events.lastValue = eventValue;
-                    ANTN.events.lastSupplementary = eventSupplementary;
+                    ANT.events.lastEvent = eventName;
+                    ANT.events.lastValue = eventValue;
+                    ANT.events.lastSupplementary = eventSupplementary;
 
                     if (document.createEvent) {
                         evt = document.createEvent("Event");
@@ -383,7 +383,7 @@ function antenna($A){
         },
         groupSettings: {
             getCustomSettings: function(){
-                //ANTN.groupSettings.getCustomSettings:
+                //ANT.groupSettings.getCustomSettings:
 
                 // grab anything on the page
                 var group_extensions = window.antenna_extend || {};
@@ -398,7 +398,7 @@ function antenna($A){
 
                 // grab anything from the URL
                 // example usage:  ant_hideOnMobile=false&ant_doubleTapMessage=%27hello%20world%27
-                var qs = ANTN.util.getQueryParams(),
+                var qs = ANT.util.getQueryParams(),
                     group_qs_extensions = {};
 
                 $.each(qs, function(key, val){
@@ -411,7 +411,7 @@ function antenna($A){
                 group_extensions = $.extend({}, group_extensions, group_qs_extensions );
 
                 //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
-                return ANTN.groupSettings._translate(group_extensions);
+                return ANT.groupSettings._translate(group_extensions);
             },
             translators: {
                 default_reactions: function(tagsList){
@@ -423,21 +423,21 @@ function antenna($A){
                 }
             },
             _translate: function(settings){
-                //ANTN.groupSettings._translate:
+                //ANT.groupSettings._translate:
                 var ret_settings = {};
-                var translators = ANTN.groupSettings.translators;
+                var translators = ANT.groupSettings.translators;
                 $.each(settings, function(key, val){
                     ret_settings[key] = !!translators[key] ? translators[key](val) : val;
                 });
                 return ret_settings;
             },
             getBlessedTags: function(hash){
-                //ANTN.groupSettings.getBlessedTags:
+                //ANT.groupSettings.getBlessedTags:
 
                 // return blessed tags for this hash, if they exist...
                 var perContainerSettings = window.antenna_extend_per_container;
                 if(hash && perContainerSettings){
-                    var name = getCustomANTNItems(hash);
+                    var name = getCustomANTItems(hash);
                     var perContainerExtentions = perContainerSettings[name];
 
                     // handle deprecated "blessed_tags"
@@ -450,12 +450,12 @@ function antenna($A){
                     }
 
                     if(perContainerExtentions && perContainerExtentions.default_reactions){
-                        var settings = ANTN.groupSettings._translate(perContainerExtentions);
+                        var settings = ANT.groupSettings._translate(perContainerExtentions);
                         return settings.default_reactions;
                     }
                 }
 
-                function getCustomANTNItems(hash){
+                function getCustomANTItems(hash){
                     var $el = $('[ant-hash="' + hash + '"]');
                     var name = $el.attr('ant-item');
                     return name;
@@ -463,7 +463,7 @@ function antenna($A){
 
                 // otherwise, return the reactions that are set on the page
                 // via Admin or via window.antenna_extend object
-                return ANTN.group.default_reactions;
+                return ANT.group.default_reactions;
             }
         },
         aWindow: {
@@ -483,24 +483,24 @@ function antenna($A){
                 rewritable: true
             },
             makeHeader: function( _headerText, interactionId ) {
-                //ANTN.aWindow.makeHeader:
+                //ANT.aWindow.makeHeader:
                 var headerText = _headerText || "";
 
                 var headerTml = $.mustache(
                     '<div class="ant ant_header">'+
                         '<div class="ant_header_arrow">'+
-                            '<img src="{{ANTN_staticUrl}}widget/images/header_up_arrow.png" />'+
+                            '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
                         '</div>'+
                         '<div class="ant_loader"></div>'+
                         '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
-                            '<img class="no-ant ant_pin" src="{{ANTN_staticUrl}}widget/images/blank.png">'+
+                            '<img class="no-ant ant_pin" src="{{ANT_staticUrl}}widget/images/blank.png">'+
                             '<span class="ant_count"></span>'+
                         '</div>' +
                         '<h1>{{headerText}}</h1>'+
                     '</div>'
                 ,{
-                    ANTN_staticUrl: ANTN_staticUrl,
+                    ANT_staticUrl: ANT_staticUrl,
                     headerText: headerText
                 });
 
@@ -533,10 +533,10 @@ function antenna($A){
                         '<div class="ant_linkWrap">'+
                             '<ul>'+
                                 '<li class="ant_link">'+
-                                    '<a href="javascript:void(0);" class="ant_undo_link">'+ANTN.t('remove_reaction')+'</a>'+
+                                    '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
                                 '</li>'+
                                 '<li class="ant_link">'+
-                                    '<a target="_blank" href="'+ANTN_baseUrl+'/interaction/'+interactionId+'" class="ant_seeit_link">'+ANTN.t('view_on_site')+'</a>'+
+                                    '<a target="_blank" href="'+ANT_baseUrl+'/interaction/'+interactionId+'" class="ant_seeit_link">'+ANT.t('view_on_site')+'</a>'+
                                 '</li>'+
                             '</ul>'+
                         '</div>'
@@ -547,10 +547,10 @@ function antenna($A){
                 return $header;
             },
             makeDefaultPanelMessage: function( $aWindow, _kind ) {
-                //ANTN.aWindow.makeDefaultPanelMessage:
+                //ANT.aWindow.makeDefaultPanelMessage:
 
                 var hash = $aWindow.data('hash');
-                var summary = ANTN.summaries[hash];
+                var summary = ANT.summaries[hash];
                 var kind = _kind || (
                     $aWindow.hasClass('ant_indicator_details') ?
                     "media" :
@@ -561,12 +561,12 @@ function antenna($A){
 
                 if( kind == "text" ){
                     if ( $aWindow.data('mode') == "writeMode" ) {
-                        headerText = ANTN.t('main_cta');
+                        headerText = ANT.t('main_cta');
                     } else {
                         if (kind=="text") {
-                            headerText = ANTN.t('reactions');
+                            headerText = ANT.t('reactions');
                         } else {
-                            headerText = (summary.counts.tags>0) ? summary.counts.tags + ANTN.t('reactions') : ANTN.t('reactions');
+                            headerText = (summary.counts.tags>0) ? summary.counts.tags + ANT.t('reactions') : ANT.t('reactions');
                         }
                     }
 
@@ -576,32 +576,32 @@ function antenna($A){
                     //confirm if we still need this.
                     var modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0;
                     headerText = (summary.counts.tags>0) ? 
-                            summary.counts.tags + " " + ANTN.t('reactions') :
+                            summary.counts.tags + " " + ANT.t('reactions') :
                             ($aWindow.width()>=(175+modForIE)) ? 
-                                ANTN.t('main_cta'):
-                                ANTN.t('react')+":";
+                                ANT.t('main_cta'):
+                                ANT.t('react')+":";
                 }
 
                 return headerText;
             },
             updateFooter: function( $aWindow, $content ) {
-                //ANTN.aWindow.updateFooter:
+                //ANT.aWindow.updateFooter:
                 var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
                 if ( typeof $content != "undefined" ) $footer.html( $content );
                 
                 //todo: examine resize
-                // ANTN.aWindow.updateSizes( $aWindow );
+                // ANT.aWindow.updateSizes( $aWindow );
             },
             hideFooter: function( $aWindow ) {
-                //ANTN.aWindow.hideFooter:
+                //ANT.aWindow.hideFooter:
                 $aWindow.find('div.ant_footer').hide(0);
                 
                 //todo: examine resize
-                // ANTN.aWindow.updateSizes( $aWindow );
+                // ANT.aWindow.updateSizes( $aWindow );
             },
             panelCreate: function( $aWindow, className ) {
-                //ANTN.aWindow.panelCreate
+                //ANT.aWindow.panelCreate
                 // later, I want to add the ability for this to create an absolutely-positioned panel
                 // that will slide OVER, not next to, current content... like a login panel sliding over the content.
 
@@ -621,7 +621,7 @@ function antenna($A){
                 return $newPanel;
             },
             panelUpdate: function( $aWindow, className, $newPanel, shouldAppendNotReplace ) {
-                //ANTN.aWindow.panelUpdate:
+                //ANT.aWindow.panelUpdate:
 
                 if ( !$aWindow ) return;
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
@@ -637,7 +637,7 @@ function antenna($A){
             },
 
             panelShow: function( $aWindow, $showPanel, callback ) {
-                //ANTN.aWindow.panelShow: 
+                //ANT.aWindow.panelShow: 
                 // panelEvent - panelShow
                 
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
@@ -664,11 +664,11 @@ function antenna($A){
                 $hidePanel.addClass('ant_hiddenPanel').removeClass('ant_visiblePanel');
 
                 //update the size at the same time so the animations run in parallel
-                ANTN.aWindow.updateSizes( $aWindow );
+                ANT.aWindow.updateSizes( $aWindow );
                 $panelWrap.animate({
                       left: -animWidth
                   },
-                  ANTN.C.aWindowAnimationSpeed,
+                  ANT.C.aWindowAnimationSpeed,
                   function() {
                       if (callback) callback();
                       if ( $aWindow.data('jsp') ) {
@@ -682,20 +682,20 @@ function antenna($A){
                 );
             },
             panelHide: function( $aWindow, callback ) {
-                //ANTN.aWindow.panelHide:
+                //ANT.aWindow.panelHide:
                 
                 // panelEvent - panelhide
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
 
                 var isWriteMode = $aWindow.hasClass('ant_writemode'),
-                    $tagsListContainer = ANTN.actions.indicators.utils.makeTagsListForInline( $aWindow, isWriteMode );
+                    $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, isWriteMode );
                 
                 var className = "ant_tags_list";
                 var $hidePanel = $aWindow.find('.ant_visiblePanel');
                 $hidePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
 
                 // replacewith bug
-                // var $showPanel = ANTN.aWindow.panelUpdate($aWindow, className, $tagsListContainer );
+                // var $showPanel = ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer );
                 // $showPanel.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
                 $tagsListContainer.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
                 
@@ -705,11 +705,11 @@ function antenna($A){
                 $panelWrap.css('left', -animWidth);
 
                 //update the size at the same time so the animations run in parallel
-                ANTN.aWindow.updateSizes( $aWindow );
+                ANT.aWindow.updateSizes( $aWindow );
                 $panelWrap.animate({
                     left: 0
                 },
-                ANTN.C.aWindowAnimationSpeed,
+                ANT.C.aWindowAnimationSpeed,
                 function() {
                     if (callback) callback();
                     $aWindow.data('panelState', 1);
@@ -725,7 +725,7 @@ function antenna($A){
                 });
             },
             panelEnsureFloatWidths: function( $aWindow ) {
-                //ANTN.aWindow.panelEnsureFloatWidths:
+                //ANT.aWindow.panelEnsureFloatWidths:
 
                 //this function keeps messing stuff up and causing the aWindow panel to jump.
                 //we shouldn't need it anyway while the success state just has a close button instead of a back button
@@ -748,24 +748,24 @@ function antenna($A){
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             updateTagPanel: function ( $aWindow ) {
-                // ANTN.aWindow.updateTagPanel:
+                // ANT.aWindow.updateTagPanel:
                 // panelEvent - backButton
 
                 var hash = $aWindow.data('hash');
 
-                ANTN.aWindow.panelHide( $aWindow );
-                ANTN.aWindow.tagBox.setWidth( $aWindow, $aWindow.data('initialWidth') );
-                ANTN.aWindow.tagBox.setHeight( $aWindow, $aWindow.data('initialHeight') );
+                ANT.aWindow.panelHide( $aWindow );
+                ANT.aWindow.tagBox.setWidth( $aWindow, $aWindow.data('initialWidth') );
+                ANT.aWindow.tagBox.setHeight( $aWindow, $aWindow.data('initialHeight') );
 
             },
 
             mediaRindowShow: function ( $mediaItem ) {
-                //ANTN.aWindow.mediaRindowShow
+                //ANT.aWindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
                     $aWindow = $('#ant_indicator_details_'+hash);
 
 
-                ANTN.util.cssSuperImportant($aWindow, {
+                ANT.util.cssSuperImportant($aWindow, {
                     display:"block",
                 });
                 // check to see if the hover event has already occurred (.data('hover')
@@ -773,19 +773,19 @@ function antenna($A){
                 //not sure we need all this logic anymore
                 if ( $mediaItem.data('hover') && !$aWindow.data('hover') && !$aWindow.is(':animated') && !$aWindow.closest('div.ant_media_details').length ) {
                     $aWindow.data('hover',true);
-                    ANTN.aWindow.updateSizes( $aWindow );
+                    ANT.aWindow.updateSizes( $aWindow );
                 }
                 $aWindow.addClass('ant_engaged')
             },
             mediaRindowHide: function ( $mediaItem ) {
-                //ANTN.aWindow.mediaRindowHide:
+                //ANT.aWindow.mediaRindowHide:
                 var hash = $mediaItem.data('hash'),
                     $aWindow = $('#ant_indicator_details_'+hash);
 
                 if ( !$mediaItem.data('hover') && !$aWindow.is(':animated') && !$aWindow.closest('div.ant_media_details').length ) {
-                    $aWindow.data('hover', false).animate( {'height':'0px' }, ANTN.C.aWindowAnimationSpeed, function() {
+                    $aWindow.data('hover', false).animate( {'height':'0px' }, ANT.C.aWindowAnimationSpeed, function() {
                         // $aWindow.removeClass('ant_has_border');
-                        ANTN.util.cssSuperImportant($aWindow, {
+                        ANT.util.cssSuperImportant($aWindow, {
                             display:"none",
                         });
                     });
@@ -794,7 +794,7 @@ function antenna($A){
                 $('#ant_indicator_' + hash).hide();
             },
             updateSizes: function($aWindow, _options) {
-                //ANTN.aWindow.updateSizes:
+                //ANT.aWindow.updateSizes:
                 // options are {
                 //     setWidth,
                 //     setHeight,
@@ -826,7 +826,7 @@ function antenna($A){
                 var defaults = {
                     h: 200,
                     w: 200,
-                    duration: ANTN.C.aWindowAnimationSpeed
+                    duration: ANT.C.aWindowAnimationSpeed
                 };
 
                 // if(kind == "media"){
@@ -853,12 +853,12 @@ function antenna($A){
                     queue:false
                 });
 
-                ANTN.aWindow.jspUpdate($aWindow);
+                ANT.aWindow.jspUpdate($aWindow);
             },
             updatePageTagMessage: function(args, action) {
                 if(action == 'tagDeleted'){
                     var $aWindow = $('div.ant_window:eq(0)');
-                    ANTN.aWindow.hideFooter($aWindow);
+                    ANT.aWindow.hideFooter($aWindow);
                     $aWindow.find('.ant_header h1').text('Reaction Undone');
                     $aWindow.find('.ant_body').css('height','auto').html(
                         '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
@@ -873,7 +873,7 @@ function antenna($A){
                 }
             },
             updateTagMessage: function(args) {
-                //ANTN.aWindow.updateTagMessage
+                //ANT.aWindow.updateTagMessage
                 // used for updating the message in the aWindow that follows a reaction
                 if ( args.scenario && args.aWindow ) {
                     // ugly as hell.  rewrite time.
@@ -891,10 +891,10 @@ function antenna($A){
                         $aWindow = args.aWindow,
                         kind = args.kind,
                         tag = args.tag,
-                        summary = ANTN.summaries[hash],
+                        summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    ANTN.aWindow.tagBox.setWidth( $aWindow, 320 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
@@ -906,7 +906,7 @@ function antenna($A){
                                     $options = $('<div class="ant_nextActions"></div>').appendTo( $success );
                                 
                                 if ( args.kind != 'page' ) {
-                                    var $sayMore = ANTN.actions.comments.makeCommentBox({
+                                    var $sayMore = ANT.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
                                         hash: hash,
@@ -918,24 +918,24 @@ function antenna($A){
                                 }
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="ant_back">'+ANTN.t('close')+' X</div>');
+                                    var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
-                                        var doClose = ANTN.aWindow.safeClose($aWindow);
+                                        var doClose = ANT.aWindow.safeClose($aWindow);
                                         if(!doClose){
                                             return;
                                         }
 
-                                        ANTN.aWindow.updateTagPanel( $aWindow );
+                                        ANT.aWindow.updateTagPanel( $aWindow );
 
                                     });
                                 // }
 
                                 var shouldAppendNotReplace = true;
-                                ANTN.aWindow.panelUpdate( $aWindow, 'ant_view_more', $success, shouldAppendNotReplace);
+                                ANT.aWindow.panelUpdate( $aWindow, 'ant_view_more', $success, shouldAppendNotReplace);
 
-                                ANTN.user = ANTN.user || {};
+                                ANT.user = ANT.user || {};
                                 
                                 var onAction = function(event){
                                     var args = event.data.args;
@@ -949,7 +949,7 @@ function antenna($A){
                                         aWindow: $aWindow
                                     };
 
-                                    ANTN.actions.interactions.ajax( newArgs, 'react', 'remove' );
+                                    ANT.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
                                 };
 
@@ -961,7 +961,7 @@ function antenna($A){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<div class="ant_shareLinks">'+ANTN.t('share_reaction')+': <ul></ul></div>'),
+                                var $shareLinks = $('<div class="ant_shareLinks">'+ANT.t('share_reaction')+': <ul></ul></div>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
@@ -978,7 +978,7 @@ function antenna($A){
                                             hash = args.hash = "page";
                                         }
 
-                                        ANTN.events.trackEventToCloud({
+                                        ANT.events.trackEventToCloud({
                                             event_type: "sh",
                                             event_value: val,
                                             container_hash: hash,
@@ -987,12 +987,12 @@ function antenna($A){
                                             reaction_body: tag_body
                                         });
 
-                                        var summary = ANTN.summaries[hash];
+                                        var summary = ANT.summaries[hash];
                                         //hack to get the kind
                                         var kind = args.kind || summary.kind;
-                                        ANTN.shareWindow = window.open(ANTN_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
+                                        ANT.shareWindow = window.open(ANT_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
                                         
-                                        ANTN.actions.share_getLink({
+                                        ANT.actions.share_getLink({
                                             referring_int_id:args.response.data.interaction.id,
                                             hash:args.hash,
                                             kind:kind,
@@ -1012,26 +1012,26 @@ function antenna($A){
                             $shareSocialWrap.append( makeShareLinks() );
                         }
 
-                        ANTN.actions.containers.media.onEngage( hash );
+                        ANT.actions.containers.media.onEngage( hash );
                     } else {
                         
-                        var headerText = ANTN.aWindow.makeDefaultPanelMessage($aWindow);
-                        var $header = ANTN.aWindow.makeHeader( headerText);
+                        var headerText = ANT.aWindow.makeDefaultPanelMessage($aWindow);
+                        var $header = ANT.aWindow.makeHeader( headerText);
                         $aWindow.find('.ant_header').replaceWith($header);
 
                         $aWindow.removeClass('ant_viewing_more').find('div.ant_indicator_details_body').show();  // image specific.
-                        ANTN.aWindow.panelHide( $aWindow );
-                        // ANTN.aWindow.panelHide( $aWindow, 'ant_view_more', $aWindow.data('initialWidth'), null, function() {
+                        ANT.aWindow.panelHide( $aWindow );
+                        // ANT.aWindow.panelHide( $aWindow, 'ant_view_more', $aWindow.data('initialWidth'), null, function() {
                         //     $aWindow.find('table.ant-one-column td').triggerHandler('mousemove');
                         // });
                     }
                     
                     //todo: examine resize
-                    ANTN.aWindow.updateSizes( $aWindow );
+                    ANT.aWindow.updateSizes( $aWindow );
                 }
             },
             jspUpdate: function( $aWindow ) {
-                //ANTN.aWindow.jspUpdate:
+                //ANT.aWindow.jspUpdate:
                 //updates or inits first (and should be only) $aWindow ant_body into jScrollPanes
 
                 if ( !$aWindow.closest('.jspContainer').length && !$aWindow.hasClass('jspScrollable') ) {
@@ -1050,20 +1050,20 @@ function antenna($A){
             },
             tagBox: {
                 setWidth: function( $aWindow, width ) {
-                    // ANTN.aWindow.tagBox.setWidth
-                    // should probably just be ANTN.aWindow.setWidth ??
+                    // ANT.aWindow.tagBox.setWidth
+                    // should probably just be ANT.aWindow.setWidth ??
                     // width must be 320, 480, or 640
-                    var aWindowWidth = (ANTN.group.max_aWindow_width) ? ANTN.group.max_aWindow_width:width;
+                    var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
                     $aWindow.removeClass('w160 w320 w480 w640').addClass('w'+aWindowWidth);
                 },
                 setHeight: function( $aWindow, height ) {
-                    // ANTN.aWindow.tagBox.setHeight
-                    // should probably just be ANTN.aWindow.setWidth ??
+                    // ANT.aWindow.tagBox.setHeight
+                    // should probably just be ANT.aWindow.setWidth ??
                     // width must be 320, 480, or 640
                     $aWindow.find('.ant_body, .jspContainer').height( height );
                 },
                 make: function( params ) {
-                    //ANTN.aWindow.tagBox.make:
+                    //ANT.aWindow.tagBox.make:
                     var tag = params.tag,
                         boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
                         $aWindow = ( params.$aWindow ) ? params.$aWindow : null,
@@ -1076,7 +1076,7 @@ function antenna($A){
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
-                        summary = ANTN.summaries[hash],
+                        summary = ANT.summaries[hash],
                         totalReactions = (typeof summary != 'undefined')?summary.counts.tags:0,
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
@@ -1188,40 +1188,40 @@ function antenna($A){
 
                     function renderReactedContent( $reactionsTable, tag ) {
                         if ( !$aWindow.find('.ant_view_more').length || !$aWindow.find('.ant_view_more').hasClass('ant_visiblePanel') ) {
-                            var $newPanel = ANTN.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                            var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
                             var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
                             $ant_body_wrap.append( $newPanel );
 
                             $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            ANTN.aWindow.tagBox.setWidth( $aWindow, 320 );
-                            ANTN.aWindow.panelShow( $aWindow, $newPanel, function() {
-                                ANTN.aWindow.hideFooter($aWindow);
-                                // ANTN.aWindow.panelEnsureFloatWidths($aWindow);
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                            ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
+                                ANT.aWindow.hideFooter($aWindow);
+                                // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                             });
                         } else {
                             $aWindow.find('.ant_body').html( $reactionsTable );
-                            ANTN.aWindow.jspUpdate( $aWindow );
+                            ANT.aWindow.jspUpdate( $aWindow );
                         }
 
                         var HeaderTxt = (tag.tag_count <= 0) ? 
                             "no reactions" :
                                 (tag.tag_count == 1) ?
-                                "1 " + ANTN.t('single_reaction') :
-                                tag.tag_count + " " + ANTN.t('plural_reaction');
-                        var $header = ANTN.aWindow.makeHeader( HeaderTxt );
+                                "1 " + ANT.t('single_reaction') :
+                                tag.tag_count + " " + ANT.t('plural_reaction');
+                        var $header = ANT.aWindow.makeHeader( HeaderTxt );
                             $aWindow.find('.ant_header').replaceWith($header)
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="ant_back">'+ANTN.t('close')+' X</div>');
+                        var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
                         $backButton.on('click.ant, touchend.ant', function() {
 
 
                             //temp fix because the aWindow scrollpane re-init isnt working
                             var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
                             if(!isViewForRindow){
-                                ANTN.aWindow.close($aWindow);
+                                ANT.aWindow.close($aWindow);
                                 return;
                             }
 
@@ -1240,21 +1240,21 @@ function antenna($A){
                         if ( counts && counts.page && counts.page > 0 ) {
                             var page_reaction_text =
                                 (counts.page == 1 ) ?
-                                "1 " + ANTN.t('single_reaction') :
-                                counts.page + " " + ANTN.t('plural_reaction');
+                                "1 " + ANT.t('single_reaction') :
+                                counts.page + " " + ANT.t('plural_reaction');
 
-                            $reactionsTable.find('.ant_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+ANTN.t('to_page')+'</td>');
+                            $reactionsTable.find('.ant_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+ANT.t('to_page')+'</td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
                             // iterate through and create an array of counts + $tr.  this is then sortable.
                             $reactionsTable.find('.ant_page_reactions').addClass('has_other_reactions');
-                            $.each( ANTN.interaction_data[ tag.id ], function(int_id, data) {
+                            $.each( ANT.interaction_data[ tag.id ], function(int_id, data) {
 
                                 //quick fix for multi page reactions.
                                 // todo: #summaryContentByPageFix
                                 var hash = data.hash;
-                                var summary = ANTN.summaries[hash];
+                                var summary = ANT.summaries[hash];
                                 var $node = $('[ant-hash="' + hash + '"]');
                                 var thisPageId = summary.pageId;
 
@@ -1268,10 +1268,10 @@ function antenna($A){
 
                                 if ( !$reactionsTable.find('tr.ant_int_summary_'+int_id).length ) {
                                     var $tr = $('<tr valign="middle" class="ant_content_reaction ant_int_summary_'+int_id+'"/>'),
-                                        thing = ANTN.interaction_data[ tag.id ][ int_id ];
+                                        thing = ANT.interaction_data[ tag.id ][ int_id ];
 
                                     if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
-                                        var reaction_word = (thing.interaction.count>1) ? ANTN.t('plural_reaction') : ANTN.t('single_reaction');
+                                        var reaction_word = (thing.interaction.count>1) ? ANT.t('plural_reaction') : ANT.t('single_reaction');
                                         $tr.append('<td class="ant_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
                                         .data('count', thing.interaction.count)//chain
                                         .data('tag', tag)//chain
@@ -1282,7 +1282,7 @@ function antenna($A){
                                         } else if ( thing.kind == "img" ) {
                                             $tr.append('<td class="ant_content"><img src="'+thing.content_node.body+'" height="50"/></td>');
                                         } else if ( thing.kind == "media" ) {
-                                            $tr.append('<td class="ant_content"><img src="'+ANTN_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
+                                            $tr.append('<td class="ant_content"><img src="'+ANT_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
                                         }
 
                                         $tr.on('click.ant, touchend.ant', function(e) {
@@ -1291,9 +1291,9 @@ function antenna($A){
                                                 container_hash:thing.hash,
                                                 location:thing.content_node.location
                                             };
-                                            ANTN.session.revealSharedContent(data);
+                                            ANT.session.revealSharedContent(data);
 
-                                            ANTN.events.trackEventToCloud({
+                                            ANT.events.trackEventToCloud({
                                                 event_type: 'sb',
                                                 event_value: 'vc',
                                                 page_id: thisPageId
@@ -1328,11 +1328,11 @@ function antenna($A){
                             var clickFunc = function(){
 
 
-                                ANTN.aWindow.hideFooter($aWindow);
+                                ANT.aWindow.hideFooter($aWindow);
                                 $aWindow.removeClass('ant_rewritable');
 
-                                var page_id = ANTN.util.getPageProperty('id', hash),
-                                    page = ANTN.pages[ page_id ],
+                                var page_id = ANT.util.getPageProperty('id', hash),
+                                    page = ANT.pages[ page_id ],
                                     tag_count = tag.tag_count,
                                     counts = {
                                         "img":0,
@@ -1342,7 +1342,7 @@ function antenna($A){
                                     };
                                 
 
-                                ANTN.events.trackEventToCloud({
+                                ANT.events.trackEventToCloud({
                                     event_type: 'sb',
                                     event_value: 'vr',
                                     page_id: page_id
@@ -1350,10 +1350,10 @@ function antenna($A){
 
 
                                 $.each( page.containers, function( idx, container ) {
-                                    if ( ANTN.summaries && ANTN.summaries[container.hash] && ANTN.summaries[container.hash].top_interactions ) {
-                                        if ( ANTN.summaries[container.hash].top_interactions.tags && ANTN.summaries[container.hash].top_interactions.tags[tag.id] ) {
-                                            counts[ANTN.summaries[container.hash].kind] += ANTN.summaries[container.hash].top_interactions.tags[tag.id].count;
-                                            counts.page -= ANTN.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                    if ( ANT.summaries && ANT.summaries[container.hash] && ANT.summaries[container.hash].top_interactions ) {
+                                        if ( ANT.summaries[container.hash].top_interactions.tags && ANT.summaries[container.hash].top_interactions.tags[tag.id] ) {
+                                            counts[ANT.summaries[container.hash].kind] += ANT.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                            counts.page -= ANT.summaries[container.hash].top_interactions.tags[tag.id].count;
                                         }
                                     }
                                 });
@@ -1377,7 +1377,7 @@ function antenna($A){
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
                                 args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANTN.actions.interactions.ajax( args, 'react', 'create');
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }
                     } else {
@@ -1389,7 +1389,7 @@ function antenna($A){
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
                                 args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANTN.actions.interactions.ajax( args, 'react', 'create');
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }else{
                             $tagBox.click( function() {
@@ -1397,7 +1397,7 @@ function antenna($A){
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
                                 args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANTN.actions.interactions.ajax( args, 'react', 'create');
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }
                     }
@@ -1464,7 +1464,7 @@ function antenna($A){
                             $commentHover.bind('tap', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
-                                ANTN.actions.viewCommentContent({
+                                ANT.actions.viewCommentContent({
                                     tag:tag,
                                     hash:hash,
                                     aWindow:$aWindow,
@@ -1477,7 +1477,7 @@ function antenna($A){
                             $commentHover.click( function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
-                                ANTN.actions.viewCommentContent({
+                                ANT.actions.viewCommentContent({
                                     tag:tag,
                                     hash:hash,
                                     aWindow:$aWindow,
@@ -1496,7 +1496,7 @@ function antenna($A){
                 }
             },
             writeCustomTag: function( $container, $aWindow, actionType ) {
-                //ANTN.aWindow.writeCustomTag
+                //ANT.aWindow.writeCustomTag
                 // think we don't need $container or actionType
 
                 var $container = $aWindow.find('.ant_footer');
@@ -1504,7 +1504,7 @@ function antenna($A){
 
                 if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText = "+ " + ANTN.t('add_custom');
+                        helpText = "+ " + ANT.t('add_custom');
 
                     // add custom tag
                     var $clickOverlay = $('<div class="ant_click_overlay"></div>').appendTo($container);
@@ -1520,7 +1520,7 @@ function antenna($A){
                     });
                                         
                     $customInput.focus( function() {
-                        // ANTN.events.track('start_custom_reaction_aWindow');
+                        // ANT.events.track('start_custom_reaction_aWindow');
                         var $input = $(this);
                         $input.removeClass('ant_default');
                         if ( $input.val() == helpText ) {
@@ -1578,7 +1578,7 @@ function antenna($A){
 
                         // args = { tag:tag, hash:hash, kind:"page" };
                         args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow};
-                        ANTN.actions.interactions.ajax( args, actionType, 'create' );
+                        ANT.actions.interactions.ajax( args, actionType, 'create' );
                         $customInput.blur();
                         // $custom.tooltip();
                     }
@@ -1593,13 +1593,13 @@ function antenna($A){
                 }
             },
             _aWindowTypes: {
-                //ANTN.aWindow._aWindowTypes:
+                //ANT.aWindow._aWindowTypes:
                 tagMode: {
-                    //ANTN.aWindow._aWindowTypes.tagMode.make(settings);
+                    //ANT.aWindow._aWindowTypes.tagMode.make(settings);
                     // [porter] we should change the name of this function.  no need to nest under _aWindowTypes anymore, right?
                     make: function(settings){
-                        //ANTN.aWindow._aWindowTypes.writeMode.make:
-                        //as the underscore suggests, this should not be called directly.  Instead, use ANTN.aWindow.make(aWindowType [,options])
+                        //ANT.aWindow._aWindowTypes.writeMode.make:
+                        //as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
 
                         if ( settings.is_page == true ) {
                             var page = settings.page,
@@ -1614,7 +1614,7 @@ function antenna($A){
                                 return;
                             }
 
-                            var $aWindow = ANTN.aWindow.draw({
+                            var $aWindow = ANT.aWindow.draw({
                                     coords: coords,
                                     container: $summary_widget,
                                     content: 'page',
@@ -1624,9 +1624,9 @@ function antenna($A){
 
                         } else {
                             var hash = settings.hash;
-                            var page_id = ANTN.util.getPageProperty('id', hash );
+                            var page_id = ANT.util.getPageProperty('id', hash );
 
-                            var summary = ANTN.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 kind = summary.kind,
                                 rewritable = (settings.rewritable == false) ? false:true,
@@ -1640,8 +1640,8 @@ function antenna($A){
                                 // writeMode
                                 
 
-                                // ANTN.events.track('start_react_text');
-                                ANTN.events.trackEventToCloud({
+                                // ANT.events.track('start_react_text');
+                                ANT.events.trackEventToCloud({
                                     // category: "engage",
                                     // action: "aWindow_shown_writemode",
                                     event_type: 'rs',
@@ -1693,7 +1693,7 @@ function antenna($A){
                                 } else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
-                                    var topValue = ( !$container.parents( ANTN.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( ANTN.group.img_container_selectors ).first().offset().bottom + 5;
+                                    var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
                                     var coords = {
                                         top: topValue,
                                         left: $container.offset().left
@@ -1720,8 +1720,8 @@ function antenna($A){
                                     };
 
                                     //log media readmode
-                                    // ANTN.events.track( 'view_node::'+hash, hash );
-                                    ANTN.events.trackEventToCloud({
+                                    // ANT.events.track( 'view_node::'+hash, hash );
+                                    ANT.events.trackEventToCloud({
                                         // category: "engage",
                                         // action: "aWindow_shown_readmode",
                                         // opt_label: "kind: "+kind+", hash: " + hash,
@@ -1753,7 +1753,7 @@ function antenna($A){
 
                             }
 
-                            var $aWindow = ANTN.aWindow.draw({
+                            var $aWindow = ANT.aWindow.draw({
                                 coords: coords,
                                 container: hash,
                                 content: settings.content,
@@ -1772,9 +1772,9 @@ function antenna($A){
                         $aWindow.addClass('ant_'+settings.mode.toLowerCase());
 
                         /* START populate the header */
-                        var headerText = ANTN.aWindow.makeDefaultPanelMessage($aWindow);
+                        var headerText = ANT.aWindow.makeDefaultPanelMessage($aWindow);
 
-                        var $header = ANTN.aWindow.makeHeader( headerText );
+                        var $header = ANT.aWindow.makeHeader( headerText );
                         $aWindow.find('.ant_header').replaceWith($header);
 
                         /* START create the tag boxes.  read / write mode matters. (??) */
@@ -1789,9 +1789,9 @@ function antenna($A){
 
                         // write inline tags: initial aWindow instantiation
                         if ( settings.is_page == true ) {
-                            var $tagList = ANTN.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
+                            var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
                         } else {
-                            var $tagList = ANTN.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode" );
+                            var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode" );
                         }
                         $bodyWrap.append($tagList);
                         /* END create the tag boxes.  read / write mode matters. */
@@ -1800,7 +1800,7 @@ function antenna($A){
                         var contentWidth = $bodyWrap.width(),
                             contentHeight = $bodyWrap.height();
            
-                        var newCoords = ANTN.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = ANT.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
 
                         $aWindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
 
@@ -1815,7 +1815,7 @@ function antenna($A){
                         $aWindow.find('div.ant_cell_wrapper div.ant_tag').css({'width':'100%'});
                         // $aWindow.find('div.ant_custom_tag input').focus();
 
-                        // return $aWindow to ANTN.aWindow.make
+                        // return $aWindow to ANT.aWindow.make
                         return $aWindow;
 
                         /* END modify the aWindow size */
@@ -1829,39 +1829,39 @@ function antenna($A){
                 }
             },
             make: function(aWindowType, options){
-                //ANTN.aWindow.make:
+                //ANT.aWindow.make:
                 //temp tie-over
                 var hash = options.hash,
-                    summary = ANTN.summaries[hash],
+                    summary = ANT.summaries[hash],
                     kind = options.kind,
                     isPage = options.is_page;
 
                 if (!isPage && !summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
-                    var summary = ANTN.util.makeEmptySummary(hash);
-                    ANTN.actions.containers.setup(summary);
+                    var summary = ANT.util.makeEmptySummary(hash);
+                    ANT.actions.containers.setup(summary);
                 }
-                // summary = ANTN.summaries[hash];
+                // summary = ANT.summaries[hash];
 
                 //checks for aWindowType
                 if ( !aWindowType ) aWindowType = "readMode";
-                // if ( !ANTN.aWindow._aWindowTypes.hasOwnProperty(aWindowType) ) return;
+                // if ( !ANT.aWindow._aWindowTypes.hasOwnProperty(aWindowType) ) return;
                 //else
 
-                var defaultOptions = ANTN.aWindow.defaults,
-                    customOptions = ANTN.aWindow._aWindowTypes.customOptions,
+                var defaultOptions = ANT.aWindow.defaults,
+                    customOptions = ANT.aWindow._aWindowTypes.customOptions,
                     settings = $.extend( {}, defaultOptions, customOptions, options, {mode:aWindowType} );
                 //call make function for appropriate type
 
-                var $aWindow = ANTN.aWindow._aWindowTypes.tagMode.make(settings);
+                var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
                 
-                // return $aWindow to whatever called ANTN.aWindow.make
+                // return $aWindow to whatever called ANT.aWindow.make
                 return $aWindow;
 
             },
             draw: function(options) {
-                //ANTN.aWindow.draw:
+                //ANT.aWindow.draw:
 
                 /*
                 //options are:
@@ -1886,7 +1886,7 @@ function antenna($A){
                 */
 
                 //at least for now, always close all other aWindows.
-                ANTN.aWindow.closeAll();
+                ANT.aWindow.closeAll();
 
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
@@ -1924,7 +1924,7 @@ function antenna($A){
                     $new_aWindow.html('');
                     $new_aWindow.append(
                         '<div class="ant ant_header">'+
-                            '<div class="ant_header_arrow"><img src="'+ANTN_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
+                            '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="ant_loader"></div>'+
                             '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
@@ -1960,7 +1960,7 @@ function antenna($A){
                     $new_aWindow.height(settings.height);
                 }
                 // do we need to call this twice in this function?
-                ANTN.actionbar.closeAll();
+                ANT.actionbar.closeAll();
 
                 $new_aWindow.settings = settings;
 
@@ -1968,21 +1968,21 @@ function antenna($A){
                     var $this = $(this);
                     
                     //todo: examine resize
-                    // ANTN.aWindow.updateSizes( $this );
+                    // ANT.aWindow.updateSizes( $this );
                 });
 
                 return $new_aWindow;
             },
             safeClose: function( $aWindow ) {
-              //ANTN.aWindow.safeClose:
+              //ANT.aWindow.safeClose:
 
               var isView = !!$aWindow.attr('ant-view-reactions-for');
 
               if(isView){
 
-                var $header = ANTN.aWindow.makeHeader( ANTN.t('reactions') );
+                var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
                     $aWindow.find('.ant_header').replaceWith($header);
-                    ANTN.aWindow.updateFooter( $aWindow );
+                    ANT.aWindow.updateFooter( $aWindow );
 
                     var $panelWrap = $aWindow.find('.ant_body_wrap'),
                         $currentlyVisiblePanel = $panelWrap.find('.ant_visiblePanel'),
@@ -1996,35 +1996,35 @@ function antenna($A){
                     $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
 
                     // if ( $aWindow.data('initialWidth') >= 480 ) {
-                    //     ANTN.aWindow.tagBox.setWidth( $aWindow, 480 );
-                    //     ANTN.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
+                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
                     // } else {
-                    //     if ( $aWindow.data('initialWidth') == 160 ) { ANTN.aWindow.tagBox.setWidth( $aWindow, 160 ); }
-                    //     ANTN.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
+                    //     if ( $aWindow.data('initialWidth') == 160 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 160 ); }
+                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
                     // }
 
                 return true;
               }
 
-              ANTN.aWindow.close($aWindow);
+              ANT.aWindow.close($aWindow);
               return true;
             },
             close: function( $aWindows ) {
-                //ANTN.aWindow.close:
-                ANTN.aWindow.clearHilites( $aWindows );
+                //ANT.aWindow.close:
+                ANT.aWindow.clearHilites( $aWindows );
                 $aWindows.each(function(idx,aWindow){
                     $(aWindow).remove();
                 });
 
                 //todo: move this - this is a temp shotgun spray approach.
-                //toggled to hidden in ANTN.aWindow._aWindowTypes.readMode.make:
+                //toggled to hidden in ANT.aWindow._aWindowTypes.readMode.make:
                 $('#ant_indicator_details_wrapper').find('.ant_body_wrap').css({
                    'visibility':'visible'
                 });
             },
             closeAll: function() {
                 var $allRindows = $('div.ant.ant_window').not('.ant_no_clear');
-                ANTN.aWindow.close( $allRindows );
+                ANT.aWindow.close( $allRindows );
                 $('.ant_shared').removeClass('ant_shared');
                 $(document).unbind('keydown.ant'); // remove the "start typing to immediately add a custom tag" feature
             },
@@ -2037,7 +2037,7 @@ function antenna($A){
                     if ( typeof hash === 'undefined' ) return;
                     //else
 
-                    var summary = ANTN.summaries[hash];
+                    var summary = ANT.summaries[hash];
 
                     //todo: think about better name and pattern for how write-mode hilite gets stored.
                     //first find writeMode selState
@@ -2071,8 +2071,8 @@ function antenna($A){
                 });
             },
             update: function(hash, diffNode){
-                //ANTN.aWindow.update:
-                var summary = ANTN.summaries[hash],
+                //ANT.aWindow.update:
+                var summary = ANT.summaries[hash],
                     $aWindow_readmode = summary.$aWindow_readmode,
                     $aWindow_writemode = summary.$aWindow_writemode;
 
@@ -2106,7 +2106,7 @@ function antenna($A){
                     if(!isMedia){
                         return;
                     }
-                    ANTN.actions.indicators.utils.makeDetailsContent(hash);
+                    ANT.actions.indicators.utils.makeDetailsContent(hash);
                 }
 
                 function _addComIndicator($aWindow, diffNode){
@@ -2166,15 +2166,15 @@ function antenna($A){
                             'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
                             {id: diffNode.content_id}
                         );
-                        ANTN.safeThrow(err);
+                        ANT.safeThrow(err);
                         
                         //this didn't fix the problem anyway - leave it out.
                         //try to recover
                         // try{
-                        //     var comsPerContentNodeId = ANTN.content_nodes[hash]['undefined'].top_interactions.coms;
+                        //     var comsPerContentNodeId = ANT.content_nodes[hash]['undefined'].top_interactions.coms;
                         // }
                         // catch(e){
-                        //     ANTN.safeThrow(e);
+                        //     ANT.safeThrow(e);
                         //     return;
                         // }
                     }
@@ -2204,7 +2204,7 @@ function antenna($A){
                     $commentHover.append( '<span class="ant_icon"></span> '+num_comments );
                     $commentHover.click( function() {
 
-                        ANTN.actions.viewCommentContent({
+                        ANT.actions.viewCommentContent({
                             tag:tag,
                             hash:hash,
                             aWindow:$aWindow,
@@ -2223,14 +2223,14 @@ function antenna($A){
                     
                     var $linkToComment = $('<span class="ant_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">'+ANTN.t('thanks_for_comment')+' <a href="javascript:void(0);">'+ANTN.t('close')+'</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">'+ANT.t('thanks_for_comment')+' <a href="javascript:void(0);">'+ANT.t('close')+'</a></span> ');
                     
 
 
                     //this broke - for now, just use the quick fix below
                     // $linkToComment.click( function() {
                     //     var selState = content_node.selState || $aWindow.data('selState');
-                    //     ANTN.actions.viewCommentContent({
+                    //     ANT.actions.viewCommentContent({
                     //         tag:tag,
                     //         hash:hash,
                     //         aWindow:$aWindow,
@@ -2244,7 +2244,7 @@ function antenna($A){
                     $linkToComment.click( function(e) {
                         e.preventDefault();
                         //there's a bug, just close the aWindow for now. 
-                        ANTN.aWindow.safeClose( $aWindow );
+                        ANT.aWindow.safeClose( $aWindow );
                         // $aWindow.find('.ant_back').eq(0).click();
                     });
 
@@ -2258,11 +2258,11 @@ function antenna($A){
                 }
 
 
-            }//end ANTN.aWindow.update
+            }//end ANT.aWindow.update
         },
         actionbar: {
             draw: function(settings) {
-                //ANTN.actionbar.draw:
+                //ANT.actionbar.draw:
                 //expand to make settings explicit
 
                 //node: summary may not be defined at this point, so get info from settings.
@@ -2271,7 +2271,7 @@ function antenna($A){
                     kind = settings.kind,
                     content = settings.content,
                     src_with_path = settings.src_with_path || undefined, //used for media only
-                    page_id = ANTN.util.getPageProperty('id', hash );
+                    page_id = ANT.util.getPageProperty('id', hash );
 
                 var actionbar_id = "ant_actionbar_"+hash;
                 var $actionbars = $('div.ant_actionbar');
@@ -2298,7 +2298,7 @@ function antenna($A){
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
                 if (kind == 'text') {
                     //rewrite coords if needed
-                    coords = ANTN.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});
+                    coords = ANT.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});
                 }
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
@@ -2310,7 +2310,7 @@ function antenna($A){
 
                 //if there is no hash here it will cause problems.  Should always be a hash.
                 if(!hash){
-                    ANTN.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                    ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                     return;
                 }
                 $new_actionbar.data('hash',hash);
@@ -2320,9 +2320,9 @@ function antenna($A){
                 var items = [
                     {
                         "item":"reaction",
-                        "tipText":ANTN.t('main_cta'),
+                        "tipText":ANT.t('main_cta'),
                         "onclick":function(){
-                            ANTN.aWindow.make( 'writeMode', {
+                            ANT.aWindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
                                 "content": content,
@@ -2335,7 +2335,7 @@ function antenna($A){
                         "item":"bookmark",
                         "tipText":"Remember this",
                         "onclick":function(){
-                            ANTN.aWindow.make( 'writeMode', {
+                            ANT.aWindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
                                 "content": content,
@@ -2346,10 +2346,10 @@ function antenna($A){
                     }
                     */
                 ];
-                // ANTN.events.track( 'show_action_bar::'+content );
+                // ANT.events.track( 'show_action_bar::'+content );
 
                 // not sure this is valuable and it adds network chatter
-                // ANTN.events.trackEventToCloud({
+                // ANT.events.trackEventToCloud({
                 //     // category: "actonbar",
                 //     // action: "actionbar_shown",
                 //     // opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
@@ -2364,7 +2364,7 @@ function antenna($A){
                     $indicatorAnchor = $(
                         '<a href="javascript:void(0);" class="ant_tooltip_this" title="'+val.tipText+'">'+
                             '<span class="ant ant_react_icon">'+val.item+'</span>'+
-                            '<span class="ant ant_react_label">'+ANTN.t('main_cta')+'</span>'+
+                            '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
                             '<div class="ant_clear"></div>'+
                         '</a>'
                     );
@@ -2407,7 +2407,7 @@ function antenna($A){
 
             },
             close: function($actionbars, effect){
-                //ANTN.actionbar.close:
+                //ANT.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                         hash = $actionbar.data('hash'),
@@ -2483,7 +2483,7 @@ function antenna($A){
             }
         },
         t: function(phrase) {
-            return ( typeof ANTN.lang[ ANTN.group.language ][phrase] != 'undefined' ) ? ANTN.lang[ ANTN.group.language ][phrase] : '###';
+            return ( typeof ANT.lang[ ANT.group.language ][phrase] != 'undefined' ) ? ANT.lang[ ANT.group.language ][phrase] : '###';
         },
         lang: {
             en : {
@@ -2564,18 +2564,18 @@ function antenna($A){
                 'touchend': false,
                 'dragging': false
             },
-            windowBlur: function() { /*ANTN.util.clearWindowInterval();*/ return; },
+            windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
             setWindowInterval: function () {
                 $.data(this, 'ant_intervalTimer', setInterval(function() {
-                    if (typeof ANTN.events != 'undefined') { ANTN.events.checkTime(); }
+                    if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
                 }, 1000));
             },
             checkForSelectedTextAndLaunchRindow: function(){
-                //ANTN.util.checkForSelectedTextAndLaunchRindow
+                //ANT.util.checkForSelectedTextAndLaunchRindow
                     
                 //this function is really hacky and gross.
                 //But there are functions we want within actionbar that I don't have time to parse out, so just make one in order to click it.
@@ -2598,9 +2598,9 @@ function antenna($A){
                 // var kind = 'text';
                 // var content = selected.text;
 
-                var $actionbar = ANTN.actions.startSelect($node, null, function(hash, kind, content){
+                var $actionbar = ANT.actions.startSelect($node, null, function(hash, kind, content){
 
-                    ANTN.aWindow.make( 'writeMode', {
+                    ANT.aWindow.make( 'writeMode', {
                         "hash": hash,
                         "kind": kind,
                         "content": content
@@ -2608,40 +2608,40 @@ function antenna($A){
                 });
             },
             initTouchBrowserSettings: function(){
-                // ANTN.util.initTouchBrowserSettings
+                // ANT.util.initTouchBrowserSettings
                 
-                if(isTouchBrowser && ANTN.util.activeAB() ){
+                if(isTouchBrowser && ANT.util.activeAB() ){
                     $('body').addClass('ant_touch_browser');
                     // mobiletodo: DO WE NEED
                     $(window).on('scrollend', function() {
-                        ANTN.util.mobileHelperToggle();
+                        ANT.util.mobileHelperToggle();
                     });
                 }
 
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             mobileHelperToggle: function() {
-                // ANTN.util.mobileHelperToggle
-                $(ANTN.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
+                // ANT.util.mobileHelperToggle
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
                     var $this = $(this),
                         hash = $this.data('hash');
 
-                    ANTN.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash);
                     $this.addClass('ant_live_hover');
                 });
 
                 
             },
             initPublicEvents: function(){
-                // ANTN.util.initPublicEvents
+                // ANT.util.initPublicEvents
                 //setup a space to bind and trigger events
                 //we're using the ant_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
                 window.antenna.public_events = $('#ant_sandbox');
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             makeEmptySummary : function(hash, kind) {
-            // ANTN.util.makeEmptySummary( hash )
+            // ANT.util.makeEmptySummary( hash )
                 var summary = {};
                 summary = {};
                 summary.hash = hash;
@@ -2658,7 +2658,7 @@ function antenna($A){
                 return summary;
             },
             getPageProperty: function( prop, hashOrObject ) {
-            //ANTN.util.getPageProperty
+            //ANT.util.getPageProperty
 
             // goal is, generally, to get the Page ID integer.
                 if (!prop) {
@@ -2729,7 +2729,7 @@ function antenna($A){
                     
                     canonical_url = $.trim( canonical_url.toLowerCase() );
 
-                    if (canonical_url == ANTN.util.getPageProperty('page_url') ) {
+                    if (canonical_url == ANT.util.getPageProperty('page_url') ) {
                         canonical_url = "same";
                     }
 
@@ -2746,33 +2746,33 @@ function antenna($A){
                 }
             },
             buildInteractionData: function() {
-                //ANTN.util.buildInteractionData
+                //ANT.util.buildInteractionData
                 /*
 
 
                 In short, the following code blows chunks.
                 Can't wait for the MVVC rewrite.
 
-                this just circles through a bunch of crap and rebuilds the ANTN.interaction_data object
+                this just circles through a bunch of crap and rebuilds the ANT.interaction_data object
 
 
                 */
-                $.each( ANTN.summaries, function(hash, summary) {
+                $.each( ANT.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                        if ( typeof ANTN.summaries[ hash ].content_nodes != "undefined" ) {
-                            $.each( ANTN.summaries[ hash ].content_nodes, function(node_id, node) {
+                        if ( typeof ANT.summaries[ hash ].content_nodes != "undefined" ) {
+                            $.each( ANT.summaries[ hash ].content_nodes, function(node_id, node) {
                                 if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
                                     var this_interaction = node.top_interactions.tags[ tag_id ];
-                                    if ( typeof ANTN.interaction_data[ tag_id ] == "undefined" ) {ANTN.interaction_data[ tag_id ] = {}; }
-                                    if ( typeof ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                    if ( typeof ANT.interaction_data[ tag_id ] == "undefined" ) {ANT.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof ANT.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { ANT.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
                                     
                                     // this content node's content, location is what we want
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                    ANTN.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
                                 }
                             });
                         }
@@ -2811,21 +2811,21 @@ function antenna($A){
                 hexcase:0,
                 b64pad:"",
                 chrsz:8,
-                hex_md5: function(s){return ANTN.util.md5.binl2hex(ANTN.util.md5.core_md5(ANTN.util.md5.str2binl(s),s.length*ANTN.util.md5.chrsz));},
-                core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=ANTN.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=ANTN.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=ANTN.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=ANTN.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=ANTN.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=ANTN.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=ANTN.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=ANTN.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=ANTN.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=ANTN.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=ANTN.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=ANTN.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=ANTN.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=ANTN.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=ANTN.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=ANTN.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=ANTN.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=ANTN.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=ANTN.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=ANTN.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=ANTN.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=ANTN.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=ANTN.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=ANTN.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=ANTN.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=ANTN.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=ANTN.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=ANTN.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=ANTN.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=ANTN.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=ANTN.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=ANTN.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=ANTN.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=ANTN.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=ANTN.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=ANTN.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=ANTN.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=ANTN.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=ANTN.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=ANTN.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=ANTN.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=ANTN.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=ANTN.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=ANTN.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=ANTN.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=ANTN.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=ANTN.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=ANTN.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=ANTN.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=ANTN.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=ANTN.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=ANTN.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=ANTN.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=ANTN.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=ANTN.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=ANTN.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=ANTN.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=ANTN.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=ANTN.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=ANTN.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=ANTN.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=ANTN.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=ANTN.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=ANTN.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=ANTN.util.md5.safe_add(a,olda);b=ANTN.util.md5.safe_add(b,oldb);c=ANTN.util.md5.safe_add(c,oldc);d=ANTN.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-                md5_cmn: function(q,a,b,x,s,t){return ANTN.util.md5.safe_add(ANTN.util.md5.bit_rol(ANTN.util.md5.safe_add(ANTN.util.md5.safe_add(a,q),ANTN.util.md5.safe_add(x,t)),s),b);},
-                md5_ff: function(a,b,c,d,x,s,t){return ANTN.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-                md5_gg: function(a,b,c,d,x,s,t){return ANTN.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-                md5_hh: function(a,b,c,d,x,s,t){return ANTN.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-                md5_ii: function(a,b,c,d,x,s,t){return ANTN.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+                hex_md5: function(s){return ANT.util.md5.binl2hex(ANT.util.md5.core_md5(ANT.util.md5.str2binl(s),s.length*ANT.util.md5.chrsz));},
+                core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=ANT.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=ANT.util.md5.safe_add(a,olda);b=ANT.util.md5.safe_add(b,oldb);c=ANT.util.md5.safe_add(c,oldc);d=ANT.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+                md5_cmn: function(q,a,b,x,s,t){return ANT.util.md5.safe_add(ANT.util.md5.bit_rol(ANT.util.md5.safe_add(ANT.util.md5.safe_add(a,q),ANT.util.md5.safe_add(x,t)),s),b);},
+                md5_ff: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+                md5_gg: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+                md5_hh: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+                md5_ii: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
                 safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
                 bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
                 //the line below is called out by jsLint because it uses Array() instead of [].  We can ignore, or I'm sure we could change it if we wanted to.
-                str2binl: function(str){var bin=Array();var mask=(1<<ANTN.util.md5.chrsz)-1;for(var i=0;i<str.length*ANTN.util.md5.chrsz;i+=ANTN.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/ANTN.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-                binl2hex: function(binarray){var hex_tab=ANTN.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+                str2binl: function(str){var bin=Array();var mask=(1<<ANT.util.md5.chrsz)-1;for(var i=0;i<str.length*ANT.util.md5.chrsz;i+=ANT.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/ANT.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+                binl2hex: function(binarray){var hex_tab=ANT.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
             },
             getCleanText: function($domNode) {
-                // ANTN.util.getCleanText
+                // ANT.util.getCleanText
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 
                 var $node = $domNode.clone();
@@ -2863,7 +2863,7 @@ function antenna($A){
                 }
             },
             cssSuperImportant: function($domNode, cssDict, shouldReplace){
-                //ANTN.util.cssSuperImportant:
+                //ANT.util.cssSuperImportant:
                 //todo: this needs improvement - it should be parsing the style into a dict and then checking for an existing style to override.
                 var inlineStyleStr = "";
 
@@ -2879,7 +2879,7 @@ function antenna($A){
                 var newStyleDict = shouldReplace ? 
                     cssDict : 
                     $.extend( 
-                        ANTN.util.parseCssAttrToDict( existingStyle ),
+                        ANT.util.parseCssAttrToDict( existingStyle ),
                         cssDict
                     );
 
@@ -2890,7 +2890,7 @@ function antenna($A){
                 return $domNode; //return the node for the hell of it.
             },
             parseCssAttrToDict: function(inlineStyleStr){
-                //ANTN.util.parseCssAttrToDict:
+                //ANT.util.parseCssAttrToDict:
                 var styleDict = {};
                 var attrs = inlineStyleStr.split(';');
                 $.each(attrs,function(idx, attrPair){
@@ -2905,10 +2905,10 @@ function antenna($A){
             },
             
             fixBrTags: function(){
-                // ANTN.util.fixBrTags:
+                // ANT.util.fixBrTags:
 
                 //find the $sections through br tags that are in the scoped section.
-                var $sections = $(ANTN.group.br_replace_scope_selector).find('> br').parent();
+                var $sections = $(ANT.group.br_replace_scope_selector).find('> br').parent();
 
                 if(!$sections.length){
                     return;
@@ -2944,7 +2944,7 @@ function antenna($A){
             },
 
             fixBodyBorderOffsetIssue: function(){
-                //ANTN.util.fixBodyBorderOffsetIssue:
+                //ANT.util.fixBodyBorderOffsetIssue:
                 //a fix for the rare case where the body element has a border on it.
                 //this is needed because jQuery's offset doesn't account for that.
                 //suposedly it also doesn't account for margin or padding on the body, but a fix for those doesnt' seem to be needed.
@@ -2961,7 +2961,7 @@ function antenna($A){
                 if( !borderTop && !borderLeft ) return;
                 //else
 
-                ANTN.util.cssSuperImportant($sandbox, {
+                ANT.util.cssSuperImportant($sandbox, {
                     top: borderTop+'px',
                     left: borderLeft+'px'
                 });
@@ -2969,29 +2969,29 @@ function antenna($A){
             },
             //_.throttle returns a function
             throttledUpdateContainerTrackers: function(){
-                return ANTN.util._.throttle(
-                    //ANTN.util.throttledUpdateContainerTrackers
-                    ANTN.actions.indicators.utils.updateContainerTrackers,
+                return ANT.util._.throttle(
+                    //ANT.util.throttledUpdateContainerTrackers
+                    ANT.actions.indicators.utils.updateContainerTrackers,
                     100
                 );
             },
             userLoginState: function() {
-                //ANTN.util.userLoginState
+                //ANT.util.userLoginState
                 if ( !$('#ant-user').length ) {
                     $('.ant-page-summary').find('div.ant-summary').prepend('<div id="ant-user" />');
                 }
-                if ( ANTN && ANTN.user && ANTN.user.full_name && $('.ant-page-summary.defaultSummaryBar').length ) {
-                    var name = (ANTN.user.user_type == "facebook") ? ( ANTN.user.full_name.split(' ')[0] ) : ANTN.user.full_name;
-                    $('#ant-user').html('Hi, <a href="'+ANTN_baseUrl+'/user/'+ANTN.user.user_id+'" target="_blank">'+name+'</a>');
+                if ( ANT && ANT.user && ANT.user.full_name && $('.ant-page-summary.defaultSummaryBar').length ) {
+                    var name = (ANT.user.user_type == "facebook") ? ( ANT.user.full_name.split(' ')[0] ) : ANT.user.full_name;
+                    $('#ant-user').html('Hi, <a href="'+ANT_baseUrl+'/user/'+ANT.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
                     // no t()
                     $('#ant-user').html('<a href="javascript:void(0);">Log in to Antenna</a>');
-                    $('#ant-user').find('a').click( function() { ANTN.session.showLoginPanel(); } );
+                    $('#ant-user').find('a').click( function() { ANT.session.showLoginPanel(); } );
                 }
             },
 
             objLength: function(obj) {
-                // ANTN.util.objLength:
+                // ANT.util.objLength:
                 // returns the length of an object
                 var size = 0, key;
                 for (key in obj) {
@@ -3004,13 +3004,13 @@ function antenna($A){
 
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
             _: {
-                //ANTN.util._:
+                //ANT.util._:
             
                 // Returns a function, that, as long as it continues to be invoked, will not
                 // be triggered. The function will be called after it stops being called for
                 // N milliseconds.
                 debounce: function(func, wait) {
-                    //ANTN.util._.debounce:
+                    //ANT.util._.debounce:
                     var timeout;
                     return function() {
                         var context = this, args = arguments;
@@ -3026,11 +3026,11 @@ function antenna($A){
                 // Returns a function, that, when invoked, will only be triggered at most once
                 // during a given window of time.
                 throttle: function(func, wait) {
-                    //ANTN.util._.throttle:
+                    //ANT.util._.throttle:
 
                     //fake the underscore stuff
                     var _ = {};
-                    _.debounce = ANTN.util._.debounce;
+                    _.debounce = ANT.util._.debounce;
 
                     var context, args, timeout, throttling, more;
                     var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
@@ -3052,7 +3052,7 @@ function antenna($A){
                     };
                 },
                 once: function(func) {
-                    //ANTN.util._.once:
+                    //ANT.util._.once:
                     var ran = false, memo;
                     return function() {
                         if (ran) return memo;
@@ -3064,7 +3064,7 @@ function antenna($A){
                 }
             },
             getQueryParams: function(optQueryString) {
-                //ANTN.util.getQueryParams:
+                //ANT.util.getQueryParams:
 
                 //thanks: http://stackoverflow.com/a/2880929/1289255
                 //I haven't verfied that this is 100% perfect for every url case, but it's solid.
@@ -3101,28 +3101,28 @@ function antenna($A){
                 return hrefQuery;
             },
             createGuid: function() {
-                //ANTN.util.createGuid
+                //ANT.util.createGuid
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
             },
             killSessions: function() {
-                //ANTN.util.killSessions
+                //ANT.util.killSessions
                 localStorage.removeItem('ant_sts');
                 localStorage.removeItem('ant_lts');
-                ANTN.user.sts = null;
-                ANTN.user.lts = null;
+                ANT.user.sts = null;
+                ANT.user.lts = null;
             },
             activeAB: function() {
-                //ANTN.util.activeAB
+                //ANT.util.activeAB
 
                 var isActive = true;
                 var ant_ab = JSON.parse( localStorage.getItem('ant_ab') );  // ab test candidate.  true = sees Antenna
 
-                if( ANTN.group.ab_test_impact === true && (!ant_ab || new Date().getTime() > ant_ab.expires) ) {
+                if( ANT.group.ab_test_impact === true && (!ant_ab || new Date().getTime() > ant_ab.expires) ) {
                     // calculate whether or not they are in the active pool
-                    var p=(10*ANTN.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
+                    var p=(10*ANT.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
 
                     // generate a random number.  if the number is lower than P, they will NOT see the widget
                     if ( Math.floor(Math.random() * 1000 ) <= p ) {
@@ -3144,13 +3144,13 @@ function antenna($A){
                 return isActive;
             },
             checkSessions: function() {
-                //ANTN.util.checkSessions
+                //ANT.util.checkSessions
                 var ant_sts = JSON.parse( localStorage.getItem('ant_sts') );  // short term session
                 var ant_lts = localStorage.getItem('ant_lts'); // long term session
 
                 // check/set session localStorages
                 if( !ant_sts || new Date().getTime() > ant_sts.expires ) {
-                    var short_session_guid = ANTN.user.sts = ANTN.util.createGuid();
+                    var short_session_guid = ANT.user.sts = ANT.util.createGuid();
                     var short_session_expiretime = new Date();
                     var minutes = 15;
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
@@ -3162,21 +3162,21 @@ function antenna($A){
                     // $.cookie('ant_sts', short_session_guid, { expires: short_session_expiretime });
                 } else {
 
-                    ANTN.user.sts = ant_sts.guid;
+                    ANT.user.sts = ant_sts.guid;
 
                     // lets extend the session time 
                     var minutes = 10;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
-                    // $.clog('rs sts 2', ANTN.user.sts );
-                    // $.cookie('ant_sts', ANTN.user.sts, { expires: short_session_expiretime });
+                    // $.clog('rs sts 2', ANT.user.sts );
+                    // $.cookie('ant_sts', ANT.user.sts, { expires: short_session_expiretime });
 
-                    var new_ant_sts = {guid: ANTN.user.sts, expires: short_session_expiretime.getTime() }
+                    var new_ant_sts = {guid: ANT.user.sts, expires: short_session_expiretime.getTime() }
                     localStorage.setItem('ant_sts', JSON.stringify(new_ant_sts) );
                 }
 
                 if( !ant_lts ) {
-                    var long_session_guid = ANTN.user.lts = ANTN.util.createGuid();
+                    var long_session_guid = ANT.user.lts = ANT.util.createGuid();
                     // var long_session_expiretime = new Date();
                     // var days = 180;
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
@@ -3186,39 +3186,39 @@ function antenna($A){
                     // var new_ant_lts = {guid: long_session_guid, expires: short_session_expiretime }
                     localStorage.setItem('ant_lts', long_session_guid );
                 } else {
-                    ANTN.user.lts = ant_lts;
-                    // $.clog('rs lts 2', ANTN.user.lts ); 
+                    ANT.user.lts = ant_lts;
+                    // $.clog('rs lts 2', ANT.user.lts ); 
 
                     //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
                     // lets extend the session time 
                     // var days = 180;
                     // var long_session_expiretime = new Date();
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
-                    // $.cookie('ant_lts', ANTN.user.long_session_guid, { expires: long_session_expiretime });
+                    // $.cookie('ant_lts', ANT.user.long_session_guid, { expires: long_session_expiretime });
                 }
             }
         },
         debug: function(){
-            window.ANTN = window.ANTNENNAIS;
-            window.$ANTN = $ANTN;
+            window.ANT = window.ANTENNAIS;
+            window.$ANT = $ANT;
             window.$A = $A;
         },
         toggle: function(){
             $A('body').toggleClass('no-ant');
         },
         getLastEvent: function() {
-            if (ANTN.group.premium == true) {
+            if (ANT.group.premium == true) {
                 return {
-                    'event':(ANTN.events.lastEvent) ? ANTN.events.lastEvent:'',
-                    'value':(ANTN.events.lastValue) ? ANTN.events.lastValue:'',
-                    'supplementary':(ANTN.events.lastSupplementary) ? ANTN.events.lastSupplementary:{}
+                    'event':(ANT.events.lastEvent) ? ANT.events.lastEvent:'',
+                    'value':(ANT.events.lastValue) ? ANT.events.lastValue:'',
+                    'supplementary':(ANT.events.lastSupplementary) ? ANT.events.lastSupplementary:{}
                 };
             }
         },
         session: {
             alertBar: {
                 make: function( whichAlert, data) {
-                    // ANTN.session.alertBar.make:
+                    // ANT.session.alertBar.make:
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects:
                     /*
@@ -3238,20 +3238,20 @@ function antenna($A){
                         $msg1 = $('<h1>Shared with <span>Antenna</span></h1>');
 
                         if ( $('img[ant-hash="'+data.container_hash+'"]').length == 1 ) {
-                            $msg2 = $('<div><strong class="reactionText">'+ANTN.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+ANT.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 ' <a class="ant_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
                                 ' <strong class="seeItLinkText ant_blue">Show it on the page</strong></a></div>');
                         } else {
                             //put a better message here
-                            $msg2 = $('<div><strong class="reactionText">'+ANTN.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+ANT.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 '<strong>"</strong><em>' + decodedContent.substr(0,140) + '...</em><strong>"</strong>'+
                                 '<br /><strong class="seeItLinkText"><a class="ant_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
                         $msg2.find('a.ant_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
-                            // ANTN.session.alertBar.close();
+                            // ANT.session.alertBar.close();
                             setTimeout(function(){
-                                ANTN.session.revealSharedContent(data);
+                                ANT.session.revealSharedContent(data);
                             }, 200);
                         });
                     }
@@ -3259,15 +3259,15 @@ function antenna($A){
                         //put a better message here
                         // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+ANTN_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" /> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" /> icons.</div>');
 
                         $msg2.find('a.ant_show_more_pins').click( function() {
-                            ANTN.actions.summaries.showLessPopularIndicators();
+                            ANT.actions.summaries.showLessPopularIndicators();
                             $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
                         });
                     }
                     if (typeof $msg1 != "undefined" ) {
-                        $pinIcon = $('<img src="'+ANTN_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />');
+                        $pinIcon = $('<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />');
 
                         var $alertContent = $('<div class="ant_alert_box ant ant_' + whichAlert + '" />');
 
@@ -3279,7 +3279,7 @@ function antenna($A){
 
                         $('#ant_sandbox').append( $alertContent );
                         $('div.ant_alert_box.ant_'+whichAlert).find('.ant_alert_box_x').click( function() {
-                            ANTN.session.alertBar.close( whichAlert );
+                            ANT.session.alertBar.close( whichAlert );
                         });
 
                         // TODO put this back in
@@ -3287,18 +3287,18 @@ function antenna($A){
                     }
                 },
                 close: function( whichAlert ) {
-                    //ANTN.session.alertBar.close:
+                    //ANT.session.alertBar.close:
                     $('div.ant_alert_box.ant_'+whichAlert).remove();
 
                     //brute force for now -
                     //if they click the X we need this;
                     $('div.ant_indicator_for_media').hide();
-                    // ANTN.actions.indicators.utils.borderHilites.disengageAll();
+                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        ANTN_baseUrl + "/static/xdm.html",
+                        ANT_baseUrl + "/static/xdm.html",
                         window.frames['ant-xdm-hidden']
                     );
                 }
@@ -3311,8 +3311,8 @@ function antenna($A){
 
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
                     $container.addClass('ant_shared');
-                    ANTN.actions.indicators.utils.updateContainerTracker(hash);
-                    // ANTN.actions.indicators.utils.borderHilites.engage(hash, true);
+                    ANT.actions.indicators.utils.updateContainerTracker(hash);
+                    // ANT.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -3353,25 +3353,25 @@ function antenna($A){
                     // quick fix
                     // todo  - do this better later;
                     var containerHash = data.container_hash;
-                    var pageHasContainer = !! ANTN.containers[containerHash];
+                    var pageHasContainer = !! ANT.containers[containerHash];
                     if (!pageHasContainer){
                         return;
                     }
                     
-                    ANTN.session.alertBar.make('fromShareLink', data);
+                    ANT.session.alertBar.make('fromShareLink', data);
                     return true; //could return something more useful if we need it.
                 }
             },
             getUser: function(args, callback) {
                 if ( callback && args ) {
-                    ANTN.session.receiveMessage( args, callback );
+                    ANT.session.receiveMessage( args, callback );
                 } else if ( callback ) {
-                    ANTN.session.receiveMessage( false, callback );
+                    ANT.session.receiveMessage( false, callback );
                 }
 
                 $.postMessage(
                     "getUser",
-                    ANTN_baseUrl + "/static/xdm.html",
+                    ANT_baseUrl + "/static/xdm.html",
                     window.frames['ant-xdm-hidden']
                 );
             },
@@ -3380,14 +3380,14 @@ function antenna($A){
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and localStorage
-                        ANTN.session.killUser();
+                        ANT.session.killUser();
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
                     break;
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
-                        ANTN.session.showLoginPanel( args, callback );
+                        ANT.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
                     break;
@@ -3397,16 +3397,16 @@ function antenna($A){
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
-                        if ( typeof ANTN.user.user_type != "undefined" && ANTN.user.user_type == "antenna") {
-                            ANTN.session.showLoginPanel( args, callback );
+                        if ( typeof ANT.user.user_type != "undefined" && ANT.user.user_type == "antenna") {
+                            ANT.session.showLoginPanel( args, callback );
                         } else {
                             // the token is out of sync.  could be a mistake or a hack.
-                            ANTN.session.receiveMessage( args, callback );
-                            // ANTN.session.showLoginPanel( args, callback );
+                            ANT.session.receiveMessage( args, callback );
+                            // ANT.session.showLoginPanel( args, callback );
                             $.postMessage(
                                 "reauthUser",
                                 // "killUser",
-                                ANTN_baseUrl + "/static/xdm.html",
+                                ANT_baseUrl + "/static/xdm.html",
                                 window.frames['ant-xdm-hidden']
                             );
                         }
@@ -3416,15 +3416,15 @@ function antenna($A){
                 }
             },
             createXDMframe: function() {
-                ANTN.session.receiveMessage({}, function() {
-                    ANTN.util.userLoginState();
+                ANT.session.receiveMessage({}, function() {
+                    ANT.util.userLoginState();
                 });
 
-                var iframeUrl = ANTN_baseUrl + "/static/xdm.html",
+                var iframeUrl = ANT_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                bookmarklet = ( ANTN.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
-                $xdmIframe = $('<iframe id="ant-xdm-hidden" name="ant-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANTN.group.id+'&group_name='+encodeURIComponent(ANTN.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                bookmarklet = ( ANT.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
+                $xdmIframe = $('<iframe id="ant-xdm-hidden" name="ant-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+encodeURIComponent(ANT.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
                 $('#ant_sandbox').append( $xdmIframe );
 
@@ -3432,7 +3432,7 @@ function antenna($A){
                 // this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             receiveMessage: function(args, callbackFunction) {
                 //args is passed through this function into the callback as a parameter.
@@ -3449,11 +3449,11 @@ function antenna($A){
 
 
                                 for ( var i in message.data ) {
-                                    ANTN.user = ANTN.user || {};
+                                    ANT.user = ANT.user || {};
                                     if ( i == "user_boards" ) {
-                                        ANTN.user.user_boards = $.evalJSON( message.data[i] );
+                                        ANT.user.user_boards = $.evalJSON( message.data[i] );
                                     } else {
-                                        ANTN.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
+                                        ANT.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                     }
                                 }
 
@@ -3463,7 +3463,7 @@ function antenna($A){
                                     if(!args.kind && args.aWindow){
                                         args.kind = $(args.aWindow).data('kind');
                                     }
-                                    args.user = ANTN.user;
+                                    args.user = ANT.user;
                                     callbackFunction(args);
                                     callbackFunction = null;
                                 }
@@ -3472,62 +3472,62 @@ function antenna($A){
                                     callbackFunction = null;
                                 }
 
-                                ANTN.util.userLoginState();
+                                ANT.util.userLoginState();
 
                             } else if ( message.status == "xdm loaded" ) {
-                                ANTN.group.xdmLoaded = true;
-                                ANTN.events.fireEventQueue();
+                                ANT.group.xdmLoaded = true;
+                                ANT.events.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
                                 $('div.ant-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
-                                clearInterval( ANTN.checkingBoardWindow );
+                                clearInterval( ANT.checkingBoardWindow );
                                 $('div.ant-board-create-div').remove();
                             } else if ( message.status == "getUserLoginState" ) {
-                                ANTN.session.getUser();
+                                ANT.session.getUser();
 
                                 //I would think this needs to get added as a callback to the function above, but looks like we don't need it.
-                                // ANTN.util.userLoginState();
+                                // ANT.util.userLoginState();
 
                                 $('#ant_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {
-                                    ANTN.session.showLoginPanel( args, callbackFunction );
+                                    ANT.session.showLoginPanel( args, callbackFunction );
                                 } else {
-                                    ANTN.session.showLoginPanel( args );
+                                    ANT.session.showLoginPanel( args );
                                 }
                             } else if ( message.status == "close login panel" ) {
-                                ANTN.util.userLoginState();
+                                ANT.util.userLoginState();
                                 $('#ant_loginPanel').remove(); // little brute force, maybe should go elsewhere?
                                 $('div.ant-summary div.ant_info').html('<em>You\'re logged in!  Try your last reaction again.');
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
                                 $('#ant_loginPanel div.ant_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             // } else if ( message.status == "educate user" ) {
-                                // ANTN.session.alertBar.make('educateUser');
+                                // ANT.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
-                                    ANTN.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
+                                    ANT.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
                                 }
                                 // TODO sharedLink[6] is SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                                ANTN.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
+                                ANT.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
                             }
                         }
                     },
-                    ANTN_baseUrl
+                    ANT_baseUrl
                 );
             },
             login: function() {},
             checkForMaxInteractions: function(){
-                ANTN.user = ANTN.user || {};
-                var isTempUser = !ANTN.user.user_type
-                if ( isTempUser && ANTN.user.num_interactions && ANTN.user.num_interactions >= ANTN.group.temp_interact ) {
+                ANT.user = ANT.user || {};
+                var isTempUser = !ANT.user.user_type
+                if ( isTempUser && ANT.user.num_interactions && ANT.user.num_interactions >= ANT.group.temp_interact ) {
                   return true;
                 }
                 return false;
             },
             showLoginPanel: function(args, callback) {
-             // ANTN.session.showLoginPanel
+             // ANT.session.showLoginPanel
 
                 $('.ant_rewritable').removeClass('ant_rewritable');
 
@@ -3551,7 +3551,7 @@ function antenna($A){
                     }
 
 
-                    var $aWindow = ANTN.aWindow.draw({
+                    var $aWindow = ANT.aWindow.draw({
                         coords:coords,
                         id: "ant_loginPanel",
                         // pnlWidth:360,
@@ -3561,7 +3561,7 @@ function antenna($A){
                     });
 
 
-                    ANTN.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
                     if ( args ) $aWindow.data( 'args', args );
@@ -3569,35 +3569,35 @@ function antenna($A){
 
                     // create the iframe containing the login panel
                     // var $loginHtml = $('<div class="ant_login" />'),
-                    var iframeUrl = ANTN_baseUrl + "/static/fb_login.html",
+                    var iframeUrl = ANT_baseUrl + "/static/fb_login.html",
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
-                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANTN.group.id+'&group_name='+ANTN.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
                     }
-                    var $header = ANTN.aWindow.makeHeader( h1_text );
+                    var $header = ANT.aWindow.makeHeader( h1_text );
                     $aWindow.find('.ant_header').replaceWith($header);
-                    ANTN.aWindow.hideFooter($aWindow);
+                    ANT.aWindow.hideFooter($aWindow);
                     $aWindow.find('div.ant_body_wrap').append('<div class="ant_body" />').append( $loginIframe );
 
-                    // ANTN.events.track( 'show_login' );
+                    // ANT.events.track( 'show_login' );
                 }
             },
             killUser: function() {
-                ANTN.user = {};
-                ANTN.util.killSessions();
+                ANT.user = {};
+                ANT.util.killSessions();
                 $.postMessage(
                     "killUser",
-                    ANTN_baseUrl + "/static/xdm.html",
+                    ANT_baseUrl + "/static/xdm.html",
                     window.frames['ant-xdm-hidden']
                 );
             },
             aWindowUserMessage: {
                 show:  function(args) {
-                    //ANTN.session.aWindowUserMessage.show:
+                    //ANT.session.aWindowUserMessage.show:
                     var $aWindow = args.aWindow;
                     var interactionInfo = args.interactionInfo;
 
@@ -3624,11 +3624,11 @@ function antenna($A){
 
                             case "tempUser":
                                 //for now, just ignore this
-                                var num_interactions_left = ANTN.group.temp_interact - parseInt( args.num_interactions, 10 ),
+                                var num_interactions_left = ANT.group.temp_interact - parseInt( args.num_interactions, 10 ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
                                 $loginLink.click( function() {
-                                    ANTN.session.showLoginPanel( args );
+                                    ANT.session.showLoginPanel( args );
                                 });
 
                                 // no t()
@@ -3657,16 +3657,16 @@ function antenna($A){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+ANTN_baseUrl+"' target='_blank'>antenna.is</a></strong>";
+                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+ANT_baseUrl+"' target='_blank'>antenna.is</a></strong>";
                                 }
 
                                 var click_args = args;
                                 if ( $aWindow.find('div.ant_aWindow_message_tempUserMsg').text().length > 0 ) {
                                     $inlineTempMsg = $('<div />');
                                     // no t()
-                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $aWindow.find('div.ant_aWindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+ANTN_staticUrl+'widget/images/fb-login_to_antenna.png" alt="Connect with Facebook" /></a>');
+                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $aWindow.find('div.ant_aWindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+ANT_staticUrl+'widget/images/fb-login_to_antenna.png" alt="Connect with Facebook" /></a>');
                                     $inlineTempMsg.find('a').click( function() {
-                                        ANTN.session.showLoginPanel( click_args );
+                                        ANT.session.showLoginPanel( click_args );
                                     });
 
                                 }
@@ -3703,7 +3703,7 @@ function antenna($A){
                     }
                 },
                 hide: function($aWindow) {
-                    //ANTN.session.aWindowUserMessage.hide:
+                    //ANT.session.aWindowUserMessage.hide:
                     if ( $aWindow ) {
 
                         var $aWindowMsgDiv = $('div.ant_aWindow_message');
@@ -3737,64 +3737,64 @@ function antenna($A){
             }
         },
         actions: {
-            //ANTN.actions:
+            //ANT.actions:
             aboutAntenna: function() {
             },
             init: function(){
-                //ANTN.actions.init:
+                //ANT.actions.init:
                 var that = this;
-                $ANTN = $(ANTN);
+                $ANT = $(ANT);
                 window.antenna_extend_per_container = window.antenna_extend_per_container || {};
-                $ANTN.queue('initAjax', function(next){
-                    ANTN.util.checkSessions();
-                    that.initGroupData(ANTN.group.short_name);
+                $ANT.queue('initAjax', function(next){
+                    ANT.util.checkSessions();
+                    that.initGroupData(ANT.group.short_name);
                     //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    //run this before initPageData.  There was a race condition
                    that.initEnvironment();
                    //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.handleDeprecated();
                    //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.initSeparateCtas();
                    //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.initHTMLAttributes();
                    //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                     that.initPageData();
                     //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
-                    ANTN.actions.runPostPageInit();
+                $ANT.queue('initAjax', function(next){
+                    ANT.actions.runPostPageInit();
 
                     // this will check for FB login status, too, and set user data
-                    ANTN.session.createXDMframe();
+                    ANT.session.createXDMframe();
                     //next fired on ajax success
                 });
-                $ANTN.queue('initAjax', function(next){
-                   ANTN.util.checkForSelectedTextAndLaunchRindow();
-                   ANTN.util.initPublicEvents();
+                $ANT.queue('initAjax', function(next){
+                   ANT.util.checkForSelectedTextAndLaunchRindow();
+                   ANT.util.initPublicEvents();
                 });
-                $ANTN.queue('initAjax', function(next){
-                   ANTN.util.initTouchBrowserSettings();
+                $ANT.queue('initAjax', function(next){
+                   ANT.util.initTouchBrowserSettings();
                 });
 
                 //start the dequeue chaindel
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
 
             },
             initGroupData: function(groupShortName){
-                // request the ANTN Group Data
+                // request the ANT Group Data
 
                 $.ajax({
-                    url: ANTN_baseUrl+"/api/settings/",
+                    url: ANT_baseUrl+"/api/settings/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -3804,48 +3804,48 @@ function antenna($A){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = (ANTN.groupSettings) ? ANTN.groupSettings.getCustomSettings():{};
-                        ANTN.group = $.extend({}, ANTN.group.defaults, group_settings, custom_group_settings );
+                        var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
+                        ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
 
                         var a_or_b_or_not = '';
-                        if ( ANTN.group.ab_test_impact === true ) {
-                            a_or_b_or_not = ( ANTN.util.activeAB() ) ? 'A':'B';
+                        if ( ANT.group.ab_test_impact === true ) {
+                            a_or_b_or_not = ( ANT.util.activeAB() ) ? 'A':'B';
                         }
 
-                        ANTN.events.trackEventToCloud({
+                        ANT.events.trackEventToCloud({
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
-                            page_id: ANTN.util.getPageProperty('id')
+                            page_id: ANT.util.getPageProperty('id')
                         });
 
                         // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof ANTN.group.blessed_tags != 'undefined' ) {
+                        if ( typeof ANT.group.blessed_tags != 'undefined' ) {
                             // use .slice() to copy by value
                             // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            ANTN.group.default_reactions = ANTN.group.blessed_tags.slice();
-                            delete ANTN.group.blessed_tags;
+                            ANT.group.default_reactions = ANT.group.blessed_tags.slice();
+                            delete ANT.group.blessed_tags;
                         }
 
-                        if (ANTN.group.hideOnMobile === true && isTouchBrowser) {
+                        if (ANT.group.hideOnMobile === true && isTouchBrowser) {
                             return false;
                         }
 
-                        ANTN.group.anno_whitelist += ',div.ant_br_replaced';
+                        ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANTN.group.no_ant).each( function() {
+                        $(ANT.group.no_ant).each( function() {
                             var $this = $(this);
                             $this.addClass('no-ant');
                             $this.find('img').addClass('no-ant');
                         });
 
                         // setup the active sections + anno_whitelist (i.e. allowed tags)
-                        if ( ANTN.group.active_sections == "" ) {
-                            ANTN.group.active_sections = "body";
+                        if ( ANT.group.active_sections == "" ) {
+                            ANT.group.active_sections = "body";
                         }
 
-                        var active_sections = ANTN.group.active_sections.split(','),
+                        var active_sections = ANT.group.active_sections.split(','),
                             active_sections_with_anno_whitelist = "",
-                            anno_whitelist = ANTN.group.anno_whitelist.split(',');
+                            anno_whitelist = ANT.group.anno_whitelist.split(',');
                         
                         
                         $.each(active_sections, function(active_idx, active_selector) {
@@ -3866,16 +3866,16 @@ function antenna($A){
                             }
                         });
 
-                        ANTN.group.active_sections_with_anno_whitelist = active_sections_with_anno_whitelist;
+                        ANT.group.active_sections_with_anno_whitelist = active_sections_with_anno_whitelist;
                         
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( ANTN.group.custom_css !== "" ) {
-                            $('head').append( $('<style type="text/css">' + ANTN.group.custom_css + '</style>') );
+                        if ( ANT.group.custom_css !== "" ) {
+                            $('head').append( $('<style type="text/css">' + ANT.group.custom_css + '</style>') );
                         }
 
-                        $ANTN.dequeue('initAjax');
+                        $ANT.dequeue('initAjax');
 
                     },
                     error: function(response) {
@@ -3884,23 +3884,23 @@ function antenna($A){
                 });
             },
             initPageData: function(){
-                var queryStr = ANTN.util.getQueryStrFromUrl(ANTN.engageScriptSrc);
-                ANTN.engageScriptParams = ANTN.util.getQueryParams(queryStr);
+                var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
+                ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                ANTN.group.useDefaultSummaryBar = (
-                    ANTN.engageScriptParams.bookmarklet &&
+                ANT.group.useDefaultSummaryBar = (
+                    ANT.engageScriptParams.bookmarklet &&
                     !$('.ant-page-summary').length &&
-                    // !$(ANTN.group.post_selector).length &&
-                    !$(ANTN.group.summary_widget_selector).length
+                    // !$(ANT.group.post_selector).length &&
+                    !$(ANT.group.summary_widget_selector).length
                 );
                 
-                if (ANTN.group.useDefaultSummaryBar){
+                if (ANT.group.useDefaultSummaryBar){
                     //add a class defaultSummaryBar to show that this is our added ant-page-summary
                     //and not a publisher added one.
                     $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar"/>').appendTo('body');
                 }
                 
-                // ANTN.session.educateUser(); //this function has changed now
+                // ANT.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -3923,20 +3923,20 @@ function antenna($A){
 
                 // if multiple posts, add additional "pages"
                 if (   
-                        ANTN.group.post_selector !== "" &&
-                        ANTN.group.post_href_selector !== "" && 
-                        ANTN.group.summary_widget_selector !== ""
+                        ANT.group.post_selector !== "" &&
+                        ANT.group.post_href_selector !== "" && 
+                        ANT.group.summary_widget_selector !== ""
                     ) {
 
-                        var $posts = $(ANTN.group.post_selector),
+                        var $posts = $(ANT.group.post_selector),
                             num_posts = $posts.length;
-                        //if $(ANTN.group.post_selector).length is 0, this will just do nothing
+                        //if $(ANT.group.post_selector).length is 0, this will just do nothing
                         $posts.each( function(){
                             // var key = pagesArr.length;
                             var $post = $(this);
-                            var $post_href = $post.find(ANTN.group.post_href_selector);
+                            var $post_href = $post.find(ANT.group.post_href_selector);
 
-                            var $summary_widget = $post.find(ANTN.group.summary_widget_selector).eq(0);
+                            var $summary_widget = $post.find(ANT.group.summary_widget_selector).eq(0);
 
                             function nearWindow($thisPost) {
                                 var offsets = $thisPost.offset();
@@ -3974,7 +3974,7 @@ function antenna($A){
                                     }
                                 }
 
-                                var urlHash = ANTN.util.md5.hex_md5(url);
+                                var urlHash = ANT.util.md5.hex_md5(url);
                                 if ( !$post.hasAttr('ant-page-container') ) {
                                     $post.attr( 'ant-page-container', 'true' ).attr('ant-page-key',urlHash);
                                 }
@@ -3983,7 +3983,7 @@ function antenna($A){
                                 urlsArr.push(url);
 
                                 thisPage = {
-                                    group_id: parseInt(ANTN.group.id, 10),
+                                    group_id: parseInt(ANT.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text()
@@ -4000,12 +4000,12 @@ function antenna($A){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                var pageUrl = ANTN.util.getPageProperty('page_url');
+                var pageUrl = ANT.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     if ( !$( 'body' ).hasAttr('ant-page-checked') ) {
-                        canonical_url = ANTN.util.getPageProperty('canonical_url');
-                        title = ANTN.util.getPageProperty('title');
+                        canonical_url = ANT.util.getPageProperty('canonical_url');
+                        title = ANT.util.getPageProperty('title');
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
@@ -4014,17 +4014,17 @@ function antenna($A){
                         // }
 
                         thisPage = {
-                            group_id: parseInt(ANTN.group.id, 10),
+                            group_id: parseInt(ANT.group.id, 10),
                             url: pageUrl,
                             canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                             title: title
                         };
 
-                        ANTN.group.thisPage = thisPage;
+                        ANT.group.thisPage = thisPage;
 
                         pagesArr.push(thisPage);
                         key = pagesArr.length-1;
-                        // key = ANTN.util.md5.hex_md5(pageUrl);
+                        // key = ANT.util.md5.hex_md5(pageUrl);
                         pageDict[key] = thisPage;
 
                         if ( !$( 'body' ).hasAttr('ant-page-container') ) {
@@ -4034,7 +4034,7 @@ function antenna($A){
                             if ( $('.ant-page-summary').length == 1 ) {
                                 $('.ant-page-summary').attr('ant-page-widget-key',key);
                             } else {
-                                var $widget_key_last = $( 'body' ).find(ANTN.group.summary_widget_selector).eq(0);
+                                var $widget_key_last = $( 'body' ).find(ANT.group.summary_widget_selector).eq(0);
                                 // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
                                 if ( $widget_key_last.attr('ant-page-widget-key') != "0" ) {
                                     $widget_key_last.attr('ant-page-widget-key', key);
@@ -4052,17 +4052,17 @@ function antenna($A){
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
                     //might not want to send canonical, or, send it separately if/only if it's different than URL
                     $.ajax({
-                        url: ANTN_baseUrl+"/api/page/",
+                        url: ANT_baseUrl+"/api/page/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
-                            // ANTN.events.track( 'load' );
+                            // ANT.events.track( 'load' );
 
                             // var load_event_value = '',
-                            //     pages_count = $(ANTN.group.post_selector).length;
-                            // if (ANTN.group.useDefaultSummaryBar){
+                            //     pages_count = $(ANT.group.post_selector).length;
+                            // if (ANT.group.useDefaultSummaryBar){
                             //     load_event_value = 'def';
                             // } else {
                             //     if (pages_count === 1) {
@@ -4075,7 +4075,7 @@ function antenna($A){
                             // }
 
                             var load_event_value = '';
-                            if (ANTN.group.useDefaultSummaryBar){
+                            if (ANT.group.useDefaultSummaryBar){
                                 load_event_value = 'def';
                             } else {
                                 if (response.data.length === 1) {
@@ -4090,18 +4090,18 @@ function antenna($A){
                             $.each( response.data, function(idx,page){
                                 //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                                 page.url = pageDict[key].url;
-                                page.key = ANTN.util.md5.hex_md5(page.url);
-                                ANTN.actions.pages.save(page.id, page);
-                                ANTN.actions.pages.initPageContainer(page.id);
+                                page.key = ANT.util.md5.hex_md5(page.url);
+                                ANT.actions.pages.save(page.id, page);
+                                ANT.actions.pages.initPageContainer(page.id);
                             });
 
-                            ANTN.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: 'wl',
                                 event_value: load_event_value,
-                                page_id: ANTN.util.getPageProperty('id')
+                                page_id: ANT.util.getPageProperty('id')
                             });
 
-                            $ANTN.dequeue('initAjax');
+                            $ANT.dequeue('initAjax');
                         },
                         error: function(response) {
                             //for now, ignore error and carry on with mockup
@@ -4111,29 +4111,29 @@ function antenna($A){
 
             },
             runPostPageInit: function(){
-                //ANTN.actions.runPostPageInit:
+                //ANT.actions.runPostPageInit:
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackListFilter = (ANTN.group.img_blacklist&&ANTN.group.img_blacklist!="") ? ':not('+ANTN.group.img_blacklist+')':'';
+                var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
 
                 if(isTouchBrowser){
                     // init the "indicators" for media objects, on mobile only.
                     // so that the image call-to-action is present and populated
-                    // $(ANTN.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
+                    // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
                     // ensure each text node is hashed and has indicator so that we can engage it
-                    $( ANTN.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
-                        ANTN.actions.indicators.init( $(node).attr('ant-hash') );
+                    $( ANT.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
+                        ANT.actions.indicators.init( $(node).attr('ant-hash') );
                     });
 
-                    $(ANTN.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANTN.group.anno_whitelist).each( function() {
-                        ANTN.actions.indicators.init( $(this).attr('ant-hash') );
+                    $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                        ANT.actions.indicators.init( $(this).attr('ant-hash') );
                     });
 
-                    if ( !localStorage.getItem('hideDoubleTapMessage') && !ANTN.group.hideDoubleTapMessage ) {
+                    if ( !localStorage.getItem('hideDoubleTapMessage') && !ANT.group.hideDoubleTapMessage ) {
                         // no t()
-                        var double_tap_message = (ANTN.group.doubleTapMessage) ? ANTN.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+ANTN.t('close')+'</a>',
-                            double_tap_message_position = (ANTN.group.doubleTapMessagePosition) ? 'ant_'+ANTN.group.doubleTapMessagePosition : 'ant_bottom',
+                        var double_tap_message = (ANT.group.doubleTapMessage) ? ANT.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+ANT.t('close')+'</a>',
+                            double_tap_message_position = (ANT.group.doubleTapMessagePosition) ? 'ant_'+ANT.group.doubleTapMessagePosition : 'ant_bottom',
                             $doubleTapMessage = $('<div class="ant ant_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#ant_sandbox');
 
@@ -4144,15 +4144,15 @@ function antenna($A){
                         }).appendTo( $sandbox );
                     }
 
-                }else if ( ANTN.util.activeAB() )  {
-                    $(ANTN.group.active_sections)
+                }else if ( ANT.util.activeAB() )  {
+                    $(ANT.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
                             var $this = $(this);
                             
                             var hash = $this.data('hash');
 
-                                ANTN.actions.indicators.utils.updateContainerTrackers();
+                                ANT.actions.indicators.utils.updateContainerTrackers();
 
                             if ( $this.closest('.no-ant').length ) {
                                 return;
@@ -4167,7 +4167,7 @@ function antenna($A){
 
                                 if(!hasBeenHashed && !isBlacklisted){
 
-                                    var hashListsByPageId = ANTN.actions.hashNodes( $(this) );
+                                    var hashListsByPageId = ANT.actions.hashNodes( $(this) );
                                     //we expect just the one here, so just get that one.
                                     var hash;
                                     $.each( hashListsByPageId, function(page_id, hashArray) {
@@ -4175,11 +4175,11 @@ function antenna($A){
                                     });
                                     if(!hash){
                                         //i think there should always be a hash though
-                                        ANTN.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                                        ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                                         return;
                                     }
 
-                                    ANTN.actions.sendHashes( hashListsByPageId, function(){
+                                    ANT.actions.sendHashes( hashListsByPageId, function(){
                                         if( $this.hasClass('ant_live_hover') ){
                                             if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
                                                 $('#ant_indicator_' + hash).show();
@@ -4189,8 +4189,8 @@ function antenna($A){
                                     //these calls are redundant to the same calls in the callback above,
                                     //but this will make them show up right away,
                                     //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                                    // ANTN.actions.indicators.utils.borderHilites.update(hash);
-                                    // ANTN.actions.indicators.utils.borderHilites.engage(hash);
+                                    // ANT.actions.indicators.utils.borderHilites.update(hash);
+                                    // ANT.actions.indicators.utils.borderHilites.engage(hash);
 
                                 } else {
                                     var hash = $this.data('hash');
@@ -4198,10 +4198,10 @@ function antenna($A){
                                     $this.addClass('ant_live_hover');
                                     if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
                                         $('#ant_indicator_' + hash).show();
-                                        // ANTN.actions.indicators.utils.borderHilites.engage(hash);
+                                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
                                     }
 
-                                    ANTN.actions.content_nodes.init(hash, function(){});
+                                    ANT.actions.content_nodes.init(hash, function(){});
                                 }
 
                             }
@@ -4211,14 +4211,14 @@ function antenna($A){
                                 // hash = $this.data('hash');
 
                             // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
-                            if ( !$this.parents( ANTN.group.img_container_selectors ).length ) {
+                            if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
                     });
                 }
 
-                if (!ANTN.util.activeAB()) return;
-                ANTN.events.emit('antenna.hashed_nodes', 'complete', { });
+                if (!ANT.util.activeAB()) return;
+                ANT.events.emit('antenna.hashed_nodes', 'complete', { });
                 
                 function _mediaHoverOff( obj ) {
                     var $this = $(obj),
@@ -4238,34 +4238,34 @@ function antenna($A){
                     $('#ant_sandbox').addClass('isTouchBrowser');
                 }
 
-                // ANTN.util.checkSessions();
+                // ANT.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
                 $.each(page_attributes, function(idx, trait){
-                    if ( ANTN.group[trait+'_selector'] != 'undefined' && ANTN.group[trait+'_attribute'] != 'undefined' && $( ANTN.group[trait+'_selector'] ).length ){
-                        ANTN.group[trait] = '';
-                        $(ANTN.group[trait+'_selector']).each( function() {
-                            ANTN.group[trait] += $(this).attr(ANTN.group[trait+'_attribute']) + ',';
+                    if ( ANT.group[trait+'_selector'] != 'undefined' && ANT.group[trait+'_attribute'] != 'undefined' && $( ANT.group[trait+'_selector'] ).length ){
+                        ANT.group[trait] = '';
+                        $(ANT.group[trait+'_selector']).each( function() {
+                            ANT.group[trait] += $(this).attr(ANT.group[trait+'_attribute']) + ',';
                         });
-                        ANTN.group[trait] = ANTN.group[trait].substr(0, ANTN.group[trait].length-1);
+                        ANT.group[trait] = ANT.group[trait].substr(0, ANT.group[trait].length-1);
                     }
                 });
 
                 // setup a scroll event detector
                 /**/
 
-                var active_section_offsets = $(ANTN.group.active_sections+':eq(0)').offset();
-                ANTN.group.active_section_top = active_section_offsets.top;
-                ANTN.group.active_section_bottom = active_section_offsets.bottom;
-                ANTN.group.active_section_height = active_section_offsets.bottom - active_section_offsets.top;
-                ANTN.group.active_section_milestones = {
-                    '0':ANTN.group.active_section_top,
-                    '20':((ANTN.group.active_section_height/5)+ANTN.group.active_section_top),
-                    '40':((ANTN.group.active_section_height/5*2)+ANTN.group.active_section_top),
-                    '60':((ANTN.group.active_section_height/5*3)+ANTN.group.active_section_top),
-                    '80':((ANTN.group.active_section_height/5*4)+ANTN.group.active_section_top),
-                    '100':ANTN.group.active_section_bottom,
+                var active_section_offsets = $(ANT.group.active_sections+':eq(0)').offset();
+                ANT.group.active_section_top = active_section_offsets.top;
+                ANT.group.active_section_bottom = active_section_offsets.bottom;
+                ANT.group.active_section_height = active_section_offsets.bottom - active_section_offsets.top;
+                ANT.group.active_section_milestones = {
+                    '0':ANT.group.active_section_top,
+                    '20':((ANT.group.active_section_height/5)+ANT.group.active_section_top),
+                    '40':((ANT.group.active_section_height/5*2)+ANT.group.active_section_top),
+                    '60':((ANT.group.active_section_height/5*3)+ANT.group.active_section_top),
+                    '80':((ANT.group.active_section_height/5*4)+ANT.group.active_section_top),
+                    '100':ANT.group.active_section_bottom,
                     'fired':0
                     // 'fired_0':true,  // this should never fire
                     // 'fired_20':false,
@@ -4284,41 +4284,41 @@ function antenna($A){
                     //     var scrolltop = $(window).scrollTop();
                     //     var windowHeight = $(window).height();
 
-                    //     if ( ANTN.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > ANTN.group.active_section_milestones['100'] ) { ANTN.events.fireScrollEvent('100'); ANTN.group.active_section_milestones['fired'] = 100; }
-                    //     if ( ANTN.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > ANTN.group.active_section_milestones['80'] ) { ANTN.events.fireScrollEvent('80'); ANTN.group.active_section_milestones['fired'] = 80; }
-                    //     if ( ANTN.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > ANTN.group.active_section_milestones['40'] ) { ANTN.events.fireScrollEvent('40'); ANTN.group.active_section_milestones['fired'] = 40; }
-                    //     if ( ANTN.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > ANTN.group.active_section_milestones['60'] ) { ANTN.events.fireScrollEvent('60'); ANTN.group.active_section_milestones['fired'] = 60; }
-                    //     if ( ANTN.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANTN.group.active_section_milestones['20'] ) { ANTN.events.fireScrollEvent('20'); ANTN.group.active_section_milestones['fired'] = 20; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['100'] ) { ANT.events.fireScrollEvent('100'); ANT.group.active_section_milestones['fired'] = 100; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['80'] ) { ANT.events.fireScrollEvent('80'); ANT.group.active_section_milestones['fired'] = 80; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['40'] ) { ANT.events.fireScrollEvent('40'); ANT.group.active_section_milestones['fired'] = 40; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['60'] ) { ANT.events.fireScrollEvent('60'); ANT.group.active_section_milestones['fired'] = 60; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['20'] ) { ANT.events.fireScrollEvent('20'); ANT.group.active_section_milestones['fired'] = 20; }
                     // }, 250));
                     
-                    ANTN.actions.initPageData();
-                    // return ANTN.util._.throttle(
-                    //     ANTN.actions.initPageData,
+                    ANT.actions.initPageData();
+                    // return ANT.util._.throttle(
+                    //     ANT.actions.initPageData,
                     // 100
                     // );
                 });
 
-                var groupPageSelector = (ANTN.group.summary_widget_selector) ? ', '+ANTN.group.summary_widget_selector : '';
-                ANTN.events.recordEvents = $(".ant-page-summary" + groupPageSelector).length;
+                var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
+                ANT.events.recordEvents = $(".ant-page-summary" + groupPageSelector).length;
 
 
                 
                 // this does not seem to work!
                 // $(window).on('beforeunload.ant',function(event) {
-                    // ANTN.events.trackEventToCloud({
+                    // ANT.events.trackEventToCloud({
                     //     event_type: 'page_exit',
                     //     event_value: '',
-                    //     page_id: ANTN.util.getPageProperty('id')
+                    //     page_id: ANT.util.getPageProperty('id')
                     // });
                 // });
 
                 // Antenna Timer?  unsure
-                ANTN.util.setWindowInterval();
+                ANT.util.setWindowInterval();
 
-                ANTN.util.fixBodyBorderOffsetIssue();
+                ANT.util.fixBodyBorderOffsetIssue();
                 
-                if(!!ANTN.group.br_replace_scope_selector){
-                  ANTN.util.fixBrTags();
+                if(!!ANT.group.br_replace_scope_selector){
+                  ANT.util.fixBrTags();
                 }
 
                 //todo - move this stuff to a function
@@ -4344,7 +4344,7 @@ function antenna($A){
                     var currTop = parseInt( $antSandbox.css('top'), 10 );
                     var currLeft = parseInt( $antSandbox.css('left'), 10);
 
-                    ANTN.util.cssSuperImportant($antSandbox, {
+                    ANT.util.cssSuperImportant($antSandbox, {
                             left: (currLeft+bodyLeft) +'px',
                             top: (currTop+bodyTop)+'px'
                         }, true);
@@ -4366,7 +4366,7 @@ function antenna($A){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
                     //Todo: This should work in the future as well, but I want to look into it further.
                     setTimeout(function(){
-                        ANTN.actions.startSelectFromMouseUp(e);
+                        ANT.actions.startSelectFromMouseUp(e);
                     }, 1 );
                     //even 0 works, so I'm not worried about 1 being too low.
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
@@ -4378,15 +4378,15 @@ function antenna($A){
 
                         if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
                             // if ( $('#ant_loginPanel').length ) {
-                            //     ANTN.session.getUser(function() {
-                            //         ANTN.util.userLoginState();
+                            //     ANT.session.getUser(function() {
+                            //         ANT.util.userLoginState();
                             //     });
                             // }
-                            ANTN.actions.UIClearState();
+                            ANT.actions.UIClearState();
 
                             // if ( !isTouchBrowser ) {
                             $('div.ant_indicator_details_for_media').each( function() {
-                                ANTN.actions.containers.media.onDisengage( $(this).data('container') );
+                                ANT.actions.containers.media.onDisengage( $(this).data('container') );
                             });
                             // }
                         }
@@ -4394,8 +4394,8 @@ function antenna($A){
                     });
                 } else {
                     $(document).on('touchend.ant',function(e) {
-                        if (ANTN.util.bubblingEvents['dragging'] == true ) { return; }
-                        if (ANTN.util.bubblingEvents['touchend'] == false) {
+                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if (ANT.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
                             if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
@@ -4403,38 +4403,38 @@ function antenna($A){
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
                                 if ( !$mouse_target.hasAttr('ant-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
-                                    ANTN.actions.UIClearState();
+                                    ANT.actions.UIClearState();
                                 }
                             }
                         }
 
-                        ANTN.util.bubblingEvents['touchend'] = false;
+                        ANT.util.bubblingEvents['touchend'] = false;
                     });
 
                     // iphone drag fix
                     $(document).on('touchmove.ant',function(e) {
-                        ANTN.util.bubblingEvents['dragging'] = true;
+                        ANT.util.bubblingEvents['dragging'] = true;
                     });
                     $(document).on('touchstart.ant',function(e) {
-                        ANTN.util.bubblingEvents['dragging'] = false;
+                        ANT.util.bubblingEvents['dragging'] = false;
                     });
                 }
 
                 //bind an escape keypress to clear it.
                 $(document).on('keyup.ant', function(event) {
                     if (event.keyCode == '27') { //esc
-                        ANTN.actions.UIClearState();
+                        ANT.actions.UIClearState();
                     }
                 });
                 
-                $(window).resize(ANTN.util.throttledUpdateContainerTrackers());
+                $(window).resize(ANT.util.throttledUpdateContainerTrackers());
 
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             handleDeprecated: function() {
                 //ant-content-type ????  could be come ant-content-attributes="question"
                 // rewrite some deprecated Antenna attributes into their newer versions
-                if (!ANTN.util.activeAB()) {
+                if (!ANT.util.activeAB()) {
                     $('[ant-custom-display]').each( function() {
                         var $this = $(this);
                         $this.attr('ant-item', $this.attr('ant-custom-display') );
@@ -4447,19 +4447,19 @@ function antenna($A){
                         $this.removeAttr('ant-grid-for');
                     });
                 }
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             initSeparateCtas: function(){
-                // ANTN.initSeparateCtas
+                // ANT.initSeparateCtas
                 
-                if (ANTN.group.separate_cta && ANTN.util.activeAB() ) {
+                if (ANT.group.separate_cta && ANT.util.activeAB() ) {
                     var separateCtaCount = 0;
-                    $(ANTN.group.active_sections).find(ANTN.group.separate_cta).each( function(idx, node) {
+                    $(ANT.group.active_sections).find(ANT.group.separate_cta).each( function(idx, node) {
                         var $node = $(node),
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(ANTN.group.no_ant).length ) {return;}
+                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
                         if ( $node.hasAttr('ant-item') ) {
                             var antItem = $node.attr('ant-item');
                         } else {
@@ -4473,16 +4473,16 @@ function antenna($A){
                         //     $node.attr('ant-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANTN_staticUrl+'widget/images/blank.png" ></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANTN.t('your_reaction')+'</span></div> </div>');
+                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                         separateCtaCount++;
                     });
                 }
 
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
-                if (ANTN.util.activeAB()) {
+                if (ANT.util.activeAB()) {
                     $('[ant-reactions][ant-item]').each( function () {
                         var $this = $(this),
                             itemName = $this.attr('ant-item'),
@@ -4501,22 +4501,22 @@ function antenna($A){
                     });
                 }
 
-                $ANTN.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             reInit: function() {
-                // ANTN.actions.reInit:
-                ANTN.actions.hashCustomDisplayHashes();
+                // ANT.actions.reInit:
+                ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
                 // if (!isTouchBrowser) {
-                    //ANTN.actions.UIClearState:
+                    //ANT.actions.UIClearState:
                     // clear any errant tooltips
                     $('div.ant_twtooltip').remove();
 
-                    ANTN.aWindow.closeAll();
-                    ANTN.actionbar.closeAll();
-                    ANTN.actions.containers.media.disengageAll();
-                    // ANTN.actions.indicators.utils.borderHilites.disengageAll();
+                    ANT.aWindow.closeAll();
+                    ANT.actionbar.closeAll();
+                    ANT.actions.containers.media.disengageAll();
+                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     $('div.ant.ant_tag_details.ant_sbRollover').remove();
                     
                     if (!isTouchBrowser) { 
@@ -4528,23 +4528,23 @@ function antenna($A){
                     //clear a share alert if it exists - do this better later.
                     var shareBoxExists = $('.ant_fromShareLink').length;
                     if( shareBoxExists ){
-                        ANTN.session.alertBar.close( 'fromShareLink' );
+                        ANT.session.alertBar.close( 'fromShareLink' );
                     }
                 // } else {
 
                 // }
             },
             catchRangyErrors: function(errorMsg){
-                //ANTN.actions.catchRangyErrors:
+                //ANT.actions.catchRangyErrors:
 
                 //safe throw the errror.
-                ANTN.safeThrow(errorMsg);
+                ANT.safeThrow(errorMsg);
             },
             hashNodes: function( $node, nomedia ) {
-                //ANTN.actions.hashNodes:
+                //ANT.actions.hashNodes:
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" || (!ANTN.util.activeAB()) ) { return; }
+                if ( typeof $node==="undefined" || (!ANT.util.activeAB()) ) { return; }
 
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
@@ -4552,8 +4552,8 @@ function antenna($A){
                     {
                         kind: 'media',
                         $group: null,
-                        whiteList: ANTN.group.media_selector,
-                        filterParam: ANTN.group.active_sections + ' embed, ' + ANTN.group.active_sections + ' video, ' + ANTN.group.active_sections + ' object, ' + ANTN.group.active_sections + ' iframe',
+                        whiteList: ANT.group.media_selector,
+                        filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var body = this.src;
                             $(this).data({
@@ -4564,7 +4564,7 @@ function antenna($A){
                     {
                         kind: 'img',
                         $group: null,
-                        whiteList: ANTN.group.active_sections + ' img',
+                        whiteList: ANT.group.active_sections + ' img',
                         filterParam: 'img',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
@@ -4577,7 +4577,7 @@ function antenna($A){
                     {
                         kind: 'text',
                         $group: null,
-                        whiteList: ANTN.group.active_sections_with_anno_whitelist,
+                        whiteList: ANT.group.active_sections_with_anno_whitelist,
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
@@ -4592,7 +4592,7 @@ function antenna($A){
                         },
                         setupFunc: function(){
                             var $this = $(this),
-                                body = ANTN.util.getCleanText($this);
+                                body = ANT.util.getCleanText($this);
                             $this.data('body',body);
                         }
 
@@ -4635,7 +4635,7 @@ function antenna($A){
                     
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
-                    if(!!ANTN.group.br_replace_scope_selector && (group.kind == "text")){
+                    if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
                         $group = $group.add( $node.find( '.ant_br_replaced' ) );
                     }
 
@@ -4644,7 +4644,7 @@ function antenna($A){
                     
                     // hack to fix text nodes taking over our media
                     if(group.kind == "text"){
-                        $group = $group.not(ANTN.group.media_selector + ", " +ANTN.group.img_selector);
+                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
@@ -4660,7 +4660,7 @@ function antenna($A){
                     $allNodes = $allNodes.add($group);
                     
                     //flag exceptions for inline_indicators
-                    var $inlineMediaSet = $allNodes.filter(ANTN.group.inline_selector);
+                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
 
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
@@ -4697,7 +4697,7 @@ function antenna($A){
 
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "ant-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
-                        oldHash = ANTN.util.md5.hex_md5( hashText );
+                        oldHash = ANT.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
                         // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
@@ -4736,11 +4736,11 @@ function antenna($A){
 
                         $.each(queryStringDomains, function(idx, domain) {
                             if (hashBody.indexOf(domain) != -1) {
-                                ANTN.group.media_url_ignore_query = false;   
+                                ANT.group.media_url_ignore_query = false;   
                             }
 
                         });
-                        if ( ANTN.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                        if ( ANT.group.media_url_ignore_query && hashBody.indexOf('?') ){
                             hashBody = hashBody.split('?')[0];
                         }
 
@@ -4750,7 +4750,7 @@ function antenna($A){
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
                             hashText = "ant-"+kind+"-"+hashBody;
-                            hash = ANTN.util.md5.hex_md5( hashText );
+                            hash = ANT.util.md5.hex_md5( hashText );
 
                         }
 
@@ -4760,14 +4760,14 @@ function antenna($A){
                         }
 
                         hashText = "ant-"+kind+"-"+body;
-                        hash = ANTN.util.md5.hex_md5( hashText );
+                        hash = ANT.util.md5.hex_md5( hashText );
 
                         if ( !$this.hasAttr('ant-hash') )  {
 
                             var iteration = 1;
-                            while ( typeof ANTN.summaries[hash] != 'undefined' ) {
+                            while ( typeof ANT.summaries[hash] != 'undefined' ) {
                                 hashText = "ant-"+kind+"-"+body+"-"+iteration;
-                                hash = ANTN.util.md5.hex_md5( hashText );
+                                hash = ANT.util.md5.hex_md5( hashText );
                                 iteration++;
                             }
                         }
@@ -4779,7 +4779,7 @@ function antenna($A){
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
                     // if ( $this.parents('[ant-hash="'+hash+'"]').length ) {
                     //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
-                    //     ANTN.actions.stripRdrNode($parentNodes);
+                    //     ANT.actions.stripRdrNode($parentNodes);
                     // }
                     
                     // we will use this in the following conditionals
@@ -4790,20 +4790,20 @@ function antenna($A){
                     // both HTML and text.
                     // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
                     if ( thisTagName == 'img' ) { 
-                        if ( $this.parents('[ant-hash]').length && !$this.siblings(ANTN.group.anno_whitelist).length ) {
+                        if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
                             var $parentNodes = $this.parents('[ant-hash]');
-                            ANTN.actions.stripRdrNode($parentNodes);
+                            ANT.actions.stripRdrNode($parentNodes);
                         }
                     }
 
                     // prevent two indicators for content when there are nested block elements
                     // only hash and insert an indicator for the deepest node
                     // to begin, check the node we are hasing (hashNode) for any nested elements from the Allowed Tags (anno_whitelist) setting
-                    if ( $this.find(ANTN.group.anno_whitelist).length ) {
+                    if ( $this.find(ANT.group.anno_whitelist).length ) {
                         var dontHash = false;
 
                         // loop through the Allowed Tags that are nested inside the hashNode
-                        $this.find(ANTN.group.anno_whitelist).each(function(idx, childNode) {
+                        $this.find(ANT.group.anno_whitelist).each(function(idx, childNode) {
 
 
                             var tagName = childNode.nodeName.toLowerCase(),
@@ -4814,7 +4814,7 @@ function antenna($A){
                             if ( $.inArray(tagName, embedTagsArray) != -1 ) {
 
                                 var $childNode = $(childNode);
-                                if ($childNode.siblings(ANTN.group.anno_whitelist).length ) {
+                                if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
                                     
                                 }
 
@@ -4824,14 +4824,14 @@ function antenna($A){
                         });
 
                         if (dontHash===true) { 
-                            // ANTN.actions.stripRdrNode($this);
+                            // ANT.actions.stripRdrNode($this);
                             return;
                         }
                     }
 
-                    // add an object with the text and hash to the ANTN.containers dictionary
+                    // add an object with the text and hash to the ANT.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
-                    ANTN.actions.containers.save({
+                    ANT.actions.containers.save({
                         body:body,
                         kind:kind,
                         hash:hash,
@@ -4851,7 +4851,7 @@ function antenna($A){
                         // // todo: touchHover
                         
                         $this.on('mouseenter', function() {
-                            ANTN.actions.indicators.init(hash);
+                            ANT.actions.indicators.init(hash);
                             $(this).addClass('ant_live_hover');
                         })//chain
                         .on('mouseleave', function() {
@@ -4864,28 +4864,28 @@ function antenna($A){
 
                     }
 
-                    var summary = ANTN.actions.summaries.init(hash);
-                    ANTN.actions.summaries.save(summary);
+                    var summary = ANT.actions.summaries.init(hash);
+                    ANT.actions.summaries.save(summary);
 
                     // indicatorInitQueue.push(hash);
 
-                    var page_id = ANTN.util.getPageProperty('id', hash );
+                    var page_id = ANT.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
 
                     hashList[ page_id ].push(hash);
-                    $this.data('hash', hash); //todo: consolidate this with the ANTN.containers object.  We only need one or the other.
+                    $this.data('hash', hash); //todo: consolidate this with the ANT.containers object.  We only need one or the other.
 
                 });
     
                 // perfimprove
                 // $.each(indicatorInitQueue, function(idx, hash){
-                //     ANTN.actions.indicators.init(hash);
+                //     ANT.actions.indicators.init(hash);
                 // });
 
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
-                // ANTN.actions.sendHashes:
+                // ANT.actions.sendHashes:
 
                 var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
@@ -4893,7 +4893,7 @@ function antenna($A){
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
                         //im guessing this will never happen - test for a while and elliminate.
-                        ANTN.safeThrow("No more messy hashes allowed!!");
+                        ANT.safeThrow("No more messy hashes allowed!!");
                         return;
                     }
 
@@ -4915,7 +4915,7 @@ function antenna($A){
 
                             //init the cross page containers so even the ones that come back with 0 reactions will
                             //have write mode enabled
-                            ANTN.actions.indicators.init(thisHash);
+                            ANT.actions.indicators.init(thisHash);
                             $node.data('ant-hashed', true);
                             // $node.data('ant-hashed-one', true); // on load.  for debug only.
                         }
@@ -4925,7 +4925,7 @@ function antenna($A){
 
                         //might not need to protect against this anymore.
                         if (typeof hash != "string" ){
-                            ANTN.safeThrow("why is your hash not a string!?");
+                            ANT.safeThrow("why is your hash not a string!?");
                             return;
                         }
 
@@ -4946,7 +4946,7 @@ function antenna($A){
                     var pageIdToInt = parseInt( pageId, 10);
                     
                     if(isNaN(pageIdToInt)){
-                        ANTN.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
+                        ANT.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
                     }
 
                     // get crossPage containers (which may/may not also be custom display)
@@ -4962,14 +4962,14 @@ function antenna($A){
 
                         //init the cross page containers so even the ones that come back with 0 reactions will
                         //have write mode enabled
-                        ANTN.actions.indicators.init(thisHash);
+                        ANT.actions.indicators.init(thisHash);
                     });
 
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
 
-                    ANTN.actions.sendHashesForSinglePage({
-                       short_name : ANTN.group.short_name,
+                    ANT.actions.sendHashesForSinglePage({
+                       short_name : ANT.group.short_name,
                        pageID: pageIdToInt,
                        hashes: hashList,
                        crossPageHashes:crossPageHashes
@@ -4978,13 +4978,13 @@ function antenna($A){
                 });
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
-                // ANTN.actions.sendHashesForSinglePage:
+                // ANT.actions.sendHashesForSinglePage:
 
                     var pageId = sendData.pageID;
 
                     // send the data!
                     $.ajax({
-                        url: ANTN_baseUrl+"/api/summary/containers/",
+                        url: ANT_baseUrl+"/api/summary/containers/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -4995,21 +4995,21 @@ function antenna($A){
                             if ( typeof response != "undefined" && typeof response.data != "undefined" ) {
                                 // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
                                 if (typeof response.data.known != "undefined" ) {
-                                    ANTN.known_hashes = response.data.known;
+                                    ANT.known_hashes = response.data.known;
                                 }
 
                                 // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
                                 if ( typeof response.data.crossPageKnown != "undefined" ) {
                                     if (typeof response.data.known != "undefined" ) {
-                                        ANTN.known_hashes = $.extend( ANTN.known_hashes, response.data.crossPageKnown );
+                                        ANT.known_hashes = $.extend( ANT.known_hashes, response.data.crossPageKnown );
                                     }
-                                    ANTN.crosspage_hashes = response.data.crossPageKnown;
+                                    ANT.crosspage_hashes = response.data.crossPageKnown;
                                 }
 
                                 // if a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
                                 // but we still want to do an init of the node... so we make dummy objects
                                 // this is so we can init the nodes down below when we call
-                                // ANTN.actions.containers.initCustomDisplayHashes(response.data.crossPageKnown);
+                                // ANT.actions.containers.initCustomDisplayHashes(response.data.crossPageKnown);
                                 $.each( $('[ant-crossPageContent="true"]'), function( idx, node ) {
                                     var thisHash = $(node).attr('ant-hash');
                                     var dummySummaryObject = {
@@ -5024,10 +5024,10 @@ function antenna($A){
                                                 "tags": {}
                                             }
                                         }
-                                    if (typeof ANTN.crosspage_hashes != "undefined" ) {
-                                        ANTN.crosspage_hashes = {};
+                                    if (typeof ANT.crosspage_hashes != "undefined" ) {
+                                        ANT.crosspage_hashes = {};
                                     }
-                                    ANTN.crosspage_hashes[thisHash] = dummySummaryObject;
+                                    ANT.crosspage_hashes[thisHash] = dummySummaryObject;
                                 });
 
                                 var summaries = {};
@@ -5035,7 +5035,7 @@ function antenna($A){
                                 
                                 $.each(response.data.unknown, function(idx, hash){
                                     if (typeof hash != "string") {
-                                        ANTN.safeThrow('why would this not be a string?');
+                                        ANT.safeThrow('why would this not be a string?');
                                         return;
                                     }
 
@@ -5044,9 +5044,9 @@ function antenna($A){
                                     var $node = $('[ant-hash="'+hash+'"]');
                                     var kind = $node.data('kind');
                                     if(!kind){
-                                        ANTN.safeThrow('node should always have data: kind');
+                                        ANT.safeThrow('node should always have data: kind');
                                     }
-                                    unknown_summary = ANTN.util.makeEmptySummary( hash, kind );
+                                    unknown_summary = ANT.util.makeEmptySummary( hash, kind );
 
                                     summaries[ pageId ][ hash ] = unknown_summary;
                                 });
@@ -5054,7 +5054,7 @@ function antenna($A){
                                 // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                                 if ( !$.isEmptyObject(summaries) ){
                                     //setup the summaries
-                                    ANTN.actions.containers.setup(summaries);
+                                    ANT.actions.containers.setup(summaries);
 
                                     //the callback verifies the new container and draws the actionbar
                                     //wont get run if this single hash is unknown.
@@ -5077,7 +5077,7 @@ function antenna($A){
                                     }
                                 });
 
-                                ANTN.actions.containers.initCustomDisplayHashes( initSomeHashes );
+                                ANT.actions.containers.initCustomDisplayHashes( initSomeHashes );
                             }
                         }
                     });
@@ -5085,10 +5085,10 @@ function antenna($A){
                 
             },
             hashCustomDisplayHashes: function() {
-                // ANTN.actions.hashCustomDisplayHashes:
+                // ANT.actions.hashCustomDisplayHashes:
 
                 var pageCustomDisplays = {},
-                    pageId = ANTN.util.getPageProperty();
+                    pageId = ANT.util.getPageProperty();
                 
                 pageCustomDisplays[ pageId ] = [];
                 
@@ -5097,21 +5097,21 @@ function antenna($A){
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
-                        ANTN.actions.hashNodes( $node );
+                        ANT.actions.hashNodes( $node );
                         var thisHash = $node.attr('ant-hash');
 
                         pageCustomDisplays[ pageId ].push( thisHash );
 
-                        ANTN.actions.indicators.init( thisHash );
+                        ANT.actions.indicators.init( thisHash );
                     });
 
                 }
 
-                ANTN.actions.sendHashes( pageCustomDisplays );
+                ANT.actions.sendHashes( pageCustomDisplays );
             },
             comments: {
                 makeCommentBox: function(settings, options){
-                    // ANTN.actions.comments.makeCommentBox
+                    // ANT.actions.comments.makeCommentBox
                     var content_node = settings.content_node,
                         tag = settings.tag,
                         summary = settings.summary,
@@ -5122,23 +5122,23 @@ function antenna($A){
 
                     options = options || {};
 
-                    var helpText = options.helpText || ANTN.t('add_comment');
+                    var helpText = options.helpText || ANT.t('add_comment');
                     
                     //not used any more
-                    var cta = options.cta || ANTN.t('comment');
+                    var cta = options.cta || ANT.t('comment');
 
                     var $commentBox = $('<div class="ant_commentBox ant_clearfix"></div>');
 
                     //todo: combine this with the other make comments code
                     var $commentDiv =  $('<div class="ant_comment">'),
                         $commentTextarea = $('<textarea class="ant_default_msg">' +helpText+ '</textarea>'),
-                        $ant_charCount =  $('<div class="ant_charCount">'+ ANTN.t('characters_left').replace('NNN', ANTN.group.comment_length ) +'</div>'),
-                        $submitButton =  $('<button class="ant_commentSubmit">'+ANTN.t('comment')+'</button>');
+                        $ant_charCount =  $('<div class="ant_charCount">'+ ANT.t('characters_left').replace('NNN', ANT.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="ant_commentSubmit">'+ANT.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $ant_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        // ANTN.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        // ANT.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         $(this).removeClass('ant_default_msg');
                         if( $(this).val() == helpText ){
                             $(this).val('');
@@ -5155,11 +5155,11 @@ function antenna($A){
                             $(this).blur();
                             // return false so the aWindow doesn't close.
                             return false;
-                        } else if ( commentText.length > ANTN.group.comment_length ) {
-                            commentText = commentText.substr(0, ANTN.group.comment_length);
+                        } else if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.ant_charCount').text( ANTN.t('characters_left').replace('NNN', ( ANTN.group.comment_length - commentText.length ) ) );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -5169,7 +5169,7 @@ function antenna($A){
                             helpText: helpText
                         });
 
-                        ANTN.actions.comments.submitComment(settings);
+                        ANT.actions.comments.submitComment(settings);
                     });
 
                     $commentBox.append( $commentDiv );
@@ -5177,7 +5177,7 @@ function antenna($A){
                 
                 },
                 submitComment: function(settings){
-                    // ANTN.actions.comments.submitComment
+                    // ANT.actions.comments.submitComment
                     var $commentTextarea = settings.$commentTextarea,
                         helpText = settings.helpText,
                         content_node = settings.content_node,
@@ -5191,10 +5191,10 @@ function antenna($A){
                     var commentText = $commentTextarea.val();
 
                     //keyup doesn't guarentee this, so check again (they could paste in for example);
-                    if ( commentText.length > ANTN.group.comment_length ) {
-                        commentText = commentText.substr(0, ANTN.group.comment_length);
+                    if ( commentText.length > ANT.group.comment_length ) {
+                        commentText = commentText.substr(0, ANT.group.comment_length);
                         $commentTextarea.val( commentText );
-                        $commentTextarea.siblings('div.ant_charCount').text( ANTN.t('characters_left').replace('NNN', ( ANTN.group.comment_length - commentText.length ) ) );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     }
 
                     if ( commentText != helpText ) {
@@ -5212,7 +5212,7 @@ function antenna($A){
                         var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, aWindow:$aWindow, selState:selState};
 
                         //leave parent_id undefined for now - backend will find it.
-                        ANTN.actions.interactions.ajax( args, 'comment', 'create');
+                        ANT.actions.interactions.ajax( args, 'comment', 'create');
 
                     } else {
                         $commentTextarea.focus();
@@ -5222,22 +5222,22 @@ function antenna($A){
             },
             containers: {
                 updateCrossPageHash: function(hash){
-                    //ANTN.actions.containers.updateCrossPageHash:
+                    //ANT.actions.containers.updateCrossPageHash:
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         return;
                     }
 
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
-                    ANTN.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash);
 
                     var $container = $('[ant-hash="'+hash+'"]'),
                         customDisplayName = $container.attr('ant-item'),
                         $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]');
 
                     if ($grid.length) {
-                        ANTN.actions.content_nodes.init(hash, function() {
-                            ANTN.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                        ANT.actions.content_nodes.init(hash, function() {
+                            ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
                             $grid.jScrollPane({ showArrows:true });
                         });
                     }
@@ -5253,8 +5253,8 @@ function antenna($A){
 
                         // var hash = hashObject.hash;
                         if (typeof hash != "undefined" && typeof $node.attr('ant_summary_loaded') == "undefined" ) {
-                            ANTN.actions.indicators.init(hash);
-                            ANTN.summaries[hash].crossPage=true;
+                            ANT.actions.indicators.init(hash);
+                            ANT.summaries[hash].crossPage=true;
 
                             // init a reaction-view for an open custom display thing.
                             // i know, this should be abstracted.  it's too ProPublica specific.  
@@ -5276,7 +5276,7 @@ function antenna($A){
                                 // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
                                 if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
 
-                                ANTN.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
+                                ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
 
                                 if ($reactionView.length) {
                                     // since currently, our reactionView needs to have a width that's a factor of 160... force that:
@@ -5285,31 +5285,31 @@ function antenna($A){
                                     reactionViewWidth = statedWidthDividedBy160 * 160;
                                     if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
 
-                                    // ANTN.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
+                                    // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
                                     if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
                                         $reactionView.wrap('<div class="ant_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANTN_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><img class="no-ant ant_pin" src="'+ANTN_staticUrl+'widget/images/blank.png"><span class="ant_count"></span></div><h1>'+ANTN.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
-                                    ANTN.actions.content_nodes.init(hash, function() { ANTN.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><img class="no-ant ant_pin" src="'+ANT_staticUrl+'widget/images/blank.png"><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
-                                    ANTN.actions.content_nodes.init(hash);
+                                    ANT.actions.content_nodes.init(hash);
                                 }
                             } else if ( reactionViewStyle == "horizontal_bars" ) {
                                 $reactionView.html('<div class="ant ant_inline ant_body_wrap ant_horizontal_bars ant_clearfix"></div>'); // gotta insert the ant_body_wrap or there is no container to attach to in makeTagsListForInline 
-                                ANTN.actions.content_nodes.init(hash, function() { ANTN.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
+                                ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
                             }
                         }
                     });
                 },
                 media: {
-                    //ANTN.actions.containers.media:
+                    //ANT.actions.containers.media:
                     //actions for the special cases of media containers
                     onEngage: function(hash){
                         // deprecated?
                         return;
-                        //ANTN.actions.containers.media.onEngage:
+                        //ANT.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
                         // var $this = $('img[ant-hash="'+hash+'"], iframe[ant-hash="'+hash+'"],embed[ant-hash="'+hash+'"],video[ant-hash="'+hash+'"],object[ant-hash="'+hash+'"]').eq(0),
@@ -5319,24 +5319,24 @@ function antenna($A){
                         // var hasBeenHashed = $this.hasAttr('ant-hashed'),
                         //     isBlacklisted = $this.closest('.ant, .no-ant').length;
 
-                        // var containerInfo = ANTN.containers[hash];
+                        // var containerInfo = ANT.containers[hash];
                         // if ( containerInfo ) {
                         //     var $mediaItem = containerInfo.$this;
 
                         //     $mediaItem.data('hover',true).data('hash', hash);
-                        //     ANTN.actions.indicators.utils.updateContainerTracker(hash);
-                        //     ANTN.aWindow.mediaRindowShow( $mediaItem );
+                        //     ANT.actions.indicators.utils.updateContainerTracker(hash);
+                        //     ANT.aWindow.mediaRindowShow( $mediaItem );
                         //     // $indicator_details.addClass('ant_has_border');
                         // }
 
                         // deprecated - see above
-                        // ANTN.events.track( 'view_node::'+hash, hash );
+                        // ANT.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         // deprecated?
                         return;
 
-                        //ANTN.actions.containers.media.onDisengage:
+                        //ANT.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
                         // var $mediaItem = $('img[ant-hash="'+hash+'"], iframe[ant-hash="'+hash+'"],embed[ant-hash="'+hash+'"],video[ant-hash="'+hash+'"],object[ant-hash="'+hash+'"]').eq(0),
                         //     $indicator = $('#ant_indicator_'+hash),
@@ -5346,31 +5346,31 @@ function antenna($A){
                         // clearTimeout(timeoutCloseEvt);
 
                         // timeoutCloseEvt = setTimeout(function(){
-                        //     var containerInfo = ANTN.containers[hash];
+                        //     var containerInfo = ANT.containers[hash];
                         //     if ( containerInfo ) {
                         //         $mediaItem.data('hover',false).data('hash', hash);
-                        //         ANTN.aWindow.mediaRindowHide( $mediaItem );
+                        //         ANT.aWindow.mediaRindowHide( $mediaItem );
                         //     }
                         // },100);
                         // $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     },
                     disengageAll: function(){
-                        //ANTN.actions.containers.media.disengageAll:
+                        //ANT.actions.containers.media.disengageAll:
 
                         //only need to run this for containers that are active
                         var hashes = [];
                         $('.ant_live_hover').each(function(){
                             var hash = $(this).data('hash');
                             hashes.push(hash);
-                            ANTN.actions.containers.media.onDisengage(hash);
+                            ANT.actions.containers.media.onDisengage(hash);
                         });
                     }
                 },
                 save: function(settings){
-                    //ANTN.actions.containers.save:
+                    //ANT.actions.containers.save:
                     //makes a new one or returns existing one
                     //expects settings with body, kind, and hash.
-                    if( ANTN.containers.hasOwnProperty(settings.hash) ) return ANTN.containers[settings.hash];
+                    if( ANT.containers.hasOwnProperty(settings.hash) ) return ANT.containers[settings.hash];
                     //else
                     var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
 
@@ -5382,16 +5382,16 @@ function antenna($A){
                         'HTMLkind': settings.HTMLkind || null,
                         '$this': settings.$this || null
                     };
-                    ANTN.containers[settings.hash] = container;
+                    ANT.containers[settings.hash] = container;
                     return container;
                 },
                 setup: function(summariesPerPage){
-                    //ANTN.actions.containers.setup:
+                    //ANT.actions.containers.setup:
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
 
-                            var containerInfo = ANTN.containers[hash];
+                            var containerInfo = ANT.containers[hash];
                             var $container = containerInfo.$this;
 
                             //generate the content_node for this image container.  (the content_node is just the image itself)
@@ -5405,13 +5405,13 @@ function antenna($A){
                                 'hash':hash
                             };
 
-                            ANTN.content_nodes[hash] = content_node_data;
-                            ANTN.aWindow.update(hash);
+                            ANT.content_nodes[hash] = content_node_data;
+                            ANT.aWindow.update(hash);
 
                             //#touchBrowserMediaInit
                             if(isTouchBrowser){
-                                ANTN.actions.content_nodes.init(hash, function(){});
-                                ANTN.actions.indicators.init(hash);
+                                ANT.actions.content_nodes.init(hash, function(){});
+                                ANT.actions.indicators.init(hash);
                             }
                         },
                         media: function(hash, summary){
@@ -5420,8 +5420,8 @@ function antenna($A){
                         },
                         text: function(hash, summary){
                             if(isTouchBrowser){
-                                ANTN.actions.content_nodes.init(hash, function(){});
-                                ANTN.actions.indicators.init(hash);
+                                ANT.actions.content_nodes.init(hash, function(){});
+                                ANT.actions.indicators.init(hash);
                             }
                         },
                         custom: function(hash, summary){
@@ -5435,7 +5435,7 @@ function antenna($A){
                     $.each(summariesPerPage, function(page_id, summariesByHash){
                         
                         if ( !summariesByHash || $.isArray(summariesByHash) ){
-                            ANTN.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
+                            ANT.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
                             return;
                         }
 
@@ -5445,7 +5445,7 @@ function antenna($A){
                             //save the hash as a summary attr for convenience.
                             summary.hash = hash;
 
-                            var containerInfo = ANTN.containers[hash];
+                            var containerInfo = ANT.containers[hash];
 
                             if ( containerInfo) {
                                 var $container = containerInfo.$this;
@@ -5468,19 +5468,19 @@ function antenna($A){
                                 });
 
                                 summary.top_interactions.coms = newComs;
-                                ANTN.actions.summaries.save(summary);
+                                ANT.actions.summaries.save(summary);
 
                                 var pageContainerExists = false;
 
-                                $.each( ANTN.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                $.each( ANT.pages[ page_id ].containers, function(idx, definedPageContainer) {
                                     if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
                                 });
                                 if ( pageContainerExists == false ) {
-                                    ANTN.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                    ANT.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
                                 } else {
                                 }
 
-                                // ANTN.actions.indicators.update( hash, true);
+                                // ANT.actions.indicators.update( hash, true);
 
 
                                 //now run the type specific function with the //run the setup func above
@@ -5499,10 +5499,10 @@ function antenna($A){
                     });
 
                     // create the container sort to see which containers have the most activity
-                    ANTN.actions.summaries.sortPopularTextContainers();
-                    ANTN.actions.summaries.displayPopularIndicators();
+                    ANT.actions.summaries.sortPopularTextContainers();
+                    ANT.actions.summaries.displayPopularIndicators();
 
-                    $.each( ANTN.known_hashes, function(returnedHash, obj) {
+                    $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
                         // we're going to iterate through images to see if there is an old hash
                         var $hash_is_an_img = $('img[ant-node="returnedHash"]');
@@ -5514,13 +5514,13 @@ function antenna($A){
                         }
 
                         // now init the indicators
-                        ANTN.actions.indicators.init(returnedHash);
+                        ANT.actions.indicators.init(returnedHash);
                     });
 
-                    ANTN.actions.indicators.show(hashesToShow);
+                    ANT.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList, onSuccessCallback){
-                    //ANTN.actions.containers.send:
+                    //ANT.actions.containers.send:
                     // gets the containers from the hashList
                     // and cuts them up into delicious bite-sized chunks
                     // to ensure that the ajax sendData isn't over 2000 chars.
@@ -5535,7 +5535,7 @@ function antenna($A){
 
                     $.each( hashList, function(idx, hash){
                         //container is {body:,kind:,hash:}
-                        var container = ANTN.containers[hash];
+                        var container = ANT.containers[hash];
 
                         //quick fix - copy the container object but without the $this obj
                         //for now we're just not sending the body
@@ -5582,7 +5582,7 @@ function antenna($A){
                                     kind: container.kind
                                 };
                                 containers[hash] = sendContainer;
-                                ANTN.actions.containers._ajaxSend(sendContainer);
+                                ANT.actions.containers._ajaxSend(sendContainer);
                             });
                             */
 
@@ -5594,7 +5594,7 @@ function antenna($A){
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
 
-                                ANTN.actions.containers._ajaxSend(containers);
+                                ANT.actions.containers._ajaxSend(containers);
                                 resetChunks();
                             }
                             containers[hash] = sendContainer;
@@ -5605,7 +5605,7 @@ function antenna($A){
                     });
                     //do one last send.  Often this will be the only send.
                     if( ! $.isEmptyObject(containers) ) {
-                        ANTN.actions.containers._ajaxSend(containers, onSuccessCallback);
+                        ANT.actions.containers._ajaxSend(containers, onSuccessCallback);
                     }
 
                     //helper functions
@@ -5616,7 +5616,7 @@ function antenna($A){
                     }
                 },
                 _ajaxSend: function(containers, onSuccessCallback){
-                    //ANTN.actions.containers._ajaxSend:
+                    //ANT.actions.containers._ajaxSend:
                     //this is a helper for this.send:
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
@@ -5624,7 +5624,7 @@ function antenna($A){
 
                     // TODO do we even need this anymore?
                     $.ajax({
-                        url: ANTN_baseUrl+"/api/containers/create/",
+                        url: ANT_baseUrl+"/api/containers/create/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -5644,12 +5644,12 @@ function antenna($A){
                                     return;
                                 }
                                 //else
-                                var node = ANTN.containers[hash];
+                                var node = ANT.containers[hash];
                                 node.id = id;
-                                dummySummaries[hash] = ANTN.actions.summaries.init(hash);
+                                dummySummaries[hash] = ANT.actions.summaries.init(hash);
                             });
 
-                            ANTN.actions.containers.setup(dummySummaries);
+                            ANT.actions.containers.setup(dummySummaries);
 
                             //the callback verifies the new container and draws the actionbar
                             //this only gets called when a single hash gets passed through all the way from startSelect
@@ -5663,7 +5663,7 @@ function antenna($A){
             },
             content_nodes: {
                 make: function(settings){
-                    //ANTN.actions.content_nodes.make:
+                    //ANT.actions.content_nodes.make:
 
                     //makes a new one or returns existing one
                     //expects settings with container, body, and location.
@@ -5678,7 +5678,7 @@ function antenna($A){
                         content_node_key = settings.container;
                     }
 
-                    if( ANTN.content_nodes.hasOwnProperty(content_node_key) ) return ANTN.content_nodes[content_node_key];
+                    if( ANT.content_nodes.hasOwnProperty(content_node_key) ) return ANT.content_nodes[content_node_key];
                     //else
                     var content_node = {
                         'container': settings.container,
@@ -5687,54 +5687,54 @@ function antenna($A){
                         'hash': hash
                     };
 
-                    ANTN.content_nodes[content_node_key] = content_node;
+                    ANT.content_nodes[content_node_key] = content_node;
 
                     return content_node;
                 },
                 quickFixReset: function(hash){
-                    //ANTN.actions.content_nodes.quickFixReset;
+                    //ANT.actions.content_nodes.quickFixReset;
 
                     //A quick hack to re-make the server call to update the comment count.  
                     //It's silly to make a server call to do this, but we need it to just work for now.
-                    var summary = ANTN.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         container_id = (typeof summary != "undefined") ? summary.id:"";
                     
                     if(container_id){
                         //clear the assetLoader flag which normally prevents it from loading twice.
-                        delete ANTN.assetLoaders.content_nodes[container_id];
-                        ANTN.actions.content_nodes.init(hash);
+                        delete ANT.assetLoaders.content_nodes[container_id];
+                        ANT.actions.content_nodes.init(hash);
                     }
                     
                 },
                 init: function(hash, onSuccessCallback){
-                    //ANTN.actions.content_nodes.init:
+                    //ANT.actions.content_nodes.init:
 
                     // if ( $('.ant-'+hash).hasClass('ant_summary_loaded') ) {
                     //     return;
                     // }
 
                     // po' man's throttling
-                    // if ( typeof ANTN.inProgress === "undefined" ) { ANTN.inProgress = []; }
-                    // if ( $.inArray( hash, ANTN.inProgress) != -1 ) {
+                    // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                    // if ( $.inArray( hash, ANT.inProgress) != -1 ) {
                     //     return false;
                     // } else {
-                    //     ANTN.inProgress.push( hash );
+                    //     ANT.inProgress.push( hash );
                     // }
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
-                    var summary = ANTN.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         container_id = (typeof summary != "undefined") ? summary.id:"";
 
                     if(!container_id){
                         //this still happens if container is an unknown container and has no reactions.
                         //It's save to just return for now though.
                         
-                        // ANTN.safeThrow('container_id is not valid for hash: '+hash);
+                        // ANT.safeThrow('container_id is not valid for hash: '+hash);
                     
                         return;
                     }
 
-                    var pageId = ANTN.util.getPageProperty('id', hash);
+                    var pageId = ANT.util.getPageProperty('id', hash);
 
                     //quick fix add pageId to summary becuase we need it in the summary widget content lookup
                     // todo: #summaryContentByPageFix
@@ -5749,18 +5749,18 @@ function antenna($A){
 
                     //use an assetLoader that returns a deferred to ensure it gets loaded only once
                     //and callbacks will run on success - or immediately if it has already returned.
-                    var assetLoader = ANTN.assetLoaders.content_nodes[container_id];
+                    var assetLoader = ANT.assetLoaders.content_nodes[container_id];
 
                     if(!assetLoader){
                         assetLoader = $.ajax({
-                            url: ANTN_baseUrl+"/api/summary/container/content/",
+                            url: ANT_baseUrl+"/api/summary/container/content/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
                             data: { json: $.toJSON(sendData) }
                         });
 
-                        ANTN.assetLoaders.content_nodes[container_id] = assetLoader;
+                        ANT.assetLoaders.content_nodes[container_id] = assetLoader;
                     }
                     
                     //todo: also remove redundant callbacks from the summary widget.
@@ -5791,7 +5791,7 @@ function antenna($A){
 
                         //throw the content_nodes into the container summary
 
-                        ANTN.content_nodes[hash] = content_nodes;
+                        ANT.content_nodes[hash] = content_nodes;
                         summary.content_nodes = content_nodes;
 
                         if(summary.kind == "text"){
@@ -5816,16 +5816,16 @@ function antenna($A){
                         $('[ant-hash="'+hash+'"]').attr('ant_summary_loaded', 'true');
 
                         // fix for ant-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
-                        ANTN.actions.indicators.update(hash);
+                        ANT.actions.indicators.update(hash);
 
                         // remove from po' man's throttling array
                         // po' man's throttling
-                        // ANTN.inProgress.splice( ANTN.inProgress.indexOf( hash ) ,1);
+                        // ANT.inProgress.splice( ANT.inProgress.indexOf( hash ) ,1);
                         // var y = [1, 2, 3]
                         // var removeItem = 2;
 
-                        // if ( typeof ANTN.inProgress === "undefined" ) { ANTN.inProgress = []; }
-                        // ANTN.inProgress = $.grep(ANTN.inProgress, function(value) {
+                        // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                        // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
                         //   return value != hash;
                         // });
 
@@ -5836,9 +5836,9 @@ function antenna($A){
                         }
 
                         //also run any callbacks that get queued up on the summarybar hover
-                        if(ANTN.contentNodeQueue && ANTN.contentNodeQueue[hash] && ANTN.contentNodeQueue[hash].length ){
-                            $.each(ANTN.contentNodeQueue[hash], function(){
-                                var func = ANTN.contentNodeQueue[hash].pop();
+                        if(ANT.contentNodeQueue && ANT.contentNodeQueue[hash] && ANT.contentNodeQueue[hash].length ){
+                            $.each(ANT.contentNodeQueue[hash], function(){
+                                var func = ANT.contentNodeQueue[hash].pop();
                                 func(hash);
                             });
                         }
@@ -5847,7 +5847,7 @@ function antenna($A){
                 },
                 utils: {
                     getMediaDims: function($mediaNode){
-                        //ANTN.actions.content_nodes.utils.getMediaDims:
+                        //ANT.actions.content_nodes.utils.getMediaDims:
 
                         var h = $mediaNode.height();
                         var w = $mediaNode.width();
@@ -5858,7 +5858,7 @@ function antenna($A){
                         };
                     },
                     makeDictSortedByTag: function(content_nodes){
-                        //ANTN.actions.content_nodes.utils.makeDictSortedByTag:
+                        //ANT.actions.content_nodes.utils.makeDictSortedByTag:
 
                         //make a helper dictionary that inverts our dict of {content_nodes: {tags...} }
                         var invertedDict = {}; //dict will be { tag_id: [ list of content_node_ids }
@@ -5877,7 +5877,7 @@ function antenna($A){
                     initHiliteStates: function( $tagSpan, content_nodes ){
                         //todo: combine with others - i think this is just being used for indicator details
 
-                        //ANTN.actions.content_nodes.utils.initHiliteStates:
+                        //ANT.actions.content_nodes.utils.initHiliteStates:
 
                         //add selStates to $tagSpan data.
                         $.each( content_nodes, function(arrIdx, content_node){
@@ -5922,21 +5922,21 @@ function antenna($A){
                             );
                         }
                     }
-                }//end ANTN.actions.content_nodes.utils
+                }//end ANT.actions.content_nodes.utils
             },
             interactions: {
-                //ANTN.actions.interactions:
+                //ANT.actions.interactions:
                 ajax: function(args, int_type, action_type){
-                    //ANTN.actions.interactions.ajax:
+                    //ANT.actions.interactions.ajax:
                     //temp tie-over
                     var hash = args.hash,
-                        summary = ANTN.summaries[hash],
+                        summary = ANT.summaries[hash],
                         kind = (summary) ? summary.kind:"";
 
 
                     if ( !action_type ) action_type = "create";
 
-                    if( !ANTN.actions.interactions.hasOwnProperty(int_type) ){
+                    if( !ANT.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
 
@@ -5944,12 +5944,12 @@ function antenna($A){
                     var crossPageSendData = {};
 
                     // take care of pre-ajax stuff, mostly UI stuff
-                    ANTN.actions.interactions[int_type].preAjax(args, action_type);
+                    ANT.actions.interactions[int_type].preAjax(args, action_type);
                     //get user and only procceed on success of that.
 
-                    ANTN.session.getUser( args, function(newArgs){
-                        var defaultSendData = ANTN.actions.interactions.defaultSendData(newArgs),
-                            customSendData = ANTN.actions.interactions[int_type].customSendData(newArgs),
+                    ANT.session.getUser( args, function(newArgs){
+                        var defaultSendData = ANT.actions.interactions.defaultSendData(newArgs),
+                            customSendData = ANT.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, defaultSendData, customSendData, crossPageSendData );
                         newArgs.sendData = sendData;
 
@@ -5958,12 +5958,12 @@ function antenna($A){
                         newArgs.sendData.hash = hash;
 
                         //run the send function for the appropriate interaction type
-                        //ANTN.actions.interactions[int_type].send(args);
-                        ANTN.actions.interactions.send(newArgs, int_type, action_type);
+                        //ANT.actions.interactions[int_type].send(args);
+                        ANT.actions.interactions.send(newArgs, int_type, action_type);
                     });
                 },
                 send: function(args, int_type, action_type){
-                    // ANTN.actions.interactions.send
+                    // ANT.actions.interactions.send
                     // /api/tag/create
                     // /api/comment/create
                     // hack to cleanup the send data
@@ -5984,7 +5984,7 @@ function antenna($A){
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
 // TODO force forcing
-if ( ANTN.summaries[sendData.hash] ) sendData.container_kind = ANTN.summaries[sendData.hash].kind;
+if ( ANT.summaries[sendData.hash] ) sendData.container_kind = ANT.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
                     // [porter] I changed all references to "tag" to be "react" so the widget code is easier to understand
@@ -6002,12 +6002,12 @@ if ( typeof sendData.tag != "undefined" ) {
 if ( sendData.kind=="page" ) {
  sendData.hash = "page";
  sendData.container_kind = "text";
- sendData.page_id = sendData.page_id || ANTN.util.getPageProperty('id', "page");
+ sendData.page_id = sendData.page_id || ANT.util.getPageProperty('id', "page");
  delete sendData.content_node_data.hash; //this was happening for delete calls.
 }
                     //todo: consider making a generic url router
-                    var url = ANTN_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
-                    var hitMax = ANTN.session.checkForMaxInteractions(args);
+                    var url = ANT_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
+                    var hitMax = ANT.session.checkForMaxInteractions(args);
 
                     if (!hitMax) {
                         // send the data!
@@ -6026,13 +6026,13 @@ if ( sendData.kind=="page" ) {
                                     var hash = args.hash = response.data.container.hash;
                                 }
                                 if ( response.data && response.data.num_interactions ) {
-                                    ANTN.user.num_interactions = response.data.num_interactions;
+                                    ANT.user.num_interactions = response.data.num_interactions;
                                 }
                                 if ( response.status == "success" ) {
                                     if ( args.response.data.interaction ) {
-                                        // ANTN.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
+                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
                                     } else if ( args.response.data.deleted_interaction ) {
-                                        // ANTN.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
+                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
                                     }
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
@@ -6042,19 +6042,19 @@ if ( sendData.kind=="page" ) {
                                     if ( typeof args.tag.id == "undefined" ) {
                                         args.tag.id = response.data.interaction.interaction_node.id;
                                     }
-                                    ANTN.actions.interactions[int_type].onSuccess[action_type](args);
+                                    ANT.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
                                         if ( response.message == "sign in required for organic reactions" ) {
-                                            ANTN.session.showLoginPanel( args );
+                                            ANT.session.showLoginPanel( args );
                                         }
                                         else {
-                                            ANTN.actions.interactions[int_type].onFail(args);
+                                            ANT.actions.interactions[int_type].onFail(args);
                                         }
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                            // ANTN.events.track( 'temp_limit_hit_r' );
-                                            ANTN.session.showLoginPanel( args );
+                                            // ANT.events.track( 'temp_limit_hit_r' );
+                                            ANT.session.showLoginPanel( args );
                                         } 
                                         if ( response.message == "existing interaction" ) {
                                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
@@ -6062,33 +6062,33 @@ if ( sendData.kind=="page" ) {
                                                 //with a message param.
                                                 //and a close 'x' button.
                                                 args.msgType = "existingInteraction";
-                                                ANTN.session.aWindowUserMessage.show( args );
+                                                ANT.session.aWindowUserMessage.show( args );
                                         }
                                         else {
                                             // if it failed, see if we can fix it, and if so, try this function one more time
-                                            ANTN.session.handleGetUserFail( args, function() {
-                                                ANTN.actions.interactions.ajax( args, int_type, 'create' );
+                                            ANT.session.handleGetUserFail( args, function() {
+                                                ANT.actions.interactions.ajax( args, int_type, 'create' );
                                             });
                                         }
                                     }
                                 }
-                                // if ( typeof ANTN.inProgress === "undefined" ) { ANTN.inProgress = []; }
-                                // ANTN.inProgress = $.grep(ANTN.inProgress, function(value) {
+                                // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                                // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
                                 //   return value != hash;
                                 // });
-                                ANTN.util.userLoginState();
+                                ANT.util.userLoginState();
                             }
                         });
                     } else {
-                        ANTN.session.showLoginPanel( args, function() { ANTN.actions.interactions.ajax( args, int_type, 'create' ); } );
+                        ANT.session.showLoginPanel( args, function() { ANT.actions.interactions.ajax( args, int_type, 'create' ); } );
                     }
                 },
                 defaultSendData: function(args){
-                    //ANTN.actions.interactions.defaultSendData:
-                    args.user_id = ANTN.user.user_id;
-                    args.ant_token = ANTN.user.ant_token;
-                    args.group_id = ANTN.group.id;
-                    args.page_id = (args.page_id) ? args.page_id : ANTN.util.getPageProperty('id', args.hash);
+                    //ANT.actions.interactions.defaultSendData:
+                    args.user_id = ANT.user.user_id;
+                    args.ant_token = ANT.user.ant_token;
+                    args.group_id = ANT.group.id;
+                    args.page_id = (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', args.hash);
 
                     return args;
 
@@ -6099,12 +6099,12 @@ if ( sendData.kind=="page" ) {
                         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
-                        //ANTN.actions.interactions.comment.customSendData:
+                        //ANT.actions.interactions.comment.customSendData:
                     },
                     onSuccess: {
-                        //ANTN.actions.interactions.comment.onSuccess:
+                        //ANT.actions.interactions.comment.onSuccess:
                         create: function(args){
-                            //ANTN.actions.interactions.comment.onSuccess.create:
+                            //ANT.actions.interactions.comment.onSuccess.create:
                             var $aWindow = args.aWindow,
                                 hash = args.hash,
                                 response = args.response,
@@ -6115,18 +6115,18 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('div.ant_loader').css('visibility','hidden');                                
 
                                 //messy fixes for success responses in crossPageHash containers.
-                                ANTN.actions.content_nodes.quickFixReset(hash);
+                                ANT.actions.content_nodes.quickFixReset(hash);
 
                                 var isInlineRindow = ($aWindow.hasClass('ant_inline') || $aWindow.find('.ant_inline').length);
                                 
-                                var $responseMsg = $('<span class="success_msg" >'+ANTN.t('thanks_for_comment')+' </span>');
-                                var $doneButton = $('<a class="ant_doneButton" href="#">'+ANTN.t('close')+'</a>')
+                                var $responseMsg = $('<span class="success_msg" >'+ANT.t('thanks_for_comment')+' </span>');
+                                var $doneButton = $('<a class="ant_doneButton" href="#">'+ANT.t('close')+'</a>')
                                     .click(function(e){
                                         e.preventDefault();
 
                                         //there's a bug, just close the aWindow for now. 
-                                        // ANTN.aWindow.close( $aWindow );
-                                        ANTN.aWindow.safeClose( $aWindow );
+                                        // ANT.aWindow.close( $aWindow );
+                                        ANT.aWindow.safeClose( $aWindow );
                                         // $aWindow.find('.ant_back').eq(0).click();
                                     });
 
@@ -6161,7 +6161,7 @@ if ( sendData.kind=="page" ) {
                             var isText = content_node.kind == 'text' || content_node.kind == "txt";
                             var isExisting = response.data.existing;
                             if (!isText && isExisting) {
-                                var content_nodes = ANTN.content_nodes[hash];
+                                var content_nodes = ANT.content_nodes[hash];
                                 $.each(content_nodes, function(id, node){
                                     //there should be only one, but sometimes there is an undefined entry - ignore that.
                                     //seriously, the id is the string "undefined" - ug.  Find the root of that and fix.
@@ -6174,7 +6174,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             //todo: examine resize
-                            // ANTN.aWindow.updateSizes( $aWindow );
+                            // ANT.aWindow.updateSizes( $aWindow );
 
 
                             // $aWindow.find('div.ant_commentBox').find('div.ant_tagFeedback, div.ant_comment').hide();
@@ -6223,8 +6223,8 @@ if ( sendData.kind=="page" ) {
                             //for now, just pull all the content_nodes down and
                             //(this will automatically) update the summary object
                             //run the rest of our comment update on the callback
-                            ANTN.actions.content_nodes.init(hash, function(){
-                                ANTN.actions.summaries.update(hash, diff);
+                            ANT.actions.content_nodes.init(hash, function(){
+                                ANT.actions.summaries.update(hash, diff);
                             });
 
                             //not using this
@@ -6236,7 +6236,7 @@ if ( sendData.kind=="page" ) {
                             //     aWindow:$aWindow
                             // };
 
-                            ANTN.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: "c",
                                 event_value: interaction.interaction_node.body,
                                 container_hash: hash,
@@ -6245,11 +6245,11 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            ANTN.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
+                            ANT.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
-                            //ANTN.actions.interactions.comment.onSuccess.remove:
+                            //ANT.actions.interactions.comment.onSuccess.remove:
 
                             //clear loader
                             var $aWindow = args.aWindow;
@@ -6292,7 +6292,7 @@ if ( sendData.kind=="page" ) {
                         return {};
                     },
                     onSuccess: {
-                        //ANTN.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
                             
@@ -6302,7 +6302,7 @@ if ( sendData.kind=="page" ) {
 
                             var safe_board_name = args.board_name.replace(/\s/g,"_"),
                                 newArgs = { board_id:args.board_id, int_id:args.int_id },
-                                $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANTN_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
+                                $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
                             
                             $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
 
@@ -6310,7 +6310,7 @@ if ( sendData.kind=="page" ) {
                                 
                                 args.aWindow = $aWindow;
                                 // panelEvent
-                                ANTN.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
+                                ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
                             });
                         }
                     }
@@ -6325,7 +6325,7 @@ if ( sendData.kind=="page" ) {
                         return {};
                     },
                     onSuccess: {
-                        //ANTN.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
                             
@@ -6341,11 +6341,11 @@ if ( sendData.kind=="page" ) {
                         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
-                        ////ANTN.actions.interactions.react.customSendData:
+                        ////ANT.actions.interactions.react.customSendData:
                         //temp tie-over
 
                         var hash = args.hash,
-                            summary = ANTN.summaries[hash],
+                            summary = ANT.summaries[hash],
                             $container = $('[ant-hash="'+hash+'"]'),
                             kind,
                             tag,
@@ -6371,10 +6371,10 @@ if ( sendData.kind=="page" ) {
                                 "content_node_data":content_node_data,
                                 "hash": hash,
                                 //page level attrs
-                                "user_id" : ANTN.user.user_id,
-                                "ant_token" : ANTN.user.ant_token,
-                                "group_id" : ANTN.group.id,
-                                "page_id" : (args.page_id) ? args.page_id : ANTN.util.getPageProperty('id', hash)
+                                "user_id" : ANT.user.user_id,
+                                "ant_token" : ANT.user.ant_token,
+                                "group_id" : ANT.group.id,
+                                "page_id" : (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', hash)
                             };
                         } else  {
 
@@ -6429,7 +6429,7 @@ if ( sendData.kind=="page" ) {
                                 //     hashBody = match[0] + '/' + filename;
                                 // }
 
-                                if ( ANTN.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                                if ( ANT.group.media_url_ignore_query && hashBody.indexOf('?') ){
                                     hashBody = hashBody.split('?')[0];
                                 }
 
@@ -6443,7 +6443,7 @@ if ( sendData.kind=="page" ) {
                                 };
 
                                 //add dims
-                                var mediaDims = ANTN.actions.content_nodes.utils.getMediaDims($container)
+                                var mediaDims = ANT.actions.content_nodes.utils.getMediaDims($container)
                                 $.extend(content_node_data, mediaDims);
 
                             }else{
@@ -6463,8 +6463,8 @@ if ( sendData.kind=="page" ) {
                                     // is it a ant-item?  if so, let's force the content_node info, if already known
                                     // UGHUGHUGHUGHUGHUGHUGHUGHUGHUGH
                                     // i don't foxtrot think this is a doing a fucking thing.  
-                                    if ( $container.hasAttr('ant-item') && typeof ANTN.summaries[hash].content_nodes != 'undefined' && ANTN.summaries[hash].content_nodes.length ) {
-                                        $.each( ANTN.summaries[hash].content_nodes, function(content_node_id, node) {
+                                    if ( $container.hasAttr('ant-item') && typeof ANT.summaries[hash].content_nodes != 'undefined' && ANT.summaries[hash].content_nodes.length ) {
+                                        $.each( ANT.summaries[hash].content_nodes, function(content_node_id, node) {
                                             // grab the first one that is not 'undefined'
                                             if ( content_node_id != 'undefined' ) {
                                                 content_node = node;
@@ -6482,7 +6482,7 @@ if ( sendData.kind=="page" ) {
                                         var content_node_id = aWindow.find('div.ant_tag_'+tag.id).data('content_node_id'),
                                             selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : aWindow.data('selState');
                                             if(!selState){
-                                                ANTN.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
+                                                ANT.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
                                                 return;
                                             }
                                         content_node_data = {
@@ -6516,10 +6516,10 @@ if ( sendData.kind=="page" ) {
                                 "content_node_data":content_node_data,
                                 "hash": content_node_data.container,
                                 //page level attrs
-                                "user_id" : ANTN.user.user_id,
-                                "ant_token" : ANTN.user.ant_token,
-                                "group_id" : ANTN.group.id,
-                                "page_id" : ANTN.util.getPageProperty('id', hash),
+                                "user_id" : ANT.user.user_id,
+                                "ant_token" : ANT.user.ant_token,
+                                "group_id" : ANT.group.id,
+                                "page_id" : ANT.util.getPageProperty('id', hash),
                                 "int_id" : args.int_id
                             };
                         }
@@ -6528,9 +6528,9 @@ if ( sendData.kind=="page" ) {
 
                     },
                     onSuccess: {
-                        //ANTN.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
-                            //ANTN.actions.interactions.react.onSuccess.create:
+                            //ANT.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
 
                             // init vars
@@ -6551,7 +6551,7 @@ if ( sendData.kind=="page" ) {
 
                             var reaction = (tag.body) ? tag.body:tag.tag_body;
 
-                            ANTN.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: 're',
                                 event_value: reaction,
                                 reaction_body: reaction,
@@ -6562,7 +6562,7 @@ if ( sendData.kind=="page" ) {
                                 page_id: args.page_id
                             });
 
-                            ANTN.events.emit('antenna.reaction', reaction);
+                            ANT.events.emit('antenna.reaction', reaction);
 
                             $('#ant_loginPanel').remove();
                             
@@ -6578,7 +6578,7 @@ if ( sendData.kind=="page" ) {
 
 
                             if (args.kind && args.kind == "page") {
-                                // ANTN.actions.viewReactionSuccess( args );
+                                // ANT.actions.viewReactionSuccess( args );
 
                                 // // either we have a hash, or we don't, and so we hope there is only one div.ant-summary.  IE sucks.
                                 // var $summary_box = $aWindow.find('.ant_tags_list');
@@ -6595,7 +6595,7 @@ if ( sendData.kind=="page" ) {
                                 //             '<div class="ant_label_icon"></div>'+
                                 //             '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
                                 //             '<span class="pipe"> | </span>'+
-                                //             // '<span><a target="_blank" href="'+ANTN_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
+                                //             // '<span><a target="_blank" href="'+ANT_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
                                 //             '<span><a href="javascript:void(0);" class="ant_undo_link">Undo?</a></span>'+
                                 //         '</div>'
                                 //     );
@@ -6609,7 +6609,7 @@ if ( sendData.kind=="page" ) {
                                 //     $pageTagResponse.append($feedbackMsg);
                                 //     $pageTagResponse.append($shareIcons);
                                     
-                                //     $pageTagResponse.append('<div class="ant_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+ANTN_staticUrl+'widget/images/blank.png" class="no-ant" style="background:url('+ANTN_staticUrl+'widget/images/ant_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
+                                //     $pageTagResponse.append('<div class="ant_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant" style="background:url('+ANT_staticUrl+'widget/images/ant_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
                                 //     $summary_box.addClass('ant_reacted').html( $pageTagResponse );
                                     
 
@@ -6621,7 +6621,7 @@ if ( sendData.kind=="page" ) {
                                 //         '<div class="feedbackMsg">'+
                                 //             '<em><strong>You have already given that reaction.</em></strong>'+
                                 //             '<span class="pipe"> | </span>'+
-                                //             // '<span><a target="_blank" href="'+ANTN_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
+                                //             // '<span><a target="_blank" href="'+ANT_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
                                 //             '<span><a href="javascript:void(0);" class="ant_undo_link">Undo?</a></span>'+
                                 //         '</div>'
                                 //     );
@@ -6640,17 +6640,17 @@ if ( sendData.kind=="page" ) {
                                 //     $summary_box.addClass('ant_reacted').html( $pageTagResponse );
                                 }
                                 
-                                // ANTN.aWindow.updateFooter( $aWindow, '' );
+                                // ANT.aWindow.updateFooter( $aWindow, '' );
 
 
-                                ANTN.actions.viewReactionSuccess( args );
+                                ANT.actions.viewReactionSuccess( args );
 
                             } else {
                                 // not a page-level reaction
 
                                 //temp tie-over
                                 var hash = args.hash,
-                                    summary = ANTN.summaries[hash],
+                                    summary = ANT.summaries[hash],
                                     kind = summary.kind;
 
 
@@ -6666,12 +6666,12 @@ if ( sendData.kind=="page" ) {
 
                                 // attempting to fix the summary widget-not-updating, and it seems to be b/c content_nodes aren't updated
                                 // update page container info, to fix the 'summary widget not updating' problem.  abstract this?
-                                // ANTN.page[ PAGE ID ].containers
+                                // ANT.page[ PAGE ID ].containers
 
                                 //this is weird because there is only one content_node - the img
                                 //this whole thing is gross.  Fix our data structure later.
 
-                                // stolen from the success callback in ANTN.actions.content_nodes.init
+                                // stolen from the success callback in ANT.actions.content_nodes.init
                                 // but wanted to not abstract that b/c this data structure is not the same.  natch.
 
                                 if (typeof summary.content_nodes == "undefined") {
@@ -6681,7 +6681,7 @@ if ( sendData.kind=="page" ) {
                                 //quick fixes for the container id too.
                                 //If the container came down eariler as an unknown container,
                                 //it will be saved but not have an id yet.
-                                var savedContainer = ANTN.containers[hash];
+                                var savedContainer = ANT.containers[hash];
                                 if(savedContainer && container && container.id){
                                     savedContainer.id = container.id;
                                 }
@@ -6728,7 +6728,7 @@ if ( sendData.kind=="page" ) {
 
 
                                 //reset this var for now
-                                content_node_data = args.content_node || ANTN.actions.content_nodes.make(content_node_data);
+                                content_node_data = args.content_node || ANT.actions.content_nodes.make(content_node_data);
 
                                 //if the summary doesn't have an id, set it
                                 summary.id = summary.id || args.container_id;
@@ -6750,11 +6750,11 @@ if ( sendData.kind=="page" ) {
                                 diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
                                 if ( args.scenario != "reactionExists" ) {
-                                    ANTN.actions.summaries.update(hash, diff);
+                                    ANT.actions.summaries.update(hash, diff);
                                 }
 
                                 // update the aWindow to reflect success
-                                ANTN.actions.viewReactionSuccess( args );
+                                ANT.actions.viewReactionSuccess( args );
 
                             }
 
@@ -6774,7 +6774,7 @@ if ( sendData.kind=="page" ) {
                                     tag: args.tag,
                                     aWindow: args.aWindow
                                 };
-                                ANTN.actions.interactions.ajax( newArgs, 'react', 'remove' );
+                                ANT.actions.interactions.ajax( newArgs, 'react', 'remove' );
                             }
 
                             function _doPageUpdates(args){
@@ -6798,7 +6798,7 @@ if ( sendData.kind=="page" ) {
 
                                 // if ( args.scenario != "reactionExists" ) {
                                     //true for isPage
-                                    ANTN.actions.summaries.update(args.hash, diff, true, args.page_id);
+                                    ANT.actions.summaries.update(args.hash, diff, true, args.page_id);
                                 // }
                             }
 
@@ -6813,10 +6813,10 @@ if ( sendData.kind=="page" ) {
                                 $shareWrapper.append('<strong class="ant_share_it">Share It:</strong>');
 
                                 $.each(socialNetworks, function(idx, val){
-                                    $shareWrapper.append('<a href="http://' +val+ '.com" class="ant_share_link"><img class="no-ant" src="'+ANTN_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
+                                    $shareWrapper.append('<a href="http://' +val+ '.com" class="ant_share_link"><img class="no-ant" src="'+ANT_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
                                     $shareWrapper.find('a.ant_share_link:last').click( function() {
                                         
-                                        ANTN.events.trackEventToCloud({
+                                        ANT.events.trackEventToCloud({
                                             // action: "share_open_attempt",
                                             // opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
                                             event_type: "sh",
@@ -6825,14 +6825,14 @@ if ( sendData.kind=="page" ) {
                                             page_id: args.page_id
                                         });
 
-                                        ANTN.shareWindow = window.open(ANTN_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
+                                        ANT.shareWindow = window.open(ANT_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
                                             $('meta[property="og:title"]').attr('content') :
                                                 $('title').text() ?
                                                 $('title').text() : "";
 
-                                        ANTN.actions.share_getLink({ hash:shareHash, kind:args.kind, sns:val, aWindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
+                                        ANT.actions.share_getLink({ hash:shareHash, kind:args.kind, sns:val, aWindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
                                         return false;
                                     });
                                 });
@@ -6840,7 +6840,7 @@ if ( sendData.kind=="page" ) {
                             }
                         },
                         remove: function(args){
-                            //ANTN.actions.interactions.react.onSuccess.remove:
+                            //ANT.actions.interactions.react.onSuccess.remove:
                             var sendData = args.sendData;
                             var interaction_node = args.response.data.deleted_interaction.interaction_node;
                             var $aWindow = args.aWindow,
@@ -6870,9 +6870,9 @@ if ( sendData.kind=="page" ) {
                             var isPage = (args.kind == 'page' || hash=="page");
                             if(isPage){
                                 //a bit hacky
-                                ANTN.actions.summaries.update(hash, diff, isPage, args.page_id);
+                                ANT.actions.summaries.update(hash, diff, isPage, args.page_id);
                             }else{
-                                ANTN.actions.summaries.update(hash, diff);
+                                ANT.actions.summaries.update(hash, diff);
                             }
                             
                             var usrMsgArgs = {
@@ -6887,21 +6887,21 @@ if ( sendData.kind=="page" ) {
                             //queued up to be released in the sharestart function after the animation finishes
                             // NOT TRUE ANYMORE?
                             $aWindow.queue('userMessage', function(){
-                                ANTN.session.aWindowUserMessage.show( usrMsgArgs );
+                                ANT.session.aWindowUserMessage.show( usrMsgArgs );
                             });
                             
                             if(isPage){
-                                ANTN.aWindow.updatePageTagMessage( args, 'tagDeleted' );
+                                ANT.aWindow.updatePageTagMessage( args, 'tagDeleted' );
                             }else{
-                                ANTN.aWindow.updateTagMessage( {aWindow:$aWindow, tag:args.tag, scenario:"tagDeleted", args:args} );
+                                ANT.aWindow.updateTagMessage( {aWindow:$aWindow, tag:args.tag, scenario:"tagDeleted", args:args} );
                             }
 
                         }
                     },
                     onFail: function(args){
-                        //ANTN.actions.interactions.react.onFail:
+                        //ANT.actions.interactions.react.onFail:
                         //todo: we prob want to move most of this to a general onFail for all interactions.
-                        // So this function would look like: doSpecificOnFailStuff....; ANTN.actions.interactions.genericOnFail();
+                        // So this function would look like: doSpecificOnFailStuff....; ANT.actions.interactions.genericOnFail();
 
                         //clear loader
                         var $aWindow = args.aWindow,
@@ -6909,38 +6909,38 @@ if ( sendData.kind=="page" ) {
                         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            ANTN.session.receiveMessage( args, function() { ANTN.actions.interactions.ajax( args, 'react', 'create' ); } );
-                            ANTN.session.showLoginPanel( args );
+                            ANT.session.receiveMessage( args, function() { ANT.actions.interactions.ajax( args, 'react', 'create' ); } );
+                            ANT.session.showLoginPanel( args );
                         } else if ( response.message == "existing interaction" ) {
                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
                             //showTempUserMsg should be adapted to be aWindowUserMessage:{show:..., hide:...}
                                 //with a message param.
                                 //and a close 'x' button.
                                 args.msgType = "existingInteraction";
-                                ANTN.session.aWindowUserMessage.show( args );
+                                ANT.session.aWindowUserMessage.show( args );
                         } else if ( response.message.indexOf("blocked this tag") != -1 ) {
-                            alert( ANTN.t('bad_language_warning') );
+                            alert( ANT.t('bad_language_warning') );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            ANTN.session.handleGetUserFail( args, function() {
-                                ANTN.actions.interactions.ajax( args, 'react', 'create' );
+                            ANT.session.handleGetUserFail( args, function() {
+                                ANT.actions.interactions.ajax( args, 'react', 'create' );
                             });
                         }
                     }
                 }
-                //end ANTN.actions.interactions
+                //end ANT.actions.interactions
             },
             indicators: {
                 show: function(hashes, boolDontFade){
                     boolDontFade = true;
-                    //ANTN.actions.indicators.show:
+                    //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? ANTN.C.indicatorOpacity : '1' ;
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
 
                     if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
                         $indicators.not('.ant_dont_show').css({
@@ -6960,7 +6960,7 @@ if ( sendData.kind=="page" ) {
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
-                    //ANTN.actions.indicators.hide:
+                    //ANT.actions.indicators.hide:
                     //hashes should be an array or a single hash string
                     //it fails gracefully if there are no indicators for the hashed container ( $indcators will just be empty and do nothing )
                     var $indicators = this.fetch(hashes);
@@ -6970,7 +6970,7 @@ if ( sendData.kind=="page" ) {
                     });
                 },
                 fetch: function(hashOrHashes){
-                    //ANTN.actions.indicators.fetch:
+                    //ANT.actions.indicators.fetch:
                     //a helper to get an $indicators obj from a hash or list of hashes
                     var $indicators = $();
                     if( typeof hashOrHashes === "string" ){
@@ -6987,12 +6987,12 @@ if ( sendData.kind=="page" ) {
                     return $indicators;
                 },
                 init: function(hash){
-                    //ANTN.actions.indicators.init:
-                    //note: this should generally be called via ANTN.actions.containers.setup
+                    //ANT.actions.indicators.init:
+                    //note: this should generally be called via ANT.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
-                    var summary = ANTN.summaries[hash];
+                    var summary = ANT.summaries[hash];
                     if (typeof summary != "undefined" && summary.$container.hasAttr('ant-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
@@ -7027,7 +7027,7 @@ if ( sendData.kind=="page" ) {
                             }
                             if ( $grid.length ) {
                             }
-                            ANTN.actions.indicators.update(hash);
+                            ANT.actions.indicators.update(hash);
 
                         } else {
                             //check for and remove any existing indicator and indicator_details and remove for now.
@@ -7048,11 +7048,11 @@ if ( sendData.kind=="page" ) {
 
                             if(!kind){
                                 //todo: I'll look into the source of this this, but this should work fine for now.
-                                // ANTN.safeThrow('indicator container has no kind attribute');
+                                // ANT.safeThrow('indicator container has no kind attribute');
                                 return;
                             }
                             //run setup specific to this type
-                            ANTN.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
 
                             //todo: combine this with the kindSpecificSetup above right?
@@ -7064,7 +7064,7 @@ if ( sendData.kind=="page" ) {
                                 }
 
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
-                                    ANTN.actions.stripRdrNode($container);
+                                    ANT.actions.stripRdrNode($container);
                                     return;
                                 }
 
@@ -7075,21 +7075,21 @@ if ( sendData.kind=="page" ) {
                                 
                                 if(!isTouchBrowser){
                                     $container.bind('mouseenter.ant_helper', function() {
-                                        var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                                        var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper) {
-                                            ANTN.actions.indicators.helpers.over($indicator);
+                                            ANT.actions.indicators.helpers.over($indicator);
                                         }
                                     });
                                     $container.bind('mouseleave.ant_helper', function(e) {
-                                        var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                                        var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper ) {
-                                            ANTN.actions.indicators.helpers.out($indicator);
+                                            ANT.actions.indicators.helpers.out($indicator);
                                         }
                                     });
                                 } else {
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
-                                        if (ANTN.util.bubblingEvents['dragging'] == true ) { return; }
-                                        if (ANTN.util.bubblingEvents['touchend'] == false) {
+                                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        if (ANT.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.ant_window').length ) {
                                                 var $this_container = $('[ant-hash="'+hash+'"]');
                                                 // var $container = $(e.target);
@@ -7097,9 +7097,9 @@ if ( sendData.kind=="page" ) {
                                                 var el = $this_container[0]
                                                 $('document').selog('selectEl', el);
 
-                                                var $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                                                var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                             } else {
-                                                ANTN.actions.UIClearState();
+                                                ANT.actions.UIClearState();
                                             }
                                         }
                                     });
@@ -7124,7 +7124,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             //of course, don't pass true for shouldReInit here.
-                            ANTN.actions.indicators.update(hash);
+                            ANT.actions.indicators.update(hash);
 
                         } // /else of if (ant-item) conditional
                     }
@@ -7137,7 +7137,7 @@ if ( sendData.kind=="page" ) {
                             .attr('id',indicatorBodyId)
                             .appendTo($indicator)
                             .append(
-                                '<img src="'+ANTN_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />',
+                                '<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
@@ -7151,20 +7151,20 @@ if ( sendData.kind=="page" ) {
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover.showRindow', function(){
                                 _makeRindow();
-                                var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 if( hasHelper ){
-                                    // ANTN.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 }
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
-                                if (ANTN.util.bubblingEvents['dragging'] == true ) { return; }
-                                ANTN.util.bubblingEvents['touchend'] = true;
+                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                ANT.util.bubblingEvents['touchend'] = true;
 
                                 _makeRindow();
-                                var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 if( hasHelper ){
-                                    // ANTN.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 }
                             });
                         }
@@ -7186,10 +7186,10 @@ if ( sendData.kind=="page" ) {
                         // }
                         //end - todo
 
-                        var $aWindow = ANTN.aWindow.make( "readMode", {hash:hash} );
-                        var page_id = ANTN.util.getPageProperty('id', hash );
+                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );
+                        var page_id = ANT.util.getPageProperty('id', hash );
 
-                        //This bug goes all the way back to the big-ol-nasty function ANTN.aWindow._aWindowTypes.writeMode.make.
+                        //This bug goes all the way back to the big-ol-nasty function ANT.aWindow._aWindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
                         if(!$aWindow){
                             return;
@@ -7201,10 +7201,10 @@ if ( sendData.kind=="page" ) {
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
 
-                            // ANTN.events.track('paragraph_helper_show');
+                            // ANT.events.track('paragraph_helper_show');
 
                             // DONT FIRE... too many events
-                            // ANTN.events.trackEventToCloud({
+                            // ANT.events.trackEventToCloud({
                             //     // category: "engage",
                             //     // action: "aWindow_shown_indicatorhelper",
                             //     // opt_label: "kind: text, hash: " + hash,
@@ -7215,8 +7215,8 @@ if ( sendData.kind=="page" ) {
                             //     page_id: page_id
                             // });
                         }else{
-                            // ANTN.events.track( 'view_node::'+hash, hash );
-                            ANTN.events.trackEventToCloud({
+                            // ANT.events.track( 'view_node::'+hash, hash );
+                            ANT.events.trackEventToCloud({
                                 // category: "engage",
                                 // action: "aWindow_shown_readmode",
                                 // opt_label: "kind: text, hash: " + hash,
@@ -7231,23 +7231,23 @@ if ( sendData.kind=="page" ) {
                     }
                     function _updateRindowForHelperIndicator(){
                         var $aWindow = $indicator.$aWindow;
-                        var $header = ANTN.aWindow.makeHeader( ANTN.t('main_cta') );
+                        var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
                         $aWindow.addClass('ant_helper_aWindow');
                         $aWindow.find('.ant_header').replaceWith($header);
-                        $header.append('<div class="ant_header_arrow"><img src="'+ANTN_staticUrl+'widget/images/header_up_arrow.png" /></div>');
+                        $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
                         $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
                         $aWindowBody.html('');
                         $aWindow.find('div.ant_body_wrap').append($aWindowBody);
-                        ANTN.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
+                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
                         $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                             $aWindow.remove();
                             var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
-                            $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                         });
 
-                        // ANTN.aWindow.updateSizes(
+                        // ANT.aWindow.updateSizes(
                         //     $aWindow, {
                         //         noAnimate:true
                         //     }
@@ -7264,13 +7264,13 @@ if ( sendData.kind=="page" ) {
 
                         if (isTouchBrowser) {
                            if ( !$indicator.hasAttr('ant-item') ) {
-                                ANTN.actions.content_nodes.init(hash, callback);
+                                ANT.actions.content_nodes.init(hash, callback);
                             } 
                         } else {
                             $indicator.on( 'mouseover.contentNodeInit' , function(){
                                 // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
                                 if ( !$indicator.hasAttr('ant-item') ) {
-                                    ANTN.actions.content_nodes.init(hash, callback);
+                                    ANT.actions.content_nodes.init(hash, callback);
                                 }
                             });
                         }
@@ -7288,9 +7288,9 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS ONE:
                         // $cta.on('mouseover.showRindow', function(){
                         //     _customDisplayMakeRindow($cta);
-                        //     var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                        //     var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                         //     if( hasHelper ){
-                        //         // ANTN.events.track('paragraph_helper_engage');
+                        //         // ANT.events.track('paragraph_helper_engage');
                         //     }
                         // });
                         
@@ -7299,9 +7299,9 @@ if ( sendData.kind=="page" ) {
                             var $thisCTA = $(this);
                             $thisCTA.attr('ant-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
-                                // var hasHelper = $indicator.hasClass('ant_helper') && ANTN.group.paragraph_helper;
+                                // var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 // if( hasHelper ){
-                                    // ANTN.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 // }
                             });
                         });
@@ -7340,11 +7340,11 @@ if ( sendData.kind=="page" ) {
                             $('document').selog('selectEl', el);
                         }
 
-                        var $aWindow = ANTN.aWindow.make( mode, {hash:hash, '$custom_cta':$cta } );
+                        var $aWindow = ANT.aWindow.make( mode, {hash:hash, '$custom_cta':$cta } );
                         $aWindow.addClass('ant_rewritable');
-                        var page_id = ANTN.util.getPageProperty('id', hash );
+                        var page_id = ANT.util.getPageProperty('id', hash );
 
-                        //This bug goes all the way back to the big-ol-nasty function ANTN.aWindow._aWindowTypes.writeMode.make.
+                        //This bug goes all the way back to the big-ol-nasty function ANT.aWindow._aWindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
                         if(!$aWindow){
                             return;
@@ -7354,11 +7354,11 @@ if ( sendData.kind=="page" ) {
 
                         var event_value = ($cta.attr('ant-mode')=="write") ? 'wr':'rd';
 
-                        // ANTN.events.track( 'view_node::'+hash, hash );
-                        // ANTN.events.track('start_react_text');
+                        // ANT.events.track( 'view_node::'+hash, hash );
+                        // ANT.events.track('start_react_text');
 
                         // wtf is this here for?
-                        // ANTN.events.trackEventToCloud({
+                        // ANT.events.trackEventToCloud({
                         //     // category: "engage",
                         //     // action: "aWindow_shown_"+ $cta.attr('ant-mode') +"mode",
                         //     // opt_label: "kind: text, hash: " + hash,
@@ -7372,10 +7372,10 @@ if ( sendData.kind=="page" ) {
                     }
                 },
                 update: function(hash, shouldReInit){
-                    //ANTN.actions.indicators.update:
+                    //ANT.actions.indicators.update:
 
                     var scope = this;
-                    var summary = ANTN.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
@@ -7402,13 +7402,13 @@ if ( sendData.kind=="page" ) {
                             if ( $counter.length ) {
                                 if ( summary.counts.tags > 0 ) {
                                     if ( summary.counts.tags > 1 ) { $label.text('Reactions'); } else { $label.text('Reaction'); }
-                                    $counter.html( ANTN.commonUtil.prettyNumber( summary.counts.tags ) );
+                                    $counter.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 // } else if ( typeof summary.content_nodes != 'undefined' ) {
                                     // $.each( summary.content_nodes, function(idx, content_node) {
                                     //     summary.counts = $.extend(true, {}, content_node.counts );
                                     //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
                                     // });
-                                    // $counter.html( ANTN.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
+                                    // $counter.html( ANT.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
                                 // } else {
                                 //     $counter.html('0');
                                 }
@@ -7430,7 +7430,7 @@ if ( sendData.kind=="page" ) {
                                 // $('#ant_container_tracker_'+hash).remove();
                             }
 
-                            ANTN.actions.indicators.init(hash);
+                            ANT.actions.indicators.init(hash);
                             //this will loop back from the .init, which does not pass true for shouldReInit - so no infinite loop.
                             return;
                         }
@@ -7445,31 +7445,31 @@ if ( sendData.kind=="page" ) {
                             $details_header_count = ($indicator_details) ? $indicator_details.find('div.ant_header h1'):false,
                             hasReactions = summary.counts.tags > 0;
 
-                        var reactionLabel = (summary.counts.tags>1) ? ANTN.t('plural_reaction') : ANTN.t('single_reaction');
+                        var reactionLabel = (summary.counts.tags>1) ? ANT.t('plural_reaction') : ANT.t('single_reaction');
                         if ( hasReactions ) {
                             if (isText) {
-                                $count.html( ANTN.commonUtil.prettyNumber( summary.counts.tags ) );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 $count_label.text(reactionLabel);
                             } else {
-                                $count.html( ANTN.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
                             }
-                            if ($details_header_count) $details_header_count.html( ANTN.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANTN.t('plural_reaction') );
+                            if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
-                            ANTN.actions.indicators.show(hash);
+                            ANT.actions.indicators.show(hash);
                             
                         } else {
                             $indicator.addClass('ant_no_reactions');
-                            $count.html( '<span class="ant_react_label">'+ANTN.t('main_cta')+'</span>' );
+                            $count.html( '<span class="ant_react_label">'+ANT.t('main_cta')+'</span>' );
                             
                             if(isText){
-                                if(ANTN.group.paragraph_helper){
-                                    ANTN.actions.indicators.show(hash);
+                                if(ANT.group.paragraph_helper){
+                                    ANT.actions.indicators.show(hash);
                                     $indicator.addClass('ant_helper');
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
                                 }else{
-                                    ANTN.actions.indicators.hide(hash);
+                                    ANT.actions.indicators.hide(hash);
                                 }                                                        
                             }
                         }
@@ -7477,11 +7477,11 @@ if ( sendData.kind=="page" ) {
 
                 },
                 helpers: {
-                    //ANTN.actions.indicators.helpers:
+                    //ANT.actions.indicators.helpers:
                     over: function($indicator){
-                        //ANTN.actions.indicators.helpers.over:
+                        //ANT.actions.indicators.helpers.over:
 
-                        // ANTN.events.track('paragraph_helper_show');
+                        // ANT.events.track('paragraph_helper_show');
 
                         var alreadyHovered = $indicator.data('containerHover');
                         if( alreadyHovered ){
@@ -7496,30 +7496,30 @@ if ( sendData.kind=="page" ) {
                             
                         //     if(hasHover){
                                 
-                        //         ANTN.util.cssSuperImportant( $indicator, { display:"inline" });
+                        //         ANT.util.cssSuperImportant( $indicator, { display:"inline" });
                                 
                         //         // $indicator
                         //         //     .css('opacity',0)
                         //         //     .animate({
-                        //         //         'opacity': ANTN.C.helperIndicators.opacity
-                        //         //         }, ANTN.C.helperIndicators.fadeInTime );
+                        //         //         'opacity': ANT.C.helperIndicators.opacity
+                        //         //         }, ANT.C.helperIndicators.fadeInTime );
                         //     }
-                        // }, ANTN.C.helperIndicators.hoverDelay);
+                        // }, ANT.C.helperIndicators.hoverDelay);
                         // $indicator.data('hoverTimeout', hoverTimeout);
                         // if(isTouchBrowser){
                             // $indicator.css({ display:"inline" });
                         // }else{
-                            ANTN.util.cssSuperImportant( $indicator, { display:"inline" });
+                            ANT.util.cssSuperImportant( $indicator, { display:"inline" });
                         // }
-                        $indicator.css('opacity', ANTN.C.helperIndicators.opacity);
+                        $indicator.css('opacity', ANT.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
-                        //ANTN.actions.indicators.helpers.out:
+                        //ANT.actions.indicators.helpers.out:
                         
                         //temp hack
                         //don't fade it out if the aWindow is showing
                             // var hash = $indicator.data('hash');
-                            // var summary = ANTN.summaries[ hash ];
+                            // var summary = ANT.summaries[ hash ];
                             // var $aWindow = (typeof summary != "undefined" && typeof summary.$aWindow_readmode != "undefined") ? summary.$aWindow_readmode:null;
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
@@ -7531,13 +7531,13 @@ if ( sendData.kind=="page" ) {
                         if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
                         }else{
-                            ANTN.util.cssSuperImportant( $indicator, { display:"none" });
+                            ANT.util.cssSuperImportant( $indicator, { display:"none" });
                         }
                     }
                 },
                 utils:{
                     checkTrailingWhiteSpace: function($container){
-                        //ANTN.actions.indicators.utils.checkTrailingWhiteSpace:
+                        //ANT.actions.indicators.utils.checkTrailingWhiteSpace:
 
                         var reversedNodes = $container.children().get().reverse();
 
@@ -7556,31 +7556,31 @@ if ( sendData.kind=="page" ) {
                         });
                         return startOfTrailingWhiteSpace;
                     },
-                    //ANTN.actions.indicators.utils:
+                    //ANT.actions.indicators.utils:
                     kindSpecificSetup: {
                         img: function( hash ){
-                            var summary = ANTN.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
                                 $container_tracker_wrap = $('#ant_container_tracker_wrap'),
                                 $container_tracker = $('<div class="ant_container_tracker" />'),
                                 indicatorDetailsId = 'ant_indicator_details_'+hash,
-                                page_id = ANTN.util.getPageProperty('id', hash );
+                                page_id = ANT.util.getPageProperty('id', hash );
 
                             if( $container.width() < 160 ){
-                                ANTN.safeThrow('Too small to init.');
+                                ANT.safeThrow('Too small to init.');
                                 return;
                             }
 
                             if( $container.css('display') == 'none' || $container.css('visibility') == 'hidden' ){
-                                ANTN.safeThrow('not visible: ');
+                                ANT.safeThrow('not visible: ');
                                 return;
                             }
 
                             var $existing = $('#ant_container_tracker_'+hash);
                             if($existing.length){
-                                ANTN.safeThrow('Images are not expected to get re-inited.');
+                                ANT.safeThrow('Images are not expected to get re-inited.');
                                 return;
                             }
 
@@ -7593,9 +7593,9 @@ if ( sendData.kind=="page" ) {
                             if(isTouchBrowser){
                                 $indicator.bind('tap', function(){
                                     if ( summary.counts.interactions == 0 ) {
-                                        var $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                                        var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     } else {
-                                        var $aWindow = ANTN.aWindow.make( "readMode", {hash:hash} );    
+                                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                     }
                                     $(this).addClass('ant_live_hover');
                                 });
@@ -7603,9 +7603,9 @@ if ( sendData.kind=="page" ) {
                                 $indicator
                                     .on('mouseenter', function() {
                                         if ( summary.counts.interactions == 0 ) {
-                                            var $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         } else {
-                                            var $aWindow = ANTN.aWindow.make( "readMode", {hash:hash} );    
+                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                         }
                                         $(this).addClass('ant_live_hover');
                                     })//chain
@@ -7615,7 +7615,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             //todo: move this from init
-                            ANTN.actions.indicators.utils.updateContainerTracker(hash);
+                            ANT.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
@@ -7643,7 +7643,7 @@ if ( sendData.kind=="page" ) {
                                 $indicator_details.addClass('ant_indicator_details_for_media').click(
                                     function() {
                                         $indicator_details.addClass('ant_live_hover');
-                                        ANTN.actions.containers.media.onEngage( hash );
+                                        ANT.actions.containers.media.onEngage( hash );
                                     }
                                 );
 
@@ -7662,7 +7662,7 @@ if ( sendData.kind=="page" ) {
                             this.img( hash );
                         },
                         text: function( hash ){
-                            var summary = ANTN.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
@@ -7671,7 +7671,7 @@ if ( sendData.kind=="page" ) {
                             $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
                             // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
 
-                            var startOfTrailingWhiteSpace = ANTN.actions.indicators.utils.checkTrailingWhiteSpace($container);
+                            var startOfTrailingWhiteSpace = ANT.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
                             if(startOfTrailingWhiteSpace){
                                 $(startOfTrailingWhiteSpace).before($indicator);
@@ -7681,9 +7681,9 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     makeDetailsContent: function( hash ){
-                        //ANTN.actions.indicators.utils.makeDetailsContent:
+                        //ANT.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
-                        var summary = ANTN.summaries[hash],
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
                             $indicator_body = summary.$indicator_body,
@@ -7696,8 +7696,8 @@ if ( sendData.kind=="page" ) {
                             // $oldDetails.remove();
 
                             //update the header
-                            var headerText = ANTN.aWindow.makeDefaultPanelMessage($indicator_details);
-                            var $header = ANTN.aWindow.makeHeader( headerText );
+                            var headerText = ANT.aWindow.makeDefaultPanelMessage($indicator_details);
+                            var $header = ANT.aWindow.makeHeader( headerText );
                             
                             var $bodyWrap = $('<div class="ant ant_body_wrap ant_clearfix" />');
                                 
@@ -7715,7 +7715,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             var $aWindow = $indicator_details;
-                            var $tagsListContainer = ANTN.actions.indicators.utils.makeTagsListForInline( $aWindow );
+                            var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
 
                             $bodyWrap.append($tagsListContainer);
 
@@ -7725,16 +7725,16 @@ if ( sendData.kind=="page" ) {
 
                     //move these from indicators-  they dont belong here
                     makeTagsListForInline: function( $aWindow, isWriteMode, page ){
-                        //ANTN.actions.indicators.utils.makeTagsListForInline:
+                        //ANT.actions.indicators.utils.makeTagsListForInline:
                         // page is the page object, not a boolean
 
                         var hash = $aWindow.data('hash') || $aWindow.attr('ant-hash');
                         
                         var isPage = !hash || hash == "page";
 
-                        var summary = !isPage ? ANTN.summaries[hash] : {};
+                        var summary = !isPage ? ANT.summaries[hash] : {};
                         
-                        var default_reactions = ANTN.groupSettings.getBlessedTags(hash);
+                        var default_reactions = ANT.groupSettings.getBlessedTags(hash);
 
                         var reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid';
 
@@ -7758,21 +7758,21 @@ if ( sendData.kind=="page" ) {
                                 // write page-level tags: readmode
 
                                 // actually, these should always be sorted already - dont think we need this.
-                                // ANTN.actions.summaries.sortByTags(page.toptags);
+                                // ANT.actions.summaries.sortByTags(page.toptags);
 
                                 writeTagBoxes( page.toptags );
-                                ANTN.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANTN.t('main_cta')+'</span>' );
+                                ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                 $aWindow.find('.ant_footer').addClass('ant_cta').find('span.ant_cta_msg').click( function() {
                                     $aWindow.remove();
-                                    $aWindow = ANTN.aWindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
+                                    $aWindow = ANT.aWindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                             } else {
                                 // write page-level tags: writemode
-                                var $header = ANTN.aWindow.makeHeader( ANTN.t('main_cta') ),
+                                var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') ),
                                     isWriteMode = true;
                                 $aWindow.find('.ant_header').replaceWith($header);
                                 writeTagBoxes(default_reactions);
-                                var $custom_tagBox = ANTN.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
+                                var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
                                 $aWindow.removeClass('ant_rewritable');
 
                             }
@@ -7786,36 +7786,36 @@ if ( sendData.kind=="page" ) {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
 
                                 // write inline tags: readmode, for all content types (kind)
-                                ANTN.actions.summaries.sortInteractions(hash);
+                                ANT.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
                                     if ( !summary.crossPage ) {
-                                        ANTN.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANTN.t('main_cta')+'</span>' );
+                                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                         $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                                             $aWindow.remove();
                                             var $container = $('[ant-hash="'+hash+'"]');
                                             var el = $container[0]
                                             $('document').selog('selectEl', el);
-                                            $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         });
                                     }
                                 } else {
-                                    ANTN.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANTN.t('main_cta')+'</span>' );
+                                    ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                     $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                                         $aWindow.remove();
-                                        $aWindow = ANTN.aWindow.make( "writeMode", {hash:hash} );
+                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     });
                                 }
                             } else {
                                 // no t() not used?
-                                ANTN.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
+                                ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
 
                         // mode-specific addition functionality that needs to precede writing the $aWindow to the DOM
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            var $custom_tagBox = ANTN.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
+                            var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
                                 $aWindow.removeClass('ant_rewritable');
                         }
 
@@ -7872,7 +7872,7 @@ if ( sendData.kind=="page" ) {
                         }
 
                         // $tagsListContainer.append($tag_table);
-                        // ANTN.aWindow.jspUpdate($aWindow);
+                        // ANT.aWindow.jspUpdate($aWindow);
                         // $aWindow.find('.ant_body_wrap').append($tagsListContainer);
                         if ( reactionViewStyle == "grid" || isWriteMode ) {
                             isotopeTags( $tagsListContainer );
@@ -7898,7 +7898,7 @@ if ( sendData.kind=="page" ) {
 
                         
                         // sort a list of tags into their buckets
-                        // private function, but could be a ANTN.util or ANTN.tagBox function
+                        // private function, but could be a ANT.util or ANT.tagBox function
                         function createTagBuckets( tagList ) {
                             // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
@@ -7948,36 +7948,36 @@ if ( sendData.kind=="page" ) {
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        ANTN.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
                                     }else{
-                                        ANTN.aWindow.tagBox.setWidth( $aWindow, 480 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    ANTN.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { ANTN.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.medium.length ) { ANTN.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.small.length >= 3 ) { ANTN.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
                                 }
                             }
 
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
-                                  ANTN.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
-                                    ANTN.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
-                                  ANTN.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                   // set next color 
                                   colorInt++;
                                   if ( colorInt == 6 ) colorInt = 1;
@@ -8086,21 +8086,21 @@ if ( sendData.kind=="page" ) {
 
                     },
                     updateContainerTrackers: function(){
-                        $.each( ANTN.containers, function(idx, container) {
+                        $.each( ANT.containers, function(idx, container) {
                             if ( container.kind && ( container.kind == "img" || container.kind == "media" || container.kind == "med") ) {
-                                ANTN.actions.indicators.utils.updateContainerTracker( container.hash );
+                                ANT.actions.indicators.utils.updateContainerTracker( container.hash );
                             }
                         });
                     },
                     updateContainerTracker: function(hash){
-                        //ANTN.actions.indicators.utils.updateContainerTracker:
-                        var summary = ANTN.summaries[hash],
+                        //ANT.actions.indicators.utils.updateContainerTracker:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $container_tracker = $('#ant_container_tracker_'+hash);
 
                         //quick fix so this doesnt get run on text.
                         //TODO figure out where this was getting called for text containers.
-                        var container = ANTN.containers[hash];
+                        var container = ANT.containers[hash];
                         if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
 
                         var padding = {
@@ -8120,7 +8120,7 @@ if ( sendData.kind=="page" ) {
                         paddingOffset.left = !hasBorder ? padding.left : 0;
 
                         //compensate for padding - which we want to ignore
-                        ANTN.util.cssSuperImportant($container_tracker, {
+                        ANT.util.cssSuperImportant($container_tracker, {
                             top: $container.offset().top + paddingOffset.top+'px',
                             left: $container.offset().left + paddingOffset.left+'px'
                         }, true);
@@ -8129,8 +8129,8 @@ if ( sendData.kind=="page" ) {
 
                     },
                     updateInlineIndicator: function(hash){
-                        //ANTN.actions.indicators.utils.updateInlineIndicator:
-                        var summary = ANTN.summaries[hash],
+                        //ANT.actions.indicators.utils.updateInlineIndicator:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator_details = summary.$indicator_details;
 
@@ -8143,8 +8143,8 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     updateMediaTracker: function(hash){
-                        //ANTN.actions.indicators.utils.updateMediaTracker:
-                        var summary = ANTN.summaries[hash],
+                        //ANT.actions.indicators.utils.updateMediaTracker:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
                             $indicator_body = summary.$indicator_body,
@@ -8153,8 +8153,8 @@ if ( sendData.kind=="page" ) {
 
                         if ( $indicator_body ) {
                             
-                            if ( $container.parents( ANTN.group.img_container_selectors ).length ) {
-                                $container = $container.parents( ANTN.group.img_container_selectors ).first();
+                            if ( $container.parents( ANT.group.img_container_selectors ).length ) {
+                                $container = $container.parents( ANT.group.img_container_selectors ).first();
                             }
 
                             //todo: consolodate this with the other case of it
@@ -8191,23 +8191,23 @@ if ( sendData.kind=="page" ) {
                                 $indicator.addClass('ant_indicator_not_img');
                             }
 
-                            ANTN.util.cssSuperImportant( $indicator, {
+                            ANT.util.cssSuperImportant( $indicator, {
                                 left: 12+'px',
                                 top: cssTop+'px'
                             }, true);
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
-                                ANTN.actions.indicators.utils.updateInlineIndicator(hash);
+                                ANT.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{
 
                             }
                         }
 
-                        // ANTN.actions.indicators.utils.borderHilites.update(hash);
+                        // ANT.actions.indicators.utils.borderHilites.update(hash);
                     },
                     borderHilites: {
-                        //ANTN.actions.indicators.utils.borderHilites:
+                        //ANT.actions.indicators.utils.borderHilites:
                         
                         //hiliteDesignEdit
                         //our old blue version
@@ -8219,7 +8219,7 @@ if ( sendData.kind=="page" ) {
 
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
-                            //ANTN.actions.indicators.utils.borderHilites.make:
+                            //ANT.actions.indicators.utils.borderHilites.make:
 
                             var $indicator = $('#ant_indicator_'+hash),
                                 $container = $('[ant-hash="'+hash+'"]'),
@@ -8230,7 +8230,7 @@ if ( sendData.kind=="page" ) {
                                 
                                 if( !$mediaBorderWrap.length ){
                                     $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
-                                    $mediaBorderWrap.addClass('designVersion_' + ANTN.actions.indicators.utils.borderHilites.designVersion);
+                                    $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
                                 }
                                 $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
@@ -8254,13 +8254,13 @@ if ( sendData.kind=="page" ) {
                                 };
 
                                 $mediaBorderWrap.data('borders',borders);
-                                // ANTN.actions.indicators.utils.borderHilites.update(hash);
+                                // ANT.actions.indicators.utils.borderHilites.update(hash);
                             }
 
                         },
                         update: function(hash){
-                            //ANTN.actions.indicators.utils.borderHilites.update:
-                            // var Section = ANTN.actions.indicators.utils.borderHilites;
+                            //ANT.actions.indicators.utils.borderHilites.update:
+                            // var Section = ANT.actions.indicators.utils.borderHilites;
 
                             // var $indicator = $('#ant_indicator_'+hash),
                             //     $container = $('[ant-hash="'+hash+'"]'),
@@ -8271,7 +8271,7 @@ if ( sendData.kind=="page" ) {
                             //     //failsafe that shouldnt be needed.
                             //     if( this.makeAttempt > 1 ) return;
                             //     this.makeAttempt ++;
-                            //     ANTN.actions.indicators.utils.borderHilites.make(hash);
+                            //     ANT.actions.indicators.utils.borderHilites.make(hash);
                             //     //just return here.  the make function will call this update function again and this will be bypassed.
                             //     return;
                             // }
@@ -8368,12 +8368,12 @@ if ( sendData.kind=="page" ) {
                             // };
 
                             // $.each( borders, function( side, data ){
-                            //     ANTN.util.cssSuperImportant( data.$side, data.css, true );
+                            //     ANT.util.cssSuperImportant( data.$side, data.css, true );
                             // });                       
                     
                         },
                         engage: function(hash, isShareLink){
-                            //ANTN.actions.indicators.utils.borderHilites.engage:
+                            //ANT.actions.indicators.utils.borderHilites.engage:
                             var $container_tracker = $('#ant_container_tracker_'+hash),
                                 $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
@@ -8384,7 +8384,7 @@ if ( sendData.kind=="page" ) {
                             }
                         },
                         disengage: function(hash){
-                            //ANTN.actions.indicators.utils.borderHilites.disengage:
+                            //ANT.actions.indicators.utils.borderHilites.disengage:
                             // if ( !$('ant_for_'+hash).length ) {
                                 var $container_tracker = $('#ant_container_tracker_'+hash),
                                     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
@@ -8395,34 +8395,34 @@ if ( sendData.kind=="page" ) {
                             // }
                         },
                         engageAll: function(){
-                            //ANTN.actions.indicators.utils.borderHilites.engageAll:
+                            //ANT.actions.indicators.utils.borderHilites.engageAll:
                             $mediaBorderWrap = $('.ant_media_border_wrap');
                             $mediaBorderWrap.addClass('engaged');
                         },
                         disengageAll: function(){
-                            //ANTN.actions.indicators.utils.borderHilites.disengageAll:
+                            //ANT.actions.indicators.utils.borderHilites.disengageAll:
                             $mediaBorderWrap = $('.ant_media_border_wrap');
                             $mediaBorderWrap.removeClass('engaged');
                             $mediaBorderWrap.removeClass('engagedForShareLink');
                             $('div.ant_indicator_for_media').hide();
                         }
                     }
-                }//end ANTN.actions.indicators.utils
+                }//end ANT.actions.indicators.utils
             },
             summaries:{
                 init: function(hash){
-                    if (!ANTN.util.activeAB()) return;
-                    //ANTN.actions.summaries.init:
+                    if (!ANT.util.activeAB()) return;
+                    //ANT.actions.summaries.init:
 
-                    if ( typeof ANTN.summaries[hash] == 'object' ) {
-                        return ANTN.summaries[hash];
+                    if ( typeof ANT.summaries[hash] == 'object' ) {
+                        return ANT.summaries[hash];
                     }
 
                     //todo: it might make sense to just get this from the backend, since it has a function to do this already.
 
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var container = ANTN.containers[hash];
+                    var container = ANT.containers[hash];
 
                     //create an 'empty' summary object
                     var summary = {
@@ -8444,18 +8444,18 @@ if ( sendData.kind=="page" ) {
                     return summary;
                 },
                 save: function(summary){
-                    //ANTN.actions.summaries.save:
+                    //ANT.actions.summaries.save:
                     var hash = summary.hash;
 
                     //save the summary and add the $container as a property
-                    ANTN.summaries[hash] = summary;
+                    ANT.summaries[hash] = summary;
                     summary.$container = $('[ant-hash="'+hash+'"]');
 
-                    // ANTN.actions.summaries.sortInteractions(hash);
+                    // ANT.actions.summaries.sortInteractions(hash);
 
                 },
                 update: function(hash, diff, isPage, pageId){
-                    //ANTN.actions.summaries.update:
+                    //ANT.actions.summaries.update:
                     /*
                     //EXAMPLE: diff object.  keep commented out, but leave it here.
                     var diff = {
@@ -8495,7 +8495,7 @@ if ( sendData.kind=="page" ) {
                                 //coms or tags
                                 //a bit hacky
                                 diffNode.page_id = pageId;
-                                ANTN.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
                             });
                         });
                         return;
@@ -8506,16 +8506,16 @@ if ( sendData.kind=="page" ) {
 
                     //todo: use a try catch instead;
                     var summary;
-                    if( !ANTN.summaries.hasOwnProperty(hash) ){
-                        summary = ANTN.actions.summaries.init(hash);
+                    if( !ANT.summaries.hasOwnProperty(hash) ){
+                        summary = ANT.actions.summaries.init(hash);
                     }else{
-                        summary = ANTN.summaries[hash];
+                        summary = ANT.summaries[hash];
                     }
 
                     //todo: not sure if this is being used. - no it's not being used yet.  never got to it.
                     // if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        // summary = ANTN.util.getPageProperty ('summary');
+                        // summary = ANT.util.getPageProperty ('summary');
                     // }
 
                     $.each( diff, function(interaction_node_type, nodes){
@@ -8547,22 +8547,22 @@ if ( sendData.kind=="page" ) {
 
                             diffNode.int_type = interaction_node_type;
                             //now update aWindow
-                            ANTN.aWindow.update(hash, diffNode);
+                            ANT.aWindow.update(hash, diffNode);
 
                         });
 
                     });
 
                     //don't forget to do this.  Tags won't get built correctly if not updated.
-                    ANTN.actions.summaries.sortInteractions(hash);
+                    ANT.actions.summaries.sortInteractions(hash);
                     
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        makeSummaryWidget(ANTN.page);
+                        makeSummaryWidget(ANT.page);
                     }else{
                         //only init if it's a text node, don't do it for media.
                         // var shouldReInit = (summary.kind == 'text');
-                        // ANTN.actions.indicators.update( hash, shouldReInit );
+                        // ANT.actions.indicators.update( hash, shouldReInit );
                     }
                                 
                     function update_top_interactions_cache(attrs){
@@ -8582,7 +8582,7 @@ if ( sendData.kind=="page" ) {
 
                             if(interaction_node_type == "tags"){
                                 //also update page
-                                ANTN.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
                                 
                                 //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
                                 if( summary_node.count <= 0 ){
@@ -8605,7 +8605,7 @@ if ( sendData.kind=="page" ) {
                                 };
 
                                 //also update page
-                                ANTN.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
 
                             }else{
 
@@ -8694,12 +8694,12 @@ if ( sendData.kind=="page" ) {
 
                 },
                 updatePageSummaryTags: function(hash, diffNode){
-                    //ANTN.actions.summaries.updatePageSummaryTags:
+                    //ANT.actions.summaries.updatePageSummaryTags:
 
                         //also update page
                         var tagId = diffNode.id;
-                        var pageId = diffNode.page_id || ANTN.util.getPageProperty('id', hash);
-                        var page = ANTN.pages[pageId];
+                        var pageId = diffNode.page_id || ANT.util.getPageProperty('id', hash);
+                        var page = ANT.pages[pageId];
                         var toptags = page.toptags;
                         
                         var foundIt;
@@ -8743,7 +8743,7 @@ if ( sendData.kind=="page" ) {
                 },
 
                 sortByTags: function(tags) {
-                  // ANTN.actions.summaries.sortByTags
+                  // ANT.actions.summaries.sortByTags
                   
                   //redundant with below.  
                   //I need to use this for page summaries and dont want to mess with the below func.
@@ -8752,11 +8752,11 @@ if ( sendData.kind=="page" ) {
                 },
 
                 sortInteractions: function(hash) {
-                    // ANTN.actions.summaries.sortInteractions
+                    // ANT.actions.summaries.sortInteractions
 
                     function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
-                    var summary = ANTN.summaries[hash];
+                    var summary = ANT.summaries[hash];
                     summary.interaction_order = [];
                     summary.counts.highest_tag_count = 0;
 
@@ -8797,50 +8797,50 @@ if ( sendData.kind=="page" ) {
                     
                 },
                 sortPopularTextContainers: function() {
-                    // ANTN.actions.summaries.sortPopularTextContainers
+                    // ANT.actions.summaries.sortPopularTextContainers
                     // only sort the most popular whitelisted
                     // is this used??
                     function SortByCount(a,b) { return b.interactions - a.interactions; }
 
-                    ANTN.text_container_popularity = [];
+                    ANT.text_container_popularity = [];
 
-                    $.each( ANTN.summaries, function( hash, container ){
+                    $.each( ANT.summaries, function( hash, container ){
                         if ( container.kind == "text" && container.counts.interactions > 0 ) {
-                            ANTN.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
+                            ANT.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
                         }
                     });
 
-                    ANTN.text_container_popularity.sort( SortByCount );
+                    ANT.text_container_popularity.sort( SortByCount );
 
                 },
                 displayPopularIndicators: function () {
-                    // ANTN.actions.summaries.displayPopularIndicators
+                    // ANT.actions.summaries.displayPopularIndicators
                     // is this used??
 
-                    for ( var i=0; i < ANTN.group.initial_pin_limit; i++) {
-                        if ( ANTN.text_container_popularity[i] ) $('#ant_indicator_' + ANTN.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
                     }
                 },
                 showLessPopularIndicators: function() {
-                    // ANTN.actions.summaries.showLessPopularIndicators
+                    // ANT.actions.summaries.showLessPopularIndicators
                     // is this used??
                     var hashesToShow = [];
 
-                    for ( var i=ANTN.group.initial_pin_limit; i<ANTN.text_container_popularity.length; i++) {
-                        if ( ANTN.text_container_popularity[i] ) {
-                            if ( ANTN.text_container_popularity[i].interactions > 0 ) {
-                                $('#ant_indicator_' + ANTN.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                                hashesToShow.push( ANTN.text_container_popularity[i].hash );
+                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                        if ( ANT.text_container_popularity[i] ) {
+                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                hashesToShow.push( ANT.text_container_popularity[i].hash );
                             }
                         }
                     }
 
-                    ANTN.actions.indicators.show(hashesToShow);
+                    ANT.actions.indicators.show(hashesToShow);
                 }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
-                //ANTN.actions.viewReactionSuccess
+                //ANT.actions.viewReactionSuccess
 
                 var tag = args.tag,
                     $aWindow = args.aWindow,
@@ -8849,7 +8849,7 @@ if ( sendData.kind=="page" ) {
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more').find('.ant_footer').hide();
                 //temp tie-over
-                var headerText = ( args.scenario == "reactionSuccess" ) ? ANTN.t('thanks') : ANTN.t('already_done_that');
+                var headerText = ( args.scenario == "reactionSuccess" ) ? ANT.t('thanks') : ANT.t('already_done_that');
 
                 var isPage = args.kind == "page";
                 if(isPage){
@@ -8857,20 +8857,20 @@ if ( sendData.kind=="page" ) {
                         kind = "page";
                 }else{
                     var hash = args.hash,
-                        summary = ANTN.summaries[hash],
+                        summary = ANT.summaries[hash],
                         kind = summary.kind; // text, img, media
                 }
 
 
                 // do stuff, populate the aWindow.
-                var $header = ANTN.aWindow.makeHeader( headerText, args.response.data.interaction.id);
+                var $header = ANT.aWindow.makeHeader( headerText, args.response.data.interaction.id);
                 $aWindow.find('.ant_header').replaceWith($header);
 
-                var $newPanel = ANTN.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
                 $ant_body_wrap.append( $newPanel );
 
-                ANTN.aWindow.updateTagMessage( args );
+                ANT.aWindow.updateTagMessage( args );
 
                 // var isMediaContainer = kind=="img" ||
                 //     kind=="image" ||  // [pb] really?
@@ -8878,68 +8878,68 @@ if ( sendData.kind=="page" ) {
                 //     kind=="med" ||
                 //     kind=="media";
 
-                ANTN.aWindow.panelShow( $aWindow, $newPanel, function() {
+                ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                   
                     if ( kind == "text" && args.selState ){
                         var selState = args.selState;
                         $().selog('hilite', selState, 'on');
                     }
 
-                    var $tagsListContainer = ANTN.actions.indicators.utils.makeTagsListForInline( $aWindow );
+                    var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
                     if (args.scenario != "reactionExists") {
-                        ANTN.actions.containers.updateCrossPageHash(hash);
+                        ANT.actions.containers.updateCrossPageHash(hash);
                     }
 
                     $tagsListContainer.addClass('ant_hiddenPanel');
                     var className = "ant_tags_list";
-                    ANTN.aWindow.hideFooter($aWindow);
-                    ANTN.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
+                    ANT.aWindow.hideFooter($aWindow);
+                    ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
                     
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                        // ANTN.aWindow.panelEnsureFloatWidths($aWindow);
+                        // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                     }
 
                 } );
                 
                 //todo: examine resize
-                // ANTN.aWindow.updateSizes( $aWindow );
+                // ANT.aWindow.updateSizes( $aWindow );
 
-                // ANTN.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
+                // ANT.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
             },
             viewCommentContent: function(args){
-                //ANTN.actions.viewCommentContent
+                //ANT.actions.viewCommentContent
                 var tag = args.tag,
                     $aWindow = args.aWindow,
                     content_node = args.content_node;
 
-                ANTN.events.trackEventToCloud({
+                ANT.events.trackEventToCloud({
                     event_type: "vcom",
                     event_value: '',
                     container_hash: args.hash,
                     container_kind: args.content_node.kind,
-                    page_id: ANTN.util.getPageProperty('id'),
+                    page_id: ANT.util.getPageProperty('id'),
                     reaction_body: args.tag.tag_body
                 });
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
-                ANTN.aWindow.tagBox.setWidth( $aWindow, 320 );
-                ANTN.aWindow.hideFooter( $aWindow );
+                ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
                 var hash = args.hash,
-                    summary = ANTN.summaries[hash],
+                    summary = ANT.summaries[hash],
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
                 // do stuff, populate the aWindow.
-                var $header = ANTN.aWindow.makeHeader( tag.tag_body );
+                var $header = ANT.aWindow.makeHeader( tag.tag_body );
                 $aWindow.find('.ant_header').replaceWith($header);
 
-                var $newPanel = ANTN.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
                 $ant_body_wrap.append( $newPanel );
 
@@ -8959,8 +8959,8 @@ if ( sendData.kind=="page" ) {
                     kind=="media";
 
                 //todo: examine resize
-                // ANTN.aWindow.updateSizes( $aWindow );
-                ANTN.aWindow.panelShow( $aWindow, $newPanel, function() {
+                // ANT.aWindow.updateSizes( $aWindow );
+                ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                     if ( kind == "text" ){
                         var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
@@ -8968,7 +8968,7 @@ if ( sendData.kind=="page" ) {
                     }
                 });
 
-                // ANTN.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
+                // ANT.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
 
                 //helper functions
                 function _makeCommentBox() {
@@ -8981,14 +8981,14 @@ if ( sendData.kind=="page" ) {
                     var helpText = "Add a comment or #hashtag",
                         $commentDiv =  $('<div class="ant_comment ant_clearfix">'),
                         $commentTextarea = $('<textarea class="commentTextArea ant_default_msg">' +helpText+ '</textarea>'),
-                        // $ant_charCount =  $('<div class="ant_charCount">'+ANTN.group.comment_length+' characters left</div>'),
-                        $ant_charCount =  $('<div class="ant_charCount">' + ANTN.t('characters_left').replace('NNN', ANTN.group.comment_length ) +'</div>'),
-                        $submitButton =  $('<button class="ant_commentSubmit">'+ANTN.t('comment')+'</button>');
+                        // $ant_charCount =  $('<div class="ant_charCount">'+ANT.group.comment_length+' characters left</div>'),
+                        $ant_charCount =  $('<div class="ant_charCount">' + ANT.t('characters_left').replace('NNN', ANT.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="ant_commentSubmit">'+ANT.t('comment')+'</button>');
 
                     $commentDiv.append( $commentTextarea, $ant_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        // ANTN.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        // ANT.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
@@ -9006,22 +9006,22 @@ if ( sendData.kind=="page" ) {
                             $(this).blur();
                             // return false so the aWindow doesn't close.
                             return false;
-                        } else if ( commentText.length > ANTN.group.comment_length ) {
-                            commentText = commentText.substr(0, ANTN.group.comment_length);
+                        } else if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        // $commentTextarea.siblings('div.ant_charCount').text( ( ANTN.group.comment_length - commentText.length ) + " characters left" );
-                        $commentTextarea.siblings('div.ant_charCount').text( ANTN.t('characters_left').replace('NNN', ( ANTN.group.comment_length - commentText.length ) ) );
+                        // $commentTextarea.siblings('div.ant_charCount').text( ( ANT.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
                         var commentText = $commentTextarea.val();
                         //keyup doesn't guarentee this, so check again (they could paste in for example);
-                        if ( commentText.length > ANTN.group.comment_length ) {
-                            commentText = commentText.substr(0, ANTN.group.comment_length);
+                        if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
-                            // $commentTextarea.siblings('div.ant_charCount').text( ( ANTN.group.comment_length - commentText.length ) + " characters left" );
-                            $commentTextarea.siblings('div.ant_charCount').text( ANTN.t('characters_left').replace('NNN', ( ANTN.group.comment_length - commentText.length ) ) );
+                            // $commentTextarea.siblings('div.ant_charCount').text( ( ANT.group.comment_length - commentText.length ) + " characters left" );
+                            $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                         }
 
                         if ( commentText != helpText ) {
@@ -9055,7 +9055,7 @@ if ( sendData.kind=="page" ) {
                             var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, aWindow:$aWindow, selState:selState};
 
                             //leave parent_id undefined for now - backend will find it.
-                            ANTN.actions.interactions.ajax( args, 'comment', 'create');
+                            ANT.actions.interactions.ajax( args, 'comment', 'create');
 
                         } else{
                             $commentTextarea.focus();
@@ -9069,19 +9069,19 @@ if ( sendData.kind=="page" ) {
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="ant_back">'+ANTN.t('close')+' X</div>');
+                    var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
                     $backButton.click( function() {
     
                         //temp fix because the aWindow scrollpane re-init isnt working
                         var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
                         if(!isViewForRindow){
-                            ANTN.aWindow.close($aWindow);
+                            ANT.aWindow.close($aWindow);
                             return;
                         }
 
-                        var $header = ANTN.aWindow.makeHeader( ANTN.t('reactions') );
+                        var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
                         $aWindow.find('.ant_header').replaceWith($header)
-                        ANTN.aWindow.updateTagPanel( $aWindow );
+                        ANT.aWindow.updateTagPanel( $aWindow );
                     });
                     return $backButton;
                 }
@@ -9115,7 +9115,7 @@ if ( sendData.kind=="page" ) {
 
                     // ok, get the content associated with this tag!
                     var $otherComments = $('<div class="ant_otherCommentsBox"></div>');
-                    var $header = $('<div class="ant_comment_header ant_innerWrap"><h4>(<span>' + node_comments + '</span>) '+ANTN.t('comments')+':</h4></div>');
+                    var $header = $('<div class="ant_comment_header ant_innerWrap"><h4>(<span>' + node_comments + '</span>) '+ANT.t('comments')+':</h4></div>');
                     $otherComments.append($header);
 
                     $.each(comments, function(idx, this_comment){
@@ -9132,16 +9132,16 @@ if ( sendData.kind=="page" ) {
                             $commentReply = $('<div class="ant_commentReply" />'),
                             $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
 
-                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: ANTN_staticUrl+'widget/images/anonymousplode.png';
+                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: ANT_staticUrl+'widget/images/anonymousplode.png';
 
                         var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? 
                             "Anonymous" : 
                             this_comment.user.first_name + " " + this_comment.user.last_name;
                         
                         $commentBy.html(
-                            '<a href="'+ANTN_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-ant" /> ' + user_name + '</a>'
+                            '<a href="'+ANT_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-ant" /> ' + user_name + '</a>'
                         ).click( function() {
-                            // ANTN.events.track('click_user_profile');
+                            // ANT.events.track('click_user_profile');
                         });
 
                         $comment.html(
@@ -9161,7 +9161,7 @@ if ( sendData.kind=="page" ) {
             },
             share_getLink: function(args) {
                 var hash = args.hash,
-                    summary = ANTN.summaries[hash],
+                    summary = ANT.summaries[hash],
                     kind = (args.kind) ? args.kind:summary.kind;
 
                 //example:
@@ -9172,7 +9172,7 @@ if ( sendData.kind=="page" ) {
                 // tag, aWindow, settings, callback
 
                 // TODO the args & params thing here is confusing
-                ANTN.session.getUser( args, function( params ) {
+                ANT.session.getUser( args, function( params ) {
                     // get the text that was highlighted
 
                     // var content = $.trim( params.settings.content ),
@@ -9197,13 +9197,13 @@ if ( sendData.kind=="page" ) {
                         'kind':kind
                     };
 
-                    var content_node = ANTN.actions.content_nodes.make(content_node_data);
+                    var content_node = ANT.actions.content_nodes.make(content_node_data);
 
                     // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
                     // if ( window.location.hash.length > 1 ) {
                         $.postMessage(
                             "page_hash|"+window.location.hash,
-                            ANTN_baseUrl + "/static/xdm.html",
+                            ANT_baseUrl + "/static/xdm.html",
                             window.frames['ant-xdm-hidden']
                         );
                     // }
@@ -9215,44 +9215,44 @@ if ( sendData.kind=="page" ) {
                         "tag" : tag,
                         "hash": content_node_info.hash,
                         "content_node_data" : content_node_data,
-                        "user_id" : ANTN.user.user_id,
-                        "ant_token" : ANTN.user.ant_token,
-                        "group_id" : ANTN.group.id,
-                        "page_id" : ANTN.util.getPageProperty('id', hash),
+                        "user_id" : ANT.user.user_id,
+                        "ant_token" : ANT.user.ant_token,
+                        "group_id" : ANT.group.id,
+                        "page_id" : ANT.util.getPageProperty('id', hash),
                         "referring_int_id" : args.referring_int_id,
-                        "container_kind" : (args.kind=="page") ? "page":ANTN.summaries[hash].kind  // TODO: a container kind of page should be handled better
+                        "container_kind" : (args.kind=="page") ? "page":ANT.summaries[hash].kind  // TODO: a container kind of page should be handled better
                     };
 
                         // send the data!
                         $.ajax({
-                            url: ANTN_baseUrl+"/api/share/",
+                            url: ANT_baseUrl+"/api/share/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
                             data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 // todo cache the short url
-                                // ANTN.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
+                                // ANT.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
                                 args.response = response;
 
                                 if ( response.status == "fail" ) {
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        ANTN.session.showLoginPanel( args );
+                                        ANT.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
-                                        ANTN.session.handleGetUserFail( args, function() {
-                                            ANTN.actions.share_getLink( args );
+                                        ANT.session.handleGetUserFail( args, function() {
+                                            ANT.actions.share_getLink( args );
                                         });
                                     }
                                 } else {
                                     //successfully got a short URL
-                                    ANTN.actions.shareContent({
+                                    ANT.actions.shareContent({
                                         sns: params.sns,
                                         content_node_info: content_node_info,
                                         short_url: response.data.short_url,
                                         reaction: tag.body,
                                         //the content_node_info kind was un-reliable. - use this instead
-                                        container_kind: (hash == "page") ? "page" : ANTN.summaries[hash].kind
+                                        container_kind: (hash == "page") ? "page" : ANT.summaries[hash].kind
                                     });
                                 }
                             },
@@ -9291,7 +9291,7 @@ if ( sendData.kind=="page" ) {
                                 contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
-                                if(ANTN_offline){
+                                if(ANT_offline){
                                     content = content.replace("local.antenna.is:8081", "www.antenna.is");
                                     content = content.replace("localhost:8081", "www.antenna.is");
                                 }
@@ -9329,7 +9329,7 @@ if ( sendData.kind=="page" ) {
                         
                         var mainShareText = "";
                         var footerShareText = "Antenna Reaction on " + groupName;
-                        var twitter_acct = ( ANTN.group.twitter ) ? '&via='+ANTN.group.twitter : '';
+                        var twitter_acct = ( ANT.group.twitter ) ? '&via='+ANT.group.twitter : '';
 
                         switch ( args.container_kind ) {
                             case "txt":
@@ -9386,7 +9386,7 @@ if ( sendData.kind=="page" ) {
                     //         case "img":
                     //         case "image":
                     //                                         //for testing offline
-                    //             if(ANTN_offline){
+                    //             if(ANT_offline){
                     //                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
                     //                 content = content.replace("localhost:8081", "www.antenna.is");
                     //             }
@@ -9437,20 +9437,20 @@ if ( sendData.kind=="page" ) {
                     // break;
                 }
                 if ( share_url !== "" ) {
-                    if ( ANTN.shareWindow ) {
-                        ANTN.shareWindow.location = share_url;
+                    if ( ANT.shareWindow ) {
+                        ANT.shareWindow.location = share_url;
                     }
                 }else{
-                    if ( ANTN.shareWindow ) {
-                        ANTN.shareWindow.close();
+                    if ( ANT.shareWindow ) {
+                        ANT.shareWindow.close();
                     }
                 }
 
                 function _getGroupName(){
-                    //consider using ANTN.group.name
+                    //consider using ANT.group.name
                     //todo: make this smarter - check for www. only in start of domain
-                    return ANTN.group.name ?
-                        ANTN.group.name :
+                    return ANT.group.name ?
+                        ANT.group.name :
                         (document.domain).replace('www.', "");
                 }
                 
@@ -9486,14 +9486,14 @@ if ( sendData.kind=="page" ) {
 
             },
             newUpdateData: function(hash){
-                //ANTN.actions.newUpdateData:
+                //ANT.actions.newUpdateData:
                 //not using this yet...
-                var summary = ANTN.summaries[hash],
+                var summary = ANT.summaries[hash],
                     $aWindow_readmode = summary.$aWindow_readmode,
                     $aWindow_writemode = summary.$aWindow_writemode;
             },
             startSelect: function($mouse_target, mouseEvent, callback) {
-                //ANTN.actions.startSelect:
+                //ANT.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
                 if ( $mouse_target.hasAttr('ant-item') && $('[ant-cta-for="'+$mouse_target.attr('ant-item')+'"]').length ) { 
@@ -9501,10 +9501,10 @@ if ( sendData.kind=="page" ) {
                 }
 
                 //destroy all other actionbars
-                ANTN.actionbar.closeAll();
+                ANT.actionbar.closeAll();
                 var maxChars = 800;
 
-                // make sure it's not selecting inside the ANTN windows.
+                // make sure it's not selecting inside the ANT windows.
                 // todo: (the ant_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
                 if ( $mouse_target.closest('.ant, .no-ant, #ant_sandbox').length && !$mouse_target.closest('.ant_indicator').length ) return;
@@ -9550,10 +9550,10 @@ if ( sendData.kind=="page" ) {
                     //note: hashes in this case will just be a single hash. That's cool.
                     
                     //todo: use our new sendHashesForSinglePage function after testing and refactoring.
-                    var hashListForPage = ANTN.actions.hashNodes( $blockParent );
+                    var hashListForPage = ANT.actions.hashNodes( $blockParent );
 
                     if(hashListForPage){
-                        ANTN.actions.sendHashes( hashListForPage, function(){
+                        ANT.actions.sendHashes( hashListForPage, function(){
                             if(callback){
                                 //god this re-var-ing of hash is awful, rewrite later.
                                 var hash = $blockParent.data('hash');
@@ -9586,18 +9586,18 @@ if ( sendData.kind=="page" ) {
                 }
                 function _drawActionBar ($blockParent){
                     var hash = $blockParent.data('hash'),
-                        summary = ANTN.summaries[hash] || 'undefined';
+                        summary = ANT.summaries[hash] || 'undefined';
 
                     if ( _writeModeOpenForThisContainer(hash) ) return false;
                     //else
 
                     if ( summary != 'undefined') {
                         var $indicator = summary.$indicator;
-                        ANTN.actions.indicators.helpers.out($indicator);
+                        ANT.actions.indicators.helpers.out($indicator);
                     }
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
-                    ANTN.aWindow.close( $('div.ant.ant_window.ant.ant_rewritable') );
+                    ANT.aWindow.close( $('div.ant.ant_window.ant.ant_rewritable') );
 
                     var actionbarCoords = mouseEvent ? {
                         top: parseInt(mouseEvent.pageY, 10),
@@ -9607,7 +9607,7 @@ if ( sendData.kind=="page" ) {
                         left: $mouse_target.offset().left
                     };
 
-                    return ANTN.actionbar.draw({
+                    return ANT.actionbar.draw({
                         coords:actionbarCoords,
                         kind:"text",
                         content:selected.text,
@@ -9622,7 +9622,7 @@ if ( sendData.kind=="page" ) {
                     if it has a summary, check for a aWindow.
                     Of course, if it's brand new, it won't have a summary, but then it wont have a aWindow either
                     */
-                    var summary = ANTN.summaries[hash] || 'undefined';
+                    var summary = ANT.summaries[hash] || 'undefined';
                     if( !summary ) return false;
                     //only allow one writemode per container at a time, check for writemode aWindow.
                     var $aWindow_writemode = summary.$aWindow_writemode;
@@ -9642,27 +9642,27 @@ if ( sendData.kind=="page" ) {
                 }
             },
             startSelectFromMouseUp: function(e) {
-                //ANTN.actions.startSelectFromMouseUp
+                //ANT.actions.startSelectFromMouseUp
                 var $mouse_target = $(e.target);
-                ANTN.actions.startSelect($mouse_target, e);
+                ANT.actions.startSelect($mouse_target, e);
             },
             stripRdrNode: function($els) {
-                //ANTN.actions.stripRdrNode
+                //ANT.actions.stripRdrNode
                 $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
             },
             pages: {
-                //ANTN.actions.pages:
+                //ANT.actions.pages:
                 save: function(id, page){
-                    //ANTN.actions.pages.save:
-                    ANTN.pages[page.id] = page;
+                    //ANT.actions.pages.save:
+                    ANT.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
-                    // ANTN.actions.pages.initPageContainer
-                    var page = ANTN.pages[pageId],
+                    // ANT.actions.pages.initPageContainer
+                    var page = ANT.pages[pageId],
                         key = page.urlhash; //todo: consider phasing out - use id instead
                         // key = page.key; //todo: consider phasing out - use id instead   
 
-                    var $container = ( $(ANTN.group.post_selector + '[ant-page-key="'+key+'"]').length == 1 ) ? $(ANTN.group.post_selector + '[ant-page-key="'+key+'"]'):$('body[ant-page-key]');
+                    var $container = ( $(ANT.group.post_selector + '[ant-page-key="'+key+'"]').length == 1 ) ? $(ANT.group.post_selector + '[ant-page-key="'+key+'"]'):$('body[ant-page-key]');
 
                     if ( $container.length !== 1 ) return;
                     //else
@@ -9670,10 +9670,10 @@ if ( sendData.kind=="page" ) {
                     $container.attr( 'ant-page-container' , pageId );
 
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
-                    var hash = ANTN.util.md5.hex_md5( String(page.id) );
+                    var hash = ANT.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
 
-                    ANTN.actions.containers.save({
+                    ANT.actions.containers.save({
                         id: String(page.id),
                         kind: "page",
                         hash: hash,
@@ -9683,18 +9683,18 @@ if ( sendData.kind=="page" ) {
                     $container.data( 'page_id', String(page.id) ); // the page ID
 
                     // hash the "page" descendant nodes
-                    // ANTN.actions.hashNodes( $container, "nomedia" );
+                    // ANT.actions.hashNodes( $container, "nomedia" );
 
                     //todo: can't we use the hashes returned by this function instead?
 
                     // is the post_selector the same node as the active_section?
                     // determined by seeing if the active_section exists, just not inside the post_selector
-                    if ( ANTN.group.post_selector && !$(ANTN.group.post_selector).first().find(ANTN.group.active_sections).length && $(ANTN.group.active_sections).length ) {
-                        // ANTN.group.active_sections = '';
-                        // active_sections_with_anno_whitelist = ANTN.group.anno_whitelist;
-                        ANTN.actions.hashNodes( $container.parent() );
+                    if ( ANT.group.post_selector && !$(ANT.group.post_selector).first().find(ANT.group.active_sections).length && $(ANT.group.active_sections).length ) {
+                        // ANT.group.active_sections = '';
+                        // active_sections_with_anno_whitelist = ANT.group.anno_whitelist;
+                        ANT.actions.hashNodes( $container.parent() );
                     } else {
-                        ANTN.actions.hashNodes( $container );
+                        ANT.actions.hashNodes( $container );
                     }
 
                     var hashesByPageId = {};
@@ -9706,7 +9706,7 @@ if ( sendData.kind=="page" ) {
                             }
                         });
 
-                        // ANTN.actions.sendHashes( hashesByPageId );
+                        // ANT.actions.sendHashes( hashesByPageId );
                     // } else if ( page && $('[ant-crossPageContent="true"]').length ) {
                     }
 
@@ -9724,7 +9724,7 @@ if ( sendData.kind=="page" ) {
 
                         // should we find custom-display nodes and add to the hashList here?
                         $.each( $container.find('[ant-item]'), function( idx, node ) {
-                            ANTN.actions.hashNodes( $(node) );
+                            ANT.actions.hashNodes( $(node) );
                             var thisHash = $(node).attr('ant-hash');
 
                             if (typeof thisHash != 'undefined') {
@@ -9732,27 +9732,27 @@ if ( sendData.kind=="page" ) {
                             }
                         });
                         // hashesByPageId[ page.id ].push( $('[ant-item="true"]:eq(0)').attr('ant-hash') );
-                        // ANTN.actions.sendHashes( hashesByPageId );
+                        // ANT.actions.sendHashes( hashesByPageId );
                     }
 
-                    ANTN.actions.sendHashes( hashesByPageId );
+                    ANT.actions.sendHashes( hashesByPageId );
 
-                    if (!ANTN.util.activeAB()) return;
+                    if (!ANT.util.activeAB()) return;
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
                     widgetSummarySettings.key = key;
                     
-                    if ( $container.find( ANTN.group.summary_widget_selector).length == 1 && $container.find( ANTN.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
-                        widgetSummarySettings.$anchor = $container.find(ANTN.group.summary_widget_selector).eq(0);
+                    if ( $container.find( ANT.group.summary_widget_selector).length == 1 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
+                        widgetSummarySettings.$anchor = $container.find(ANT.group.summary_widget_selector).eq(0);
                         
                     } else if( $(".ant-page-summary").length==1 ){
                         widgetSummarySettings.$anchor = $(".ant-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
                     }else{
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
-                        var displayDefaultBar = ( typeof ANTN.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
+                        var displayDefaultBar = ( typeof ANT.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
                         widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
@@ -9761,20 +9761,20 @@ if ( sendData.kind=="page" ) {
                     $('#ant_sandbox').append('<div id="ant_summary_tag_details" />');
                     
                     //setup widgetSummary
-                    if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANTN.group.post_selector).length ) ) {
+                    if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANT.group.post_selector).length ) ) {
                         widgetSummarySettings.$anchor.antWidgetSummary(widgetSummarySettings);
                     }
 
                 }
             },
             users: {
-                //ANTN.actions.users:
+                //ANT.actions.users:
                 save: function(id, settings){
-                    //ANTN.actions.users.save:
+                    //ANT.actions.users.save:
 
                 }
             }
-        }//end ANTN.actions
+        }//end ANT.actions
     });
 }
 
@@ -9807,32 +9807,32 @@ function ant_loadScript(attributes, callbackfunction) {
     }
 }
 
-//add to ANTN for use later.
-ANTN.ant_loadScript = ant_loadScript;
+//add to ANT for use later.
+ANT.ant_loadScript = ant_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $A clone, and revert the client's jquery back
-ANTN_scriptPaths.jquery = ANTN_offline ?
-    ANTN_staticUrl+"js/jquery-1.11.1.min.js" :
-    // ANTN_staticUrl+"global/js/jquery-1.7.1.min.js" :
+ANT_scriptPaths.jquery = ANT_offline ?
+    ANT_staticUrl+"js/jquery-1.11.1.min.js" :
+    // ANT_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
 // dont think we use this -- we embedded it below.
-// ANTN_scriptPaths.mobileEvents = ANTN_staticUrl+"global/js/jquery.mobile-events.js";
+// ANT_scriptPaths.mobileEvents = ANT_staticUrl+"global/js/jquery.mobile-events.js";
 
-// ANTN_scriptPaths.jqueryUI = ANTN_offline ?
-//     ANTN_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
+// ANT_scriptPaths.jqueryUI = ANT_offline ?
+//     ANT_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
 
-// ANTN_scriptPaths.jqueryWithJqueryUI = ANTN_offline ? 
-//     ANTN_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
-//     ANTN_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
+// ANT_scriptPaths.jqueryWithJqueryUI = ANT_offline ? 
+//     ANT_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
+//     ANT_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
 
-// ANTN_scriptPaths.jqueryUI_CSS = ANTN_offline ?
-//     ANTN_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
+// ANT_scriptPaths.jqueryUI_CSS = ANT_offline ?
+//     ANT_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
-ant_loadScript({src:ANTN_scriptPaths.jquery}, function(){
+ant_loadScript({src:ANT_scriptPaths.jquery}, function(){
     
     if(isTouchBrowser){
         load_mobileEvents(jQuery);
@@ -9872,7 +9872,7 @@ function jquery_onload(jQuery){
     }
     
     //A function to load all plugins including those (most) that depend on jQuery.
-    //The rest of our code is then set off with ANTN.actions.init();
+    //The rest of our code is then set off with ANT.actions.init();
     $AFunctions($A);
 }
 
@@ -9890,18 +9890,19 @@ function $AFunctions($A){
     var css = [];
 
     if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
-        css.push( ANTN_staticUrl+"css/fonts/fontawesome.css" );
+        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
+        css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
     if ( $A.browser.msie ) {
-        css.push( ANTN_staticUrl+"widget/css/ie.css" );
+        css.push( ANT_staticUrl+"widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-        css.push( ANTN_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
+        css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANTN_offline ) ? ANTN_widgetCssStaticUrl+"widget/css/widget.css" : ANTN_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
     css.push( widgetCSS );
-    // css.push( ANTN_scriptPaths.jqueryUI_CSS );
-    css.push( ANTN_staticUrl+"widget/css/jquery.jscrollpane.css" );
+    // css.push( ANT_scriptPaths.jqueryUI_CSS );
+    css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
     loadCSS(css);
 
@@ -9915,7 +9916,7 @@ function $AFunctions($A){
         });
     }
 
-    //these are basic utils that can be used both in the plugins and main scripts.  Added to ANTN.commonUtil;
+    //these are basic utils that can be used both in the plugins and main scripts.  Added to ANT.commonUtil;
     initCommonUtils($A);
         
     //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $A passed is our jQuery alias)
@@ -9925,13 +9926,13 @@ function $AFunctions($A){
     antenna($A);
 
     //run init functions
-    ANTN.actions.init();
+    ANT.actions.init();
 
     function initCommonUtils($){
-        $.extend(ANTN, {
+        $.extend(ANT, {
             commonUtil: {
                 prettyNumber: function(anInt){
-                    // ANTN.commonUtil.prettyNumber:
+                    // ANT.commonUtil.prettyNumber:
                     var parsedInt = parseInt(anInt, 10); //convert if we can.
                     if( isNaN(parsedInt) || parsedInt<0 ) return false;
                     //else
@@ -10318,7 +10319,7 @@ function $AFunctions($A){
                         var settings = $(this).data('settings');
 
                         //get the latest page data
-                        settings.summary = ANTN.pages[settings.id].summary;
+                        settings.summary = ANT.pages[settings.id].summary;
                         _makeSummaryWidget(settings);
                     });
                 }
@@ -10340,7 +10341,7 @@ function $AFunctions($A){
                 var $summary_widget_parent = $(page.parentContainer),
                     $summary_widget = $('<div class="ant ant-summary ant-summary-'+page.id+' ant-border-box" ant-page-id="'+page.id+'"></div>').addClass(widgetClass);
 
-                if ( ANTN.engageScriptParams.bookmarklet == "true" ) {
+                if ( ANT.engageScriptParams.bookmarklet == "true" ) {
                     $summary_widget.addClass('ant_bookmarklet');
                 }
                 $summary_widget.data({
@@ -10348,7 +10349,7 @@ function $AFunctions($A){
                     page_key:page.key
                 });
 
-                var summaryWidgetInsertionMethod = ( ANTN.group.summary_widget_method != "" ) ? ANTN.group.summary_widget_method : "after";
+                var summaryWidgetInsertionMethod = ( ANT.group.summary_widget_method != "" ) ? ANT.group.summary_widget_method : "after";
 
                 //page.jqFunc would be something like 'append' or 'after',
                 //so this would read $summary_widget_parent.append($summary_widget);
@@ -10359,13 +10360,13 @@ function $AFunctions($A){
 
                 $summary_widget.append(
                     '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
-                    '<a href="'+ANTN_baseUrl+'" target="_blank" class="ant_logo">'+
-                        '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANTN_staticUrl+'widget/images/blank.png" ></span>'+
+                    '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
+                        '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
                 );
 
                 $summary_widget.find('.ant-logo').click( function() {
-                    // ANTN.events.track('click_ant_icon_summ');
+                    // ANT.events.track('click_ant_icon_summ');
                 });
 
                 $summary_widget.find('.ant-logo').tooltip({});
@@ -10375,9 +10376,9 @@ function $AFunctions($A){
                     getReactedContent();
                     var page_id = $(this).data('page_id');
 
-                    var $aWindow = ANTN.aWindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+                    var $aWindow = ANT.aWindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
 
-                    ANTN.events.trackEventToCloud({
+                    ANT.events.trackEventToCloud({
                         event_type: 'sb',
                         event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                         page_id: page_id
@@ -10417,10 +10418,10 @@ function $AFunctions($A){
                 }
 
                 var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" " + ANTN.t('plural_reaction') :
+                    total_reactions+" " + ANT.t('plural_reaction') :
                         ( total_reactions > 0 ) ? 
-                            total_reactions+" " + ANTN.t('single_reaction') :
-                            ANTN.t('plural_reaction');
+                            total_reactions+" " + ANT.t('single_reaction') :
+                            ANT.t('plural_reaction');
                 $summary_widget.append(
                     '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                 );
@@ -10430,18 +10431,18 @@ function $AFunctions($A){
             function getReactedContent( counts ) {            
                 // get all of the content_nodes for this page
                 // may want to limit this on back-end by a date range
-                if ( typeof ANTN.interaction_data == "undefined" ) {
-                    ANTN.interaction_data = {};
+                if ( typeof ANT.interaction_data == "undefined" ) {
+                    ANT.interaction_data = {};
                 }
                 
-                $.each( ANTN.summaries, function(hash, summary) {
+                $.each( ANT.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
                         if (typeof interaction != "undefined" ) {
-                            if ( typeof ANTN.summaries[ hash ].content_nodes != "undefined") {
-                                ANTN.util.buildInteractionData();
+                            if ( typeof ANT.summaries[ hash ].content_nodes != "undefined") {
+                                ANT.util.buildInteractionData();
                             } else {
-                                ANTN.actions.content_nodes.init( hash, function() {
-                                    ANTN.util.buildInteractionData();
+                                ANT.actions.content_nodes.init( hash, function() {
+                                    ANT.util.buildInteractionData();
                                 });
                             }
                         }
@@ -10700,7 +10701,7 @@ function $AFunctions($A){
             */
             ],
             _modifierFilters = {
-                filterOutANTNIndicator: function(range, params){
+                filterOutANTIndicator: function(range, params){
                     //check if $indicator is contained in the range, and if so, move the range's end to just before it.
 
                     var commonAncestorContainer = range.commonAncestorContainer;
@@ -11182,7 +11183,7 @@ function $AFunctions($A){
              *
              * Unless required by applicable law or agreed to in writing, software
              * distributed under the License is distributed on an "AS IS" BASIS,
-             * WITHOUT WARRANTNIES OR CONDITIONS OF ANY KIND, either express or implied.
+             * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
              * See the License for the specific language governing permissions and
              * limitations under the License.
              * ========================================================== */
@@ -11487,7 +11488,7 @@ function $AFunctions($A){
             e;if(!a.collapsed){this.sc=a.startContainer;this.so=a.startOffset;this.ec=a.endContainer;this.eo=a.endOffset;var g=a.commonAncestorContainer;if(this.sc===this.ec&&l.isCharacterDataNode(this.sc)){this.isSingleCharacterDataNode=true;this._first=this._last=this._next=this.sc}else{this._first=this._next=this.sc===g&&!l.isCharacterDataNode(this.sc)?this.sc.childNodes[this.so]:l.getClosestAncestorIn(this.sc,g,true);this._last=this.ec===g&&!l.isCharacterDataNode(this.ec)?this.ec.childNodes[this.eo-1]:l.getClosestAncestorIn(this.ec,
             g,true)}}}function v(a){this.code=this[a];this.codeName=a;this.message="RangeException: "+this.codeName}function c(a,e,g){this.nodes=y(a,e,g);this._next=this.nodes[0];this._position=0}function f(a){return function(e,g){for(var q,G=g?e:e.parentNode;G;){q=G.nodeType;if(l.arrayContains(a,q))return G;G=G.parentNode}return null}}function j(a,e){if(F(a,e))throw new v("INVALID_NODE_TYPE_ERR");}function r(a){if(!a.startContainer)throw new Q("INVALID_STATE_ERR");}function M(a,e){if(!l.arrayContains(e,a.nodeType))throw new v("INVALID_NODE_TYPE_ERR");
             }function o(a,e){if(e<0||e>(l.isCharacterDataNode(a)?a.length:a.childNodes.length))throw new Q("INDEX_SIZE_ERR");}function u(a,e){if(d(a,true)!==d(e,true))throw new Q("WRONG_DOCUMENT_ERR");}function x(a){if(i(a,true))throw new Q("NO_MODIFICATION_ALLOWED_ERR");}function B(a,e){if(!a)throw new Q(e);}function D(a){r(a);if(!l.arrayContains(Y,a.startContainer.nodeType)&&!d(a.startContainer,true)||!l.arrayContains(Y,a.endContainer.nodeType)&&!d(a.endContainer,true)||!(a.startOffset<=(l.isCharacterDataNode(a.startContainer)?
-            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))/*ANTNENNA EDIT*//*throw Error*/ANTN.actions.catchRangyErrors("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");/*end ANTENNA EDIT*/}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
+            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))/*ANTENNA EDIT*//*throw Error*/ANT.actions.catchRangyErrors("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");/*end ANTENNA EDIT*/}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
             var g=this.startContainer,q=this.startOffset,G=this.commonAncestorContainer,U=new p(this,true);if(g!==G){g=l.getClosestAncestorIn(g,G,true);q=C(g);g=q.node;q=q.offset}h(U,x);U.reset();G=a(U);U.detach();e(this,g,q,g,q);return G}}function ca(a,e,g){function q(m,t){return function(w){r(this);M(w,fa);M(b(w),Y);w=(m?z:C)(w);(t?G:U)(this,w.node,w.offset)}}function G(m,t,w){var I=m.endContainer,R=m.endOffset;if(t!==m.startContainer||w!==this.startOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==1){I=t;R=
             w}e(m,t,w,I,R)}}function U(m,t,w){var I=m.startContainer,R=m.startOffset;if(t!==m.endContainer||w!==this.endOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==-1){I=t;R=w}e(m,I,R,t,w)}}function ba(m,t,w){if(t!==m.startContainer||w!==this.startOffset||t!==m.endContainer||w!==this.endOffset)e(m,t,w,t,w)}a.prototype=new W;k.util.extend(a.prototype,{setStart:function(m,t){r(this);j(m,true);o(m,t);G(this,m,t)},setEnd:function(m,t){r(this);j(m,true);o(m,t);U(this,m,t)},setStartBefore:q(true,true),setStartAfter:q(false,
             true),setEndBefore:q(true,false),setEndAfter:q(false,false),collapse:function(m){D(this);m?e(this,this.startContainer,this.startOffset,this.startContainer,this.startOffset):e(this,this.endContainer,this.endOffset,this.endContainer,this.endOffset)},selectNodeContents:function(m){r(this);j(m,true);e(this,m,0,m,l.getNodeLength(m))},selectNode:function(m){r(this);j(m,false);M(m,fa);var t=z(m);m=C(m);e(this,t.node,t.offset,m.node,m.offset)},extractContents:X(s,e),deleteContents:X(n,e),canSurroundContents:function(){D(this);
@@ -11636,8 +11637,8 @@ function $AFunctions($A){
     //end initPlugins()
 
     //if we're offline, expose stuff to window for testing
-    if(ANTN_offline){
-        ANTN.debug();
+    if(ANT_offline){
+        ANT.debug();
     }
 }
 //end $AFunctions()
