@@ -60,10 +60,10 @@
     });
 
     // put in external file...
-    RB.analytics = {
+    ANTsite.analytics = {
         newGroups: function( args ) {},
         debugError: function(error){
-            if(!RB.RDR_offline){
+            if(!ANTsite.ANT_offline){
                 return;
             }
             alert("Error: " + error.code + " " + error.message);
@@ -71,8 +71,8 @@
         parse: {},
 
         test: function( args ) {
-            var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-            var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+            var start = ( args && args.start ) ? args.start : ANTsite.analytics.startDate;
+            var end = ( args && args.end ) ? args.end : ANTsite.analytics.endDate;
             var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
             var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
@@ -107,44 +107,44 @@
         }, 
         updateAll: function() {
             
-            RB.analytics.setDates();
+            ANTsite.analytics.setDates();
             
-            RB.analytics.test();
+            ANTsite.analytics.test();
         },
         setDates: function(){
 
             var nowDate = moment().format("MM/DD/YY");
-            RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-            RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+            ANTsite.analytics.startDate = ANTsite.util.getHashValue('start') || nowDate;
+            ANTsite.analytics.endDate = ANTsite.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
 
-            RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-            RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+            ANTsite.analytics.jsStartDate = ANTsite.analytics.startDate ? new Date(ANTsite.analytics.startDate) : new Date();
+            ANTsite.analytics.jsEndDate = ANTsite.analytics.endDate ? new Date(ANTsite.analytics.endDate) : new Date();
         }
 
     };
 
     $(function(){
 
-        RB.analytics.setDates();
+        ANTsite.analytics.setDates();
 
         
         $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
-        $('input[name="start_date"]').val( RB.analytics.startDate );
-        $('input[name="end_date"]').val( RB.analytics.endDate );
+        $('input[name="start_date"]').val( ANTsite.analytics.startDate );
+        $('input[name="end_date"]').val( ANTsite.analytics.endDate );
 
         $('section[role="datepicker"] form').submit( function() {
 
             var startDate = $('input[name="start_date"]').val();
             var endDate = $('input[name="end_date"]').val();
             
-            RB.util.setHashValue('start', startDate );
-            RB.util.setHashValue('end', endDate );
+            ANTsite.util.setHashValue('start', startDate );
+            ANTsite.util.setHashValue('end', endDate );
 
-            RB.analytics.updateAll();
+            ANTsite.analytics.updateAll();
             return false;
         });
 
-        RB.analytics.updateAll();
+        ANTsite.analytics.updateAll();
 
     });
 })();

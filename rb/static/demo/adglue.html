@@ -405,12 +405,12 @@ Sacramento, CA 95816
 
 <script defer src="/static/engage_full.js"></script>
 <script>
-window.readrboard_extend = {premium:true};
-document.addEventListener("readrboard.reaction", function(){
-  // console.log("readrboard.reaction");
-  var lastEvent = readrboard.getLastEvent();
+window.antenna_extend = {premium:true};
+document.addEventListener("antenna.reaction", function(){
+  // console.log("antenna.reaction");
+  var lastEvent = antenna.getLastEvent();
   // console.log(lastEvent);
-  if (lastEvent.event == 'readrboard.reaction' && lastEvent.value) {
+  if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
     var cssClassToShow = lastEvent.value.toLowerCase().replace(/\s+/g, '-').replace('\'','').replace('\'','');
     // console.log(cssClassToShow);
     $('.tell-us-response, .'+cssClassToShow).show(333);

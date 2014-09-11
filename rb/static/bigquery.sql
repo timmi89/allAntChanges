@@ -109,7 +109,7 @@ from [events.data] where et='wl' and gid = 1660
 group by sts
 order by loadCount DESC);
 
-# REFERRERS that used ReadrBoard
+# REFERRERS that used Antenna
 # (not yet a most-engaged count)
 select ref, count(et) evCount from [events.data] where gid = 1661 and (et = 're' OR (et = 'rs' and ev='rd') OR ( et='sb' and ev='show' )) group by ref
 order by evCount DESC

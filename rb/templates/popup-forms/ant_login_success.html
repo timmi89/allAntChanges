@@ -8,11 +8,11 @@
   <div class="container">
   	You can <a href="javascript:void(0);" onclick="self.close();">close this window</a>.
 	<script type="text/javascript">
-		RDRAuth.events.track('login_success_page');
-        RDRAuth.events.trackEventToCloud({
+		ANTAuth.events.track('login_success_page');
+        ANTAuth.events.trackEventToCloud({
             category: 'login',
             action: 'success',
-            opt_label: 'auth: rb'
+            opt_label: 'auth: ant' // was 'auth: rb'
         });
         
 		self.close();

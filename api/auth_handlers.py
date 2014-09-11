@@ -20,12 +20,12 @@ class TempUserHandler(BaseHandler):
         group_id = data['group_id']
         user = User.objects.create_user(
             username=generateUsername(), 
-            email='tempuser@readrboard.com'
+            email='tempuser@antenna.is'
         )
-        readr_token = createToken(user.id, 'R3dRB0aRdR0X')
+        ant_token = createToken(user.id, 'R3dRB0aRdR0X')
         return dict(
             user_id=user.id,
-            readr_token=readr_token
+            ant_token=ant_token
         )
 
 class Deauthorize(BaseHandler):
@@ -78,14 +78,14 @@ class FBHandler(BaseHandler):
             convertUser(user_id, django_user)
 
         # Make a token for this guy
-        readr_token = createToken(django_user.id, social_auth.auth_token)
+        ant_token = createToken(django_user.id, social_auth.auth_token)
 
         user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
             img_url=social_user.img_url,
-            readr_token=readr_token,
+            ant_token=ant_token,
             user_type="facebook"
         )
 
@@ -95,7 +95,7 @@ class FBHandler(BaseHandler):
         return user
         
         
-class RBHandler(BaseHandler):
+class ANTHandler(BaseHandler):
     allowed_methods = ('POST',)
     @status_response
     def create(self, request, admin_req=False):
@@ -136,7 +136,7 @@ class RBHandler(BaseHandler):
                         confirmation=generateConfirmation(django_user), user_id=django_user.id)
         
         social_user = findSocialUser(django_user)
-        logger.info("SOCIAL RB LOGIN : " + str(social_user))
+        logger.info("SOCIAL ANT LOGIN : " + str(social_user))
         social_auth = createSocialAuth(
             social_user,
             django_user,
@@ -150,14 +150,14 @@ class RBHandler(BaseHandler):
             convertUser(user_id, django_user)
 
         # Make a token for this guy
-        readr_token = createToken(django_user.id, social_auth.auth_token)
+        ant_token = createToken(django_user.id, social_auth.auth_token)
 
         user = dict(
             user_id=django_user.id,
             first_name=django_user.first_name,
             full_name=social_user.full_name,
             img_url=social_user.img_url,
-            readr_token=readr_token,
+            ant_token=ant_token,
             user_type="readrboard"
         )
 
@@ -175,7 +175,7 @@ class ConfirmUserHandler(BaseHandler):
         user_confirmation = data['confirmation']
         user = User.objects.get(id=int(user_id))
         if user_confirmation == generateConfirmation(user):
-            msg = EmailMessage("ReadrBoard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            msg = EmailMessage("Antenna email confirmation", generateConfirmationEmail(user), "hello@antenna.is", [user.email])
             msg.content_subtype='html'
             msg.send(False)
         return dict(

@@ -7,9 +7,9 @@
         {% if interaction.kind == 'tag' %}
   <meta property="og:title"       content="{{interaction.interaction_node.body|escapejs }}" itemprop="name" />
   <meta property="og:type"        content="article"/>
-  <meta property="og:url"         content="http://www.readrboard.com/interaction/{{ interaction.id }}/"/>
+  <meta property="og:url"         content="http://www.antenna.is/interaction/{{ interaction.id }}/"/>
   <meta property="og:image"       content="http://s3.amazonaws.com/readrboard/images/site/periodic_logo.png" itemprop="image" />
-  <meta property="og:site_name"   content="ReadrBoard" itemprop="publisher" />
+  <meta property="og:site_name"   content="Antenna" itemprop="publisher" />
   <meta property="og:description" content="{{interaction.interaction_node.body|escapejs }} &raquo; {{ interaction.content.body|escapejs }}" />
         {% endif %}
     {% endfor %}
@@ -27,7 +27,7 @@
     
     {% include "interactions.html" %}
     <div class="seeAllReactionsButtonWrap">
-        <a href="/">See more Reactions on ReadrBoard</a>
+        <a href="/">See more Reactions on Antenna</a>
     </div>
 
     <script>

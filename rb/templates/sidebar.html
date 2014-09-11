@@ -17,7 +17,7 @@
 </div> -->
 <script>
 $(document).ready( function() {
-  RB.follow.followers({{ group.id }},'grp');
+  ANTsite.follow.followers({{ group.id }},'grp');
 });
 </script>
 {% endif %}
@@ -64,8 +64,8 @@ $(document).ready( function() {
 
         <script>
         $(document).ready( function() {
-          RB.follow.followers({{ profile_user.id }},'usr');
-          RB.follow.following({{ profile_user.id }},1);
+          ANTsite.follow.followers({{ profile_user.id }},'usr');
+          ANTsite.follow.following({{ profile_user.id }},1);
         });
         </script>
 

@@ -1,25 +1,25 @@
 ;(function(){
 //dont bother indenting this top level anonymous function
 
-var RDR = {};
-if(window.READRBOARDCOM && window.READRBOARDCOM.hasLoaded){
-    window.READRBOARDCOM.actions.reInit();
+var ANT = {};
+if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
+    window.ANTENNAIS.actions.reInit();
     return;
 }
 
-//READRBOARDCOM and readrboard will now be the only things in the global namespace
-window.READRBOARDCOM = window.readrboard = RDR;
+//ANTENNAIS and antenna will now be the only things in the global namespace
+window.ANTENNAIS = window.antenna = ANT;
 
-RDR.hasLoaded = true;
+ANT.hasLoaded = true;
 
 /*some constants that we need for now*/
-RDR.C = {
-    /*tied to div.rdr div.rdr_tag height*/
+ANT.C = {
+    /*tied to div.ant div.ant_tag height*/
     // summaryWidgetMaxHeight: 68,
      //+ header height + extra padding;
-    rindowHeaderPadding: 29,
-    rindowWidthForKindIsText: 200,
-    rindowAnimationSpeed: 333,
+    aWindowHeaderPadding: 29,
+    aWindowWidthForKindIsText: 200,
+    aWindowAnimationSpeed: 333,
     indicatorOpacity: 0.4,
     helperIndicators: {
         hoverDelay: 250,
@@ -28,36 +28,36 @@ RDR.C = {
     }
 }
 
-RDR.engageScript = document.getElementById("readrboardscript") || findEngageScript();
-RDR.engageScriptSrc = RDR.engageScript.src;
+ANT.engageScript = document.getElementById("antennascript") || findEngageScript();
+ANT.engageScriptSrc = ANT.engageScript.src;
 
 //todo: clean these up
-var $RDR, //our global $RDR object (jquerified RDR object for attaching data and queues and such)
-$R, //init var: our clone of jQuery
-RDR_scriptPaths = {},
+var $ANT, //our global $ANT object (jquerified ANT object for attaching data and queues and such)
+$A, //init var: our clone of jQuery
+ANT_scriptPaths = {},
 //check if this script is the offline version
-//note that the other RDR_offline vars in our iframes should check window.location for local.readrboard.com instead
-RDR_offline = !!(
-    RDR.engageScriptSrc.indexOf('local.readrboard.com') != -1 ||
-    RDR.engageScriptSrc.indexOf('local.readrboard2.com') != -1 ||
-    document.domain == "local.readrboard.com" //shouldn't need this line anymore
+//note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
+ANT_offline = !!(
+    ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
+    ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
+    document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-RDR_baseUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081":window.location.protocol + "//www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? window.location.protocol + "//local.readrboard.com:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
     (window.DocumentTouch && document instanceof DocumentTouch)
 );
 
-RDR.safeThrow = function(msg){
-    //this will never actually throw in production (if !RDR_offline)
+ANT.safeThrow = function(msg){
+    //this will never actually throw in production (if !ANT_offline)
     //this is used for errors that aren't stopship, but are definitely wrong behavior.
     //set localDebug to true if you want to catch these while developing.
     var debugMode = false;
 
-    if(RDR_offline && debugMode){
+    if(ANT_offline && debugMode){
         // [porter]  changing to log so that acceptable, trivial bugs are not blockers, but do get logged
         console.log(msg);
         // throw msg;
@@ -65,19 +65,19 @@ RDR.safeThrow = function(msg){
 };
 
 //temp for testing
-function test_readrboard_extend(){
+function test_antenna_extend(){
     //for saftey
-    if(!RDR_offline){
+    if(!ANT_offline){
         return;
     }
-    window.readrboard_extend = {
+    window.antenna_extend = {
         default_reactions: [
             "Love It",
             "Hate It",
             "Heeeeeey"
         ]
     };
-    window.readrboard_extend_per_container = {
+    window.antenna_extend_per_container = {
         "question1": {
             default_reactions: [
                 "tag1",
@@ -96,7 +96,7 @@ function test_readrboard_extend(){
     };
 }
 //keep this commented out when not testing.
-// test_readrboard_extend();
+// test_antenna_extend();
 
 //this doesn't need to run if we have an id on the script
 function findEngageScript(){
@@ -105,21 +105,21 @@ function findEngageScript(){
     for(var i=0; i<scripts.length; i++){
         var s = scripts[i];
         var src = s.src;
-        //not looking for readrboard.com right now in case we use the amazon version without an id on the script
-        var isReadrBoardScript = (
-            src.indexOf('readrboard') != -1 &&
+        //not looking for antenna.is right now in case we use the amazon version without an id on the script
+        var isAntennaScript = (
+            src.indexOf('antenna') != -1 &&
             src.indexOf('engage') != -1
         );
-        if(isReadrBoardScript){
+        if(isAntennaScript){
             return s;
         }
     }
 }
 
-function readrBoard($R){
-    var $ = $R;
+function antenna($A){
+    var $ = $A;
 
-    $.extend(RDR, {
+    $.extend(ANT, {
         summaries:{},
         current: {}, //todo: what is this? delete it?
         // used to store jQuery deffered objects for assets that should be loaded only once per page load.
@@ -137,8 +137,8 @@ function readrBoard($R){
         containers:{},
         pages:{},
         group: {
-            //RDR.group:
-            //details to be set by RDR.actions.initGroupData which extends defaults
+            //ANT.group:
+            //details to be set by ANT.actions.initGroupData which extends defaults
             defaults: {
                 premium: false,
                 img_selector: "img",
@@ -150,10 +150,10 @@ function readrBoard($R){
                 comment_length: 500,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
-                no_readr: "",
+                no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
-                // call_to_action: RDR.t('main_cta'),
+                // call_to_action: ANT.t('main_cta'),
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
                 inline_selector: 'img, embed, video, object, iframe',
                 paragraph_helper: true,
@@ -167,14 +167,14 @@ function readrBoard($R){
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
                 
                 //example:
-                // br_replace_scope_selector: ".rdr_br_replace" //e.g. "#mainsection" or "p"
+                // br_replace_scope_selector: ".ant_br_replace" //e.g. "#mainsection" or "p"
                 
                 br_replace_scope_selector: null //e.g. "#mainsection" or "p"
             }
         },
         user: {
             img_url: "",
-            readr_token: "",
+            ant_token: "",
             user_id: ""
         },
         known_users: {
@@ -190,67 +190,69 @@ function readrBoard($R){
         },
         events: {
             focusedSeconds:0,
-            elapsedTime: function() {
-                return ( Date.now() - RDR.startTime ) / 1000;
-            },
             fireScrollEvent: function(milestone) {
                 if (milestone.indexOf('more') != -1) {
                     var event_type = 'scroll_more';
                 } else {
                     var event_type = 'sc';
                 }
-                RDR.events.trackEventToCloud({
+                ANT.events.trackEventToCloud({
                     event_type: event_type,
                     event_value: milestone
                 });
 
             },
+            fireEventQueue: function() {
+                $.each( ANT.events.queue, function(idx, event_params) {
+                    ANT.events.trackEventToCloud(event_params);
+                });
+            },
             checkTime: function() {
                 if ( document.hasFocus() === true ){
-                    // if ( RDR.events.focusedSeconds > 0 ) {  // && RDR.events.justFocused === false 
-                    //     RDR.events.trackEventToCloud({
-                    //         event_type: 'ti',
-                    //         event_value: RDR.events.focusedSeconds.toString()
-                    //     });
-                    // }
-                    RDR.events.focusedSeconds = RDR.events.focusedSeconds + 0.2;
-
-                    // if (RDR.events.justFocused === false ) {
-                    //     RDR.events.focusedSeconds++;
+                    if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
+                        ANT.events.trackEventToCloud({
+                            event_type: 'ti',
+                            event_value: ANT.events.focusedSeconds.toString()
+                        });
+                    }
+                    ANT.events.focusedSeconds++;
+                    // if (ANT.events.justFocused === false ) {
+                    //     ANT.events.focusedSeconds++;
                     // } else {
-                    //     RDR.events.justFocused = false;
+                    //     ANT.events.justFocused = false;
                     // }
                 }
             },
             // track : function( data, hash ) {
-                // RDR.events.track:
+                // ANT.events.track:
                 
                 // var standardData = "",
                 //     timestamp = new Date().getTime();
                 
-                // RDR.user = RDR.user || {};
+                // ANT.user = ANT.user || {};
                 
-                // if ( RDR.user && RDR.user.user_id ) standardData += "||uid::"+RDR.user.user_id;
-                // if ( hash && RDR.util.getPageProperty('id', hash) ) standardData += "||pid::"+RDR.util.getPageProperty('id', hash);
-                // if ( RDR.group && RDR.group.id ) standardData += "||gid::"+RDR.group.id;
-                // if ( RDR.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
+                // if ( ANT.user && ANT.user.user_id ) standardData += "||uid::"+ANT.user.user_id;
+                // if ( hash && ANT.util.getPageProperty('id', hash) ) standardData += "||pid::"+ANT.util.getPageProperty('id', hash);
+                // if ( ANT.group && ANT.group.id ) standardData += "||gid::"+ANT.group.id;
+                // if ( ANT.engageScriptParams.bookmarklet ) standardData += "||bookmarklet";
 
                 // var eventSrc = data+standardData,
-                //     $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                //     $event = $('<img src="'+ANT_baseUrl+'/static/widget/images/event.png?'+timestamp+'&'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
-                // $('#rdr_event_pixels').append($event);
+                // $('#ant_event_pixels').append($event);
 
             // },
             trackEventToCloud: function( params ) {
-                // RDR.events.trackEventToCloud
+                // ANT.events.trackEventToCloud
 
-                RDR.user = RDR.user || {};
+                ANT.user = ANT.user || {};
+                ANT.events.queue = ANT.events.queue || [];
 
                 // this puts in some checks to be able to track event if event_type == 'sl', i.e., script load
                 // which will not have all of the PAGE data loaded yet.
-                if ( (RDR.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
+                if ( (ANT.events.recordEvents || params.event_type == 'sl') && typeof params.event_type !== 'undefined' && params.event_value !== 'undefined'){
 
-                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : RDR.util.getPageProperty('id') ).toString() );
+                    var page_id = (params.event_type == 'sl') ? 'na' : parseInt( ( (typeof params.page_id != 'undefined') ? params.page_id : ANT.util.getPageProperty('id') ).toString() );
 
                     var referrer_url_array = document.referrer.split('/');
                     var referrer_url = referrer_url_array.splice(2).join('/');
@@ -258,12 +260,6 @@ function readrBoard($R){
                     var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                     var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
                     var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
-
-                    // use the content_attributes field to determine if they are in a test group
-                    var content_attributes = '';
-                    if ( RDR.group.ab_test_impact === true ) {
-                        content_attributes = ( RDR.util.activeAB() ) ? 'A2':'B2';
-                    }
 
                     // if (params.event_type == 'widget_load') {
                         var trackData = {
@@ -301,33 +297,30 @@ function readrBoard($R){
                             // for all events
                             et: params.event_type,
                             ev: params.event_value,
-                            gid: RDR.group.id || null,
-                            uid: RDR.user.user_id || null,
+                            gid: ANT.group.id || null,
+                            uid: ANT.user.user_id || null,
                             pid: page_id,
-                            lts: RDR.user.lts || null,
-                            sts: RDR.user.sts || null,
+                            lts: ANT.user.lts || null,
+                            sts: ANT.user.sts || null,
                             ref: referrer_tld || null,
                             cid: params.content_id || null,
-                            ah: (params.event_type == 'sl') ? 'na' : parseInt(RDR.group.active_section_milestones[100]) || null,
+                            ah: (params.event_type == 'sl') ? 'na' : parseInt(ANT.group.active_section_milestones[100]) || null,
                             ch: params.container_hash || null,
                             ck: params.container_kind || null,
                             r: params.reaction_body || null,
-                            pt: RDR.util.getPageProperty('title') || null,
-                            cu: RDR.util.getPageProperty('canonical_url') || null,
-                            pu: RDR.util.getPageProperty('page_url') || null,
+                            pt: ANT.util.getPageProperty('title') || null,
+                            cu: ANT.util.getPageProperty('canonical_url') || null,
+                            pu: ANT.util.getPageProperty('page_url') || null,
                             ru: referrer_url || null,
-                            // ca: params.content_attributes || null,  // what is this for?
-                            ca: content_attributes || null,
+                            ca: params.content_attributes || null,  // what is this for?
                             cl: params.content_location || null,  
-                            ptop: RDR.group.topics || null,
-                            a: RDR.group.author || null,
-                            sec: RDR.group.section || null,
+                            ptop: ANT.group.topics || null,
+                            a: ANT.group.author || null,
+                            sec: ANT.group.section || null,
                             it: isTouchBrowser || false,
                             sw:  screen.width,
                             sh:  screen.height,
-                            // pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
-                            // co-opting this for A/B testing for now.  PD is now going to hold the seconds
-                            pd:  RDR.events.elapsedTime() || 0,
+                            pd:  window.devicePixelRatio || Math.round(window.screen.availWidth / document.documentElement.clientWidth),
                             ua:  navigator.userAgent
 
                             /*
@@ -335,7 +328,7 @@ function readrBoard($R){
                             event_type
                               share         :     sh
                               summary bar   :     sb
-                              rindow_show   :     rs
+                              aWindow_show   :     rs
                               scroll        :     sc
                               widget_load   :     wl
                               comment       :     c
@@ -357,31 +350,24 @@ function readrBoard($R){
                         };
                     var data = $.toJSON( trackData );
 
-                    // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
-                    var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
-
-                    $.ajax({
-                        url: trackingUrl,
-                        type: "get",
-                        contentType: "application/json",
-                        dataType: "jsonp",
-                        data: {
-                            json: data
-                        },
-                        success : function(response)
-                        {
-                        }
-                    });
-
+                    if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
+                        $.postMessage(
+                            "register-event::"+data,
+                            ANT_baseUrl + "/static/xdm.html",
+                            window.frames['ant-xdm-hidden']
+                        );
+                    } else {
+                        ANT.events.queue.push(params);
+                    }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
-                // RDR.events.emit
-                if (RDR.group.premium == true) {
+                // ANT.events.emit
+                if (ANT.group.premium == true) {
                     // non-IE
-                    RDR.events.lastEvent = eventName;
-                    RDR.events.lastValue = eventValue;
-                    RDR.events.lastSupplementary = eventSupplementary;
+                    ANT.events.lastEvent = eventName;
+                    ANT.events.lastValue = eventValue;
+                    ANT.events.lastSupplementary = eventSupplementary;
 
                     if (document.createEvent) {
                         evt = document.createEvent("Event");
@@ -397,10 +383,10 @@ function readrBoard($R){
         },
         groupSettings: {
             getCustomSettings: function(){
-                //RDR.groupSettings.getCustomSettings:
+                //ANT.groupSettings.getCustomSettings:
 
                 // grab anything on the page
-                var group_extensions = window.readrboard_extend || {};
+                var group_extensions = window.antenna_extend || {};
 
                 // handle deprecated "blessed_tags"
                 if ( typeof group_extensions.blessed_tags != 'undefined' ) {
@@ -411,12 +397,12 @@ function readrBoard($R){
                 }
 
                 // grab anything from the URL
-                // example usage:  rdr_hideOnMobile=false&rdr_doubleTapMessage=%27hello%20world%27
-                var qs = RDR.util.getQueryParams(),
+                // example usage:  ant_hideOnMobile=false&ant_doubleTapMessage=%27hello%20world%27
+                var qs = ANT.util.getQueryParams(),
                     group_qs_extensions = {};
 
                 $.each(qs, function(key, val){
-                    if ( key.indexOf('rdr_') === 0 ) {
+                    if ( key.indexOf('ant_') === 0 ) {
                         key = key.substr(4);
                         group_qs_extensions[key] = val;
                     }
@@ -425,7 +411,7 @@ function readrBoard($R){
                 group_extensions = $.extend({}, group_extensions, group_qs_extensions );
 
                 //the translations just make for a nicer api.  If no translation is defined for a setting, it returns the given value.
-                return RDR.groupSettings._translate(group_extensions);
+                return ANT.groupSettings._translate(group_extensions);
             },
             translators: {
                 default_reactions: function(tagsList){
@@ -437,21 +423,21 @@ function readrBoard($R){
                 }
             },
             _translate: function(settings){
-                //RDR.groupSettings._translate:
+                //ANT.groupSettings._translate:
                 var ret_settings = {};
-                var translators = RDR.groupSettings.translators;
+                var translators = ANT.groupSettings.translators;
                 $.each(settings, function(key, val){
                     ret_settings[key] = !!translators[key] ? translators[key](val) : val;
                 });
                 return ret_settings;
             },
             getBlessedTags: function(hash){
-                //RDR.groupSettings.getBlessedTags:
+                //ANT.groupSettings.getBlessedTags:
 
                 // return blessed tags for this hash, if they exist...
-                var perContainerSettings = window.readrboard_extend_per_container;
+                var perContainerSettings = window.antenna_extend_per_container;
                 if(hash && perContainerSettings){
-                    var name = getCustomRDRItems(hash);
+                    var name = getCustomANTItems(hash);
                     var perContainerExtentions = perContainerSettings[name];
 
                     // handle deprecated "blessed_tags"
@@ -464,23 +450,23 @@ function readrBoard($R){
                     }
 
                     if(perContainerExtentions && perContainerExtentions.default_reactions){
-                        var settings = RDR.groupSettings._translate(perContainerExtentions);
+                        var settings = ANT.groupSettings._translate(perContainerExtentions);
                         return settings.default_reactions;
                     }
                 }
 
-                function getCustomRDRItems(hash){
-                    var $el = $('[rdr-hash="' + hash + '"]');
-                    var name = $el.attr('rdr-item');
+                function getCustomANTItems(hash){
+                    var $el = $('[ant-hash="' + hash + '"]');
+                    var name = $el.attr('ant-item');
                     return name;
                 }
 
                 // otherwise, return the reactions that are set on the page
-                // via Admin or via window.readrboard_extend object
-                return RDR.group.default_reactions;
+                // via Admin or via window.antenna_extend object
+                return ANT.group.default_reactions;
             }
         },
-        rindow: {
+        aWindow: {
             defaults:{
                 coords:{
                     left:100,
@@ -497,24 +483,24 @@ function readrBoard($R){
                 rewritable: true
             },
             makeHeader: function( _headerText, interactionId ) {
-                //RDR.rindow.makeHeader:
+                //ANT.aWindow.makeHeader:
                 var headerText = _headerText || "";
 
                 var headerTml = $.mustache(
-                    '<div class="rdr rdr_header">'+
-                        '<div class="rdr_header_arrow">'+
-                            '<img src="{{RDR_staticUrl}}widget/images/header_up_arrow.png" />'+
+                    '<div class="ant ant_header">'+
+                        '<div class="ant_header_arrow">'+
+                            '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
                         '</div>'+
-                        '<div class="rdr_loader"></div>'+
-                        '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
-                        '<div class="rdr_indicator_stats">'+
-                            '<img class="no-rdr rdr_pin" src="{{RDR_staticUrl}}widget/images/blank.png">'+
-                            '<span class="rdr_count"></span>'+
+                        '<div class="ant_loader"></div>'+
+                        '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
+                        '<div class="ant_indicator_stats">'+
+                            '<img class="no-ant ant_pin" src="{{ANT_staticUrl}}widget/images/blank.png">'+
+                            '<span class="ant_count"></span>'+
                         '</div>' +
                         '<h1>{{headerText}}</h1>'+
                     '</div>'
                 ,{
-                    RDR_staticUrl: RDR_staticUrl,
+                    ANT_staticUrl: ANT_staticUrl,
                     headerText: headerText
                 });
 
@@ -525,18 +511,18 @@ function readrBoard($R){
 
                
                 var $menuDropdownActions = $(
-                    '<div class="rdr_menuDropDown rdr_menu_actions">'+
-                        '<span class="rdr_icon-chevron-down rdr_menuTrigger"></span>'+
+                    '<div class="ant_menuDropDown ant_menu_actions">'+
+                        '<span class="ant_icon-chevron-down ant_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
                 $menuDropdownActions.append($menuActions);
 
-                var $menu = $('<div class="rdr_rindowMenu"></div>').append($menuDropdownActions);
+                var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('tap', '.rdr_menuDropDown', function(){
-                        $(this).toggleClass('rdr_hover');
+                    $menu.on('tap', '.ant_menuDropDown', function(){
+                        $(this).toggleClass('ant_hover');
                     });
                 }
 
@@ -544,13 +530,13 @@ function readrBoard($R){
     
                 function makeActionList(){
                     var $links = $(
-                        '<div class="rdr_linkWrap">'+
+                        '<div class="ant_linkWrap">'+
                             '<ul>'+
-                                '<li class="rdr_link">'+
-                                    '<a href="javascript:void(0);" class="rdr_undo_link">'+RDR.t('remove_reaction')+'</a>'+
+                                '<li class="ant_link">'+
+                                    '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
                                 '</li>'+
-                                '<li class="rdr_link">'+
-                                    '<a target="_blank" href="'+RDR_baseUrl+'/interaction/'+interactionId+'" class="rdr_seeit_link">'+RDR.t('view_on_site')+'</a>'+
+                                '<li class="ant_link">'+
+                                    '<a target="_blank" href="'+ANT_baseUrl+'/interaction/'+interactionId+'" class="ant_seeit_link">'+ANT.t('view_on_site')+'</a>'+
                                 '</li>'+
                             '</ul>'+
                         '</div>'
@@ -560,13 +546,13 @@ function readrBoard($R){
 
                 return $header;
             },
-            makeDefaultPanelMessage: function( $rindow, _kind ) {
-                //RDR.rindow.makeDefaultPanelMessage:
+            makeDefaultPanelMessage: function( $aWindow, _kind ) {
+                //ANT.aWindow.makeDefaultPanelMessage:
 
-                var hash = $rindow.data('hash');
-                var summary = RDR.summaries[hash];
+                var hash = $aWindow.data('hash');
+                var summary = ANT.summaries[hash];
                 var kind = _kind || (
-                    $rindow.hasClass('rdr_indicator_details') ?
+                    $aWindow.hasClass('ant_indicator_details') ?
                     "media" :
                     "text"
                 );
@@ -574,72 +560,72 @@ function readrBoard($R){
                 var headerText;
 
                 if( kind == "text" ){
-                    if ( $rindow.data('mode') == "writeMode" ) {
-                        headerText = RDR.t('main_cta');
+                    if ( $aWindow.data('mode') == "writeMode" ) {
+                        headerText = ANT.t('main_cta');
                     } else {
                         if (kind=="text") {
-                            headerText = RDR.t('reactions');
+                            headerText = ANT.t('reactions');
                         } else {
-                            headerText = (summary.counts.tags>0) ? summary.counts.tags + RDR.t('reactions') : RDR.t('reactions');
+                            headerText = (summary.counts.tags>0) ? summary.counts.tags + ANT.t('reactions') : ANT.t('reactions');
                         }
                     }
 
                 }else{
-                    //note: $rindow is the $indicator_details
+                    //note: $aWindow is the $indicator_details
 
                     //confirm if we still need this.
                     var modForIE = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 20:0;
                     headerText = (summary.counts.tags>0) ? 
-                            summary.counts.tags + " " + RDR.t('reactions') :
-                            ($rindow.width()>=(175+modForIE)) ? 
-                                RDR.t('main_cta'):
-                                RDR.t('react')+":";
+                            summary.counts.tags + " " + ANT.t('reactions') :
+                            ($aWindow.width()>=(175+modForIE)) ? 
+                                ANT.t('main_cta'):
+                                ANT.t('react')+":";
                 }
 
                 return headerText;
             },
-            updateFooter: function( $rindow, $content ) {
-                //RDR.rindow.updateFooter:
-                var $footer = $rindow.find('div.rdr_footer');
+            updateFooter: function( $aWindow, $content ) {
+                //ANT.aWindow.updateFooter:
+                var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
                 if ( typeof $content != "undefined" ) $footer.html( $content );
                 
                 //todo: examine resize
-                // RDR.rindow.updateSizes( $rindow );
+                // ANT.aWindow.updateSizes( $aWindow );
             },
-            hideFooter: function( $rindow ) {
-                //RDR.rindow.hideFooter:
-                $rindow.find('div.rdr_footer').hide(0);
+            hideFooter: function( $aWindow ) {
+                //ANT.aWindow.hideFooter:
+                $aWindow.find('div.ant_footer').hide(0);
                 
                 //todo: examine resize
-                // RDR.rindow.updateSizes( $rindow );
+                // ANT.aWindow.updateSizes( $aWindow );
             },
-            panelCreate: function( $rindow, className ) {
-                //RDR.rindow.panelCreate
+            panelCreate: function( $aWindow, className ) {
+                //ANT.aWindow.panelCreate
                 // later, I want to add the ability for this to create an absolutely-positioned panel
                 // that will slide OVER, not next to, current content... like a login panel sliding over the content.
 
-                // create a new panel for the rindow
-                if ( !$rindow ) return;
+                // create a new panel for the aWindow
+                if ( !$aWindow ) return;
 
-                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
-                    $rdr_bodyFirst = $rdr_body_wrap.find('div.rdr_body').eq(0);
+                var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
+                    $ant_bodyFirst = $ant_body_wrap.find('div.ant_body').eq(0);
 
                 //not sure if this will ever happen - could just be legacy stuff
-                var $existingPanel = $rdr_body_wrap.find('div.'+className);
+                var $existingPanel = $ant_body_wrap.find('div.'+className);
                 $existingPanel.remove();
 
-                var $newPanel = $('<div class="rdr_body '+className+'"/>'),
-                        column_count = ( $rdr_body_wrap.find('div.rdr_body').length ) + 1;
+                var $newPanel = $('<div class="ant_body '+className+'"/>'),
+                        column_count = ( $ant_body_wrap.find('div.ant_body').length ) + 1;
         
                 return $newPanel;
             },
-            panelUpdate: function( $rindow, className, $newPanel, shouldAppendNotReplace ) {
-                //RDR.rindow.panelUpdate:
+            panelUpdate: function( $aWindow, className, $newPanel, shouldAppendNotReplace ) {
+                //ANT.aWindow.panelUpdate:
 
-                if ( !$rindow ) return;
-                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap'),
-                    $panel = $rdr_body_wrap.find('div.'+className);
+                if ( !$aWindow ) return;
+                var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
+                    $panel = $ant_body_wrap.find('div.'+className);
 
                 if (shouldAppendNotReplace){
                     $panel.append( $newPanel );
@@ -650,15 +636,15 @@ function readrBoard($R){
                 return $newPanel;
             },
 
-            panelShow: function( $rindow, $showPanel, callback ) {
-                //RDR.rindow.panelShow: 
+            panelShow: function( $aWindow, $showPanel, callback ) {
+                //ANT.aWindow.panelShow: 
                 // panelEvent - panelShow
                 
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
-                var $hidePanel = $rindow.find('.rdr_visiblePanel');
+                var $panelWrap = $aWindow.find('.ant_body_wrap');
+                var $hidePanel = $aWindow.find('.ant_visiblePanel');
                 //do this for now, because there are too many places in the code to add this correctly
                 if(!$hidePanel.length){
-                    $hidePanel = $rindow.find('.rdr_body').eq(0);
+                    $hidePanel = $aWindow.find('.ant_body').eq(0);
                 }
 
                 var animWidth = $hidePanel.width();
@@ -666,52 +652,52 @@ function readrBoard($R){
                 // reflow opportunity
                 $showPanel
                     .show()
-                    .addClass('rdr-visible')
+                    .addClass('ant-visible')
                     .css({
                         position: 'relative',
                         top: 0,
                         left: animWidth
                     });
 
-                $rindow.data('panelState', 2);
-                $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
-                $hidePanel.addClass('rdr_hiddenPanel').removeClass('rdr_visiblePanel');
+                $aWindow.data('panelState', 2);
+                $showPanel.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
+                $hidePanel.addClass('ant_hiddenPanel').removeClass('ant_visiblePanel');
 
                 //update the size at the same time so the animations run in parallel
-                RDR.rindow.updateSizes( $rindow );
+                ANT.aWindow.updateSizes( $aWindow );
                 $panelWrap.animate({
                       left: -animWidth
                   },
-                  RDR.C.rindowAnimationSpeed,
+                  ANT.C.aWindowAnimationSpeed,
                   function() {
                       if (callback) callback();
-                      if ( $rindow.data('jsp') ) {
-                          var API = $rindow.data('jsp');
+                      if ( $aWindow.data('jsp') ) {
+                          var API = $aWindow.data('jsp');
                           // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                           API.reinitialise();
                       } else {
-                          $rindow.jScrollPane({ showArrows:true });
+                          $aWindow.jScrollPane({ showArrows:true });
                       }
                   }
                 );
             },
-            panelHide: function( $rindow, callback ) {
-                //RDR.rindow.panelHide:
+            panelHide: function( $aWindow, callback ) {
+                //ANT.aWindow.panelHide:
                 
                 // panelEvent - panelhide
-                var $panelWrap = $rindow.find('.rdr_body_wrap');
+                var $panelWrap = $aWindow.find('.ant_body_wrap');
 
-                var isWriteMode = $rindow.hasClass('rdr_writemode'),
-                    $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, isWriteMode );
+                var isWriteMode = $aWindow.hasClass('ant_writemode'),
+                    $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, isWriteMode );
                 
-                var className = "rdr_tags_list";
-                var $hidePanel = $rindow.find('.rdr_visiblePanel');
-                $hidePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
+                var className = "ant_tags_list";
+                var $hidePanel = $aWindow.find('.ant_visiblePanel');
+                $hidePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
 
                 // replacewith bug
-                // var $showPanel = RDR.rindow.panelUpdate($rindow, className, $tagsListContainer );
-                // $showPanel.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
-                $tagsListContainer.addClass('rdr_visiblePanel').removeClass('rdr_hiddenPanel');
+                // var $showPanel = ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer );
+                // $showPanel.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
+                $tagsListContainer.addClass('ant_visiblePanel').removeClass('ant_hiddenPanel');
                 
                 // var animWidth = $showPanel.width();
                 var animWidth = $tagsListContainer.width();
@@ -719,36 +705,36 @@ function readrBoard($R){
                 $panelWrap.css('left', -animWidth);
 
                 //update the size at the same time so the animations run in parallel
-                RDR.rindow.updateSizes( $rindow );
+                ANT.aWindow.updateSizes( $aWindow );
                 $panelWrap.animate({
                     left: 0
                 },
-                RDR.C.rindowAnimationSpeed,
+                ANT.C.aWindowAnimationSpeed,
                 function() {
                     if (callback) callback();
-                    $rindow.data('panelState', 1);
+                    $aWindow.data('panelState', 1);
                     
-                    if ( $rindow.data('jsp') ) {
-                        var API = $rindow.data('jsp');
+                    if ( $aWindow.data('jsp') ) {
+                        var API = $aWindow.data('jsp');
                         // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
-                        $rindow.jScrollPane({ showArrows:true });
+                        $aWindow.jScrollPane({ showArrows:true });
                     }
 
                 });
             },
-            panelEnsureFloatWidths: function( $rindow ) {
-                //RDR.rindow.panelEnsureFloatWidths:
+            panelEnsureFloatWidths: function( $aWindow ) {
+                //ANT.aWindow.panelEnsureFloatWidths:
 
-                //this function keeps messing stuff up and causing the rindow panel to jump.
+                //this function keeps messing stuff up and causing the aWindow panel to jump.
                 //we shouldn't need it anyway while the success state just has a close button instead of a back button
                 return;
 
                 //this is needed becuase after the tagList updates, the width of panel1 can change.
-                // var $panelWrap = $rindow.find('.rdr_body_wrap');
-                // var $showPanel = $rindow.find('.rdr_visiblePanel');
-                // var $hidePanel = $rindow.find('.rdr_hiddenPanel');
+                // var $panelWrap = $aWindow.find('.ant_body_wrap');
+                // var $showPanel = $aWindow.find('.ant_visiblePanel');
+                // var $hidePanel = $aWindow.find('.ant_hiddenPanel');
 
                 // var xOffset = $hidePanel.width();
 
@@ -761,54 +747,54 @@ function readrBoard($R){
 
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
-            updateTagPanel: function ( $rindow ) {
-                // RDR.rindow.updateTagPanel:
+            updateTagPanel: function ( $aWindow ) {
+                // ANT.aWindow.updateTagPanel:
                 // panelEvent - backButton
 
-                var hash = $rindow.data('hash');
+                var hash = $aWindow.data('hash');
 
-                RDR.rindow.panelHide( $rindow );
-                RDR.rindow.tagBox.setWidth( $rindow, $rindow.data('initialWidth') );
-                RDR.rindow.tagBox.setHeight( $rindow, $rindow.data('initialHeight') );
+                ANT.aWindow.panelHide( $aWindow );
+                ANT.aWindow.tagBox.setWidth( $aWindow, $aWindow.data('initialWidth') );
+                ANT.aWindow.tagBox.setHeight( $aWindow, $aWindow.data('initialHeight') );
 
             },
 
             mediaRindowShow: function ( $mediaItem ) {
-                //RDR.rindow.mediaRindowShow
+                //ANT.aWindow.mediaRindowShow
                 var hash = $mediaItem.data('hash'),
-                    $rindow = $('#rdr_indicator_details_'+hash);
+                    $aWindow = $('#ant_indicator_details_'+hash);
 
 
-                RDR.util.cssSuperImportant($rindow, {
+                ANT.util.cssSuperImportant($aWindow, {
                     display:"block",
                 });
                 // check to see if the hover event has already occurred (.data('hover')
                 // and whether either of the two elements that share this same hover event are currently hovered-over
                 //not sure we need all this logic anymore
-                if ( $mediaItem.data('hover') && !$rindow.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
-                    $rindow.data('hover',true);
-                    RDR.rindow.updateSizes( $rindow );
+                if ( $mediaItem.data('hover') && !$aWindow.data('hover') && !$aWindow.is(':animated') && !$aWindow.closest('div.ant_media_details').length ) {
+                    $aWindow.data('hover',true);
+                    ANT.aWindow.updateSizes( $aWindow );
                 }
-                $rindow.addClass('rdr_engaged')
+                $aWindow.addClass('ant_engaged')
             },
             mediaRindowHide: function ( $mediaItem ) {
-                //RDR.rindow.mediaRindowHide:
+                //ANT.aWindow.mediaRindowHide:
                 var hash = $mediaItem.data('hash'),
-                    $rindow = $('#rdr_indicator_details_'+hash);
+                    $aWindow = $('#ant_indicator_details_'+hash);
 
-                if ( !$mediaItem.data('hover') && !$rindow.is(':animated') && !$rindow.closest('div.rdr_media_details').length ) {
-                    $rindow.data('hover', false).animate( {'height':'0px' }, RDR.C.rindowAnimationSpeed, function() {
-                        // $rindow.removeClass('rdr_has_border');
-                        RDR.util.cssSuperImportant($rindow, {
+                if ( !$mediaItem.data('hover') && !$aWindow.is(':animated') && !$aWindow.closest('div.ant_media_details').length ) {
+                    $aWindow.data('hover', false).animate( {'height':'0px' }, ANT.C.aWindowAnimationSpeed, function() {
+                        // $aWindow.removeClass('ant_has_border');
+                        ANT.util.cssSuperImportant($aWindow, {
                             display:"none",
                         });
                     });
                 }
-                $rindow.removeClass('rdr_engaged');
-                $('#rdr_indicator_' + hash).hide();
+                $aWindow.removeClass('ant_engaged');
+                $('#ant_indicator_' + hash).hide();
             },
-            updateSizes: function($rindow, _options) {
-                //RDR.rindow.updateSizes:
+            updateSizes: function($aWindow, _options) {
+                //ANT.aWindow.updateSizes:
                 // options are {
                 //     setWidth,
                 //     setHeight,
@@ -817,30 +803,30 @@ function readrBoard($R){
 
                 //_kind should not need to be set manually
                 var kind = (
-                    $rindow.hasClass('rdr_indicator_details') ?
+                    $aWindow.hasClass('ant_indicator_details') ?
                     "media" :
                     "text"
                 );
 
                 var options = _options || {};
 
-                var $elm = $rindow.find('.rdr_visiblePanel');
+                var $elm = $aWindow.find('.ant_visiblePanel');
 
                 // var $jsPane = $elm.find('div.jspPane');
-                var initialWidth = $rindow.data('initialWidth'),
-                    initialHeight = $rindow.data('initialHeight');
+                var initialWidth = $aWindow.data('initialWidth'),
+                    initialHeight = $aWindow.data('initialHeight');
 
                 var width,
                     height;
 
                 //fix this later.  We should be expanding only the body instead of the whole thing so we dont need this.
                 //note - includes padding
-                var rindowHeaderHeight = 0;
+                var aWindowHeaderHeight = 0;
 
                 var defaults = {
                     h: 200,
                     w: 200,
-                    duration: RDR.C.rindowAnimationSpeed
+                    duration: ANT.C.aWindowAnimationSpeed
                 };
 
                 // if(kind == "media"){
@@ -854,12 +840,12 @@ function readrBoard($R){
                 height = options.setHeight || defaults.h;
 
                 if(options.noAnimate){
-                    $rindow.css({
+                    $aWindow.css({
                         width: width,
                         height: height
                     });
                 }
-                $rindow.animate({
+                $aWindow.animate({
                     width: width,
                     height: height
                 },{
@@ -867,16 +853,16 @@ function readrBoard($R){
                     queue:false
                 });
 
-                RDR.rindow.jspUpdate($rindow);
+                ANT.aWindow.jspUpdate($aWindow);
             },
             updatePageTagMessage: function(args, action) {
                 if(action == 'tagDeleted'){
-                    var $rindow = $('div.rdr_window:eq(0)');
-                    RDR.rindow.hideFooter($rindow);
-                    $rindow.find('.rdr_header h1').text('Reaction Undone');
-                    $rindow.find('.rdr_body').css('height','auto').html(
-                        '<div class="rdr_reactionMessage rdr_reactUndoSuccess">'+
-                            '<div class="rdr_label_icon"></div>'+
+                    var $aWindow = $('div.ant_window:eq(0)');
+                    ANT.aWindow.hideFooter($aWindow);
+                    $aWindow.find('.ant_header h1').text('Reaction Undone');
+                    $aWindow.find('.ant_body').css('height','auto').html(
+                        '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
+                            '<div class="ant_label_icon"></div>'+
                             '<em>'+
                                 '<span>Your Reaction: </span>'+
                                 '<strong> '+args.tag.body+' </strong>'+
@@ -887,9 +873,9 @@ function readrBoard($R){
                 }
             },
             updateTagMessage: function(args) {
-                //RDR.rindow.updateTagMessage
-                // used for updating the message in the rindow that follows a reaction
-                if ( args.scenario && args.rindow ) {
+                //ANT.aWindow.updateTagMessage
+                // used for updating the message in the aWindow that follows a reaction
+                if ( args.scenario && args.aWindow ) {
                     // ugly as hell.  rewrite time.
                     if ( args.args ) {
                         $.each( args.args, function( key, copyThisArg ) {
@@ -902,54 +888,54 @@ function readrBoard($R){
                     }
 
                     var hash = args.hash,
-                        $rindow = args.rindow,
+                        $aWindow = args.aWindow,
                         kind = args.kind,
                         tag = args.tag,
-                        summary = RDR.summaries[hash],
+                        summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
 
-                                var $success = $('<div class="rdr_view_success"></div>'),
-                                    $subheader = $('<div class="rdr_subheader rdr_clearfix"></div>').appendTo( $success ),
+                                var $success = $('<div class="ant_view_success"></div>'),
+                                    $subheader = $('<div class="ant_subheader ant_clearfix"></div>').appendTo( $success ),
                                     tagBody = ( tag.body ) ? tag.body:tag.tag_body,
                                     $h1 = $('<h1>'+tagBody+'</h1>').appendTo( $subheader ),
-                                    $options = $('<div class="rdr_nextActions"></div>').appendTo( $success );
+                                    $options = $('<div class="ant_nextActions"></div>').appendTo( $success );
                                 
                                 if ( args.kind != 'page' ) {
-                                    var $sayMore = RDR.actions.comments.makeCommentBox({
+                                    var $sayMore = ANT.actions.comments.makeCommentBox({
                                         content_node: content_node,
                                         summary: summary,
                                         hash: hash,
                                         tag: tag,
                                         kind: kind,
-                                        $rindow: $rindow,
+                                        $aWindow: $aWindow,
                                         selState: content_node.selState || null
                                     }).appendTo( $options );
                                 }
 
                                 // if ( kind != "text" ) {
-                                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
+                                    var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
                                     $success.prepend($backButton);
                                     $backButton.click( function() {
 
-                                        var doClose = RDR.rindow.safeClose($rindow);
+                                        var doClose = ANT.aWindow.safeClose($aWindow);
                                         if(!doClose){
                                             return;
                                         }
 
-                                        RDR.rindow.updateTagPanel( $rindow );
+                                        ANT.aWindow.updateTagPanel( $aWindow );
 
                                     });
                                 // }
 
                                 var shouldAppendNotReplace = true;
-                                RDR.rindow.panelUpdate( $rindow, 'rdr_view_more', $success, shouldAppendNotReplace);
+                                ANT.aWindow.panelUpdate( $aWindow, 'ant_view_more', $success, shouldAppendNotReplace);
 
-                                RDR.user = RDR.user || {};
+                                ANT.user = ANT.user || {};
                                 
                                 var onAction = function(event){
                                     var args = event.data.args;
@@ -960,28 +946,28 @@ function readrBoard($R){
                                         hash: args.hash,
                                         int_id: args.response.data.interaction.id,
                                         tag: args.tag,
-                                        rindow: $rindow
+                                        aWindow: $aWindow
                                     };
 
-                                    RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
+                                    ANT.actions.interactions.ajax( newArgs, 'react', 'remove' );
 
                                 };
 
                                 if(isTouchBrowser){
-                                    $rindow.find('a.rdr_undo_link').on('tap.rdr', {args:args}, onAction);
+                                    $aWindow.find('a.ant_undo_link').on('tap.ant', {args:args}, onAction);
                                 }else{
-                                    $rindow.find('a.rdr_undo_link').on('click.rdr', {args:args}, onAction);
+                                    $aWindow.find('a.ant_undo_link').on('click.ant', {args:args}, onAction);
                                 }
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<div class="rdr_shareLinks">'+RDR.t('share_reaction')+': <ul></ul></div>'),
+                                var $shareLinks = $('<div class="ant_shareLinks">'+ANT.t('share_reaction')+': <ul></ul></div>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="rdr_icon-'+val+'"></i></a></li>');
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="ant_icon-'+val+'"></i></a></li>');
                                     $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
@@ -992,7 +978,7 @@ function readrBoard($R){
                                             hash = args.hash = "page";
                                         }
 
-                                        RDR.events.trackEventToCloud({
+                                        ANT.events.trackEventToCloud({
                                             event_type: "sh",
                                             event_value: val,
                                             container_hash: hash,
@@ -1001,17 +987,17 @@ function readrBoard($R){
                                             reaction_body: tag_body
                                         });
 
-                                        var summary = RDR.summaries[hash];
+                                        var summary = ANT.summaries[hash];
                                         //hack to get the kind
                                         var kind = args.kind || summary.kind;
-                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                        ANT.shareWindow = window.open(ANT_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
                                         
-                                        RDR.actions.share_getLink({
+                                        ANT.actions.share_getLink({
                                             referring_int_id:args.response.data.interaction.id,
                                             hash:args.hash,
                                             kind:kind,
                                             sns:val,
-                                            rindow:$rindow,
+                                            aWindow:$aWindow,
                                             tag:tag,
                                             content_node:content_node
                                         }); // ugh, lots of weird data nesting
@@ -1021,35 +1007,35 @@ function readrBoard($R){
                                 return $shareLinks;
                             }
 
-                            // var $shareSocialWrap = $('.rdr_menu_share .rdr_linkWrap');
-                            var $shareSocialWrap = $('.rdr_nextActions');
+                            // var $shareSocialWrap = $('.ant_menu_share .ant_linkWrap');
+                            var $shareSocialWrap = $('.ant_nextActions');
                             $shareSocialWrap.append( makeShareLinks() );
                         }
 
-                        RDR.actions.containers.media.onEngage( hash );
+                        ANT.actions.containers.media.onEngage( hash );
                     } else {
                         
-                        var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
-                        var $header = RDR.rindow.makeHeader( headerText);
-                        $rindow.find('.rdr_header').replaceWith($header);
+                        var headerText = ANT.aWindow.makeDefaultPanelMessage($aWindow);
+                        var $header = ANT.aWindow.makeHeader( headerText);
+                        $aWindow.find('.ant_header').replaceWith($header);
 
-                        $rindow.removeClass('rdr_viewing_more').find('div.rdr_indicator_details_body').show();  // image specific.
-                        RDR.rindow.panelHide( $rindow );
-                        // RDR.rindow.panelHide( $rindow, 'rdr_view_more', $rindow.data('initialWidth'), null, function() {
-                        //     $rindow.find('table.rdr-one-column td').triggerHandler('mousemove');
+                        $aWindow.removeClass('ant_viewing_more').find('div.ant_indicator_details_body').show();  // image specific.
+                        ANT.aWindow.panelHide( $aWindow );
+                        // ANT.aWindow.panelHide( $aWindow, 'ant_view_more', $aWindow.data('initialWidth'), null, function() {
+                        //     $aWindow.find('table.ant-one-column td').triggerHandler('mousemove');
                         // });
                     }
                     
                     //todo: examine resize
-                    RDR.rindow.updateSizes( $rindow );
+                    ANT.aWindow.updateSizes( $aWindow );
                 }
             },
-            jspUpdate: function( $rindow ) {
-                //RDR.rindow.jspUpdate:
-                //updates or inits first (and should be only) $rindow rdr_body into jScrollPanes
+            jspUpdate: function( $aWindow ) {
+                //ANT.aWindow.jspUpdate:
+                //updates or inits first (and should be only) $aWindow ant_body into jScrollPanes
 
-                if ( !$rindow.closest('.jspContainer').length && !$rindow.hasClass('jspScrollable') ) {
-                    $rindow.find('div.rdr_body').each( function() {
+                if ( !$aWindow.closest('.jspContainer').length && !$aWindow.hasClass('jspScrollable') ) {
+                    $aWindow.find('div.ant_body').each( function() {
                         var $this = $(this);
 
                         if( !$this.hasClass('jspScrollable') ){
@@ -1063,34 +1049,34 @@ function readrBoard($R){
                 }
             },
             tagBox: {
-                setWidth: function( $rindow, width ) {
-                    // RDR.rindow.tagBox.setWidth
-                    // should probably just be RDR.rindow.setWidth ??
+                setWidth: function( $aWindow, width ) {
+                    // ANT.aWindow.tagBox.setWidth
+                    // should probably just be ANT.aWindow.setWidth ??
                     // width must be 320, 480, or 640
-                    var rindowWidth = (RDR.group.max_rindow_width) ? RDR.group.max_rindow_width:width;
-                    $rindow.removeClass('w160 w320 w480 w640').addClass('w'+rindowWidth);
+                    var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
+                    $aWindow.removeClass('w160 w320 w480 w640').addClass('w'+aWindowWidth);
                 },
-                setHeight: function( $rindow, height ) {
-                    // RDR.rindow.tagBox.setHeight
-                    // should probably just be RDR.rindow.setWidth ??
+                setHeight: function( $aWindow, height ) {
+                    // ANT.aWindow.tagBox.setHeight
+                    // should probably just be ANT.aWindow.setWidth ??
                     // width must be 320, 480, or 640
-                    $rindow.find('.rdr_body, .jspContainer').height( height );
+                    $aWindow.find('.ant_body, .jspContainer').height( height );
                 },
                 make: function( params ) {
-                    //RDR.rindow.tagBox.make:
+                    //ANT.aWindow.tagBox.make:
                     var tag = params.tag,
                         boxSize = ( params.boxSize ) ? params.boxSize : "medium", //default
-                        $rindow = ( params.$rindow ) ? params.$rindow : null,
-                        $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$rindow ) ? params.$rindow.find('div.rdr_body.rdr_tags_list') : null,
-                        reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid',
+                        $aWindow = ( params.$aWindow ) ? params.$aWindow : null,
+                        $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$aWindow ) ? params.$aWindow.find('div.ant_body.ant_tags_list') : null,
+                        reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
                         tagPercent = 0,
                         tagWidth = '',
                         colorInt = ( params.colorInt ) ? params.colorInt:1,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
-                        kind = $rindow.data('kind'),
-                        hash = ($rindow.data('hash')) ? $rindow.data('hash'):$rindow.data('container'),
-                        summary = RDR.summaries[hash],
+                        kind = $aWindow.data('kind'),
+                        hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
+                        summary = ANT.summaries[hash],
                         totalReactions = (typeof summary != 'undefined')?summary.counts.tags:0,
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
@@ -1114,10 +1100,10 @@ function readrBoard($R){
                     // for ex,
 
                     // this can go away if we change CSS class names
-                    var boxSize = ( boxSize == "big" ) ? "rdr_box_big" : ( boxSize == "medium" ) ? "rdr_box_medium" : "rdr_box_small",
-                    // var boxSize = "rdr_box_"+ boxSize, 
+                    var boxSize = ( boxSize == "big" ) ? "ant_box_big" : ( boxSize == "medium" ) ? "ant_box_medium" : "ant_box_small",
+                    // var boxSize = "ant_box_"+ boxSize, 
                       wideBox = "",
-                      writeMode = ( isWriteMode ) ? 'rdr_writeMode' : '',
+                      writeMode = ( isWriteMode ) ? 'ant_writeMode' : '',
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
                       tagBodyCrazyHtml = "",
                       tagIsSplitClass = "";
@@ -1141,18 +1127,18 @@ function readrBoard($R){
                     var charCountText = ""
                     //split long tag onto two lines.
                     if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
-                        charCountText = 'rdr_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBodyRaw+'</div>';
+                        charCountText = 'ant_charCount'+tagBodyRaw.length;
+                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBodyRaw+'</div>';
                     } else {
-                        tagIsSplitClass = "rdr_tag_split";
+                        tagIsSplitClass = "ant_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            charCountText = 'rdr_charCount15';
+                            charCountText = 'ant_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="rdr_tag_body rdr_tag_lineone">' + 
+                            '<div class="ant_tag_body ant_tag_lineone">' + 
                             tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
-                            // if ( boxSize == "rdr_box_small" ) {
-                            //     boxSize = "rdr_box_medium";
+                            // if ( boxSize == "ant_box_small" ) {
+                            //     boxSize = "ant_box_medium";
                             // }
                         } else {
                             var tagBody1 = "", tagBody2 = "", keepLooping = true;
@@ -1162,28 +1148,28 @@ function readrBoard($R){
                                 if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
-                            charCountText = 'rdr_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="rdr_tag_body rdr_tag_lineone">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            charCountText = 'ant_charCount'+tagBody1.length;
+                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
                     var tag_id = tag.id;
                     var parent_id = tag.parent_id;
-                    var content_node_str = content_node_id ? 'rdr_content_node_'+content_node_id : "";
+                    var content_node_str = content_node_id ? 'ant_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
                     var tagCountDisplay = (renderPercentages===true) ? tagPercent+'%':tagCount;
                     var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
                         "" : 
-                        '<span class="rdr_plusOne">+1</span>';
+                        '<span class="ant_plusOne">+1</span>';
 
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
-                        '<span class="rdr_count">'+tagCountDisplay+'</span>' +
-                        '<i class="rdr_icon-search rdr_tag_read_icon"></i>';
+                        '<span class="ant_count">'+tagCountDisplay+'</span>' +
+                        '<i class="ant_icon-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="rdr_color'+colorInt+' '+boxSize+' rdr_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
+                    var tagBoxHTML = '<div class="ant_color'+colorInt+' '+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
                             '<div '+
-                                'class="rdr_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
+                                'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
                                 'data-tag_id="'+tag_id+'" '+
                                 'data-tag_count="'+tagCount+'" '+
@@ -1201,41 +1187,41 @@ function readrBoard($R){
                     $tagContainer.append( $tagBox );
 
                     function renderReactedContent( $reactionsTable, tag ) {
-                        if ( !$rindow.find('.rdr_view_more').length || !$rindow.find('.rdr_view_more').hasClass('rdr_visiblePanel') ) {
-                            var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
-                            var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
-                            $rdr_body_wrap.append( $newPanel );
+                        if ( !$aWindow.find('.ant_view_more').length || !$aWindow.find('.ant_view_more').hasClass('ant_visiblePanel') ) {
+                            var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                            var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
+                            $ant_body_wrap.append( $newPanel );
 
-                            $newPanel.append( $reactionsTable ).addClass('rdr_page_reactions_summary');
+                            $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                            RDR.rindow.panelShow( $rindow, $newPanel, function() {
-                                RDR.rindow.hideFooter($rindow);
-                                // RDR.rindow.panelEnsureFloatWidths($rindow);
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                            ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
+                                ANT.aWindow.hideFooter($aWindow);
+                                // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                             });
                         } else {
-                            $rindow.find('.rdr_body').html( $reactionsTable );
-                            RDR.rindow.jspUpdate( $rindow );
+                            $aWindow.find('.ant_body').html( $reactionsTable );
+                            ANT.aWindow.jspUpdate( $aWindow );
                         }
 
                         var HeaderTxt = (tag.tag_count <= 0) ? 
                             "no reactions" :
                                 (tag.tag_count == 1) ?
-                                "1 " + RDR.t('single_reaction') :
-                                tag.tag_count + " " + RDR.t('plural_reaction');
-                        var $header = RDR.rindow.makeHeader( HeaderTxt );
-                            $rindow.find('.rdr_header').replaceWith($header)
+                                "1 " + ANT.t('single_reaction') :
+                                tag.tag_count + " " + ANT.t('plural_reaction');
+                        var $header = ANT.aWindow.makeHeader( HeaderTxt );
+                            $aWindow.find('.ant_header').replaceWith($header)
                     } // renderReactedContent
 
                     function _makeBackButton(){
-                        var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
-                        $backButton.on('click.rdr, touchend.rdr', function() {
+                        var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
+                        $backButton.on('click.ant, touchend.ant', function() {
 
 
-                            //temp fix because the rindow scrollpane re-init isnt working
-                            var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                            //temp fix because the aWindow scrollpane re-init isnt working
+                            var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
                             if(!isViewForRindow){
-                                RDR.rindow.close($rindow);
+                                ANT.aWindow.close($aWindow);
                                 return;
                             }
 
@@ -1246,30 +1232,30 @@ function readrBoard($R){
                     function createReactedContentTable($this, counts, pageId) {
 
                         $().selog('hilite', true, 'off');
-                        $('.rdr_twtooltip').remove();
+                        $('.ant_twtooltip').remove();
                         var $backButton = _makeBackButton(),
-                            $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="rdr_page_reactions"></tr></tbody>');
+                            $reactionsTable = $('<table cellpadding="0" cellspacing="0" border="0" class="reaction_summary_table"></table>').append('<tbody><tr class="ant_page_reactions"></tr></tbody>');
 
                         // add count of page-level reactions
                         if ( counts && counts.page && counts.page > 0 ) {
                             var page_reaction_text =
                                 (counts.page == 1 ) ?
-                                "1 " + RDR.t('single_reaction') :
-                                counts.page + " " + RDR.t('plural_reaction');
+                                "1 " + ANT.t('single_reaction') :
+                                counts.page + " " + ANT.t('plural_reaction');
 
-                            $reactionsTable.find('.rdr_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+RDR.t('to_page')+'</td>');
+                            $reactionsTable.find('.ant_page_reactions').append('<td colspan="2"><strong>'+page_reaction_text+'</strong> '+ANT.t('to_page')+'</td>');
                         }
 
                         if ( counts.img > 0 || counts.text > 0 || counts.media > 0 ) {
                             // iterate through and create an array of counts + $tr.  this is then sortable.
-                            $reactionsTable.find('.rdr_page_reactions').addClass('has_other_reactions');
-                            $.each( RDR.interaction_data[ tag.id ], function(int_id, data) {
+                            $reactionsTable.find('.ant_page_reactions').addClass('has_other_reactions');
+                            $.each( ANT.interaction_data[ tag.id ], function(int_id, data) {
 
                                 //quick fix for multi page reactions.
                                 // todo: #summaryContentByPageFix
                                 var hash = data.hash;
-                                var summary = RDR.summaries[hash];
-                                var $node = $('[rdr-hash="' + hash + '"]');
+                                var summary = ANT.summaries[hash];
+                                var $node = $('[ant-hash="' + hash + '"]');
                                 var thisPageId = summary.pageId;
 
                                 if(
@@ -1280,34 +1266,34 @@ function readrBoard($R){
                                     return;
                                 }
 
-                                if ( !$reactionsTable.find('tr.rdr_int_summary_'+int_id).length ) {
-                                    var $tr = $('<tr valign="middle" class="rdr_content_reaction rdr_int_summary_'+int_id+'"/>'),
-                                        thing = RDR.interaction_data[ tag.id ][ int_id ];
+                                if ( !$reactionsTable.find('tr.ant_int_summary_'+int_id).length ) {
+                                    var $tr = $('<tr valign="middle" class="ant_content_reaction ant_int_summary_'+int_id+'"/>'),
+                                        thing = ANT.interaction_data[ tag.id ][ int_id ];
 
                                     if (typeof thing.interaction != "undefined" && typeof thing.content_node != "undefined" ) {
-                                        var reaction_word = (thing.interaction.count>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
-                                        $tr.append('<td class="rdr_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
+                                        var reaction_word = (thing.interaction.count>1) ? ANT.t('plural_reaction') : ANT.t('single_reaction');
+                                        $tr.append('<td class="ant_count"><h4>'+thing.interaction.count+'</h4><h5>'+reaction_word+'</h5></td>')//chain
                                         .data('count', thing.interaction.count)//chain
                                         .data('tag', tag)//chain
                                         .data('int_id', int_id);
 
                                         if ( thing.kind == "text" ) {
-                                            $tr.append('<td class="rdr_content">'+thing.content_node.body+'</td>');
+                                            $tr.append('<td class="ant_content">'+thing.content_node.body+'</td>');
                                         } else if ( thing.kind == "img" ) {
-                                            $tr.append('<td class="rdr_content"><img src="'+thing.content_node.body+'" height="50"/></td>');
+                                            $tr.append('<td class="ant_content"><img src="'+thing.content_node.body+'" height="50"/></td>');
                                         } else if ( thing.kind == "media" ) {
-                                            $tr.append('<td class="rdr_content"><img src="'+RDR_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
+                                            $tr.append('<td class="ant_content"><img src="'+ANT_baseUrl+'/static/widget/images/video_icon.png" height="33" style="margin-bottom:-10px;"/> <div style="display:inline-block;margin-left:10px;">Video</div></td>');
                                         }
 
-                                        $tr.on('click.rdr, touchend.rdr', function(e) {
+                                        $tr.on('click.ant, touchend.ant', function(e) {
                                             e.preventDefault();
                                             var data = {
                                                 container_hash:thing.hash,
                                                 location:thing.content_node.location
                                             };
-                                            RDR.session.revealSharedContent(data);
+                                            ANT.session.revealSharedContent(data);
 
-                                            RDR.events.trackEventToCloud({
+                                            ANT.events.trackEventToCloud({
                                                 event_type: 'sb',
                                                 event_value: 'vc',
                                                 page_id: thisPageId
@@ -1315,17 +1301,17 @@ function readrBoard($R){
                                         });
 
                                         // insert the new content into the right place, ordered by count
-                                        if ( !$reactionsTable.find('tr.rdr_content_reaction').length ) {
+                                        if ( !$reactionsTable.find('tr.ant_content_reaction').length ) {
                                             $reactionsTable.find('tbody').append( $tr );
                                         } else {
                                             var insertIndex = 0;
-                                            $.each( $reactionsTable.find('tr.rdr_content_reaction'), function(idx, existing_tr) {
+                                            $.each( $reactionsTable.find('tr.ant_content_reaction'), function(idx, existing_tr) {
                                                 if ( parseInt(thing.interaction.count) > parseInt($(existing_tr).data('count')) ) {
                                                     insertIndex = idx;
                                                     return false;
                                                 }
                                             });
-                                            $reactionsTable.find('tr.rdr_content_reaction:eq('+insertIndex+')').before( $tr );
+                                            $reactionsTable.find('tr.ant_content_reaction:eq('+insertIndex+')').before( $tr );
                                         }
                                     }
                                 }
@@ -1342,11 +1328,11 @@ function readrBoard($R){
                             var clickFunc = function(){
 
 
-                                RDR.rindow.hideFooter($rindow);
-                                $rindow.removeClass('rdr_rewritable');
+                                ANT.aWindow.hideFooter($aWindow);
+                                $aWindow.removeClass('ant_rewritable');
 
-                                var page_id = RDR.util.getPageProperty('id', hash),
-                                    page = RDR.pages[ page_id ],
+                                var page_id = ANT.util.getPageProperty('id', hash),
+                                    page = ANT.pages[ page_id ],
                                     tag_count = tag.tag_count,
                                     counts = {
                                         "img":0,
@@ -1356,7 +1342,7 @@ function readrBoard($R){
                                     };
                                 
 
-                                RDR.events.trackEventToCloud({
+                                ANT.events.trackEventToCloud({
                                     event_type: 'sb',
                                     event_value: 'vr',
                                     page_id: page_id
@@ -1364,10 +1350,10 @@ function readrBoard($R){
 
 
                                 $.each( page.containers, function( idx, container ) {
-                                    if ( RDR.summaries && RDR.summaries[container.hash] && RDR.summaries[container.hash].top_interactions ) {
-                                        if ( RDR.summaries[container.hash].top_interactions.tags && RDR.summaries[container.hash].top_interactions.tags[tag.id] ) {
-                                            counts[RDR.summaries[container.hash].kind] += RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
-                                            counts.page -= RDR.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                    if ( ANT.summaries && ANT.summaries[container.hash] && ANT.summaries[container.hash].top_interactions ) {
+                                        if ( ANT.summaries[container.hash].top_interactions.tags && ANT.summaries[container.hash].top_interactions.tags[tag.id] ) {
+                                            counts[ANT.summaries[container.hash].kind] += ANT.summaries[container.hash].top_interactions.tags[tag.id].count;
+                                            counts.page -= ANT.summaries[container.hash].top_interactions.tags[tag.id].count;
                                         }
                                     }
                                 });
@@ -1377,21 +1363,21 @@ function readrBoard($R){
 
                                 renderReactedContent( $reactionsTable, tag );
 
-                                $this.addClass('rdr_live_hover');
+                                $this.addClass('ant_live_hover');
                             };
 
-                            $tagBox.on('click.rdr, touchend.rdr', function(){
+                            $tagBox.on('click.ant, touchend.ant', function(){
                                 clickFunc();
                             });
 
 
                         } else {
-                            $tagBox.on('click.rdr, touchend.rdr', function() {
-                                $(this).addClass('rdr_tagged');
-                                $rindow.removeClass('rdr_rewritable');
-                                var hash = $rindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                            $tagBox.on('click.ant, touchend.ant', function() {
+                                $(this).addClass('ant_tagged');
+                                $aWindow.removeClass('ant_rewritable');
+                                var hash = $aWindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }
                     } else {
@@ -1399,19 +1385,19 @@ function readrBoard($R){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
                             $tagBox.bind('tap', function() {
-                                $(this).addClass('rdr_tagged');
-                                $rindow.removeClass('rdr_rewritable');
-                                var hash = $rindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                                $(this).addClass('ant_tagged');
+                                $aWindow.removeClass('ant_rewritable');
+                                var hash = $aWindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }else{
                             $tagBox.click( function() {
-                                $(this).addClass('rdr_tagged');
-                                $rindow.removeClass('rdr_rewritable');
-                                var hash = $rindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow, content_node:content_node};
-                                RDR.actions.interactions.ajax( args, 'react', 'create');
+                                $(this).addClass('ant_tagged');
+                                $aWindow.removeClass('ant_rewritable');
+                                var hash = $aWindow.data('container');
+                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
                         }
                     }
@@ -1420,14 +1406,14 @@ function readrBoard($R){
                     if(!isTouchBrowser){
                         $tagBox.hover(function() {
                             var $this = $(this);
-                            if ( !$this.hasClass('rdr_tagged') ) {
-                                var $tagCount = $this.find('span.rdr_tag_count');
+                            if ( !$this.hasClass('ant_tagged') ) {
+                                var $tagCount = $this.find('span.ant_tag_count');
                                 $tagCount.width( $tagCount.width() );
                                 $tagCount.text('+');
                             }
                         }, function() {
                             var $this = $(this);
-                            $this.find('span.rdr_tag_count').text( $this.find('.rdr_tag').data('tag_count') );
+                            $this.find('span.ant_tag_count').text( $this.find('.ant_tag').data('tag_count') );
                         });
                     }
 
@@ -1470,18 +1456,18 @@ function readrBoard($R){
                     // add the comment indicator + comment hover... if we should!
 
                     if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var $commentHover = $('<span class="rdr_comment_hover rdr_tooltip_this" title="view comments"></span>');
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" title="view comments"></span>');
 
-                        $commentHover.append( '<i class="rdr_icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="ant_icon-comment"></i> '+num_comments );
                         
                         if(isTouchBrowser){
                             $commentHover.bind('tap', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
-                                RDR.actions.viewCommentContent({
+                                ANT.actions.viewCommentContent({
                                     tag:tag,
                                     hash:hash,
-                                    rindow:$rindow,
+                                    aWindow:$aWindow,
                                     content_node:content_node,
                                     selState:content_node.selState
                                 });
@@ -1491,10 +1477,10 @@ function readrBoard($R){
                             $commentHover.click( function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
-                                RDR.actions.viewCommentContent({
+                                ANT.actions.viewCommentContent({
                                     tag:tag,
                                     hash:hash,
-                                    rindow:$rindow,
+                                    aWindow:$aWindow,
                                     content_node:content_node,
                                     selState:content_node.selState
                                 });
@@ -1509,22 +1495,22 @@ function readrBoard($R){
                     return $tagBox;
                 }
             },
-            writeCustomTag: function( $container, $rindow, actionType ) {
-                //RDR.rindow.writeCustomTag
+            writeCustomTag: function( $container, $aWindow, actionType ) {
+                //ANT.aWindow.writeCustomTag
                 // think we don't need $container or actionType
 
-                var $container = $rindow.find('.rdr_footer');
-                $container.append( '<div class="rdr_box"></div> ');
+                var $container = $aWindow.find('.ant_footer');
+                $container.append( '<div class="ant_box"></div> ');
 
-                if ( $container.find('div.rdr_custom_tag').not('div.rdr_custom_tag.rdr_tagged').length == 0) {
+                if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
-                        helpText = "+ " + RDR.t('add_custom');
+                        helpText = "+ " + ANT.t('add_custom');
 
                     // add custom tag
-                    var $clickOverlay = $('<div class="rdr_click_overlay"></div>').appendTo($container);
-                    var $custom = $('<div class="rdr_tag rdr_custom_tag"></div>');
+                    var $clickOverlay = $('<div class="ant_click_overlay"></div>').appendTo($container);
+                    var $custom = $('<div class="ant_tag ant_custom_tag"></div>');
                     var $customInput = $('<input value="'+helpText+'" />').appendTo($custom);
-                    var $customSubmit = $('<button class="rdr_custom_tag_submit" name="rdr_custom_tag_submit">ok</button>').appendTo($custom);
+                    var $customSubmit = $('<button class="ant_custom_tag_submit" name="ant_custom_tag_submit">ok</button>').appendTo($custom);
                     $customSubmit.click(function(){
                         submitCustomTag($custom, $customInput);
                     });
@@ -1534,9 +1520,9 @@ function readrBoard($R){
                     });
                                         
                     $customInput.focus( function() {
-                        // RDR.events.track('start_custom_reaction_rindow');
+                        // ANT.events.track('start_custom_reaction_aWindow');
                         var $input = $(this);
-                        $input.removeClass('rdr_default');
+                        $input.removeClass('ant_default');
                         if ( $input.val() == helpText ) {
                             $input.val('');
                         }
@@ -1544,7 +1530,7 @@ function readrBoard($R){
                         $clickOverlay.hide();
                         $customSubmit.show();
 
-                        $rindow.removeClass('rdr_rewritable');
+                        $aWindow.removeClass('ant_rewritable');
 
                     }).blur( function() {
                         var $input = $(this);
@@ -1554,11 +1540,11 @@ function readrBoard($R){
                             $clickOverlay.show();
                         }
                         if ( $input.val() == helpText ) {
-                            $input.addClass('rdr_default');
+                            $input.addClass('ant_default');
                             $customSubmit.hide();
                             $clickOverlay.show();              
                         }
-                        $input.closest('div.rdr_tag').removeClass('rdr_hover');
+                        $input.closest('div.ant_tag').removeClass('ant_hover');
                         
                     }).keyup( function(event) {
                         var $input = $customInput;
@@ -1567,7 +1553,7 @@ function readrBoard($R){
                         }
                         else if (event.keyCode == '27') { //esc
                             $input.blur();
-                            // return false so the rindow doesn't close.
+                            // return false so the aWindow doesn't close.
                             return false;
                         } else if ( $input.val().length > 25 ) {
                             var customTag = $input.val();
@@ -1575,11 +1561,11 @@ function readrBoard($R){
                         }
                     });
 
-                    $container.find('.rdr_box').append( $custom, " " );
+                    $container.find('.ant_box').append( $custom, " " );
 
                     function submitCustomTag($custom, $customInput){
                         var tag = {},
-                            hash = $rindow.data('container');
+                            hash = $aWindow.data('container');
                             //note that hash is a $(dom) element, not a hash.  Fix this later.
                         
                         var val = $customInput.val();
@@ -1588,16 +1574,16 @@ function readrBoard($R){
                         }
                         tag.body = val;
 
-                        $custom.parent().addClass('rdr_tagged');
+                        $custom.parent().addClass('ant_tagged');
 
                         // args = { tag:tag, hash:hash, kind:"page" };
-                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$rindow.data('kind'), rindow:$rindow};
-                        RDR.actions.interactions.ajax( args, actionType, 'create' );
+                        args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow};
+                        ANT.actions.interactions.ajax( args, actionType, 'create' );
                         $customInput.blur();
                         // $custom.tooltip();
                     }
 
-                    $(document).on('keydown.rdr', function(event) {
+                    $(document).on('keydown.ant', function(event) {
                         // this won't be international-friendly -- it's a list of letters, numbers, punctuation, plus SHIFT
                         keyCodes = [16, 81, 87, 69, 82, 84, 89, 85, 73, 79, 80, 65, 83, 68, 70, 71, 72, 74, 75, 76, 90, 88, 67, 86, 66, 78, 77, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 189, 187, 219, 221, 220, 186, 222, 188, 190, 191, 192];
                         if ( $.inArray(event.keyCode, keyCodes) != -1 ) {
@@ -1606,29 +1592,29 @@ function readrBoard($R){
                     });
                 }
             },
-            _rindowTypes: {
-                //RDR.rindow._rindowTypes:
+            _aWindowTypes: {
+                //ANT.aWindow._aWindowTypes:
                 tagMode: {
-                    //RDR.rindow._rindowTypes.tagMode.make(settings);
-                    // [porter] we should change the name of this function.  no need to nest under _rindowTypes anymore, right?
+                    //ANT.aWindow._aWindowTypes.tagMode.make(settings);
+                    // [porter] we should change the name of this function.  no need to nest under _aWindowTypes anymore, right?
                     make: function(settings){
-                        //RDR.rindow._rindowTypes.writeMode.make:
-                        //as the underscore suggests, this should not be called directly.  Instead, use RDR.rindow.make(rindowType [,options])
+                        //ANT.aWindow._aWindowTypes.writeMode.make:
+                        //as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
 
                         if ( settings.is_page == true ) {
                             var page = settings.page,
-                                $summary_widget = $('.rdr-summary-'+page.id),
+                                $summary_widget = $('.ant-summary-'+page.id),
                                 coords = {
                                     top: $summary_widget.offset().top,
                                     left: $summary_widget.offset().left
                                 };
 
-                            // don't redraw summary rindow if already showing
-                            if ( $('div.rdr_page_key_' + $summary_widget.data('page_key') ).length ) {
+                            // don't redraw summary aWindow if already showing
+                            if ( $('div.ant_page_key_' + $summary_widget.data('page_key') ).length ) {
                                 return;
                             }
 
-                            var $rindow = RDR.rindow.draw({
+                            var $aWindow = ANT.aWindow.draw({
                                     coords: coords,
                                     container: $summary_widget,
                                     content: 'page',
@@ -1638,9 +1624,9 @@ function readrBoard($R){
 
                         } else {
                             var hash = settings.hash;
-                            var page_id = RDR.util.getPageProperty('id', hash );
+                            var page_id = ANT.util.getPageProperty('id', hash );
 
-                            var summary = RDR.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 kind = summary.kind,
                                 rewritable = (settings.rewritable == false) ? false:true,
@@ -1648,16 +1634,16 @@ function readrBoard($R){
 
                             var actionType = (settings.actionType) ? settings.actionType:"react";
 
-                            /* START create rindow based on write vs. read mode */
+                            /* START create aWindow based on write vs. read mode */
                             if ( settings.mode == "writeMode" ) {
                                 // show writemode text
                                 // writeMode
                                 
 
-                                // RDR.events.track('start_react_text');
-                                RDR.events.trackEventToCloud({
+                                // ANT.events.track('start_react_text');
+                                ANT.events.trackEventToCloud({
                                     // category: "engage",
-                                    // action: "rindow_shown_writemode",
+                                    // action: "aWindow_shown_writemode",
                                     event_type: 'rs',
                                     event_value: 'wr',
                                     // opt_label: "kind: text, hash: " + hash,
@@ -1698,7 +1684,7 @@ function readrBoard($R){
 
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
-                                        var $container = $('[rdr-hash="'+hash+'"]');
+                                        var $container = $('[ant-hash="'+hash+'"]');
                                         var coords = {
                                             top: $container.offset().bottom+5,
                                             left: $container.offset().left
@@ -1707,7 +1693,7 @@ function readrBoard($R){
                                 } else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
-                                    var topValue = ( !$container.parents( RDR.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( RDR.group.img_container_selectors ).first().offset().bottom + 5;
+                                    var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
                                     var coords = {
                                         top: topValue,
                                         left: $container.offset().left
@@ -1716,11 +1702,11 @@ function readrBoard($R){
                             } else {
                                 // readMode
                                 // show readmode 
-                                var selector = '[rdr-hash="' + hash + '"]';
+                                var selector = '[ant-hash="' + hash + '"]';
 
-                                var $indicator = $('#rdr_indicator_'+hash),
-                                $indicator_body = $('#rdr_indicator_body_'+ hash),
-                                $container = $('[rdr-hash="'+hash+'"]');
+                                var $indicator = $('#ant_indicator_'+hash),
+                                $indicator_body = $('#ant_indicator_body_'+ hash),
+                                $container = $('[ant-hash="'+hash+'"]');
 
                                 if ( kind == "text" ) {
                                     coords = {
@@ -1734,10 +1720,10 @@ function readrBoard($R){
                                     };
 
                                     //log media readmode
-                                    // RDR.events.track( 'view_node::'+hash, hash );
-                                    RDR.events.trackEventToCloud({
+                                    // ANT.events.track( 'view_node::'+hash, hash );
+                                    ANT.events.trackEventToCloud({
                                         // category: "engage",
-                                        // action: "rindow_shown_readmode",
+                                        // action: "aWindow_shown_readmode",
                                         // opt_label: "kind: "+kind+", hash: " + hash,
                                         event_type: 'rs',
                                         event_value: 'rd',
@@ -1759,15 +1745,15 @@ function readrBoard($R){
                                         left: settings.$custom_cta.left
                                     };
                                 } else {
-                                    var rdr_offset_x = (settings.$custom_cta.attr('rdr-offset-x')) ? parseInt(settings.$custom_cta.attr('rdr-offset-x')) : 0;
-                                    var rdr_offset_y = (settings.$custom_cta.attr('rdr-offset-y')) ? parseInt(settings.$custom_cta.attr('rdr-offset-y')) : 0;
-                                    coords.top = settings.$custom_cta.offset().top + rdr_offset_y;
-                                    coords.left = settings.$custom_cta.offset().left + rdr_offset_x;
+                                    var ant_offset_x = (settings.$custom_cta.attr('ant-offset-x')) ? parseInt(settings.$custom_cta.attr('ant-offset-x')) : 0;
+                                    var ant_offset_y = (settings.$custom_cta.attr('ant-offset-y')) ? parseInt(settings.$custom_cta.attr('ant-offset-y')) : 0;
+                                    coords.top = settings.$custom_cta.offset().top + ant_offset_y;
+                                    coords.left = settings.$custom_cta.offset().left + ant_offset_x;
                                 }
 
                             }
 
-                            var $rindow = RDR.rindow.draw({
+                            var $aWindow = ANT.aWindow.draw({
                                 coords: coords,
                                 container: hash,
                                 content: settings.content,
@@ -1777,62 +1763,62 @@ function readrBoard($R){
                                 mode:settings.mode
                             });
                             //later we should consolodate the use of 'container' and 'hash' as the key
-                            $rindow.data('hash', hash);
-                            summary['$rindow_'+settings.mode.toLowerCase()] = $rindow;
+                            $aWindow.data('hash', hash);
+                            summary['$aWindow_'+settings.mode.toLowerCase()] = $aWindow;
                         }
 
-                        /* END create rindow based on write vs. read mode */
+                        /* END create aWindow based on write vs. read mode */
 
-                        $rindow.addClass('rdr_'+settings.mode.toLowerCase());
+                        $aWindow.addClass('ant_'+settings.mode.toLowerCase());
 
                         /* START populate the header */
-                        var headerText = RDR.rindow.makeDefaultPanelMessage($rindow);
+                        var headerText = ANT.aWindow.makeDefaultPanelMessage($aWindow);
 
-                        var $header = RDR.rindow.makeHeader( headerText );
-                        $rindow.find('.rdr_header').replaceWith($header);
+                        var $header = ANT.aWindow.makeHeader( headerText );
+                        $aWindow.find('.ant_header').replaceWith($header);
 
                         /* START create the tag boxes.  read / write mode matters. (??) */
-                        $rindow.addClass('rdr_reactions');
+                        $aWindow.addClass('ant_reactions');
 
-                        var $bodyWrap = $rindow.find('div.rdr_body_wrap');
+                        var $bodyWrap = $aWindow.find('div.ant_body_wrap');
 
-                        var $oldTagList = $rindow.find('div.rdr_body');
+                        var $oldTagList = $aWindow.find('div.ant_body');
                         if($oldTagList.length){
                             $oldTagList.remove();
                         }
 
-                        // write inline tags: initial rindow instantiation
+                        // write inline tags: initial aWindow instantiation
                         if ( settings.is_page == true ) {
-                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
+                            var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
                         } else {
-                            var $tagList = RDR.actions.indicators.utils.makeTagsListForInline( $rindow, settings.mode == "writeMode" );
+                            var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode" );
                         }
                         $bodyWrap.append($tagList);
                         /* END create the tag boxes.  read / write mode matters. */
 
-                        /* START modify the rindow size */
+                        /* START modify the aWindow size */
                         var contentWidth = $bodyWrap.width(),
                             contentHeight = $bodyWrap.height();
            
-                        var newCoords = RDR.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
+                        var newCoords = ANT.util.stayInWindow({coords:coords, width:contentWidth, ignoreWindowEdges:settings.ignoreWindowEdges});
 
-                        $rindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
+                        $aWindow.css('left', newCoords.left + 'px').css('top', newCoords.top + 'px');
 
-                        $rindow.animate({
+                        $aWindow.animate({
                             width:contentWidth
                         }, 333, 'swing' );
 
-                        $rindow.data( 'initialWidth', contentWidth ).data('initialHeight', contentHeight );
+                        $aWindow.data( 'initialWidth', contentWidth ).data('initialHeight', contentHeight );
 
 
                         //todo
-                        $rindow.find('div.rdr_cell_wrapper div.rdr_tag').css({'width':'100%'});
-                        // $rindow.find('div.rdr_custom_tag input').focus();
+                        $aWindow.find('div.ant_cell_wrapper div.ant_tag').css({'width':'100%'});
+                        // $aWindow.find('div.ant_custom_tag input').focus();
 
-                        // return $rindow to RDR.rindow.make
-                        return $rindow;
+                        // return $aWindow to ANT.aWindow.make
+                        return $aWindow;
 
-                        /* END modify the rindow size */
+                        /* END modify the aWindow size */
                     },
                     customOptions: {
 
@@ -1842,40 +1828,40 @@ function readrBoard($R){
                     }
                 }
             },
-            make: function(rindowType, options){
-                //RDR.rindow.make:
+            make: function(aWindowType, options){
+                //ANT.aWindow.make:
                 //temp tie-over
                 var hash = options.hash,
-                    summary = RDR.summaries[hash],
+                    summary = ANT.summaries[hash],
                     kind = options.kind,
                     isPage = options.is_page;
 
                 if (!isPage && !summary) {
                     // setup the summary
                     // FORCING SUMMARY CREATION
-                    var summary = RDR.util.makeEmptySummary(hash);
-                    RDR.actions.containers.setup(summary);
+                    var summary = ANT.util.makeEmptySummary(hash);
+                    ANT.actions.containers.setup(summary);
                 }
-                // summary = RDR.summaries[hash];
+                // summary = ANT.summaries[hash];
 
-                //checks for rindowType
-                if ( !rindowType ) rindowType = "readMode";
-                // if ( !RDR.rindow._rindowTypes.hasOwnProperty(rindowType) ) return;
+                //checks for aWindowType
+                if ( !aWindowType ) aWindowType = "readMode";
+                // if ( !ANT.aWindow._aWindowTypes.hasOwnProperty(aWindowType) ) return;
                 //else
 
-                var defaultOptions = RDR.rindow.defaults,
-                    customOptions = RDR.rindow._rindowTypes.customOptions,
-                    settings = $.extend( {}, defaultOptions, customOptions, options, {mode:rindowType} );
+                var defaultOptions = ANT.aWindow.defaults,
+                    customOptions = ANT.aWindow._aWindowTypes.customOptions,
+                    settings = $.extend( {}, defaultOptions, customOptions, options, {mode:aWindowType} );
                 //call make function for appropriate type
 
-                var $rindow = RDR.rindow._rindowTypes.tagMode.make(settings);
+                var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
                 
-                // return $rindow to whatever called RDR.rindow.make
-                return $rindow;
+                // return $aWindow to whatever called ANT.aWindow.make
+                return $aWindow;
 
             },
             draw: function(options) {
-                //RDR.rindow.draw:
+                //ANT.aWindow.draw:
 
                 /*
                 //options are:
@@ -1891,7 +1877,7 @@ function readrBoard($R){
                     kind: kind,
                     selState: newSel,
                     selector:selector,
-                    id: "rdr_loginPanel",
+                    id: "ant_loginPanel",
                     pnls:1,
                     height:225,
                     animTime:100,
@@ -1899,8 +1885,8 @@ function readrBoard($R){
                 }
                 */
 
-                //at least for now, always close all other rindows.
-                RDR.rindow.closeAll();
+                //at least for now, always close all other aWindows.
+                ANT.aWindow.closeAll();
 
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
@@ -1914,150 +1900,150 @@ function readrBoard($R){
                     maxHeight = settings.maxHeight;
                     minWidth = settings.minWidth,
                     maxWidth = settings.maxWidth,
-                    rdr_for = ( typeof settings.container == "string" ) ? 'rdr_for_'+settings.container:'rdr_for_page',
-                    $new_rindow = $('<div class="rdr rdr_window rdr_rewritable rdr_widget w160 '+rdr_for+'"></div>');
+                    ant_for = ( typeof settings.container == "string" ) ? 'ant_for_'+settings.container:'ant_for_page',
+                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w160 '+ant_for+'"></div>');
 
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
-                    // todo not sure we should always just REMOVE a pre-existing rindow with a particular ID...
+                    // todo not sure we should always just REMOVE a pre-existing aWindow with a particular ID...
                     // reason I'm adding this: want a login panel with an ID and data attached to it, so after a user
-                    // logs in, the login rindow knows what function to then call
-                    $new_rindow.attr('id',settings.id);
+                    // logs in, the login aWindow knows what function to then call
+                    $new_aWindow.attr('id',settings.id);
                 }
 
                 //this is instead of the if / else below
-                $('#rdr_sandbox').append( $new_rindow );
+                $('#ant_sandbox').append( $new_aWindow );
                 
                 if ( settings.kind == "page" ) {
-                    $new_rindow.addClass('rdr_page_key_' + options.container.data('page_key') ).addClass('rdr_page_summary');
+                    $new_aWindow.addClass('ant_page_key_' + options.container.data('page_key') ).addClass('ant_page_summary');
                 }
 
-                $new_rindow.data(settings);
+                $new_aWindow.data(settings);
                 
-                if ( $new_rindow.find('div.rdr_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a rindow exists and we want to use that.
-                    $new_rindow.html('');
-                    $new_rindow.append(
-                        '<div class="rdr rdr_header">'+
-                            '<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
-                            '<div class="rdr_loader"></div>'+
-                            '<div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div>'+
+                if ( $new_aWindow.find('div.ant_header').length === 0 ) {  // not sure why this conditional is here.  [pb] b/c just above, it's possible a aWindow exists and we want to use that.
+                    $new_aWindow.html('');
+                    $new_aWindow.append(
+                        '<div class="ant ant_header">'+
+                            '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
+                            '<div class="ant_loader"></div>'+
+                            '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
-                        '<div class="rdr rdr_body_wrap rdr_clearfix"></div>'+
-                        '<div class="rdr rdr_footer"></div>'
+                        '<div class="ant ant_body_wrap ant_clearfix"></div>'+
+                        '<div class="ant ant_footer"></div>'
                     );
 
-                    if ( settings.noHeader ) $new_rindow.find('div.rdr_header').remove();  // haha.  let's manipulate the DOM twice.  (Add then remove.)
+                    if ( settings.noHeader ) $new_aWindow.find('div.ant_header').remove();  // haha.  let's manipulate the DOM twice.  (Add then remove.)
 
-                    // $new_rindow.draggable({
-                    //     handle:'.rdr_header', //todo: move the header_overlay inside the header so we don't need this hack
+                    // $new_aWindow.draggable({
+                    //     handle:'.ant_header', //todo: move the header_overlay inside the header so we don't need this hack
                     //     containment:'document',
-                    //     stack:'.rdr_window',
+                    //     stack:'.ant_window',
                     //     start:function() {
-                    //         $(this).removeClass('rdr_rewritable');
+                    //         $(this).removeClass('ant_rewritable');
                     //     }
                     // });
-                    $new_rindow.drags({
-                        handle:'.rdr_header' //todo: move the header_overlay inside the header so we don't need this hack
+                    $new_aWindow.drags({
+                        handle:'.ant_header' //todo: move the header_overlay inside the header so we don't need this hack
                         // containment:'document',
-                        // stack:'.rdr_window',
+                        // stack:'.ant_window',
                         // start:function() {
-                            // $(this).removeClass('rdr_rewritable');
+                            // $(this).removeClass('ant_rewritable');
                         // }
                     });
                 }
 
                 var coords = settings.coords;
 
-                $new_rindow.css('left', coords.left + 'px');
-                $new_rindow.css('top', coords.top + 'px');
+                $new_aWindow.css('left', coords.left + 'px');
+                $new_aWindow.css('top', coords.top + 'px');
                 if(settings.height){
-                    $new_rindow.height(settings.height);
+                    $new_aWindow.height(settings.height);
                 }
                 // do we need to call this twice in this function?
-                RDR.actionbar.closeAll();
+                ANT.actionbar.closeAll();
 
-                $new_rindow.settings = settings;
+                $new_aWindow.settings = settings;
 
-                $new_rindow.on( "resizestop", function(event, ui) {
+                $new_aWindow.on( "resizestop", function(event, ui) {
                     var $this = $(this);
                     
                     //todo: examine resize
-                    // RDR.rindow.updateSizes( $this );
+                    // ANT.aWindow.updateSizes( $this );
                 });
 
-                return $new_rindow;
+                return $new_aWindow;
             },
-            safeClose: function( $rindow ) {
-              //RDR.rindow.safeClose:
+            safeClose: function( $aWindow ) {
+              //ANT.aWindow.safeClose:
 
-              var isView = !!$rindow.attr('rdr-view-reactions-for');
+              var isView = !!$aWindow.attr('ant-view-reactions-for');
 
               if(isView){
 
-                var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
-                    $rindow.find('.rdr_header').replaceWith($header);
-                    RDR.rindow.updateFooter( $rindow );
+                var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
+                    $aWindow.find('.ant_header').replaceWith($header);
+                    ANT.aWindow.updateFooter( $aWindow );
 
-                    var $panelWrap = $rindow.find('.rdr_body_wrap'),
-                        $currentlyVisiblePanel = $panelWrap.find('.rdr_visiblePanel'),
-                        $currentlyHiddenPanel = $panelWrap.find('.rdr_hiddenPanel');
+                    var $panelWrap = $aWindow.find('.ant_body_wrap'),
+                        $currentlyVisiblePanel = $panelWrap.find('.ant_visiblePanel'),
+                        $currentlyHiddenPanel = $panelWrap.find('.ant_hiddenPanel');
                     
                     $panelWrap.animate({
                         left: 0
                     });
 
-                    $currentlyVisiblePanel.removeClass('rdr_visiblePanel').addClass('rdr_hiddenPanel');
-                    $currentlyHiddenPanel.removeClass('rdr_hiddenPanel').addClass('rdr_visiblePanel');
+                    $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
+                    $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
 
-                    // if ( $rindow.data('initialWidth') >= 480 ) {
-                    //     RDR.rindow.tagBox.setWidth( $rindow, 480 );
-                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 70 } );
+                    // if ( $aWindow.data('initialWidth') >= 480 ) {
+                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
                     // } else {
-                    //     if ( $rindow.data('initialWidth') == 160 ) { RDR.rindow.tagBox.setWidth( $rindow, 160 ); }
-                    //     RDR.rindow.updateSizes( $rindow, { setHeight:$rindow.find('.rdr_tags_list').height() + 95 } );
+                    //     if ( $aWindow.data('initialWidth') == 160 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 160 ); }
+                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
                     // }
 
                 return true;
               }
 
-              RDR.rindow.close($rindow);
+              ANT.aWindow.close($aWindow);
               return true;
             },
-            close: function( $rindows ) {
-                //RDR.rindow.close:
-                RDR.rindow.clearHilites( $rindows );
-                $rindows.each(function(idx,rindow){
-                    $(rindow).remove();
+            close: function( $aWindows ) {
+                //ANT.aWindow.close:
+                ANT.aWindow.clearHilites( $aWindows );
+                $aWindows.each(function(idx,aWindow){
+                    $(aWindow).remove();
                 });
 
                 //todo: move this - this is a temp shotgun spray approach.
-                //toggled to hidden in RDR.rindow._rindowTypes.readMode.make:
-                $('#rdr_indicator_details_wrapper').find('.rdr_body_wrap').css({
+                //toggled to hidden in ANT.aWindow._aWindowTypes.readMode.make:
+                $('#ant_indicator_details_wrapper').find('.ant_body_wrap').css({
                    'visibility':'visible'
                 });
             },
             closeAll: function() {
-                var $allRindows = $('div.rdr.rdr_window').not('.rdr_no_clear');
-                RDR.rindow.close( $allRindows );
-                $('.rdr_shared').removeClass('rdr_shared');
-                $(document).unbind('keydown.rdr'); // remove the "start typing to immediately add a custom tag" feature
+                var $allRindows = $('div.ant.ant_window').not('.ant_no_clear');
+                ANT.aWindow.close( $allRindows );
+                $('.ant_shared').removeClass('ant_shared');
+                $(document).unbind('keydown.ant'); // remove the "start typing to immediately add a custom tag" feature
             },
-            clearHilites: function( $rindows ){
+            clearHilites: function( $aWindows ){
                 var selStates = [];
-                $rindows.each(function(idx,rindow){
-                    var hash = $(rindow).data('container');
+                $aWindows.each(function(idx,aWindow){
+                    var hash = $(aWindow).data('container');
 
-                    //if not a rindow for a container, there won't be any hilites.
+                    //if not a aWindow for a container, there won't be any hilites.
                     if ( typeof hash === 'undefined' ) return;
                     //else
 
-                    var summary = RDR.summaries[hash];
+                    var summary = ANT.summaries[hash];
 
                     //todo: think about better name and pattern for how write-mode hilite gets stored.
                     //first find writeMode selState
-                    var selState = $(rindow).data('selState');
+                    var selState = $(aWindow).data('selState');
                     if ( typeof selState !== 'undefined' && selState !== ""){
-                        //note that image rindows have no hilite, but this takes care of that.
+                        //note that image aWindows have no hilite, but this takes care of that.
                         selStates.push(selState);
                     }
 
@@ -2085,88 +2071,88 @@ function readrBoard($R){
                 });
             },
             update: function(hash, diffNode){
-                //RDR.rindow.update:
-                var summary = RDR.summaries[hash],
-                    $rindow_readmode = summary.$rindow_readmode,
-                    $rindow_writemode = summary.$rindow_writemode;
+                //ANT.aWindow.update:
+                var summary = ANT.summaries[hash],
+                    $aWindow_readmode = summary.$aWindow_readmode,
+                    $aWindow_writemode = summary.$aWindow_writemode;
 
                 if( diffNode){
                     if( diffNode.int_type == "coms" ){
-                        if($rindow_writemode && $rindow_writemode.length){
+                        if($aWindow_writemode && $aWindow_writemode.length){
 
                             //add the content_id class to the tags
-                            $tags = $rindow_writemode.find('.rdr_tags').find('.rdr_tag');
-                            $tags.addClass('rdr_content_node_'+diffNode.content_id);
+                            $tags = $aWindow_writemode.find('.ant_tags').find('.ant_tag');
+                            $tags.addClass('ant_content_node_'+diffNode.content_id);
 
-                            _addComIndicator($rindow_writemode, diffNode);
+                            _addComIndicator($aWindow_writemode, diffNode);
                         }
-                        if($rindow_readmode && $rindow_readmode.length){
-                            _addComIndicator($rindow_readmode, diffNode);
+                        if($aWindow_readmode && $aWindow_readmode.length){
+                            _addComIndicator($aWindow_readmode, diffNode);
                         }else{
                             //image container.
-                            var $rindow = $('#rdr_indicator_details_'+hash);
+                            var $aWindow = $('#ant_indicator_details_'+hash);
 
                             //add the content_id class to the tags
-                            $tags = $rindow.find('.rdr_tags').find('.rdr_tag');
-                            $tags.addClass('rdr_content_node_'+diffNode.content_id);
+                            $tags = $aWindow.find('.ant_tags').find('.ant_tag');
+                            $tags.addClass('ant_content_node_'+diffNode.content_id);
 
-                            _addComIndicator($rindow, diffNode);
+                            _addComIndicator($aWindow, diffNode);
                         }
                     }
                 }else{
                     //yuck - improve this later
-                    //right now this is just being used as a call to 'init' the rindow state for media
+                    //right now this is just being used as a call to 'init' the aWindow state for media
                     var isMedia = ( summary.kind && ( summary.kind == "img" || summary.kind == "media" || summary.kind == "med") );
                     if(!isMedia){
                         return;
                     }
-                    RDR.actions.indicators.utils.makeDetailsContent(hash);
+                    ANT.actions.indicators.utils.makeDetailsContent(hash);
                 }
 
-                function _addComIndicator($rindow, diffNode){
+                function _addComIndicator($aWindow, diffNode){
                     var $tags, $tag;
-                    $tags = $rindow.find('.rdr_tags');
+                    $tags = $aWindow.find('.ant_tags');
 
                     //todo: we also need the contentnode id to make this unique
-                    //The class looks like this: rdr_tag rdr_tag_368 rdr_content_node_518
+                    //The class looks like this: ant_tag ant_tag_368 ant_content_node_518
                     $tag = $tags
-                        .find('.rdr_tag_'+diffNode.parent_interaction_node.id)
+                        .find('.ant_tag_'+diffNode.parent_interaction_node.id)
                         .filter(function(){
-                            return $(this).hasClass('rdr_content_node_'+diffNode.content_id);
+                            return $(this).hasClass('ant_content_node_'+diffNode.content_id);
                         });
 
-                    $tag.addClass('rdr_comment_indicator');
-                    _tempCopyOfCommentHover(diffNode, $tag, $rindow);
-                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $rindow ); // deprecated?
-                    _addLinkToViewComs(diffNode, $tag, $rindow);
+                    $tag.addClass('ant_comment_indicator');
+                    _tempCopyOfCommentHover(diffNode, $tag, $aWindow);
+                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $aWindow ); // deprecated?
+                    _addLinkToViewComs(diffNode, $tag, $aWindow);
 
 
                 }
 
-                function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($rindow) {
+                function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($aWindow) {
                     // deprecated?
-                    var $tag_table = $rindow.find('table.rdr_tags')
+                    var $tag_table = $aWindow.find('table.ant_tags')
 
                     // this is a duplication of code from elsewhere:
                     if ( $tag_table.find('tr:eq(0)').find('td').length == 1 ) {
-                        $tag_table.addClass('rdr-one-column');
+                        $tag_table.addClass('ant-one-column');
 
                         if(!isTouchBrowser){
-                            $tag_table.find('td.rdr_has_pillHover').on('mouseenter, mousemove', function() {
+                            $tag_table.find('td.ant_has_pillHover').on('mouseenter, mousemove', function() {
                                 var $this = $(this),
-                                    $rindow = $this.closest('div.rdr_window');
+                                    $aWindow = $this.closest('div.ant_window');
 
-                                thisWidth = $rindow.data('initialWidth');
+                                thisWidth = $aWindow.data('initialWidth');
                             }).on('mouseleave', function() {
                                 var $this = $(this),
-                                    $rindow = $this.closest('div.rdr_window');
-                                thisWidth = $rindow.width();
+                                    $aWindow = $this.closest('div.ant_window');
+                                thisWidth = $aWindow.width();
                             });
                         }
                     }
                 }
 
-                function _tempCopyOfCommentHover(diffNode, $tag, $rindow){
+                function _tempCopyOfCommentHover(diffNode, $tag, $aWindow){
 
                     //some crazy logic here to get the nodes per tag and per comment
                     //simplify our data structure later
@@ -2180,15 +2166,15 @@ function readrBoard($R){
                             'contentNode not found by id: {{id}}.  Figure out why nodeId was saved as "undefined".',
                             {id: diffNode.content_id}
                         );
-                        RDR.safeThrow(err);
+                        ANT.safeThrow(err);
                         
                         //this didn't fix the problem anyway - leave it out.
                         //try to recover
                         // try{
-                        //     var comsPerContentNodeId = RDR.content_nodes[hash]['undefined'].top_interactions.coms;
+                        //     var comsPerContentNodeId = ANT.content_nodes[hash]['undefined'].top_interactions.coms;
                         // }
                         // catch(e){
-                        //     RDR.safeThrow(e);
+                        //     ANT.safeThrow(e);
                         //     return;
                         // }
                     }
@@ -2209,45 +2195,45 @@ function readrBoard($R){
 
 
                     //remove any existing comment shit so we can remake it
-                    $a.find('.rdr_comment_hover').remove();
-                    $a.find('.rdr_comment_indicator').remove();
+                    $a.find('.ant_comment_hover').remove();
+                    $a.find('.ant_comment_indicator').remove();
 
-                    var $commentHover = $('<span class="rdr_comment_hover"/>');
+                    var $commentHover = $('<span class="ant_comment_hover"/>');
 
 
-                    $commentHover.append( '<span class="rdr_icon"></span> '+num_comments );
+                    $commentHover.append( '<span class="ant_icon"></span> '+num_comments );
                     $commentHover.click( function() {
 
-                        RDR.actions.viewCommentContent({
+                        ANT.actions.viewCommentContent({
                             tag:tag,
                             hash:hash,
-                            rindow:$rindow,
+                            aWindow:$aWindow,
                             content_node:content_node,
                             selState:content_node.selState
                         });
                     });
 
                     $a.append( $commentHover );
-                    $a.closest('td').addClass('rdr_has_pillHover'); // deprecated?
+                    $a.closest('td').addClass('ant_has_pillHover'); // deprecated?
 
                 }
-                function _addLinkToViewComs(diffNode, $tag, $rindow){
+                function _addLinkToViewComs(diffNode, $tag, $aWindow){
                     var tag = diffNode.parent_interaction_node;
                     var content_node = diffNode.content_node;
                     
-                    var $linkToComment = $('<span class="rdr_comment_feedback"/>');
+                    var $linkToComment = $('<span class="ant_comment_feedback"/>');
 
-                    $linkToComment.append( '<span class="linkToComment">'+RDR.t('thanks_for_comment')+' <a href="javascript:void(0);">'+RDR.t('close')+'</a></span> ');
+                    $linkToComment.append( '<span class="linkToComment">'+ANT.t('thanks_for_comment')+' <a href="javascript:void(0);">'+ANT.t('close')+'</a></span> ');
                     
 
 
                     //this broke - for now, just use the quick fix below
                     // $linkToComment.click( function() {
-                    //     var selState = content_node.selState || $rindow.data('selState');
-                    //     RDR.actions.viewCommentContent({
+                    //     var selState = content_node.selState || $aWindow.data('selState');
+                    //     ANT.actions.viewCommentContent({
                     //         tag:tag,
                     //         hash:hash,
-                    //         rindow:$rindow,
+                    //         aWindow:$aWindow,
                     //         content_node:content_node,
                     //         selState:selState
                     //     });
@@ -2257,26 +2243,26 @@ function readrBoard($R){
                     //silly quick way to just trigger the back button
                     $linkToComment.click( function(e) {
                         e.preventDefault();
-                        //there's a bug, just close the rindow for now. 
-                        RDR.rindow.safeClose( $rindow );
-                        // $rindow.find('.rdr_back').eq(0).click();
+                        //there's a bug, just close the aWindow for now. 
+                        ANT.aWindow.safeClose( $aWindow );
+                        // $aWindow.find('.ant_back').eq(0).click();
                     });
 
-                    $rindow.find('div.rdr_commentBox')
+                    $aWindow.find('div.ant_commentBox')
                         .empty()
                         .append($linkToComment)
                         .show();
 
-                    $rindow.find('button.rdr_add_comment').hide();
+                    $aWindow.find('button.ant_add_comment').hide();
 
                 }
 
 
-            }//end RDR.rindow.update
+            }//end ANT.aWindow.update
         },
         actionbar: {
             draw: function(settings) {
-                //RDR.actionbar.draw:
+                //ANT.actionbar.draw:
                 //expand to make settings explicit
 
                 //node: summary may not be defined at this point, so get info from settings.
@@ -2285,10 +2271,10 @@ function readrBoard($R){
                     kind = settings.kind,
                     content = settings.content,
                     src_with_path = settings.src_with_path || undefined, //used for media only
-                    page_id = RDR.util.getPageProperty('id', hash );
+                    page_id = ANT.util.getPageProperty('id', hash );
 
-                var actionbar_id = "rdr_actionbar_"+hash;
-                var $actionbars = $('div.rdr_actionbar');
+                var actionbar_id = "ant_actionbar_"+hash;
+                var $actionbars = $('div.ant_actionbar');
 
                 if ( $('#'+actionbar_id).length > 0 ) return $('#'+actionbar_id);
                 // else
@@ -2312,11 +2298,11 @@ function readrBoard($R){
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
                 if (kind == 'text') {
                     //rewrite coords if needed
-                    coords = RDR.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});
+                    coords = ANT.util.stayInWindow({coords:coords, width:45, height:30, paddingY:40, paddingX:40, ignoreWindowEdges:settings.ignoreWindowEdges});
                 }
 
                 // TODO use settings check for certain features and content types to determine which of these to disable
-                var $new_actionbar = $('<div class="rdr rdr_actionbar rdr_widget rdr_widget_bar" id="' + actionbar_id + '" ></div>');
+                var $new_actionbar = $('<div class="ant ant_actionbar ant_widget ant_widget_bar" id="' + actionbar_id + '" ></div>');
                 $new_actionbar.css({
                    'top':coords.top,
                    'left':coords.left
@@ -2324,7 +2310,7 @@ function readrBoard($R){
 
                 //if there is no hash here it will cause problems.  Should always be a hash.
                 if(!hash){
-                    RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                    ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                     return;
                 }
                 $new_actionbar.data('hash',hash);
@@ -2334,9 +2320,9 @@ function readrBoard($R){
                 var items = [
                     {
                         "item":"reaction",
-                        "tipText":RDR.t('main_cta'),
+                        "tipText":ANT.t('main_cta'),
                         "onclick":function(){
-                            RDR.rindow.make( 'writeMode', {
+                            ANT.aWindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
                                 "content": content,
@@ -2349,7 +2335,7 @@ function readrBoard($R){
                         "item":"bookmark",
                         "tipText":"Remember this",
                         "onclick":function(){
-                            RDR.rindow.make( 'writeMode', {
+                            ANT.aWindow.make( 'writeMode', {
                                 "hash": hash,
                                 "kind": kind,
                                 "content": content,
@@ -2360,10 +2346,10 @@ function readrBoard($R){
                     }
                     */
                 ];
-                // RDR.events.track( 'show_action_bar::'+content );
+                // ANT.events.track( 'show_action_bar::'+content );
 
                 // not sure this is valuable and it adds network chatter
-                // RDR.events.trackEventToCloud({
+                // ANT.events.trackEventToCloud({
                 //     // category: "actonbar",
                 //     // action: "actionbar_shown",
                 //     // opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
@@ -2374,12 +2360,12 @@ function readrBoard($R){
                 //     page_id: page_id
                 // });
                 $.each( items, function(idx, val){
-                    var $item = $('<li class="rdr_icon_' +val.item+ '" />'),
+                    var $item = $('<li class="ant_icon_' +val.item+ '" />'),
                     $indicatorAnchor = $(
-                        '<a href="javascript:void(0);" class="rdr_tooltip_this" title="'+val.tipText+'">'+
-                            '<span class="rdr rdr_react_icon">'+val.item+'</span>'+
-                            '<span class="rdr rdr_react_label">'+RDR.t('main_cta')+'</span>'+
-                            '<div class="rdr_clear"></div>'+
+                        '<a href="javascript:void(0);" class="ant_tooltip_this" title="'+val.tipText+'">'+
+                            '<span class="ant ant_react_icon">'+val.item+'</span>'+
+                            '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
+                            '<div class="ant_clear"></div>'+
                         '</a>'
                     );
                     
@@ -2387,14 +2373,14 @@ function readrBoard($R){
                         val.onclick();
                         return false;
                     });
-                    $item.addClass('rdr_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
+                    $item.addClass('ant_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
                 });
-                $('#rdr_sandbox').append( $new_actionbar );
-                // $('a.rdr_tooltip_this').tooltip({});
+                $('#ant_sandbox').append( $new_actionbar );
+                // $('a.ant_tooltip_this').tooltip({});
 
                 if(kind == "img" || kind == "media" || kind == "med" ){
-                    $new_actionbar.addClass('rdr_actionbar_for_media');
-                    $new_actionbar.append('<div style="clear:both;" />').removeClass('rdr_widget rdr_widget_bar');
+                    $new_actionbar.addClass('ant_actionbar_for_media');
+                    $new_actionbar.append('<div style="clear:both;" />').removeClass('ant_widget ant_widget_bar');
 
                     //for now, just move the actionbar here overridding the positioning from above:
                 }
@@ -2407,8 +2393,8 @@ function readrBoard($R){
                         left: coords.left + 2
                     };
                     */
-                    var $containerTracker = $('#rdr_container_tracker_'+hash),
-                        $topHilite = $containerTracker.find('.rdr_mediaHilite_top');
+                    var $containerTracker = $('#ant_container_tracker_'+hash),
+                        $topHilite = $containerTracker.find('.ant_mediaHilite_top');
 
                     var newCoords = {
                         top: $topHilite.offset().top,
@@ -2421,11 +2407,11 @@ function readrBoard($R){
 
             },
             close: function($actionbars, effect){
-                //RDR.actionbar.close:
+                //ANT.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                         hash = $actionbar.data('hash'),
-                        $containerTracker = $('#rdr_container_tracker_'+hash);
+                        $containerTracker = $('#ant_container_tracker_'+hash);
 
                     if(typeof effect !== "undefined"){ //quick hack to signal fade effect
                         //make more robust if we want more animations
@@ -2435,7 +2421,7 @@ function readrBoard($R){
                     else{
                         cleanup($actionbar, hash);
 
-                        var $indicator = $('#rdr_indicator_'+hash);
+                        var $indicator = $('#ant_indicator_'+hash);
                     }
                 });
 
@@ -2446,10 +2432,10 @@ function readrBoard($R){
                     clearTimeout(timeoutCloseEvt);
                     clearTimeout(timeoutCollapseEvt);
 
-                    var $container = $('[rdr-hash="'+hash+'"]'),
-                        $indicator = $('#rdr_indicator_'+hash);
+                    var $container = $('[ant-hash="'+hash+'"]'),
+                        $indicator = $('#ant_indicator_'+hash);
 
-                    $container.removeClass('rdr_engage_media');
+                    $container.removeClass('ant_engage_media');
                     $actionbar.remove();
                 }
 
@@ -2458,17 +2444,17 @@ function readrBoard($R){
                 //hashes can be a single hash or a list of hashes
                 var $actionbars = $();
                 if( !hashes ){
-                    $actionbars = $('div.rdr_actionbar');
+                    $actionbars = $('div.ant_actionbar');
                 }
                 else
                 if(typeof hashes == "string" ){
                     var hash = hashes;
-                    $actionbars = $('#rdr_actionbar_'+hash);
+                    $actionbars = $('#ant_actionbar_'+hash);
                     $actionbars.data('hash',hash);
                 }
                 else{
                     $.each( hashes, function(idx, hash){
-                        $actionbars = $actionbars.add('#rdr_actionbar_'+hash);
+                        $actionbars = $actionbars.add('#ant_actionbar_'+hash);
                         $actionbars.data('hash',hash);
                     });
                 }
@@ -2477,8 +2463,8 @@ function readrBoard($R){
                 $actionbars.each(function(){
                     var $this = $(this),
                     hash = $actionbars.data('hash'),
-                    $indicator_details = $('#rdr_indicator_details_'+hash),
-                    $containerImg = $('[rdr-hash="'+hash+'"]'),
+                    $indicator_details = $('#ant_indicator_details_'+hash),
+                    $containerImg = $('[ant-hash="'+hash+'"]'),
                     timeoutCloseEvt = $(this).data('timeoutCloseEvt');
 
                     //each actionbar only has one timeout - if one exists, it gets cleared and reset here.
@@ -2492,12 +2478,12 @@ function readrBoard($R){
                 });
             },
             closeAll: function(){
-                var $actionbars = $('div.rdr_actionbar');
+                var $actionbars = $('div.ant_actionbar');
                 this.close($actionbars);
             }
         },
         t: function(phrase) {
-            return ( typeof RDR.lang[ RDR.group.language ][phrase] != 'undefined' ) ? RDR.lang[ RDR.group.language ][phrase] : '###';
+            return ( typeof ANT.lang[ ANT.group.language ][phrase] != 'undefined' ) ? ANT.lang[ ANT.group.language ][phrase] : '###';
         },
         lang: {
             en : {
@@ -2514,7 +2500,7 @@ function readrBoard($R){
                 thanks : 'Thanks For Your Reaction!',
                 already_done_that : 'You\'ve already reacted to this',
                 remove_reaction : 'Remove reaction',
-                view_on_site : 'View at Readrboad',
+                view_on_site : 'View at Antenna',
                 add_comment : 'Add comments or #hashtags',
                 characters_left : 'NNN characters left',
                 comment: 'Comment',
@@ -2537,7 +2523,7 @@ function readrBoard($R){
                 thanks : 'Gracias por tu reacción',
                 already_done_that : 'Ya reaccionaste a esto',
                 remove_reaction : 'Remover reacción',
-                view_on_site : 'Ver en Readrboad',
+                view_on_site : 'Ver en Antenna',
                 add_comment : 'Añade comentarios o #hashtags',
                 characters_left : 'Quedan NNN caracteres ',
                 comment: ' Comenta',
@@ -2578,18 +2564,18 @@ function readrBoard($R){
                 'touchend': false,
                 'dragging': false
             },
-            windowBlur: function() { /*RDR.util.clearWindowInterval();*/ return; },
+            windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
             clearWindowInterval: function () {
-                // clearInterval($.data(this, 'rdr_intervalTimer'));
+                // clearInterval($.data(this, 'ant_intervalTimer'));
             },
             setWindowInterval: function () {
-                $.data(this, 'rdr_intervalTimer', setInterval(function() {
-                    if (typeof RDR.events != 'undefined') { RDR.events.checkTime(); }
-                }, 200));
+                $.data(this, 'ant_intervalTimer', setInterval(function() {
+                    if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
+                }, 1000));
             },
             checkForSelectedTextAndLaunchRindow: function(){
-                //RDR.util.checkForSelectedTextAndLaunchRindow
+                //ANT.util.checkForSelectedTextAndLaunchRindow
                     
                 //this function is really hacky and gross.
                 //But there are functions we want within actionbar that I don't have time to parse out, so just make one in order to click it.
@@ -2612,9 +2598,9 @@ function readrBoard($R){
                 // var kind = 'text';
                 // var content = selected.text;
 
-                var $actionbar = RDR.actions.startSelect($node, null, function(hash, kind, content){
+                var $actionbar = ANT.actions.startSelect($node, null, function(hash, kind, content){
 
-                    RDR.rindow.make( 'writeMode', {
+                    ANT.aWindow.make( 'writeMode', {
                         "hash": hash,
                         "kind": kind,
                         "content": content
@@ -2622,40 +2608,40 @@ function readrBoard($R){
                 });
             },
             initTouchBrowserSettings: function(){
-                // RDR.util.initTouchBrowserSettings
+                // ANT.util.initTouchBrowserSettings
                 
-                if(isTouchBrowser && RDR.util.activeAB() ){
-                    $('body').addClass('rdr_touch_browser');
+                if(isTouchBrowser && ANT.util.activeAB() ){
+                    $('body').addClass('ant_touch_browser');
                     // mobiletodo: DO WE NEED
                     $(window).on('scrollend', function() {
-                        RDR.util.mobileHelperToggle();
+                        ANT.util.mobileHelperToggle();
                     });
                 }
 
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             mobileHelperToggle: function() {
-                // RDR.util.mobileHelperToggle
-                $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+                // ANT.util.mobileHelperToggle
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
                     var $this = $(this),
                         hash = $this.data('hash');
 
-                    RDR.actions.indicators.init(hash);
-                    $this.addClass('rdr_live_hover');
+                    ANT.actions.indicators.init(hash);
+                    $this.addClass('ant_live_hover');
                 });
 
                 
             },
             initPublicEvents: function(){
-                // RDR.util.initPublicEvents
+                // ANT.util.initPublicEvents
                 //setup a space to bind and trigger events
-                //we're using the rdr_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
-                window.readrboard.public_events = $('#rdr_sandbox');
-                $RDR.dequeue('initAjax');
+                //we're using the ant_sandbox which is somewhat arbitrary, but it will work fine and keep things clean.
+                window.antenna.public_events = $('#ant_sandbox');
+                $ANT.dequeue('initAjax');
             },
             makeEmptySummary : function(hash, kind) {
-            // RDR.util.makeEmptySummary( hash )
+            // ANT.util.makeEmptySummary( hash )
                 var summary = {};
                 summary = {};
                 summary.hash = hash;
@@ -2672,7 +2658,7 @@ function readrBoard($R){
                 return summary;
             },
             getPageProperty: function( prop, hashOrObject ) {
-            //RDR.util.getPageProperty
+            //ANT.util.getPageProperty
 
             // goal is, generally, to get the Page ID integer.
                 if (!prop) {
@@ -2685,34 +2671,34 @@ function readrBoard($R){
                     //hack to accomodate the dirty - hash=="page"
                     if(hashOrObject == "page"){
                         // hack salvage data
-                        page_id = $('.rdr_window').data('container').attr('rdr-page-id');
+                        page_id = $('.ant_window').data('container').attr('ant-page-id');
                         return parseInt(page_id, 10);
                     }
 
                     // this code is to accommodate passing in either a hash (string) or jquery element to 
                     if (typeof hashOrObject == "object") {
-                        // if ( $(hashOrObject).closest('[rdr-page-container]').length && $(hashOrObject).closest('[rdr-page-container]').data('page_id') ) {
-                        if ( $(hashOrObject).closest('[rdr-page-container]').length ) {
-                            return parseInt( $(hashOrObject).closest('[rdr-page-container]').attr('rdr-page-container') );
+                        // if ( $(hashOrObject).closest('[ant-page-container]').length && $(hashOrObject).closest('[ant-page-container]').data('page_id') ) {
+                        if ( $(hashOrObject).closest('[ant-page-container]').length ) {
+                            return parseInt( $(hashOrObject).closest('[ant-page-container]').attr('ant-page-container') );
                         }
                     } else if (!hashOrObject) {
                         // whiskey tango foxtrot
                         // return false;
-                        // return $('[rdr-page-container]').eq(0).data('page_id');
-                        return $('[rdr-page-container]').eq(0).attr('rdr-page-container');
+                        // return $('[ant-page-container]').eq(0).data('page_id');
+                        return $('[ant-page-container]').eq(0).attr('ant-page-container');
                     }
 
                     if ( typeof hashOrObject == "string" ) {
                         var hash = hashOrObject;
-                        var $objWithHash = $('[rdr-hash="'+hash+'"]');
+                        var $objWithHash = $('[ant-hash="'+hash+'"]');
                     }
 
                     // do we already have the page_id stored on this element, or do we need to walk up the tree to find one?
                     // so foxtrot ugly
-                    var page_id = ( $objWithHash.data('page_id') ) ? $objWithHash.data('page_id') : ( $objWithHash.closest('[rdr-page-container]').length ) ? $objWithHash.closest('[rdr-page-container]').attr('rdr-page-container'):$('body').attr('rdr-page-container');
+                    var page_id = ( $objWithHash.data('page_id') ) ? $objWithHash.data('page_id') : ( $objWithHash.closest('[ant-page-container]').length ) ? $objWithHash.closest('[ant-page-container]').attr('ant-page-container'):$('body').attr('ant-page-container');
 
                     // store the page_id on this node to prevent walking-up again later
-                    if ( $objWithHash.hasAttr('rdr-page-container') && !$objWithHash.data('page_id') ) {
+                    if ( $objWithHash.hasAttr('ant-page-container') && !$objWithHash.data('page_id') ) {
                         $objWithHash.data('page_id', page_id);
                     }
                     return parseInt( page_id );
@@ -2743,7 +2729,7 @@ function readrBoard($R){
                     
                     canonical_url = $.trim( canonical_url.toLowerCase() );
 
-                    if (canonical_url == RDR.util.getPageProperty('page_url') ) {
+                    if (canonical_url == ANT.util.getPageProperty('page_url') ) {
                         canonical_url = "same";
                     }
 
@@ -2760,33 +2746,33 @@ function readrBoard($R){
                 }
             },
             buildInteractionData: function() {
-                //RDR.util.buildInteractionData
+                //ANT.util.buildInteractionData
                 /*
 
 
                 In short, the following code blows chunks.
                 Can't wait for the MVVC rewrite.
 
-                this just circles through a bunch of crap and rebuilds the RDR.interaction_data object
+                this just circles through a bunch of crap and rebuilds the ANT.interaction_data object
 
 
                 */
-                $.each( RDR.summaries, function(hash, summary) {
+                $.each( ANT.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
-                        if ( typeof RDR.summaries[ hash ].content_nodes != "undefined" ) {
-                            $.each( RDR.summaries[ hash ].content_nodes, function(node_id, node) {
+                        if ( typeof ANT.summaries[ hash ].content_nodes != "undefined" ) {
+                            $.each( ANT.summaries[ hash ].content_nodes, function(node_id, node) {
                                 if ( typeof node.top_interactions.tags != "undefined" && typeof node.top_interactions.tags[ tag_id ] != "undefined" ) {
                                     var this_interaction = node.top_interactions.tags[ tag_id ];
-                                    if ( typeof RDR.interaction_data[ tag_id ] == "undefined" ) {RDR.interaction_data[ tag_id ] = {}; }
-                                    if ( typeof RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { RDR.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
+                                    if ( typeof ANT.interaction_data[ tag_id ] == "undefined" ) {ANT.interaction_data[ tag_id ] = {}; }
+                                    if ( typeof ANT.interaction_data[ tag_id ][ this_interaction.parent_id ] == "undefined" ) { ANT.interaction_data[ tag_id ][ this_interaction.parent_id ] = {}; }
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].hash = hash;
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].container_id = summary.id;
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].tag = { body:this_interaction.body, id:tag_id};
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].kind = summary.kind;
                                     
                                     // this content node's content, location is what we want
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
-                                    RDR.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].interaction = { id:this_interaction.parent_id, count:this_interaction.count, body:this_interaction.body};
+                                    ANT.interaction_data[ tag_id ][ this_interaction.parent_id ].content_node = { body:node.body, location:node.location, selState:node.selState };
                                 }
                             });
                         }
@@ -2825,29 +2811,29 @@ function readrBoard($R){
                 hexcase:0,
                 b64pad:"",
                 chrsz:8,
-                hex_md5: function(s){return RDR.util.md5.binl2hex(RDR.util.md5.core_md5(RDR.util.md5.str2binl(s),s.length*RDR.util.md5.chrsz));},
-                core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=RDR.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=RDR.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=RDR.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=RDR.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=RDR.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=RDR.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=RDR.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=RDR.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=RDR.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=RDR.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=RDR.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=RDR.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=RDR.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=RDR.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=RDR.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=RDR.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=RDR.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=RDR.util.md5.safe_add(a,olda);b=RDR.util.md5.safe_add(b,oldb);c=RDR.util.md5.safe_add(c,oldc);d=RDR.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
-                md5_cmn: function(q,a,b,x,s,t){return RDR.util.md5.safe_add(RDR.util.md5.bit_rol(RDR.util.md5.safe_add(RDR.util.md5.safe_add(a,q),RDR.util.md5.safe_add(x,t)),s),b);},
-                md5_ff: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
-                md5_gg: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
-                md5_hh: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
-                md5_ii: function(a,b,c,d,x,s,t){return RDR.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
+                hex_md5: function(s){return ANT.util.md5.binl2hex(ANT.util.md5.core_md5(ANT.util.md5.str2binl(s),s.length*ANT.util.md5.chrsz));},
+                core_md5: function(x,len){x[len>>5]|=0x80<<((len)%32);x[(((len+64)>>>9)<<4)+14]=len;var a=1732584193;var b=-271733879;var c=-1732584194;var d=271733878;for(var i=0;i<x.length;i+=16){var olda=a;var oldb=b;var oldc=c;var oldd=d;a=ANT.util.md5.md5_ff(a,b,c,d,x[i+0],7,-680876936);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+1],12,-389564586);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+2],17,606105819);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+3],22,-1044525330);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+4],7,-176418897);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+5],12,1200080426);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+6],17,-1473231341);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+7],22,-45705983);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+8],7,1770035416);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+9],12,-1958414417);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+10],17,-42063);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+11],22,-1990404162);a=ANT.util.md5.md5_ff(a,b,c,d,x[i+12],7,1804603682);d=ANT.util.md5.md5_ff(d,a,b,c,x[i+13],12,-40341101);c=ANT.util.md5.md5_ff(c,d,a,b,x[i+14],17,-1502002290);b=ANT.util.md5.md5_ff(b,c,d,a,x[i+15],22,1236535329);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+1],5,-165796510);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+6],9,-1069501632);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+11],14,643717713);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+0],20,-373897302);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+5],5,-701558691);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+10],9,38016083);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+15],14,-660478335);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+4],20,-405537848);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+9],5,568446438);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+14],9,-1019803690);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+3],14,-187363961);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+8],20,1163531501);a=ANT.util.md5.md5_gg(a,b,c,d,x[i+13],5,-1444681467);d=ANT.util.md5.md5_gg(d,a,b,c,x[i+2],9,-51403784);c=ANT.util.md5.md5_gg(c,d,a,b,x[i+7],14,1735328473);b=ANT.util.md5.md5_gg(b,c,d,a,x[i+12],20,-1926607734);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+5],4,-378558);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+8],11,-2022574463);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+11],16,1839030562);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+14],23,-35309556);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+1],4,-1530992060);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+4],11,1272893353);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+7],16,-155497632);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+10],23,-1094730640);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+13],4,681279174);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+0],11,-358537222);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+3],16,-722521979);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+6],23,76029189);a=ANT.util.md5.md5_hh(a,b,c,d,x[i+9],4,-640364487);d=ANT.util.md5.md5_hh(d,a,b,c,x[i+12],11,-421815835);c=ANT.util.md5.md5_hh(c,d,a,b,x[i+15],16,530742520);b=ANT.util.md5.md5_hh(b,c,d,a,x[i+2],23,-995338651);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+0],6,-198630844);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+7],10,1126891415);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+14],15,-1416354905);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+5],21,-57434055);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+12],6,1700485571);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+3],10,-1894986606);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+10],15,-1051523);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+1],21,-2054922799);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+8],6,1873313359);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+15],10,-30611744);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+6],15,-1560198380);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+13],21,1309151649);a=ANT.util.md5.md5_ii(a,b,c,d,x[i+4],6,-145523070);d=ANT.util.md5.md5_ii(d,a,b,c,x[i+11],10,-1120210379);c=ANT.util.md5.md5_ii(c,d,a,b,x[i+2],15,718787259);b=ANT.util.md5.md5_ii(b,c,d,a,x[i+9],21,-343485551);a=ANT.util.md5.safe_add(a,olda);b=ANT.util.md5.safe_add(b,oldb);c=ANT.util.md5.safe_add(c,oldc);d=ANT.util.md5.safe_add(d,oldd);} return Array(a,b,c,d);},
+                md5_cmn: function(q,a,b,x,s,t){return ANT.util.md5.safe_add(ANT.util.md5.bit_rol(ANT.util.md5.safe_add(ANT.util.md5.safe_add(a,q),ANT.util.md5.safe_add(x,t)),s),b);},
+                md5_ff: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn((b&c)|((~b)&d),a,b,x,s,t);},
+                md5_gg: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn((b&d)|(c&(~d)),a,b,x,s,t);},
+                md5_hh: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn(b^c^d,a,b,x,s,t);},
+                md5_ii: function(a,b,c,d,x,s,t){return ANT.util.md5.md5_cmn(c^(b|(~d)),a,b,x,s,t);},
                 safe_add: function(x,y){var lsw=(x&0xFFFF)+(y&0xFFFF);var msw=(x>>16)+(y>>16)+(lsw>>16);return(msw<<16)|(lsw&0xFFFF);},
                 bit_rol: function(num,cnt){return(num<<cnt)|(num>>>(32-cnt));},
                 //the line below is called out by jsLint because it uses Array() instead of [].  We can ignore, or I'm sure we could change it if we wanted to.
-                str2binl: function(str){var bin=Array();var mask=(1<<RDR.util.md5.chrsz)-1;for(var i=0;i<str.length*RDR.util.md5.chrsz;i+=RDR.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/RDR.util.md5.chrsz)&mask)<<(i%32);}return bin;},
-                binl2hex: function(binarray){var hex_tab=RDR.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
+                str2binl: function(str){var bin=Array();var mask=(1<<ANT.util.md5.chrsz)-1;for(var i=0;i<str.length*ANT.util.md5.chrsz;i+=ANT.util.md5.chrsz){bin[i>>5]|=(str.charCodeAt(i/ANT.util.md5.chrsz)&mask)<<(i%32);}return bin;},
+                binl2hex: function(binarray){var hex_tab=ANT.util.md5.hexcase?"0123456789ABCDEF":"0123456789abcdef";var str="";for(var i=0;i<binarray.length*4;i++){str+=hex_tab.charAt((binarray[i>>2]>>((i%4)*8+4))&0xF)+hex_tab.charAt((binarray[i>>2]>>((i%4)*8))&0xF);} return str;}
             },
             getCleanText: function($domNode) {
-                // RDR.util.getCleanText
+                // ANT.util.getCleanText
                 // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces
                 
                 var $node = $domNode.clone();
 
-                $node.find('.rdr, .rdr-custom-cta-container').remove();
+                $node.find('.ant, .ant-custom-cta-container').remove();
 
                 //make sure it doesnt alredy have in indicator - it shouldn't.
-                var $indicator = $node.find('.rdr_indicator');
+                var $indicator = $node.find('.ant_indicator');
                 if($indicator.length){
                     //todo: send us an error report - this may still be happening for slideshows.
                     //This fix works fine, but we should fix the code to handle it before here.
@@ -2877,7 +2863,7 @@ function readrBoard($R){
                 }
             },
             cssSuperImportant: function($domNode, cssDict, shouldReplace){
-                //RDR.util.cssSuperImportant:
+                //ANT.util.cssSuperImportant:
                 //todo: this needs improvement - it should be parsing the style into a dict and then checking for an existing style to override.
                 var inlineStyleStr = "";
 
@@ -2893,7 +2879,7 @@ function readrBoard($R){
                 var newStyleDict = shouldReplace ? 
                     cssDict : 
                     $.extend( 
-                        RDR.util.parseCssAttrToDict( existingStyle ),
+                        ANT.util.parseCssAttrToDict( existingStyle ),
                         cssDict
                     );
 
@@ -2904,7 +2890,7 @@ function readrBoard($R){
                 return $domNode; //return the node for the hell of it.
             },
             parseCssAttrToDict: function(inlineStyleStr){
-                //RDR.util.parseCssAttrToDict:
+                //ANT.util.parseCssAttrToDict:
                 var styleDict = {};
                 var attrs = inlineStyleStr.split(';');
                 $.each(attrs,function(idx, attrPair){
@@ -2919,16 +2905,16 @@ function readrBoard($R){
             },
             
             fixBrTags: function(){
-                // RDR.util.fixBrTags:
+                // ANT.util.fixBrTags:
 
                 //find the $sections through br tags that are in the scoped section.
-                var $sections = $(RDR.group.br_replace_scope_selector).find('> br').parent();
+                var $sections = $(ANT.group.br_replace_scope_selector).find('> br').parent();
 
                 if(!$sections.length){
                     return;
                 }
                 //arbitrary unique string
-                var marker = "|rdr|br|/rdr|";
+                var marker = "|ant|br|/ant|";
 
                 $sections.each(function(){
                     //clone it to manipulate outside the dom
@@ -2948,17 +2934,17 @@ function readrBoard($R){
                         //use a div rarely-used html5 element as a conveninent wrapper
                         //http://www.quackit.com/html_5/tags/html_rt_tag.cfm
                         // update:  no, dont.  running into CSS and browser support issues.
-                        $dummySection.append('<div class="rdr_br_replaced">'+innerText+'</div>');
+                        $dummySection.append('<div class="ant_br_replaced">'+innerText+'</div>');
                     }
 
                     $this
-                      .addClass('rdr_br_replaced_section')
+                      .addClass('ant_br_replaced_section')
                       .html($dummySection.html());
                 });
             },
 
             fixBodyBorderOffsetIssue: function(){
-                //RDR.util.fixBodyBorderOffsetIssue:
+                //ANT.util.fixBodyBorderOffsetIssue:
                 //a fix for the rare case where the body element has a border on it.
                 //this is needed because jQuery's offset doesn't account for that.
                 //suposedly it also doesn't account for margin or padding on the body, but a fix for those doesnt' seem to be needed.
@@ -2970,12 +2956,12 @@ function readrBoard($R){
                 var $body = $('body'),
                     borderTop = parseInt( $body.css('border-top-width'), 10 ),
                     borderLeft = parseInt( $body.css('border-left-width'), 10 ),
-                    $sandbox = $('#rdr_sandbox');
+                    $sandbox = $('#ant_sandbox');
 
                 if( !borderTop && !borderLeft ) return;
                 //else
 
-                RDR.util.cssSuperImportant($sandbox, {
+                ANT.util.cssSuperImportant($sandbox, {
                     top: borderTop+'px',
                     left: borderLeft+'px'
                 });
@@ -2983,29 +2969,29 @@ function readrBoard($R){
             },
             //_.throttle returns a function
             throttledUpdateContainerTrackers: function(){
-                return RDR.util._.throttle(
-                    //RDR.util.throttledUpdateContainerTrackers
-                    RDR.actions.indicators.utils.updateContainerTrackers,
+                return ANT.util._.throttle(
+                    //ANT.util.throttledUpdateContainerTrackers
+                    ANT.actions.indicators.utils.updateContainerTrackers,
                     100
                 );
             },
             userLoginState: function() {
-                //RDR.util.userLoginState
-                if ( !$('#rdr-user').length ) {
-                    $('.rdr-page-summary').find('div.rdr-summary').prepend('<div id="rdr-user" />');
+                //ANT.util.userLoginState
+                if ( !$('#ant-user').length ) {
+                    $('.ant-page-summary').find('div.ant-summary').prepend('<div id="ant-user" />');
                 }
-                if ( RDR && RDR.user && RDR.user.full_name && $('.rdr-page-summary.defaultSummaryBar').length ) {
-                    var name = (RDR.user.user_type == "facebook") ? ( RDR.user.full_name.split(' ')[0] ) : RDR.user.full_name;
-                    $('#rdr-user').html('Hi, <a href="'+RDR_baseUrl+'/user/'+RDR.user.user_id+'" target="_blank">'+name+'</a>');
+                if ( ANT && ANT.user && ANT.user.full_name && $('.ant-page-summary.defaultSummaryBar').length ) {
+                    var name = (ANT.user.user_type == "facebook") ? ( ANT.user.full_name.split(' ')[0] ) : ANT.user.full_name;
+                    $('#ant-user').html('Hi, <a href="'+ANT_baseUrl+'/user/'+ANT.user.user_id+'" target="_blank">'+name+'</a>');
                 } else {
                     // no t()
-                    $('#rdr-user').html('<a href="javascript:void(0);">Log in to ReadrBoard</a>');
-                    $('#rdr-user').find('a').click( function() { RDR.session.showLoginPanel(); } );
+                    $('#ant-user').html('<a href="javascript:void(0);">Log in to Antenna</a>');
+                    $('#ant-user').find('a').click( function() { ANT.session.showLoginPanel(); } );
                 }
             },
 
             objLength: function(obj) {
-                // RDR.util.objLength:
+                // ANT.util.objLength:
                 // returns the length of an object
                 var size = 0, key;
                 for (key in obj) {
@@ -3018,13 +3004,13 @@ function readrBoard($R){
 
             //temp copies of some underscore functions.  Later we'll use the underscore library - replace then.
             _: {
-                //RDR.util._:
+                //ANT.util._:
             
                 // Returns a function, that, as long as it continues to be invoked, will not
                 // be triggered. The function will be called after it stops being called for
                 // N milliseconds.
                 debounce: function(func, wait) {
-                    //RDR.util._.debounce:
+                    //ANT.util._.debounce:
                     var timeout;
                     return function() {
                         var context = this, args = arguments;
@@ -3040,11 +3026,11 @@ function readrBoard($R){
                 // Returns a function, that, when invoked, will only be triggered at most once
                 // during a given window of time.
                 throttle: function(func, wait) {
-                    //RDR.util._.throttle:
+                    //ANT.util._.throttle:
 
                     //fake the underscore stuff
                     var _ = {};
-                    _.debounce = RDR.util._.debounce;
+                    _.debounce = ANT.util._.debounce;
 
                     var context, args, timeout, throttling, more;
                     var whenDone = _.debounce(function(){ more = throttling = false; }, wait);
@@ -3066,7 +3052,7 @@ function readrBoard($R){
                     };
                 },
                 once: function(func) {
-                    //RDR.util._.once:
+                    //ANT.util._.once:
                     var ran = false, memo;
                     return function() {
                         if (ran) return memo;
@@ -3078,12 +3064,12 @@ function readrBoard($R){
                 }
             },
             getQueryParams: function(optQueryString) {
-                //RDR.util.getQueryParams:
+                //ANT.util.getQueryParams:
 
                 //thanks: http://stackoverflow.com/a/2880929/1289255
                 //I haven't verfied that this is 100% perfect for every url case, but it's solid.
                 
-                //this function is also in readr_scripts
+                //this function is also in ant_scripts
                 var queryString = optQueryString || window.location.search;
 
                 var urlParams = {};
@@ -3115,28 +3101,28 @@ function readrBoard($R){
                 return hrefQuery;
             },
             createGuid: function() {
-                //RDR.util.createGuid
+                //ANT.util.createGuid
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
             },
             killSessions: function() {
-                //RDR.util.killSessions
-                localStorage.removeItem('rdr_sts');
-                localStorage.removeItem('rdr_lts');
-                RDR.user.sts = null;
-                RDR.user.lts = null;
+                //ANT.util.killSessions
+                localStorage.removeItem('ant_sts');
+                localStorage.removeItem('ant_lts');
+                ANT.user.sts = null;
+                ANT.user.lts = null;
             },
             activeAB: function() {
-                //RDR.util.activeAB
+                //ANT.util.activeAB
 
                 var isActive = true;
-                var rdr_ab = JSON.parse( localStorage.getItem('rdr_ab') );  // ab test candidate.  true = sees Antenna
+                var ant_ab = JSON.parse( localStorage.getItem('ant_ab') );  // ab test candidate.  true = sees Antenna
 
-                if( RDR.group.ab_test_impact === true && (!rdr_ab || new Date().getTime() > rdr_ab.expires) ) {
+                if( ANT.group.ab_test_impact === true && (!ant_ab || new Date().getTime() > ant_ab.expires) ) {
                     // calculate whether or not they are in the active pool
-                    var p=(10*RDR.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
+                    var p=(10*ANT.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
 
                     // generate a random number.  if the number is lower than P, they will NOT see the widget
                     if ( Math.floor(Math.random() * 1000 ) <= p ) {
@@ -3149,90 +3135,90 @@ function readrBoard($R){
                     var days = 30;
                     ab_session_expiretime.setTime(ab_session_expiretime.getTime() + (days * 1440 * 60 * 1000));
 
-                    var new_rdr_ab = {active: isActive, expires: ab_session_expiretime.getTime() }
-                    localStorage.setItem('rdr_ab', JSON.stringify(new_rdr_ab) );
+                    var new_ant_ab = {active: isActive, expires: ab_session_expiretime.getTime() }
+                    localStorage.setItem('ant_ab', JSON.stringify(new_ant_ab) );
                 } else {
-                    isActive = rdr_ab.active;
+                    isActive = ant_ab.active;
                 }
 
                 return isActive;
             },
             checkSessions: function() {
-                //RDR.util.checkSessions
-                var rdr_sts = JSON.parse( localStorage.getItem('rdr_sts') );  // short term session
-                var rdr_lts = localStorage.getItem('rdr_lts'); // long term session
+                //ANT.util.checkSessions
+                var ant_sts = JSON.parse( localStorage.getItem('ant_sts') );  // short term session
+                var ant_lts = localStorage.getItem('ant_lts'); // long term session
 
                 // check/set session localStorages
-                if( !rdr_sts || new Date().getTime() > rdr_sts.expires ) {
-                    var short_session_guid = RDR.user.sts = RDR.util.createGuid();
+                if( !ant_sts || new Date().getTime() > ant_sts.expires ) {
+                    var short_session_guid = ANT.user.sts = ANT.util.createGuid();
                     var short_session_expiretime = new Date();
                     var minutes = 15;
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
 
-                    var new_rdr_sts = {guid: short_session_guid, expires: short_session_expiretime.getTime() }
-                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                    var new_ant_sts = {guid: short_session_guid, expires: short_session_expiretime.getTime() }
+                    localStorage.setItem('ant_sts', JSON.stringify(new_ant_sts) );
                     
                     // $.clog('rs sts 1', short_session_guid );
-                    // $.cookie('rdr_sts', short_session_guid, { expires: short_session_expiretime });
+                    // $.cookie('ant_sts', short_session_guid, { expires: short_session_expiretime });
                 } else {
 
-                    RDR.user.sts = rdr_sts.guid;
+                    ANT.user.sts = ant_sts.guid;
 
                     // lets extend the session time 
                     var minutes = 10;
                     var short_session_expiretime = new Date();
                     short_session_expiretime.setTime(short_session_expiretime.getTime() + (minutes * 60 * 1000));
-                    // $.clog('rs sts 2', RDR.user.sts );
-                    // $.cookie('rdr_sts', RDR.user.sts, { expires: short_session_expiretime });
+                    // $.clog('rs sts 2', ANT.user.sts );
+                    // $.cookie('ant_sts', ANT.user.sts, { expires: short_session_expiretime });
 
-                    var new_rdr_sts = {guid: RDR.user.sts, expires: short_session_expiretime.getTime() }
-                    localStorage.setItem('rdr_sts', JSON.stringify(new_rdr_sts) );
+                    var new_ant_sts = {guid: ANT.user.sts, expires: short_session_expiretime.getTime() }
+                    localStorage.setItem('ant_sts', JSON.stringify(new_ant_sts) );
                 }
 
-                if( !rdr_lts ) {
-                    var long_session_guid = RDR.user.lts = RDR.util.createGuid();
+                if( !ant_lts ) {
+                    var long_session_guid = ANT.user.lts = ANT.util.createGuid();
                     // var long_session_expiretime = new Date();
                     // var days = 180;
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
                     // $.clog('rs lts 1', long_session_guid ); 
-                    // $.cookie('rdr_lts', long_session_guid, { expires: long_session_expiretime });
+                    // $.cookie('ant_lts', long_session_guid, { expires: long_session_expiretime });
 
-                    // var new_rdr_lts = {guid: long_session_guid, expires: short_session_expiretime }
-                    localStorage.setItem('rdr_lts', long_session_guid );
+                    // var new_ant_lts = {guid: long_session_guid, expires: short_session_expiretime }
+                    localStorage.setItem('ant_lts', long_session_guid );
                 } else {
-                    RDR.user.lts = rdr_lts;
-                    // $.clog('rs lts 2', RDR.user.lts ); 
+                    ANT.user.lts = ant_lts;
+                    // $.clog('rs lts 2', ANT.user.lts ); 
 
                     //////////// buggy when i reset this cookie's time, too, so not doing it for now::::
                     // lets extend the session time 
                     // var days = 180;
                     // var long_session_expiretime = new Date();
                     // long_session_expiretime.setTime(long_session_expiretime.getTime() + (days * 60 * 1000 * 60 * 24));
-                    // $.cookie('rdr_lts', RDR.user.long_session_guid, { expires: long_session_expiretime });
+                    // $.cookie('ant_lts', ANT.user.long_session_guid, { expires: long_session_expiretime });
                 }
             }
         },
         debug: function(){
-            window.RDR = window.READRBOARDCOM;
-            window.$RDR = $RDR;
-            window.$R = $R;
+            window.ANT = window.ANTENNAIS;
+            window.$ANT = $ANT;
+            window.$A = $A;
         },
         toggle: function(){
-            $R('body').toggleClass('no-rdr');
+            $A('body').toggleClass('no-ant');
         },
         getLastEvent: function() {
-            if (RDR.group.premium == true) {
+            if (ANT.group.premium == true) {
                 return {
-                    'event':(RDR.events.lastEvent) ? RDR.events.lastEvent:'',
-                    'value':(RDR.events.lastValue) ? RDR.events.lastValue:'',
-                    'supplementary':(RDR.events.lastSupplementary) ? RDR.events.lastSupplementary:{}
+                    'event':(ANT.events.lastEvent) ? ANT.events.lastEvent:'',
+                    'value':(ANT.events.lastValue) ? ANT.events.lastValue:'',
+                    'supplementary':(ANT.events.lastSupplementary) ? ANT.events.lastSupplementary:{}
                 };
             }
         },
         session: {
             alertBar: {
                 make: function( whichAlert, data) {
-                    // RDR.session.alertBar.make:
+                    // ANT.session.alertBar.make:
                     //whichAlert to tell us if it's the educate user bar, or the sharedLink bar
                     //data if we want it, not using it now... - expects:
                     /*
@@ -3249,23 +3235,23 @@ function readrBoard($R){
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         var decodedContent = unescape($.evalJSON('"'+data.content+'"'));
                         
-                        $msg1 = $('<h1>Shared with <span>ReadrBoard</span></h1>');
+                        $msg1 = $('<h1>Shared with <span>Antenna</span></h1>');
 
-                        if ( $('img[rdr-hash="'+data.container_hash+'"]').length == 1 ) {
-                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
-                                ' <a class="rdr_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
-                                ' <strong class="seeItLinkText rdr_blue">Show it on the page</strong></a></div>');
+                        if ( $('img[ant-hash="'+data.container_hash+'"]').length == 1 ) {
+                            $msg2 = $('<div><strong class="reactionText">'+ANT.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
+                                ' <a class="ant_showSelection" href="javascript:void(0);"><img src="' + data.content + '" style="max-width:100px !important;max-height:70px !important;margin:5px 0 !important;display:block !important;" />'+
+                                ' <strong class="seeItLinkText ant_blue">Show it on the page</strong></a></div>');
                         } else {
                             //put a better message here
-                            $msg2 = $('<div><strong class="reactionText">'+RDR.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
+                            $msg2 = $('<div><strong class="reactionText">'+ANT.t('single_reaction')+': <em>' + data.reaction + '</em></strong>'+
                                 '<strong>"</strong><em>' + decodedContent.substr(0,140) + '...</em><strong>"</strong>'+
-                                '<br /><strong class="seeItLinkText"><a class="rdr_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
+                                '<br /><strong class="seeItLinkText"><a class="ant_showSelection" href="javascript:void(0);">Show it on the page</a></strong></div>');
                         }
-                        $msg2.find('a.rdr_showSelection').click( function() {
+                        $msg2.find('a.ant_showSelection').click( function() {
                             //show the alertBar sliding closed for just a second before scrolling down..
-                            // RDR.session.alertBar.close();
+                            // ANT.session.alertBar.close();
                             setTimeout(function(){
-                                RDR.session.revealSharedContent(data);
+                                ANT.session.revealSharedContent(data);
                             }, 200);
                         });
                     }
@@ -3273,60 +3259,60 @@ function readrBoard($R){
                         //put a better message here
                         // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="rdr_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" /> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" /> icons.</div>');
 
-                        $msg2.find('a.rdr_show_more_pins').click( function() {
-                            RDR.actions.summaries.showLessPopularIndicators();
-                            $(this).closest('div.rdr_alert_box').find('div.rdr_alert_box_x').click();
+                        $msg2.find('a.ant_show_more_pins').click( function() {
+                            ANT.actions.summaries.showLessPopularIndicators();
+                            $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
                         });
                     }
                     if (typeof $msg1 != "undefined" ) {
-                        $pinIcon = $('<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />');
+                        $pinIcon = $('<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />');
 
-                        var $alertContent = $('<div class="rdr_alert_box rdr rdr_' + whichAlert + '" />');
+                        var $alertContent = $('<div class="ant_alert_box ant ant_' + whichAlert + '" />');
 
                         $alertContent.append(
-                            $('<div class="rdr_alert_box_1" />').append($pinIcon).append($msg1),
-                            $('<div class="rdr_alert_box_2" />').append($msg2),
-                            '<div class="rdr rdr_alert_box_x">x</div>'
+                            $('<div class="ant_alert_box_1" />').append($pinIcon).append($msg1),
+                            $('<div class="ant_alert_box_2" />').append($msg2),
+                            '<div class="ant ant_alert_box_x">x</div>'
                         );
 
-                        $('#rdr_sandbox').append( $alertContent );
-                        $('div.rdr_alert_box.rdr_'+whichAlert).find('.rdr_alert_box_x').click( function() {
-                            RDR.session.alertBar.close( whichAlert );
+                        $('#ant_sandbox').append( $alertContent );
+                        $('div.ant_alert_box.ant_'+whichAlert).find('.ant_alert_box_x').click( function() {
+                            ANT.session.alertBar.close( whichAlert );
                         });
 
                         // TODO put this back in
-                        $('div.rdr_alert_box.rdr_'+whichAlert).animate({top:-5},1000);
+                        $('div.ant_alert_box.ant_'+whichAlert).animate({top:-5},1000);
                     }
                 },
                 close: function( whichAlert ) {
-                    //RDR.session.alertBar.close:
-                    $('div.rdr_alert_box.rdr_'+whichAlert).remove();
+                    //ANT.session.alertBar.close:
+                    $('div.ant_alert_box.ant_'+whichAlert).remove();
 
                     //brute force for now -
                     //if they click the X we need this;
-                    $('div.rdr_indicator_for_media').hide();
-                    // RDR.actions.indicators.utils.borderHilites.disengageAll();
+                    $('div.ant_indicator_for_media').hide();
+                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
                         "close "+whichAlert,
-                        RDR_baseUrl + "/static/xdm.html",
-                        window.frames['rdr-xdm-hidden']
+                        ANT_baseUrl + "/static/xdm.html",
+                        window.frames['ant-xdm-hidden']
                     );
                 }
             },
             revealSharedContent: function(data){
                 var hash = data.container_hash,
-                    $container = $('[rdr-hash="'+hash+'"]');
+                    $container = $('[ant-hash="'+hash+'"]');
 
                 var kind = $container.data('kind');
 
                 if(kind == 'img' || kind == 'media' || kind == 'med'){
-                    $container.addClass('rdr_shared');
-                    RDR.actions.indicators.utils.updateContainerTracker(hash);
-                    // RDR.actions.indicators.utils.borderHilites.engage(hash, true);
+                    $container.addClass('ant_shared');
+                    ANT.actions.indicators.utils.updateContainerTracker(hash);
+                    // ANT.actions.indicators.utils.borderHilites.engage(hash, true);
                 }
 
                 if ( data.location && data.location != "None" ) {
@@ -3339,7 +3325,7 @@ function readrBoard($R){
                     var selState = $container.selog('save', {'serialRange':serialRange} );
                     $().selog('hilite', selState, 'on');
 
-                    $('div.rdr_page_summary').remove();
+                    $('div.ant_page_summary').remove();
                 }
 
                 var targetOffset = $container.offset().top,
@@ -3362,31 +3348,31 @@ function readrBoard($R){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                if ( localStorage.getItem('rdr_content_type') != 'pag' ) {
+                if ( localStorage.getItem('ant_content_type') != 'pag' ) {
                     
                     // quick fix
                     // todo  - do this better later;
                     var containerHash = data.container_hash;
-                    var pageHasContainer = !! RDR.containers[containerHash];
+                    var pageHasContainer = !! ANT.containers[containerHash];
                     if (!pageHasContainer){
                         return;
                     }
                     
-                    RDR.session.alertBar.make('fromShareLink', data);
+                    ANT.session.alertBar.make('fromShareLink', data);
                     return true; //could return something more useful if we need it.
                 }
             },
             getUser: function(args, callback) {
                 if ( callback && args ) {
-                    RDR.session.receiveMessage( args, callback );
+                    ANT.session.receiveMessage( args, callback );
                 } else if ( callback ) {
-                    RDR.session.receiveMessage( false, callback );
+                    ANT.session.receiveMessage( false, callback );
                 }
 
                 $.postMessage(
                     "getUser",
-                    RDR_baseUrl + "/static/xdm.html",
-                    window.frames['rdr-xdm-hidden']
+                    ANT_baseUrl + "/static/xdm.html",
+                    window.frames['ant-xdm-hidden']
                 );
             },
             handleGetUserFail: function(args, callback) {
@@ -3394,14 +3380,14 @@ function readrBoard($R){
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and localStorage
-                        RDR.session.killUser();
+                        ANT.session.killUser();
                         // TODO tell the user something failed and ask them to try again
                         // pass callback into the login panel
                     break;
 
                     case "Temporary user interaction limit reached":
                         // TODO: something.  anything at all.
-                        RDR.session.showLoginPanel( args, callback );
+                        ANT.session.showLoginPanel( args, callback );
                     break;
                     case "Container specified does not exist":
                     break;
@@ -3411,17 +3397,17 @@ function readrBoard($R){
                     case "FB graph error - token invalid":  // call fb login
                     case "Social Auth does not exist for user": // call fb login
                     case "Data to create token is missing": // call fb login
-                        if ( typeof RDR.user.user_type != "undefined" && RDR.user.user_type == "readrboard") {
-                            RDR.session.showLoginPanel( args, callback );
+                        if ( typeof ANT.user.user_type != "undefined" && ANT.user.user_type == "antenna") {
+                            ANT.session.showLoginPanel( args, callback );
                         } else {
                             // the token is out of sync.  could be a mistake or a hack.
-                            RDR.session.receiveMessage( args, callback );
-                            // RDR.session.showLoginPanel( args, callback );
+                            ANT.session.receiveMessage( args, callback );
+                            // ANT.session.showLoginPanel( args, callback );
                             $.postMessage(
                                 "reauthUser",
                                 // "killUser",
-                                RDR_baseUrl + "/static/xdm.html",
-                                window.frames['rdr-xdm-hidden']
+                                ANT_baseUrl + "/static/xdm.html",
+                                window.frames['ant-xdm-hidden']
                             );
                         }
 
@@ -3430,23 +3416,23 @@ function readrBoard($R){
                 }
             },
             createXDMframe: function() {
-                RDR.session.receiveMessage({}, function() {
-                    RDR.util.userLoginState();
+                ANT.session.receiveMessage({}, function() {
+                    ANT.util.userLoginState();
                 });
 
-                var iframeUrl = RDR_baseUrl + "/static/xdm.html",
+                var iframeUrl = ANT_baseUrl + "/static/xdm.html",
                 parentUrl = window.location.href,
                 parentHost = window.location.protocol + "//" + window.location.host,
-                bookmarklet = ( RDR.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
-                $xdmIframe = $('<iframe id="rdr-xdm-hidden" name="rdr-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+encodeURIComponent(RDR.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
+                bookmarklet = ( ANT.engageScriptParams.bookmarklet ) ? "bookmarklet=true":"",
+                $xdmIframe = $('<iframe id="ant-xdm-hidden" name="ant-xdm-hidden" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+encodeURIComponent(ANT.group.name)+'&'+bookmarklet+'" width="1" height="1" style="position:absolute;top:-1000px;left:-1000px;" />'
                 );
-                $('#rdr_sandbox').append( $xdmIframe );
+                $('#ant_sandbox').append( $xdmIframe );
 
 
                 // this is the postMessage receiver for ALL messages posted.
                 // TODO: put this elsewhere so it's more logically placed and easier to find??
 
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             receiveMessage: function(args, callbackFunction) {
                 //args is passed through this function into the callback as a parameter.
@@ -3463,21 +3449,21 @@ function readrBoard($R){
 
 
                                 for ( var i in message.data ) {
-                                    RDR.user = RDR.user || {};
+                                    ANT.user = ANT.user || {};
                                     if ( i == "user_boards" ) {
-                                        RDR.user.user_boards = $.evalJSON( message.data[i] );
+                                        ANT.user.user_boards = $.evalJSON( message.data[i] );
                                     } else {
-                                        RDR.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
+                                        ANT.user[ i ] = ( !isNaN( message.data[i] ) ) ? parseInt(message.data[i],10):message.data[i];
                                     }
                                 }
 
                                 if ( callbackFunction && args ) {
                                     
                                     //quick fix for page level data
-                                    if(!args.kind && args.rindow){
-                                        args.kind = $(args.rindow).data('kind');
+                                    if(!args.kind && args.aWindow){
+                                        args.kind = $(args.aWindow).data('kind');
                                     }
-                                    args.user = RDR.user;
+                                    args.user = ANT.user;
                                     callbackFunction(args);
                                     callbackFunction = null;
                                 }
@@ -3486,74 +3472,75 @@ function readrBoard($R){
                                     callbackFunction = null;
                                 }
 
-                                RDR.util.userLoginState();
+                                ANT.util.userLoginState();
 
                             } else if ( message.status == "xdm loaded" ) {
-                                RDR.group.xdmLoaded = true;
+                                ANT.group.xdmLoaded = true;
+                                ANT.events.fireEventQueue();
                             } else if ( message.status == "board_created" ) {
-                                $('div.rdr-board-create-div').remove();
+                                $('div.ant-board-create-div').remove();
                             } else if ( message.status == "board_create_cancel" ) {
-                                clearInterval( RDR.checkingBoardWindow );
-                                $('div.rdr-board-create-div').remove();
+                                clearInterval( ANT.checkingBoardWindow );
+                                $('div.ant-board-create-div').remove();
                             } else if ( message.status == "getUserLoginState" ) {
-                                RDR.session.getUser();
+                                ANT.session.getUser();
 
                                 //I would think this needs to get added as a callback to the function above, but looks like we don't need it.
-                                // RDR.util.userLoginState();
+                                // ANT.util.userLoginState();
 
-                                $('#rdr_loginPanel').remove();
+                                $('#ant_loginPanel').remove();
                             } else if ( message.status == "fb_user_needs_to_login" ) {
                                 if ( callbackFunction && args ) {
-                                    RDR.session.showLoginPanel( args, callbackFunction );
+                                    ANT.session.showLoginPanel( args, callbackFunction );
                                 } else {
-                                    RDR.session.showLoginPanel( args );
+                                    ANT.session.showLoginPanel( args );
                                 }
                             } else if ( message.status == "close login panel" ) {
-                                RDR.util.userLoginState();
-                                $('#rdr_loginPanel').remove(); // little brute force, maybe should go elsewhere?
-                                $('div.rdr-summary div.rdr_info').html('<em>You\'re logged in!  Try your last reaction again.');
+                                ANT.util.userLoginState();
+                                $('#ant_loginPanel').remove(); // little brute force, maybe should go elsewhere?
+                                $('div.ant-summary div.ant_info').html('<em>You\'re logged in!  Try your last reaction again.');
                             } else if ( message.status == "already had user" ) {
                                 // todo: when is this used?
-                                $('#rdr_loginPanel div.rdr_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
+                                $('#ant_loginPanel div.ant_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             // } else if ( message.status == "educate user" ) {
-                                // RDR.session.alertBar.make('educateUser');
+                                // ANT.session.alertBar.make('educateUser');
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
-                                    RDR.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
+                                    ANT.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
                                 }
                                 // TODO sharedLink[6] is SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                                RDR.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
+                                ANT.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
                             }
                         }
                     },
-                    RDR_baseUrl
+                    ANT_baseUrl
                 );
             },
             login: function() {},
             checkForMaxInteractions: function(){
-                RDR.user = RDR.user || {};
-                var isTempUser = !RDR.user.user_type
-                if ( isTempUser && RDR.user.num_interactions && RDR.user.num_interactions >= RDR.group.temp_interact ) {
+                ANT.user = ANT.user || {};
+                var isTempUser = !ANT.user.user_type
+                if ( isTempUser && ANT.user.num_interactions && ANT.user.num_interactions >= ANT.group.temp_interact ) {
                   return true;
                 }
                 return false;
             },
             showLoginPanel: function(args, callback) {
-             // RDR.session.showLoginPanel
+             // ANT.session.showLoginPanel
 
-                $('.rdr_rewritable').removeClass('rdr_rewritable');
+                $('.ant_rewritable').removeClass('ant_rewritable');
 
-                if ( $('#rdr_loginPanel').length < 1 ) {
-                    // $('#rdr_loginPanel').remove();
+                if ( $('#ant_loginPanel').length < 1 ) {
+                    // $('#ant_loginPanel').remove();
                     //todo: weird, why did commenting this line out not do anything?...look into it
                     //porter says: the action bar used to just animate larger and get populated as a window
-                    //$('div.rdr.rdr_actionbar').removeClass('rdr_actionbar').addClass('rdr_window').addClass('rdr_rewritable');
+                    //$('div.ant.ant_actionbar').removeClass('ant_actionbar').addClass('ant_window').addClass('ant_rewritable');
 
                     var coords;
 
-                    if ( args && args.rindow ) {
-                        var caller = args.rindow;
+                    if ( args && args.aWindow ) {
+                        var caller = args.aWindow;
                         coords = caller.offset();
                         coords.left = coords.left ? (coords.left-34) : 100;
                         coords.top = coords.top ? (coords.top-25) : 100;
@@ -3564,9 +3551,9 @@ function readrBoard($R){
                     }
 
 
-                    var $rindow = RDR.rindow.draw({
+                    var $aWindow = ANT.aWindow.draw({
                         coords:coords,
-                        id: "rdr_loginPanel",
+                        id: "ant_loginPanel",
                         // pnlWidth:360,
                         pnls:1,
                         height:175,
@@ -3574,74 +3561,74 @@ function readrBoard($R){
                     });
 
 
-                    RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
-                    if ( args ) $rindow.data( 'args', args );
-                    if ( callback ) $rindow.data( 'callback', callback );
+                    if ( args ) $aWindow.data( 'args', args );
+                    if ( callback ) $aWindow.data( 'callback', callback );
 
                     // create the iframe containing the login panel
-                    // var $loginHtml = $('<div class="rdr_login" />'),
-                    var iframeUrl = RDR_baseUrl + "/static/fb_login.html",
+                    // var $loginHtml = $('<div class="ant_login" />'),
+                    var iframeUrl = ANT_baseUrl + "/static/fb_login.html",
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
-                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to ReadrBoard",
-                        $loginIframe = $('<iframe id="rdr-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+RDR.group.id+'&group_name='+RDR.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                        h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
                     }
-                    var $header = RDR.rindow.makeHeader( h1_text );
-                    $rindow.find('.rdr_header').replaceWith($header);
-                    RDR.rindow.hideFooter($rindow);
-                    $rindow.find('div.rdr_body_wrap').append('<div class="rdr_body" />').append( $loginIframe );
+                    var $header = ANT.aWindow.makeHeader( h1_text );
+                    $aWindow.find('.ant_header').replaceWith($header);
+                    ANT.aWindow.hideFooter($aWindow);
+                    $aWindow.find('div.ant_body_wrap').append('<div class="ant_body" />').append( $loginIframe );
 
-                    // RDR.events.track( 'show_login' );
+                    // ANT.events.track( 'show_login' );
                 }
             },
             killUser: function() {
-                RDR.user = {};
-                RDR.util.killSessions();
+                ANT.user = {};
+                ANT.util.killSessions();
                 $.postMessage(
                     "killUser",
-                    RDR_baseUrl + "/static/xdm.html",
-                    window.frames['rdr-xdm-hidden']
+                    ANT_baseUrl + "/static/xdm.html",
+                    window.frames['ant-xdm-hidden']
                 );
             },
-            rindowUserMessage: {
+            aWindowUserMessage: {
                 show:  function(args) {
-                    //RDR.session.rindowUserMessage.show:
-                    var $rindow = args.rindow;
+                    //ANT.session.aWindowUserMessage.show:
+                    var $aWindow = args.aWindow;
                     var interactionInfo = args.interactionInfo;
 
-                    if ( $rindow ) {
+                    if ( $aWindow ) {
 
                         var msgType = args.msgType || null, //defaults to tempUser
                             userMsg = null,
                             actionPastTense;
 
-                        var extraHeight = 45,  //$rindowMsgDiv.height(),
+                        var extraHeight = 45,  //$aWindowMsgDiv.height(),
                             bodyWrapHeight = 10,
-                            rindowHeight = $rindow.height(),
+                            aWindowHeight = $aWindow.height(),
                             durr = 300;
 
-                        var $bodyWraps = $rindow.find('.rdr_body_wrap');
-                        var $rindowMsgDiv = $rindow.find('div.rdr_rindow_message'),
-                            $rindowMsgDivInnerwrap = $rindow.find('.rdr_rindow_message_innerwrap'),
-                            $otherTagsWrap = $('div.rdr_otherTagsWrap'),
-                            $tmpUserMsg = $rindow.find('.rdr_rindow_message_tempUserMsg');
+                        var $bodyWraps = $aWindow.find('.ant_body_wrap');
+                        var $aWindowMsgDiv = $aWindow.find('div.ant_aWindow_message'),
+                            $aWindowMsgDivInnerwrap = $aWindow.find('.ant_aWindow_message_innerwrap'),
+                            $otherTagsWrap = $('div.ant_otherTagsWrap'),
+                            $tmpUserMsg = $aWindow.find('.ant_aWindow_message_tempUserMsg');
 
-                        $rindowMsgDiv.show();
+                        $aWindowMsgDiv.show();
 
                         switch (msgType) {
 
                             case "tempUser":
                                 //for now, just ignore this
-                                var num_interactions_left = RDR.group.temp_interact - parseInt( args.num_interactions, 10 ),
+                                var num_interactions_left = ANT.group.temp_interact - parseInt( args.num_interactions, 10 ),
                                     $loginLink = $('<a href="javascript:void(0);">Connect with Facebook</a>.');
 
                                 $loginLink.click( function() {
-                                    RDR.session.showLoginPanel( args );
+                                    ANT.session.showLoginPanel( args );
                                 });
 
                                 // no t()
@@ -3670,16 +3657,16 @@ function readrBoard($R){
                                     (interactionInfo.type == 'comment') ?
                                         "You have left your comment." :
                                         ""; //this default shouldn't happen
-                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+RDR_baseUrl+"' target='_blank'>readrboard.com</a></strong>";
+                                    userMsg += " See your "+interactionInfo.type+"s on this page, and at <strong><a href='"+ANT_baseUrl+"' target='_blank'>antenna.is</a></strong>";
                                 }
 
                                 var click_args = args;
-                                if ( $rindow.find('div.rdr_rindow_message_tempUserMsg').text().length > 0 ) {
+                                if ( $aWindow.find('div.ant_aWindow_message_tempUserMsg').text().length > 0 ) {
                                     $inlineTempMsg = $('<div />');
                                     // no t()
-                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $rindow.find('div.rdr_rindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+RDR_staticUrl+'widget/images/fb-login_to_readrboard.png" alt="Connect with Facebook" /></a>');
+                                    $inlineTempMsg.html( '<h4 style="font-size:17px;">You can react '+ $aWindow.find('div.ant_aWindow_message_tempUserMsg strong').text() +'.</h4><br/><p><a style="font-weight:bold;color:#008be4;" href="javascript:void(0);">Connect with Facebook</a> to react as much as you want &amp; show other readers here what you think.</p><br/><p>Plus, you can share and comment in-line!</p><br/><a href="javascript:void(0);"><img src="'+ANT_staticUrl+'widget/images/fb-login_to_antenna.png" alt="Connect with Facebook" /></a>');
                                     $inlineTempMsg.find('a').click( function() {
-                                        RDR.session.showLoginPanel( click_args );
+                                        ANT.session.showLoginPanel( click_args );
                                     });
 
                                 }
@@ -3689,125 +3676,125 @@ function readrBoard($R){
                         }
 
                         if(userMsg){
-                            $rindowMsgDiv.find('span.rdr_userMsg').html( userMsg );
+                            $aWindowMsgDiv.find('span.ant_userMsg').html( userMsg );
                         }
 
-                        $rindowMsgDivInnerwrap.hide();
-                        $rindow.queue('userMessage', function(){
-                            if( $rindowMsgDiv.height() > 0 ){
+                        $aWindowMsgDivInnerwrap.hide();
+                        $aWindow.queue('userMessage', function(){
+                            if( $aWindowMsgDiv.height() > 0 ){
                                 //already expanded
-                                $rindowMsgDivInnerwrap.fadeIn(500);
+                                $aWindowMsgDivInnerwrap.fadeIn(500);
                                 $(this).dequeue('userMessage');
                             }else{
                                 //expand it and expand the window with it.
                                 //I know this simo animations together are a bit much - this should be redesigned
-                                $rindow.animate({ height: rindowHeight+extraHeight }, durr);
+                                $aWindow.animate({ height: aWindowHeight+extraHeight }, durr);
                                 $otherTagsWrap.animate({ bottom:0 }, durr);
                                 $bodyWraps.animate({
                                     bottom: extraHeight
                                 }, durr);
-                                $rindowMsgDiv.animate({ height:extraHeight },durr, function(){
-                                    $rindowMsgDivInnerwrap.fadeIn(500);
+                                $aWindowMsgDiv.animate({ height:extraHeight },durr, function(){
+                                    $aWindowMsgDivInnerwrap.fadeIn(500);
                                     $(this).dequeue('userMessage');
                                 });
                             }
                         });
-                        $rindow.dequeue('userMessage');
+                        $aWindow.dequeue('userMessage');
                     }
                 },
-                hide: function($rindow) {
-                    //RDR.session.rindowUserMessage.hide:
-                    if ( $rindow ) {
+                hide: function($aWindow) {
+                    //ANT.session.aWindowUserMessage.hide:
+                    if ( $aWindow ) {
 
-                        var $rindowMsgDiv = $('div.rdr_rindow_message');
-                            $otherTagsWrap = $('div.rdr_otherTagsWrap');
+                        var $aWindowMsgDiv = $('div.ant_aWindow_message');
+                            $otherTagsWrap = $('div.ant_otherTagsWrap');
 
-                        var $bodyWraps = $rindow.find('.rdr_body_wrap');
+                        var $bodyWraps = $aWindow.find('.ant_body_wrap');
                             //else
 
                             //todo: make this a better solution.  The simultaneous animations might not be ideal.
-                            var extraHeight = $rindowMsgDiv.height(),  //$rindowMsgDiv.height(),
-                                rindowHeight = $rindow.height(),
+                            var extraHeight = $aWindowMsgDiv.height(),  //$aWindowMsgDiv.height(),
+                                aWindowHeight = $aWindow.height(),
                                 durr = 300,
                                 bodyWrapHeight = 10;
 
                             //no need to use queue like this here, but this is how we can use it when we need to
-                            //expand the rindow first and then slide down the msgBar
-                            $rindow.queue('userMessage', function(){
-                                $rindow.animate({ height: rindowHeight-extraHeight }, durr);
+                            //expand the aWindow first and then slide down the msgBar
+                            $aWindow.queue('userMessage', function(){
+                                $aWindow.animate({ height: aWindowHeight-extraHeight }, durr);
                                 $otherTagsWrap.animate({ bottom: 0-bodyWrapHeight }, durr);
                                 $bodyWraps.animate({
                                     bottom: bodyWrapHeight
                                 }, durr);
-                                $rindowMsgDiv.animate({ height:0 }, durr, function(){
-                                    $rindowMsgDiv.hide();
+                                $aWindowMsgDiv.animate({ height:0 }, durr, function(){
+                                    $aWindowMsgDiv.hide();
                                     $(this).dequeue('userMessage');
                                 });
                             });
-                            $rindow.dequeue('userMessage');
+                            $aWindow.dequeue('userMessage');
                     }
                 }
             }
         },
         actions: {
-            //RDR.actions:
-            aboutReadrBoard: function() {
+            //ANT.actions:
+            aboutAntenna: function() {
             },
             init: function(){
-                //RDR.actions.init:
+                //ANT.actions.init:
                 var that = this;
-                $RDR = $(RDR);
-                window.readrboard_extend_per_container = window.readrboard_extend_per_container || {};
-                $RDR.queue('initAjax', function(next){
-                    RDR.util.checkSessions();
-                    that.initGroupData(RDR.group.short_name);
+                $ANT = $(ANT);
+                window.antenna_extend_per_container = window.antenna_extend_per_container || {};
+                $ANT.queue('initAjax', function(next){
+                    ANT.util.checkSessions();
+                    that.initGroupData(ANT.group.short_name);
                     //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    //run this before initPageData.  There was a race condition
                    that.initEnvironment();
                    //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.handleDeprecated();
                    //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.initSeparateCtas();
                    //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                    that.initHTMLAttributes();
                    //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
+                $ANT.queue('initAjax', function(next){
                     that.initPageData();
                     //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
-                    RDR.actions.runPostPageInit();
+                $ANT.queue('initAjax', function(next){
+                    ANT.actions.runPostPageInit();
 
                     // this will check for FB login status, too, and set user data
-                    RDR.session.createXDMframe();
+                    ANT.session.createXDMframe();
                     //next fired on ajax success
                 });
-                $RDR.queue('initAjax', function(next){
-                   RDR.util.checkForSelectedTextAndLaunchRindow();
-                   RDR.util.initPublicEvents();
+                $ANT.queue('initAjax', function(next){
+                   ANT.util.checkForSelectedTextAndLaunchRindow();
+                   ANT.util.initPublicEvents();
                 });
-                $RDR.queue('initAjax', function(next){
-                   RDR.util.initTouchBrowserSettings();
+                $ANT.queue('initAjax', function(next){
+                   ANT.util.initTouchBrowserSettings();
                 });
 
                 //start the dequeue chaindel
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
 
             },
             initGroupData: function(groupShortName){
-                // request the RBGroup Data
+                // request the ANT Group Data
 
                 $.ajax({
-                    url: RDR_baseUrl+"/api/settings/",
+                    url: ANT_baseUrl+"/api/settings/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
@@ -3817,48 +3804,48 @@ function readrBoard($R){
                     success: function(response, textStatus, XHR) {
 
                         var group_settings = response.data;
-                        var custom_group_settings = (RDR.groupSettings) ? RDR.groupSettings.getCustomSettings():{};
-                        RDR.group = $.extend({}, RDR.group.defaults, group_settings, custom_group_settings );
+                        var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
+                        ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
 
                         var a_or_b_or_not = '';
-                        if ( RDR.group.ab_test_impact === true ) {
-                            a_or_b_or_not = ( RDR.util.activeAB() ) ? 'A':'B';
+                        if ( ANT.group.ab_test_impact === true ) {
+                            a_or_b_or_not = ( ANT.util.activeAB() ) ? 'A':'B';
                         }
 
-                        RDR.events.trackEventToCloud({
+                        ANT.events.trackEventToCloud({
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
-                            page_id: RDR.util.getPageProperty('id')
+                            page_id: ANT.util.getPageProperty('id')
                         });
 
                         // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof RDR.group.blessed_tags != 'undefined' ) {
+                        if ( typeof ANT.group.blessed_tags != 'undefined' ) {
                             // use .slice() to copy by value
                             // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            RDR.group.default_reactions = RDR.group.blessed_tags.slice();
-                            delete RDR.group.blessed_tags;
+                            ANT.group.default_reactions = ANT.group.blessed_tags.slice();
+                            delete ANT.group.blessed_tags;
                         }
 
-                        if (RDR.group.hideOnMobile === true && isTouchBrowser) {
+                        if (ANT.group.hideOnMobile === true && isTouchBrowser) {
                             return false;
                         }
 
-                        RDR.group.anno_whitelist += ',div.rdr_br_replaced';
+                        ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(RDR.group.no_readr).each( function() {
+                        $(ANT.group.no_ant).each( function() {
                             var $this = $(this);
-                            $this.addClass('no-rdr');
-                            $this.find('img').addClass('no-rdr');
+                            $this.addClass('no-ant');
+                            $this.find('img').addClass('no-ant');
                         });
 
                         // setup the active sections + anno_whitelist (i.e. allowed tags)
-                        if ( RDR.group.active_sections == "" ) {
-                            RDR.group.active_sections = "body";
+                        if ( ANT.group.active_sections == "" ) {
+                            ANT.group.active_sections = "body";
                         }
 
-                        var active_sections = RDR.group.active_sections.split(','),
+                        var active_sections = ANT.group.active_sections.split(','),
                             active_sections_with_anno_whitelist = "",
-                            anno_whitelist = RDR.group.anno_whitelist.split(',');
+                            anno_whitelist = ANT.group.anno_whitelist.split(',');
                         
                         
                         $.each(active_sections, function(active_idx, active_selector) {
@@ -3879,16 +3866,16 @@ function readrBoard($R){
                             }
                         });
 
-                        RDR.group.active_sections_with_anno_whitelist = active_sections_with_anno_whitelist;
+                        ANT.group.active_sections_with_anno_whitelist = active_sections_with_anno_whitelist;
                         
 
                         // it's not a CSS URL, but rather custom CSS rules.  We should change the name in the model...
                         // this embeds custom CSS.
-                        if ( RDR.group.custom_css !== "" ) {
-                            $('head').append( $('<style type="text/css">' + RDR.group.custom_css + '</style>') );
+                        if ( ANT.group.custom_css !== "" ) {
+                            $('head').append( $('<style type="text/css">' + ANT.group.custom_css + '</style>') );
                         }
 
-                        $RDR.dequeue('initAjax');
+                        $ANT.dequeue('initAjax');
 
                     },
                     error: function(response) {
@@ -3897,23 +3884,23 @@ function readrBoard($R){
                 });
             },
             initPageData: function(){
-                var queryStr = RDR.util.getQueryStrFromUrl(RDR.engageScriptSrc);
-                RDR.engageScriptParams = RDR.util.getQueryParams(queryStr);
+                var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
+                ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                RDR.group.useDefaultSummaryBar = (
-                    RDR.engageScriptParams.bookmarklet &&
-                    !$('.rdr-page-summary').length &&
-                    // !$(RDR.group.post_selector).length &&
-                    !$(RDR.group.summary_widget_selector).length
+                ANT.group.useDefaultSummaryBar = (
+                    ANT.engageScriptParams.bookmarklet &&
+                    !$('.ant-page-summary').length &&
+                    // !$(ANT.group.post_selector).length &&
+                    !$(ANT.group.summary_widget_selector).length
                 );
                 
-                if (RDR.group.useDefaultSummaryBar){
-                    //add a class defaultSummaryBar to show that this is our added rdr-page-summary
+                if (ANT.group.useDefaultSummaryBar){
+                    //add a class defaultSummaryBar to show that this is our added ant-page-summary
                     //and not a publisher added one.
-                    $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar"/>').appendTo('body');
+                    $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar"/>').appendTo('body');
                 }
                 
-                // RDR.session.educateUser(); //this function has changed now
+                // ANT.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
 
                 // TODO flesh out Porter's code below and incorporate it into the queue
@@ -3936,20 +3923,20 @@ function readrBoard($R){
 
                 // if multiple posts, add additional "pages"
                 if (   
-                        RDR.group.post_selector !== "" &&
-                        RDR.group.post_href_selector !== "" && 
-                        RDR.group.summary_widget_selector !== ""
+                        ANT.group.post_selector !== "" &&
+                        ANT.group.post_href_selector !== "" && 
+                        ANT.group.summary_widget_selector !== ""
                     ) {
 
-                        var $posts = $(RDR.group.post_selector),
+                        var $posts = $(ANT.group.post_selector),
                             num_posts = $posts.length;
-                        //if $(RDR.group.post_selector).length is 0, this will just do nothing
+                        //if $(ANT.group.post_selector).length is 0, this will just do nothing
                         $posts.each( function(){
                             // var key = pagesArr.length;
                             var $post = $(this);
-                            var $post_href = $post.find(RDR.group.post_href_selector);
+                            var $post_href = $post.find(ANT.group.post_href_selector);
 
-                            var $summary_widget = $post.find(RDR.group.summary_widget_selector).eq(0);
+                            var $summary_widget = $post.find(ANT.group.summary_widget_selector).eq(0);
 
                             function nearWindow($thisPost) {
                                 var offsets = $thisPost.offset();
@@ -3969,8 +3956,8 @@ function readrBoard($R){
                                 }
 
                             }
-                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('rdr-page-checked') ) {
-                                $post.attr('rdr-page-checked', true);
+                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
+                                $post.attr('ant-page-checked', true);
                                 url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
@@ -3987,16 +3974,16 @@ function readrBoard($R){
                                     }
                                 }
 
-                                var urlHash = RDR.util.md5.hex_md5(url);
-                                if ( !$post.hasAttr('rdr-page-container') ) {
-                                    $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',urlHash);
+                                var urlHash = ANT.util.md5.hex_md5(url);
+                                if ( !$post.hasAttr('ant-page-container') ) {
+                                    $post.attr( 'ant-page-container', 'true' ).attr('ant-page-key',urlHash);
                                 }
-                                $summary_widget.attr('rdr-page-widget-key',urlHash);
+                                $summary_widget.attr('ant-page-widget-key',urlHash);
 
                                 urlsArr.push(url);
 
                                 thisPage = {
-                                    group_id: parseInt(RDR.group.id, 10),
+                                    group_id: parseInt(ANT.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text()
@@ -4004,21 +3991,21 @@ function readrBoard($R){
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
-                                // if ( !$post.hasAttr('rdr-page-container') ) {
-                                //     $post.attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key);
+                                // if ( !$post.hasAttr('ant-page-container') ) {
+                                //     $post.attr( 'ant-page-container', 'true' ).attr('ant-page-key',key);
                                 // }
-                                // $summary_widget.attr('rdr-page-widget-key',key);
+                                // $summary_widget.attr('ant-page-widget-key',key);
                             }
                         });
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
-                var pageUrl = RDR.util.getPageProperty('page_url');
+                var pageUrl = ANT.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
-                    if ( !$( 'body' ).hasAttr('rdr-page-checked') ) {
-                        canonical_url = RDR.util.getPageProperty('canonical_url');
-                        title = RDR.util.getPageProperty('title');
+                    if ( !$( 'body' ).hasAttr('ant-page-checked') ) {
+                        canonical_url = ANT.util.getPageProperty('canonical_url');
+                        title = ANT.util.getPageProperty('title');
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
@@ -4027,30 +4014,30 @@ function readrBoard($R){
                         // }
 
                         thisPage = {
-                            group_id: parseInt(RDR.group.id, 10),
+                            group_id: parseInt(ANT.group.id, 10),
                             url: pageUrl,
                             canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
                             title: title
                         };
 
-                        RDR.group.thisPage = thisPage;
+                        ANT.group.thisPage = thisPage;
 
                         pagesArr.push(thisPage);
                         key = pagesArr.length-1;
-                        // key = RDR.util.md5.hex_md5(pageUrl);
+                        // key = ANT.util.md5.hex_md5(pageUrl);
                         pageDict[key] = thisPage;
 
-                        if ( !$( 'body' ).hasAttr('rdr-page-container') ) {
-                            // $( 'body' ).attr( 'rdr-page-container', 'true' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);
-                            $( 'body' ).attr('rdr-page-key',key).attr('rdr-page-checked', true);;
+                        if ( !$( 'body' ).hasAttr('ant-page-container') ) {
+                            // $( 'body' ).attr( 'ant-page-container', 'true' ).attr('ant-page-key',key).attr('ant-page-checked', true);
+                            $( 'body' ).attr('ant-page-key',key).attr('ant-page-checked', true);;
 
-                            if ( $('.rdr-page-summary').length == 1 ) {
-                                $('.rdr-page-summary').attr('rdr-page-widget-key',key);
+                            if ( $('.ant-page-summary').length == 1 ) {
+                                $('.ant-page-summary').attr('ant-page-widget-key',key);
                             } else {
-                                var $widget_key_last = $( 'body' ).find(RDR.group.summary_widget_selector).eq(0);
+                                var $widget_key_last = $( 'body' ).find(ANT.group.summary_widget_selector).eq(0);
                                 // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
-                                if ( $widget_key_last.attr('rdr-page-widget-key') != "0" ) {
-                                    $widget_key_last.attr('rdr-page-widget-key', key);
+                                if ( $widget_key_last.attr('ant-page-widget-key') != "0" ) {
+                                    $widget_key_last.attr('ant-page-widget-key', key);
                                 }
                             }
                         }
@@ -4065,17 +4052,17 @@ function readrBoard($R){
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
                     //might not want to send canonical, or, send it separately if/only if it's different than URL
                     $.ajax({
-                        url: RDR_baseUrl+"/api/page/",
+                        url: ANT_baseUrl+"/api/page/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
-                            // RDR.events.track( 'load' );
+                            // ANT.events.track( 'load' );
 
                             // var load_event_value = '',
-                            //     pages_count = $(RDR.group.post_selector).length;
-                            // if (RDR.group.useDefaultSummaryBar){
+                            //     pages_count = $(ANT.group.post_selector).length;
+                            // if (ANT.group.useDefaultSummaryBar){
                             //     load_event_value = 'def';
                             // } else {
                             //     if (pages_count === 1) {
@@ -4088,7 +4075,7 @@ function readrBoard($R){
                             // }
 
                             var load_event_value = '';
-                            if (RDR.group.useDefaultSummaryBar){
+                            if (ANT.group.useDefaultSummaryBar){
                                 load_event_value = 'def';
                             } else {
                                 if (response.data.length === 1) {
@@ -4103,18 +4090,18 @@ function readrBoard($R){
                             $.each( response.data, function(idx,page){
                                 //todo: it seems like we should use the page.id as the unique identifier instead of introducting 'key' which is just a counter
                                 page.url = pageDict[key].url;
-                                page.key = RDR.util.md5.hex_md5(page.url);
-                                RDR.actions.pages.save(page.id, page);
-                                RDR.actions.pages.initPageContainer(page.id);
+                                page.key = ANT.util.md5.hex_md5(page.url);
+                                ANT.actions.pages.save(page.id, page);
+                                ANT.actions.pages.initPageContainer(page.id);
                             });
 
-                            RDR.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: 'wl',
                                 event_value: load_event_value,
-                                page_id: RDR.util.getPageProperty('id')
+                                page_id: ANT.util.getPageProperty('id')
                             });
 
-                            $RDR.dequeue('initAjax');
+                            $ANT.dequeue('initAjax');
                         },
                         error: function(response) {
                             //for now, ignore error and carry on with mockup
@@ -4124,63 +4111,63 @@ function readrBoard($R){
 
             },
             runPostPageInit: function(){
-                //RDR.actions.runPostPageInit:
+                //ANT.actions.runPostPageInit:
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackListFilter = (RDR.group.img_blacklist&&RDR.group.img_blacklist!="") ? ':not('+RDR.group.img_blacklist+')':'';
+                var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
 
                 if(isTouchBrowser){
                     // init the "indicators" for media objects, on mobile only.
                     // so that the image call-to-action is present and populated
-                    // $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node]').each( function() {
+                    // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
                     // ensure each text node is hashed and has indicator so that we can engage it
-                    $( RDR.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
-                        RDR.actions.indicators.init( $(node).attr('rdr-hash') );
+                    $( ANT.group.active_sections_with_anno_whitelist ).each(function(idx, node) {
+                        ANT.actions.indicators.init( $(node).attr('ant-hash') );
                     });
 
-                    $(RDR.group.active_sections).find('embed[rdr-node], video[rdr-node], object[rdr-node], iframe[rdr-node], img[rdr-node],'+RDR.group.anno_whitelist).each( function() {
-                        RDR.actions.indicators.init( $(this).attr('rdr-hash') );
+                    $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                        ANT.actions.indicators.init( $(this).attr('ant-hash') );
                     });
 
-                    if ( !localStorage.getItem('hideDoubleTapMessage') && !RDR.group.hideDoubleTapMessage ) {
+                    if ( !localStorage.getItem('hideDoubleTapMessage') && !ANT.group.hideDoubleTapMessage ) {
                         // no t()
-                        var double_tap_message = (RDR.group.doubleTapMessage) ? RDR.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+RDR.t('close')+'</a>',
-                            double_tap_message_position = (RDR.group.doubleTapMessagePosition) ? 'rdr_'+RDR.group.doubleTapMessagePosition : 'rdr_bottom',
-                            $doubleTapMessage = $('<div class="rdr rdr_mobile_message">'+double_tap_message+'</div>'),
-                            $sandbox = $('#rdr_sandbox');
+                        var double_tap_message = (ANT.group.doubleTapMessage) ? ANT.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+ANT.t('close')+'</a>',
+                            double_tap_message_position = (ANT.group.doubleTapMessagePosition) ? 'ant_'+ANT.group.doubleTapMessagePosition : 'ant_bottom',
+                            $doubleTapMessage = $('<div class="ant ant_mobile_message">'+double_tap_message+'</div>'),
+                            $sandbox = $('#ant_sandbox');
 
-                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.rdr', function() {
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.ant', function() {
                             // we should handle settings through localStorage.  will do later.
                             localStorage.setItem('hideDoubleTapMessage', true);
                             $(this).remove();
                         }).appendTo( $sandbox );
                     }
 
-                }else if ( RDR.util.activeAB() )  {
-                    $(RDR.group.active_sections)
+                }else if ( ANT.util.activeAB() )  {
+                    $(ANT.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
                             var $this = $(this);
                             
                             var hash = $this.data('hash');
 
-                                RDR.actions.indicators.utils.updateContainerTrackers();
+                                ANT.actions.indicators.utils.updateContainerTrackers();
 
-                            if ( $this.closest('.no-rdr').length ) {
+                            if ( $this.closest('.no-ant').length ) {
                                 return;
                             }
 
                             var minImgWidth = 160;
                             if ( $this.width() >= minImgWidth ) {
-                                var hasBeenHashed = $this.hasAttr('rdr-hashed'),
-                                    isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+                                var hasBeenHashed = $this.hasAttr('ant-hashed'),
+                                    isBlacklisted = $this.closest('.ant, .no-ant').length;
 
-                                $this.addClass('rdr_live_hover');
+                                $this.addClass('ant_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
 
-                                    var hashListsByPageId = RDR.actions.hashNodes( $(this) );
+                                    var hashListsByPageId = ANT.actions.hashNodes( $(this) );
                                     //we expect just the one here, so just get that one.
                                     var hash;
                                     $.each( hashListsByPageId, function(page_id, hashArray) {
@@ -4188,33 +4175,33 @@ function readrBoard($R){
                                     });
                                     if(!hash){
                                         //i think there should always be a hash though
-                                        RDR.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                                        ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
                                         return;
                                     }
 
-                                    RDR.actions.sendHashes( hashListsByPageId, function(){
-                                        if( $this.hasClass('rdr_live_hover') ){
-                                            if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                                $('#rdr_indicator_' + hash).show();
+                                    ANT.actions.sendHashes( hashListsByPageId, function(){
+                                        if( $this.hasClass('ant_live_hover') ){
+                                            if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                                                $('#ant_indicator_' + hash).show();
                                             }
                                         }
                                     });
                                     //these calls are redundant to the same calls in the callback above,
                                     //but this will make them show up right away,
                                     //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                                    // RDR.actions.indicators.utils.borderHilites.update(hash);
-                                    // RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                    // ANT.actions.indicators.utils.borderHilites.update(hash);
+                                    // ANT.actions.indicators.utils.borderHilites.engage(hash);
 
                                 } else {
                                     var hash = $this.data('hash');
                                     
-                                    $this.addClass('rdr_live_hover');
-                                    if ( !$('#rdr_indicator_details_'+hash).hasClass('rdr_engaged') ) {
-                                        $('#rdr_indicator_' + hash).show();
-                                        // RDR.actions.indicators.utils.borderHilites.engage(hash);
+                                    $this.addClass('ant_live_hover');
+                                    if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                                        $('#ant_indicator_' + hash).show();
+                                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
                                     }
 
-                                    RDR.actions.content_nodes.init(hash, function(){});
+                                    ANT.actions.content_nodes.init(hash, function(){});
                                 }
 
                             }
@@ -4224,61 +4211,61 @@ function readrBoard($R){
                                 // hash = $this.data('hash');
 
                             // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
-                            if ( !$this.parents( RDR.group.img_container_selectors ).length ) {
+                            if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
                     });
                 }
 
-                if (!RDR.util.activeAB()) return;
-                RDR.events.emit('readrboard.hashed_nodes', 'complete', { });
+                if (!ANT.util.activeAB()) return;
+                ANT.events.emit('antenna.hashed_nodes', 'complete', { });
                 
                 function _mediaHoverOff( obj ) {
                     var $this = $(obj),
                         hash = $this.data('hash');
 
-                    $this.removeClass('rdr_live_hover');
-                    $('#rdr_indicator_' + hash).hide();
+                    $this.removeClass('ant_live_hover');
+                    $('#ant_indicator_' + hash).hide();
                 }
 
             },
             initEnvironment: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
             
-                var $rdrSandbox = $('<div id="rdr_sandbox" class="rdr rdr_sandbox"/>').appendTo('body');
+                var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
                 
                 if(isTouchBrowser){
-                    $('#rdr_sandbox').addClass('isTouchBrowser');
+                    $('#ant_sandbox').addClass('isTouchBrowser');
                 }
 
-                // RDR.util.checkSessions();
+                // ANT.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
                 $.each(page_attributes, function(idx, trait){
-                    if ( RDR.group[trait+'_selector'] != 'undefined' && RDR.group[trait+'_attribute'] != 'undefined' && $( RDR.group[trait+'_selector'] ).length ){
-                        RDR.group[trait] = '';
-                        $(RDR.group[trait+'_selector']).each( function() {
-                            RDR.group[trait] += $(this).attr(RDR.group[trait+'_attribute']) + ',';
+                    if ( ANT.group[trait+'_selector'] != 'undefined' && ANT.group[trait+'_attribute'] != 'undefined' && $( ANT.group[trait+'_selector'] ).length ){
+                        ANT.group[trait] = '';
+                        $(ANT.group[trait+'_selector']).each( function() {
+                            ANT.group[trait] += $(this).attr(ANT.group[trait+'_attribute']) + ',';
                         });
-                        RDR.group[trait] = RDR.group[trait].substr(0, RDR.group[trait].length-1);
+                        ANT.group[trait] = ANT.group[trait].substr(0, ANT.group[trait].length-1);
                     }
                 });
 
                 // setup a scroll event detector
                 /**/
 
-                var active_section_offsets = $(RDR.group.active_sections+':eq(0)').offset();
-                RDR.group.active_section_top = active_section_offsets.top;
-                RDR.group.active_section_bottom = active_section_offsets.bottom;
-                RDR.group.active_section_height = active_section_offsets.bottom - active_section_offsets.top;
-                RDR.group.active_section_milestones = {
-                    '0':RDR.group.active_section_top,
-                    '20':((RDR.group.active_section_height/5)+RDR.group.active_section_top),
-                    '40':((RDR.group.active_section_height/5*2)+RDR.group.active_section_top),
-                    '60':((RDR.group.active_section_height/5*3)+RDR.group.active_section_top),
-                    '80':((RDR.group.active_section_height/5*4)+RDR.group.active_section_top),
-                    '100':RDR.group.active_section_bottom,
+                var active_section_offsets = $(ANT.group.active_sections+':eq(0)').offset();
+                ANT.group.active_section_top = active_section_offsets.top;
+                ANT.group.active_section_bottom = active_section_offsets.bottom;
+                ANT.group.active_section_height = active_section_offsets.bottom - active_section_offsets.top;
+                ANT.group.active_section_milestones = {
+                    '0':ANT.group.active_section_top,
+                    '20':((ANT.group.active_section_height/5)+ANT.group.active_section_top),
+                    '40':((ANT.group.active_section_height/5*2)+ANT.group.active_section_top),
+                    '60':((ANT.group.active_section_height/5*3)+ANT.group.active_section_top),
+                    '80':((ANT.group.active_section_height/5*4)+ANT.group.active_section_top),
+                    '100':ANT.group.active_section_bottom,
                     'fired':0
                     // 'fired_0':true,  // this should never fire
                     // 'fired_20':false,
@@ -4289,55 +4276,49 @@ function readrBoard($R){
                 };
 
         
-                $(window).on('scroll.rdr', function() {
+                $(window).on('scroll.ant', function() {
                     // disable scroll event tracking.
-                    // clearTimeout($.data(this, 'rdr_scrollTimer'));
-                    // $.data(this, 'rdr_scrollTimer', setTimeout(function() {
+                    // clearTimeout($.data(this, 'ant_scrollTimer'));
+                    // $.data(this, 'ant_scrollTimer', setTimeout(function() {
 
                     //     var scrolltop = $(window).scrollTop();
                     //     var windowHeight = $(window).height();
 
-                    //     if ( RDR.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['100'] ) { RDR.events.fireScrollEvent('100'); RDR.group.active_section_milestones['fired'] = 100; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['80'] ) { RDR.events.fireScrollEvent('80'); RDR.group.active_section_milestones['fired'] = 80; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['40'] ) { RDR.events.fireScrollEvent('40'); RDR.group.active_section_milestones['fired'] = 40; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['60'] ) { RDR.events.fireScrollEvent('60'); RDR.group.active_section_milestones['fired'] = 60; }
-                    //     if ( RDR.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > RDR.group.active_section_milestones['20'] ) { RDR.events.fireScrollEvent('20'); RDR.group.active_section_milestones['fired'] = 20; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['100'] ) { ANT.events.fireScrollEvent('100'); ANT.group.active_section_milestones['fired'] = 100; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['80'] ) { ANT.events.fireScrollEvent('80'); ANT.group.active_section_milestones['fired'] = 80; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['40'] ) { ANT.events.fireScrollEvent('40'); ANT.group.active_section_milestones['fired'] = 40; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['60'] ) { ANT.events.fireScrollEvent('60'); ANT.group.active_section_milestones['fired'] = 60; }
+                    //     if ( ANT.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['20'] ) { ANT.events.fireScrollEvent('20'); ANT.group.active_section_milestones['fired'] = 20; }
                     // }, 250));
                     
-                    RDR.actions.initPageData();
-                    // return RDR.util._.throttle(
-                    //     RDR.actions.initPageData,
+                    ANT.actions.initPageData();
+                    // return ANT.util._.throttle(
+                    //     ANT.actions.initPageData,
                     // 100
                     // );
                 });
 
-                var groupPageSelector = (RDR.group.summary_widget_selector) ? ', '+RDR.group.summary_widget_selector : '';
-                RDR.events.recordEvents = $(".rdr-page-summary" + groupPageSelector).length;
+                var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
+                ANT.events.recordEvents = $(".ant-page-summary" + groupPageSelector).length;
 
 
                 
                 // this does not seem to work!
-                // $(window).on('beforeunload.rdr',function(event) {
-                    // RDR.events.trackEventToCloud({
+                // $(window).on('beforeunload.ant',function(event) {
+                    // ANT.events.trackEventToCloud({
                     //     event_type: 'page_exit',
                     //     event_value: '',
-                    //     page_id: RDR.util.getPageProperty('id')
+                    //     page_id: ANT.util.getPageProperty('id')
                     // });
                 // });
 
-                // onunload, fire the page time total
-                $( window ).on('beforeunload.rdr',function() {
-                    RDR.events.trackEventToCloud({
-                        event_type: 'pt',
-                        event_value: RDR.events.focusedSeconds,
-                        page_id: RDR.util.getPageProperty('id')
-                    });
-                });
+                // Antenna Timer?  unsure
+                ANT.util.setWindowInterval();
 
-                RDR.util.fixBodyBorderOffsetIssue();
+                ANT.util.fixBodyBorderOffsetIssue();
                 
-                if(!!RDR.group.br_replace_scope_selector){
-                  RDR.util.fixBrTags();
+                if(!!ANT.group.br_replace_scope_selector){
+                  ANT.util.fixBrTags();
                 }
 
                 //todo - move this stuff to a function
@@ -4360,154 +4341,154 @@ function readrBoard($R){
 
                     //todo: do this better
                     //add these offsets to the existing offsets that could come from fixBodyBorderOffsetIssue
-                    var currTop = parseInt( $rdrSandbox.css('top'), 10 );
-                    var currLeft = parseInt( $rdrSandbox.css('left'), 10);
+                    var currTop = parseInt( $antSandbox.css('top'), 10 );
+                    var currLeft = parseInt( $antSandbox.css('left'), 10);
 
-                    RDR.util.cssSuperImportant($rdrSandbox, {
+                    ANT.util.cssSuperImportant($antSandbox, {
                             left: (currLeft+bodyLeft) +'px',
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $rdrSandbox.append('<style>.rdr_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
 
 
 
                 //div to hold indicatorBodies for media (images and video)
-                $('<div id="rdr_container_tracker_wrap" /><div id="rdr_indicator_details_wrapper" /><div id="rdr_event_pixels" />').appendTo($rdrSandbox);
+                $('<div id="ant_container_tracker_wrap" /><div id="ant_indicator_details_wrapper" /><div id="ant_event_pixels" />').appendTo($antSandbox);
           
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
-                // $('<div id="rdr_indicator_details_wrapper" />').appendTo($rdrSandbox);
+                // $('<div id="ant_indicator_details_wrapper" />').appendTo($antSandbox);
 
                 //div to hold event pixels
-                // $('<div id="rdr_event_pixels" />').appendTo($rdrSandbox);
+                // $('<div id="ant_event_pixels" />').appendTo($antSandbox);
 
-                $(document).on('mouseup.rdr', function(e){
+                $(document).on('mouseup.ant', function(e){
                     //temp fix for bug where a click that clears a selection still picks up the selected text:
                     //Todo: This should work in the future as well, but I want to look into it further.
                     setTimeout(function(){
-                        RDR.actions.startSelectFromMouseUp(e);
+                        ANT.actions.startSelectFromMouseUp(e);
                     }, 1 );
                     //even 0 works, so I'm not worried about 1 being too low.
                     //besides, the fail scenerio here is very minor - just that the actionbar hangs out till you click again.
                 });
 
                 if ( !isTouchBrowser ) {
-                    $(document).on('mousedown.rdr',function(event) {
+                    $(document).on('mousedown.ant',function(event) {
                         var $mouse_target = $(event.target);
 
-                        if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
-                            // if ( $('#rdr_loginPanel').length ) {
-                            //     RDR.session.getUser(function() {
-                            //         RDR.util.userLoginState();
+                        if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
+                            // if ( $('#ant_loginPanel').length ) {
+                            //     ANT.session.getUser(function() {
+                            //         ANT.util.userLoginState();
                             //     });
                             // }
-                            RDR.actions.UIClearState();
+                            ANT.actions.UIClearState();
 
                             // if ( !isTouchBrowser ) {
-                            $('div.rdr_indicator_details_for_media').each( function() {
-                                RDR.actions.containers.media.onDisengage( $(this).data('container') );
+                            $('div.ant_indicator_details_for_media').each( function() {
+                                ANT.actions.containers.media.onDisengage( $(this).data('container') );
                             });
                             // }
                         }
 
                     });
                 } else {
-                    $(document).on('touchend.rdr',function(e) {
-                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
-                        if (RDR.util.bubblingEvents['touchend'] == false) {
+                    $(document).on('touchend.ant',function(e) {
+                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if (ANT.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
-                            if ( ( $mouse_target.closest('.rdr_inline').length ) || (!$mouse_target.hasAttr('rdr-cta-for') && !$mouse_target.parents().hasClass('rdr') && !$('div.rdr-board-create-div').length) ) {
-                                // if ( ($mouse_target.hasAttr('rdr-node') && $('.rdr_window').length>1) || ( !$mouse_target.hasAttr('rdr-node') && $('.rdr_window').length ) ) {
+                            if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
+                                // if ( ($mouse_target.hasAttr('ant-node') && $('.ant_window').length>1) || ( !$mouse_target.hasAttr('ant-node') && $('.ant_window').length ) ) {
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
-                                if ( !$mouse_target.hasAttr('rdr-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
-                                    RDR.actions.UIClearState();
+                                if ( !$mouse_target.hasAttr('ant-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
+                                    ANT.actions.UIClearState();
                                 }
                             }
                         }
 
-                        RDR.util.bubblingEvents['touchend'] = false;
+                        ANT.util.bubblingEvents['touchend'] = false;
                     });
 
                     // iphone drag fix
-                    $(document).on('touchmove.rdr',function(e) {
-                        RDR.util.bubblingEvents['dragging'] = true;
+                    $(document).on('touchmove.ant',function(e) {
+                        ANT.util.bubblingEvents['dragging'] = true;
                     });
-                    $(document).on('touchstart.rdr',function(e) {
-                        RDR.util.bubblingEvents['dragging'] = false;
+                    $(document).on('touchstart.ant',function(e) {
+                        ANT.util.bubblingEvents['dragging'] = false;
                     });
                 }
 
                 //bind an escape keypress to clear it.
-                $(document).on('keyup.rdr', function(event) {
+                $(document).on('keyup.ant', function(event) {
                     if (event.keyCode == '27') { //esc
-                        RDR.actions.UIClearState();
+                        ANT.actions.UIClearState();
                     }
                 });
                 
-                $(window).resize(RDR.util.throttledUpdateContainerTrackers());
+                $(window).resize(ANT.util.throttledUpdateContainerTrackers());
 
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             handleDeprecated: function() {
-                //rdr-content-type ????  could be come rdr-content-attributes="question"
-                // rewrite some deprecated ReadrBoard attributes into their newer versions
-                if (!RDR.util.activeAB()) {
-                    $('[rdr-custom-display]').each( function() {
+                //ant-content-type ????  could be come ant-content-attributes="question"
+                // rewrite some deprecated Antenna attributes into their newer versions
+                if (!ANT.util.activeAB()) {
+                    $('[ant-custom-display]').each( function() {
                         var $this = $(this);
-                        $this.attr('rdr-item', $this.attr('rdr-custom-display') );
-                        $this.removeAttr('rdr-custom-display');
+                        $this.attr('ant-item', $this.attr('ant-custom-display') );
+                        $this.removeAttr('ant-custom-display');
                     });
 
-                    $('[rdr-grid-for]').each( function() {
+                    $('[ant-grid-for]').each( function() {
                         var $this = $(this);
-                        $this.attr('rdr-view-reactions-for', $this.attr('rdr-grid-for') );
-                        $this.removeAttr('rdr-grid-for');
+                        $this.attr('ant-view-reactions-for', $this.attr('ant-grid-for') );
+                        $this.removeAttr('ant-grid-for');
                     });
                 }
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             initSeparateCtas: function(){
-                // RDR.initSeparateCtas
+                // ANT.initSeparateCtas
                 
-                if (RDR.group.separate_cta && RDR.util.activeAB() ) {
+                if (ANT.group.separate_cta && ANT.util.activeAB() ) {
                     var separateCtaCount = 0;
-                    $(RDR.group.active_sections).find(RDR.group.separate_cta).each( function(idx, node) {
+                    $(ANT.group.active_sections).find(ANT.group.separate_cta).each( function(idx, node) {
                         var $node = $(node),
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(RDR.group.no_readr).length ) {return;}
-                        if ( $node.hasAttr('rdr-item') ) {
-                            var rdrItem = $node.attr('rdr-item');
+                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
+                        if ( $node.hasAttr('ant-item') ) {
+                            var antItem = $node.attr('ant-item');
                         } else {
-                            var rdrItem = 'rdr-custom-cta-'+separateCtaCount;
-                            $node.attr('rdr-item', rdrItem);
+                            var antItem = 'ant-custom-cta-'+separateCtaCount;
+                            $node.attr('ant-item', antItem);
                         }
 
                         // make all media a crosspage container?  
                         // nah.
                         // if ( tagName == 'img' || tagName == 'iframe' || tagName == 'embed' || tagName == 'video' || tagName == 'audio' ) {
-                        //     $node.attr('rdr-crossPageContent', 'true');
+                        //     $node.attr('ant-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="rdr-custom-cta-container" rdr-tag-type="'+tagName+'"><div class="rdr-custom-cta" rdr-cta-for="'+rdrItem+'" rdr-mode="read write"><span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span> <span rdr-counter-for="'+rdrItem+'"></span> <span rdr-reactions-label-for="'+rdrItem+'">'+RDR.t('your_reaction')+'</span></div> </div>');
+                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                         separateCtaCount++;
                     });
                 }
 
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             initHTMLAttributes: function() {
-                // grab rdr-items that have a set of rdr-reactions and add to window.readrboard_extend_per_container
-                if (RDR.util.activeAB()) {
-                    $('[rdr-reactions][rdr-item]').each( function () {
+                // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
+                if (ANT.util.activeAB()) {
+                    $('[ant-reactions][ant-item]').each( function () {
                         var $this = $(this),
-                            itemName = $this.attr('rdr-item'),
-                            reactions = $this.attr('rdr-reactions');
+                            itemName = $this.attr('ant-item'),
+                            reactions = $this.attr('ant-reactions');
 
-                        if ( reactions && typeof window.readrboard_extend_per_container[itemName] == 'undefined' ) {
+                        if ( reactions && typeof window.antenna_extend_per_container[itemName] == 'undefined' ) {
                             var itemDefinition = {};
                             itemDefinition.default_reactions = [];
 
@@ -4515,55 +4496,55 @@ function readrBoard($R){
                                 itemDefinition.default_reactions.push( $.trim(tag) );
                             });
 
-                            window.readrboard_extend_per_container[itemName] = itemDefinition;
+                            window.antenna_extend_per_container[itemName] = itemDefinition;
                         }
                     });
                 }
 
-                $RDR.dequeue('initAjax');
+                $ANT.dequeue('initAjax');
             },
             reInit: function() {
-                // RDR.actions.reInit:
-                RDR.actions.hashCustomDisplayHashes();
+                // ANT.actions.reInit:
+                ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
                 // if (!isTouchBrowser) {
-                    //RDR.actions.UIClearState:
+                    //ANT.actions.UIClearState:
                     // clear any errant tooltips
-                    $('div.rdr_twtooltip').remove();
+                    $('div.ant_twtooltip').remove();
 
-                    RDR.rindow.closeAll();
-                    RDR.actionbar.closeAll();
-                    RDR.actions.containers.media.disengageAll();
-                    // RDR.actions.indicators.utils.borderHilites.disengageAll();
-                    $('div.rdr.rdr_tag_details.rdr_sbRollover').remove();
+                    ANT.aWindow.closeAll();
+                    ANT.actionbar.closeAll();
+                    ANT.actions.containers.media.disengageAll();
+                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
+                    $('div.ant.ant_tag_details.ant_sbRollover').remove();
                     
                     if (!isTouchBrowser) { 
-                        $('div.rdr_indicator_for_media').hide();
+                        $('div.ant_indicator_for_media').hide();
                     }
 
                     $().selog('hilite', true, 'off');
 
                     //clear a share alert if it exists - do this better later.
-                    var shareBoxExists = $('.rdr_fromShareLink').length;
+                    var shareBoxExists = $('.ant_fromShareLink').length;
                     if( shareBoxExists ){
-                        RDR.session.alertBar.close( 'fromShareLink' );
+                        ANT.session.alertBar.close( 'fromShareLink' );
                     }
                 // } else {
 
                 // }
             },
             catchRangyErrors: function(errorMsg){
-                //RDR.actions.catchRangyErrors:
+                //ANT.actions.catchRangyErrors:
 
                 //safe throw the errror.
-                RDR.safeThrow(errorMsg);
+                ANT.safeThrow(errorMsg);
             },
             hashNodes: function( $node, nomedia ) {
-                //RDR.actions.hashNodes:
+                //ANT.actions.hashNodes:
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" || (!RDR.util.activeAB()) ) { return; }
+                if ( typeof $node==="undefined" || (!ANT.util.activeAB()) ) { return; }
 
                 //todo: consider how to do this whitelist, initialset stuff right
                 var $allNodes = $(),
@@ -4571,8 +4552,8 @@ function readrBoard($R){
                     {
                         kind: 'media',
                         $group: null,
-                        whiteList: RDR.group.media_selector,
-                        filterParam: RDR.group.active_sections + ' embed, ' + RDR.group.active_sections + ' video, ' + RDR.group.active_sections + ' object, ' + RDR.group.active_sections + ' iframe',
+                        whiteList: ANT.group.media_selector,
+                        filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var body = this.src;
                             $(this).data({
@@ -4583,7 +4564,7 @@ function readrBoard($R){
                     {
                         kind: 'img',
                         $group: null,
-                        whiteList: RDR.group.active_sections + ' img',
+                        whiteList: ANT.group.active_sections + ' img',
                         filterParam: 'img',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
@@ -4596,7 +4577,7 @@ function readrBoard($R){
                     {
                         kind: 'text',
                         $group: null,
-                        whiteList: RDR.group.active_sections_with_anno_whitelist,
+                        whiteList: ANT.group.active_sections_with_anno_whitelist,
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
@@ -4611,7 +4592,7 @@ function readrBoard($R){
                         },
                         setupFunc: function(){
                             var $this = $(this),
-                                body = RDR.util.getCleanText($this);
+                                body = ANT.util.getCleanText($this);
                             $this.data('body',body);
                         }
 
@@ -4621,16 +4602,16 @@ function readrBoard($R){
                         $group: null,
                         whiteList: '',
                         filterParam: function(idx, node){
-                            // look for a rdr-src
+                            // look for a ant-src
                             var $node = $(this);
 
                             // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
-                            return !!$node.hasAttr('rdr-src');
+                            return !!$node.hasAttr('ant-src');
                         },
                         setupFunc: function(){
-                            // set the rdr-src to the 'body'
+                            // set the ant-src to the 'body'
                             var $node = $(this),
-                                body = $node.attr('rdr-src');
+                                body = $node.attr('ant-src');
 
                             $node.data({
                                 'body':body
@@ -4654,8 +4635,8 @@ function readrBoard($R){
                     
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
-                    if(!!RDR.group.br_replace_scope_selector && (group.kind == "text")){
-                        $group = $group.add( $node.find( '.rdr_br_replaced' ) );
+                    if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
+                        $group = $group.add( $node.find( '.ant_br_replaced' ) );
                     }
 
                     //take out prev categorized nodes (text is last, so we default to that)
@@ -4663,11 +4644,11 @@ function readrBoard($R){
                     
                     // hack to fix text nodes taking over our media
                     if(group.kind == "text"){
-                        $group = $group.not(RDR.group.media_selector + ", " +RDR.group.img_selector);
+                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
-                    $group = $group.not('[rdr-hashed], .no-rdr, #rdr_sandbox');
+                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
                     group.$nodes = $group;
 
                     //setup the group as needed
@@ -4679,7 +4660,7 @@ function readrBoard($R){
                     $allNodes = $allNodes.add($group);
                     
                     //flag exceptions for inline_indicators
-                    var $inlineMediaSet = $allNodes.filter(RDR.group.inline_selector);
+                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
 
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
@@ -4708,15 +4689,15 @@ function readrBoard($R){
                         oldHash,
                         hashText;
 
-                    if ( $this.closest('.no-rdr').length ) {
+                    if ( $this.closest('.no-ant').length ) {
                         return;
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
 
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
-                        hashText = "rdr-"+kind+"-"+hashBody; //examples: "rdr-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "rdr-p-ohshit this is some crazy text up in this paragraph"
-                        oldHash = RDR.util.md5.hex_md5( hashText );
+                        hashText = "ant-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
+                        oldHash = ANT.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
                         // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
@@ -4755,21 +4736,21 @@ function readrBoard($R){
 
                         $.each(queryStringDomains, function(idx, domain) {
                             if (hashBody.indexOf(domain) != -1) {
-                                RDR.group.media_url_ignore_query = false;   
+                                ANT.group.media_url_ignore_query = false;   
                             }
 
                         });
-                        if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                        if ( ANT.group.media_url_ignore_query && hashBody.indexOf('?') ){
                             hashBody = hashBody.split('?')[0];
                         }
 
-                        // if this got 'rdr-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
-                        if ( $this.hasAttr('rdr-oldhash') ) {
+                        // if this got 'ant-oldhash' class down in the /api/summary/containers/ call, then use that hash, don't regenerate it
+                        if ( $this.hasAttr('ant-oldhash') ) {
                             hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
-                            hashText = "rdr-"+kind+"-"+hashBody;
-                            hash = RDR.util.md5.hex_md5( hashText );
+                            hashText = "ant-"+kind+"-"+hashBody;
+                            hash = ANT.util.md5.hex_md5( hashText );
 
                         }
 
@@ -4778,15 +4759,15 @@ function readrBoard($R){
                           return;
                         }
 
-                        hashText = "rdr-"+kind+"-"+body;
-                        hash = RDR.util.md5.hex_md5( hashText );
+                        hashText = "ant-"+kind+"-"+body;
+                        hash = ANT.util.md5.hex_md5( hashText );
 
-                        if ( !$this.hasAttr('rdr-hash') )  {
+                        if ( !$this.hasAttr('ant-hash') )  {
 
                             var iteration = 1;
-                            while ( typeof RDR.summaries[hash] != 'undefined' ) {
-                                hashText = "rdr-"+kind+"-"+body+"-"+iteration;
-                                hash = RDR.util.md5.hex_md5( hashText );
+                            while ( typeof ANT.summaries[hash] != 'undefined' ) {
+                                hashText = "ant-"+kind+"-"+body+"-"+iteration;
+                                hash = ANT.util.md5.hex_md5( hashText );
                                 iteration++;
                             }
                         }
@@ -4796,9 +4777,9 @@ function readrBoard($R){
                     // prevent the identical nested elements being double-hashed bug
                     // like <blockquote><p>Some quote here</p></blockquote>
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
-                    // if ( $this.parents('[rdr-hash="'+hash+'"]').length ) {
-                    //     var $parentNodes = $this.parents('[rdr-hash="'+hash+'"]');
-                    //     RDR.actions.stripRdrNode($parentNodes);
+                    // if ( $this.parents('[ant-hash="'+hash+'"]').length ) {
+                    //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
+                    //     ANT.actions.stripRdrNode($parentNodes);
                     // }
                     
                     // we will use this in the following conditionals
@@ -4809,20 +4790,20 @@ function readrBoard($R){
                     // both HTML and text.
                     // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
                     if ( thisTagName == 'img' ) { 
-                        if ( $this.parents('[rdr-hash]').length && !$this.siblings(RDR.group.anno_whitelist).length ) {
-                            var $parentNodes = $this.parents('[rdr-hash]');
-                            RDR.actions.stripRdrNode($parentNodes);
+                        if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
+                            var $parentNodes = $this.parents('[ant-hash]');
+                            ANT.actions.stripRdrNode($parentNodes);
                         }
                     }
 
                     // prevent two indicators for content when there are nested block elements
                     // only hash and insert an indicator for the deepest node
                     // to begin, check the node we are hasing (hashNode) for any nested elements from the Allowed Tags (anno_whitelist) setting
-                    if ( $this.find(RDR.group.anno_whitelist).length ) {
+                    if ( $this.find(ANT.group.anno_whitelist).length ) {
                         var dontHash = false;
 
                         // loop through the Allowed Tags that are nested inside the hashNode
-                        $this.find(RDR.group.anno_whitelist).each(function(idx, childNode) {
+                        $this.find(ANT.group.anno_whitelist).each(function(idx, childNode) {
 
 
                             var tagName = childNode.nodeName.toLowerCase(),
@@ -4833,7 +4814,7 @@ function readrBoard($R){
                             if ( $.inArray(tagName, embedTagsArray) != -1 ) {
 
                                 var $childNode = $(childNode);
-                                if ($childNode.siblings(RDR.group.anno_whitelist).length ) {
+                                if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
                                     
                                 }
 
@@ -4843,14 +4824,14 @@ function readrBoard($R){
                         });
 
                         if (dontHash===true) { 
-                            // RDR.actions.stripRdrNode($this);
+                            // ANT.actions.stripRdrNode($this);
                             return;
                         }
                     }
 
-                    // add an object with the text and hash to the RDR.containers dictionary
+                    // add an object with the text and hash to the ANT.containers dictionary
                     //todo: consider putting this info directly onto the DOM node data object
-                    RDR.actions.containers.save({
+                    ANT.actions.containers.save({
                         body:body,
                         kind:kind,
                         hash:hash,
@@ -4858,53 +4839,53 @@ function readrBoard($R){
                         $this: $this
                     });
 
-                    // add a CSS class to the node that will look something like "rdr-207c611a9f947ef779501580c7349d62"
+                    // add a CSS class to the node that will look something like "ant-207c611a9f947ef779501580c7349d62"
                     // this makes it easy to find on the page later
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.attr( 'rdr-hash', hash ).attr('rdr-node', 'true');
+                    $this.attr( 'ant-hash', hash ).attr('ant-node', 'true');
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
                     if ( HTMLkind != 'body' && !isTouchBrowser ) {
                         // // todo: touchHover
                         
                         $this.on('mouseenter', function() {
-                            RDR.actions.indicators.init(hash);
-                            $(this).addClass('rdr_live_hover');
+                            ANT.actions.indicators.init(hash);
+                            $(this).addClass('ant_live_hover');
                         })//chain
                         .on('mouseleave', function() {
-                            // var $hash_helper = $('.rdr_helper_rindow.rdr_for_'+hash);
+                            // var $hash_helper = $('.ant_helper_aWindow.ant_for_'+hash);
                             // if ( $hash_helper.length ) {
                             //     $hash_helper.remove();
                             // }
-                            $(this).removeClass('rdr_live_hover');
+                            $(this).removeClass('ant_live_hover');
                         });
 
                     }
 
-                    var summary = RDR.actions.summaries.init(hash);
-                    RDR.actions.summaries.save(summary);
+                    var summary = ANT.actions.summaries.init(hash);
+                    ANT.actions.summaries.save(summary);
 
                     // indicatorInitQueue.push(hash);
 
-                    var page_id = RDR.util.getPageProperty('id', hash );
+                    var page_id = ANT.util.getPageProperty('id', hash );
                     if ( !hashList[ page_id ] ) hashList[ page_id ] = [];
 
                     hashList[ page_id ].push(hash);
-                    $this.data('hash', hash); //todo: consolidate this with the RDR.containers object.  We only need one or the other.
+                    $this.data('hash', hash); //todo: consolidate this with the ANT.containers object.  We only need one or the other.
 
                 });
     
                 // perfimprove
                 // $.each(indicatorInitQueue, function(idx, hash){
-                //     RDR.actions.indicators.init(hash);
+                //     ANT.actions.indicators.init(hash);
                 // });
 
                 return hashList;
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
-                // RDR.actions.sendHashes:
+                // ANT.actions.sendHashes:
 
                 var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
@@ -4912,17 +4893,17 @@ function readrBoard($R){
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
                         //im guessing this will never happen - test for a while and elliminate.
-                        RDR.safeThrow("No more messy hashes allowed!!");
+                        ANT.safeThrow("No more messy hashes allowed!!");
                         return;
                     }
 
-                    var $pageContainer = $('[rdr-page-container="'+pageId+'"]');
+                    var $pageContainer = $('[ant-page-container="'+pageId+'"]');
 
-                    $.each( $pageContainer.find('[rdr-item]'), function( idx, node ) {
+                    $.each( $pageContainer.find('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
 
-                        if ( typeof $node.data('rdr-hashed') == "undefined" ) {
-                            var thisHash = $node.attr('rdr-hash');
+                        if ( typeof $node.data('ant-hashed') == "undefined" ) {
+                            var thisHash = $node.attr('ant-hash');
 
                             hashList = $.grep(hashList, function(value) {
                               return value != thisHash;
@@ -4934,9 +4915,9 @@ function readrBoard($R){
 
                             //init the cross page containers so even the ones that come back with 0 reactions will
                             //have write mode enabled
-                            RDR.actions.indicators.init(thisHash);
-                            $node.data('rdr-hashed', true);
-                            // $node.data('rdr-hashed-one', true); // on load.  for debug only.
+                            ANT.actions.indicators.init(thisHash);
+                            $node.data('ant-hashed', true);
+                            // $node.data('ant-hashed-one', true); // on load.  for debug only.
                         }
                     });
 
@@ -4944,15 +4925,15 @@ function readrBoard($R){
 
                         //might not need to protect against this anymore.
                         if (typeof hash != "string" ){
-                            RDR.safeThrow("why is your hash not a string!?");
+                            ANT.safeThrow("why is your hash not a string!?");
                             return;
                         }
 
-                        var $hashable_node = $pageContainer.find('[rdr-hash="' + hash +'"]');
+                        var $hashable_node = $pageContainer.find('[ant-hash="' + hash +'"]');
 
                         if ($hashable_node.length == 1 ) {
-                            $hashable_node.attr('rdr-hashed', true);
-                            // $hashable_node.attr('rdr-hashed-two', true); // on select.  for debug only.
+                            $hashable_node.attr('ant-hashed', true);
+                            // $hashable_node.attr('ant-hashed-two', true); // on select.  for debug only.
                         } else {
                             // remove the hash, it is not in this 'page'
                             var removeIndex = hashList.indexOf(hash);
@@ -4965,14 +4946,14 @@ function readrBoard($R){
                     var pageIdToInt = parseInt( pageId, 10);
                     
                     if(isNaN(pageIdToInt)){
-                        RDR.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
+                        ANT.safeThrow("why is the pageID NAN ??: "+ pageId + "-->" + pageIdToInt);
                     }
 
                     // get crossPage containers (which may/may not also be custom display)
-                    // they need to be initialized by this point (rdr-hashed)
+                    // they need to be initialized by this point (ant-hashed)
                     var crossPageHashes = [];
-                    $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
-                        var thisHash = $(node).attr('rdr-hash');
+                    $.each( $('[ant-crossPageContent="true"]'), function( idx, node ) {
+                        var thisHash = $(node).attr('ant-hash');
                         crossPageHashes.push( thisHash );
 
                         hashList = $.grep(hashList, function(value) {
@@ -4981,14 +4962,14 @@ function readrBoard($R){
 
                         //init the cross page containers so even the ones that come back with 0 reactions will
                         //have write mode enabled
-                        RDR.actions.indicators.init(thisHash);
+                        ANT.actions.indicators.init(thisHash);
                     });
 
                     // debug:
                     // var crossPageHashes = ["fcd4547dcaf3699886587ab47cb2ab5e"];
 
-                    RDR.actions.sendHashesForSinglePage({
-                       short_name : RDR.group.short_name,
+                    ANT.actions.sendHashesForSinglePage({
+                       short_name : ANT.group.short_name,
                        pageID: pageIdToInt,
                        hashes: hashList,
                        crossPageHashes:crossPageHashes
@@ -4997,13 +4978,13 @@ function readrBoard($R){
                 });
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
-                // RDR.actions.sendHashesForSinglePage:
+                // ANT.actions.sendHashesForSinglePage:
 
                     var pageId = sendData.pageID;
 
                     // send the data!
                     $.ajax({
-                        url: RDR_baseUrl+"/api/summary/containers/",
+                        url: ANT_baseUrl+"/api/summary/containers/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -5014,23 +4995,23 @@ function readrBoard($R){
                             if ( typeof response != "undefined" && typeof response.data != "undefined" ) {
                                 // making known items a global, so we can run a init them later.  doing so now will prevent data from being inserted.
                                 if (typeof response.data.known != "undefined" ) {
-                                    RDR.known_hashes = response.data.known;
+                                    ANT.known_hashes = response.data.known;
                                 }
 
                                 // add the cross-page hashes to the known_hashes obj so that its reaction info gets inserted!
                                 if ( typeof response.data.crossPageKnown != "undefined" ) {
                                     if (typeof response.data.known != "undefined" ) {
-                                        RDR.known_hashes = $.extend( RDR.known_hashes, response.data.crossPageKnown );
+                                        ANT.known_hashes = $.extend( ANT.known_hashes, response.data.crossPageKnown );
                                     }
-                                    RDR.crosspage_hashes = response.data.crossPageKnown;
+                                    ANT.crosspage_hashes = response.data.crossPageKnown;
                                 }
 
                                 // if a crosspage container has no reactions, it isn't returned in the "crossPageKnown" object
                                 // but we still want to do an init of the node... so we make dummy objects
                                 // this is so we can init the nodes down below when we call
-                                // RDR.actions.containers.initCustomDisplayHashes(response.data.crossPageKnown);
-                                $.each( $('[rdr-crossPageContent="true"]'), function( idx, node ) {
-                                    var thisHash = $(node).attr('rdr-hash');
+                                // ANT.actions.containers.initCustomDisplayHashes(response.data.crossPageKnown);
+                                $.each( $('[ant-crossPageContent="true"]'), function( idx, node ) {
+                                    var thisHash = $(node).attr('ant-hash');
                                     var dummySummaryObject = {
                                             "hash":thisHash,
                                             "counts": {
@@ -5043,10 +5024,10 @@ function readrBoard($R){
                                                 "tags": {}
                                             }
                                         }
-                                    if (typeof RDR.crosspage_hashes != "undefined" ) {
-                                        RDR.crosspage_hashes = {};
+                                    if (typeof ANT.crosspage_hashes != "undefined" ) {
+                                        ANT.crosspage_hashes = {};
                                     }
-                                    RDR.crosspage_hashes[thisHash] = dummySummaryObject;
+                                    ANT.crosspage_hashes[thisHash] = dummySummaryObject;
                                 });
 
                                 var summaries = {};
@@ -5054,18 +5035,18 @@ function readrBoard($R){
                                 
                                 $.each(response.data.unknown, function(idx, hash){
                                     if (typeof hash != "string") {
-                                        RDR.safeThrow('why would this not be a string?');
+                                        ANT.safeThrow('why would this not be a string?');
                                         return;
                                     }
 
                                     var unknown_summary;
                                     // get the kind
-                                    var $node = $('[rdr-hash="'+hash+'"]');
+                                    var $node = $('[ant-hash="'+hash+'"]');
                                     var kind = $node.data('kind');
                                     if(!kind){
-                                        RDR.safeThrow('node should always have data: kind');
+                                        ANT.safeThrow('node should always have data: kind');
                                     }
-                                    unknown_summary = RDR.util.makeEmptySummary( hash, kind );
+                                    unknown_summary = ANT.util.makeEmptySummary( hash, kind );
 
                                     summaries[ pageId ][ hash ] = unknown_summary;
                                 });
@@ -5073,7 +5054,7 @@ function readrBoard($R){
                                 // [ porter ]: since we're not storing containers anymore, just setup all hashes regardless of "known" status
                                 if ( !$.isEmptyObject(summaries) ){
                                     //setup the summaries
-                                    RDR.actions.containers.setup(summaries);
+                                    ANT.actions.containers.setup(summaries);
 
                                     //the callback verifies the new container and draws the actionbar
                                     //wont get run if this single hash is unknown.
@@ -5090,13 +5071,13 @@ function readrBoard($R){
                                 });
 
                                 // init the custom display / separate_cta elements
-                                $.each( $('[rdr-item]') , function(idx, node) {
+                                $.each( $('[ant-item]') , function(idx, node) {
                                     if ( initSomeHashes.indexOf($(node).data('hash')) == -1 ) {
                                         initSomeHashes.push( $(node).data('hash') );
                                     }
                                 });
 
-                                RDR.actions.containers.initCustomDisplayHashes( initSomeHashes );
+                                ANT.actions.containers.initCustomDisplayHashes( initSomeHashes );
                             }
                         }
                     });
@@ -5104,81 +5085,81 @@ function readrBoard($R){
                 
             },
             hashCustomDisplayHashes: function() {
-                // RDR.actions.hashCustomDisplayHashes:
+                // ANT.actions.hashCustomDisplayHashes:
 
                 var pageCustomDisplays = {},
-                    pageId = RDR.util.getPageProperty();
+                    pageId = ANT.util.getPageProperty();
                 
                 pageCustomDisplays[ pageId ] = [];
                 
-                if ( $('[rdr-item]').length ) {
+                if ( $('[ant-item]').length ) {
 
                     // should we find custom-display nodes and add to the hashList here?
-                    $.each( $('[rdr-item]'), function( idx, node ) {
+                    $.each( $('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
-                        RDR.actions.hashNodes( $node );
-                        var thisHash = $node.attr('rdr-hash');
+                        ANT.actions.hashNodes( $node );
+                        var thisHash = $node.attr('ant-hash');
 
                         pageCustomDisplays[ pageId ].push( thisHash );
 
-                        RDR.actions.indicators.init( thisHash );
+                        ANT.actions.indicators.init( thisHash );
                     });
 
                 }
 
-                RDR.actions.sendHashes( pageCustomDisplays );
+                ANT.actions.sendHashes( pageCustomDisplays );
             },
             comments: {
                 makeCommentBox: function(settings, options){
-                    // RDR.actions.comments.makeCommentBox
+                    // ANT.actions.comments.makeCommentBox
                     var content_node = settings.content_node,
                         tag = settings.tag,
                         summary = settings.summary,
                         hash = settings.hash,
                         kind = settings.kind,
-                        $rindow = settings.$rindow,
+                        $aWindow = settings.$aWindow,
                         selState = settings.selState;
 
                     options = options || {};
 
-                    var helpText = options.helpText || RDR.t('add_comment');
+                    var helpText = options.helpText || ANT.t('add_comment');
                     
                     //not used any more
-                    var cta = options.cta || RDR.t('comment');
+                    var cta = options.cta || ANT.t('comment');
 
-                    var $commentBox = $('<div class="rdr_commentBox rdr_clearfix"></div>');
+                    var $commentBox = $('<div class="ant_commentBox ant_clearfix"></div>');
 
                     //todo: combine this with the other make comments code
-                    var $commentDiv =  $('<div class="rdr_comment">'),
-                        $commentTextarea = $('<textarea class="rdr_default_msg">' +helpText+ '</textarea>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">'+ RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
+                    var $commentDiv =  $('<div class="ant_comment">'),
+                        $commentTextarea = $('<textarea class="ant_default_msg">' +helpText+ '</textarea>'),
+                        $ant_charCount =  $('<div class="ant_charCount">'+ ANT.t('characters_left').replace('NNN', ANT.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="ant_commentSubmit">'+ANT.t('comment')+'</button>');
 
-                    $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                    $commentDiv.append( $commentTextarea, $ant_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        // RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
-                        $(this).removeClass('rdr_default_msg');
+                        // ANT.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        $(this).removeClass('ant_default_msg');
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
                     }).blur(function(){
                         var val = $(this).val();
                         if( val === "" || val === helpText ){
-                            $(this).addClass('rdr_default_msg');
+                            $(this).addClass('ant_default_msg');
                             $(this).val( helpText );
                         }
                     }).keyup(function(event) {
                         var commentText = $commentTextarea.val();
                         if (event.keyCode == '27') { //esc
                             $(this).blur();
-                            // return false so the rindow doesn't close.
+                            // return false so the aWindow doesn't close.
                             return false;
-                        } else if ( commentText.length > RDR.group.comment_length ) {
-                            commentText = commentText.substr(0, RDR.group.comment_length);
+                        } else if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
@@ -5188,7 +5169,7 @@ function readrBoard($R){
                             helpText: helpText
                         });
 
-                        RDR.actions.comments.submitComment(settings);
+                        ANT.actions.comments.submitComment(settings);
                     });
 
                     $commentBox.append( $commentDiv );
@@ -5196,7 +5177,7 @@ function readrBoard($R){
                 
                 },
                 submitComment: function(settings){
-                    // RDR.actions.comments.submitComment
+                    // ANT.actions.comments.submitComment
                     var $commentTextarea = settings.$commentTextarea,
                         helpText = settings.helpText,
                         content_node = settings.content_node,
@@ -5204,16 +5185,16 @@ function readrBoard($R){
                         kind= settings.kind,
                         hash = settings.hash,
                         tag  = settings.tag ,
-                        $rindow = settings.$rindow,
+                        $aWindow = settings.$aWindow,
                         selState = settings.selState;
 
                     var commentText = $commentTextarea.val();
 
                     //keyup doesn't guarentee this, so check again (they could paste in for example);
-                    if ( commentText.length > RDR.group.comment_length ) {
-                        commentText = commentText.substr(0, RDR.group.comment_length);
+                    if ( commentText.length > ANT.group.comment_length ) {
+                        commentText = commentText.substr(0, ANT.group.comment_length);
                         $commentTextarea.val( commentText );
-                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     }
 
                     if ( commentText != helpText ) {
@@ -5222,16 +5203,16 @@ function readrBoard($R){
                         //could try to really fix, but hey.  we're rewriting soon, so using this hack for now.
                         if ($.isEmptyObject(content_node) && summary.kind=="img") {
                             content_node = {
-                                "body":$('img.rdr-'+summary.hash).get(0).src,
+                                "body":$('img.ant-'+summary.hash).get(0).src,
                                 "kind":summary.kind,
                                 "hash":summary.hash
                             };
 
                         }
-                        var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
+                        var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, aWindow:$aWindow, selState:selState};
 
                         //leave parent_id undefined for now - backend will find it.
-                        RDR.actions.interactions.ajax( args, 'comment', 'create');
+                        ANT.actions.interactions.ajax( args, 'comment', 'create');
 
                     } else {
                         $commentTextarea.focus();
@@ -5241,22 +5222,22 @@ function readrBoard($R){
             },
             containers: {
                 updateCrossPageHash: function(hash){
-                    //RDR.actions.containers.updateCrossPageHash:
-                    var isCrossPageContainer = $('[rdr-hash="'+hash+'"]').length > 0;
+                    //ANT.actions.containers.updateCrossPageHash:
+                    var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         return;
                     }
 
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
-                    RDR.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash);
 
-                    var $container = $('[rdr-hash="'+hash+'"]'),
-                        customDisplayName = $container.attr('rdr-item'),
-                        $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]');
+                    var $container = $('[ant-hash="'+hash+'"]'),
+                        customDisplayName = $container.attr('ant-item'),
+                        $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]');
 
                     if ($grid.length) {
-                        RDR.actions.content_nodes.init(hash, function() {
-                            RDR.actions.indicators.utils.makeTagsListForInline( $grid, false );
+                        ANT.actions.content_nodes.init(hash, function() {
+                            ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
                             $grid.jScrollPane({ showArrows:true });
                         });
                     }
@@ -5268,26 +5249,26 @@ function readrBoard($R){
                     // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
 
                     $.each( hashesToInit, function(idx, hash) {
-                        var $node = $('[rdr-hash="'+hash+'"]');
+                        var $node = $('[ant-hash="'+hash+'"]');
 
                         // var hash = hashObject.hash;
-                        if (typeof hash != "undefined" && typeof $node.attr('rdr_summary_loaded') == "undefined" ) {
-                            RDR.actions.indicators.init(hash);
-                            RDR.summaries[hash].crossPage=true;
+                        if (typeof hash != "undefined" && typeof $node.attr('ant_summary_loaded') == "undefined" ) {
+                            ANT.actions.indicators.init(hash);
+                            ANT.summaries[hash].crossPage=true;
 
                             // init a reaction-view for an open custom display thing.
                             // i know, this should be abstracted.  it's too ProPublica specific.  
                             // needs abstraction, and conditionals to determine what to do based on the display properties.
-                            var $container = $('[rdr-hash="'+hash+'"]'),
-                                customDisplayName = $container.attr('rdr-item'),
+                            var $container = $('[ant-hash="'+hash+'"]'),
+                                customDisplayName = $container.attr('ant-item'),
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
-                                // $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $reactionView = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
-                                reactionViewStyle = $reactionView.attr('rdr-view-style') || 'grid',
+                                // $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
+                                $reactionView = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                                reactionViewStyle = $reactionView.attr('ant-view-style') || 'grid',
                                 reactionViewWidth = $reactionView.width(),
                                 reactionViewHeight = $reactionView.height();
 
-                            $reactionView.data('hash', hash).data('container', hash).addClass('no-rdr');
+                            $reactionView.data('hash', hash).data('container', hash).addClass('no-ant');
 
                             if ( reactionViewStyle == "grid" ) {
 
@@ -5295,7 +5276,7 @@ function readrBoard($R){
                                 // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
                                 if ( reactionViewHeight < 200 ) { reactionViewHeight = 200; $reactionView.height(reactionViewHeight); }
 
-                                RDR.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
+                                ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
 
                                 if ($reactionView.length) {
                                     // since currently, our reactionView needs to have a width that's a factor of 160... force that:
@@ -5304,92 +5285,92 @@ function readrBoard($R){
                                     reactionViewWidth = statedWidthDividedBy160 * 160;
                                     if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
 
-                                    // RDR.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
-                                    if ( !$reactionView.closest('.rdr_reactionView_wrapper').length ) {
-                                        $reactionView.wrap('<div class="rdr_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
+                                    // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
+                                    if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
+                                        $reactionView.wrap('<div class="ant_reactionView_wrapper" style="width:'+reactionViewWidth+'px;height:'+reactionViewHeight+'px;"></div>')
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="rdr rdr_window rdr_inline w'+reactionViewWidth+' rdr_no_clear" style="position:relative !important;"><div class="rdr rdr_header"><div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png"></div><div class="rdr_loader"></div><div class="rdr_about"><a href="http://www.readrboard.com/" target="_blank">&nbsp;</a></div><div class="rdr_indicator_stats"><img class="no-rdr rdr_pin" src="'+RDR_staticUrl+'widget/images/blank.png"><span class="rdr_count"></span></div><h1>'+RDR.t('reactions')+'</h1></div><div class="rdr rdr_body_wrap rdr_grid rdr_clearfix"></div></div>');
-                                    RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><img class="no-ant ant_pin" src="'+ANT_staticUrl+'widget/images/blank.png"><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
-                                    RDR.actions.content_nodes.init(hash);
+                                    ANT.actions.content_nodes.init(hash);
                                 }
                             } else if ( reactionViewStyle == "horizontal_bars" ) {
-                                $reactionView.html('<div class="rdr rdr_inline rdr_body_wrap rdr_horizontal_bars rdr_clearfix"></div>'); // gotta insert the rdr_body_wrap or there is no container to attach to in makeTagsListForInline 
-                                RDR.actions.content_nodes.init(hash, function() { RDR.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
+                                $reactionView.html('<div class="ant ant_inline ant_body_wrap ant_horizontal_bars ant_clearfix"></div>'); // gotta insert the ant_body_wrap or there is no container to attach to in makeTagsListForInline 
+                                ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
                             }
                         }
                     });
                 },
                 media: {
-                    //RDR.actions.containers.media:
+                    //ANT.actions.containers.media:
                     //actions for the special cases of media containers
                     onEngage: function(hash){
                         // deprecated?
                         return;
-                        //RDR.actions.containers.media.onEngage:
+                        //ANT.actions.containers.media.onEngage:
                         // action to be run when media container is engaged - typically with a click on the indicator
 
-                        // var $this = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                        //     $indicator = $('#rdr_indicator_'+hash),
-                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $this = $('img[ant-hash="'+hash+'"], iframe[ant-hash="'+hash+'"],embed[ant-hash="'+hash+'"],video[ant-hash="'+hash+'"],object[ant-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#ant_indicator_'+hash),
+                        //     $indicator_details = $('#ant_indicator_details_'+hash);
 
-                        // var hasBeenHashed = $this.hasAttr('rdr-hashed'),
-                        //     isBlacklisted = $this.closest('.rdr, .no-rdr').length;
+                        // var hasBeenHashed = $this.hasAttr('ant-hashed'),
+                        //     isBlacklisted = $this.closest('.ant, .no-ant').length;
 
-                        // var containerInfo = RDR.containers[hash];
+                        // var containerInfo = ANT.containers[hash];
                         // if ( containerInfo ) {
                         //     var $mediaItem = containerInfo.$this;
 
                         //     $mediaItem.data('hover',true).data('hash', hash);
-                        //     RDR.actions.indicators.utils.updateContainerTracker(hash);
-                        //     RDR.rindow.mediaRindowShow( $mediaItem );
-                        //     // $indicator_details.addClass('rdr_has_border');
+                        //     ANT.actions.indicators.utils.updateContainerTracker(hash);
+                        //     ANT.aWindow.mediaRindowShow( $mediaItem );
+                        //     // $indicator_details.addClass('ant_has_border');
                         // }
 
                         // deprecated - see above
-                        // RDR.events.track( 'view_node::'+hash, hash );
+                        // ANT.events.track( 'view_node::'+hash, hash );
                     },
                     onDisengage: function(hash){
                         // deprecated?
                         return;
 
-                        //RDR.actions.containers.media.onDisengage:
+                        //ANT.actions.containers.media.onDisengage:
                         //actions to be run when media container is disengaged - typically with a hover off of the container
-                        // var $mediaItem = $('img[rdr-hash="'+hash+'"], iframe[rdr-hash="'+hash+'"],embed[rdr-hash="'+hash+'"],video[rdr-hash="'+hash+'"],object[rdr-hash="'+hash+'"]').eq(0),
-                        //     $indicator = $('#rdr_indicator_'+hash),
-                        //     $indicator_details = $('#rdr_indicator_details_'+hash);
+                        // var $mediaItem = $('img[ant-hash="'+hash+'"], iframe[ant-hash="'+hash+'"],embed[ant-hash="'+hash+'"],video[ant-hash="'+hash+'"],object[ant-hash="'+hash+'"]').eq(0),
+                        //     $indicator = $('#ant_indicator_'+hash),
+                        //     $indicator_details = $('#ant_indicator_details_'+hash);
 
                         // var timeoutCloseEvt = $mediaItem.data('timeoutCloseEvt_'+hash);
                         // clearTimeout(timeoutCloseEvt);
 
                         // timeoutCloseEvt = setTimeout(function(){
-                        //     var containerInfo = RDR.containers[hash];
+                        //     var containerInfo = ANT.containers[hash];
                         //     if ( containerInfo ) {
                         //         $mediaItem.data('hover',false).data('hash', hash);
-                        //         RDR.rindow.mediaRindowHide( $mediaItem );
+                        //         ANT.aWindow.mediaRindowHide( $mediaItem );
                         //     }
                         // },100);
                         // $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
                     },
                     disengageAll: function(){
-                        //RDR.actions.containers.media.disengageAll:
+                        //ANT.actions.containers.media.disengageAll:
 
                         //only need to run this for containers that are active
                         var hashes = [];
-                        $('.rdr_live_hover').each(function(){
+                        $('.ant_live_hover').each(function(){
                             var hash = $(this).data('hash');
                             hashes.push(hash);
-                            RDR.actions.containers.media.onDisengage(hash);
+                            ANT.actions.containers.media.onDisengage(hash);
                         });
                     }
                 },
                 save: function(settings){
-                    //RDR.actions.containers.save:
+                    //ANT.actions.containers.save:
                     //makes a new one or returns existing one
                     //expects settings with body, kind, and hash.
-                    if( RDR.containers.hasOwnProperty(settings.hash) ) return RDR.containers[settings.hash];
+                    if( ANT.containers.hasOwnProperty(settings.hash) ) return ANT.containers[settings.hash];
                     //else
                     var pageId = ( typeof settings.id === 'undefined' || settings.id === null ) ? null : settings.id;
 
@@ -5401,16 +5382,16 @@ function readrBoard($R){
                         'HTMLkind': settings.HTMLkind || null,
                         '$this': settings.$this || null
                     };
-                    RDR.containers[settings.hash] = container;
+                    ANT.containers[settings.hash] = container;
                     return container;
                 },
                 setup: function(summariesPerPage){
-                    //RDR.actions.containers.setup:
+                    //ANT.actions.containers.setup:
                     //then define type-specific setup functions and run them
                     var _setupFuncs = {
                         img: function(hash, summary){
 
-                            var containerInfo = RDR.containers[hash];
+                            var containerInfo = ANT.containers[hash];
                             var $container = containerInfo.$this;
 
                             //generate the content_node for this image container.  (the content_node is just the image itself)
@@ -5424,13 +5405,13 @@ function readrBoard($R){
                                 'hash':hash
                             };
 
-                            RDR.content_nodes[hash] = content_node_data;
-                            RDR.rindow.update(hash);
+                            ANT.content_nodes[hash] = content_node_data;
+                            ANT.aWindow.update(hash);
 
                             //#touchBrowserMediaInit
                             if(isTouchBrowser){
-                                RDR.actions.content_nodes.init(hash, function(){});
-                                RDR.actions.indicators.init(hash);
+                                ANT.actions.content_nodes.init(hash, function(){});
+                                ANT.actions.indicators.init(hash);
                             }
                         },
                         media: function(hash, summary){
@@ -5439,8 +5420,8 @@ function readrBoard($R){
                         },
                         text: function(hash, summary){
                             if(isTouchBrowser){
-                                RDR.actions.content_nodes.init(hash, function(){});
-                                RDR.actions.indicators.init(hash);
+                                ANT.actions.content_nodes.init(hash, function(){});
+                                ANT.actions.indicators.init(hash);
                             }
                         },
                         custom: function(hash, summary){
@@ -5454,7 +5435,7 @@ function readrBoard($R){
                     $.each(summariesPerPage, function(page_id, summariesByHash){
                         
                         if ( !summariesByHash || $.isArray(summariesByHash) ){
-                            RDR.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
+                            ANT.safeThrow('For godsake no. This should not be an array of hashes and it should not be the bastard cruft of some frankenpage object.');
                             return;
                         }
 
@@ -5464,7 +5445,7 @@ function readrBoard($R){
                             //save the hash as a summary attr for convenience.
                             summary.hash = hash;
 
-                            var containerInfo = RDR.containers[hash];
+                            var containerInfo = ANT.containers[hash];
 
                             if ( containerInfo) {
                                 var $container = containerInfo.$this;
@@ -5487,19 +5468,19 @@ function readrBoard($R){
                                 });
 
                                 summary.top_interactions.coms = newComs;
-                                RDR.actions.summaries.save(summary);
+                                ANT.actions.summaries.save(summary);
 
                                 var pageContainerExists = false;
 
-                                $.each( RDR.pages[ page_id ].containers, function(idx, definedPageContainer) {
+                                $.each( ANT.pages[ page_id ].containers, function(idx, definedPageContainer) {
                                     if ( definedPageContainer.hash == hash ) { pageContainerExists = true; }
                                 });
                                 if ( pageContainerExists == false ) {
-                                    RDR.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
+                                    ANT.pages[ page_id ].containers.push({ "hash":hash, "id":summary.id });
                                 } else {
                                 }
 
-                                // RDR.actions.indicators.update( hash, true);
+                                // ANT.actions.indicators.update( hash, true);
 
 
                                 //now run the type specific function with the //run the setup func above
@@ -5518,28 +5499,28 @@ function readrBoard($R){
                     });
 
                     // create the container sort to see which containers have the most activity
-                    RDR.actions.summaries.sortPopularTextContainers();
-                    RDR.actions.summaries.displayPopularIndicators();
+                    ANT.actions.summaries.sortPopularTextContainers();
+                    ANT.actions.summaries.displayPopularIndicators();
 
-                    $.each( RDR.known_hashes, function(returnedHash, obj) {
+                    $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
                         // we're going to iterate through images to see if there is an old hash
-                        var $hash_is_an_img = $('img[rdr-node="returnedHash"]');
+                        var $hash_is_an_img = $('img[ant-node="returnedHash"]');
                         if ( $hash_is_an_img.length ) {
                             if ( $hash_is_an_img.data('oldHash') == returnedHash ) {
                                 // remove the class with the 'new' hash, add a class with the 'old' hash, and set the current hash to the 'old' one
-                                $hash_is_an_img.attr('rdr-hash', returnedHash).attr('rdr-oldhash','true').data('hash', returnedHash);
+                                $hash_is_an_img.attr('ant-hash', returnedHash).attr('ant-oldhash','true').data('hash', returnedHash);
                             }
                         }
 
                         // now init the indicators
-                        RDR.actions.indicators.init(returnedHash);
+                        ANT.actions.indicators.init(returnedHash);
                     });
 
-                    RDR.actions.indicators.show(hashesToShow);
+                    ANT.actions.indicators.show(hashesToShow);
                 },
                 send: function(hashList, onSuccessCallback){
-                    //RDR.actions.containers.send:
+                    //ANT.actions.containers.send:
                     // gets the containers from the hashList
                     // and cuts them up into delicious bite-sized chunks
                     // to ensure that the ajax sendData isn't over 2000 chars.
@@ -5554,7 +5535,7 @@ function readrBoard($R){
 
                     $.each( hashList, function(idx, hash){
                         //container is {body:,kind:,hash:}
-                        var container = RDR.containers[hash];
+                        var container = ANT.containers[hash];
 
                         //quick fix - copy the container object but without the $this obj
                         //for now we're just not sending the body
@@ -5601,7 +5582,7 @@ function readrBoard($R){
                                     kind: container.kind
                                 };
                                 containers[hash] = sendContainer;
-                                RDR.actions.containers._ajaxSend(sendContainer);
+                                ANT.actions.containers._ajaxSend(sendContainer);
                             });
                             */
 
@@ -5613,7 +5594,7 @@ function readrBoard($R){
                             if(proposedLen > charLimit){
                                 //send the existing set that is curLen, not proposedLen
 
-                                RDR.actions.containers._ajaxSend(containers);
+                                ANT.actions.containers._ajaxSend(containers);
                                 resetChunks();
                             }
                             containers[hash] = sendContainer;
@@ -5624,7 +5605,7 @@ function readrBoard($R){
                     });
                     //do one last send.  Often this will be the only send.
                     if( ! $.isEmptyObject(containers) ) {
-                        RDR.actions.containers._ajaxSend(containers, onSuccessCallback);
+                        ANT.actions.containers._ajaxSend(containers, onSuccessCallback);
                     }
 
                     //helper functions
@@ -5635,7 +5616,7 @@ function readrBoard($R){
                     }
                 },
                 _ajaxSend: function(containers, onSuccessCallback){
-                    //RDR.actions.containers._ajaxSend:
+                    //ANT.actions.containers._ajaxSend:
                     //this is a helper for this.send:
                     //don't call this directly! Always use this.send so you don't choke on your ajax.
 
@@ -5643,7 +5624,7 @@ function readrBoard($R){
 
                     // TODO do we even need this anymore?
                     $.ajax({
-                        url: RDR_baseUrl+"/api/containers/create/",
+                        url: ANT_baseUrl+"/api/containers/create/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -5663,12 +5644,12 @@ function readrBoard($R){
                                     return;
                                 }
                                 //else
-                                var node = RDR.containers[hash];
+                                var node = ANT.containers[hash];
                                 node.id = id;
-                                dummySummaries[hash] = RDR.actions.summaries.init(hash);
+                                dummySummaries[hash] = ANT.actions.summaries.init(hash);
                             });
 
-                            RDR.actions.containers.setup(dummySummaries);
+                            ANT.actions.containers.setup(dummySummaries);
 
                             //the callback verifies the new container and draws the actionbar
                             //this only gets called when a single hash gets passed through all the way from startSelect
@@ -5682,7 +5663,7 @@ function readrBoard($R){
             },
             content_nodes: {
                 make: function(settings){
-                    //RDR.actions.content_nodes.make:
+                    //ANT.actions.content_nodes.make:
 
                     //makes a new one or returns existing one
                     //expects settings with container, body, and location.
@@ -5697,7 +5678,7 @@ function readrBoard($R){
                         content_node_key = settings.container;
                     }
 
-                    if( RDR.content_nodes.hasOwnProperty(content_node_key) ) return RDR.content_nodes[content_node_key];
+                    if( ANT.content_nodes.hasOwnProperty(content_node_key) ) return ANT.content_nodes[content_node_key];
                     //else
                     var content_node = {
                         'container': settings.container,
@@ -5706,54 +5687,54 @@ function readrBoard($R){
                         'hash': hash
                     };
 
-                    RDR.content_nodes[content_node_key] = content_node;
+                    ANT.content_nodes[content_node_key] = content_node;
 
                     return content_node;
                 },
                 quickFixReset: function(hash){
-                    //RDR.actions.content_nodes.quickFixReset;
+                    //ANT.actions.content_nodes.quickFixReset;
 
                     //A quick hack to re-make the server call to update the comment count.  
                     //It's silly to make a server call to do this, but we need it to just work for now.
-                    var summary = RDR.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         container_id = (typeof summary != "undefined") ? summary.id:"";
                     
                     if(container_id){
                         //clear the assetLoader flag which normally prevents it from loading twice.
-                        delete RDR.assetLoaders.content_nodes[container_id];
-                        RDR.actions.content_nodes.init(hash);
+                        delete ANT.assetLoaders.content_nodes[container_id];
+                        ANT.actions.content_nodes.init(hash);
                     }
                     
                 },
                 init: function(hash, onSuccessCallback){
-                    //RDR.actions.content_nodes.init:
+                    //ANT.actions.content_nodes.init:
 
-                    // if ( $('.rdr-'+hash).hasClass('rdr_summary_loaded') ) {
+                    // if ( $('.ant-'+hash).hasClass('ant_summary_loaded') ) {
                     //     return;
                     // }
 
                     // po' man's throttling
-                    // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                    // if ( $.inArray( hash, RDR.inProgress) != -1 ) {
+                    // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                    // if ( $.inArray( hash, ANT.inProgress) != -1 ) {
                     //     return false;
                     // } else {
-                    //     RDR.inProgress.push( hash );
+                    //     ANT.inProgress.push( hash );
                     // }
 
                     //gets this summary's content_nodes from the server and populates the summary with them.
-                    var summary = RDR.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         container_id = (typeof summary != "undefined") ? summary.id:"";
 
                     if(!container_id){
                         //this still happens if container is an unknown container and has no reactions.
                         //It's save to just return for now though.
                         
-                        // RDR.safeThrow('container_id is not valid for hash: '+hash);
+                        // ANT.safeThrow('container_id is not valid for hash: '+hash);
                     
                         return;
                     }
 
-                    var pageId = RDR.util.getPageProperty('id', hash);
+                    var pageId = ANT.util.getPageProperty('id', hash);
 
                     //quick fix add pageId to summary becuase we need it in the summary widget content lookup
                     // todo: #summaryContentByPageFix
@@ -5763,23 +5744,23 @@ function readrBoard($R){
                         "page_id" : pageId,
                         "container_id":container_id,
                         "hash":hash,
-                        "cross_page": ( summary.$container.hasAttr('rdr-crossPageContent') ) ? true:false
+                        "cross_page": ( summary.$container.hasAttr('ant-crossPageContent') ) ? true:false
                     };
 
                     //use an assetLoader that returns a deferred to ensure it gets loaded only once
                     //and callbacks will run on success - or immediately if it has already returned.
-                    var assetLoader = RDR.assetLoaders.content_nodes[container_id];
+                    var assetLoader = ANT.assetLoaders.content_nodes[container_id];
 
                     if(!assetLoader){
                         assetLoader = $.ajax({
-                            url: RDR_baseUrl+"/api/summary/container/content/",
+                            url: ANT_baseUrl+"/api/summary/container/content/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
                             data: { json: $.toJSON(sendData) }
                         });
 
-                        RDR.assetLoaders.content_nodes[container_id] = assetLoader;
+                        ANT.assetLoaders.content_nodes[container_id] = assetLoader;
                     }
                     
                     //todo: also remove redundant callbacks from the summary widget.
@@ -5797,7 +5778,7 @@ function readrBoard($R){
                         //make selStates for these nodes and give the nodes a reference to them
                         $.each(content_nodes, function(key, node){
 
-                            var $container = $('[rdr-hash="'+hash+'"]');
+                            var $container = $('[ant-hash="'+hash+'"]');
 
                             try{
                                 node.selState = $container.selog('save', { 'serialRange': node.location });
@@ -5810,7 +5791,7 @@ function readrBoard($R){
 
                         //throw the content_nodes into the container summary
 
-                        RDR.content_nodes[hash] = content_nodes;
+                        ANT.content_nodes[hash] = content_nodes;
                         summary.content_nodes = content_nodes;
 
                         if(summary.kind == "text"){
@@ -5832,19 +5813,19 @@ function readrBoard($R){
                         }
 
                         // add a class so we note that the content summary was retrieved
-                        $('[rdr-hash="'+hash+'"]').attr('rdr_summary_loaded', 'true');
+                        $('[ant-hash="'+hash+'"]').attr('ant_summary_loaded', 'true');
 
-                        // fix for rdr-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
-                        RDR.actions.indicators.update(hash);
+                        // fix for ant-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
+                        ANT.actions.indicators.update(hash);
 
                         // remove from po' man's throttling array
                         // po' man's throttling
-                        // RDR.inProgress.splice( RDR.inProgress.indexOf( hash ) ,1);
+                        // ANT.inProgress.splice( ANT.inProgress.indexOf( hash ) ,1);
                         // var y = [1, 2, 3]
                         // var removeItem = 2;
 
-                        // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                        // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                        // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                        // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
                         //   return value != hash;
                         // });
 
@@ -5855,9 +5836,9 @@ function readrBoard($R){
                         }
 
                         //also run any callbacks that get queued up on the summarybar hover
-                        if(RDR.contentNodeQueue && RDR.contentNodeQueue[hash] && RDR.contentNodeQueue[hash].length ){
-                            $.each(RDR.contentNodeQueue[hash], function(){
-                                var func = RDR.contentNodeQueue[hash].pop();
+                        if(ANT.contentNodeQueue && ANT.contentNodeQueue[hash] && ANT.contentNodeQueue[hash].length ){
+                            $.each(ANT.contentNodeQueue[hash], function(){
+                                var func = ANT.contentNodeQueue[hash].pop();
                                 func(hash);
                             });
                         }
@@ -5866,7 +5847,7 @@ function readrBoard($R){
                 },
                 utils: {
                     getMediaDims: function($mediaNode){
-                        //RDR.actions.content_nodes.utils.getMediaDims:
+                        //ANT.actions.content_nodes.utils.getMediaDims:
 
                         var h = $mediaNode.height();
                         var w = $mediaNode.width();
@@ -5877,7 +5858,7 @@ function readrBoard($R){
                         };
                     },
                     makeDictSortedByTag: function(content_nodes){
-                        //RDR.actions.content_nodes.utils.makeDictSortedByTag:
+                        //ANT.actions.content_nodes.utils.makeDictSortedByTag:
 
                         //make a helper dictionary that inverts our dict of {content_nodes: {tags...} }
                         var invertedDict = {}; //dict will be { tag_id: [ list of content_node_ids }
@@ -5896,7 +5877,7 @@ function readrBoard($R){
                     initHiliteStates: function( $tagSpan, content_nodes ){
                         //todo: combine with others - i think this is just being used for indicator details
 
-                        //RDR.actions.content_nodes.utils.initHiliteStates:
+                        //ANT.actions.content_nodes.utils.initHiliteStates:
 
                         //add selStates to $tagSpan data.
                         $.each( content_nodes, function(arrIdx, content_node){
@@ -5941,21 +5922,21 @@ function readrBoard($R){
                             );
                         }
                     }
-                }//end RDR.actions.content_nodes.utils
+                }//end ANT.actions.content_nodes.utils
             },
             interactions: {
-                //RDR.actions.interactions:
+                //ANT.actions.interactions:
                 ajax: function(args, int_type, action_type){
-                    //RDR.actions.interactions.ajax:
+                    //ANT.actions.interactions.ajax:
                     //temp tie-over
                     var hash = args.hash,
-                        summary = RDR.summaries[hash],
+                        summary = ANT.summaries[hash],
                         kind = (summary) ? summary.kind:"";
 
 
                     if ( !action_type ) action_type = "create";
 
-                    if( !RDR.actions.interactions.hasOwnProperty(int_type) ){
+                    if( !ANT.actions.interactions.hasOwnProperty(int_type) ){
                         return false; //don't continue
                     }
 
@@ -5963,12 +5944,12 @@ function readrBoard($R){
                     var crossPageSendData = {};
 
                     // take care of pre-ajax stuff, mostly UI stuff
-                    RDR.actions.interactions[int_type].preAjax(args, action_type);
+                    ANT.actions.interactions[int_type].preAjax(args, action_type);
                     //get user and only procceed on success of that.
 
-                    RDR.session.getUser( args, function(newArgs){
-                        var defaultSendData = RDR.actions.interactions.defaultSendData(newArgs),
-                            customSendData = RDR.actions.interactions[int_type].customSendData(newArgs),
+                    ANT.session.getUser( args, function(newArgs){
+                        var defaultSendData = ANT.actions.interactions.defaultSendData(newArgs),
+                            customSendData = ANT.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, defaultSendData, customSendData, crossPageSendData );
                         newArgs.sendData = sendData;
 
@@ -5977,17 +5958,17 @@ function readrBoard($R){
                         newArgs.sendData.hash = hash;
 
                         //run the send function for the appropriate interaction type
-                        //RDR.actions.interactions[int_type].send(args);
-                        RDR.actions.interactions.send(newArgs, int_type, action_type);
+                        //ANT.actions.interactions[int_type].send(args);
+                        ANT.actions.interactions.send(newArgs, int_type, action_type);
                     });
                 },
                 send: function(args, int_type, action_type){
-                    // RDR.actions.interactions.send
+                    // ANT.actions.interactions.send
                     // /api/tag/create
                     // /api/comment/create
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
-                    if (sendData.rindow) delete sendData.rindow;
+                    if (sendData.aWindow) delete sendData.aWindow;
                     if (sendData.settings) delete sendData.settings;
                     if (sendData.selState) delete sendData.selState;
                     if (sendData.content_node ) delete sendData.content_node;
@@ -5997,13 +5978,13 @@ function readrBoard($R){
                     if (sendData.content_node_data && sendData.content_node_data.$container) delete sendData.content_node_data.$container; //this was happening for delete calls.
                     if (sendData.content_node_data && sendData.content_node_data.$indicator) delete sendData.content_node_data.$indicator; //this was happening for delete calls.
                     if (sendData.content_node_data && sendData.content_node_data.$indicator_details) delete sendData.content_node_data.$indicator_details; //this was happening for delete calls.
-                    if (sendData.content_node_data && sendData.content_node_data.$rindow_readmode) delete sendData.content_node_data.$rindow_readmode; //this was happening for delete calls.
+                    if (sendData.content_node_data && sendData.content_node_data.$aWindow_readmode) delete sendData.content_node_data.$aWindow_readmode; //this was happening for delete calls.
                     if (sendData.node) delete sendData.node;
                     if (sendData.uiMode) delete sendData.uiMode;
                     if (sendData.sendData) delete sendData.sendData; //this was happening for delete calls.
 
 // TODO force forcing
-if ( RDR.summaries[sendData.hash] ) sendData.container_kind = RDR.summaries[sendData.hash].kind;
+if ( ANT.summaries[sendData.hash] ) sendData.container_kind = ANT.summaries[sendData.hash].kind;
 // sendData.container_kind = sendData.hash;
 if (sendData.content_node_data && sendData.content_node_data.container ) delete sendData.content_node_data.container;
                     // [porter] I changed all references to "tag" to be "react" so the widget code is easier to understand
@@ -6021,12 +6002,12 @@ if ( typeof sendData.tag != "undefined" ) {
 if ( sendData.kind=="page" ) {
  sendData.hash = "page";
  sendData.container_kind = "text";
- sendData.page_id = sendData.page_id || RDR.util.getPageProperty('id', "page");
+ sendData.page_id = sendData.page_id || ANT.util.getPageProperty('id', "page");
  delete sendData.content_node_data.hash; //this was happening for delete calls.
 }
                     //todo: consider making a generic url router
-                    var url = RDR_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
-                    var hitMax = RDR.session.checkForMaxInteractions(args);
+                    var url = ANT_baseUrl+"/api/" +int_type_for_url+ "/"+action_type+"/";
+                    var hitMax = ANT.session.checkForMaxInteractions(args);
 
                     if (!hitMax) {
                         // send the data!
@@ -6045,13 +6026,13 @@ if ( sendData.kind=="page" ) {
                                     var hash = args.hash = response.data.container.hash;
                                 }
                                 if ( response.data && response.data.num_interactions ) {
-                                    RDR.user.num_interactions = response.data.num_interactions;
+                                    ANT.user.num_interactions = response.data.num_interactions;
                                 }
                                 if ( response.status == "success" ) {
                                     if ( args.response.data.interaction ) {
-                                        // RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
+                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
                                     } else if ( args.response.data.deleted_interaction ) {
-                                        // RDR.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
+                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
                                     }
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
@@ -6061,103 +6042,103 @@ if ( sendData.kind=="page" ) {
                                     if ( typeof args.tag.id == "undefined" ) {
                                         args.tag.id = response.data.interaction.interaction_node.id;
                                     }
-                                    RDR.actions.interactions[int_type].onSuccess[action_type](args);
+                                    ANT.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
                                         if ( response.message == "sign in required for organic reactions" ) {
-                                            RDR.session.showLoginPanel( args );
+                                            ANT.session.showLoginPanel( args );
                                         }
                                         else {
-                                            RDR.actions.interactions[int_type].onFail(args);
+                                            ANT.actions.interactions[int_type].onFail(args);
                                         }
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                            // RDR.events.track( 'temp_limit_hit_r' );
-                                            RDR.session.showLoginPanel( args );
+                                            // ANT.events.track( 'temp_limit_hit_r' );
+                                            ANT.session.showLoginPanel( args );
                                         } 
                                         if ( response.message == "existing interaction" ) {
                                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                                            //showTempUserMsg should be adapted to be aWindowUserMessage:{show:..., hide:...}
                                                 //with a message param.
                                                 //and a close 'x' button.
                                                 args.msgType = "existingInteraction";
-                                                RDR.session.rindowUserMessage.show( args );
+                                                ANT.session.aWindowUserMessage.show( args );
                                         }
                                         else {
                                             // if it failed, see if we can fix it, and if so, try this function one more time
-                                            RDR.session.handleGetUserFail( args, function() {
-                                                RDR.actions.interactions.ajax( args, int_type, 'create' );
+                                            ANT.session.handleGetUserFail( args, function() {
+                                                ANT.actions.interactions.ajax( args, int_type, 'create' );
                                             });
                                         }
                                     }
                                 }
-                                // if ( typeof RDR.inProgress === "undefined" ) { RDR.inProgress = []; }
-                                // RDR.inProgress = $.grep(RDR.inProgress, function(value) {
+                                // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                                // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
                                 //   return value != hash;
                                 // });
-                                RDR.util.userLoginState();
+                                ANT.util.userLoginState();
                             }
                         });
                     } else {
-                        RDR.session.showLoginPanel( args, function() { RDR.actions.interactions.ajax( args, int_type, 'create' ); } );
+                        ANT.session.showLoginPanel( args, function() { ANT.actions.interactions.ajax( args, int_type, 'create' ); } );
                     }
                 },
                 defaultSendData: function(args){
-                    //RDR.actions.interactions.defaultSendData:
-                    args.user_id = RDR.user.user_id;
-                    args.readr_token = RDR.user.readr_token;
-                    args.group_id = RDR.group.id;
-                    args.page_id = (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', args.hash);
+                    //ANT.actions.interactions.defaultSendData:
+                    args.user_id = ANT.user.user_id;
+                    args.ant_token = ANT.user.ant_token;
+                    args.group_id = ANT.group.id;
+                    args.page_id = (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', args.hash);
 
                     return args;
 
                 },
                 comment: {
                     preAjax: function(args){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
-                        //RDR.actions.interactions.comment.customSendData:
+                        //ANT.actions.interactions.comment.customSendData:
                     },
                     onSuccess: {
-                        //RDR.actions.interactions.comment.onSuccess:
+                        //ANT.actions.interactions.comment.onSuccess:
                         create: function(args){
-                            //RDR.actions.interactions.comment.onSuccess.create:
-                            var $rindow = args.rindow,
+                            //ANT.actions.interactions.comment.onSuccess.create:
+                            var $aWindow = args.aWindow,
                                 hash = args.hash,
                                 response = args.response,
                                 tag = args.tag;
 
                             //clear loader
-                            if ( $rindow ) {
-                                $rindow.find('div.rdr_loader').css('visibility','hidden');                                
+                            if ( $aWindow ) {
+                                $aWindow.find('div.ant_loader').css('visibility','hidden');                                
 
                                 //messy fixes for success responses in crossPageHash containers.
-                                RDR.actions.content_nodes.quickFixReset(hash);
+                                ANT.actions.content_nodes.quickFixReset(hash);
 
-                                var isInlineRindow = ($rindow.hasClass('rdr_inline') || $rindow.find('.rdr_inline').length);
+                                var isInlineRindow = ($aWindow.hasClass('ant_inline') || $aWindow.find('.ant_inline').length);
                                 
-                                var $responseMsg = $('<span class="success_msg" >'+RDR.t('thanks_for_comment')+' </span>');
-                                var $doneButton = $('<a class="rdr_doneButton" href="#">'+RDR.t('close')+'</a>')
+                                var $responseMsg = $('<span class="success_msg" >'+ANT.t('thanks_for_comment')+' </span>');
+                                var $doneButton = $('<a class="ant_doneButton" href="#">'+ANT.t('close')+'</a>')
                                     .click(function(e){
                                         e.preventDefault();
 
-                                        //there's a bug, just close the rindow for now. 
-                                        // RDR.rindow.close( $rindow );
-                                        RDR.rindow.safeClose( $rindow );
-                                        // $rindow.find('.rdr_back').eq(0).click();
+                                        //there's a bug, just close the aWindow for now. 
+                                        // ANT.aWindow.close( $aWindow );
+                                        ANT.aWindow.safeClose( $aWindow );
+                                        // $aWindow.find('.ant_back').eq(0).click();
                                     });
 
-                                var isPostTagComment = $('.rdr_subheader').length;
+                                var isPostTagComment = $('.ant_subheader').length;
                                 if(isPostTagComment){
 
-                                    $('.rdr_nextActions').remove();
-                                    $rindow.find('.rdr_subheader')
+                                    $('.ant_nextActions').remove();
+                                    $aWindow.find('.ant_subheader')
                                         .empty().append($responseMsg).append($doneButton);
 
                                 }else{
-                                    $rindow.find('.rdr_commentBox')
+                                    $aWindow.find('.ant_commentBox')
                                         .empty().append($responseMsg).append($doneButton);
                                 }
                                         
@@ -6180,7 +6161,7 @@ if ( sendData.kind=="page" ) {
                             var isText = content_node.kind == 'text' || content_node.kind == "txt";
                             var isExisting = response.data.existing;
                             if (!isText && isExisting) {
-                                var content_nodes = RDR.content_nodes[hash];
+                                var content_nodes = ANT.content_nodes[hash];
                                 $.each(content_nodes, function(id, node){
                                     //there should be only one, but sometimes there is an undefined entry - ignore that.
                                     //seriously, the id is the string "undefined" - ug.  Find the root of that and fix.
@@ -6193,10 +6174,10 @@ if ( sendData.kind=="page" ) {
                             }
 
                             //todo: examine resize
-                            // RDR.rindow.updateSizes( $rindow );
+                            // ANT.aWindow.updateSizes( $aWindow );
 
 
-                            // $rindow.find('div.rdr_commentBox').find('div.rdr_tagFeedback, div.rdr_comment').hide();
+                            // $aWindow.find('div.ant_commentBox').find('div.ant_tagFeedback, div.ant_comment').hide();
 
                             //todo: consider adding these fields to the summary
                             // update the comments for this hash
@@ -6242,8 +6223,8 @@ if ( sendData.kind=="page" ) {
                             //for now, just pull all the content_nodes down and
                             //(this will automatically) update the summary object
                             //run the rest of our comment update on the callback
-                            RDR.actions.content_nodes.init(hash, function(){
-                                RDR.actions.summaries.update(hash, diff);
+                            ANT.actions.content_nodes.init(hash, function(){
+                                ANT.actions.summaries.update(hash, diff);
                             });
 
                             //not using this
@@ -6252,10 +6233,10 @@ if ( sendData.kind=="page" ) {
                             //     interactionInfo: {
                             //         type: 'comment'
                             //     },
-                            //     rindow:$rindow
+                            //     aWindow:$aWindow
                             // };
 
-                            RDR.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: "c",
                                 event_value: interaction.interaction_node.body,
                                 container_hash: hash,
@@ -6264,72 +6245,72 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            RDR.events.emit('readrboard.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
+                            ANT.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
-                            //RDR.actions.interactions.comment.onSuccess.remove:
+                            //ANT.actions.interactions.comment.onSuccess.remove:
 
                             //clear loader
-                            var $rindow = args.rindow;
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            var $aWindow = args.aWindow;
+                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
                         }
 
                     },
                     onFail: function(args){
                         //clear loader
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
                     }
                 },
                 share: {
                     preAjax: function(){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(){
                         return {};
                     },
                     onSuccess: function(args){
                         //clear loader
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
                     },
                     onFail: function(args){
                         //clear loader
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
                     }
                 },
                 // breaks the interaction convention:
                 boardadd: {
                     preAjax: function(){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(){
                         return {};
                     },
                     onSuccess: {
-                        //RDR.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
                             
-                            //carefull with this.. $('div.rdr_tag_details.rdr_reacted') without the rdr_live_hover was returning 2 nodes. shore this up later.
-                            var $rindow = (args.rindow) ? args.rindow : $('div.rdr_tag_details.rdr_reacted.rdr_live_hover');
-                            $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            //carefull with this.. $('div.ant_tag_details.ant_reacted') without the ant_live_hover was returning 2 nodes. shore this up later.
+                            var $aWindow = (args.aWindow) ? args.aWindow : $('div.ant_tag_details.ant_reacted.ant_live_hover');
+                            $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                             var safe_board_name = args.board_name.replace(/\s/g,"_"),
                                 newArgs = { board_id:args.board_id, int_id:args.int_id },
-                                $success = $('<div class="rdr_success">Success!  See <a target="_blank" href="'+RDR_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="rdr_seeit_link">your board.</a> <a href="javascript:void(0);" class="rdr_seeit_link rdr_undo">Undo?</a></div>');
+                                $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
                             
-                            $rindow.find('.rdr_select_user_board').append( $success ).find('select').hide();
+                            $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
 
-                            $success.find('a.rdr_undo').click( function() {
+                            $success.find('a.ant_undo').click( function() {
                                 
-                                args.rindow = $rindow;
+                                args.aWindow = $aWindow;
                                 // panelEvent
-                                RDR.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
+                                ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
                             });
                         }
                     }
@@ -6337,35 +6318,35 @@ if ( sendData.kind=="page" ) {
                 // breaks the interaction convention:
                 boarddelete: {
                     preAjax: function(){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(){
                         return {};
                     },
                     onSuccess: {
-                        //RDR.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
                             //clear loader
                             
-                            var $rindow = args.rindow;
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            var $aWindow = args.aWindow;
+                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                         }
                     }
                 },
                 react: {
                     preAjax: function(args, action_type){
-                        var $rindow = args.rindow;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','visible');
+                        var $aWindow = args.aWindow;
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
                     },
                     customSendData: function(args){
-                        ////RDR.actions.interactions.react.customSendData:
+                        ////ANT.actions.interactions.react.customSendData:
                         //temp tie-over
 
                         var hash = args.hash,
-                            summary = RDR.summaries[hash],
-                            $container = $('[rdr-hash="'+hash+'"]'),
+                            summary = ANT.summaries[hash],
+                            $container = $('[ant-hash="'+hash+'"]'),
                             kind,
                             tag,
                             sendData;
@@ -6390,18 +6371,18 @@ if ( sendData.kind=="page" ) {
                                 "content_node_data":content_node_data,
                                 "hash": hash,
                                 //page level attrs
-                                "user_id" : RDR.user.user_id,
-                                "readr_token" : RDR.user.readr_token,
-                                "group_id" : RDR.group.id,
-                                "page_id" : (args.page_id) ? args.page_id : RDR.util.getPageProperty('id', hash)
+                                "user_id" : ANT.user.user_id,
+                                "ant_token" : ANT.user.ant_token,
+                                "group_id" : ANT.group.id,
+                                "page_id" : (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', hash)
                             };
                         } else  {
 
                             kind = summary.kind;
 
-                            var $container = $('[rdr-hash="'+hash+'"]');
+                            var $container = $('[ant-hash="'+hash+'"]');
 
-                            var rindow = args.rindow,
+                            var aWindow = args.aWindow,
                                 tag_li = args.tag;
 
                             tag = ( typeof args.tag.data == "function" ) ? args.tag.data('tag'):args.tag;
@@ -6412,12 +6393,12 @@ if ( sendData.kind=="page" ) {
 
                             if ( kind == 'custom' ){
                                 content_node_data = {
-                                    'container': rindow.data('container'),
-                                    'body': $container.attr('rdr-src'),
+                                    'container': aWindow.data('container'),
+                                    'body': $container.attr('ant-src'),
                                     'kind':'media',
                                     'location': $container.get(0).nodeName.toLowerCase(), // trying to store the tagName, so we can convert to a media type later...???
                                     'hash':hash,
-                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                    'item_type': ($container.hasAttr('ant-item-type')) ? $container.attr('ant-item-type') : ''
                                 };
 
                             } else if(kind == 'img' || kind == 'media' || kind == 'med'){
@@ -6448,21 +6429,21 @@ if ( sendData.kind=="page" ) {
                                 //     hashBody = match[0] + '/' + filename;
                                 // }
 
-                                if ( RDR.group.media_url_ignore_query && hashBody.indexOf('?') ){
+                                if ( ANT.group.media_url_ignore_query && hashBody.indexOf('?') ){
                                     hashBody = hashBody.split('?')[0];
                                 }
 
                                 content_node_data = {
-                                    'container': rindow.data('container'),
+                                    'container': aWindow.data('container'),
                                     'body': hashBody,
                                     'kind':kind,
                                     // 'location':srcProtocol + '//' + match.input.substr(0,match.index),  // http://whatever-the-subdomain-is.
                                     'hash':hash,
-                                    'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                    'item_type': ($container.hasAttr('ant-item-type')) ? $container.attr('ant-item-type') : ''
                                 };
 
                                 //add dims
-                                var mediaDims = RDR.actions.content_nodes.utils.getMediaDims($container)
+                                var mediaDims = ANT.actions.content_nodes.utils.getMediaDims($container)
                                 $.extend(content_node_data, mediaDims);
 
                             }else{
@@ -6470,46 +6451,46 @@ if ( sendData.kind=="page" ) {
                                 //todo: fix this temp hackery
                                 if(content_node){
                                     content_node_data = {
-                                        'container': rindow.data('container'),
+                                        'container': aWindow.data('container'),
                                         'body': content_node.body,
                                         'location': content_node.location,
                                         'kind':kind,
                                         'id':content_node.id,
-                                        'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                        'item_type': ($container.hasAttr('ant-item-type')) ? $container.attr('ant-item-type') : ''
                                     };
                                 }else{
 
-                                    // is it a rdr-item?  if so, let's force the content_node info, if already known
+                                    // is it a ant-item?  if so, let's force the content_node info, if already known
                                     // UGHUGHUGHUGHUGHUGHUGHUGHUGHUGH
                                     // i don't foxtrot think this is a doing a fucking thing.  
-                                    if ( $container.hasAttr('rdr-item') && typeof RDR.summaries[hash].content_nodes != 'undefined' && RDR.summaries[hash].content_nodes.length ) {
-                                        $.each( RDR.summaries[hash].content_nodes, function(content_node_id, node) {
+                                    if ( $container.hasAttr('ant-item') && typeof ANT.summaries[hash].content_nodes != 'undefined' && ANT.summaries[hash].content_nodes.length ) {
+                                        $.each( ANT.summaries[hash].content_nodes, function(content_node_id, node) {
                                             // grab the first one that is not 'undefined'
                                             if ( content_node_id != 'undefined' ) {
                                                 content_node = node;
                                             }
                                         });
                                         content_node_data = {
-                                            'container': rindow.data('container'),
+                                            'container': aWindow.data('container'),
                                             'body': content_node.body,
                                             'location': content_node.location,
                                             'kind':kind,
                                             'id':content_node.id,
-                                            'item_type': $container.attr('rdr-item-type')
+                                            'item_type': $container.attr('ant-item-type')
                                         };
                                     } else {
-                                        var content_node_id = rindow.find('div.rdr_tag_'+tag.id).data('content_node_id'),
-                                            selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : rindow.data('selState');
+                                        var content_node_id = aWindow.find('div.ant_tag_'+tag.id).data('content_node_id'),
+                                            selState = ( content_node_id ) ? summary.content_nodes[ content_node_id ].selState : aWindow.data('selState');
                                             if(!selState){
-                                                RDR.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
+                                                ANT.safeThrow("selState not found:  I cannot figure out why this happens every once in a while");
                                                 return;
                                             }
                                         content_node_data = {
-                                            'container': rindow.data('container'),
+                                            'container': aWindow.data('container'),
                                             'body': selState.text,
                                             'location': selState.serialRange,
                                             'kind': kind,
-                                            'item_type': ($container.hasAttr('rdr-item-type')) ? $container.attr('rdr-item-type') : ''
+                                            'item_type': ($container.hasAttr('ant-item-type')) ? $container.attr('ant-item-type') : ''
                                         };
                                     }
 
@@ -6535,10 +6516,10 @@ if ( sendData.kind=="page" ) {
                                 "content_node_data":content_node_data,
                                 "hash": content_node_data.container,
                                 //page level attrs
-                                "user_id" : RDR.user.user_id,
-                                "readr_token" : RDR.user.readr_token,
-                                "group_id" : RDR.group.id,
-                                "page_id" : RDR.util.getPageProperty('id', hash),
+                                "user_id" : ANT.user.user_id,
+                                "ant_token" : ANT.user.ant_token,
+                                "group_id" : ANT.group.id,
+                                "page_id" : ANT.util.getPageProperty('id', hash),
                                 "int_id" : args.int_id
                             };
                         }
@@ -6547,15 +6528,15 @@ if ( sendData.kind=="page" ) {
 
                     },
                     onSuccess: {
-                        //RDR.actions.interactions.react.onSuccess:
+                        //ANT.actions.interactions.react.onSuccess:
                         create: function(args){
-                            //RDR.actions.interactions.react.onSuccess.create:
+                            //ANT.actions.interactions.react.onSuccess.create:
                             //todo: clean up these args.
 
                             // init vars
-                            var $rindow = args.rindow,
-                                // $tag_table = $rindow.find('table.rdr_tags'),
-                                uiMode = $rindow.data('mode') || 'writeMode',
+                            var $aWindow = args.aWindow,
+                                // $tag_table = $aWindow.find('table.ant_tags'),
+                                uiMode = $aWindow.data('mode') || 'writeMode',
                                 response = args.response,
                                 interaction = response.interaction,
                                 interaction_node = response.data.interaction.interaction_node,
@@ -6570,7 +6551,7 @@ if ( sendData.kind=="page" ) {
 
                             var reaction = (tag.body) ? tag.body:tag.tag_body;
 
-                            RDR.events.trackEventToCloud({
+                            ANT.events.trackEventToCloud({
                                 event_type: 're',
                                 event_value: reaction,
                                 reaction_body: reaction,
@@ -6581,95 +6562,95 @@ if ( sendData.kind=="page" ) {
                                 page_id: args.page_id
                             });
 
-                            RDR.events.emit('readrboard.reaction', reaction);
+                            ANT.events.emit('antenna.reaction', reaction);
 
-                            $('#rdr_loginPanel').remove();
+                            $('#ant_loginPanel').remove();
                             
                             //clear loader
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                             // remove summary loaded since we might need to call it again....
-                            $('[rdr-hash="'+hash+'"]').removeAttr('rdr_summary_loaded');
+                            $('[ant-hash="'+hash+'"]').removeAttr('ant_summary_loaded');
 
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
-                            $('.rdr_twtooltip').remove();
+                            $('.ant_twtooltip').remove();
 
 
                             if (args.kind && args.kind == "page") {
-                                // RDR.actions.viewReactionSuccess( args );
+                                // ANT.actions.viewReactionSuccess( args );
 
-                                // // either we have a hash, or we don't, and so we hope there is only one div.rdr-summary.  IE sucks.
-                                // var $summary_box = $rindow.find('.rdr_tags_list');
-                                // var $pageTagResponse = $('<div class="rdr_info"></div>');
+                                // // either we have a hash, or we don't, and so we hope there is only one div.ant-summary.  IE sucks.
+                                // var $summary_box = $aWindow.find('.ant_tags_list');
+                                // var $pageTagResponse = $('<div class="ant_info"></div>');
                                 
                                 // var $shareIcons = _makeShareIcons(args);
 
                                 var existing = args.response.data.existing;
 
                                 if(!existing){
-                                //     var $rdr_reactionMessage = $('<div class="rdr_reactSuccess rdr_reactionMessage"></div>');
+                                //     var $ant_reactionMessage = $('<div class="ant_reactSuccess ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
-                                //             '<div class="rdr_label_icon"></div>'+
+                                //             '<div class="ant_label_icon"></div>'+
                                 //             '<em>Thanks!  You reacted <strong style="color:#008be4;font-style:italic !important;">'+args.tag.body+'</strong>.</em>'+
                                 //             '<span class="pipe"> | </span>'+
-                                //             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                //             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                //             // '<span><a target="_blank" href="'+ANT_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
+                                //             '<span><a href="javascript:void(0);" class="ant_undo_link">Undo?</a></span>'+
                                 //         '</div>'
                                 //     );
-                                //     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                //     $feedbackMsg.find('a.ant_undo_link').on('click.ant', {args:args}, function(event){
                                 //         // panelEvent - undo2
                                 //         var args = event.data.args;
-                                //         args.rindow = $(this).closest('.rdr_tag_details');
+                                //         args.aWindow = $(this).closest('.ant_tag_details');
                                 //         _undoPageReaction(args);
                                 //     });
 
                                 //     $pageTagResponse.append($feedbackMsg);
                                 //     $pageTagResponse.append($shareIcons);
                                     
-                                //     $pageTagResponse.append('<div class="rdr_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr" style="background:url('+RDR_staticUrl+'widget/images/readr_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
-                                //     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                //     $pageTagResponse.append('<div class="ant_tipReactToOtherStuff"><strong>Tip:</strong> You can <strong style="color:#008be4;">react to anything on the page</strong>. <ins>Select some text, or roll your mouse over any image or video, and look for this icon: <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant" style="background:url('+ANT_staticUrl+'widget/images/ant_icons.png) 0px 0px no-repeat;margin:0 0 -5px 0;" /></ins></div>' );
+                                //     $summary_box.addClass('ant_reacted').html( $pageTagResponse );
                                     
 
                                     _doPageUpdates(args);
                                     
                                 }else{
-                                //     var $rdr_reactionMessage = $('<div class="rdr_reactionMessage"></div>');
+                                //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
                                 //             '<em><strong>You have already given that reaction.</em></strong>'+
                                 //             '<span class="pipe"> | </span>'+
-                                //             // '<span><a target="_blank" href="'+RDR_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="rdr_seeit_link">See it.</a></span>'+
-                                //             '<span><a href="javascript:void(0);" class="rdr_undo_link">Undo?</a></span>'+
+                                //             // '<span><a target="_blank" href="'+ANT_baseUrl+'/interaction/'+args.response.data.interaction.id+'" class="ant_seeit_link">See it.</a></span>'+
+                                //             '<span><a href="javascript:void(0);" class="ant_undo_link">Undo?</a></span>'+
                                 //         '</div>'
                                 //     );
-                                //     $feedbackMsg.find('a.rdr_undo_link').on('click.rdr', {args:args}, function(event){
+                                //     $feedbackMsg.find('a.ant_undo_link').on('click.ant', {args:args}, function(event){
                                         
                                 //         // panelEvent - undo3
 
                                 //         var args = event.data.args;
-                                //         args.rindow = $(this).closest('.rdr_tag_details');
+                                //         args.aWindow = $(this).closest('.ant_tag_details');
                                 //         _undoPageReaction(args);
                                 //     });
 
                                 //     $pageTagResponse.append($feedbackMsg);
 
                                 //     $pageTagResponse.append($shareIcons);
-                                //     $summary_box.addClass('rdr_reacted').html( $pageTagResponse );
+                                //     $summary_box.addClass('ant_reacted').html( $pageTagResponse );
                                 }
                                 
-                                // RDR.rindow.updateFooter( $rindow, '' );
+                                // ANT.aWindow.updateFooter( $aWindow, '' );
 
 
-                                RDR.actions.viewReactionSuccess( args );
+                                ANT.actions.viewReactionSuccess( args );
 
                             } else {
                                 // not a page-level reaction
 
                                 //temp tie-over
                                 var hash = args.hash,
-                                    summary = RDR.summaries[hash],
+                                    summary = ANT.summaries[hash],
                                     kind = summary.kind;
 
 
@@ -6685,12 +6666,12 @@ if ( sendData.kind=="page" ) {
 
                                 // attempting to fix the summary widget-not-updating, and it seems to be b/c content_nodes aren't updated
                                 // update page container info, to fix the 'summary widget not updating' problem.  abstract this?
-                                // RDR.page[ PAGE ID ].containers
+                                // ANT.page[ PAGE ID ].containers
 
                                 //this is weird because there is only one content_node - the img
                                 //this whole thing is gross.  Fix our data structure later.
 
-                                // stolen from the success callback in RDR.actions.content_nodes.init
+                                // stolen from the success callback in ANT.actions.content_nodes.init
                                 // but wanted to not abstract that b/c this data structure is not the same.  natch.
 
                                 if (typeof summary.content_nodes == "undefined") {
@@ -6700,7 +6681,7 @@ if ( sendData.kind=="page" ) {
                                 //quick fixes for the container id too.
                                 //If the container came down eariler as an unknown container,
                                 //it will be saved but not have an id yet.
-                                var savedContainer = RDR.containers[hash];
+                                var savedContainer = ANT.containers[hash];
                                 if(savedContainer && container && container.id){
                                     savedContainer.id = container.id;
                                 }
@@ -6747,7 +6728,7 @@ if ( sendData.kind=="page" ) {
 
 
                                 //reset this var for now
-                                content_node_data = args.content_node || RDR.actions.content_nodes.make(content_node_data);
+                                content_node_data = args.content_node || ANT.actions.content_nodes.make(content_node_data);
 
                                 //if the summary doesn't have an id, set it
                                 summary.id = summary.id || args.container_id;
@@ -6769,11 +6750,11 @@ if ( sendData.kind=="page" ) {
                                 diff.tags[ intNodeHelper.id ] = intNodeHelper;
 
                                 if ( args.scenario != "reactionExists" ) {
-                                    RDR.actions.summaries.update(hash, diff);
+                                    ANT.actions.summaries.update(hash, diff);
                                 }
 
-                                // update the rindow to reflect success
-                                RDR.actions.viewReactionSuccess( args );
+                                // update the aWindow to reflect success
+                                ANT.actions.viewReactionSuccess( args );
 
                             }
 
@@ -6791,9 +6772,9 @@ if ( sendData.kind=="page" ) {
                                     page_id:args.page_id,
                                     int_id: args.response.data.interaction.id,
                                     tag: args.tag,
-                                    rindow: args.rindow
+                                    aWindow: args.aWindow
                                 };
-                                RDR.actions.interactions.ajax( newArgs, 'react', 'remove' );
+                                ANT.actions.interactions.ajax( newArgs, 'react', 'remove' );
                             }
 
                             function _doPageUpdates(args){
@@ -6817,7 +6798,7 @@ if ( sendData.kind=="page" ) {
 
                                 // if ( args.scenario != "reactionExists" ) {
                                     //true for isPage
-                                    RDR.actions.summaries.update(args.hash, diff, true, args.page_id);
+                                    ANT.actions.summaries.update(args.hash, diff, true, args.page_id);
                                 // }
                             }
 
@@ -6829,13 +6810,13 @@ if ( sendData.kind=="page" ) {
                                 var shareHash = args.hash;
                                 var $shareWrapper = $('<div class="shareWrapper" ></div>');
                                 
-                                $shareWrapper.append('<strong class="rdr_share_it">Share It:</strong>');
+                                $shareWrapper.append('<strong class="ant_share_it">Share It:</strong>');
 
                                 $.each(socialNetworks, function(idx, val){
-                                    $shareWrapper.append('<a href="http://' +val+ '.com" class="rdr_share_link"><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
-                                    $shareWrapper.find('a.rdr_share_link:last').click( function() {
+                                    $shareWrapper.append('<a href="http://' +val+ '.com" class="ant_share_link"><img class="no-ant" src="'+ANT_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a>');
+                                    $shareWrapper.find('a.ant_share_link:last').click( function() {
                                         
-                                        RDR.events.trackEventToCloud({
+                                        ANT.events.trackEventToCloud({
                                             // action: "share_open_attempt",
                                             // opt_label: "which: "+val+", kind: "+args.kind+", page: "+args.page_id+", tag: "+args.tag.body,
                                             event_type: "sh",
@@ -6844,14 +6825,14 @@ if ( sendData.kind=="page" ) {
                                             page_id: args.page_id
                                         });
 
-                                        RDR.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                        ANT.shareWindow = window.open(ANT_staticUrl+'share.html', 'ant_share','menubar=1,resizable=1,width=626,height=436');
 
                                         var title = $('meta[property="og:title"]').attr('content') ?
                                             $('meta[property="og:title"]').attr('content') :
                                                 $('title').text() ?
                                                 $('title').text() : "";
 
-                                        RDR.actions.share_getLink({ hash:shareHash, kind:args.kind, sns:val, rindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
+                                        ANT.actions.share_getLink({ hash:shareHash, kind:args.kind, sns:val, aWindow:{}, tag:args.tag, content_node:{content:title,kind:"page"} }); // ugh, lots of weird data nesting
                                         return false;
                                     });
                                 });
@@ -6859,15 +6840,15 @@ if ( sendData.kind=="page" ) {
                             }
                         },
                         remove: function(args){
-                            //RDR.actions.interactions.react.onSuccess.remove:
+                            //ANT.actions.interactions.react.onSuccess.remove:
                             var sendData = args.sendData;
                             var interaction_node = args.response.data.deleted_interaction.interaction_node;
-                            var $rindow = args.rindow,
+                            var $aWindow = args.aWindow,
                                 tag = args.tag,
                                 int_id = args.int_id;
 
                             //clear loader
-                            if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                             //do updates
                             var hash = sendData.hash;
@@ -6889,9 +6870,9 @@ if ( sendData.kind=="page" ) {
                             var isPage = (args.kind == 'page' || hash=="page");
                             if(isPage){
                                 //a bit hacky
-                                RDR.actions.summaries.update(hash, diff, isPage, args.page_id);
+                                ANT.actions.summaries.update(hash, diff, isPage, args.page_id);
                             }else{
-                                RDR.actions.summaries.update(hash, diff);
+                                ANT.actions.summaries.update(hash, diff);
                             }
                             
                             var usrMsgArgs = {
@@ -6901,85 +6882,85 @@ if ( sendData.kind=="page" ) {
                                     body: interaction_node.body,
                                     remove: true
                                 },
-                                rindow:$rindow
+                                aWindow:$aWindow
                             };
                             //queued up to be released in the sharestart function after the animation finishes
                             // NOT TRUE ANYMORE?
-                            $rindow.queue('userMessage', function(){
-                                RDR.session.rindowUserMessage.show( usrMsgArgs );
+                            $aWindow.queue('userMessage', function(){
+                                ANT.session.aWindowUserMessage.show( usrMsgArgs );
                             });
                             
                             if(isPage){
-                                RDR.rindow.updatePageTagMessage( args, 'tagDeleted' );
+                                ANT.aWindow.updatePageTagMessage( args, 'tagDeleted' );
                             }else{
-                                RDR.rindow.updateTagMessage( {rindow:$rindow, tag:args.tag, scenario:"tagDeleted", args:args} );
+                                ANT.aWindow.updateTagMessage( {aWindow:$aWindow, tag:args.tag, scenario:"tagDeleted", args:args} );
                             }
 
                         }
                     },
                     onFail: function(args){
-                        //RDR.actions.interactions.react.onFail:
+                        //ANT.actions.interactions.react.onFail:
                         //todo: we prob want to move most of this to a general onFail for all interactions.
-                        // So this function would look like: doSpecificOnFailStuff....; RDR.actions.interactions.genericOnFail();
+                        // So this function would look like: doSpecificOnFailStuff....; ANT.actions.interactions.genericOnFail();
 
                         //clear loader
-                        var $rindow = args.rindow,
+                        var $aWindow = args.aWindow,
                             response = args.response;
-                        if ( $rindow ) $rindow.find('div.rdr_loader').css('visibility','hidden');
+                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            RDR.session.receiveMessage( args, function() { RDR.actions.interactions.ajax( args, 'react', 'create' ); } );
-                            RDR.session.showLoginPanel( args );
+                            ANT.session.receiveMessage( args, function() { ANT.actions.interactions.ajax( args, 'react', 'create' ); } );
+                            ANT.session.showLoginPanel( args );
                         } else if ( response.message == "existing interaction" ) {
                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
-                            //showTempUserMsg should be adapted to be rindowUserMessage:{show:..., hide:...}
+                            //showTempUserMsg should be adapted to be aWindowUserMessage:{show:..., hide:...}
                                 //with a message param.
                                 //and a close 'x' button.
                                 args.msgType = "existingInteraction";
-                                RDR.session.rindowUserMessage.show( args );
+                                ANT.session.aWindowUserMessage.show( args );
                         } else if ( response.message.indexOf("blocked this tag") != -1 ) {
-                            alert( RDR.t('bad_language_warning') );
+                            alert( ANT.t('bad_language_warning') );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            RDR.session.handleGetUserFail( args, function() {
-                                RDR.actions.interactions.ajax( args, 'react', 'create' );
+                            ANT.session.handleGetUserFail( args, function() {
+                                ANT.actions.interactions.ajax( args, 'react', 'create' );
                             });
                         }
                     }
                 }
-                //end RDR.actions.interactions
+                //end ANT.actions.interactions
             },
             indicators: {
                 show: function(hashes, boolDontFade){
                     boolDontFade = true;
-                    //RDR.actions.indicators.show:
+                    //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
                     //todo: this works for now, but use a differnet signal later
-                    if ( $indicators.length == 1 ) $indicators.removeClass('rdr_dont_show');
+                    if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? RDR.C.indicatorOpacity : '1' ;
+                    var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
 
                     if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
-                        $indicators.not('.rdr_dont_show').css({
+                        $indicators.not('.ant_dont_show').css({
                             'opacity':'0',
                             'visibility':'visible'
                         });
                         if(boolDontFade){
-                            $indicators.not('.rdr_dont_show').css({
+                            $indicators.not('.ant_dont_show').css({
                                 'opacity':textIndicatorOpacity
                             });
                             return;
                         } else {
-                            $indicators.filter('div.rdr_indicator_for_text').not('.rdr_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                            $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
                         }
                     }
 
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
-                    //RDR.actions.indicators.hide:
+                    //ANT.actions.indicators.hide:
                     //hashes should be an array or a single hash string
                     //it fails gracefully if there are no indicators for the hashed container ( $indcators will just be empty and do nothing )
                     var $indicators = this.fetch(hashes);
@@ -6989,56 +6970,56 @@ if ( sendData.kind=="page" ) {
                     });
                 },
                 fetch: function(hashOrHashes){
-                    //RDR.actions.indicators.fetch:
+                    //ANT.actions.indicators.fetch:
                     //a helper to get an $indicators obj from a hash or list of hashes
                     var $indicators = $();
                     if( typeof hashOrHashes === "string" ){
                         var hash = hashOrHashes;
-                        $indicators = $('#rdr_indicator_'+hash);
+                        $indicators = $('#ant_indicator_'+hash);
                     }
                     else{
                         //should be an array of hashes
                         var hashes = hashOrHashes;
                         $.each(hashes, function(idx, hash){
-                            $indicators = $indicators.add( $('#rdr_indicator_'+hash) );
+                            $indicators = $indicators.add( $('#ant_indicator_'+hash) );
                         });
                     }
                     return $indicators;
                 },
                 init: function(hash){
-                    //RDR.actions.indicators.init:
-                    //note: this should generally be called via RDR.actions.containers.setup
+                    //ANT.actions.indicators.init:
+                    //note: this should generally be called via ANT.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
-                    var summary = RDR.summaries[hash];
-                    if (typeof summary != "undefined" && summary.$container.hasAttr('rdr-node')) {
+                    var summary = ANT.summaries[hash];
+                    if (typeof summary != "undefined" && summary.$container.hasAttr('ant-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
-                            indicatorId = 'rdr_indicator_'+hash,
-                            indicatorBodyId = 'rdr_indicator_body_'+hash,
-                            indicatorDetailsId = 'rdr_indicator_details_'+hash;
+                            indicatorId = 'ant_indicator_'+hash,
+                            indicatorBodyId = 'ant_indicator_body_'+hash,
+                            indicatorDetailsId = 'ant_indicator_details_'+hash;
 
                         // don't insert floating pins for page-level interactions
-                        if ( $container.hasAttr('rdr-page-container') ) return;
+                        if ( $container.hasAttr('ant-page-container') ) return;
                         //else
 
-                        $container.attr('rdr-hasIndicator', 'true');
+                        $container.attr('ant-hasIndicator', 'true');
 
-                        if ( $container.hasAttr('rdr-item') ) {
+                        if ( $container.hasAttr('ant-item') ) {
 
-                            var customDisplayName = $container.attr('rdr-item'),
+                            var customDisplayName = $container.attr('ant-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
-                                $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                                $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
-                                $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
+                                $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
+                                $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                                $cta = $('[ant-cta-for="'+customDisplayName+'"]');
 
                             // some init.  does this make sense here?
                             _setupHoverToFetchContentNodes();
 
                             // if there is a counter on the page
                             if ( $counter.length ) {
-                                $counter.addClass('rdr_count');
+                                $counter.addClass('ant_count');
                             }
                             if ( $cta.length ) {
                                 _customDisplaySetupHoverForShowRindow($cta);
@@ -7046,20 +7027,20 @@ if ( sendData.kind=="page" ) {
                             }
                             if ( $grid.length ) {
                             }
-                            RDR.actions.indicators.update(hash);
+                            ANT.actions.indicators.update(hash);
 
                         } else {
                             //check for and remove any existing indicator and indicator_details and remove for now.
                             //this shouldn't happen though.
                             //todo: solve for duplicate content that will have the same hash.
-                            $('#rdr_indicator_'+hash).remove();
-                            $('#rdr_container_tracker_'+hash).remove();
-                            $('#rdr_indicator_details_'+hash).remove();
+                            $('#ant_indicator_'+hash).remove();
+                            $('#ant_container_tracker_'+hash).remove();
+                            $('#ant_indicator_details_'+hash).remove();
 
-                            if ($('#rdr_indicator_'+hash).length) {
+                            if ($('#ant_indicator_'+hash).length) {
                                 return;
                             }
-                            var $indicator = summary.$indicator = $('<div class="rdr_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            var $indicator = summary.$indicator = $('<div class="ant_indicator" />').attr('id',indicatorId).data('hash',hash);
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
 
@@ -7067,11 +7048,11 @@ if ( sendData.kind=="page" ) {
 
                             if(!kind){
                                 //todo: I'll look into the source of this this, but this should work fine for now.
-                                // RDR.safeThrow('indicator container has no kind attribute');
+                                // ANT.safeThrow('indicator container has no kind attribute');
                                 return;
                             }
                             //run setup specific to this type
-                            RDR.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash );
 
 
                             //todo: combine this with the kindSpecificSetup above right?
@@ -7083,42 +7064,42 @@ if ( sendData.kind=="page" ) {
                                 }
 
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
-                                    RDR.actions.stripRdrNode($container);
+                                    ANT.actions.stripRdrNode($container);
                                     return;
                                 }
 
 
 
-                                $container.unbind('.rdr_helper');
+                                $container.unbind('.ant_helper');
                                 // todo: touchHover
                                 
                                 if(!isTouchBrowser){
-                                    $container.bind('mouseenter.rdr_helper', function() {
-                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                    $container.bind('mouseenter.ant_helper', function() {
+                                        var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper) {
-                                            RDR.actions.indicators.helpers.over($indicator);
+                                            ANT.actions.indicators.helpers.over($indicator);
                                         }
                                     });
-                                    $container.bind('mouseleave.rdr_helper', function(e) {
-                                        var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                    $container.bind('mouseleave.ant_helper', function(e) {
+                                        var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper ) {
-                                            RDR.actions.indicators.helpers.out($indicator);
+                                            ANT.actions.indicators.helpers.out($indicator);
                                         }
                                     });
                                 } else {
-                                    $container.off('touchend.rdr').on('touchend.rdr', function(e){
-                                        if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
-                                        if (RDR.util.bubblingEvents['touchend'] == false) {
-                                            if ( !$('.rdr_window').length ) {
-                                                var $this_container = $('[rdr-hash="'+hash+'"]');
+                                    $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        if (ANT.util.bubblingEvents['touchend'] == false) {
+                                            if ( !$('.ant_window').length ) {
+                                                var $this_container = $('[ant-hash="'+hash+'"]');
                                                 // var $container = $(e.target);
 
                                                 var el = $this_container[0]
                                                 $('document').selog('selectEl', el);
 
-                                                var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                                var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                             } else {
-                                                RDR.actions.UIClearState();
+                                                ANT.actions.UIClearState();
                                             }
                                         }
                                     });
@@ -7129,7 +7110,7 @@ if ( sendData.kind=="page" ) {
 
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
-                                    $indicator.addClass('rdr_helper');
+                                    $indicator.addClass('ant_helper');
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
@@ -7143,22 +7124,22 @@ if ( sendData.kind=="page" ) {
                             }
 
                             //of course, don't pass true for shouldReInit here.
-                            RDR.actions.indicators.update(hash);
+                            ANT.actions.indicators.update(hash);
 
-                        } // /else of if (rdr-item) conditional
+                        } // /else of if (ant-item) conditional
                     }
 
                     /*helper functions */
                     function _setupIndicators(){
 
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
-                        var $indicator_body = summary.$indicator_body = $('<div class="rdr rdr_indicator_body " />')
+                        var $indicator_body = summary.$indicator_body = $('<div class="ant ant_indicator_body " />')
                             .attr('id',indicatorBodyId)
                             .appendTo($indicator)
                             .append(
-                                '<img src="'+RDR_staticUrl+'widget/images/blank.png" class="no-rdr rdr_pin" />',
-                                '<span class="rdr_count" />', //the count will get added automatically later, and on every update.
-                                '<span class="rdr_count_label" />' 
+                                '<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />',
+                                '<span class="ant_count" />', //the count will get added automatically later, and on every update.
+                                '<span class="ant_count_label" />' 
                             );
 
                         $indicator.css('visibility','visible');
@@ -7170,74 +7151,74 @@ if ( sendData.kind=="page" ) {
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover.showRindow', function(){
                                 _makeRindow();
-                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 if( hasHelper ){
-                                    // RDR.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 }
                             });
                         } else {
-                            $indicator.on('touchend.rdr', function(e){
-                                if (RDR.util.bubblingEvents['dragging'] == true ) { return; }
-                                RDR.util.bubblingEvents['touchend'] = true;
+                            $indicator.on('touchend.ant', function(e){
+                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                ANT.util.bubblingEvents['touchend'] = true;
 
                                 _makeRindow();
-                                var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 if( hasHelper ){
-                                    // RDR.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 }
                             });
                         }
                     }
                     function _makeRindow(){
-                        //only allow one indicator rindow.
+                        //only allow one indicator aWindow.
                         //todo - replace this with the code below - but need to deal with selstate hilites first
-                        if($indicator.$rindow){
+                        if($indicator.$aWindow){
                             // dont rewrite the window if it already exists...
                             // adding to prevent tagBox text animation.  if this is problematic, just go prevent the animation but let this redraw.
-                            if ( $indicator.$rindow.data('container') == hash ) { return; }
-                            $indicator.$rindow.remove();
+                            if ( $indicator.$aWindow.data('container') == hash ) { return; }
+                            $indicator.$aWindow.remove();
                         }
-                        // if(summary.$rindow){
-                        //     summary.$rindow.remove();
+                        // if(summary.$aWindow){
+                        //     summary.$aWindow.remove();
                         // }
-                        // if(summary.$rindow_readmode){
-                        //     summary.$rindow_readmode.remove();
+                        // if(summary.$aWindow_readmode){
+                        //     summary.$aWindow_readmode.remove();
                         // }
                         //end - todo
 
-                        var $rindow = RDR.rindow.make( "readMode", {hash:hash} );
-                        var page_id = RDR.util.getPageProperty('id', hash );
+                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );
+                        var page_id = ANT.util.getPageProperty('id', hash );
 
-                        //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
+                        //This bug goes all the way back to the big-ol-nasty function ANT.aWindow._aWindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
-                        if(!$rindow){
+                        if(!$aWindow){
                             return;
                         }
 
-                        $indicator.$rindow = $rindow;
+                        $indicator.$aWindow = $aWindow;
                         
-                        //these should probably be moved under tagMode.make (called by rindow.make) where the image tracking lives.
+                        //these should probably be moved under tagMode.make (called by aWindow.make) where the image tracking lives.
                         if( $indicator.data('isZeroCountIndicator') ){
                             _updateRindowForHelperIndicator();
 
-                            // RDR.events.track('paragraph_helper_show');
+                            // ANT.events.track('paragraph_helper_show');
 
                             // DONT FIRE... too many events
-                            // RDR.events.trackEventToCloud({
+                            // ANT.events.trackEventToCloud({
                             //     // category: "engage",
-                            //     // action: "rindow_shown_indicatorhelper",
+                            //     // action: "aWindow_shown_indicatorhelper",
                             //     // opt_label: "kind: text, hash: " + hash,
-                            //     event_type: 'rindow_show',
+                            //     event_type: 'aWindow_show',
                             //     event_value: 'indicator_helper',
                             //     container_hash: hash,
                             //     container_kind: "text",
                             //     page_id: page_id
                             // });
                         }else{
-                            // RDR.events.track( 'view_node::'+hash, hash );
-                            RDR.events.trackEventToCloud({
+                            // ANT.events.track( 'view_node::'+hash, hash );
+                            ANT.events.trackEventToCloud({
                                 // category: "engage",
-                                // action: "rindow_shown_readmode",
+                                // action: "aWindow_shown_readmode",
                                 // opt_label: "kind: text, hash: " + hash,
                                 event_type: 'rs',
                                 event_value: 'rd',
@@ -7249,25 +7230,25 @@ if ( sendData.kind=="page" ) {
 
                     }
                     function _updateRindowForHelperIndicator(){
-                        var $rindow = $indicator.$rindow;
-                        var $header = RDR.rindow.makeHeader( RDR.t('main_cta') );
-                        $rindow.addClass('rdr_helper_rindow');
-                        $rindow.find('.rdr_header').replaceWith($header);
-                        $header.append('<div class="rdr_header_arrow"><img src="'+RDR_staticUrl+'widget/images/header_up_arrow.png" /></div>');
-                        $rindowBody = $('<div class="rdr_body rdr_visiblePanel" />');
-                        $rindowBody.html('');
-                        $rindow.find('div.rdr_body_wrap').append($rindowBody);
-                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">Click to respond</span>' );
-                        $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
-                            $rindow.remove();
-                            var $container = $('[rdr-hash="'+hash+'"]');
+                        var $aWindow = $indicator.$aWindow;
+                        var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
+                        $aWindow.addClass('ant_helper_aWindow');
+                        $aWindow.find('.ant_header').replaceWith($header);
+                        $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
+                        $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
+                        $aWindowBody.html('');
+                        $aWindow.find('div.ant_body_wrap').append($aWindowBody);
+                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
+                        $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                            $aWindow.remove();
+                            var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
-                            $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                         });
 
-                        // RDR.rindow.updateSizes(
-                        //     $rindow, {
+                        // ANT.aWindow.updateSizes(
+                        //     $aWindow, {
                         //         noAnimate:true
                         //     }
                         // );
@@ -7282,14 +7263,14 @@ if ( sendData.kind=="page" ) {
 
 
                         if (isTouchBrowser) {
-                           if ( !$indicator.hasAttr('rdr-item') ) {
-                                RDR.actions.content_nodes.init(hash, callback);
+                           if ( !$indicator.hasAttr('ant-item') ) {
+                                ANT.actions.content_nodes.init(hash, callback);
                             } 
                         } else {
                             $indicator.on( 'mouseover.contentNodeInit' , function(){
                                 // not sure about this, but we're not initializing ON MOUSEOVER the content nodes for a node w/ custom display
-                                if ( !$indicator.hasAttr('rdr-item') ) {
-                                    RDR.actions.content_nodes.init(hash, callback);
+                                if ( !$indicator.hasAttr('ant-item') ) {
+                                    ANT.actions.content_nodes.init(hash, callback);
                                 }
                             });
                         }
@@ -7307,45 +7288,45 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS ONE:
                         // $cta.on('mouseover.showRindow', function(){
                         //     _customDisplayMakeRindow($cta);
-                        //     var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                        //     var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                         //     if( hasHelper ){
-                        //         // RDR.events.track('paragraph_helper_engage');
+                        //         // ANT.events.track('paragraph_helper_engage');
                         //     }
                         // });
                         
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.attr('rdr-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
+                            $thisCTA.attr('ant-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
                                 _customDisplayMakeRindow($thisCTA);
-                                // var hasHelper = $indicator.hasClass('rdr_helper') && RDR.group.paragraph_helper;
+                                // var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 // if( hasHelper ){
-                                    // RDR.events.track('paragraph_helper_engage');
+                                    // ANT.events.track('paragraph_helper_engage');
                                 // }
                             });
                         });
                     }
                     function _customDisplayMakeRindow($cta) {
                         // see if this is a read+write mode cta, or just one "mode"
-                        if ( $cta.attr('rdr-mode').indexOf('write') != -1 && $cta.attr('rdr-mode').indexOf('read') != -1 ) {
+                        if ( $cta.attr('ant-mode').indexOf('write') != -1 && $cta.attr('ant-mode').indexOf('read') != -1 ) {
                             var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
                         } else {
-                            var mode = ( $cta.attr('rdr-mode') == "write" ) ? "writeMode":"readMode";
+                            var mode = ( $cta.attr('ant-mode') == "write" ) ? "writeMode":"readMode";
                         }
 
                         //todo - replace this with the code below - but need to deal with selstate hilites first
-                        if($indicator.$rindow && $indicator.$rindow.hasClass('rdr_'+mode.toLowerCase() ) ){
+                        if($indicator.$aWindow && $indicator.$aWindow.hasClass('ant_'+mode.toLowerCase() ) ){
                             // dont rewrite the window if it already exists...
                             // adding to prevent tagBox text animation.  if this is problematic, just go prevent the animation but let this redraw.
-                            if ( $indicator.$rindow.data('container') == hash ) { return; }
-                            $indicator.$rindow.remove();
+                            if ( $indicator.$aWindow.data('container') == hash ) { return; }
+                            $indicator.$aWindow.remove();
                         }
 
-                        // if(summary.$rindow){
-                        //     summary.$rindow.remove();
+                        // if(summary.$aWindow){
+                        //     summary.$aWindow.remove();
                         // }
-                        // if(summary.$rindow_readmode){
-                        //     summary.$rindow_readmode.remove();
+                        // if(summary.$aWindow_readmode){
+                        //     summary.$aWindow_readmode.remove();
                         // }
                         //end - todo
                         if (mode=="writeMode") {
@@ -7353,33 +7334,33 @@ if ( sendData.kind=="page" ) {
                                 el = $container[0];
                             }else{
                                 // hash = hash || testHash;
-                                var selector = '[rdr-hash="' + hash + '"]';
+                                var selector = '[ant-hash="' + hash + '"]';
                                 el = $(selector)[0];
                             }
                             $('document').selog('selectEl', el);
                         }
 
-                        var $rindow = RDR.rindow.make( mode, {hash:hash, '$custom_cta':$cta } );
-                        $rindow.addClass('rdr_rewritable');
-                        var page_id = RDR.util.getPageProperty('id', hash );
+                        var $aWindow = ANT.aWindow.make( mode, {hash:hash, '$custom_cta':$cta } );
+                        $aWindow.addClass('ant_rewritable');
+                        var page_id = ANT.util.getPageProperty('id', hash );
 
-                        //This bug goes all the way back to the big-ol-nasty function RDR.rindow._rindowTypes.writeMode.make.
+                        //This bug goes all the way back to the big-ol-nasty function ANT.aWindow._aWindowTypes.writeMode.make.
                         //fix later, but it's fine to return here - must be getting called twice and will build correctly the 2nd time.
-                        if(!$rindow){
+                        if(!$aWindow){
                             return;
                         }
 
-                        $indicator.$rindow = $rindow;
+                        $indicator.$aWindow = $aWindow;
 
-                        var event_value = ($cta.attr('rdr-mode')=="write") ? 'wr':'rd';
+                        var event_value = ($cta.attr('ant-mode')=="write") ? 'wr':'rd';
 
-                        // RDR.events.track( 'view_node::'+hash, hash );
-                        // RDR.events.track('start_react_text');
+                        // ANT.events.track( 'view_node::'+hash, hash );
+                        // ANT.events.track('start_react_text');
 
                         // wtf is this here for?
-                        // RDR.events.trackEventToCloud({
+                        // ANT.events.trackEventToCloud({
                         //     // category: "engage",
-                        //     // action: "rindow_shown_"+ $cta.attr('rdr-mode') +"mode",
+                        //     // action: "aWindow_shown_"+ $cta.attr('ant-mode') +"mode",
                         //     // opt_label: "kind: text, hash: " + hash,
                         //     event_type: 'rs',
                         //     event_value: event_value,
@@ -7391,10 +7372,10 @@ if ( sendData.kind=="page" ) {
                     }
                 },
                 update: function(hash, shouldReInit){
-                    //RDR.actions.indicators.update:
+                    //ANT.actions.indicators.update:
 
                     var scope = this;
-                    var summary = RDR.summaries[hash],
+                    var summary = ANT.summaries[hash],
                         kind = summary.kind,
                         $container = summary.$container,
                         isText = summary.kind === 'text';
@@ -7407,13 +7388,13 @@ if ( sendData.kind=="page" ) {
                     }
 
                     // for now, separately handle the "custom display" elements
-                    if ( $container.hasAttr('rdr-item') ) {
-                            var customDisplayName = $container.attr('rdr-item'),
+                    if ( $container.hasAttr('ant-item') ) {
+                            var customDisplayName = $container.attr('ant-item'),
                             $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data..,
-                            $counter = $('[rdr-counter-for="'+customDisplayName+'"]'),
-                            $label = $('[rdr-reactions-label-for="'+customDisplayName+'"]'),
-                            $grid = $('[rdr-view-reactions-for="'+customDisplayName+'"]'),
-                            $cta = $('[rdr-cta-for="'+customDisplayName+'"]');
+                            $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
+                            $label = $('[ant-reactions-label-for="'+customDisplayName+'"]'),
+                            $grid = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
+                            $cta = $('[ant-cta-for="'+customDisplayName+'"]');
 
                         // some init.  does this make sense here?
 
@@ -7421,13 +7402,13 @@ if ( sendData.kind=="page" ) {
                             if ( $counter.length ) {
                                 if ( summary.counts.tags > 0 ) {
                                     if ( summary.counts.tags > 1 ) { $label.text('Reactions'); } else { $label.text('Reaction'); }
-                                    $counter.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                    $counter.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 // } else if ( typeof summary.content_nodes != 'undefined' ) {
                                     // $.each( summary.content_nodes, function(idx, content_node) {
                                     //     summary.counts = $.extend(true, {}, content_node.counts );
                                     //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
                                     // });
-                                    // $counter.html( RDR.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
+                                    // $counter.html( ANT.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
                                 // } else {
                                 //     $counter.html('0');
                                 }
@@ -7443,13 +7424,13 @@ if ( sendData.kind=="page" ) {
                         
                             if(isText){
                                 //damn it - kill them all!  Dont know why the helpers were still adding a second indicator
-                                $container.closest('[rdr-node]').find('.rdr_indicator').remove();
+                                $container.closest('[ant-node]').find('.ant_indicator').remove();
                             }else{
                                 // summary.$indicator.remove();
-                                // $('#rdr_container_tracker_'+hash).remove();
+                                // $('#ant_container_tracker_'+hash).remove();
                             }
 
-                            RDR.actions.indicators.init(hash);
+                            ANT.actions.indicators.init(hash);
                             //this will loop back from the .init, which does not pass true for shouldReInit - so no infinite loop.
                             return;
                         }
@@ -7459,36 +7440,36 @@ if ( sendData.kind=="page" ) {
                             $indicator_details = summary.$indicator_details;
 
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at
-                        var $count = $indicator_body.find('.rdr_count'),
-                            $count_label = $indicator_body.find('.rdr_count_label'),
-                            $details_header_count = ($indicator_details) ? $indicator_details.find('div.rdr_header h1'):false,
+                        var $count = $indicator_body.find('.ant_count'),
+                            $count_label = $indicator_body.find('.ant_count_label'),
+                            $details_header_count = ($indicator_details) ? $indicator_details.find('div.ant_header h1'):false,
                             hasReactions = summary.counts.tags > 0;
 
-                        var reactionLabel = (summary.counts.tags>1) ? RDR.t('plural_reaction') : RDR.t('single_reaction');
+                        var reactionLabel = (summary.counts.tags>1) ? ANT.t('plural_reaction') : ANT.t('single_reaction');
                         if ( hasReactions ) {
                             if (isText) {
-                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 $count_label.text(reactionLabel);
                             } else {
-                                $count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
                             }
-                            if ($details_header_count) $details_header_count.html( RDR.commonUtil.prettyNumber( summary.counts.tags ) + " " + RDR.t('plural_reaction') );
+                            if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
-                            RDR.actions.indicators.show(hash);
+                            ANT.actions.indicators.show(hash);
                             
                         } else {
-                            $indicator.addClass('rdr_no_reactions');
-                            $count.html( '<span class="rdr_react_label">'+RDR.t('main_cta')+'</span>' );
+                            $indicator.addClass('ant_no_reactions');
+                            $count.html( '<span class="ant_react_label">'+ANT.t('main_cta')+'</span>' );
                             
                             if(isText){
-                                if(RDR.group.paragraph_helper){
-                                    RDR.actions.indicators.show(hash);
-                                    $indicator.addClass('rdr_helper');
+                                if(ANT.group.paragraph_helper){
+                                    ANT.actions.indicators.show(hash);
+                                    $indicator.addClass('ant_helper');
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
                                 }else{
-                                    RDR.actions.indicators.hide(hash);
+                                    ANT.actions.indicators.hide(hash);
                                 }                                                        
                             }
                         }
@@ -7496,11 +7477,11 @@ if ( sendData.kind=="page" ) {
 
                 },
                 helpers: {
-                    //RDR.actions.indicators.helpers:
+                    //ANT.actions.indicators.helpers:
                     over: function($indicator){
-                        //RDR.actions.indicators.helpers.over:
+                        //ANT.actions.indicators.helpers.over:
 
-                        // RDR.events.track('paragraph_helper_show');
+                        // ANT.events.track('paragraph_helper_show');
 
                         var alreadyHovered = $indicator.data('containerHover');
                         if( alreadyHovered ){
@@ -7515,32 +7496,32 @@ if ( sendData.kind=="page" ) {
                             
                         //     if(hasHover){
                                 
-                        //         RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                        //         ANT.util.cssSuperImportant( $indicator, { display:"inline" });
                                 
                         //         // $indicator
                         //         //     .css('opacity',0)
                         //         //     .animate({
-                        //         //         'opacity': RDR.C.helperIndicators.opacity
-                        //         //         }, RDR.C.helperIndicators.fadeInTime );
+                        //         //         'opacity': ANT.C.helperIndicators.opacity
+                        //         //         }, ANT.C.helperIndicators.fadeInTime );
                         //     }
-                        // }, RDR.C.helperIndicators.hoverDelay);
+                        // }, ANT.C.helperIndicators.hoverDelay);
                         // $indicator.data('hoverTimeout', hoverTimeout);
                         // if(isTouchBrowser){
                             // $indicator.css({ display:"inline" });
                         // }else{
-                            RDR.util.cssSuperImportant( $indicator, { display:"inline" });
+                            ANT.util.cssSuperImportant( $indicator, { display:"inline" });
                         // }
-                        $indicator.css('opacity', RDR.C.helperIndicators.opacity);
+                        $indicator.css('opacity', ANT.C.helperIndicators.opacity);
                     },
                     out: function($indicator){
-                        //RDR.actions.indicators.helpers.out:
+                        //ANT.actions.indicators.helpers.out:
                         
                         //temp hack
-                        //don't fade it out if the rindow is showing
+                        //don't fade it out if the aWindow is showing
                             // var hash = $indicator.data('hash');
-                            // var summary = RDR.summaries[ hash ];
-                            // var $rindow = (typeof summary != "undefined" && typeof summary.$rindow_readmode != "undefined") ? summary.$rindow_readmode:null;
-                            // if( $rindow && $rindow.is(':visible') ){
+                            // var summary = ANT.summaries[ hash ];
+                            // var $aWindow = (typeof summary != "undefined" && typeof summary.$aWindow_readmode != "undefined") ? summary.$aWindow_readmode:null;
+                            // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
 
@@ -7550,13 +7531,13 @@ if ( sendData.kind=="page" ) {
                         if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
                         }else{
-                            RDR.util.cssSuperImportant( $indicator, { display:"none" });
+                            ANT.util.cssSuperImportant( $indicator, { display:"none" });
                         }
                     }
                 },
                 utils:{
                     checkTrailingWhiteSpace: function($container){
-                        //RDR.actions.indicators.utils.checkTrailingWhiteSpace:
+                        //ANT.actions.indicators.utils.checkTrailingWhiteSpace:
 
                         var reversedNodes = $container.children().get().reverse();
 
@@ -7575,35 +7556,35 @@ if ( sendData.kind=="page" ) {
                         });
                         return startOfTrailingWhiteSpace;
                     },
-                    //RDR.actions.indicators.utils:
+                    //ANT.actions.indicators.utils:
                     kindSpecificSetup: {
                         img: function( hash ){
-                            var summary = RDR.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
-                                $container_tracker_wrap = $('#rdr_container_tracker_wrap'),
-                                $container_tracker = $('<div class="rdr_container_tracker" />'),
-                                indicatorDetailsId = 'rdr_indicator_details_'+hash,
-                                page_id = RDR.util.getPageProperty('id', hash );
+                                $container_tracker_wrap = $('#ant_container_tracker_wrap'),
+                                $container_tracker = $('<div class="ant_container_tracker" />'),
+                                indicatorDetailsId = 'ant_indicator_details_'+hash,
+                                page_id = ANT.util.getPageProperty('id', hash );
 
                             if( $container.width() < 160 ){
-                                RDR.safeThrow('Too small to init.');
+                                ANT.safeThrow('Too small to init.');
                                 return;
                             }
 
                             if( $container.css('display') == 'none' || $container.css('visibility') == 'hidden' ){
-                                RDR.safeThrow('not visible: ');
+                                ANT.safeThrow('not visible: ');
                                 return;
                             }
 
-                            var $existing = $('#rdr_container_tracker_'+hash);
+                            var $existing = $('#ant_container_tracker_'+hash);
                             if($existing.length){
-                                RDR.safeThrow('Images are not expected to get re-inited.');
+                                ANT.safeThrow('Images are not expected to get re-inited.');
                                 return;
                             }
 
-                            $container_tracker.attr('id', 'rdr_container_tracker_'+hash).appendTo($container_tracker_wrap);
+                            $container_tracker.attr('id', 'ant_container_tracker_'+hash).appendTo($container_tracker_wrap);
                             //position the containerTracker at the top left of the image or videos.  We'll position the indicator and hiliteborder relative to this.
 
                             _commonSetup();
@@ -7612,46 +7593,46 @@ if ( sendData.kind=="page" ) {
                             if(isTouchBrowser){
                                 $indicator.bind('tap', function(){
                                     if ( summary.counts.interactions == 0 ) {
-                                        var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                        var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     } else {
-                                        var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
+                                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                     }
-                                    $(this).addClass('rdr_live_hover');
+                                    $(this).addClass('ant_live_hover');
                                 });
                             }else{
                                 $indicator
                                     .on('mouseenter', function() {
                                         if ( summary.counts.interactions == 0 ) {
-                                            var $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         } else {
-                                            var $rindow = RDR.rindow.make( "readMode", {hash:hash} );    
+                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                         }
-                                        $(this).addClass('rdr_live_hover');
+                                        $(this).addClass('ant_live_hover');
                                     })//chain
                                     .on('mouseleave', function() {
-                                        $(this).removeClass('rdr_live_hover');
+                                        $(this).removeClass('ant_live_hover');
                                     });
                             }
 
                             //todo: move this from init
-                            RDR.actions.indicators.utils.updateContainerTracker(hash);
+                            ANT.actions.indicators.utils.updateContainerTracker(hash);
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
                                 // deprecated?
-                                if ( $('div.rdr_media_details').not('rdr_loaded').length ) {
+                                if ( $('div.ant_media_details').not('ant_loaded').length ) {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                                        .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar');
+                                        .addClass('ant ant_indicator_details ant_widget ant_widget_bar');
 
-                                    $('div.rdr_media_details').html( $indicator_details );
-                                    $container_tracker.addClass('rdr_inline_video');
+                                    $('div.ant_media_details').html( $indicator_details );
+                                    $container_tracker.addClass('ant_inline_video');
                                     
                                     //what is this?  There should only be one sandbox right?
-                                    $('div.rdr_media_details').addClass('rdr_sandbox');
+                                    $('div.ant_media_details').addClass('ant_sandbox');
                                 } else {
                                     var $indicator_details = summary.$indicator_details = $('<div />').attr('id',indicatorDetailsId)//chain
-                                    .addClass('rdr rdr_indicator_details rdr_widget rdr_widget_bar')//chain
-                                    .appendTo('#rdr_indicator_details_wrapper');
+                                    .addClass('ant ant_indicator_details ant_widget ant_widget_bar')//chain
+                                    .appendTo('#ant_indicator_details_wrapper');
                                 }
 
                                 $indicator_details.data('container',hash);
@@ -7659,18 +7640,18 @@ if ( sendData.kind=="page" ) {
                                 $indicator_details.data('hash',hash);
                                 $indicator_details.data('summary',summary);
 
-                                $indicator_details.addClass('rdr_indicator_details_for_media').click(
+                                $indicator_details.addClass('ant_indicator_details_for_media').click(
                                     function() {
-                                        $indicator_details.addClass('rdr_live_hover');
-                                        RDR.actions.containers.media.onEngage( hash );
+                                        $indicator_details.addClass('ant_live_hover');
+                                        ANT.actions.containers.media.onEngage( hash );
                                     }
                                 );
 
-                                // $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body').append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
-                                $indicator.addClass('rdr_indicator_for_media rdr_indicator_for_media_inline').find('.rdr_indicator_body'); // .append('<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>');
+                                // $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body').append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
+                                $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body'); // .append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
                                 if(isTouchBrowser){
                                     $indicator.bind('tap', function(){
-                                        $(this).toggleClass('rdr_hover');
+                                        $(this).toggleClass('ant_hover');
                                     });
                                 }
                             }
@@ -7681,16 +7662,16 @@ if ( sendData.kind=="page" ) {
                             this.img( hash );
                         },
                         text: function( hash ){
-                            var summary = RDR.summaries[hash],
+                            var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
-                                $actionbar = $('rdr_actionbar_'+hash);
+                                $actionbar = $('ant_actionbar_'+hash);
 
-                            $indicator.addClass('rdr_indicator_for_text').addClass('rdr_dont_show');
-                            // $indicator.addClass('rdr_indicator_for_text');  //.addClass('rdr_dont_show');
+                            $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
 
-                            var startOfTrailingWhiteSpace = RDR.actions.indicators.utils.checkTrailingWhiteSpace($container);
+                            var startOfTrailingWhiteSpace = ANT.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
                             if(startOfTrailingWhiteSpace){
                                 $(startOfTrailingWhiteSpace).before($indicator);
@@ -7700,25 +7681,25 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     makeDetailsContent: function( hash ){
-                        //RDR.actions.indicators.utils.makeDetailsContent:
+                        //ANT.actions.indicators.utils.makeDetailsContent:
                         var scope = this;
-                        var summary = RDR.summaries[hash],
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
                             $indicator_body = summary.$indicator_body,
                             $indicator_details = summary.$indicator_details,
-                            $actionbar = $('rdr_actionbar_'+hash);
+                            $actionbar = $('ant_actionbar_'+hash);
 
                         if ( typeof $indicator != "undefined" ) {
                             //just rebuild them
-                            $indicator_details.find('div.rdr_body_wrap').remove();
+                            $indicator_details.find('div.ant_body_wrap').remove();
                             // $oldDetails.remove();
 
                             //update the header
-                            var headerText = RDR.rindow.makeDefaultPanelMessage($indicator_details);
-                            var $header = RDR.rindow.makeHeader( headerText );
+                            var headerText = ANT.aWindow.makeDefaultPanelMessage($indicator_details);
+                            var $header = ANT.aWindow.makeHeader( headerText );
                             
-                            var $bodyWrap = $('<div class="rdr rdr_body_wrap rdr_clearfix" />');
+                            var $bodyWrap = $('<div class="ant ant_body_wrap ant_clearfix" />');
                                 
 
                             var kind = summary.kind;
@@ -7729,12 +7710,12 @@ if ( sendData.kind=="page" ) {
                                 kind=="media";
 
                             //builds out the $tagsList contents
-                            if (isMediaContainer && !$indicator_details.find('div.rdr_view_success').length ){
+                            if (isMediaContainer && !$indicator_details.find('div.ant_view_success').length ){
                                 $indicator_details.data( 'initialWidth', $container.width() );
                             }
 
-                            var $rindow = $indicator_details;
-                            var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                            var $aWindow = $indicator_details;
+                            var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
 
                             $bodyWrap.append($tagsListContainer);
 
@@ -7743,19 +7724,19 @@ if ( sendData.kind=="page" ) {
                     },
 
                     //move these from indicators-  they dont belong here
-                    makeTagsListForInline: function( $rindow, isWriteMode, page ){
-                        //RDR.actions.indicators.utils.makeTagsListForInline:
+                    makeTagsListForInline: function( $aWindow, isWriteMode, page ){
+                        //ANT.actions.indicators.utils.makeTagsListForInline:
                         // page is the page object, not a boolean
 
-                        var hash = $rindow.data('hash') || $rindow.attr('rdr-hash');
+                        var hash = $aWindow.data('hash') || $aWindow.attr('ant-hash');
                         
                         var isPage = !hash || hash == "page";
 
-                        var summary = !isPage ? RDR.summaries[hash] : {};
+                        var summary = !isPage ? ANT.summaries[hash] : {};
                         
-                        var default_reactions = RDR.groupSettings.getBlessedTags(hash);
+                        var default_reactions = ANT.groupSettings.getBlessedTags(hash);
 
-                        var reactionViewStyle = $rindow.attr('rdr-view-style') || 'grid';
+                        var reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid';
 
                         // For IE8 and earlier version.
                         if (!Date.now) {
@@ -7764,11 +7745,11 @@ if ( sendData.kind=="page" ) {
                           }
                         }
 
-                        var $tagsListContainer = $('<div class="rdr_body rdr_tags_list rdr_'+reactionViewStyle+'" />').data('now', Date.now()),
-                            $tagsListContainerCopy = $('<div class="rdr_body rdr_tags_list" />').data('now', Date.now());  // wtf
+                        var $tagsListContainer = $('<div class="ant_body ant_tags_list ant_'+reactionViewStyle+'" />').data('now', Date.now()),
+                            $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
                         
-                        var $existingTagslist = $rindow.find('.rdr_tags_list');
-                        $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        var $existingTagslist = $aWindow.find('.ant_tags_list');
+                        $aWindow.find('.ant_body_wrap').append($tagsListContainer);
                         $existingTagslist.remove();
 
                         if ( typeof page != "undefined" ) {
@@ -7777,22 +7758,22 @@ if ( sendData.kind=="page" ) {
                                 // write page-level tags: readmode
 
                                 // actually, these should always be sorted already - dont think we need this.
-                                // RDR.actions.summaries.sortByTags(page.toptags);
+                                // ANT.actions.summaries.sortByTags(page.toptags);
 
                                 writeTagBoxes( page.toptags );
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
-                                $rindow.find('.rdr_footer').addClass('rdr_cta').find('span.rdr_cta_msg').click( function() {
-                                    $rindow.remove();
-                                    $rindow = RDR.rindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
+                                ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
+                                $aWindow.find('.ant_footer').addClass('ant_cta').find('span.ant_cta_msg').click( function() {
+                                    $aWindow.remove();
+                                    $aWindow = ANT.aWindow.make( "writeMode", { hash:'page', page:page, is_page:true } );
                                 });
                             } else {
                                 // write page-level tags: writemode
-                                var $header = RDR.rindow.makeHeader( RDR.t('main_cta') ),
+                                var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') ),
                                     isWriteMode = true;
-                                $rindow.find('.rdr_header').replaceWith($header);
+                                $aWindow.find('.ant_header').replaceWith($header);
                                 writeTagBoxes(default_reactions);
-                                var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
+                                var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
+                                $aWindow.removeClass('ant_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
@@ -7805,48 +7786,48 @@ if ( sendData.kind=="page" ) {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
 
                                 // write inline tags: readmode, for all content types (kind)
-                                RDR.actions.summaries.sortInteractions(hash);
+                                ANT.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
                                     if ( !summary.crossPage ) {
-                                        RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
-                                        $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
-                                            $rindow.remove();
-                                            var $container = $('[rdr-hash="'+hash+'"]');
+                                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
+                                        $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                                            $aWindow.remove();
+                                            var $container = $('[ant-hash="'+hash+'"]');
                                             var el = $container[0]
                                             $('document').selog('selectEl', el);
-                                            $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         });
                                     }
                                 } else {
-                                    RDR.rindow.updateFooter( $rindow, '<span class="rdr_cta_msg">'+RDR.t('main_cta')+'</span>' );
-                                    $rindow.find('.rdr_footer').addClass('rdr_cta').find('.rdr_cta_msg').click( function() {
-                                        $rindow.remove();
-                                        $rindow = RDR.rindow.make( "writeMode", {hash:hash} );
+                                    ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
+                                    $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                                        $aWindow.remove();
+                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     });
                                 }
                             } else {
                                 // no t() not used?
-                                RDR.rindow.updateFooter( $rindow, '<span class="rdr_no_reactions_msg rdr_clearfix">No reactions yet!</span>' );
+                                ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
 
-                        // mode-specific addition functionality that needs to precede writing the $rindow to the DOM
+                        // mode-specific addition functionality that needs to precede writing the $aWindow to the DOM
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
-                            var $custom_tagBox = RDR.rindow.writeCustomTag( $tagsListContainer, $rindow );
-                                $rindow.removeClass('rdr_rewritable');
+                            var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
+                                $aWindow.removeClass('ant_rewritable');
                         }
 
 
-                        // mode-specific addition functionality that needs to come AFTER writing the $rindow to the DOM
+                        // mode-specific addition functionality that needs to come AFTER writing the $aWindow to the DOM
                         if ( !isTouchBrowser) {
-                            $rindow.on( 'mouseleave', function(e) {
+                            $aWindow.on( 'mouseleave', function(e) {
                                 var $this = $(this),
                                     timeoutCloseEvt;
 
                                 timeoutCloseEvt = setTimeout(function(){
-                                    if ( $this.hasClass('rdr_rewritable') ) {
+                                    if ( $this.hasClass('ant_rewritable') ) {
                                         $this.remove();
                                     }
                                 },300);
@@ -7859,23 +7840,23 @@ if ( sendData.kind=="page" ) {
                             
                             //note: wrapped in !touchBrowser above
                             if ( typeof summary !="undefined" && summary.kind == "text" && !$.isEmptyObject( summary.content_nodes )) {
-                                $rindow.find('div.rdr_box').each( function() {
+                                $aWindow.find('div.ant_box').each( function() {
                                     $(this).hover(
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
                                             //make sure it's not already transitiontion into a success state
                                             //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
                                             if( isPanelState1 ){
                                                 $().selog('hilite', selState, 'on');
-                                                $rindow.data('selState', selState);
+                                                $aWindow.data('selState', selState);
                                             }
                                         },
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.rdr_tag').data('content_node_id')].selState;
+                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
                                             //make sure it's not already transitiontion into a success state
                                             //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$rindow.data('panelState') || $rindow.data('panelState') === 1;
+                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
                                             if( isPanelState1 ){
                                                 $().selog('hilite', selState, 'off');                                        
                                             }
@@ -7891,21 +7872,21 @@ if ( sendData.kind=="page" ) {
                         }
 
                         // $tagsListContainer.append($tag_table);
-                        // RDR.rindow.jspUpdate($rindow);
-                        // $rindow.find('.rdr_body_wrap').append($tagsListContainer);
+                        // ANT.aWindow.jspUpdate($aWindow);
+                        // $aWindow.find('.ant_body_wrap').append($tagsListContainer);
                         if ( reactionViewStyle == "grid" || isWriteMode ) {
                             isotopeTags( $tagsListContainer );
                             isotopeFillGap($tagsListContainer);
                         } else {
-                            // $tagsListContainer.find('.rdr_box').addClass('rdr_animated');
-                            var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
+                            // $tagsListContainer.find('.ant_box').addClass('ant_animated');
+                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
                                 currentTagBoxAnimating = 0;
                             // var animationQueue = setInterval( animateNextBox, 10 );
                             var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
                             function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('rdr_animated');
+                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
+                                $thisBox.addClass('ant_animated');
                                 currentTagBoxAnimating++;
                                 if ( currentTagBoxAnimating > tagBoxesCount ) {
                                     clearInterval( animationQueue );
@@ -7917,7 +7898,7 @@ if ( sendData.kind=="page" ) {
 
                         
                         // sort a list of tags into their buckets
-                        // private function, but could be a RDR.util or RDR.tagBox function
+                        // private function, but could be a ANT.util or ANT.tagBox function
                         function createTagBuckets( tagList ) {
                             // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
@@ -7963,40 +7944,40 @@ if ( sendData.kind=="page" ) {
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
                                 colorInt = 1;
 
-                            // if a grid, size the rindow based on # of reactions
+                            // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
                                     }else{
-                                        RDR.rindow.tagBox.setWidth( $rindow, 480 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    RDR.rindow.tagBox.setWidth( $rindow, 320 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                    if ( buckets.medium.length ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
-                                    if ( buckets.small.length >= 3 ) { RDR.rindow.tagBox.setWidth( $rindow, 320 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
                                 }
                             }
 
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
-                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "big", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
-                                    RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "medium", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
                                     if ( colorInt == 6 ) colorInt = 1;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
-                                  RDR.rindow.tagBox.make( { tag: thisTag, boxSize: "small", $rindow:$rindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                   // set next color 
                                   colorInt++;
                                   if ( colorInt == 6 ) colorInt = 1;
@@ -8013,13 +7994,13 @@ if ( sendData.kind=="page" ) {
                           }
                         }, function() {
 
-                            var tagBoxesCount = $tagsListContainer.find('div.rdr_box').length,
+                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
                                 currentTagBoxAnimating = 0;
                             var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
                             function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.rdr_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('rdr_animated');
+                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
+                                $thisBox.addClass('ant_animated');
                                 currentTagBoxAnimating++;
                                 if ( currentTagBoxAnimating > tagBoxesCount ) {
                                     clearInterval( animationQueue );
@@ -8029,15 +8010,15 @@ if ( sendData.kind=="page" ) {
                       } // isotopeTags
 
                         function isotopeFillGap($tagsListContainer){
-                            var $boxes = $tagsListContainer.find('.rdr_box');
+                            var $boxes = $tagsListContainer.find('.ant_box');
                             var $lastTag = $boxes.eq(-1);
                             
-                            var $smallBoxes = $tagsListContainer.find('.rdr_box_small');
+                            var $smallBoxes = $tagsListContainer.find('.ant_box_small');
                             var $lastSmallTag = $smallBoxes.eq(-1);
 
                             if ( isTouchBrowser && $smallBoxes.length > 1 ) {
                                 if ( $smallBoxes.index($lastTag) % 2 ==0 ) {
-                                    $lastSmallTag.addClass('rdr_wide');
+                                    $lastSmallTag.addClass('ant_wide');
                                 }
                                 return;
                             }
@@ -8069,7 +8050,7 @@ if ( sendData.kind=="page" ) {
                                 
                                 if(isAdjacentRow){
                                     $thisTag
-                                        .addClass('rdr_clear_transform')
+                                        .addClass('ant_clear_transform')
                                         .css({
                                             height: 'auto',
                                             top: thisTagDims.top,
@@ -8080,7 +8061,7 @@ if ( sendData.kind=="page" ) {
                                 //don't do this for now.
                                 // if(isAdjacentCol){
                                 //     $thisTag
-                                //         .addClass('rdr_clear_transform')
+                                //         .addClass('ant_clear_transform')
                                 //         .css({
                                 //             width: 'auto',
                                 //             top: thisTagDims.top,
@@ -8092,7 +8073,7 @@ if ( sendData.kind=="page" ) {
                             });
                             
                             $lastTag
-                                .addClass('rdr_clear_transform')
+                                .addClass('ant_clear_transform')
                                 .css({
                                     height: 'auto',
                                     width: 'auto',
@@ -8105,21 +8086,21 @@ if ( sendData.kind=="page" ) {
 
                     },
                     updateContainerTrackers: function(){
-                        $.each( RDR.containers, function(idx, container) {
+                        $.each( ANT.containers, function(idx, container) {
                             if ( container.kind && ( container.kind == "img" || container.kind == "media" || container.kind == "med") ) {
-                                RDR.actions.indicators.utils.updateContainerTracker( container.hash );
+                                ANT.actions.indicators.utils.updateContainerTracker( container.hash );
                             }
                         });
                     },
                     updateContainerTracker: function(hash){
-                        //RDR.actions.indicators.utils.updateContainerTracker:
-                        var summary = RDR.summaries[hash],
+                        //ANT.actions.indicators.utils.updateContainerTracker:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
-                            $container_tracker = $('#rdr_container_tracker_'+hash);
+                            $container_tracker = $('#ant_container_tracker_'+hash);
 
                         //quick fix so this doesnt get run on text.
                         //TODO figure out where this was getting called for text containers.
-                        var container = RDR.containers[hash];
+                        var container = ANT.containers[hash];
                         if ( container.kind && ( container.kind == "text" || container.kind == "txt") ) return;
 
                         var padding = {
@@ -8139,7 +8120,7 @@ if ( sendData.kind=="page" ) {
                         paddingOffset.left = !hasBorder ? padding.left : 0;
 
                         //compensate for padding - which we want to ignore
-                        RDR.util.cssSuperImportant($container_tracker, {
+                        ANT.util.cssSuperImportant($container_tracker, {
                             top: $container.offset().top + paddingOffset.top+'px',
                             left: $container.offset().left + paddingOffset.left+'px'
                         }, true);
@@ -8148,8 +8129,8 @@ if ( sendData.kind=="page" ) {
 
                     },
                     updateInlineIndicator: function(hash){
-                        //RDR.actions.indicators.utils.updateInlineIndicator:
-                        var summary = RDR.summaries[hash],
+                        //ANT.actions.indicators.utils.updateInlineIndicator:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator_details = summary.$indicator_details;
 
@@ -8162,18 +8143,18 @@ if ( sendData.kind=="page" ) {
                         }
                     },
                     updateMediaTracker: function(hash){
-                        //RDR.actions.indicators.utils.updateMediaTracker:
-                        var summary = RDR.summaries[hash],
+                        //ANT.actions.indicators.utils.updateMediaTracker:
+                        var summary = ANT.summaries[hash],
                             $container = summary.$container,
                             $indicator = summary.$indicator,
                             $indicator_body = summary.$indicator_body,
                             $indicator_details = summary.$indicator_details,
-                            $container_tracker = $('#rdr_container_tracker_'+hash);
+                            $container_tracker = $('#ant_container_tracker_'+hash);
 
                         if ( $indicator_body ) {
                             
-                            if ( $container.parents( RDR.group.img_container_selectors ).length ) {
-                                $container = $container.parents( RDR.group.img_container_selectors ).first();
+                            if ( $container.parents( ANT.group.img_container_selectors ).length ) {
+                                $container = $container.parents( ANT.group.img_container_selectors ).first();
                             }
 
                             //todo: consolodate this with the other case of it
@@ -8207,26 +8188,26 @@ if ( sendData.kind=="page" ) {
                             $indicator.data('top', cssTop);
 
                             if (summary.kind=="media") {
-                                $indicator.addClass('rdr_indicator_not_img');
+                                $indicator.addClass('ant_indicator_not_img');
                             }
 
-                            RDR.util.cssSuperImportant( $indicator, {
+                            ANT.util.cssSuperImportant( $indicator, {
                                 left: 12+'px',
                                 top: cssTop+'px'
                             }, true);
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
-                                RDR.actions.indicators.utils.updateInlineIndicator(hash);
+                                ANT.actions.indicators.utils.updateInlineIndicator(hash);
                             }else{
 
                             }
                         }
 
-                        // RDR.actions.indicators.utils.borderHilites.update(hash);
+                        // ANT.actions.indicators.utils.borderHilites.update(hash);
                     },
                     borderHilites: {
-                        //RDR.actions.indicators.utils.borderHilites:
+                        //ANT.actions.indicators.utils.borderHilites:
                         
                         //hiliteDesignEdit
                         //our old blue version
@@ -8238,18 +8219,18 @@ if ( sendData.kind=="page" ) {
 
                         makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
                         make: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.make:
+                            //ANT.actions.indicators.utils.borderHilites.make:
 
-                            var $indicator = $('#rdr_indicator_'+hash),
-                                $container = $('[rdr-hash="'+hash+'"]'),
-                                $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap'); //probably null, will make it below.
+                            var $indicator = $('#ant_indicator_'+hash),
+                                $container = $('[ant-hash="'+hash+'"]'),
+                                $container_tracker = $('#ant_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
                                                         
-                            if( !$container_tracker.hasClass('rdr_inline_video') ){
+                            if( !$container_tracker.hasClass('ant_inline_video') ){
                                 
                                 if( !$mediaBorderWrap.length ){
-                                    $mediaBorderWrap = $('<div class="rdr_media_border_wrap" />').appendTo($container_tracker);
-                                    $mediaBorderWrap.addClass('designVersion_' + RDR.actions.indicators.utils.borderHilites.designVersion);
+                                    $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
+                                    $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
                                 }
                                 $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
@@ -8273,24 +8254,24 @@ if ( sendData.kind=="page" ) {
                                 };
 
                                 $mediaBorderWrap.data('borders',borders);
-                                // RDR.actions.indicators.utils.borderHilites.update(hash);
+                                // ANT.actions.indicators.utils.borderHilites.update(hash);
                             }
 
                         },
                         update: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.update:
-                            // var Section = RDR.actions.indicators.utils.borderHilites;
+                            //ANT.actions.indicators.utils.borderHilites.update:
+                            // var Section = ANT.actions.indicators.utils.borderHilites;
 
-                            // var $indicator = $('#rdr_indicator_'+hash),
-                            //     $container = $('[rdr-hash="'+hash+'"]'),
-                            //     $container_tracker = $('#rdr_container_tracker_'+hash),
-                            //     $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            // var $indicator = $('#ant_indicator_'+hash),
+                            //     $container = $('[ant-hash="'+hash+'"]'),
+                            //     $container_tracker = $('#ant_container_tracker_'+hash),
+                            //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
                             
                             // if( !$mediaBorderWrap.length ){
                             //     //failsafe that shouldnt be needed.
                             //     if( this.makeAttempt > 1 ) return;
                             //     this.makeAttempt ++;
-                            //     RDR.actions.indicators.utils.borderHilites.make(hash);
+                            //     ANT.actions.indicators.utils.borderHilites.make(hash);
                             //     //just return here.  the make function will call this update function again and this will be bypassed.
                             //     return;
                             // }
@@ -8335,7 +8316,7 @@ if ( sendData.kind=="page" ) {
 
                             // $.each( borders, function(side, data){
                             //     //set the value in the object using the key's string as a helper
-                            //     var hiliteClass = 'rdr_mediaHilite_'+side; //i.e. rdr_mediaHilite_top
+                            //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
                       
                             //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
                             //     if( !data.$side.length ){
@@ -8387,14 +8368,14 @@ if ( sendData.kind=="page" ) {
                             // };
 
                             // $.each( borders, function( side, data ){
-                            //     RDR.util.cssSuperImportant( data.$side, data.css, true );
+                            //     ANT.util.cssSuperImportant( data.$side, data.css, true );
                             // });                       
                     
                         },
                         engage: function(hash, isShareLink){
-                            //RDR.actions.indicators.utils.borderHilites.engage:
-                            var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            //ANT.actions.indicators.utils.borderHilites.engage:
+                            var $container_tracker = $('#ant_container_tracker_'+hash),
+                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
                             $mediaBorderWrap.addClass('engaged');
                             
@@ -8403,45 +8384,45 @@ if ( sendData.kind=="page" ) {
                             }
                         },
                         disengage: function(hash){
-                            //RDR.actions.indicators.utils.borderHilites.disengage:
-                            // if ( !$('rdr_for_'+hash).length ) {
-                                var $container_tracker = $('#rdr_container_tracker_'+hash),
-                                    $mediaBorderWrap = $container_tracker.find('.rdr_media_border_wrap');
+                            //ANT.actions.indicators.utils.borderHilites.disengage:
+                            // if ( !$('ant_for_'+hash).length ) {
+                                var $container_tracker = $('#ant_container_tracker_'+hash),
+                                    $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
                                 $mediaBorderWrap.removeClass('engaged');
                                 $mediaBorderWrap.removeClass('engagedForShareLink');
-                                $('#rdr_indicator_' + hash).hide();
+                                $('#ant_indicator_' + hash).hide();
                             // }
                         },
                         engageAll: function(){
-                            //RDR.actions.indicators.utils.borderHilites.engageAll:
-                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            //ANT.actions.indicators.utils.borderHilites.engageAll:
+                            $mediaBorderWrap = $('.ant_media_border_wrap');
                             $mediaBorderWrap.addClass('engaged');
                         },
                         disengageAll: function(){
-                            //RDR.actions.indicators.utils.borderHilites.disengageAll:
-                            $mediaBorderWrap = $('.rdr_media_border_wrap');
+                            //ANT.actions.indicators.utils.borderHilites.disengageAll:
+                            $mediaBorderWrap = $('.ant_media_border_wrap');
                             $mediaBorderWrap.removeClass('engaged');
                             $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('div.rdr_indicator_for_media').hide();
+                            $('div.ant_indicator_for_media').hide();
                         }
                     }
-                }//end RDR.actions.indicators.utils
+                }//end ANT.actions.indicators.utils
             },
             summaries:{
                 init: function(hash){
-                    if (!RDR.util.activeAB()) return;
-                    //RDR.actions.summaries.init:
+                    if (!ANT.util.activeAB()) return;
+                    //ANT.actions.summaries.init:
 
-                    if ( typeof RDR.summaries[hash] == 'object' ) {
-                        return RDR.summaries[hash];
+                    if ( typeof ANT.summaries[hash] == 'object' ) {
+                        return ANT.summaries[hash];
                     }
 
                     //todo: it might make sense to just get this from the backend, since it has a function to do this already.
 
                     //data is in form {body:,kind:,hash:}
                     //todo: combine with above
-                    var container = RDR.containers[hash];
+                    var container = ANT.containers[hash];
 
                     //create an 'empty' summary object
                     var summary = {
@@ -8463,18 +8444,18 @@ if ( sendData.kind=="page" ) {
                     return summary;
                 },
                 save: function(summary){
-                    //RDR.actions.summaries.save:
+                    //ANT.actions.summaries.save:
                     var hash = summary.hash;
 
                     //save the summary and add the $container as a property
-                    RDR.summaries[hash] = summary;
-                    summary.$container = $('[rdr-hash="'+hash+'"]');
+                    ANT.summaries[hash] = summary;
+                    summary.$container = $('[ant-hash="'+hash+'"]');
 
-                    // RDR.actions.summaries.sortInteractions(hash);
+                    // ANT.actions.summaries.sortInteractions(hash);
 
                 },
                 update: function(hash, diff, isPage, pageId){
-                    //RDR.actions.summaries.update:
+                    //ANT.actions.summaries.update:
                     /*
                     //EXAMPLE: diff object.  keep commented out, but leave it here.
                     var diff = {
@@ -8514,7 +8495,7 @@ if ( sendData.kind=="page" ) {
                                 //coms or tags
                                 //a bit hacky
                                 diffNode.page_id = pageId;
-                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
                             });
                         });
                         return;
@@ -8525,16 +8506,16 @@ if ( sendData.kind=="page" ) {
 
                     //todo: use a try catch instead;
                     var summary;
-                    if( !RDR.summaries.hasOwnProperty(hash) ){
-                        summary = RDR.actions.summaries.init(hash);
+                    if( !ANT.summaries.hasOwnProperty(hash) ){
+                        summary = ANT.actions.summaries.init(hash);
                     }else{
-                        summary = RDR.summaries[hash];
+                        summary = ANT.summaries[hash];
                     }
 
                     //todo: not sure if this is being used. - no it's not being used yet.  never got to it.
                     // if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        // summary = RDR.util.getPageProperty ('summary');
+                        // summary = ANT.util.getPageProperty ('summary');
                     // }
 
                     $.each( diff, function(interaction_node_type, nodes){
@@ -8565,23 +8546,23 @@ if ( sendData.kind=="page" ) {
                             summary.counts.interactions += diffNode.delta;
 
                             diffNode.int_type = interaction_node_type;
-                            //now update rindow
-                            RDR.rindow.update(hash, diffNode);
+                            //now update aWindow
+                            ANT.aWindow.update(hash, diffNode);
 
                         });
 
                     });
 
                     //don't forget to do this.  Tags won't get built correctly if not updated.
-                    RDR.actions.summaries.sortInteractions(hash);
+                    ANT.actions.summaries.sortInteractions(hash);
                     
                     if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        makeSummaryWidget(RDR.page);
+                        makeSummaryWidget(ANT.page);
                     }else{
                         //only init if it's a text node, don't do it for media.
                         // var shouldReInit = (summary.kind == 'text');
-                        // RDR.actions.indicators.update( hash, shouldReInit );
+                        // ANT.actions.indicators.update( hash, shouldReInit );
                     }
                                 
                     function update_top_interactions_cache(attrs){
@@ -8601,7 +8582,7 @@ if ( sendData.kind=="page" ) {
 
                             if(interaction_node_type == "tags"){
                                 //also update page
-                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
                                 
                                 //if this cleared out the last of this node, delete it. (i.e. if a first-ever tag was made, and then undone )
                                 if( summary_node.count <= 0 ){
@@ -8624,7 +8605,7 @@ if ( sendData.kind=="page" ) {
                                 };
 
                                 //also update page
-                                RDR.actions.summaries.updatePageSummaryTags(hash, diffNode);
+                                ANT.actions.summaries.updatePageSummaryTags(hash, diffNode);
 
                             }else{
 
@@ -8713,12 +8694,12 @@ if ( sendData.kind=="page" ) {
 
                 },
                 updatePageSummaryTags: function(hash, diffNode){
-                    //RDR.actions.summaries.updatePageSummaryTags:
+                    //ANT.actions.summaries.updatePageSummaryTags:
 
                         //also update page
                         var tagId = diffNode.id;
-                        var pageId = diffNode.page_id || RDR.util.getPageProperty('id', hash);
-                        var page = RDR.pages[pageId];
+                        var pageId = diffNode.page_id || ANT.util.getPageProperty('id', hash);
+                        var page = ANT.pages[pageId];
                         var toptags = page.toptags;
                         
                         var foundIt;
@@ -8753,16 +8734,16 @@ if ( sendData.kind=="page" ) {
                         });
 
 
-                        var $page = $('[rdr-page-container="'+pageId+'"]'); 
+                        var $page = $('[ant-page-container="'+pageId+'"]'); 
                         //update plugin widgets
-                        //update rdrWidgetSummary...
-                        var $summaryWidgetAnchorNode = $page.find('[rdr-page-widget-key]');
-                        $summaryWidgetAnchorNode.rdrWidgetSummary('update');
+                        //update antWidgetSummary...
+                        var $summaryWidgetAnchorNode = $page.find('[ant-page-widget-key]');
+                        $summaryWidgetAnchorNode.antWidgetSummary('update');
                     
                 },
 
                 sortByTags: function(tags) {
-                  // RDR.actions.summaries.sortByTags
+                  // ANT.actions.summaries.sortByTags
                   
                   //redundant with below.  
                   //I need to use this for page summaries and dont want to mess with the below func.
@@ -8771,11 +8752,11 @@ if ( sendData.kind=="page" ) {
                 },
 
                 sortInteractions: function(hash) {
-                    // RDR.actions.summaries.sortInteractions
+                    // ANT.actions.summaries.sortInteractions
 
                     function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
-                    var summary = RDR.summaries[hash];
+                    var summary = ANT.summaries[hash];
                     summary.interaction_order = [];
                     summary.counts.highest_tag_count = 0;
 
@@ -8791,7 +8772,7 @@ if ( sendData.kind=="page" ) {
                                     setHighestTagCount(tag_data.count);
                                 });
                             });
-                        // has no content node obj?  i.e. is text that is probably a rdr-item.
+                        // has no content node obj?  i.e. is text that is probably a ant-item.
                         } else {
                             $.each( summary.top_interactions.tags, function( tag_id, tag_data ) {
                                 summary.interaction_order.push( { tag_count:tag_data.count, tag_id:tag_id, tag_body:tag_data.body, content_node_id:node_id, parent_id:tag_data.parent_id } );
@@ -8816,59 +8797,59 @@ if ( sendData.kind=="page" ) {
                     
                 },
                 sortPopularTextContainers: function() {
-                    // RDR.actions.summaries.sortPopularTextContainers
+                    // ANT.actions.summaries.sortPopularTextContainers
                     // only sort the most popular whitelisted
                     // is this used??
                     function SortByCount(a,b) { return b.interactions - a.interactions; }
 
-                    RDR.text_container_popularity = [];
+                    ANT.text_container_popularity = [];
 
-                    $.each( RDR.summaries, function( hash, container ){
+                    $.each( ANT.summaries, function( hash, container ){
                         if ( container.kind == "text" && container.counts.interactions > 0 ) {
-                            RDR.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
+                            ANT.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
                         }
                     });
 
-                    RDR.text_container_popularity.sort( SortByCount );
+                    ANT.text_container_popularity.sort( SortByCount );
 
                 },
                 displayPopularIndicators: function () {
-                    // RDR.actions.summaries.displayPopularIndicators
+                    // ANT.actions.summaries.displayPopularIndicators
                     // is this used??
 
-                    for ( var i=0; i < RDR.group.initial_pin_limit; i++) {
-                        if ( RDR.text_container_popularity[i] ) $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
+                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
                     }
                 },
                 showLessPopularIndicators: function() {
-                    // RDR.actions.summaries.showLessPopularIndicators
+                    // ANT.actions.summaries.showLessPopularIndicators
                     // is this used??
                     var hashesToShow = [];
 
-                    for ( var i=RDR.group.initial_pin_limit; i<RDR.text_container_popularity.length; i++) {
-                        if ( RDR.text_container_popularity[i] ) {
-                            if ( RDR.text_container_popularity[i].interactions > 0 ) {
-                                $('#rdr_indicator_' + RDR.text_container_popularity[i].hash).removeClass('rdr_dont_show');
-                                hashesToShow.push( RDR.text_container_popularity[i].hash );
+                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                        if ( ANT.text_container_popularity[i] ) {
+                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                hashesToShow.push( ANT.text_container_popularity[i].hash );
                             }
                         }
                     }
 
-                    RDR.actions.indicators.show(hashesToShow);
+                    ANT.actions.indicators.show(hashesToShow);
                 }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
-                //RDR.actions.viewReactionSuccess
+                //ANT.actions.viewReactionSuccess
 
                 var tag = args.tag,
-                    $rindow = args.rindow,
+                    $aWindow = args.aWindow,
                     interaction = args.response.data.interaction,
                     content_node = ( args.content_node == "" ) ? args.response.data.content_node:args.content_node;
 
-                $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more').find('.rdr_footer').hide();
+                $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more').find('.ant_footer').hide();
                 //temp tie-over
-                var headerText = ( args.scenario == "reactionSuccess" ) ? RDR.t('thanks') : RDR.t('already_done_that');
+                var headerText = ( args.scenario == "reactionSuccess" ) ? ANT.t('thanks') : ANT.t('already_done_that');
 
                 var isPage = args.kind == "page";
                 if(isPage){
@@ -8876,20 +8857,20 @@ if ( sendData.kind=="page" ) {
                         kind = "page";
                 }else{
                     var hash = args.hash,
-                        summary = RDR.summaries[hash],
+                        summary = ANT.summaries[hash],
                         kind = summary.kind; // text, img, media
                 }
 
 
-                // do stuff, populate the rindow.
-                var $header = RDR.rindow.makeHeader( headerText, args.response.data.interaction.id);
-                $rindow.find('.rdr_header').replaceWith($header);
+                // do stuff, populate the aWindow.
+                var $header = ANT.aWindow.makeHeader( headerText, args.response.data.interaction.id);
+                $aWindow.find('.ant_header').replaceWith($header);
 
-                var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
-                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
-                $rdr_body_wrap.append( $newPanel );
+                var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
+                $ant_body_wrap.append( $newPanel );
 
-                RDR.rindow.updateTagMessage( args );
+                ANT.aWindow.updateTagMessage( args );
 
                 // var isMediaContainer = kind=="img" ||
                 //     kind=="image" ||  // [pb] really?
@@ -8897,73 +8878,73 @@ if ( sendData.kind=="page" ) {
                 //     kind=="med" ||
                 //     kind=="media";
 
-                RDR.rindow.panelShow( $rindow, $newPanel, function() {
+                ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                   
                     if ( kind == "text" && args.selState ){
                         var selState = args.selState;
                         $().selog('hilite', selState, 'on');
                     }
 
-                    var $tagsListContainer = RDR.actions.indicators.utils.makeTagsListForInline( $rindow );
+                    var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
                     if (args.scenario != "reactionExists") {
-                        RDR.actions.containers.updateCrossPageHash(hash);
+                        ANT.actions.containers.updateCrossPageHash(hash);
                     }
 
-                    $tagsListContainer.addClass('rdr_hiddenPanel');
-                    var className = "rdr_tags_list";
-                    RDR.rindow.hideFooter($rindow);
-                    RDR.rindow.panelUpdate($rindow, className, $tagsListContainer);
+                    $tagsListContainer.addClass('ant_hiddenPanel');
+                    var className = "ant_tags_list";
+                    ANT.aWindow.hideFooter($aWindow);
+                    ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
                     
-                    var isCrossPageContainer = $('[rdr-hash="'+hash+'"]').length > 0;
+                    var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                        // RDR.rindow.panelEnsureFloatWidths($rindow);
+                        // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                     }
 
                 } );
                 
                 //todo: examine resize
-                // RDR.rindow.updateSizes( $rindow );
+                // ANT.aWindow.updateSizes( $aWindow );
 
-                // RDR.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
+                // ANT.events.track( 'view_reaction_success::'+interaction.id+'|'+tag.id, hash );
             },
             viewCommentContent: function(args){
-                //RDR.actions.viewCommentContent
+                //ANT.actions.viewCommentContent
                 var tag = args.tag,
-                    $rindow = args.rindow,
+                    $aWindow = args.aWindow,
                     content_node = args.content_node;
 
-                RDR.events.trackEventToCloud({
+                ANT.events.trackEventToCloud({
                     event_type: "vcom",
                     event_value: '',
                     container_hash: args.hash,
                     container_kind: args.content_node.kind,
-                    page_id: RDR.util.getPageProperty('id'),
+                    page_id: ANT.util.getPageProperty('id'),
                     reaction_body: args.tag.tag_body
                 });
 
-                $rindow.removeClass('rdr_rewritable').addClass('rdr_viewing_more');
-                RDR.rindow.tagBox.setWidth( $rindow, 320 );
-                RDR.rindow.hideFooter( $rindow );
+                $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
+                ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
                 var hash = args.hash,
-                    summary = RDR.summaries[hash],
+                    summary = ANT.summaries[hash],
                     tagBody = (tag.tag_body) ? tag.tag_body:tag.body,
                     kind = summary.kind; // text, img, media
 
-                // do stuff, populate the rindow.
-                var $header = RDR.rindow.makeHeader( tag.tag_body );
-                $rindow.find('.rdr_header').replaceWith($header);
+                // do stuff, populate the aWindow.
+                var $header = ANT.aWindow.makeHeader( tag.tag_body );
+                $aWindow.find('.ant_header').replaceWith($header);
 
-                var $newPanel = RDR.rindow.panelCreate( $rindow, 'rdr_view_more' );
-                var $rdr_body_wrap = $rindow.find('div.rdr_body_wrap');
-                $rdr_body_wrap.append( $newPanel );
+                var $newPanel = ANT.aWindow.panelCreate( $aWindow, 'ant_view_more' );
+                var $ant_body_wrap = $aWindow.find('div.ant_body_wrap');
+                $ant_body_wrap.append( $newPanel );
 
 
-                var $commentsWrap = $('<div class="rdr_commentsWrap"></div>');
+                var $commentsWrap = $('<div class="ant_commentsWrap"></div>');
                 var $backButton = _makeBackButton();
                 var $backButton2 = _makeBackButton();
                 var $otherComments = _makeOtherComments();
@@ -8978,36 +8959,36 @@ if ( sendData.kind=="page" ) {
                     kind=="media";
 
                 //todo: examine resize
-                // RDR.rindow.updateSizes( $rindow );
-                RDR.rindow.panelShow( $rindow, $newPanel, function() {
+                // ANT.aWindow.updateSizes( $aWindow );
+                ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                     if ( kind == "text" ){
                         var selState = args.selState || summary.content_nodes[ content_node.id ].selState;
                         $().selog('hilite', selState, 'on');
-                        $rindow.data('selState', selState);
+                        $aWindow.data('selState', selState);
                     }
                 });
 
-                // RDR.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
+                // ANT.events.track( 'view_comment::'+content_node.id+'|'+tag.id, hash );
 
                 //helper functions
                 function _makeCommentBox() {
 
                     // no t()
-                    var $commentBox = $('<div class="rdr_commentBox rdr_innerWrap"></div>').html(
-                        '<div class="rdr_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
+                    var $commentBox = $('<div class="ant_commentBox ant_innerWrap"></div>').html(
+                        '<div class="ant_commentComplete"><div><h4>Leave a comment:</h4></div></div>'
                     );
                    //todo: combine this with the other make comments code
                     var helpText = "Add a comment or #hashtag",
-                        $commentDiv =  $('<div class="rdr_comment rdr_clearfix">'),
-                        $commentTextarea = $('<textarea class="commentTextArea rdr_default_msg">' +helpText+ '</textarea>'),
-                        // $rdr_charCount =  $('<div class="rdr_charCount">'+RDR.group.comment_length+' characters left</div>'),
-                        $rdr_charCount =  $('<div class="rdr_charCount">' + RDR.t('characters_left').replace('NNN', RDR.group.comment_length ) +'</div>'),
-                        $submitButton =  $('<button class="rdr_commentSubmit">'+RDR.t('comment')+'</button>');
+                        $commentDiv =  $('<div class="ant_comment ant_clearfix">'),
+                        $commentTextarea = $('<textarea class="commentTextArea ant_default_msg">' +helpText+ '</textarea>'),
+                        // $ant_charCount =  $('<div class="ant_charCount">'+ANT.group.comment_length+' characters left</div>'),
+                        $ant_charCount =  $('<div class="ant_charCount">' + ANT.t('characters_left').replace('NNN', ANT.group.comment_length ) +'</div>'),
+                        $submitButton =  $('<button class="ant_commentSubmit">'+ANT.t('comment')+'</button>');
 
-                    $commentDiv.append( $commentTextarea, $rdr_charCount, $submitButton );
+                    $commentDiv.append( $commentTextarea, $ant_charCount, $submitButton );
 
                     $commentTextarea.focus(function(){
-                        // RDR.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
+                        // ANT.events.track('start_comment_lg::'+content_node.id+'|'+tag.id);
                         if( $(this).val() == helpText ){
                             $(this).val('');
                         }
@@ -9016,31 +8997,31 @@ if ( sendData.kind=="page" ) {
                     }).blur(function(){
                         var val = $(this).val();
                         if( val === "" || val === helpText ){
-                            $(this).addClass('rdr_default_msg');
+                            $(this).addClass('ant_default_msg');
                             $(this).val( helpText );
                         }
                     }).keyup(function(event) {
                         var commentText = $commentTextarea.val();
                         if (event.keyCode == '27') { //esc
                             $(this).blur();
-                            // return false so the rindow doesn't close.
+                            // return false so the aWindow doesn't close.
                             return false;
-                        } else if ( commentText.length > RDR.group.comment_length ) {
-                            commentText = commentText.substr(0, RDR.group.comment_length);
+                        } else if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
                         }
-                        // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
-                        $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
+                        // $commentTextarea.siblings('div.ant_charCount').text( ( ANT.group.comment_length - commentText.length ) + " characters left" );
+                        $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                     });
 
                     $submitButton.click(function(e) {
                         var commentText = $commentTextarea.val();
                         //keyup doesn't guarentee this, so check again (they could paste in for example);
-                        if ( commentText.length > RDR.group.comment_length ) {
-                            commentText = commentText.substr(0, RDR.group.comment_length);
+                        if ( commentText.length > ANT.group.comment_length ) {
+                            commentText = commentText.substr(0, ANT.group.comment_length);
                             $commentTextarea.val( commentText );
-                            // $commentTextarea.siblings('div.rdr_charCount').text( ( RDR.group.comment_length - commentText.length ) + " characters left" );
-                            $commentTextarea.siblings('div.rdr_charCount').text( RDR.t('characters_left').replace('NNN', ( RDR.group.comment_length - commentText.length ) ) );
+                            // $commentTextarea.siblings('div.ant_charCount').text( ( ANT.group.comment_length - commentText.length ) + " characters left" );
+                            $commentTextarea.siblings('div.ant_charCount').text( ANT.t('characters_left').replace('NNN', ( ANT.group.comment_length - commentText.length ) ) );
                         }
 
                         if ( commentText != helpText ) {
@@ -9050,7 +9031,7 @@ if ( sendData.kind=="page" ) {
 
                             if ($.isEmptyObject(content_node) && summary.kind=="img") {
                                 content_node = {
-                                    "body":$('img[rdr-hash="'+summary.hash+'"]').get(0).src,
+                                    "body":$('img[ant-hash="'+summary.hash+'"]').get(0).src,
                                     "kind":summary.kind,
                                     "hash":summary.hash
                                 };
@@ -9059,8 +9040,8 @@ if ( sendData.kind=="page" ) {
                                 // see if this is a custom display type
                                 // if so, use that info to set the kind
                                 // i know, this looks bad, is duplicated elsewhere, and looks overlappng with the code in the if() right above
-                                var $node = $('[rdr-hash="'+summary.hash+'"]'),
-                                    content_type = $node.attr('rdr-content-type');
+                                var $node = $('[ant-hash="'+summary.hash+'"]'),
+                                    content_type = $node.attr('ant-content-type');
 
                                 if ( content_type ) {
                                     if (content_type == "media") { content_node.kind = "media"; }
@@ -9071,10 +9052,10 @@ if ( sendData.kind=="page" ) {
                                 }
                             }
                             var selState = selState || null;
-                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, rindow:$rindow, selState:selState};
+                            var args = {  hash:hash, content_node_data:content_node, comment:commentText, content:content_node.body, tag:tag, aWindow:$aWindow, selState:selState};
 
                             //leave parent_id undefined for now - backend will find it.
-                            RDR.actions.interactions.ajax( args, 'comment', 'create');
+                            ANT.actions.interactions.ajax( args, 'comment', 'create');
 
                         } else{
                             $commentTextarea.focus();
@@ -9088,19 +9069,19 @@ if ( sendData.kind=="page" ) {
                 }
 
                 function _makeBackButton(){
-                    var $backButton = $('<div class="rdr_back">'+RDR.t('close')+' X</div>');
+                    var $backButton = $('<div class="ant_back">'+ANT.t('close')+' X</div>');
                     $backButton.click( function() {
     
-                        //temp fix because the rindow scrollpane re-init isnt working
-                        var isViewForRindow = !!$rindow.attr('rdr-view-reactions-for');
+                        //temp fix because the aWindow scrollpane re-init isnt working
+                        var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
                         if(!isViewForRindow){
-                            RDR.rindow.close($rindow);
+                            ANT.aWindow.close($aWindow);
                             return;
                         }
 
-                        var $header = RDR.rindow.makeHeader( RDR.t('reactions') );
-                        $rindow.find('.rdr_header').replaceWith($header)
-                        RDR.rindow.updateTagPanel( $rindow );
+                        var $header = ANT.aWindow.makeHeader( ANT.t('reactions') );
+                        $aWindow.find('.ant_header').replaceWith($header)
+                        ANT.aWindow.updateTagPanel( $aWindow );
                     });
                     return $backButton;
                 }
@@ -9133,8 +9114,8 @@ if ( sendData.kind=="page" ) {
                     //else
 
                     // ok, get the content associated with this tag!
-                    var $otherComments = $('<div class="rdr_otherCommentsBox"></div>');
-                    var $header = $('<div class="rdr_comment_header rdr_innerWrap"><h4>(<span>' + node_comments + '</span>) '+RDR.t('comments')+':</h4></div>');
+                    var $otherComments = $('<div class="ant_otherCommentsBox"></div>');
+                    var $header = $('<div class="ant_comment_header ant_innerWrap"><h4>(<span>' + node_comments + '</span>) '+ANT.t('comments')+':</h4></div>');
                     $otherComments.append($header);
 
                     $.each(comments, function(idx, this_comment){
@@ -9144,28 +9125,28 @@ if ( sendData.kind=="page" ) {
 
                         $otherComments.show();
 
-                        var $commentSet = $('<div class="rdr_commentSet rdr_innerWrap" />'),
-                            $commentBy = $('<div class="rdr_commentBy" />'),
-                            $comment = $('<div class="rdr_comment" />'),
-                            $commentReplies = $('<div class="rdr_commentReplies" />'),
-                            $commentReply = $('<div class="rdr_commentReply" />'),
+                        var $commentSet = $('<div class="ant_commentSet ant_innerWrap" />'),
+                            $commentBy = $('<div class="ant_commentBy" />'),
+                            $comment = $('<div class="ant_comment" />'),
+                            $commentReplies = $('<div class="ant_commentReplies" />'),
+                            $commentReply = $('<div class="ant_commentReply" />'),
                             $commentReply_link = $('<a href="javascript:void(0);">Reply</a>');
 
-                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: RDR_staticUrl+'widget/images/anonymousplode.png';
+                        var user_image_url = ( this_comment && this_comment.social_user && this_comment.social_user.img_url ) ? this_comment.social_user.img_url: ANT_staticUrl+'widget/images/anonymousplode.png';
 
                         var user_name = ( !this_comment || !this_comment.user || this_comment.user.first_name === "" ) ? 
                             "Anonymous" : 
                             this_comment.user.first_name + " " + this_comment.user.last_name;
                         
                         $commentBy.html(
-                            '<a href="'+RDR_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-rdr" /> ' + user_name + '</a>'
+                            '<a href="'+ANT_baseUrl+'/user/'+this_comment.user.id+'" target="_blank"><img src="'+user_image_url+'" class="no-ant" /> ' + user_name + '</a>'
                         ).click( function() {
-                            // RDR.events.track('click_user_profile');
+                            // ANT.events.track('click_user_profile');
                         });
 
                         $comment.html(
-                            // '<span class="rdr_quoteImg"></span>'+
-                            '<div class="rdr_comment_body">'+this_comment.body+'</div>'
+                            // '<span class="ant_quoteImg"></span>'+
+                            '<div class="ant_comment_body">'+this_comment.body+'</div>'
                         );
 
                         $commentSet.append( $commentBy, $comment ); // , $commentReplies, $commentReply
@@ -9173,32 +9154,32 @@ if ( sendData.kind=="page" ) {
 
                     });
 
-                    $otherComments.find('div.rdr_commentSet:last-child').addClass('rdr_lastchild');
+                    $otherComments.find('div.ant_commentSet:last-child').addClass('ant_lastchild');
                     return $otherComments;
 
                 } //end makeOtherComments
             },
             share_getLink: function(args) {
                 var hash = args.hash,
-                    summary = RDR.summaries[hash],
+                    summary = ANT.summaries[hash],
                     kind = (args.kind) ? args.kind:summary.kind;
 
                 //example:
-                //tag:{body, id}, rindow:rindow, settings:settings, callback:
+                //tag:{body, id}, aWindow:aWindow, settings:settings, callback:
 
                 // tag can be an ID or a string.  if a string, we need to sanitize.
 
-                // tag, rindow, settings, callback
+                // tag, aWindow, settings, callback
 
                 // TODO the args & params thing here is confusing
-                RDR.session.getUser( args, function( params ) {
+                ANT.session.getUser( args, function( params ) {
                     // get the text that was highlighted
 
                     // var content = $.trim( params.settings.content ),
                     //     container = $.trim( params.settings.container ),
                     //     src_with_path = $.trim( params.settings.src_with_path );
 
-                    var rindow = params.rindow,
+                    var aWindow = params.aWindow,
                         tag = params.tag;
                     
                     var content_node_info = (params.content_node_info) ? params.content_node_info:params.content_node;
@@ -9216,14 +9197,14 @@ if ( sendData.kind=="page" ) {
                         'kind':kind
                     };
 
-                    var content_node = RDR.actions.content_nodes.make(content_node_data);
+                    var content_node = ANT.actions.content_nodes.make(content_node_data);
 
                     // TODO SHARE HACK REMOVE THIS DAILYCANDY ONLY
                     // if ( window.location.hash.length > 1 ) {
                         $.postMessage(
                             "page_hash|"+window.location.hash,
-                            RDR_baseUrl + "/static/xdm.html",
-                            window.frames['rdr-xdm-hidden']
+                            ANT_baseUrl + "/static/xdm.html",
+                            window.frames['ant-xdm-hidden']
                         );
                     // }
 
@@ -9234,44 +9215,44 @@ if ( sendData.kind=="page" ) {
                         "tag" : tag,
                         "hash": content_node_info.hash,
                         "content_node_data" : content_node_data,
-                        "user_id" : RDR.user.user_id,
-                        "readr_token" : RDR.user.readr_token,
-                        "group_id" : RDR.group.id,
-                        "page_id" : RDR.util.getPageProperty('id', hash),
+                        "user_id" : ANT.user.user_id,
+                        "ant_token" : ANT.user.ant_token,
+                        "group_id" : ANT.group.id,
+                        "page_id" : ANT.util.getPageProperty('id', hash),
                         "referring_int_id" : args.referring_int_id,
-                        "container_kind" : (args.kind=="page") ? "page":RDR.summaries[hash].kind  // TODO: a container kind of page should be handled better
+                        "container_kind" : (args.kind=="page") ? "page":ANT.summaries[hash].kind  // TODO: a container kind of page should be handled better
                     };
 
                         // send the data!
                         $.ajax({
-                            url: RDR_baseUrl+"/api/share/",
+                            url: ANT_baseUrl+"/api/share/",
                             type: "get",
                             contentType: "application/json",
                             dataType: "jsonp",
                             data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 // todo cache the short url
-                                // RDR.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
+                                // ANT.summaries[content_node_info.hash].content_nodes[IDX].top_interactions.tags[tag.id].short_url = ;
                                 args.response = response;
 
                                 if ( response.status == "fail" ) {
                                     if ( response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                                        RDR.session.showLoginPanel( args );
+                                        ANT.session.showLoginPanel( args );
                                     } else {
                                         // if it failed, see if we can fix it, and if so, try this function one more time
-                                        RDR.session.handleGetUserFail( args, function() {
-                                            RDR.actions.share_getLink( args );
+                                        ANT.session.handleGetUserFail( args, function() {
+                                            ANT.actions.share_getLink( args );
                                         });
                                     }
                                 } else {
                                     //successfully got a short URL
-                                    RDR.actions.shareContent({
+                                    ANT.actions.shareContent({
                                         sns: params.sns,
                                         content_node_info: content_node_info,
                                         short_url: response.data.short_url,
                                         reaction: tag.body,
                                         //the content_node_info kind was un-reliable. - use this instead
-                                        container_kind: (hash == "page") ? "page" : RDR.summaries[hash].kind
+                                        container_kind: (hash == "page") ? "page" : ANT.summaries[hash].kind
                                     });
                                 }
                             },
@@ -9295,7 +9276,7 @@ if ( sendData.kind=="page" ) {
                         var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
                         var mainShareText = "";
                         // no t()
-                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
+                        var footerShareText = "Antenna Reaction on " + groupName;
 
                         switch ( args.container_kind ) {
                             case "txt":
@@ -9310,9 +9291,9 @@ if ( sendData.kind=="page" ) {
                                 contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                                 //for testing offline
-                                if(RDR_offline){
-                                    content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
-                                    content = content.replace("localhost:8081", "www.readrboard.com");
+                                if(ANT_offline){
+                                    content = content.replace("local.antenna.is:8081", "www.antenna.is");
+                                    content = content.replace("localhost:8081", "www.antenna.is");
                                 }
                                 
                                 imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -9347,8 +9328,8 @@ if ( sendData.kind=="page" ) {
                     case "twitter":
                         
                         var mainShareText = "";
-                        var footerShareText = "A ReadrBoard Reaction on " + groupName;
-                        var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                        var footerShareText = "Antenna Reaction on " + groupName;
+                        var twitter_acct = ( ANT.group.twitter ) ? '&via='+ANT.group.twitter : '';
 
                         switch ( args.container_kind ) {
                             case "txt":
@@ -9392,7 +9373,7 @@ if ( sendData.kind=="page" ) {
                     //         case "text":
                     //             //tumblr adds quotes for us - don't pass true to quote it.
                     //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via Antenna]';
                                 
                     //             content_length = 300;
                     //             contentStr = _shortenContentIfNeeded(content, content_length);
@@ -9405,14 +9386,14 @@ if ( sendData.kind=="page" ) {
                     //         case "img":
                     //         case "image":
                     //                                         //for testing offline
-                    //             if(RDR_offline){
-                    //                 content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
-                    //                 content = content.replace("localhost:8081", "www.readrboard.com");
+                    //             if(ANT_offline){
+                    //                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
+                    //                 content = content.replace("localhost:8081", "www.antenna.is");
                     //             }
 
                     //             mainShareText = _wrapTag(args.reaction, true);
 
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via Antenna]';
 
                     //             share_url = 'http://www.tumblr.com/share/photo?'+
                     //                 'source='+encodeURIComponent(content)+
@@ -9430,16 +9411,16 @@ if ( sendData.kind=="page" ) {
 
                     //             mainShareText = _wrapTag(args.reaction, true);
 
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via ReadrBoard]';
+                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via Antenna]';
 
                     //             //todo: get the urlencode right and put the link back in
-                    //             var readrLink = mainShareText + footerShareText;
-                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( readrLink );
+                    //             var antennaLink = mainShareText + footerShareText;
+                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( antennaLink );
                     //         break;
 
                     //         case "page":
                     //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via ReadrBoard]';
+                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via Antenna]';
                                 
                     //             content_length = 300;
                     //             contentStr = _shortenContentIfNeeded(content, content_length);
@@ -9456,20 +9437,20 @@ if ( sendData.kind=="page" ) {
                     // break;
                 }
                 if ( share_url !== "" ) {
-                    if ( RDR.shareWindow ) {
-                        RDR.shareWindow.location = share_url;
+                    if ( ANT.shareWindow ) {
+                        ANT.shareWindow.location = share_url;
                     }
                 }else{
-                    if ( RDR.shareWindow ) {
-                        RDR.shareWindow.close();
+                    if ( ANT.shareWindow ) {
+                        ANT.shareWindow.close();
                     }
                 }
 
                 function _getGroupName(){
-                    //consider using RDR.group.name
+                    //consider using ANT.group.name
                     //todo: make this smarter - check for www. only in start of domain
-                    return RDR.group.name ?
-                        RDR.group.name :
+                    return ANT.group.name ?
+                        ANT.group.name :
                         (document.domain).replace('www.', "");
                 }
                 
@@ -9505,28 +9486,28 @@ if ( sendData.kind=="page" ) {
 
             },
             newUpdateData: function(hash){
-                //RDR.actions.newUpdateData:
+                //ANT.actions.newUpdateData:
                 //not using this yet...
-                var summary = RDR.summaries[hash],
-                    $rindow_readmode = summary.$rindow_readmode,
-                    $rindow_writemode = summary.$rindow_writemode;
+                var summary = ANT.summaries[hash],
+                    $aWindow_readmode = summary.$aWindow_readmode,
+                    $aWindow_writemode = summary.$aWindow_writemode;
             },
             startSelect: function($mouse_target, mouseEvent, callback) {
-                //RDR.actions.startSelect:
+                //ANT.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
-                if ( $mouse_target.hasAttr('rdr-item') && $('[rdr-cta-for="'+$mouse_target.attr('rdr-item')+'"]').length ) { 
+                if ( $mouse_target.hasAttr('ant-item') && $('[ant-cta-for="'+$mouse_target.attr('ant-item')+'"]').length ) { 
                     return; 
                 }
 
                 //destroy all other actionbars
-                RDR.actionbar.closeAll();
+                ANT.actionbar.closeAll();
                 var maxChars = 800;
 
-                // make sure it's not selecting inside the RDR windows.
-                // todo: (the rdr_indicator is an expection.
+                // make sure it's not selecting inside the ANT windows.
+                // todo: (the ant_indicator is an expection.
                 // The way we're dealing with this is a little weird.  It works, but could be cleaner)
-                if ( $mouse_target.closest('.rdr, .no-rdr, #rdr_sandbox').length && !$mouse_target.closest('.rdr_indicator').length ) return;
+                if ( $mouse_target.closest('.ant, .no-ant, #ant_sandbox').length && !$mouse_target.closest('.ant_indicator').length ) return;
                 //else
 
                 var $blockParent = null;
@@ -9541,7 +9522,7 @@ if ( sendData.kind=="page" ) {
                 if( $blockParent === null ) return;
                 //else
 
-                $rdrParent = $blockParent.closest('[rdr-hashed]');
+                $antParent = $blockParent.closest('[ant-hashed]');
             
                 //let selog use serialrange to check if the selected text is contained in the $blockParent (also check for "" of just whitespace)
                 var selected = $blockParent.selog('save');
@@ -9555,13 +9536,13 @@ if ( sendData.kind=="page" ) {
                 var content = selected.text;
 
                 // check if the blockparent is already hashed
-                if ( $rdrParent.length && $rdrParent.hasAttr('rdr-hashed') && !$rdrParent.hasAttr('rdr-page-container') ) {
+                if ( $antParent.length && $antParent.hasAttr('ant-hashed') && !$antParent.hasAttr('ant-page-container') ) {
                     if(callback){
-                        var hash = $rdrParent.data('hash')
+                        var hash = $antParent.data('hash')
                         callback(hash, kind, content);
                         return;
                     }
-                    return _drawActionBar($rdrParent);
+                    return _drawActionBar($antParent);
                 }
                 else{
                     //hasn't been hashed yet.
@@ -9569,10 +9550,10 @@ if ( sendData.kind=="page" ) {
                     //note: hashes in this case will just be a single hash. That's cool.
                     
                     //todo: use our new sendHashesForSinglePage function after testing and refactoring.
-                    var hashListForPage = RDR.actions.hashNodes( $blockParent );
+                    var hashListForPage = ANT.actions.hashNodes( $blockParent );
 
                     if(hashListForPage){
-                        RDR.actions.sendHashes( hashListForPage, function(){
+                        ANT.actions.sendHashes( hashListForPage, function(){
                             if(callback){
                                 //god this re-var-ing of hash is awful, rewrite later.
                                 var hash = $blockParent.data('hash');
@@ -9605,18 +9586,18 @@ if ( sendData.kind=="page" ) {
                 }
                 function _drawActionBar ($blockParent){
                     var hash = $blockParent.data('hash'),
-                        summary = RDR.summaries[hash] || 'undefined';
+                        summary = ANT.summaries[hash] || 'undefined';
 
                     if ( _writeModeOpenForThisContainer(hash) ) return false;
                     //else
 
                     if ( summary != 'undefined') {
                         var $indicator = summary.$indicator;
-                        RDR.actions.indicators.helpers.out($indicator);
+                        ANT.actions.indicators.helpers.out($indicator);
                     }
                     // closes undragged windows
                     //close with our own event instead of removing directly so that I can bind an event to the remove event (thanks ie.)
-                    RDR.rindow.close( $('div.rdr.rdr_window.rdr.rdr_rewritable') );
+                    ANT.aWindow.close( $('div.ant.ant_window.ant.ant_rewritable') );
 
                     var actionbarCoords = mouseEvent ? {
                         top: parseInt(mouseEvent.pageY, 10),
@@ -9626,7 +9607,7 @@ if ( sendData.kind=="page" ) {
                         left: $mouse_target.offset().left
                     };
 
-                    return RDR.actionbar.draw({
+                    return ANT.actionbar.draw({
                         coords:actionbarCoords,
                         kind:"text",
                         content:selected.text,
@@ -9636,17 +9617,17 @@ if ( sendData.kind=="page" ) {
                 }
                 function _writeModeOpenForThisContainer(hash){
 
-                    /*todo: quick fix - check for other writemode rindows for this container that are already open.*/
+                    /*todo: quick fix - check for other writemode aWindows for this container that are already open.*/
                     /*
-                    if it has a summary, check for a rindow.
-                    Of course, if it's brand new, it won't have a summary, but then it wont have a rindow either
+                    if it has a summary, check for a aWindow.
+                    Of course, if it's brand new, it won't have a summary, but then it wont have a aWindow either
                     */
-                    var summary = RDR.summaries[hash] || 'undefined';
+                    var summary = ANT.summaries[hash] || 'undefined';
                     if( !summary ) return false;
-                    //only allow one writemode per container at a time, check for writemode rindow.
-                    var $rindow_writemode = summary.$rindow_writemode;
-                    if( $rindow_writemode && $rindow_writemode.filter(":visible").length ){
-                        return $rindow_writemode;
+                    //only allow one writemode per container at a time, check for writemode aWindow.
+                    var $aWindow_writemode = summary.$aWindow_writemode;
+                    if( $aWindow_writemode && $aWindow_writemode.filter(":visible").length ){
+                        return $aWindow_writemode;
                     }else{
                         return false;
                     }
@@ -9654,45 +9635,45 @@ if ( sendData.kind=="page" ) {
                 function _isValid($node){
                     var validity = ( ( $node.css('display') == "block" || $node.css('display') == "list-item" ) &&
                         // $node.css('float') == "none" &&
-                        ! $node.closest('.rdr_indicator').length &&
+                        ! $node.closest('.ant_indicator').length &&
                         ! $node.is('html, body')
                     );
                     return validity;
                 }
             },
             startSelectFromMouseUp: function(e) {
-                //RDR.actions.startSelectFromMouseUp
+                //ANT.actions.startSelectFromMouseUp
                 var $mouse_target = $(e.target);
-                RDR.actions.startSelect($mouse_target, e);
+                ANT.actions.startSelect($mouse_target, e);
             },
             stripRdrNode: function($els) {
-                //RDR.actions.stripRdrNode
-                $els.removeAttr('rdr-node rdr-hasIndicator rdr-hashed rdr_summary_loaded rdr-hash').find('.rdr_indicator').remove();
+                //ANT.actions.stripRdrNode
+                $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
             },
             pages: {
-                //RDR.actions.pages:
+                //ANT.actions.pages:
                 save: function(id, page){
-                    //RDR.actions.pages.save:
-                    RDR.pages[page.id] = page;
+                    //ANT.actions.pages.save:
+                    ANT.pages[page.id] = page;
                 },
                 initPageContainer: function(pageId){
-                    // RDR.actions.pages.initPageContainer
-                    var page = RDR.pages[pageId],
+                    // ANT.actions.pages.initPageContainer
+                    var page = ANT.pages[pageId],
                         key = page.urlhash; //todo: consider phasing out - use id instead
                         // key = page.key; //todo: consider phasing out - use id instead   
 
-                    var $container = ( $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]').length == 1 ) ? $(RDR.group.post_selector + '[rdr-page-key="'+key+'"]'):$('body[rdr-page-key]');
+                    var $container = ( $(ANT.group.post_selector + '[ant-page-key="'+key+'"]').length == 1 ) ? $(ANT.group.post_selector + '[ant-page-key="'+key+'"]'):$('body[ant-page-key]');
 
                     if ( $container.length !== 1 ) return;
                     //else
-                    $container.removeAttr( 'rdr-page-key' );
-                    $container.attr( 'rdr-page-container' , pageId );
+                    $container.removeAttr( 'ant-page-key' );
+                    $container.attr( 'ant-page-container' , pageId );
 
                     //todo: [eric] this can't be right - we shouldn't just hash a single number like '1'.
-                    var hash = RDR.util.md5.hex_md5( String(page.id) );
+                    var hash = ANT.util.md5.hex_md5( String(page.id) );
                     var tagName = $container.get(0).nodeName.toLowerCase();  //todo: looks like we're not using this for pages?
 
-                    RDR.actions.containers.save({
+                    ANT.actions.containers.save({
                         id: String(page.id),
                         kind: "page",
                         hash: hash,
@@ -9702,18 +9683,18 @@ if ( sendData.kind=="page" ) {
                     $container.data( 'page_id', String(page.id) ); // the page ID
 
                     // hash the "page" descendant nodes
-                    // RDR.actions.hashNodes( $container, "nomedia" );
+                    // ANT.actions.hashNodes( $container, "nomedia" );
 
                     //todo: can't we use the hashes returned by this function instead?
 
                     // is the post_selector the same node as the active_section?
                     // determined by seeing if the active_section exists, just not inside the post_selector
-                    if ( RDR.group.post_selector && !$(RDR.group.post_selector).first().find(RDR.group.active_sections).length && $(RDR.group.active_sections).length ) {
-                        // RDR.group.active_sections = '';
-                        // active_sections_with_anno_whitelist = RDR.group.anno_whitelist;
-                        RDR.actions.hashNodes( $container.parent() );
+                    if ( ANT.group.post_selector && !$(ANT.group.post_selector).first().find(ANT.group.active_sections).length && $(ANT.group.active_sections).length ) {
+                        // ANT.group.active_sections = '';
+                        // active_sections_with_anno_whitelist = ANT.group.anno_whitelist;
+                        ANT.actions.hashNodes( $container.parent() );
                     } else {
-                        RDR.actions.hashNodes( $container );
+                        ANT.actions.hashNodes( $container );
                     }
 
                     var hashesByPageId = {};
@@ -9725,12 +9706,12 @@ if ( sendData.kind=="page" ) {
                             }
                         });
 
-                        // RDR.actions.sendHashes( hashesByPageId );
-                    // } else if ( page && $('[rdr-crossPageContent="true"]').length ) {
+                        // ANT.actions.sendHashes( hashesByPageId );
+                    // } else if ( page && $('[ant-crossPageContent="true"]').length ) {
                     }
 
-                    if ( page && $container.find('[rdr-item]').length ) {
-                        // [pb] should this be $('[rdr-item]') instead of crossPageContent??
+                    if ( page && $container.find('[ant-item]').length ) {
+                        // [pb] should this be $('[ant-item]') instead of crossPageContent??
                         // [pb] 10/2013: methinks yes, b/c we want to ensure a custom display is visible. 
                         //               see comment right below:
 
@@ -9742,64 +9723,64 @@ if ( sendData.kind=="page" ) {
                         hashesByPageId[ page.id ] = hashesByPageId[ page.id ] || [];
 
                         // should we find custom-display nodes and add to the hashList here?
-                        $.each( $container.find('[rdr-item]'), function( idx, node ) {
-                            RDR.actions.hashNodes( $(node) );
-                            var thisHash = $(node).attr('rdr-hash');
+                        $.each( $container.find('[ant-item]'), function( idx, node ) {
+                            ANT.actions.hashNodes( $(node) );
+                            var thisHash = $(node).attr('ant-hash');
 
                             if (typeof thisHash != 'undefined') {
                                 hashesByPageId[ page.id ].push( thisHash );
                             }
                         });
-                        // hashesByPageId[ page.id ].push( $('[rdr-item="true"]:eq(0)').attr('rdr-hash') );
-                        // RDR.actions.sendHashes( hashesByPageId );
+                        // hashesByPageId[ page.id ].push( $('[ant-item="true"]:eq(0)').attr('ant-hash') );
+                        // ANT.actions.sendHashes( hashesByPageId );
                     }
 
-                    RDR.actions.sendHashes( hashesByPageId );
+                    ANT.actions.sendHashes( hashesByPageId );
 
-                    if (!RDR.util.activeAB()) return;
+                    if (!ANT.util.activeAB()) return;
 
                     //init the widgetSummary
                     var widgetSummarySettings = page;
 
                     widgetSummarySettings.key = key;
                     
-                    if ( $container.find( RDR.group.summary_widget_selector).length == 1 && $container.find( RDR.group.summary_widget_selector+'[rdr-page-widget-key="' + key + '"]') ) {
-                        widgetSummarySettings.$anchor = $container.find(RDR.group.summary_widget_selector).eq(0);
+                    if ( $container.find( ANT.group.summary_widget_selector).length == 1 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
+                        widgetSummarySettings.$anchor = $container.find(ANT.group.summary_widget_selector).eq(0);
                         
-                    } else if( $(".rdr-page-summary").length==1 ){
-                        widgetSummarySettings.$anchor = $(".rdr-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
+                    } else if( $(".ant-page-summary").length==1 ){
+                        widgetSummarySettings.$anchor = $(".ant-page-summary").eq(0); //change to group.summaryWidgetAnchorNode or whatever
                     }else{
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
-                        var displayDefaultBar = ( typeof RDR.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
-                        widgetSummarySettings.$anchor = $('<div id="rdr-page-summary" class="rdr no-rdr rdr-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
+                        var displayDefaultBar = ( typeof ANT.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
+                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
                     //div to hold summary tag detail "menus"
-                    $('#rdr_sandbox').append('<div id="rdr_summary_tag_details" />');
+                    $('#ant_sandbox').append('<div id="ant_summary_tag_details" />');
                     
                     //setup widgetSummary
-                    if ( ($('div.rdr-summary').length===0) || ( $('div.rdr-summary').length < $(RDR.group.post_selector).length ) ) {
-                        widgetSummarySettings.$anchor.rdrWidgetSummary(widgetSummarySettings);
+                    if ( ($('div.ant-summary').length===0) || ( $('div.ant-summary').length < $(ANT.group.post_selector).length ) ) {
+                        widgetSummarySettings.$anchor.antWidgetSummary(widgetSummarySettings);
                     }
 
                 }
             },
             users: {
-                //RDR.actions.users:
+                //ANT.actions.users:
                 save: function(id, settings){
-                    //RDR.actions.users.save:
+                    //ANT.actions.users.save:
 
                 }
             }
-        }//end RDR.actions
+        }//end ANT.actions
     });
 }
 
 
 //from http://www.aaronpeters.nl/blog/prevent-double-callback-execution-in-IE9#comment-175618750
-function rdr_loadScript(attributes, callbackfunction) {
+function ant_loadScript(attributes, callbackfunction) {
     var oHead = document.getElementsByTagName('head')[0];
     if(oHead) {
         var oScript = document.createElement('script');
@@ -9826,32 +9807,32 @@ function rdr_loadScript(attributes, callbackfunction) {
     }
 }
 
-//add to RDR for use later.
-RDR.rdr_loadScript = rdr_loadScript;
+//add to ANT for use later.
+ANT.ant_loadScript = ant_loadScript;
 
-//load jQuery overwriting the client's jquery, create our $R clone, and revert the client's jquery back
-RDR_scriptPaths.jquery = RDR_offline ?
-    RDR_staticUrl+"global/js/jquery-1.11.1.min.js" :
-    // RDR_staticUrl+"global/js/jquery-1.7.1.min.js" :
+//load jQuery overwriting the client's jquery, create our $A clone, and revert the client's jquery back
+ANT_scriptPaths.jquery = ANT_offline ?
+    ANT_staticUrl+"js/jquery-1.11.1.min.js" :
+    // ANT_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
 // dont think we use this -- we embedded it below.
-// RDR_scriptPaths.mobileEvents = RDR_staticUrl+"global/js/jquery.mobile-events.js";
+// ANT_scriptPaths.mobileEvents = ANT_staticUrl+"global/js/jquery.mobile-events.js";
 
-// RDR_scriptPaths.jqueryUI = RDR_offline ?
-//     RDR_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
+// ANT_scriptPaths.jqueryUI = ANT_offline ?
+//     ANT_staticUrl+"global/js/jquery-ui-1.8.17.min.js" :
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/jquery-ui.min.js";
 
-// RDR_scriptPaths.jqueryWithJqueryUI = RDR_offline ? 
-//     RDR_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
-//     RDR_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
+// ANT_scriptPaths.jqueryWithJqueryUI = ANT_offline ? 
+//     ANT_staticUrl+"global/js/jquery-1.7.1-with-ui-1.8.17.js" :
+//     ANT_staticUrl+"global/js/jquery-1.7.1.min-with-ui-1.8.17.min.js";
 
-// RDR_scriptPaths.jqueryUI_CSS = RDR_offline ?
-//     RDR_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
+// ANT_scriptPaths.jqueryUI_CSS = ANT_offline ?
+//     ANT_staticUrl+"global/css/jquery-ui-1.8.17.base.css" :
 //     "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/base/jquery-ui.css";
 
-rdr_loadScript({src:RDR_scriptPaths.jquery}, function(){
+ant_loadScript({src:ANT_scriptPaths.jquery}, function(){
     
     if(isTouchBrowser){
         load_mobileEvents(jQuery);
@@ -9862,8 +9843,8 @@ rdr_loadScript({src:RDR_scriptPaths.jquery}, function(){
 function jquery_onload(jQuery){
 
     //Give back the $ and jQuery.
-    $R = jQuery.noConflict(true);
-    var $ = $R;
+    $A = jQuery.noConflict(true);
+    var $ = $A;
 
     // add $.browser functionality back since we're using a newer version of jQuery, but some of our code + older plugins rely on it.
     /*!
@@ -9887,75 +9868,71 @@ function jquery_onload(jQuery){
         return false;
     }
     if ( $.browser.msie  && parseInt($.browser.version, 10) == 8 ) {
-        $('body').addClass('rdr_ie');
+        $('body').addClass('ant_ie');
     }
     
     //A function to load all plugins including those (most) that depend on jQuery.
-    //The rest of our code is then set off with RDR.actions.init();
-    $RFunctions($R);
+    //The rest of our code is then set off with ANT.actions.init();
+    $AFunctions($A);
 }
 
 function load_mobileEvents(jQuery){
     (function(e){function d(){var e=o();if(e!==u){u=e;i.trigger("orientationchange")}}function E(t,n,r,i){var s=r.type;r.type=n;e.event.dispatch.call(t,r,i);r.type=s}e.attrFn=e.attrFn||{};var t=navigator.userAgent.toLowerCase(),n=t.indexOf("chrome")>-1&&(t.indexOf("windows")>-1||t.indexOf("macintosh")>-1||t.indexOf("linux")>-1)&&t.indexOf("chrome")<0,r={swipe_h_threshold:50,swipe_v_threshold:50,taphold_threshold:750,doubletap_int:500,touch_capable:"ontouchstart"in document.documentElement&&!n,orientation_support:"orientation"in window&&"onorientationchange"in window,startevent:"ontouchstart"in document.documentElement&&!n?"touchstart":"mousedown",endevent:"ontouchstart"in document.documentElement&&!n?"touchend":"mouseup",moveevent:"ontouchstart"in document.documentElement&&!n?"touchmove":"mousemove",tapevent:"ontouchstart"in document.documentElement&&!n?"tap":"click",scrollevent:"ontouchstart"in document.documentElement&&!n?"touchmove":"scroll",hold_timer:null,tap_timer:null};e.isTouchCapable=function(){return r.touch_capable};e.getStartEvent=function(){return r.startevent};e.getEndEvent=function(){return r.endevent};e.getMoveEvent=function(){return r.moveevent};e.getTapEvent=function(){return r.tapevent};e.getScrollEvent=function(){return r.scrollevent};e.each(["tapstart","tapend","tap","singletap","doubletap","taphold","swipe","swipeup","swiperight","swipedown","swipeleft","swipeend","scrollstart","scrollend","orientationchange"],function(t,n){e.fn[n]=function(e){return e?this.bind(n,e):this.trigger(n)};e.attrFn[n]=true});e.event.special.tapstart={setup:function(){var t=this,n=e(t);n.bind(r.startevent,function(e){n.data("callee",arguments.callee);if(e.which&&e.which!==1){return false}var i=e.originalEvent,s={position:{x:r.touch_capable?i.touches[0].screenX:e.screenX,y:r.touch_capable?i.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.touches[0].pageX-i.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.touches[0].pageY-i.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tapstart",e,s);return true})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee)}};e.event.special.tapend={setup:function(){var t=this,n=e(t);n.bind(r.endevent,function(e){n.data("callee",arguments.callee);var i=e.originalEvent;var s={position:{x:r.touch_capable?i.changedTouches[0].screenX:e.screenX,y:r.touch_capable?i.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.changedTouches[0].pageX-i.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.changedTouches[0].pageY-i.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tapend",e,s);return true})},remove:function(){e(this).unbind(r.endevent,e(this).data.callee)}};e.event.special.taphold={setup:function(){var t=this,n=e(t),i,s,o={x:0,y:0};n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{n.data("tapheld",false);i=e.target;var s=e.originalEvent;var u=(new Date).getTime(),a={x:r.touch_capable?s.touches[0].screenX:e.screenX,y:r.touch_capable?s.touches[0].screenY:e.screenY},f={x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:e.offsetY};o.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;o.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;r.hold_timer=window.setTimeout(function(){var l=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX,c=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;if(e.target==i&&o.x==l&&o.y==c){n.data("tapheld",true);var h=(new Date).getTime(),p={x:r.touch_capable?s.touches[0].screenX:e.screenX,y:r.touch_capable?s.touches[0].screenY:e.screenY},d={x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:e.offsetY};duration=h-u;var v={startTime:u,endTime:h,startPosition:a,startOffset:f,endPosition:p,endOffset:d,duration:duration,target:e.target};n.data("callee1",arguments.callee);E(t,"taphold",e,v)}},r.taphold_threshold);return true}}).bind(r.endevent,function(){n.data("callee2",arguments.callee);n.data("tapheld",false);window.clearTimeout(r.hold_timer)})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.doubletap={setup:function(){var t=this,n=e(t),i,s,o,u;n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{n.data("doubletapped",false);i=e.target;n.data("callee1",arguments.callee);u=e.originalEvent;o={position:{x:r.touch_capable?u.touches[0].screenX:e.screenX,y:r.touch_capable?u.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?u.touches[0].pageX-u.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?u.touches[0].pageY-u.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};return true}}).bind(r.endevent,function(e){var a=(new Date).getTime();var f=n.data("lastTouch")||a+1;var l=a-f;window.clearTimeout(s);n.data("callee2",arguments.callee);if(l<r.doubletap_int&&l>0&&e.target==i&&l>100){n.data("doubletapped",true);window.clearTimeout(r.tap_timer);var c={position:{x:r.touch_capable?u.touches[0].screenX:e.screenX,y:r.touch_capable?u.touches[0].screenY:e.screenY},offset:{x:r.touch_capable?u.touches[0].pageX-u.touches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?u.touches[0].pageY-u.touches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};var h={firstTap:o,secondTap:c,interval:c.time-o.time};E(t,"doubletap",e,h)}else{n.data("lastTouch",a);s=window.setTimeout(function(e){window.clearTimeout(s)},r.doubletap_int,[e])}n.data("lastTouch",a)})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.singletap={setup:function(){var t=this,n=e(t),i=null,s=null,o={x:0,y:0};n.bind(r.startevent,function(e){if(e.which&&e.which!==1){return false}else{s=(new Date).getTime();i=e.target;n.data("callee1",arguments.callee);o.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;o.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;return true}}).bind(r.endevent,function(e){n.data("callee2",arguments.callee);if(e.target==i){end_pos_x=e.originalEvent.changedTouches?e.originalEvent.changedTouches[0].pageX:e.pageX;end_pos_y=e.originalEvent.changedTouches?e.originalEvent.changedTouches[0].pageY:e.pageY;r.tap_timer=window.setTimeout(function(){if(!n.data("doubletapped")&&!n.data("tapheld")&&o.x==end_pos_x&&o.y==end_pos_y){var i=e.originalEvent;var u={position:{x:r.touch_capable?i.changedTouches[0].screenX:e.screenX,y:r.touch_capable?i.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?i.changedTouches[0].pageX-i.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?i.changedTouches[0].pageY-i.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};if(u.time-s<r.taphold_threshold){E(t,"singletap",e,u)}}},r.doubletap_int)}})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.tap={setup:function(){var t=this,n=e(t),i=false,s=null,o,u={x:0,y:0};n.bind(r.startevent,function(e){n.data("callee1",arguments.callee);if(e.which&&e.which!==1){return false}else{i=true;u.x=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageX:e.pageX;u.y=e.originalEvent.targetTouches?e.originalEvent.targetTouches[0].pageY:e.pageY;o=(new Date).getTime();s=e.target;return true}}).bind(r.endevent,function(e){n.data("callee2",arguments.callee);var a=e.originalEvent.targetTouches?e.originalEvent.changedTouches[0].pageX:e.pageX,f=e.originalEvent.targetTouches?e.originalEvent.changedTouches[0].pageY:e.pageY;if(s==e.target&&i&&(new Date).getTime()-o<r.taphold_threshold&&u.x==a&&u.y==f){var l=e.originalEvent;var c={position:{x:r.touch_capable?l.changedTouches[0].screenX:e.screenX,y:r.touch_capable?l.changedTouches[0].screenY:e.screenY},offset:{x:r.touch_capable?l.changedTouches[0].pageX-l.changedTouches[0].target.offsetLeft:e.offsetX,y:r.touch_capable?l.changedTouches[0].pageY-l.changedTouches[0].target.offsetTop:e.offsetY},time:(new Date).getTime(),target:e.target};E(t,"tap",e,c)}})},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.endevent,e(this).data.callee2)}};e.event.special.swipe={setup:function(){function f(t){n=e(t.target);n.data("callee1",arguments.callee);o.x=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageX:t.pageX;o.y=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageY:t.pageY;u.x=o.x;u.y=o.y;i=true;var s=t.originalEvent;a={position:{x:r.touch_capable?s.touches[0].screenX:t.screenX,y:r.touch_capable?s.touches[0].screenY:t.screenY},offset:{x:r.touch_capable?s.touches[0].pageX-s.touches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?s.touches[0].pageY-s.touches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};var f=new Date;while(new Date-f<100){}}function l(t){n=e(t.target);n.data("callee2",arguments.callee);u.x=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageX:t.pageX;u.y=t.originalEvent.targetTouches?t.originalEvent.targetTouches[0].pageY:t.pageY;window.clearTimeout(r.hold_timer);var f;var l=n.data("xthreshold"),c=n.data("ythreshold"),h=typeof l!=="undefined"&&l!==false&&parseInt(l)?parseInt(l):r.swipe_h_threshold,p=typeof c!=="undefined"&&c!==false&&parseInt(c)?parseInt(c):r.swipe_v_threshold;if(o.y>u.y&&o.y-u.y>p){f="swipeup"}if(o.x<u.x&&u.x-o.x>h){f="swiperight"}if(o.y<u.y&&u.y-o.y>p){f="swipedown"}if(o.x>u.x&&o.x-u.x>h){f="swipeleft"}if(f!=undefined&&i){o.x=0;o.y=0;u.x=0;u.y=0;i=false;var d=t.originalEvent;endEvnt={position:{x:r.touch_capable?d.touches[0].screenX:t.screenX,y:r.touch_capable?d.touches[0].screenY:t.screenY},offset:{x:r.touch_capable?d.touches[0].pageX-d.touches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?d.touches[0].pageY-d.touches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};var v=Math.abs(a.position.x-endEvnt.position.x),m=Math.abs(a.position.y-endEvnt.position.y);var g={startEvnt:a,endEvnt:endEvnt,direction:f.replace("swipe",""),xAmount:v,yAmount:m,duration:endEvnt.time-a.time};s=true;n.trigger("swipe",g).trigger(f,g)}}function c(t){n=e(t.target);var o="";n.data("callee3",arguments.callee);if(s){var u=n.data("xthreshold"),f=n.data("ythreshold"),l=typeof u!=="undefined"&&u!==false&&parseInt(u)?parseInt(u):r.swipe_h_threshold,c=typeof f!=="undefined"&&f!==false&&parseInt(f)?parseInt(f):r.swipe_v_threshold;var h=t.originalEvent;endEvnt={position:{x:r.touch_capable?h.changedTouches[0].screenX:t.screenX,y:r.touch_capable?h.changedTouches[0].screenY:t.screenY},offset:{x:r.touch_capable?h.changedTouches[0].pageX-h.changedTouches[0].target.offsetLeft:t.offsetX,y:r.touch_capable?h.changedTouches[0].pageY-h.changedTouches[0].target.offsetTop:t.offsetY},time:(new Date).getTime(),target:t.target};if(a.position.y>endEvnt.position.y&&a.position.y-endEvnt.position.y>c){o="swipeup"}if(a.position.x<endEvnt.position.x&&endEvnt.position.x-a.position.x>l){o="swiperight"}if(a.position.y<endEvnt.position.y&&endEvnt.position.y-a.position.y>c){o="swipedown"}if(a.position.x>endEvnt.position.x&&a.position.x-endEvnt.position.x>l){o="swipeleft"}var p=Math.abs(a.position.x-endEvnt.position.x),d=Math.abs(a.position.y-endEvnt.position.y);var v={startEvnt:a,endEvnt:endEvnt,direction:o.replace("swipe",""),xAmount:p,yAmount:d,duration:endEvnt.time-a.time};n.trigger("swipeend",v)}i=false;s=false}var t=this,n=e(t),i=false,s=false,o={x:0,y:0},u={x:0,y:0},a;n.bind(r.startevent,f);n.bind(r.moveevent,l);n.bind(r.endevent,c)},remove:function(){e(this).unbind(r.startevent,e(this).data.callee1).unbind(r.moveevent,e(this).data.callee2).unbind(r.endevent,e(this).data.callee3)}};e.event.special.scrollstart={setup:function(){function o(e,n){i=n;E(t,i?"scrollstart":"scrollend",e)}var t=this,n=e(t),i,s;n.bind(r.scrollevent,function(e){n.data("callee",arguments.callee);if(!i){o(e,true)}clearTimeout(s);s=setTimeout(function(){o(e,false)},50)})},remove:function(){e(this).unbind(r.scrollevent,e(this).data.callee)}};var i=e(window),s,o,u,a,f,l={0:true,180:true};if(r.orientation_support){var c=window.innerWidth||e(window).width(),h=window.innerHeight||e(window).height(),p=50;a=c>h&&c-h>p;f=l[window.orientation];if(a&&f||!a&&!f){l={"-90":true,90:true}}}e.event.special.orientationchange=s={setup:function(){if(r.orientation_support){return false}u=o();i.bind("throttledresize",d);return true},teardown:function(){if(r.orientation_support){return false}i.unbind("throttledresize",d);return true},add:function(e){var t=e.handler;e.handler=function(e){e.orientation=o();return t.apply(this,arguments)}}};e.event.special.orientationchange.orientation=o=function(){var e=true,t=document.documentElement;if(r.orientation_support){e=l[window.orientation]}else{e=t&&t.clientWidth/t.clientHeight<1.1}return e?"portrait":"landscape"};e.event.special.throttledresize={setup:function(){e(this).bind("resize",m)},teardown:function(){e(this).unbind("resize",m)}};var v=250,m=function(){b=(new Date).getTime();w=b-g;if(w>=v){g=b;e(this).trigger("throttledresize")}else{if(y){window.clearTimeout(y)}y=window.setTimeout(d,v-w)}},g=0,y,b,w;e.each({scrollend:"scrollstart",swipeup:"swipe",swiperight:"swipe",swipedown:"swipe",swipeleft:"swipe",swipeend:"swipe"},function(t,n,r){e.event.special[t]={setup:function(){e(this).bind(n,e.noop)}}})})(jQuery);
 }
 
-function $RFunctions($R){
-    //called after our version of jQuery ($R) is loaded
+function $AFunctions($A){
+    //called after our version of jQuery ($A) is loaded
     
-    //alias $ here as well to be the same as our $R version of jQuery;
-    var $ = $R;
+    //alias $ here as well to be the same as our $A version of jQuery;
+    var $ = $A;
     
     //load CSS
     var css = [];
 
-    if ( !$R.browser.msie || ( $R.browser.msie && parseInt( $R.browser.version, 10 ) > 8 ) ) {
-        css.push( RDR_staticUrl+"css/fonts/fontawesome.css" );
+    if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
+        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
+        css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
-    if ( $R.browser.msie ) {
-        css.push( RDR_staticUrl+"widget/css/ie.css" );
+    if ( $A.browser.msie ) {
+        css.push( ANT_staticUrl+"widget/css/ie.css" );
         //todo: make sure that if this css file doens't exist, it won't bork.  Otherwise as soon as IE10 comes out, this will kill it.
-        css.push( RDR_staticUrl+"widget/css/ie"+parseInt( $R.browser.version, 10) +".css" );
+        css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( RDR_offline ) ? RDR_widgetCssStaticUrl+"widget/css/widget.css" : RDR_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
     css.push( widgetCSS );
-    // css.push( RDR_scriptPaths.jqueryUI_CSS );
-    css.push( RDR_staticUrl+"widget/css/jquery.jscrollpane.css" );
+    // css.push( ANT_scriptPaths.jqueryUI_CSS );
+    css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
 
     loadCSS(css);
 
     function loadCSS(cssFileList){
 
-        $R.each(cssFileList, function(i, val){
-            $R('<link>').attr({
+        $A.each(cssFileList, function(i, val){
+            $A('<link>').attr({
                 href: val,
                 rel: 'stylesheet'
             }).appendTo('body');
         });
     }
 
-    //these are basic utils that can be used both in the plugins and main scripts.  Added to RDR.commonUtil;
-    initCommonUtils($R);
+    //these are basic utils that can be used both in the plugins and main scripts.  Added to ANT.commonUtil;
+    initCommonUtils($A);
         
-    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $R passed is our jQuery alias)
-    initPlugins($R);
+    //init our plugins (includes rangy, but otherwise, mostly jquery plugins. The $A passed is our jQuery alias)
+    initPlugins($A);
 
     //load our main scripts
-    readrBoard($R);
-
-    RDR.startTime = Date.now();
-
-    // time on page timer.  should only be incrementing when they are focused on the page.
-    RDR.util.setWindowInterval();
+    antenna($A);
 
     //run init functions
-    RDR.actions.init();
+    ANT.actions.init();
 
     function initCommonUtils($){
-        $.extend(RDR, {
+        $.extend(ANT, {
             commonUtil: {
                 prettyNumber: function(anInt){
-                    // RDR.commonUtil.prettyNumber:
+                    // ANT.commonUtil.prettyNumber:
                     var parsedInt = parseInt(anInt, 10); //convert if we can.
                     if( isNaN(parsedInt) || parsedInt<0 ) return false;
                     //else
@@ -9973,8 +9950,8 @@ function $RFunctions($R){
         });
     }
 
-    function initPlugins($R){
-        //All jquery plugins to be loaded using our $R version of jquery and before our widget code;
+    function initPlugins($A){
+        //All jquery plugins to be loaded using our $A version of jquery and before our widget code;
 
         //Rangy - init before our jquery
         var rangy = plugin_rangy();
@@ -9982,26 +9959,26 @@ function $RFunctions($R){
         rangy.init();
 
         //jQuery Plugins
-        plugin_jquery_log($R);
-        plugin_jquery_hasAttr($R);
-        plugin_jquery_json($R);
-        plugin_jquery_postMessage($R);
-        plugin_jquery_mustache($R);
-        plugin_jquery_enhancedOffset($R);
-        plugin_jquery_drags($R);
-        plugin_jquery_mousewheel($R);
-        plugin_jquery_isotope($R);
-        plugin_jquery_jScrollPane($R);
-        plugin_jquery_twitterTip($R);
-        plugin_jquery_rdrWidgetSummary($R);
-        plugin_jquery_selectionographer($R, rangy);
+        plugin_jquery_log($A);
+        plugin_jquery_hasAttr($A);
+        plugin_jquery_json($A);
+        plugin_jquery_postMessage($A);
+        plugin_jquery_mustache($A);
+        plugin_jquery_enhancedOffset($A);
+        plugin_jquery_drags($A);
+        plugin_jquery_mousewheel($A);
+        plugin_jquery_isotope($A);
+        plugin_jquery_jScrollPane($A);
+        plugin_jquery_twitterTip($A);
+        plugin_jquery_antWidgetSummary($A);
+        plugin_jquery_selectionographer($A, rangy);
 
         /* are we using this */
         //todo: maybe need to fix this...
         // parents filter:  http://stackoverflow.com/questions/965816/what-jquery-selector-excludes-items-with-a-parent-that-matches-a-given-selector
         // doesn't seem to be working tho.
-        $R.expr[':'].parents = function(a,i,m){
-            return $R(a).parents(m[3]).length < 1;
+        $A.expr[':'].parents = function(a,i,m){
+            return $A(a).parents(m[3]).length < 1;
         };
 
 
@@ -10053,7 +10030,7 @@ function $RFunctions($R){
                 };
             }
 
-            //add in alias temporaily to client $ so we can use regular $ instead of $R if we want
+            //add in alias temporaily to client $ so we can use regular $ instead of $A if we want
             if(typeof jQuery !== 'undefined'){
                 jQuery.clog = $.clog;
                 jQuery.fn.clog = $.fn.clog;
@@ -10210,7 +10187,7 @@ function $RFunctions($R){
             // Simple JQuery Draggable Plugin
             // https://plus.google.com/108949996304093815163/about
             // Usage: $(selector).drags();
-            // THIS HAS BEEN CUSTOMIZED FOR READRBOARD
+            // THIS HAS BEEN CUSTOMIZED FOR Antenna
             $.fn.drags = function(opt) {
 
                 opt = $.extend({
@@ -10232,12 +10209,12 @@ function $RFunctions($R){
 
                 $elements.on('mousedown', function(e) {
 
-                    if ( (opt.handle !== "" ) && !$(e.target).closest('.rdr_header').length ) {
+                    if ( (opt.handle !== "" ) && !$(e.target).closest('.ant_header').length ) {
                         // has a handle, but the handle is not clicked
                         return;
                     }
 
-                    $selected.removeClass("rdr_rewritable");
+                    $selected.removeClass("ant_rewritable");
 
                     var drg_h = $selected.outerHeight(),
                         drg_w = $selected.outerWidth(),
@@ -10245,13 +10222,13 @@ function $RFunctions($R){
                         pos_y = offsets.top + drg_h - e.pageY,
                         pos_x = offsets.left + drg_w - e.pageX;
 
-                    $(document).on("mousemove.rdr_drag", function(e) {
+                    $(document).on("mousemove.ant_drag", function(e) {
                         $selected.offset({
                             top: e.pageY + pos_y - drg_h,
                             left: e.pageX + pos_x - drg_w
                         });
                     }).on("mouseup", function() {
-                        $(this).off("mousemove.rdr_drag"); // Unbind events from document
+                        $(this).off("mousemove.ant_drag"); // Unbind events from document
                     });
 
                     e.preventDefault(); // disable selection
@@ -10298,14 +10275,14 @@ function $RFunctions($R){
         }
         //end function plugin_jquery_enhancedOffset
 
-        function plugin_jquery_rdrWidgetSummary($){
+        function plugin_jquery_antWidgetSummary($){
             /*
-             * jQuery Plugin by readrboard.com
-             * builds the readrboard widget's summary widget.
+             * jQuery Plugin by antenna.is
+             * builds the antenna widget's summary widget.
              * accepts settings to customize the format
              */
 
-            $.fn.rdrWidgetSummary = function( params ) {
+            $.fn.antWidgetSummary = function( params ) {
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
                 if ( methods[params] ) {
                     return methods[params].apply( this, Array.prototype.slice.call( arguments, 1 ));
@@ -10321,7 +10298,7 @@ function $RFunctions($R){
 
             var methods = {
                 init: function( options ) {
-                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this,
+                    var $this = ( this[0] === document ) ? $('.ant-summary') : this,
                         settings;
                     return $this.each(function(){
 
@@ -10335,14 +10312,14 @@ function $RFunctions($R){
                     });
                 },
                 update: function(){
-                    var $this = ( this[0] === document ) ? $('.rdr-summary') : this;
+                    var $this = ( this[0] === document ) ? $('.ant-summary') : this;
                     return $this.each(function(index){
                         
                         //grab the basic setting just from the data 
                         var settings = $(this).data('settings');
 
                         //get the latest page data
-                        settings.summary = RDR.pages[settings.id].summary;
+                        settings.summary = ANT.pages[settings.id].summary;
                         _makeSummaryWidget(settings);
                     });
                 }
@@ -10356,52 +10333,52 @@ function $RFunctions($R){
                 
                 var page = settings;
                 
-                var widgetClass = 'rdr-summary-key-'+page.key;
+                var widgetClass = 'ant-summary-key-'+page.key;
 
                 //first kill any existing instances; we're going to recreate them.
                 $('.'+widgetClass).remove();
 
                 var $summary_widget_parent = $(page.parentContainer),
-                    $summary_widget = $('<div class="rdr rdr-summary rdr-summary-'+page.id+' rdr-border-box" rdr-page-id="'+page.id+'"></div>').addClass(widgetClass);
+                    $summary_widget = $('<div class="ant ant-summary ant-summary-'+page.id+' ant-border-box" ant-page-id="'+page.id+'"></div>').addClass(widgetClass);
 
-                if ( RDR.engageScriptParams.bookmarklet == "true" ) {
-                    $summary_widget.addClass('rdr_bookmarklet');
+                if ( ANT.engageScriptParams.bookmarklet == "true" ) {
+                    $summary_widget.addClass('ant_bookmarklet');
                 }
                 $summary_widget.data({
                     page_id:page.id,
                     page_key:page.key
                 });
 
-                var summaryWidgetInsertionMethod = ( RDR.group.summary_widget_method != "" ) ? RDR.group.summary_widget_method : "after";
+                var summaryWidgetInsertionMethod = ( ANT.group.summary_widget_method != "" ) ? ANT.group.summary_widget_method : "after";
 
                 //page.jqFunc would be something like 'append' or 'after',
                 //so this would read $summary_widget_parent.append($summary_widget);
                 $summary_widget_parent[ summaryWidgetInsertionMethod ]($summary_widget);
 
                 var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
-                $summary_widget.find('img.rdr_tooltip_this').tooltip({placement:placement});
+                $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="rdr_chevron_cta"><i class="rdr_icon-chevron-down"></i></div>' +
-                    '<a href="'+RDR_baseUrl+'" target="_blank" class="rdr_logo">'+
-                        '<span class="no-rdr rdr-logo" title="This is <strong style=\'color:#4d92da;\'>ReadrBoard</strong>. Click to visit our site and learn more!" src="'+RDR_staticUrl+'widget/images/blank.png" ></span>'+
+                    '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
+                    '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
+                        '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
                 );
 
-                $summary_widget.find('.rdr-logo').click( function() {
-                    // RDR.events.track('click_rb_icon_summ');
+                $summary_widget.find('.ant-logo').click( function() {
+                    // ANT.events.track('click_ant_icon_summ');
                 });
 
-                $summary_widget.find('.rdr-logo').tooltip({});
+                $summary_widget.find('.ant-logo').tooltip({});
 
                 var onActiveEvent = function(){
                     // let's get the reaction summaries for the page here.
                     getReactedContent();
                     var page_id = $(this).data('page_id');
 
-                    var $rindow = RDR.rindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+                    var $aWindow = ANT.aWindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
 
-                    RDR.events.trackEventToCloud({
+                    ANT.events.trackEventToCloud({
                         event_type: 'sb',
                         event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                         page_id: page_id
@@ -10411,7 +10388,7 @@ function $RFunctions($R){
                 if(isTouchBrowser){
                     $summary_widget.bind('tap', function(){
                         onActiveEvent.call(this);
-                        $(this).toggleClass('rdr_hover');
+                        $(this).toggleClass('ant_hover');
                     });
                 }else{
                     $summary_widget.hover(
@@ -10441,12 +10418,12 @@ function $RFunctions($R){
                 }
 
                 var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" " + RDR.t('plural_reaction') :
+                    total_reactions+" " + ANT.t('plural_reaction') :
                         ( total_reactions > 0 ) ? 
-                            total_reactions+" " + RDR.t('single_reaction') :
-                            RDR.t('plural_reaction');
+                            total_reactions+" " + ANT.t('single_reaction') :
+                            ANT.t('plural_reaction');
                 $summary_widget.append(
-                    '<a class="rdr_reactions_label">'+total_reactions_label+'</a>'
+                    '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                 );
                 
             }
@@ -10454,18 +10431,18 @@ function $RFunctions($R){
             function getReactedContent( counts ) {            
                 // get all of the content_nodes for this page
                 // may want to limit this on back-end by a date range
-                if ( typeof RDR.interaction_data == "undefined" ) {
-                    RDR.interaction_data = {};
+                if ( typeof ANT.interaction_data == "undefined" ) {
+                    ANT.interaction_data = {};
                 }
                 
-                $.each( RDR.summaries, function(hash, summary) {
+                $.each( ANT.summaries, function(hash, summary) {
                     $.each( summary.top_interactions.tags, function(tag_id,interaction) {
                         if (typeof interaction != "undefined" ) {
-                            if ( typeof RDR.summaries[ hash ].content_nodes != "undefined") {
-                                RDR.util.buildInteractionData();
+                            if ( typeof ANT.summaries[ hash ].content_nodes != "undefined") {
+                                ANT.util.buildInteractionData();
                             } else {
-                                RDR.actions.content_nodes.init( hash, function() {
-                                    RDR.util.buildInteractionData();
+                                ANT.actions.content_nodes.init( hash, function() {
+                                    ANT.util.buildInteractionData();
                                 });
                             }
                         }
@@ -10475,13 +10452,13 @@ function $RFunctions($R){
 
 
         }
-        //end function plugin_jquery_rdrWidgetSummary
+        //end function plugin_jquery_antWidgetSummary
 
         function plugin_jquery_selectionographer($, rangy){
             /*
              * jquery.selectionographer.js
              * $.fn.selog aliases to $.fn.selectionographer
-             * author: eric@readrboard.com
+             * author: eric@antenna.is
              * see docs for more info /docs/selectionographer-docs.js
              *
              * depends on all of the rangy pacakge:
@@ -10492,7 +10469,7 @@ function $RFunctions($R){
              *
              * expects params of ( $, rangy ) where $ is the jQuery alias
              *
-             * //temp readr note: to test in the live page, don't forget to use $R(), not $().
+             * //temp antenna note: to test in the live page, don't forget to use $A(), not $().
             */
             $.fn.selectionographer = function( params ) {
                 //jQuery plugin pattern :http://docs.jquery.com/Plugins/Authoring
@@ -10724,11 +10701,11 @@ function $RFunctions($R){
             */
             ],
             _modifierFilters = {
-                filterOutRDRIndicator: function(range, params){
+                filterOutANTIndicator: function(range, params){
                     //check if $indicator is contained in the range, and if so, move the range's end to just before it.
 
                     var commonAncestorContainer = range.commonAncestorContainer;
-                    var $indicator = $(commonAncestorContainer).find('.rdr_indicator');
+                    var $indicator = $(commonAncestorContainer).find('.ant_indicator');
                     if($indicator.length){
                         var inTheRange = range.containsNode($indicator[0], true); //2nd param is 'partial': (rangy docs for containsNode)
                         if(inTheRange){
@@ -10836,7 +10813,7 @@ function $RFunctions($R){
                 range, serialRange,
                 theSettings = settings || {},
                 defaults = {
-                    styleName: 'rdr_hilite',
+                    styleName: 'ant_hilite',
                     container: document,        // likely passed in by save()
                     serialRange: null,          // set below - overwritten by explicit range object
                     range: null                 // set below - overwrites serial range
@@ -11304,14 +11281,14 @@ function $RFunctions($R){
                     this.setContent()
 
                     if (this.options.animation) {
-                      $tip.addClass('rdr_tw_fade')
+                      $tip.addClass('ant_tw_fade')
                     }
 
                     placement = typeof this.options.placement == 'function' ?
                       this.options.placement.call(this, $tip[0], this.$element[0]) :
                       this.options.placement
 
-                    inside = /rdr_tw_in/.test(placement)
+                    inside = /ant_tw_in/.test(placement)
 
                     $tip
                       .remove()
@@ -11340,22 +11317,22 @@ function $RFunctions($R){
 
                     $tip
                       .css(tp)
-                      .addClass('rdr_tw_'+placement)
-                      .addClass('rdr_tw_in')
+                      .addClass('ant_tw_'+placement)
+                      .addClass('ant_tw_in')
                   }
                 }
 
               , setContent: function () {
                   var $tip = this.tip()
-                  $tip.find('.rdr_twtooltip-inner').html(this.getTitle())
-                  $tip.removeClass('rdr_tw_fade rdr_tw_in rdr_tw_top rdr_tw_bottom rdr_tw_left rdr_tw_right')
+                  $tip.find('.ant_twtooltip-inner').html(this.getTitle())
+                  $tip.removeClass('ant_tw_fade ant_tw_in ant_tw_top ant_tw_bottom ant_tw_left ant_tw_right')
                 }
 
               , hide: function () {
                   var that = this
                     , $tip = this.tip()
 
-                  $tip.removeClass('rdr_tw_in')
+                  $tip.removeClass('ant_tw_in')
 
                   function removeWithAnimation() {
                     var timeout = setTimeout(function () {
@@ -11368,10 +11345,10 @@ function $RFunctions($R){
                     })
                   }
 
-                  $.support.transition && this.$tip.hasClass('rdr_tw_fade') ?
+                  $.support.transition && this.$tip.hasClass('ant_tw_fade') ?
                     removeWithAnimation() :
                     $tip.remove();
-                    if ( $.support.transition && this.$tip.hasClass('rdr_tw_fade') ) {
+                    if ( $.support.transition && this.$tip.hasClass('ant_tw_fade') ) {
                     } else {
                     }
                 }
@@ -11432,7 +11409,7 @@ function $RFunctions($R){
                 }
 
               , toggle: function () {
-                  this[this.tip().hasClass('rdr_tw_in') ? 'hide' : 'show']()
+                  this[this.tip().hasClass('ant_tw_in') ? 'hide' : 'show']()
                 }
 
               }
@@ -11460,7 +11437,7 @@ function $RFunctions($R){
               , placement: 'top'
               , trigger: 'hover'
               , title: ''
-              , template: '<div class="rdr rdr_twtooltip"><div class="rdr_twtooltip-arrow"></div><div class="rdr_twtooltip-inner"></div></div>'
+              , template: '<div class="ant ant_twtooltip"><div class="ant_twtooltip-arrow"></div><div class="ant_twtooltip-inner"></div></div>'
               }
             }( $ );
         }
@@ -11484,8 +11461,8 @@ function $RFunctions($R){
              Build date: 30 May 2011 - I believe this is now using Rangy 1.2 beta 2 release from 5 August 2011
             */
 
-            /*readrboard tweak to code:  replaced 4 instances of "span" with the var rdr_node */
-            var rdr_node = "ins"; /*use the html node ins instead of span to avoid having the client's css affect our hilite wrapper*/
+            /*antenna tweak to code:  replaced 4 instances of "span" with the var ant_node */
+            var ant_node = "ins"; /*use the html node ins instead of span to avoid having the client's css affect our hilite wrapper*/
 
             var rangy=function(){function k(o,u){var x=typeof o[u];return x=="function"||!!(x=="object"&&o[u])||x=="unknown"}function L(o,u){return!!(typeof o[u]=="object"&&o[u])}function J(o,u){return typeof o[u]!="undefined"}function K(o){return function(u,x){for(var B=x.length;B--;)if(!o(u,x[B]))return false;return true}}function z(o){return o&&A(o,y)&&v(o,s)}function C(o){window.alert("Rangy not supported in your browser. Reason: "+o);c.initialized=true;c.supported=false}function N(){if(!c.initialized){var o,
             u=false,x=false;if(k(document,"createRange")){o=document.createRange();if(A(o,n)&&v(o,h))u=true;o.detach()}if((o=L(document,"body")?document.body:document.getElementsByTagName("body")[0])&&k(o,"createTextRange")){o=o.createTextRange();if(z(o))x=true}!u&&!x&&C("Neither Range nor TextRange are implemented");c.initialized=true;c.features={implementsDomRange:u,implementsTextRange:x};u=j.concat(f);x=0;for(o=u.length;x<o;++x)try{u[x](c)}catch(B){L(window,"console")&&k(window.console,"log")&&window.console.log("Init listener threw an exception. Continuing.",
@@ -11511,7 +11488,7 @@ function $RFunctions($R){
             e;if(!a.collapsed){this.sc=a.startContainer;this.so=a.startOffset;this.ec=a.endContainer;this.eo=a.endOffset;var g=a.commonAncestorContainer;if(this.sc===this.ec&&l.isCharacterDataNode(this.sc)){this.isSingleCharacterDataNode=true;this._first=this._last=this._next=this.sc}else{this._first=this._next=this.sc===g&&!l.isCharacterDataNode(this.sc)?this.sc.childNodes[this.so]:l.getClosestAncestorIn(this.sc,g,true);this._last=this.ec===g&&!l.isCharacterDataNode(this.ec)?this.ec.childNodes[this.eo-1]:l.getClosestAncestorIn(this.ec,
             g,true)}}}function v(a){this.code=this[a];this.codeName=a;this.message="RangeException: "+this.codeName}function c(a,e,g){this.nodes=y(a,e,g);this._next=this.nodes[0];this._position=0}function f(a){return function(e,g){for(var q,G=g?e:e.parentNode;G;){q=G.nodeType;if(l.arrayContains(a,q))return G;G=G.parentNode}return null}}function j(a,e){if(F(a,e))throw new v("INVALID_NODE_TYPE_ERR");}function r(a){if(!a.startContainer)throw new Q("INVALID_STATE_ERR");}function M(a,e){if(!l.arrayContains(e,a.nodeType))throw new v("INVALID_NODE_TYPE_ERR");
             }function o(a,e){if(e<0||e>(l.isCharacterDataNode(a)?a.length:a.childNodes.length))throw new Q("INDEX_SIZE_ERR");}function u(a,e){if(d(a,true)!==d(e,true))throw new Q("WRONG_DOCUMENT_ERR");}function x(a){if(i(a,true))throw new Q("NO_MODIFICATION_ALLOWED_ERR");}function B(a,e){if(!a)throw new Q(e);}function D(a){r(a);if(!l.arrayContains(Y,a.startContainer.nodeType)&&!d(a.startContainer,true)||!l.arrayContains(Y,a.endContainer.nodeType)&&!d(a.endContainer,true)||!(a.startOffset<=(l.isCharacterDataNode(a.startContainer)?
-            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))/*READRBOARD EDIT*//*throw Error*/RDR.actions.catchRangyErrors("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");/*end READRBOARD EDIT*/}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
+            a.startContainer.length:a.startContainer.childNodes.length))||!(a.endOffset<=(l.isCharacterDataNode(a.endContainer)?a.endContainer.length:a.endContainer.childNodes.length)))/*ANTENNA EDIT*//*throw Error*/ANT.actions.catchRangyErrors("Range error: Range is no longer valid after DOM mutation ("+a.inspect()+")");/*end ANTENNA EDIT*/}function W(){}function ea(a){a.START_TO_START=O;a.START_TO_END=Z;a.END_TO_END=ka;a.END_TO_START=la;a.NODE_BEFORE=ma;a.NODE_AFTER=na;a.NODE_BEFORE_AND_AFTER=oa;a.NODE_INSIDE=ja}function $(a){ea(a);ea(a.prototype)}function X(a,e){return function(){D(this);
             var g=this.startContainer,q=this.startOffset,G=this.commonAncestorContainer,U=new p(this,true);if(g!==G){g=l.getClosestAncestorIn(g,G,true);q=C(g);g=q.node;q=q.offset}h(U,x);U.reset();G=a(U);U.detach();e(this,g,q,g,q);return G}}function ca(a,e,g){function q(m,t){return function(w){r(this);M(w,fa);M(b(w),Y);w=(m?z:C)(w);(t?G:U)(this,w.node,w.offset)}}function G(m,t,w){var I=m.endContainer,R=m.endOffset;if(t!==m.startContainer||w!==this.startOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==1){I=t;R=
             w}e(m,t,w,I,R)}}function U(m,t,w){var I=m.startContainer,R=m.startOffset;if(t!==m.endContainer||w!==this.endOffset){if(b(t)!=b(I)||l.comparePoints(t,w,I,R)==-1){I=t;R=w}e(m,I,R,t,w)}}function ba(m,t,w){if(t!==m.startContainer||w!==this.startOffset||t!==m.endContainer||w!==this.endOffset)e(m,t,w,t,w)}a.prototype=new W;k.util.extend(a.prototype,{setStart:function(m,t){r(this);j(m,true);o(m,t);G(this,m,t)},setEnd:function(m,t){r(this);j(m,true);o(m,t);U(this,m,t)},setStartBefore:q(true,true),setStartAfter:q(false,
             true),setEndBefore:q(true,false),setEndAfter:q(false,false),collapse:function(m){D(this);m?e(this,this.startContainer,this.startOffset,this.startContainer,this.startOffset):e(this,this.endContainer,this.endOffset,this.endContainer,this.endOffset)},selectNodeContents:function(m){r(this);j(m,true);e(this,m,0,m,l.getNodeLength(m))},selectNode:function(m){r(this);j(m,false);M(m,fa);var t=z(m);m=C(m);e(this,t.node,t.offset,m.node,m.offset)},extractContents:X(s,e),deleteContents:X(n,e),canSurroundContents:function(){D(this);
@@ -11534,9 +11511,9 @@ function $RFunctions($R){
             0)>=0&&this.comparePoint(a,l.getNodeLength(a))<=0},containsRange:function(a){return this.intersection(a).equals(a)},containsNodeText:function(a){var e=this.cloneRange();e.selectNode(a);var g=e.getNodes([3]);if(g.length>0){e.setStart(g[0],0);a=g.pop();e.setEnd(a,a.length);a=this.containsRange(e);e.detach();return a}else return this.containsNodeContents(a)},createNodeIterator:function(a,e){D(this);return new c(this,a,e)},getNodes:function(a,e){D(this);return y(this,a,e)},getDocument:function(){return J(this)},
             collapseBefore:function(a){r(this);this.setEndBefore(a);this.collapse(false)},collapseAfter:function(a){r(this);this.setStartAfter(a);this.collapse(true)},getName:function(){return"DomRange"},equals:function(a){return T.rangesEqual(this,a)},inspect:function(){return A(this)}};ca(T,da,function(a){r(a);a.startContainer=a.startOffset=a.endContainer=a.endOffset=null;a.collapsed=a.commonAncestorContainer=null;K(a,"detach",null);a._listeners=null});k.rangePrototype=W.prototype;T.rangeProperties=H;T.RangeIterator=
             p;T.copyComparisonConstants=$;T.createPrototypeRange=ca;T.inspect=A;T.getRangeDocument=J;T.rangesEqual=function(a,e){return a.startContainer===e.startContainer&&a.startOffset===e.startOffset&&a.endContainer===e.endContainer&&a.endOffset===e.endOffset};k.DomRange=T;k.RangeException=v});
-            rangy.createModule("WrappedRange",function(k){function L(h,n,s,y){var A=h.duplicate();A.collapse(s);var p=A.parentElement();z.isAncestorOf(n,p,true)||(p=n);if(!p.canHaveHTML)return new C(p.parentNode,z.getNodeIndex(p));n=z.getDocument(p).createElement(rdr_node);var v,c=s?"StartToStart":"StartToEnd";do{p.insertBefore(n,n.previousSibling);A.moveToElementText(n)}while((v=A.compareEndPoints(c,h))>0&&n.previousSibling);c=n.nextSibling;if(v==-1&&c&&z.isCharacterDataNode(c)){A.setEndPoint(s?"EndToStart":"EndToEnd",
+            rangy.createModule("WrappedRange",function(k){function L(h,n,s,y){var A=h.duplicate();A.collapse(s);var p=A.parentElement();z.isAncestorOf(n,p,true)||(p=n);if(!p.canHaveHTML)return new C(p.parentNode,z.getNodeIndex(p));n=z.getDocument(p).createElement(ant_node);var v,c=s?"StartToStart":"StartToEnd";do{p.insertBefore(n,n.previousSibling);A.moveToElementText(n)}while((v=A.compareEndPoints(c,h))>0&&n.previousSibling);c=n.nextSibling;if(v==-1&&c&&z.isCharacterDataNode(c)){A.setEndPoint(s?"EndToStart":"EndToEnd",
             h);if(/[\r\n]/.test(c.data)){p=A.duplicate();s=p.text.replace(/\r\n/g,"\r").length;for(s=p.moveStart("character",s);p.compareEndPoints("StartToEnd",p)==-1;){s++;p.moveStart("character",1)}}else s=A.text.length;p=new C(c,s)}else{c=(y||!s)&&n.previousSibling;p=(s=(y||s)&&n.nextSibling)&&z.isCharacterDataNode(s)?new C(s,0):c&&z.isCharacterDataNode(c)?new C(c,c.length):new C(p,z.getNodeIndex(n))}n.parentNode.removeChild(n);return p}function J(h,n){var s,y,A=h.offset,p=z.getDocument(h.node),v=p.body.createTextRange(),
-            c=z.isCharacterDataNode(h.node);if(c){s=h.node;y=s.parentNode}else{s=h.node.childNodes;s=A<s.length?s[A]:null;y=h.node}p=p.createElement(rdr_node);p.innerHTML="&#feff;";s?y.insertBefore(p,s):y.appendChild(p);v.moveToElementText(p);v.collapse(!n);y.removeChild(p);if(c)v[n?"moveStart":"moveEnd"]("character",A);return v}k.requireModules(["DomUtil","DomRange"]);var K,z=k.dom,C=z.DomPosition,N=k.DomRange;if(k.features.implementsDomRange&&(!k.features.implementsTextRange||!k.config.preferTextRange)){(function(){function h(f){for(var j=
+            c=z.isCharacterDataNode(h.node);if(c){s=h.node;y=s.parentNode}else{s=h.node.childNodes;s=A<s.length?s[A]:null;y=h.node}p=p.createElement(ant_node);p.innerHTML="&#feff;";s?y.insertBefore(p,s):y.appendChild(p);v.moveToElementText(p);v.collapse(!n);y.removeChild(p);if(c)v[n?"moveStart":"moveEnd"]("character",A);return v}k.requireModules(["DomUtil","DomRange"]);var K,z=k.dom,C=z.DomPosition,N=k.DomRange;if(k.features.implementsDomRange&&(!k.features.implementsTextRange||!k.config.preferTextRange)){(function(){function h(f){for(var j=
             s.length,r;j--;){r=s[j];f[r]=f.nativeRange[r]}}var n,s=N.rangeProperties,y,A;K=function(f){if(!f)throw Error("Range must be specified");this.nativeRange=f;h(this)};N.createPrototypeRange(K,function(f,j,r,M,o){var u=f.endContainer!==M||f.endOffset!=o;if(f.startContainer!==j||f.startOffset!=r||u){f.setEnd(M,o);f.setStart(j,r)}},function(f){f.nativeRange.detach();f.detached=true;for(var j=s.length,r;j--;){r=s[j];f[r]=null}});n=K.prototype;n.selectNode=function(f){this.nativeRange.selectNode(f);h(this)};
             n.deleteContents=function(){this.nativeRange.deleteContents();h(this)};n.extractContents=function(){var f=this.nativeRange.extractContents();h(this);return f};n.cloneContents=function(){return this.nativeRange.cloneContents()};n.surroundContents=function(f){this.nativeRange.surroundContents(f);h(this)};n.collapse=function(f){this.nativeRange.collapse(f);h(this)};n.cloneRange=function(){return new K(this.nativeRange.cloneRange())};n.refresh=function(){h(this)};n.toString=function(){return this.nativeRange.toString()};
             var p=document.createTextNode("test");z.getBody(document).appendChild(p);var v=document.createRange();v.setStart(p,0);v.setEnd(p,0);try{v.setStart(p,1);y=true;n.setStart=function(f,j){this.nativeRange.setStart(f,j);h(this)};n.setEnd=function(f,j){this.nativeRange.setEnd(f,j);h(this)};A=function(f){return function(j){this.nativeRange[f](j);h(this)}}}catch(c){y=false;n.setStart=function(f,j){try{this.nativeRange.setStart(f,j)}catch(r){this.nativeRange.setEnd(f,j);this.nativeRange.setStart(f,j)}h(this)};
@@ -11590,7 +11567,7 @@ function $RFunctions($R){
             a.cloneRange();c.selectNodeContents(b);var d=c.intersection(a);d=d?d.toString():"";c.detach();return d!=""}function x(a,b){if(a.attributes.length!=b.attributes.length)return false;for(var c=0,d=a.attributes.length,e,f;c<d;++c){e=a.attributes[c];f=e.name;if(f!="class"){f=b.attributes.getNamedItem(f);if(e.specified!=f.specified)return false;if(e.specified&&e.nodeValue!==f.nodeValue)return false}}return true}function y(a){for(var b=0,c=a.attributes.length;b<c;++b)if(a.attributes[b].specified&&a.attributes[b].name!=
             "class")return true;return false}function z(a,b){if(g.isCharacterDataNode(a))return b==0?!!a.previousSibling:b==a.length?!!a.nextSibling:true;return b>0&&b<a.childNodes.length}function l(a,b,c){var d;if(g.isCharacterDataNode(b))if(c==0){c=g.getNodeIndex(b);b=b.parentNode}else if(c==b.length){c=g.getNodeIndex(b)+1;b=b.parentNode}else d=g.splitDataNode(b,c);if(!d){d=b.cloneNode(false);d.id&&d.removeAttribute("id");for(var e;e=b.childNodes[c];)d.appendChild(e);g.insertAfter(d,b)}return b==a?d:l(a,d.parentNode,
             g.getNodeIndex(d))}function A(a,b){var c=a.nodeType==3,d=c?a.parentNode:a,e=b?"nextSibling":"previousSibling";if(c){if((c=a[e])&&c.nodeType==3)return c}else if((c=d[e])&&a.tagName==c.tagName&&u(a,c)&&x(a,c))return c[b?"firstChild":"lastChild"];return null}function p(a){this.firstTextNode=(this.isElementMerge=a.nodeType==1)?a.lastChild:a;if(this.isElementMerge)this.sortedCssClasses=o(a);this.textNodes=[this.firstTextNode]}function m(a,b,c){this.cssClass=a;this.normalize=b;this.applyToAnytagBody=false;
-            a=typeof c;if(a=="string")if(c=="*")this.applyToAnytagBody=true;else this.tagNames=s(c.toLowerCase()).split(/\s*,\s*/);else if(a=="object"&&typeof c.length=="number"){this.tagNames=[];a=0;for(b=c.length;a<b;++a)if(c[a]=="*")this.applyToAnytagBody=true;else this.tagNames.push(c[a].toLowerCase())}else this.tagNames=[q]}h.requireModules(["WrappedSelection","WrappedRange"]);var g=h.dom,q=rdr_node,B=function(){function a(b,c,d){return c&&d?" ":""}return function(b,c){if(b.className)b.className=b.className.replace(RegExp("(?:^|\\s)"+
+            a=typeof c;if(a=="string")if(c=="*")this.applyToAnytagBody=true;else this.tagNames=s(c.toLowerCase()).split(/\s*,\s*/);else if(a=="object"&&typeof c.length=="number"){this.tagNames=[];a=0;for(b=c.length;a<b;++a)if(c[a]=="*")this.applyToAnytagBody=true;else this.tagNames.push(c[a].toLowerCase())}else this.tagNames=[q]}h.requireModules(["WrappedSelection","WrappedRange"]);var g=h.dom,q=ant_node,B=function(){function a(b,c,d){return c&&d?" ":""}return function(b,c){if(b.className)b.className=b.className.replace(RegExp("(?:^|\\s)"+
             c+"(?:\\s|$)"),a)}}();p.prototype={doMerge:function(){for(var a=[],b,c,d=0,e=this.textNodes.length;d<e;++d){b=this.textNodes[d];c=b.parentNode;a[d]=b.data;if(d){c.removeChild(b);c.hasChildNodes()||c.parentNode.removeChild(c)}}return this.firstTextNode.data=a=a.join("")},getLength:function(){for(var a=this.textNodes.length,b=0;a--;)b+=this.textNodes[a].length;return b},toString:function(){for(var a=[],b=0,c=this.textNodes.length;b<c;++b)a[b]="'"+this.textNodes[b].data+"'";return"[Merge("+a.join(",")+
             ")]"}};m.prototype={appliesToElement:function(a){return this.applyToAnytagBody||g.arrayContains(this.tagNames,a.tagName.toLowerCase())},getAncestorWithClass:function(a){for(a=a.parentNode;a;){if(a.nodeType==1&&this.appliesToElement(a)&&n(a,this.cssClass))return a;a=a.parentNode}return false},postApply:function(a,b){for(var c=a[0],d=a[a.length-1],e=[],f,j=c,C=d,D=0,E=d.length,k,F,i=0,r=a.length;i<r;++i){k=a[i];if(F=A(k,false)){if(!f){f=new p(F);e.push(f)}f.textNodes.push(k);if(k===c){j=f.firstTextNode;
             D=j.length}if(k===d){C=f.firstTextNode;E=f.getLength()}}else f=null}if(c=A(d,true)){if(!f){f=new p(d);e.push(f)}f.textNodes.push(c)}if(e.length){i=0;for(r=e.length;i<r;++i)e[i].doMerge();b.setStart(j,D);b.setEnd(C,E)}},createContainer:function(a){a=a.createElement(q);a.className=this.cssClass;return a},applyToTextNode:function(a){var b=a.parentNode;if(b.childNodes.length==1&&this.appliesToElement(b))t(b,this.cssClass);else{b=this.createContainer(g.getDocument(a));a.parentNode.insertBefore(b,a);b.appendChild(a)}},
@@ -11616,7 +11593,7 @@ function $RFunctions($R){
              Version: 1.1.2
              Build date: 30 May 2011
             */
-            rangy.createModule("SaveRestore",function(h,m){function n(a,g){var e="selectionBoundary_"+ +new Date+"_"+(""+Math.random()).slice(2),c,f=p.getDocument(a.startContainer),d=a.cloneRange();d.collapse(g);c=f.createElement(rdr_node);c.id=e;c.style.lineHeight="0";c.style.display="none";c.appendChild(f.createTextNode(q));d.insertNode(c);d.detach();return c}function o(a,g,e,c){if(a=(a||document).getElementById(e)){g[c?"setStartBefore":"setEndBefore"](a);a.parentNode.removeChild(a)}else m.warn("Marker element has been removed. Cannot restore selection.")}
+            rangy.createModule("SaveRestore",function(h,m){function n(a,g){var e="selectionBoundary_"+ +new Date+"_"+(""+Math.random()).slice(2),c,f=p.getDocument(a.startContainer),d=a.cloneRange();d.collapse(g);c=f.createElement(ant_node);c.id=e;c.style.lineHeight="0";c.style.display="none";c.appendChild(f.createTextNode(q));d.insertNode(c);d.detach();return c}function o(a,g,e,c){if(a=(a||document).getElementById(e)){g[c?"setStartBefore":"setEndBefore"](a);a.parentNode.removeChild(a)}else m.warn("Marker element has been removed. Cannot restore selection.")}
             function r(a,g){return g.compareBoundaryPoints(a.START_TO_START,a)}function k(a,g){var e=(a||document).getElementById(g);e&&e.parentNode.removeChild(e)}h.requireModules(["DomUtil","DomRange","WrappedRange"]);var p=h.dom,q="\ufeff";h.saveSelection=function(a){a=a||window;var g=a.document;if(h.isSelectionValid(a)){var e=h.getSelection(a),c=e.getAllRanges(),f=[],d,j;c.sort(r);for(var b=0,i=c.length;b<i;++b){d=c[b];if(d.collapsed){j=n(d,false);f.push({markerId:j.id,collapsed:true})}else{j=n(d,false);
             d=n(d,true);f[b]={startMarkerId:d.id,endMarkerId:j.id,collapsed:false,backwards:c.length==1&&e.isBackwards()}}}for(b=i-1;b>=0;--b){d=c[b];if(d.collapsed)d.collapseBefore((g||document).getElementById(f[b].markerId));else{d.setEndBefore((g||document).getElementById(f[b].endMarkerId));d.setStartAfter((g||document).getElementById(f[b].startMarkerId))}}e.setRanges(c);return{win:a,doc:g,rangeInfos:f,restored:false}}else m.warn("Cannot save selection. This usually happens when the selection is collapsed and the selection document has lost focus.")};
             h.restoreSelection=function(a,g){if(!a.restored){for(var e=a.rangeInfos,c=h.getSelection(a.win),f=[],d=e.length,j=d-1,b,i;j>=0;--j){b=e[j];i=h.createRange(a.doc);if(b.collapsed)if(b=(a.doc||document).getElementById(b.markerId)){b.style.display="inline";var l=b.previousSibling;if(l&&l.nodeType==3){b.parentNode.removeChild(b);i.collapseToPoint(l,l.length)}else{i.collapseBefore(b);b.parentNode.removeChild(b)}}else m.warn("Marker element has been removed. Cannot restore selection.");else{o(a.doc,i,b.startMarkerId,
@@ -11660,10 +11637,10 @@ function $RFunctions($R){
     //end initPlugins()
 
     //if we're offline, expose stuff to window for testing
-    if(RDR_offline){
-        RDR.debug();
+    if(ANT_offline){
+        ANT.debug();
     }
 }
-//end $RFunctions()
+//end $AFunctions()
 
 })();

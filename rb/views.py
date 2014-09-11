@@ -599,8 +599,8 @@ def create_rb_user(request):
         if form.is_valid():
             user = form.save(True)
             
-            #user.email_user("ReadrBoard email confirmation", generateConfirmationEmail(user))
-            msg = EmailMessage("ReadrBoard email confirmation", generateConfirmationEmail(user), "hello@readrboard.com", [user.email])
+            #user.email_user("Antenna email confirmation", generateConfirmationEmail(user))
+            msg = EmailMessage("Antenna email confirmation", generateConfirmationEmail(user), "hello@antenna.is", [user.email])
             msg.content_subtype='html'
             msg.send(False)
             context['requested'] = True
@@ -620,7 +620,7 @@ def modify_rb_social_user(request):
     logger.info("modify user")
     context = {}
     cookie_user = checkCookieToken(request)
-    if not cookie_user: return HttpResponseRedirect('/rb_login/')
+    if not cookie_user: return HttpResponseRedirect('/ant_login/')
     try:
         social_user = SocialUser.objects.get(user=cookie_user)
         user_token = generateSocialUserToken(social_user)
@@ -674,22 +674,22 @@ def confirm_rb_user(request):
     return response
 
 
-def rb_login(request):
+def ant_login(request):
     context = {}
     
     response =  render_to_response(
-        "popup-forms/rb_login.html",
+        "popup-forms/ant_login.html",
         context,
         context_instance=RequestContext(request)
     )
     
     return response
 
-def rb_login_success(request):
+def ant_login_success(request):
     context = {}
     
     response =  render_to_response(
-        "popup-forms/rb_login_success.html",
+        "popup-forms/ant_login_success.html",
         context,
         context_instance=RequestContext(request)
     )
@@ -703,8 +703,7 @@ def request_password_reset(request):
         email_addr = request.POST['email']
         (user, password_email) = generatePasswordEmail(username, email_addr)
         if user is not None:
-            #user.email_user("Readrboard email confirmation", password_email)
-            msg = EmailMessage("ReadrBoard password reset", password_email, "hello@readrboard.com", [user.email])
+            msg = EmailMessage("Antenna password reset", password_email, "hello@antenna.is", [user.email])
             msg.content_subtype='html'
             msg.send(False)
             context['requested'] = True
@@ -729,7 +728,7 @@ def change_rb_password(request):
     cookie_user = checkCookieToken(request)
     # cookies = request.COOKIES
     # data['user_id'] = cookies.get('user_id', None)
-    # data['readr_token'] = cookies.get('readr_token', None)
+    # data['ant_token'] = cookies.get('ant_token', None)
 
     if not cookie_user: return HttpResponseRedirect('/')
 

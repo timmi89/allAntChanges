@@ -1,4 +1,4 @@
-# Django settings for readrboard project.
+# Django settings for antenna project.
 from os import uname
 
 if uname()[1] == "hat" : DEBUG = True
@@ -36,13 +36,13 @@ FACEBOOK_APP_ID = '163759626987948'
 FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
-    ('Porter Bayne', 'porter@antenna.is'),
-    ('Michael Shaw', 'michael@antenna.is')
+    ('Porter Bayne', 'porter@readrboard.com'),
+    ('Michael Shaw', 'michael@readrboard.com')
 )
 
 RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
-    'michael@readrboard.com',
+    'michael@readrboard.com'
 ]
 
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
@@ -50,10 +50,10 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8081'
-    BASE_URL = 'http://local.readrboard.com:8081'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8081'
-    STATIC_URL = '//local.readrboard.com:8081/static/'
+    URL_NO_PROTO = 'local.antenna.is:8081'
+    BASE_URL = 'http://local.antenna.is:8081'
+    BASE_URL_SECURE = 'https://local.antenna.is:8081'
+    STATIC_URL = '//local.antenna.is:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
@@ -108,7 +108,7 @@ if DEBUG:
     
 
 else:
-    ALLOWED_HOSTS = ["127.0.0.1", "www.readrboard.com","readrboard.com","static.readrboard.com", "www.antenna.is", "antenna.is", "static.antenna.is"]
+    ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
     URL_NO_PROTO = 'www.antenna.is'
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
@@ -404,7 +404,7 @@ DEBUG_TOOLBAR_CONFIG = {
 #SOCIAL_AUTH_EXPIRATION = 'expires'
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
-#SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
+#SESSION_COOKIE_DOMAIN = '.local.antenna.is'
 
 LOGGING = {
     'version': 1,

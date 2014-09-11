@@ -170,10 +170,10 @@ if(typeof Parse !== "undefined"){
         });
 
         // put in external file...
-        RB.analytics = {
+        ANTsite.analytics = {
         	mostPopular: function( args ) {
-        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var start = ( args && args.start ) ? args.start : ANTsite.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : ANTsite.analytics.endDate;
         		var type = ( args && args.type ) ? args.type : "tags";  // users, pages, content
         		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
@@ -183,7 +183,7 @@ if(typeof Parse !== "undefined"){
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/popular/'+querystring,
+        			url: '/group/'+ANTsite.group.short_name+'/analytics_v1/'+type+'/popular/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -284,8 +284,8 @@ if(typeof Parse !== "undefined"){
         		});
         	},
         	mostActive: function( args ) {
-        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var start = ( args && args.start ) ? args.start : ANTsite.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : ANTsite.analytics.endDate;
         		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
         		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
@@ -295,7 +295,7 @@ if(typeof Parse !== "undefined"){
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/active/'+querystring,
+        			url: '/group/'+ANTsite.group.short_name+'/analytics_v1/'+type+'/active/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -322,7 +322,7 @@ if(typeof Parse !== "undefined"){
                             $('table[role="active pages table"] tbody').html( pageHtml );
 
                             //this will send off ajax to parse and fill in the reactionViews
-                            RB.analytics.parse.updateReactionViewsForPages();
+                            ANTsite.analytics.parse.updateReactionViewsForPages();
 
         				} else if ( type == "users" ) {
                         	var userHtml = "";
@@ -345,7 +345,7 @@ if(typeof Parse !== "undefined"){
                                         + '</td>'
         								+ '<td role="reactions">'+ ( (response[i].counts.tag)?response[i].counts.tag:0 ) +'</td>'
                                         + '<td role="reactionViews" class="reactionViews">'
-                                            + RB.analytics.parse.getReactionViewsPerUser(user.id) 
+                                            + ANTsite.analytics.parse.getReactionViewsPerUser(user.id) 
                                         +'</td>'
         								+ '<td role="shares">'+ ( (response[i].counts.shr)?response[i].counts.shr:0 ) +'</td>'
         								+ '<td role="comments">'+ ( (response[i].counts.com)?response[i].counts.com:0 ) +'</td>'
@@ -355,7 +355,7 @@ if(typeof Parse !== "undefined"){
         					$('table[role="active user table"] tbody').html( userHtml );
 
                             //this will send off ajax to parse and fill in the reactionViews
-                            RB.analytics.parse.updateReactionViewsForUsers();
+                            ANTsite.analytics.parse.updateReactionViewsForUsers();
 
                         } else if ( type == "content" ) {
 
@@ -388,8 +388,8 @@ if(typeof Parse !== "undefined"){
         		});
         	},
         	recentlyActive: function( args ) {
-        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var start = ( args && args.start ) ? args.start : ANTsite.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : ANTsite.analytics.endDate;
         		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
         		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
@@ -399,7 +399,7 @@ if(typeof Parse !== "undefined"){
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics_v1/'+type+'/recent/'+querystring,
+        			url: '/group/'+ANTsite.group.short_name+'/analytics_v1/'+type+'/recent/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -416,7 +416,7 @@ if(typeof Parse !== "undefined"){
         		});
         	},
             debugError: function(error){
-                if(!RB.RDR_offline){
+                if(!ANTsite.ANT_offline){
                     return;
                 }
                 alert("Error: " + error.code + " " + error.message);
@@ -429,18 +429,18 @@ if(typeof Parse !== "undefined"){
                 init: function(){
 
                     //todo: using Self convention for now. Convert this to use an actual constucter/instance pattern
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     if( typeof Parse === "undefined" ){
                         return;
                     }
-                    var repoName = RB.RDR_offline ? "EventTracking_Dev" : "EventTracking";
+                    var repoName = ANTsite.ANT_offline ? "EventTracking_Dev" : "EventTracking";
                     Self.repo = Parse.Object.extend(repoName);
                     Self._hasInited = true;
                 },
                 update: function(){
 
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     if( typeof Parse === "undefined" ){
                         return;
@@ -454,7 +454,7 @@ if(typeof Parse !== "undefined"){
                             $('#interactionReadCount h1').text(count);
                         },
                         error: function(error) {
-                            RB.analytics.debugError(error);
+                            ANTsite.analytics.debugError(error);
                         }
                     });
 
@@ -462,16 +462,16 @@ if(typeof Parse !== "undefined"){
                     // Self.getAllData(Self.repo, {
                     //     success: function(results) {
                     //         // debugger;
-                    //         RB.analytics.mostActive({type:'users'});
+                    //         ANTsite.analytics.mostActive({type:'users'});
                     //     },
                     //     error: function(error) {
-                    //         RB.analytics.debugError(error);
+                    //         ANTsite.analytics.debugError(error);
                     //     }
                     // });
 
                 },
                 getAllData: function(Table, callbacks){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     var query = new Parse.Query(Table);
                     query = Self._setQueryDefaults(query);
@@ -482,7 +482,7 @@ if(typeof Parse !== "undefined"){
                 },
 
                 getReactionViewCount: function(Table, callbacks){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     var query = new Parse.Query(Table);
                     query = Self._setQueryDefaults(query);
@@ -490,7 +490,7 @@ if(typeof Parse !== "undefined"){
                 },
                 
                 getReactionViewPerPageCount: function(pageId, callbacks){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
                     var options = {
                         id: pageId,
                         key: "page_id",
@@ -499,7 +499,7 @@ if(typeof Parse !== "undefined"){
                     Self._getReactionViewPerCount(Self.repo, options);
                 },
                 getReactionViewPerUserCount: function(userId, callbacks){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
                     var options = {
                         id: userId,
                         key: "user_id",
@@ -508,7 +508,7 @@ if(typeof Parse !== "undefined"){
                     Self._getReactionViewPerCount(Self.repo, options);
                 },
                 _getReactionViewPerCount: function(Table, options){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     var id = options.id;
                     var key = options.key;
@@ -523,7 +523,7 @@ if(typeof Parse !== "undefined"){
                 //todo: not the prettiest way to do this, improve later.
                 updateReactionViewsForPages: function(){
                     //todo: this should be optimized later.
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     $('table[role="active pages table"] tbody tr').each(function(){
                         var $this = $(this);
@@ -534,7 +534,7 @@ if(typeof Parse !== "undefined"){
                                 $this.find('.reactionViews').html(count);
                             },
                             error: function(error) {
-                                RB.analytics.debugError(error);
+                                ANTsite.analytics.debugError(error);
                             }
                         });
 
@@ -543,7 +543,7 @@ if(typeof Parse !== "undefined"){
                 //todo: not the prettiest way to do this, improve later.
                 updateReactionViewsForUsers: function(){
                     //todo: this should be optimized later.
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
 
                     $('table[role="active user table"] tbody tr').each(function(){
                         var $this = $(this);
@@ -554,43 +554,43 @@ if(typeof Parse !== "undefined"){
                                 $this.find('.reactionViews').html(count);
                             },
                             error: function(error) {
-                                RB.analytics.debugError(error);
+                                ANTsite.analytics.debugError(error);
                             }
                         });
 
                     });
                 },
                 getReactionViewsPerPage: function(pageId){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
                     return Self._getCountPerId(pageId, "page_id");
                 },
 
                 getReactionViewsPerUser: function(userId){
-                    var Self = RB.analytics.parse;
+                    var Self = ANTsite.analytics.parse;
                     return Self._getCountPerId(userId, "user_id");
                 },
                 _getCountPerId: function(id, fieldName){
 
-                    if(!id || !RB.analytics.parse.collection){
-                        return RB.analytics.parse.loadingHTML;
+                    if(!id || !ANTsite.analytics.parse.collection){
+                        return ANTsite.analytics.parse.loadingHTML;
                     }
 
-                    return RB.analytics.parse.collection.filter(function(model){
+                    return ANTsite.analytics.parse.collection.filter(function(model){
                         return model.get(fieldName) == id;
                     }).length;
                 },
                 _setQueryDefaults: function(query){
                     return query
-                        .greaterThanOrEqualTo("createdAt", RB.analytics.jsStartDate)
-                        .lessThanOrEqualTo("createdAt", RB.analytics.jsEndDate)
+                        .greaterThanOrEqualTo("createdAt", ANTsite.analytics.jsStartDate)
+                        .lessThanOrEqualTo("createdAt", ANTsite.analytics.jsEndDate)
                         .containedIn("action", ["rindow_shown_readmode", "rindow_shown_summarybar"])
-                        .equalTo("group_id", RB.group.id);
+                        .equalTo("group_id", ANTsite.group.id);
                 }
             },
 
         	interactionFrequency: function( args ) {
-        		var start = ( args && args.start ) ? args.start : RB.analytics.startDate;
-        		var end = ( args && args.end ) ? args.end : RB.analytics.endDate;
+        		var start = ( args && args.start ) ? args.start : ANTsite.analytics.startDate;
+        		var end = ( args && args.end ) ? args.end : ANTsite.analytics.endDate;
         		var type = ( args && args.type ) ? args.type : "pages";  // users, pages, content
         		var max_count = ( args && args.max_count ) ? args.max_count : 20;  // users, pages, content
 
@@ -600,7 +600,7 @@ if(typeof Parse !== "undefined"){
         			"&max_count="+max_count;
 
         		$.ajax({
-        			url: '/group/'+RB.group.short_name+'/analytics_v1/frequency/'+querystring,
+        			url: '/group/'+ANTsite.group.short_name+'/analytics_v1/frequency/'+querystring,
         			type: "get",
         			contentType: "application/json",
         			dataType: "jsonp",
@@ -676,75 +676,75 @@ if(typeof Parse !== "undefined"){
         	}, 
         	updateAll: function() {
                 
-                RB.analytics.setDates();
+                ANTsite.analytics.setDates();
         		
-                RB.analytics.interactionFrequency();
+                ANTsite.analytics.interactionFrequency();
 
-        		RB.analytics.mostPopular();
-        		RB.analytics.mostPopular( {type:'bookmarks'} );
-        		RB.analytics.mostPopular( {type:'shares'} );
+        		ANTsite.analytics.mostPopular();
+        		ANTsite.analytics.mostPopular( {type:'bookmarks'} );
+        		ANTsite.analytics.mostPopular( {type:'shares'} );
 
-        		RB.analytics.mostActive();
-        		RB.analytics.mostActive({type:'users'});
-        		RB.analytics.mostActive({type:'content'});
+        		ANTsite.analytics.mostActive();
+        		ANTsite.analytics.mostActive({type:'users'});
+        		ANTsite.analytics.mostActive({type:'content'});
 
-        		RB.analytics.recentlyActive();
+        		ANTsite.analytics.recentlyActive();
 
-                RB.analytics.parse.update();
+                ANTsite.analytics.parse.update();
         	},
             setDates: function(){
 
                 var nowDate = moment().format("MM/DD/YY");
-                RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-                RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+                ANTsite.analytics.startDate = ANTsite.util.getHashValue('start') || nowDate;
+                ANTsite.analytics.endDate = ANTsite.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
 
-                RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-                RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+                ANTsite.analytics.jsStartDate = ANTsite.analytics.startDate ? new Date(ANTsite.analytics.startDate) : new Date();
+                ANTsite.analytics.jsEndDate = ANTsite.analytics.endDate ? new Date(ANTsite.analytics.endDate) : new Date();
             }
 
         };
 
 
         // defined in template
-        RB.group.short_name = "{{ group.short_name }}";
-        RB.group.full_name = "{{ group.name }}";
+        ANTsite.group.short_name = "{{ group.short_name }}";
+        ANTsite.group.full_name = "{{ group.name }}";
         
         $(function(){
 
-            RB.analytics.setDates();
+            ANTsite.analytics.setDates();
 
             //init this once so that the destroy function doesn't error when it refreshes this.
             $('section[role="tag cloud grid"]').isotope();
             
             $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
-            $('input[name="start_date"]').val( RB.analytics.startDate );
-            $('input[name="end_date"]').val( RB.analytics.endDate );
+            $('input[name="start_date"]').val( ANTsite.analytics.startDate );
+            $('input[name="end_date"]').val( ANTsite.analytics.endDate );
 
             $('section[role="datepicker"] form').submit( function() {
 
                 var startDate = $('input[name="start_date"]').val();
                 var endDate = $('input[name="end_date"]').val();
                 
-                RB.util.setHashValue('start', startDate );
-                RB.util.setHashValue('end', endDate );
+                ANTsite.util.setHashValue('start', startDate );
+                ANTsite.util.setHashValue('end', endDate );
 
-                RB.analytics.updateAll();
+                ANTsite.analytics.updateAll();
                 return false;
             });
 
-            RB.analytics.updateAll();
+            ANTsite.analytics.updateAll();
 
         });
 
         /* for links:
 
-        http://local.readrboard.com:8081/page/3/?s=not+sure
+        http://local.antenna.is:8081/page/3/?s=not+sure
 
-        http://local.readrboard.com:8081/group/demo/
-        http://local.readrboard.com:8081/group/demo/tags/?s=not+sure
-        http://local.readrboard.com:8081/group/demo/shares/?s=not+sure
+        http://local.antenna.is:8081/group/demo/
+        http://local.antenna.is:8081/group/demo/tags/?s=not+sure
+        http://local.antenna.is:8081/group/demo/shares/?s=not+sure
 
-        http://local.readrboard.com:8081/user/2/
+        http://local.antenna.is:8081/user/2/
 
         Aanlytics links
         Profile stream links (interactions.html)

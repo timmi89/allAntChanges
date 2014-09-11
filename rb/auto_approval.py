@@ -92,7 +92,7 @@ def addDefaultsForNewGroup(group, cookie_user):
     #######
 
     # email us about needing to approve the group
-    msg = EmailMessage("ReadrBoard group approval", userutils.generateGroupApprovalEmail(group), "groups@readrboard.com", RB_SOCIAL_ADMINS )
+    msg = EmailMessage("Antenna group approval", userutils.generateGroupApprovalEmail(group), "groups@antenna.is", RB_SOCIAL_ADMINS )
     msg.content_subtype='html'
     msg.send(False)
 
@@ -110,7 +110,7 @@ def autoApproveUserAsAdmin(group, cookie_user, isAutoApproved=False):
     if isAutoApproved:
         group_admin = GroupAdmin.objects.create(group=group,social_user=social_user,approved=isAutoApproved)
         ga_approval_mail = userutils.generateAdminApprovalEmail(group_admin, isAutoApproved)
-        msg = EmailMessage("ReadrBoard group admin approval", ga_approval_mail, "groups@readrboard.com", RB_SOCIAL_ADMINS )
+        msg = EmailMessage("Antenna group admin approval", ga_approval_mail, "groups@antenna.is", RB_SOCIAL_ADMINS )
         msg.content_subtype='html'
         msg.send(False)
         #######

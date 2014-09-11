@@ -91,8 +91,8 @@ def createSocialUser(django_user, profile, base = 'http://graph.facebook.com', p
     social_user = social[0]
     if social[1]:
         mail_admins(
-            'New ReadrBoard User',
-            social_user.full_name + ' just joined ReadrBoard!',
+            'New Antenna User',
+            social_user.full_name + ' just joined Antenna!',
             fail_silently=True
         )
     result = ("Created new" if social[1] else "Retreived existing")

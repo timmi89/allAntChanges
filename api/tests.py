@@ -118,7 +118,7 @@ class APITest(TestCase):
 					"content": "test",
 					"content_type":"text",
 					"user_id":"1",
-					"readr_token":"8e740723c1a88dc9abb3",
+					"ant_token":"8e740723c1a88dc9abb3",
 					"group_id":"1",
 					"page_id":1
 				})

@@ -1,12 +1,12 @@
-var RDR_offline = (window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false,
-RDR_baseUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081":"http://www.readrboard.com",
-RDR_staticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/",
-RDR_widgetCssStaticUrl = ( RDR_offline ) ? "http://local.readrboard.com:8081/static/":"http://s3.amazonaws.com/readrboard/";
+var ANT_offline = (window.location.href.indexOf('local.antenna.is') != -1 ) ? true:false,
+ANT_baseUrl = ( ANT_offline ) ? "http://local.antenna.is:8081":"http://www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/";
 
-var RB = RB ? RB : {};
+var ANTsite = ANTsite ? ANTsite : {};
 
-RB = {
-    RDR_offline: RDR_offline,
+ANTsite = {
+    ANT_offline: ANT_offline,
     group: {},
     querystring: function(key) {
         var qs = ( window.location.search + window.location.hash ).substr(1).split('&');
@@ -17,7 +17,7 @@ RB = {
         }
         return qs_args[ key ];
     },
-    anonUserImg: RDR_staticUrl+"site/images/anonymous-user.png",
+    anonUserImg: ANT_staticUrl+"site/images/anonymous-user.png",
     admin: {
         requestAccess: function(fb_response, group_id) {
             if ( fb_response ) {
@@ -47,8 +47,8 @@ RB = {
         blockContent: function(int_id) {
             var sendData = {
                 "int_id": int_id,
-                "user_id": RDRAuth.rdr_user.user_id,
-                "readr_token": RDRAuth.rdr_user.readr_token
+                "user_id": ANTAuth.ant_user.user_id,
+                "ant_token": ANTAuth.ant_user.ant_token
             };
 
             // send the data!
@@ -219,7 +219,7 @@ RB = {
     },
     follow : {
         add : function(id, type) {
-            // RB.follow.add
+            // ANTsite.follow.add
             // type: usr, grp, pag, brd
             var data = {
                 follow_id:parseInt(id),
@@ -240,13 +240,13 @@ RB = {
                         var follower_count = parseInt($('#board_follower_count').text() ) + 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
                         $('#board_follow_button').unbind().html('<i class="fa fa-minus"></i>').click( function() {
-                            RB.follow.remove(data.follow_id,'brd');
+                            ANTsite.follow.remove(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
                         $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
-                            var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
-                            RB.follow.remove( id, type );
+                            var id = (type=="usr") ? ANTsite.profile_user.id:ANTsite.group.id;
+                            ANTsite.follow.remove( id, type );
                         });
                         $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )+1) + "</strong> followers" );
                     }
@@ -254,7 +254,7 @@ RB = {
             });
         },
         remove : function(id, type) {
-            // RB.follow.remove
+            // ANTsite.follow.remove
             // type: usr, grp, pag, brd
             var data = {
                 follow_id:parseInt(id),
@@ -275,13 +275,13 @@ RB = {
                         var follower_count = parseInt($('#board_follower_count').text() ) - 1;
                         $('#board_follower_count').text( follower_count + ' Followers' )
                         $('#board_follow_button').unbind().html('<i class="fa fa-plus"></i>').click( function() {
-                            RB.follow.add(data.follow_id,'brd');
+                            ANTsite.follow.add(data.follow_id,'brd');
                         });
                     } else {
                         var person_or_group = (data.type=="usr") ? "person":"group";
                         $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
-                            var id = (type=="usr") ? RB.profile_user.id:RB.group.id;
-                            RB.follow.add( id, type );
+                            var id = (type=="usr") ? ANTsite.profile_user.id:ANTsite.group.id;
+                            ANTsite.follow.add( id, type );
                         });
                         $('#follower_count').html( "<strong>"+(parseInt( $('#follower_count').text() )-1) + "</strong> followers" );
                     }
@@ -289,7 +289,7 @@ RB = {
             });
         },
         following : function(id, page_num, types) {
-            // RB.follow.following
+            // ANTsite.follow.following
             // who am I following?
             if ( typeof types == "undefined" ) {
                 var types = ["usr","grp","pag","brd"];
@@ -314,7 +314,7 @@ RB = {
                         
                         // 1/13/2014:  I'm disabling Boards for now!  -- pb.
                         // abstract this
-                        // var $boards = $('<div id="board_listing"><h2>ReadrBoards I\'m Following</h2><ul></ul></div>');
+                        // var $boards = $('<div id="board_listing"><h2>Boards I\'m Following</h2><ul></ul></div>');
                         // $.each( response.data.paginated_follows, function(idx, followed_item) {
                         //     var board_id = followed_item.brd.id;
                         //     $boards.find('ul').append('<li><a class="btn btn-info" style="font-size:18px;" href="/board/'+followed_item.brd.id+'">'+followed_item.brd.title+'</a></li>');
@@ -340,7 +340,7 @@ RB = {
                         var followerList = response.data.paginated_follows;
                         $.each(followerList, function(idx, following) {
                             if ( typeof following.social_usr != "undefined" ) {
-                                var userImg = following.social_usr.img_url||RB.anonUserImg;
+                                var userImg = following.social_usr.img_url||ANTsite.anonUserImg;
                                 $ul.append('<li><a href="/user/'+following.social_usr.user+'/" class="clearfix"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                             } else if ( typeof following.grp != "undefined" ) {
                                 $ul.append('<li><a href="/group/'+following.grp.short_name+'/" class="clearfix">'+following.grp.short_name+'</a></li>');
@@ -355,7 +355,7 @@ RB = {
             });
         },
         followers : function(id, type) {
-            // RB.follow.followers
+            // ANTsite.follow.followers
             // who follows this thing
             // type: usr, grp, pag, brd
             var data = {
@@ -378,7 +378,7 @@ RB = {
                         $('#board_follower_count').text( response.data.followed_by_count + ' Followers' );
                         if ( response.data.user_is_follower == true ) {
                             $('#board_follow_button').unbind().text('Stop following this board').click( function() {
-                                RB.follow.remove(data.entity_id,'brd');
+                                ANTsite.follow.remove(data.entity_id,'brd');
                             });
                         }
                     } else {
@@ -386,15 +386,15 @@ RB = {
                             $('#follower_count').html( "<strong>"+response.data.followed_by_count + "</strong> followers" );
                         }
                         
-                        var id = (data.entity_type=="usr") ? RB.profile_user.id:RB.group.id,
+                        var id = (data.entity_type=="usr") ? ANTsite.profile_user.id:ANTsite.group.id,
                             person_or_group = (data.entity_type=="usr") ? "person":"group";
                         if ( response.data.user_is_follower ) {
                             $('#follow_action').html( '<i class="fa fa-minus"></i>' ).unbind().click( function() {
-                                RB.follow.remove( id, type );
+                                ANTsite.follow.remove( id, type );
                             });
                         } else {
                             $('#follow_action').html( '<i class="fa fa-plus"></i>' ).unbind().click( function() {
-                                RB.follow.add( id, type );
+                                ANTsite.follow.add( id, type );
                             });
                         }
 
@@ -403,7 +403,7 @@ RB = {
                             $ul = $('<ul/>');
                         
                         $.each(followerList, function(idx, following) {
-                            var userImg = following.social_usr.img_url||RB.anonUserImg;
+                            var userImg = following.social_usr.img_url||ANTsite.anonUserImg;
                             $ul.append('<li><a href="/user/'+following.social_usr.user+'/"><img src="'+userImg+'" /><span>'+following.social_usr.full_name+'</span></a></li>');
                         });
                         $('#follower_list').html( $follower_html.append($ul) );
@@ -417,7 +417,7 @@ RB = {
             });
         },
         agreed : function(parent_id) {
-            // RB.follow.agreed
+            // ANTsite.follow.agreed
             // who agreed with this reaction?
             var data = {
                 parent_id:parseInt(parent_id)
@@ -439,7 +439,7 @@ RB = {
                         $ul = $('<ul class="fancy_user_list"/>');
                     $.each( response.data, function(idx, user) {
                         if ( user.social_user.full_name != "undefined" ) {
-                            var userImg = user.social_user.img_url||RB.anonUserImg;
+                            var userImg = user.social_user.img_url||ANTsite.anonUserImg;
                             $ul.append('<li><a href="/user/'+user.id+'/"><img src="'+userImg+'" /> '+user.social_user.full_name+'</a></li>');
                         // } else if ( typeof following.grp != "undefined" ) {
                             // $ul.append('<li><div class="follow_type">Website</div><a href="/group/'+following.grp.short_name+'/">'+following.grp.short_name+'</a></li>');
@@ -465,7 +465,7 @@ RB = {
     interactions : {
         displayUserBoards : function(user_id) {
             return; // disabling for now
-            // RB.interactions.displayUserBoards
+            // ANTsite.interactions.displayUserBoards
 
             $.ajax({
                 beforeSend: function( xhr ) {
@@ -476,7 +476,7 @@ RB = {
                 success: function(response) {
                     if ( response.data.user_boards.length > 0 ) {
                         // abstract this
-                        var $boards = $('<div id="board_listing"><h2>ReadrBoards</h2><ul></ul></div>');
+                        var $boards = $('<div id="board_listing"><h2>Antenna Boards</h2><ul></ul></div>');
                         $.each( response.data.user_boards, function(idx, board) {
                             var board_id = board.id;
                             $boards.find('ul').append('<li><a style="font-size:18px;" class="btn btn-info" href="/board/'+board.id+'">'+board.title+'</a></li>');
@@ -494,7 +494,7 @@ RB = {
             });
         },
         searchBoards : function(search_term) {
-            // RB.interactions.searchBoards
+            // ANTsite.interactions.searchBoards
 
             // DO NOT DO THIS RIGHT NOW.
             return;
@@ -513,9 +513,9 @@ RB = {
                 success: function(response) {
                     if ( response.data.found_boards.length > 0 ) {
                         if ( search_term != "" ) {
-                            var $boards = $('<div id="board_listing"><h2>ReadrBoards matching "'+search_term+'"</h2><ul></ul></div>');
+                            var $boards = $('<div id="board_listing"><h2>Boards matching "'+search_term+'"</h2><ul></ul></div>');
                         } else {
-                            var $boards = $('<div id="board_listing"><h2>Recently updated ReadrBoards</h2><ul></ul></div>');
+                            var $boards = $('<div id="board_listing"><h2>Recently updated Boards</h2><ul></ul></div>');
                         }
 
                         var board_count = 0;
@@ -555,7 +555,7 @@ RB = {
             });
         },
         me_too : function(parent_id) {
-            // RB.interactions.me_too
+            // ANTsite.interactions.me_too
             var sendData = {"parent_id":parent_id};
             
             $.ajax({
@@ -576,8 +576,8 @@ RB = {
                         var needToLogin = (response.data.message && response.data.message == "not_logged_in");
 
                         if (needToLogin) {
-                            RDRAuth.killUser( function() {
-                                RDRAuth.quickFixAjaxLogout();
+                            ANTAuth.killUser( function() {
+                                ANTAuth.quickFixAjaxLogout();
                             });
                             $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
                         } else if (response.data.existing == true ) {
@@ -605,11 +605,11 @@ RB = {
                         }
 
                         $.each(socialNetworks, function(idx, val){
-                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-ant" src="'+ANT_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                             $li.find('a').click( function(e) {
                                 e.preventDefault();
-                                RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
+                                ANTsite.shareWindow = window.open(ANT_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                ANTsite.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
                             $shareLinks.find('ul').append($li);
@@ -641,7 +641,7 @@ RB = {
             });
         },
         delete_reaction : function(interaction_id) {
-            // RB.interactions.delete_reaction
+            // ANTsite.interactions.delete_reaction
             var sendData = {"interaction_id":interaction_id};
             
             $.ajax({
@@ -666,8 +666,8 @@ RB = {
                             $message;
                         
                         if( needToLogin ){
-                            RDRAuth.killUser( function() {
-                                RDRAuth.quickFixAjaxLogout();
+                            ANTAuth.killUser( function() {
+                                ANTAuth.quickFixAjaxLogout();
                             });
                             $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
                         }
@@ -705,7 +705,7 @@ RB = {
             });
         },
         add_to_board : function(interaction_id, board_id, board_title) {
-            // RB.interactions.add_to_board
+            // ANTsite.interactions.add_to_board
             var sendData = {"board_id":board_id, "int_id":interaction_id};
             
             $.ajax({
@@ -741,7 +741,7 @@ RB = {
             });
         },
         remove_from_board : function(interaction_id, board_id, board_title) {
-            // RB.interactions.add_to_board
+            // ANTsite.interactions.add_to_board
             var sendData = {"board_id":board_id, "int_id":interaction_id};
             
             $.ajax({
@@ -764,7 +764,7 @@ RB = {
             });
         },
         add_new_reaction : function(parent_id, tag_body) {
-            // RB.interactions.add_new_reaction
+            // ANTsite.interactions.add_new_reaction
             var sendData = {"parent_id":parent_id, "tag":{"body":tag_body}};
             
             $.ajax({
@@ -785,8 +785,8 @@ RB = {
                         var needToLogin = (response.data.message && response.data.message == "not_logged_in");
 
                         if (needToLogin) {
-                            RDRAuth.killUser( function() {
-                                RDRAuth.quickFixAjaxLogout();
+                            ANTAuth.killUser( function() {
+                                ANTAuth.quickFixAjaxLogout();
                             });
                             $message = $('<div><em>Your login has expired.  Please Log in.</em></div>');
                         } else if (response.data.existing == true ) {
@@ -817,11 +817,11 @@ RB = {
                         }
 
                         $.each(socialNetworks, function(idx, val){
-                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-rdr" src="'+RDR_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
+                            var $li = $('<li><a href="http://' +val+ '.com" ><img class="no-ant" src="'+ANT_staticUrl+'widget/images/social-icons-loose/social-icon-' +val+ '.png" /></a></li>');
                             $li.find('a').click( function(e) {
                                 e.preventDefault();
-                                RB.shareWindow = window.open(RDR_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
-                                RB.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
+                                ANTsite.shareWindow = window.open(ANT_staticUrl+'share.html', 'readr_share','menubar=1,resizable=1,width=626,height=436');
+                                ANTsite.interactions.share(val, kind, parent_id, interaction_body, groupName, content);
                                 return false;
                             });
                             $shareLinks.find('ul').append($li);
@@ -847,7 +847,7 @@ RB = {
             });
         },
         add_new_comment : function(parent_id, comment_body) {
-            // RB.interactions.add_new_comment
+            // ANTsite.interactions.add_new_comment
             var sendData = { "parent_id":parent_id, "comment":comment_body };
             
             $.ajax({
@@ -888,13 +888,13 @@ RB = {
             });
         },
         share : function(sns, kind, interaction_id, interaction_body, groupName, content) {
-            // RB.interactions.share
+            // ANTsite.interactions.share
 
             var content = content,
                 share_url = "",
                 contentStr = "",
                 content_length = 300,
-                short_url = RDR_baseUrl + '/interaction/' + interaction_id;
+                short_url = ANT_baseUrl + '/interaction/' + interaction_id;
 
             switch (sns) {
 
@@ -902,7 +902,7 @@ RB = {
                     var imageQueryP = "";
                     var videoQueryP = ""; //cant get one of these to work yet without overwriting the rest of the stuff
                     var mainShareText = "";
-                    var footerShareText = "A ReadrBoard Reaction on " + groupName;
+                    var footerShareText = "Antenna Reaction on " + groupName;
 
                     switch ( kind ) {
                         case "txt":
@@ -917,9 +917,9 @@ RB = {
                             contentStr = "[a picture on "+groupName+"] Check it out: ";
 
                             //for testing offline
-                            if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
-                                content = content.replace("localhost:8081", "www.readrboard.com");
+                            if(ANT_offline){
+                                content = content.replace("local.antenna.is:8081", "www.antenna.is");
+                                content = content.replace("localhost:8081", "www.antenna.is");
                             }
                             
                             imageQueryP = '&p[images][0]='+encodeURI(content);
@@ -949,8 +949,7 @@ RB = {
                 case "twitter":
                     
                     var mainShareText = "";
-                    var footerShareText = "A ReadrBoard Reaction on " + groupName;
-                    // var twitter_acct = ( RDR.group.twitter ) ? '&via='+RDR.group.twitter : '';
+                    var footerShareText = "Antenna Reaction on " + groupName;
                 
                     switch ( kind ) {
                         case "txt":
@@ -989,7 +988,7 @@ RB = {
                         case "text":
                             //tumblr adds quotes for us - don't pass true to quote it.
                             var footerShareText = _wrapTag(interaction_body, true) +
-                                '&nbsp;[a <a href="'+short_url+'">quote</a> on '+groupName+' via ReadrBoard]';
+                                '&nbsp;[a <a href="'+short_url+'">quote</a> on '+groupName+' via Antenna]';
                             
                             content_length = 300;
                             contentStr = _shortenContentIfNeeded(content, content_length);
@@ -1002,14 +1001,14 @@ RB = {
                         case "img":
                         case "image":
                                                         //for testing offline
-                            if(RDR_offline){
-                                content = content.replace("local.readrboard.com:8081", "www.readrboard.com");
-                                content = content.replace("localhost:8081", "www.readrboard.com");
+                            if(ANT_offline){
+                                content = content.replace("local.antenna.is:8081", "www.antenna.is");
+                                content = content.replace("localhost:8081", "www.antenna.is");
                             }
 
                             mainShareText = _wrapTag(interaction_body, true);
 
-                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">picture</a> on '+groupName+' via ReadrBoard]';
+                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">picture</a> on '+groupName+' via Antenna]';
 
                             share_url = 'http://www.tumblr.com/share/photo?'+
                                 'source='+encodeURIComponent(content)+
@@ -1027,7 +1026,7 @@ RB = {
 
                             mainShareText = _wrapTag(interaction_body, true);
 
-                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">video</a> on '+groupName+' via ReadrBoard]';
+                            var footerShareText = '&nbsp;[a <a href="'+short_url+'">video</a> on '+groupName+' via Antenna]';
 
                             //todo: get the urlencode right and put the link back in
                             var readrLink = mainShareText + footerShareText;
@@ -1038,13 +1037,13 @@ RB = {
             }
             
             if ( share_url !== "" ) {
-                if ( RB.shareWindow ) {
-                    RB.shareWindow.location = share_url;
+                if ( ANTsite.shareWindow ) {
+                    ANTsite.shareWindow.location = share_url;
                 }
             }
 
             function _getGroupName(){
-                //consider using RDR.group.name
+                //consider using ANTN.group.name
                 //todo: make this smarter - check for www. only in start of domain
                 return (document.domain).replace('www.', " ")
             }

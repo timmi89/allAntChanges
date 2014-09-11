@@ -35,30 +35,30 @@
 
     </style>
     <script>
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
     </script>
 {% endblock %}
 
 {% block mainContent %}
   
   {% block msgHeader %}
-  <h1>ReadrBoard Login</h1>
+  <h1>Antenna Login</h1>
   <h3 style="font-size: 14px;">Please log in.</h3>
   {% endblock msgHeader %}
  
   <div id="login-options" style="overflow:auto;">
     <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
       <div id="fb-login-button">
-        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.openFBLoginWindowFromPopup();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
+        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.openFBLoginWindowFromPopup();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
       </div>
     </div>
     <div style="float:left;padding-left:6px;">
-      <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
+      <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
     </div>
     
     {% block signupButton %}
     <div style="float:left;padding:6px;">
-        <a class="alternateAction" href="javascript:void(0);" onclick="RDRAuth.openRbCreateNewAccountWindow({width:535,height:350});" style="font-size:11px;
+        <a class="alternateAction" href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});" style="font-size:11px;
     font-style:italic;">Or create a new account</a>
     </div>
     {% endblock signupButton %}
