@@ -296,7 +296,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 if not ANTENNA_ARRAY:
-    ROOT_URLCONF = 'readrboard.urls'
+    # ROOT_URLCONF = 'readrboard.urls'
+    ROOT_URLCONF = 'antenna.urls'
 else:
     ROOT_URLCONF = 'antenna.urls'
 
