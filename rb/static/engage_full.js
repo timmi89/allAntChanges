@@ -1636,6 +1636,10 @@ function antenna($A){
 
                             var actionType = (settings.actionType) ? settings.actionType:"react";
 
+                            // gets used in both read & write mode aWindow placement calculations
+                            var containerWidth = $container.width();
+                            var containerHeight = $container.height();
+
                             /* START create aWindow based on write vs. read mode */
                             if ( settings.mode == "writeMode" ) {
                                 // show writemode text
@@ -1657,7 +1661,8 @@ function antenna($A){
 
                                 var newSel;
                                 if ( kind == "text" ) {
-                                    
+                                    // TEXTACTIONBAR
+
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
@@ -1695,11 +1700,17 @@ function antenna($A){
                                 } else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
-                                    var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
-                                    var coords = {
-                                        top: topValue,
-                                        left: $container.offset().left
-                                    };
+                                    var indicatorOffsets = summary.$indicator.offset();
+                                    var coords = {};
+                                        coords.top = indicatorOffsets.top;
+                                        coords.left =  indicatorOffsets.left;
+
+                                    // var modTop = (kind=='img') ? -24 : -5;
+                                    // var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom + modTop : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
+                                    // var topValue = indicatorOffsets.top;
+                                    // var containerOffsets = $container.offset();
+                                    // var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
+                                    // var cssSideDistance = indicatorOffsets.left;
                                 }
                             } else {
                                 // readMode
@@ -1712,14 +1723,24 @@ function antenna($A){
 
                                 if ( kind == "text" ) {
                                     coords = {
-                                        top: $indicator_body.offset().top + 22,
-                                        left: $indicator_body.offset().left -5
+                                        top: $indicator_body.offset().top,
+                                        left: $indicator_body.offset().left
                                     };
                                 } else {
-                                    var coords = {
-                                        top: $container.offset().bottom+5,
-                                        left: $container.offset().left
-                                    };
+                                    // var modTop = (kind=='img') ? - 24 : -5;
+                                    // var coords = {
+                                    //     top: $container.offset().bottom+5,
+                                    //     left: $container.offset().left
+                                    // };
+                                    // var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom + modTop : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
+                                    // var coords = {
+                                    //     top: topValue,
+                                    //     left: $container.offset().left + 12
+                                    // };
+                                    var indicatorOffsets = summary.$indicator.offset();
+                                    var coords = {};
+                                        coords.top = indicatorOffsets.top;
+                                        coords.left =  indicatorOffsets.left;
 
                                     //log media readmode
                                     // ANT.events.track( 'view_node::'+hash, hash );
@@ -8213,22 +8234,16 @@ if ( sendData.kind=="page" ) {
 
                             var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
                             var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
-                            $indicator.data('top', cssTop);
-
-                            if (summary.kind=="media") {
-                                $indicator.addClass('ant_indicator_not_img');
-                            }
-
                             var indicatorPosition = {};
                             indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
                             indicatorPosition['top'] = cssTop+'px';
 
                             ANT.util.cssSuperImportant( $indicator, indicatorPosition, true);
-                            // ANT.util.cssSuperImportant( $indicator, {
-                            //     left: 12+'px',
-                            //     top: cssTop+'px'
-                            // }, true);
 
+                            $indicator.data('top', cssTop);
+                            if (summary.kind=="media") {
+                                $indicator.addClass('ant_indicator_not_img');
+                            }
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 ANT.actions.indicators.utils.updateInlineIndicator(hash);
