@@ -85,7 +85,7 @@ div.ant.ant_window {
     z-index:12000 !important;
     background:#fff;
     /*overflow:hidden;*/
-    width:160px;
+    width:100px;
 }
 div.ant.ant_window .ant_reactUndoSuccess {
   font-size:18px;
@@ -99,19 +99,19 @@ div.ant.ant_window .ant_reactUndoSuccess strong {
   font-weight:bold;
 }
 
-div.ant.ant_window.w320 { width:320px; }
+div.ant.ant_window.w200 { width:200px; }
 
 
-.isTouchBrowser div.ant.ant_window.w320 {
+.isTouchBrowser div.ant.ant_window.w200 {
   -moz-transform: scale(0.9);
   -webkit-transform: scale(0.9);
   transform: scale(0.9);
   margin-top:-10px;
 }
-div.ant.ant_window.w480 { width:480px; }
-div.ant.ant_window.w640 { width:640px; }
-div.ant.ant_window.w800 { width:800px; }
-div.ant.ant_window.w960 { width:960px; }
+div.ant.ant_window.w300 { width:300px; }
+div.ant.ant_window.w400 { width:400px; }
+div.ant.ant_window.w500 { width:500px; }
+div.ant.ant_window.w600 { width:600px; }
 
 /* the action bar */
 div.ant_actionbar {
@@ -146,11 +146,15 @@ div.ant_actionbar li a span.ant_react_icon {
     float:left;
 }
 span.ant_react_label {
-  font-size:12px;
-  font-weight:bold;
-  padding:0px;
-  display: inline-block;
+  /*font-size:12px;*/
+  /*font-weight:bold;*/
+  /*padding:0px;*/
+  /*display: inline-block;*/
+  color:#888;
   cursor:pointer;
+}
+div.ant_indicator_for_text span.ant_react_label {
+  margin-left:1px;
 }
 
 div.ant_actionbar span.ant_react_label {
@@ -397,15 +401,15 @@ div.ant div.ant_header                         {
     -o-box-sizing : border-box;
     box-sizing : border-box;
 }
-div.ant div.ant_header div.ant_header_arrow    { 
+/*div.ant div.ant_header div.ant_header_arrow    { 
   bottom: 29px;
   left: 6px;
   position:absolute;
-}
-div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
+}*/
+/*div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
   display:none;
 }
-
+*/
 
 div.ant.ant_window div.ant_header              { cursor:move; padding:4px 0; }
 div.ant.ant_window div.ant_rindowMenu {
@@ -517,7 +521,8 @@ div.ant div.ant_footer.ant_cta span {
 }
 div.ant div.ant_footer.ant_cta .ant_cta_msg{
   position: relative;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight:bold;
   left: -3px;
 }
 div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
@@ -586,7 +591,7 @@ div.ant div.ant_header h1 {
  font-style:normal;
  padding-top: 6px;
 }
-div.ant.w160 div.ant_header h1 {
+div.ant.w100 div.ant_header h1 {
  font-size:13px;
 }
 
@@ -744,7 +749,6 @@ div.ant div.ant_commentBox                     { clear:both; display:block; text
 
 div.ant div.ant_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.ant div.ant_back:hover { background:#999; }
-div.ant_indicator_details_for_media div.ant_body div.ant_back { }
 
 div.ant div.ant_back.ant_hide { margin-top:-10px;}
 /*for now, just hide this button*/
@@ -1020,8 +1024,8 @@ div.ant_shareWidget div.ant.ant-summary {
     border:1px solid #ccc;
 }
 
-div.ant.ant-summary .ant_chevron_cta {
-  display: none;
+/*div.ant.ant-summary .ant_chevron_cta {*/
+  /*display: none;*/
   /*float: right;*/
   /*border-left: 1px solid #ddd;*/
   /*height: 30px;
@@ -1030,15 +1034,15 @@ div.ant.ant-summary .ant_chevron_cta {
   padding-left: 6px;
   margin-left: 6px;
   text-align: left;*/
-}
-div.ant.ant-summary:hover .ant_chevron_cta i:before,
+/*}*/
+/*div.ant.ant-summary:hover .ant_chevron_cta i:before,
 div.ant.ant-summary.ant_hover .ant_chevron_cta i:before {
   content: "\f077";
 }
 div.ant.ant-summary .ant_chevron_cta i {
   color:#999;
 }
-
+*/
 div.ant.ant-summary a.ant_logo {
   display: inline-block;
 }
@@ -1057,7 +1061,7 @@ div.ant.ant-summary #ant-user a {
   color:#008be4;
 }
 div.ant div.ant_footer.ant_cta .ant_what_is_it { border-left:1px solid #ddd; }
-div.ant.w160 div.ant_footer.ant_cta .ant_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0;}
+div.ant.w100 div.ant_footer.ant_cta .ant_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0;}
 
 div.ant.ant-summary div.ant-see-more {
     background: url("../images/readr_icons.png") repeat scroll -225px 0px transparent;
@@ -1265,7 +1269,7 @@ div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle:hover img.ant_arr
     background:url("../images/summary_box_arrow.png") no-repeat scroll 0 -19px transparent;
 }
 div.ant.ant_window div.ant_tags_list .ant_info {
-  max-width:320px;
+  max-width:200px;
   text-align:left;
   max-height:350px;
   overflow-y:auto;
@@ -1446,9 +1450,9 @@ div#ant-page-summary.defaultSummaryBar .ant-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 .ant_widget{
-    -moz-box-shadow:0 0 20px #bbb;
-    -webkit-box-shadow:0 0 20px #bbb;
-    box-shadow:0 0 20px #bbb;
+    -moz-box-shadow:0 2px 10px #ccc;
+    -webkit-box-shadow:0 2px 10px #ccc;
+    box-shadow:0 2px 10px #ccc;
 }
 
 /*shareWidget*/
@@ -1610,7 +1614,7 @@ div.ant_socialShareWrap.locateWithSummaryWidget div.ant_shareWidget .ant_innerWr
 
 
 div.ant_reactions {
-    min-width:120px;
+    min-width:100px;
 }
 
 /* user education bar */
@@ -1671,8 +1675,8 @@ div.ant_indicator {
     position: relative;
     margin: 0;
     padding: 0;
-    top: 0;
-    left: 0;
+    /*top: 0;
+    left: 0;*/
     z-index:11000;
     text-decoration:none;
     border:none;
@@ -1684,10 +1688,6 @@ div.ant_indicator {
     user-select: none;
 }
 .no-ant-icon div.ant_indicator { display:none !important; }
-
-div.ant_indicator.ant_indicator_for_media {
-    /*cursor:pointer;*/
-}
 
 /*touchBrowser overrides for sandbox*/
 #ant_sandbox.isTouchBrowser div.ant_indicator.ant_indicator_for_media {
@@ -1753,6 +1753,9 @@ div.ant_indicator_for_text * {
     user-select: none;
     /*opacity:0.5;*/
 }
+div.ant_indicator_for_text .icon.ant-antenna-logo {
+  top: 2px;
+}
 /*the indicator body will be moved up to compensate*/
 
 div.ant_helper_rindow div.ant_header h1{
@@ -1778,7 +1781,7 @@ div.ant_helper_text {
   text-align: center;
   margin: 0 6px 8px 0;
   padding: 4px 7px 0px;
-  width: 160px;
+  width: 100px;
   line-height: 1.2em;
 }
 #ant_indicator_details_wrapper{
@@ -1872,14 +1875,14 @@ body.no-ant div.ant-summary,
 div.ant div.ant_indicator_stats img.ant_pin {
   background-position:1px -1px;
 }
-div.ant_indicator.ant_indicator_for_media img.ant_pin { 
+/*div.ant_indicator.ant_indicator_for_media img.ant_pin { 
     background:url("../images/readr_icons.png") no-repeat -2px -1px;
     position:absolute;
     margin:6px 0 0;
-}
-body.ant_touch_browser div.ant_indicator.ant_indicator_for_media img.ant_pin {
+}*/
+/*body.ant_touch_browser div.ant_indicator.ant_indicator_for_media img.ant_pin {
   background-position: -182px -1px;
-}
+}*/
 /*indicator pin inline indicator only*/
 div.ant_indicator img.ant_pin{ 
     top: auto;
@@ -1889,10 +1892,12 @@ div.ant_indicator img.ant_pin{
 div.ant_indicator_details img.ant_pin{ 
 }
 
-div.ant_indicator div.ant_indicator_body { 
+div.ant_indicator.ant_indicator_for_text div.ant_indicator_body { 
     position:absolute;
-    top:0; /*don't make important so that our js can update*/
-    left:0; /*don't make important so that our js can update*/
+    /*don't make important so that our js can update*/
+    top: 4px;
+    left: 5px;
+
     margin:0;
     overflow:hidden;
     min-height:16px;
@@ -1900,8 +1905,8 @@ div.ant_indicator div.ant_indicator_body {
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
 div.ant_indicator_for_text div.ant_indicator_body{
-    left: 4px;
-    /*top: -15px;*/
+    left: 6px;
+    top: 5px;
 }
 
 body.ant_touch_browser div.ant_indicator_for_text.ant_no_reactions {
@@ -1924,29 +1929,19 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_co
 }
 
 
-
 div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
-  padding: 0 0 0 4px;
+  padding: 6px 0 0 0;
   height:24px;
-  /*fallback*/
   background: rgba(255,255,255,0.9);
-  /*background: -moz-linear-gradient(
-    top,
-    #ffffff 100%,
-    #eeeeee);*/
-  /*background: -webkit-gradient(
-    linear, left top, left bottom, 
-    from(#ffffff),
-    to(#eeeeee));*/
-  /*-moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;*/
   border: 0px solid #c9c9c9;
-  text-shadow:
-    0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1);
 }
+div.ant_indicator_for_media div.ant_indicator_body .icon.ant-antenna-logo {
+  margin-left:4px;
+  top: -3px;
+  position: relative;
+}
+
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body{
 background: rgba(255,255,255,0.75);
   text-shadow:none;
@@ -1963,8 +1958,8 @@ div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
     inset 0px 0px 3px rgba(255,255,255,1);
 }
 
-div.ant_indicator_for_media div.ant_indicator_body:hover {
-  background: #fff;
+/*div.ant_indicator_for_media div.ant_indicator_body:hover {*/
+  /*background: #fff;*/
   /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
@@ -1973,11 +1968,11 @@ div.ant_indicator_for_media div.ant_indicator_body:hover {
     linear, left top, left bottom, 
     from(#ffffff),
     to(#e5f5ff));*/
-}
+/*}*/
 
-div.ant_indicator_for_media .ant_chevron_cta {
+/*div.ant_indicator_for_media .ant_chevron_cta {
   display: inline-block;
-  /*border-left: 1px solid #ddd;*/
+  border-left: 1px solid #ddd;
   height: 30px;
   width:23px;
   padding-top: 6px;
@@ -1990,7 +1985,7 @@ body.ant_touch_browser div.ant_indicator_for_media .ant_chevron_cta {
 div.ant_indicator_for_media:hover .ant_chevron_cta i:before,
 div.ant_indicator_for_media.ant_hover .ant_chevron_cta i:before {
   content: "\f077";
-  /*background: -moz-linear-gradient(
+  background: -moz-linear-gradient(
     top,
     #f7f7f7 100%,
     #dddddd);
@@ -1998,8 +1993,9 @@ div.ant_indicator_for_media.ant_hover .ant_chevron_cta i:before {
     linear, left top, left bottom, 
     from(#f7f7f7),
     to(#dddddd));
-  border-left:1px solid #eee;*/
+  border-left:1px solid #eee;
 }
+*/
 
 
 
@@ -2017,11 +2013,15 @@ div.ant_indicator_details_for_media div.ant_indicator_details_body {
 
 /*now override styles for the image containers*/
 div.ant_indicator_for_media {
-    /*display:absolute;*/
+    position:absolute;;
     display:none;;
     opacity:1 !important;
     -moz-opacity:1 !important;
     -khtml-opacity:1 !important;
+}
+div.ant_indicator_for_media.ant_visible,
+div.ant_indicator_for_media.ant_show_on_load {
+  display: block !important;
 }
 
 div.ant_indicator_for_media.ant_live_hover {
@@ -2035,7 +2035,7 @@ div.ant_indicator_details_for_media {
     overflow:hidden; /*for the animate() out to work nicely*/
     height:0;;
     /*should be hidden by default*/
-    display: none;;
+    /*display: none;;*/
     /*display:block;*/
     margin:0;
     box-shadow: 0 0px 4px #ccc;
@@ -2043,6 +2043,7 @@ div.ant_indicator_details_for_media {
     -webkit-box-shadow: 0 0px 4px #ccc;
     background: #fff;
 }
+
 div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
   height:auto;
   box-shadow: 0;
@@ -2050,9 +2051,20 @@ div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
   -webkit-box-shadow:  0;
 }
 
-div.ant_indicator_for_media_inline div.ant_indicator_body { 
-    left:-12px;
-    top:-36px;    
+div.ant_indicator_for_media_inline {
+    max-width:21px;
+    transition: max-width 0.25s;
+}
+/*div.ant_indicator_for_media_inline div.ant_indicator_body { */
+    /*left:-12px;*/
+    /*top:-36px;    */
+    /*width:22px;*/
+    /*text-align: center;;*/
+/*}*/
+
+div.ant_indicator_for_media_inline.ant_visible {
+  width:auto;
+  max-width:150px;
 }
 
 div#ant_event_pixels {
@@ -2060,6 +2072,7 @@ div#ant_event_pixels {
 }
 div.ant_container_tracker{
     position:absolute;
+    width:100%;
 }
 
 /*the only divs here will be the border elements*/
@@ -2142,20 +2155,45 @@ div.ant_mediaHilite_left{
 
 
 div.ant_indicator span.ant_count, 
-div.ant_indicator_details span.ant_count { 
+div.ant_indicator_details span.ant_count {
     position:relative;
-    margin-left:13px;
     font-size:11px;
     font-weight:bold;
-    padding:4px 8px 4px 4px;
+    padding:0px 8px 0px 3px;
     line-height:16px;
-    /*color:#4d92da;*/
     color:#888;
+    /*vertical-align: baseline;*/
 }
+
+div.ant_indicator.ant_indicator_for_text span.ant_count {
+  opacity:0;
+  /*transition:left 300ms ease, opacity 300ms ease;*/
+}
+
+.ant_live_hover div.ant_indicator span.ant_count, 
+.ant_live_hover div.ant_indicator_details span.ant_count {
+  /*left:0px;*/
+  opacity:1;
+}
+
 div.ant_indicator.ant_indicator_for_media span.ant_count {
-    margin:1px 0 0 13px;
-    font-size:12px;
-    display:inline-block;
+  display:inline-block;
+  visibility: hidden;
+  margin:0 0 0 1px;
+  font-size:11px;
+  max-width:0px;
+  transition: max-width 0.25s;
+  overflow: hidden;
+}
+div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
+  max-width:130px;
+  visibility: visible;
+}
+div.ant_indicator.ant_indicator_for_media .icon {
+  vertical-align: middle;
+}
+div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
+  display:inline-block;
 }
 body.ant_touch_browser div.ant_indicator.ant_indicator_for_media span.ant_count {
   font-size:11px;
@@ -2180,12 +2218,12 @@ div.ant.ant_inline div.ant_body.ant_tags_list {
 }
 
 div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }
-div.ant div.ant_body.ant_tags_list.ant_grid { background:#fff; width:160px; }
-div.ant.ant_window.w320 div.ant_body.ant_tags_list.ant_grid { width:320px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid { width:480px; }
-div.ant.ant_window.w640 div.ant_body.ant_tags_list.ant_grid { width:640px; }
-div.ant.ant_window.w800 div.ant_body.ant_tags_list.ant_grid { width:800px; }
-div.ant.ant_window.w960 div.ant_body.ant_tags_list.ant_grid { width:960px; }
+div.ant div.ant_body.ant_tags_list.ant_grid { background:#fff; width:100px; }
+div.ant.ant_window.w200 div.ant_body.ant_tags_list.ant_grid { width:200px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid { width:300px; }
+div.ant.ant_window.w400 div.ant_body.ant_tags_list.ant_grid { width:400px; }
+div.ant.ant_window.w500 div.ant_body.ant_tags_list.ant_grid { width:500px; }
+div.ant.ant_window.w600 div.ant_body.ant_tags_list.ant_grid { width:600px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box { 
     text-align:center; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; box-sizing: border-box; overflow:hidden; letter-spacing:-1px;
     position: relative;
@@ -2271,37 +2309,37 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_plusOne
 
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_big {
-  width:320px;
+  width:200px;
   /*tag_height_double*/
   height:140px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium {
-  width:160px;
+  width:100px;
   /*tag_height_double*/
   height:140px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small {
-  width:160px;
+  width:100px;
   /*tag_height*/
   height:70px;
   padding: 0;
 }
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium.ant_wide { width:320px;}
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:320px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium.ant_wide { width:200px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:200px; }
 
 
-div.ant.ant_window.w160 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:160px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:480px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w640 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w800 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w960 div.ant_body.ant_tags_list.ant_grid .ant_contains1{
+div.ant.ant_window.w100 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:100px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:300px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w400 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w500 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w600 div.ant_body.ant_tags_list.ant_grid .ant_contains1{
     /*tag_height_double*/
     height:140px;
-    width: 160px;
+    width: 100px;
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:100%; }
@@ -2433,7 +2471,7 @@ div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   display: none;
 }
 
-div.ant.w160 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
+div.ant.w100 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   margin-right:-22px;
 }
 
@@ -2570,9 +2608,9 @@ div#ant_loginPanel {
     position: relative;*/
 }
 
-div#ant_loginPanel .ant_header_arrow{
+/*div#ant_loginPanel .ant_header_arrow{*/
     /*display: none !important;*/
-}
+/*}*/
 
 
 /*rarely used html tag to wrap br-separated text when the group settings specifies*/
@@ -2632,9 +2670,30 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
   padding-top:4px;
 }
 
+
+/***** brand new styles *****/
+.ant_indicator .ant-antenna-logo { color:#bbb; }
+.ant_live_hover .ant_indicator .ant-antenna-logo,
+.ant-antenna-logo { color:#8fb3f2; }
+
 /* mobile */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {
   div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_count            { margin-top: -1px; font-size: 12px; }
 }
 
+/* mozille specific */
+@-moz-document url-prefix() {
+  div.ant_indicator_for_media div.ant_indicator_body .icon.ant-antenna-logo {
+    margin-left: 5px;
+  }
+}
 
+
+/****** DEBUG WHILE REBRANDING *****/
+/*div.ant_indicator.ant_indicator_for_media {
+    display: block !important;
+    opacity:1.0 !important;
+    -moz-opacity:1.0 !important;
+    -khtml-opacity:1.0 !important;
+    visibility: visible;;
+}*/

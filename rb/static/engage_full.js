@@ -162,6 +162,8 @@ function antenna($A){
                 language: 'en',
                 ab_test_impact: true,
                 ab_test_sample_percentage: 10,
+                img_indicator_show_onload: false,
+                img_indicator_show_side: 'left',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -488,13 +490,13 @@ function antenna($A){
 
                 var headerTml = $.mustache(
                     '<div class="ant ant_header">'+
-                        '<div class="ant_header_arrow">'+
-                            '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
-                        '</div>'+
+                        // '<div class="ant_header_arrow">'+
+                            // '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
+                        // '</div>'+
                         '<div class="ant_loader"></div>'+
                         '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
-                            '<img class="no-ant ant_pin" src="{{ANT_staticUrl}}widget/images/blank.png">'+
+                            '<span class="icon ant-antenna-logo"></span>'+
                             '<span class="ant_count"></span>'+
                         '</div>' +
                         '<h1>{{headerText}}</h1>'+
@@ -894,7 +896,7 @@ function antenna($A){
                         summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
@@ -1052,14 +1054,14 @@ function antenna($A){
                 setWidth: function( $aWindow, width ) {
                     // ANT.aWindow.tagBox.setWidth
                     // should probably just be ANT.aWindow.setWidth ??
-                    // width must be 320, 480, or 640
+                    // width must be 200, 300, or 400
                     var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
-                    $aWindow.removeClass('w160 w320 w480 w640').addClass('w'+aWindowWidth);
+                    $aWindow.removeClass('w100 w200 w300 w400').addClass('w'+aWindowWidth);
                 },
                 setHeight: function( $aWindow, height ) {
                     // ANT.aWindow.tagBox.setHeight
                     // should probably just be ANT.aWindow.setWidth ??
-                    // width must be 320, 480, or 640
+                    // width must be 200, 300, or 400
                     $aWindow.find('.ant_body, .jspContainer').height( height );
                 },
                 make: function( params ) {
@@ -1194,7 +1196,7 @@ function antenna($A){
 
                             $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                             ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                                 ANT.aWindow.hideFooter($aWindow);
                                 // ANT.aWindow.panelEnsureFloatWidths($aWindow);
@@ -1901,7 +1903,7 @@ function antenna($A){
                     minWidth = settings.minWidth,
                     maxWidth = settings.maxWidth,
                     ant_for = ( typeof settings.container == "string" ) ? 'ant_for_'+settings.container:'ant_for_page',
-                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w160 '+ant_for+'"></div>');
+                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w100 '+ant_for+'"></div>');
 
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
@@ -1924,7 +1926,7 @@ function antenna($A){
                     $new_aWindow.html('');
                     $new_aWindow.append(
                         '<div class="ant ant_header">'+
-                            '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
+                            // '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="ant_loader"></div>'+
                             '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
@@ -1995,11 +1997,11 @@ function antenna($A){
                     $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
 
-                    // if ( $aWindow.data('initialWidth') >= 480 ) {
-                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    // if ( $aWindow.data('initialWidth') >= 300 ) {
+                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
                     //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
                     // } else {
-                    //     if ( $aWindow.data('initialWidth') == 160 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 160 ); }
+                    //     if ( $aWindow.data('initialWidth') == 100 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 100 ); }
                     //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
                     // }
 
@@ -3259,7 +3261,7 @@ function antenna($A){
                         //put a better message here
                         // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" /> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="icon ant-antenna-logo"></span> icons.</div>');
 
                         $msg2.find('a.ant_show_more_pins').click( function() {
                             ANT.actions.summaries.showLessPopularIndicators();
@@ -3267,7 +3269,7 @@ function antenna($A){
                         });
                     }
                     if (typeof $msg1 != "undefined" ) {
-                        $pinIcon = $('<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />');
+                        $pinIcon = $('<span class="icon ant-antenna-logo"></span>');
 
                         var $alertContent = $('<div class="ant_alert_box ant ant_' + whichAlert + '" />');
 
@@ -3561,7 +3563,7 @@ function antenna($A){
                     });
 
 
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
                     if ( args ) $aWindow.data( 'args', args );
@@ -3573,7 +3575,7 @@ function antenna($A){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
-                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="300" height="140" frameborder="0" style="overflow:hidden; width:300px !important;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
@@ -4116,8 +4118,14 @@ function antenna($A){
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
 
+                // init media object on load.
+                // this is new, but we want the experience for images to be faster.
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                    ANT.actions.indicators.init( $(this).attr('ant-hash') );
+                });
+
                 if(isTouchBrowser){
-                    // init the "indicators" for media objects, on mobile only.
+                    // init the "indicators" for text objects, on mobile only.
                     // so that the image call-to-action is present and populated
                     // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
@@ -4126,9 +4134,6 @@ function antenna($A){
                         ANT.actions.indicators.init( $(node).attr('ant-hash') );
                     });
 
-                    $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
-                        ANT.actions.indicators.init( $(this).attr('ant-hash') );
-                    });
 
                     if ( !localStorage.getItem('hideDoubleTapMessage') && !ANT.group.hideDoubleTapMessage ) {
                         // no t()
@@ -4145,6 +4150,7 @@ function antenna($A){
                     }
 
                 }else if ( ANT.util.activeAB() )  {
+
                     $(ANT.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
@@ -4158,7 +4164,7 @@ function antenna($A){
                                 return;
                             }
 
-                            var minImgWidth = 160;
+                            var minImgWidth = 100;
                             if ( $this.width() >= minImgWidth ) {
                                 var hasBeenHashed = $this.hasAttr('ant-hashed'),
                                     isBlacklisted = $this.closest('.ant, .no-ant').length;
@@ -4182,7 +4188,8 @@ function antenna($A){
                                     ANT.actions.sendHashes( hashListsByPageId, function(){
                                         if( $this.hasClass('ant_live_hover') ){
                                             if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                                $('#ant_indicator_' + hash).show();
+                                                // $('#ant_indicator_' + hash).show();
+                                                $('#ant_indicator_' + hash).toggleClass('ant_visible');
                                             }
                                         }
                                     });
@@ -4197,7 +4204,9 @@ function antenna($A){
                                     
                                     $this.addClass('ant_live_hover');
                                     if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                        $('#ant_indicator_' + hash).show();
+                                        $('#ant_indicator_' + hash).toggleClass('ant_visible');
+
+                                        // $('#ant_indicator_' + hash).show();
                                         // ANT.actions.indicators.utils.borderHilites.engage(hash);
                                     }
 
@@ -4207,13 +4216,14 @@ function antenna($A){
                             }
                         })
                         .on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
-                            var $this = $(this);
-                                // hash = $this.data('hash');
+                            var $this = $(this),
+                                hash = $this.data('hash');
 
                             // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
                             if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
+                            $('#ant_indicator_' + hash).toggleClass('ant_visible');
                     });
                 }
 
@@ -5279,11 +5289,11 @@ function antenna($A){
                                 ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
 
                                 if ($reactionView.length) {
-                                    // since currently, our reactionView needs to have a width that's a factor of 160... force that:
-                                    var statedWidthDividedBy160 = parseInt( reactionViewWidth / 160 );
+                                    // since currently, our reactionView needs to have a width that's a factor of 100... force that:
+                                    var statedWidthDividedBy100 = parseInt( reactionViewWidth / 100 );
                                     
-                                    reactionViewWidth = statedWidthDividedBy160 * 160;
-                                    if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
+                                    reactionViewWidth = statedWidthDividedBy100 * 100;
+                                    if ( reactionViewWidth > 600 ) { reactionViewWidth=600; }
 
                                     // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
                                     if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
@@ -5291,7 +5301,8 @@ function antenna($A){
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><img class="no-ant ant_pin" src="'+ANT_staticUrl+'widget/images/blank.png"><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    // $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="icon ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="icon ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
                                     ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
@@ -7041,6 +7052,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
                             var $indicator = summary.$indicator = $('<div class="ant_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            if (kind!='text' && ANT.group.img_indicator_show_onload===true) { $indicator.addClass('ant_show_on_load'); }
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
 
@@ -7137,7 +7149,7 @@ if ( sendData.kind=="page" ) {
                             .attr('id',indicatorBodyId)
                             .appendTo($indicator)
                             .append(
-                                '<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />',
+                                '<span class="icon ant-antenna-logo"></span>',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
@@ -7234,7 +7246,7 @@ if ( sendData.kind=="page" ) {
                         var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
                         $aWindow.addClass('ant_helper_aWindow');
                         $aWindow.find('.ant_header').replaceWith($header);
-                        $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
+                        // $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
                         $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
                         $aWindowBody.html('');
                         $aWindow.find('div.ant_body_wrap').append($aWindowBody);
@@ -7568,7 +7580,7 @@ if ( sendData.kind=="page" ) {
                                 indicatorDetailsId = 'ant_indicator_details_'+hash,
                                 page_id = ANT.util.getPageProperty('id', hash );
 
-                            if( $container.width() < 160 ){
+                            if( $container.width() < 100 ){
                                 ANT.safeThrow('Too small to init.');
                                 return;
                             }
@@ -7616,6 +7628,9 @@ if ( sendData.kind=="page" ) {
 
                             //todo: move this from init
                             ANT.actions.indicators.utils.updateContainerTracker(hash);
+
+                            /*debug*/
+                            // $('#ant_indicator_'+hash).addClass('ant_visible');
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
@@ -7948,16 +7963,16 @@ if ( sendData.kind=="page" ) {
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                                     }else{
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
                                 }
                             }
 
@@ -7990,7 +8005,7 @@ if ( sendData.kind=="page" ) {
                         function isotopeTags( $tagsListContainer ) {
                         $tagsListContainer.isotope({
                           masonry: {
-                            columnWidth: 160
+                            columnWidth: 100
                           }
                         }, function() {
 
@@ -8078,7 +8093,7 @@ if ( sendData.kind=="page" ) {
                                     height: 'auto',
                                     width: 'auto',
                                     top: lastTagDims.top,
-                                    left: (lastTagDims.left > 0 && lastTagDims.left < 160) ? 160:lastTagDims.left,
+                                    left: (lastTagDims.left > 0 && lastTagDims.left < 100) ? 100:lastTagDims.left,
                                     bottom: 0,
                                     right: 0
                                 });  
@@ -8119,11 +8134,16 @@ if ( sendData.kind=="page" ) {
                         paddingOffset.top = !hasBorder ? padding.top : 0;
                         paddingOffset.left = !hasBorder ? padding.left : 0;
 
+                        // var containerWidth = $container.width() + 'px';
+                        // var containerHeight = $container.height() + 'px';
+
                         //compensate for padding - which we want to ignore
-                        ANT.util.cssSuperImportant($container_tracker, {
-                            top: $container.offset().top + paddingOffset.top+'px',
-                            left: $container.offset().left + paddingOffset.left+'px'
-                        }, true);
+                        // ANT.util.cssSuperImportant($container_tracker, {
+                        //     // width: containerWidth,
+                        //     // height: containerHeight,
+                        //     top: $container.offset().top + paddingOffset.top+'px',
+                        //     left: $container.offset().left + paddingOffset.left+'px'
+                        // }, true);
 
                         this.updateMediaTracker(hash);
 
@@ -8159,6 +8179,8 @@ if ( sendData.kind=="page" ) {
 
                             //todo: consolodate this with the other case of it
                             var containerWidth, containerHeight;
+                            var containerOffsets = $container.offset();
+
                             //this will calc to 0 if there is no border.
                             var hasBorder = parseInt( $container.css('border-top-width'), 10 ) +
                                 parseInt( $container.css('border-bottom-width'), 10 ) +
@@ -8173,28 +8195,39 @@ if ( sendData.kind=="page" ) {
                                 containerHeight = $container.height();
                             }
 
-                            var padding = {
-                                top: parseInt( $container.css('padding-top'), 10 ),
-                                right: parseInt( $container.css('padding-right'), 10 ),
-                                bottom: parseInt( $container.css('padding-bottom'), 10 ),
-                                left: parseInt( $container.css('padding-left'), 10 )
-                            };
+                            // not used currently
+                            // var padding = {
+                            //     top: parseInt( $container.css('padding-top'), 10 ),
+                            //     right: parseInt( $container.css('padding-right'), 10 ),
+                            //     bottom: parseInt( $container.css('padding-bottom'), 10 ),
+                            //     left: parseInt( $container.css('padding-left'), 10 )
+                            // };
+
+                            // $indicator.offset({ top:containerOffsets.top+'px', left:containerOffsets.left+'px' });
+                            // $indicator.width( containerWidth );
+                            // $indicator.height( containerHeight );
 
                             var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = (summary.kind=="media") ? $container.height()+modIEHeight+36:$container.height()+modIEHeight+12;
+                            var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
+                            var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
                             $indicator.data('top', cssTop);
 
                             if (summary.kind=="media") {
                                 $indicator.addClass('ant_indicator_not_img');
                             }
 
-                            ANT.util.cssSuperImportant( $indicator, {
-                                left: 12+'px',
-                                top: cssTop+'px'
-                            }, true);
+                            var indicatorPosition = {};
+                            indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
+                            indicatorPosition['top'] = cssTop+'px';
+
+                            ANT.util.cssSuperImportant( $indicator, indicatorPosition, true);
+                            // ANT.util.cssSuperImportant( $indicator, {
+                            //     left: 12+'px',
+                            //     top: cssTop+'px'
+                            // }, true);
 
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
@@ -8206,207 +8239,207 @@ if ( sendData.kind=="page" ) {
 
                         // ANT.actions.indicators.utils.borderHilites.update(hash);
                     },
-                    borderHilites: {
-                        //ANT.actions.indicators.utils.borderHilites:
+                    // borderHilites: {
+                    //     //ANT.actions.indicators.utils.borderHilites:
                         
-                        //hiliteDesignEdit
-                        //our old blue version
-                        // designVersion: 1,
+                    //     //hiliteDesignEdit
+                    //     //our old blue version
+                    //     // designVersion: 1,
 
-                        //black border and black box shadow fade
-                        designVersion: 2,
+                    //     //black border and black box shadow fade
+                    //     designVersion: 2,
                         
 
-                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                        make: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.make:
+                    //     makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
+                    //     make: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.make:
 
-                            var $indicator = $('#ant_indicator_'+hash),
-                                $container = $('[ant-hash="'+hash+'"]'),
-                                $container_tracker = $('#ant_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
+                    //         var $indicator = $('#ant_indicator_'+hash),
+                    //             $container = $('[ant-hash="'+hash+'"]'),
+                    //             $container_tracker = $('#ant_container_tracker_'+hash),
+                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
                                                         
-                            if( !$container_tracker.hasClass('ant_inline_video') ){
+                    //         if( !$container_tracker.hasClass('ant_inline_video') ){
                                 
-                                if( !$mediaBorderWrap.length ){
-                                    $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
-                                    $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
-                                }
-                                $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                    //             if( !$mediaBorderWrap.length ){
+                    //                 $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
+                    //                 $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
+                    //             }
+                    //             $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                                var borders = {
-                                    'top': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'right': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'bottom': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'left': {
-                                        $side: null,
-                                        css: {}
-                                    }
-                                };
+                    //             var borders = {
+                    //                 'top': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'right': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'bottom': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'left': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 }
+                    //             };
 
-                                $mediaBorderWrap.data('borders',borders);
-                                // ANT.actions.indicators.utils.borderHilites.update(hash);
-                            }
+                    //             $mediaBorderWrap.data('borders',borders);
+                    //             // ANT.actions.indicators.utils.borderHilites.update(hash);
+                    //         }
 
-                        },
-                        update: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.update:
-                            // var Section = ANT.actions.indicators.utils.borderHilites;
+                    //     },
+                    //     update: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.update:
+                    //         // var Section = ANT.actions.indicators.utils.borderHilites;
 
-                            // var $indicator = $('#ant_indicator_'+hash),
-                            //     $container = $('[ant-hash="'+hash+'"]'),
-                            //     $container_tracker = $('#ant_container_tracker_'+hash),
-                            //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //         // var $indicator = $('#ant_indicator_'+hash),
+                    //         //     $container = $('[ant-hash="'+hash+'"]'),
+                    //         //     $container_tracker = $('#ant_container_tracker_'+hash),
+                    //         //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
                             
-                            // if( !$mediaBorderWrap.length ){
-                            //     //failsafe that shouldnt be needed.
-                            //     if( this.makeAttempt > 1 ) return;
-                            //     this.makeAttempt ++;
-                            //     ANT.actions.indicators.utils.borderHilites.make(hash);
-                            //     //just return here.  the make function will call this update function again and this will be bypassed.
-                            //     return;
-                            // }
-                            // //else
-                            // this.makeAttempt = 0;
+                    //         // if( !$mediaBorderWrap.length ){
+                    //         //     //failsafe that shouldnt be needed.
+                    //         //     if( this.makeAttempt > 1 ) return;
+                    //         //     this.makeAttempt ++;
+                    //         //     ANT.actions.indicators.utils.borderHilites.make(hash);
+                    //         //     //just return here.  the make function will call this update function again and this will be bypassed.
+                    //         //     return;
+                    //         // }
+                    //         // //else
+                    //         // this.makeAttempt = 0;
 
-                            // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                    //         // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                            // var borders = {
-                            //     'top': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'right': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'bottom': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'left': {
-                            //         $side: null,
-                            //         css: {}
-                            //     }
-                            // };
+                    //         // var borders = {
+                    //         //     'top': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'right': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'bottom': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'left': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     }
+                    //         // };
                             
-                            // //hiliteDesignEdit
-                            // // var hiliteThickness = 2,
-                            // var hiliteThickness = 
-                            //     Section.designVersion === 1 ? 2 : 
-                            //     Section.designVersion === 2 ? 3 : 
-                            //     2;
+                    //         // //hiliteDesignEdit
+                    //         // // var hiliteThickness = 2,
+                    //         // var hiliteThickness = 
+                    //         //     Section.designVersion === 1 ? 2 : 
+                    //         //     Section.designVersion === 2 ? 3 : 
+                    //         //     2;
                             
-                            // var containerWidth,
-                            //     containerHeight;
+                    //         // var containerWidth,
+                    //         //     containerHeight;
 
-                            // var hasBorder = false;
-                            // //for checking if it has a border.
-                            // //If so we'll use outerWidth and outerHeight to take it into account.
-                            // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                    //         // var hasBorder = false;
+                    //         // //for checking if it has a border.
+                    //         // //If so we'll use outerWidth and outerHeight to take it into account.
+                    //         // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
 
-                            // $.each( borders, function(side, data){
-                            //     //set the value in the object using the key's string as a helper
-                            //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
+                    //         // $.each( borders, function(side, data){
+                    //         //     //set the value in the object using the key's string as a helper
+                    //         //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
                       
-                            //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                            //     if( !data.$side.length ){
-                            //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                            //     }
+                    //         //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                    //         //     if( !data.$side.length ){
+                    //         //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                    //         //     }
 
-                            //     //if any side has a border - set hasBorder to true
-                            //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                            //         hasBorder = true;
-                            //     }
+                    //         //     //if any side has a border - set hasBorder to true
+                    //         //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                    //         //         hasBorder = true;
+                    //         //     }
 
-                            // });
+                    //         // });
                             
-                            // //figure out dims
-                            // if(hasBorder){
-                            //     containerWidth = $container.outerWidth();
-                            //     containerHeight = $container.outerHeight();
-                            // }else{
-                            //     containerWidth = $container.width();
-                            //     containerHeight = $container.height();
-                            // }
+                    //         // //figure out dims
+                    //         // if(hasBorder){
+                    //         //     containerWidth = $container.outerWidth();
+                    //         //     containerHeight = $container.outerHeight();
+                    //         // }else{
+                    //         //     containerWidth = $container.width();
+                    //         //     containerHeight = $container.height();
+                    //         // }
 
-                            // //use dims to make the css rules for each border side
-                            // var widthCap = 2*hiliteThickness;
+                    //         // //use dims to make the css rules for each border side
+                    //         // var widthCap = 2*hiliteThickness;
 
-                            // borders.top.css = {
-                            //     width: containerWidth+widthCap+'px',
-                            //     height: 0+'px',
-                            //     top: -hiliteThickness+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
-                            // borders.right.css = {
-                            //     width:0+'px',
-                            //     height: containerHeight+'px',
-                            //     top: 0+'px',
-                            //     left: containerWidth+'px'
-                            // };
-                            // borders.bottom.css = {
-                            //     width: containerWidth+widthCap+'px',
-                            //     height: 0+'px',
-                            //     top: containerHeight+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
-                            // borders.left.css = {
-                            //     width: 0+'px',
-                            //     height: containerHeight+'px',
-                            //     top: 0+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
+                    //         // borders.top.css = {
+                    //         //     width: containerWidth+widthCap+'px',
+                    //         //     height: 0+'px',
+                    //         //     top: -hiliteThickness+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
+                    //         // borders.right.css = {
+                    //         //     width:0+'px',
+                    //         //     height: containerHeight+'px',
+                    //         //     top: 0+'px',
+                    //         //     left: containerWidth+'px'
+                    //         // };
+                    //         // borders.bottom.css = {
+                    //         //     width: containerWidth+widthCap+'px',
+                    //         //     height: 0+'px',
+                    //         //     top: containerHeight+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
+                    //         // borders.left.css = {
+                    //         //     width: 0+'px',
+                    //         //     height: containerHeight+'px',
+                    //         //     top: 0+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
 
-                            // $.each( borders, function( side, data ){
-                            //     ANT.util.cssSuperImportant( data.$side, data.css, true );
-                            // });                       
+                    //         // $.each( borders, function( side, data ){
+                    //         //     ANT.util.cssSuperImportant( data.$side, data.css, true );
+                    //         // });                       
                     
-                        },
-                        engage: function(hash, isShareLink){
-                            //ANT.actions.indicators.utils.borderHilites.engage:
-                            var $container_tracker = $('#ant_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //     },
+                    //     engage: function(hash, isShareLink){
+                    //         //ANT.actions.indicators.utils.borderHilites.engage:
+                    //         var $container_tracker = $('#ant_container_tracker_'+hash),
+                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
-                            $mediaBorderWrap.addClass('engaged');
+                    //         $mediaBorderWrap.addClass('engaged');
                             
-                            if (isShareLink) {
-                                $mediaBorderWrap.addClass('engagedForShareLink');
-                            }
-                        },
-                        disengage: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.disengage:
-                            // if ( !$('ant_for_'+hash).length ) {
-                                var $container_tracker = $('#ant_container_tracker_'+hash),
-                                    $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //         if (isShareLink) {
+                    //             $mediaBorderWrap.addClass('engagedForShareLink');
+                    //         }
+                    //     },
+                    //     disengage: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.disengage:
+                    //         // if ( !$('ant_for_'+hash).length ) {
+                    //             var $container_tracker = $('#ant_container_tracker_'+hash),
+                    //                 $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
-                                $mediaBorderWrap.removeClass('engaged');
-                                $mediaBorderWrap.removeClass('engagedForShareLink');
-                                $('#ant_indicator_' + hash).hide();
-                            // }
-                        },
-                        engageAll: function(){
-                            //ANT.actions.indicators.utils.borderHilites.engageAll:
-                            $mediaBorderWrap = $('.ant_media_border_wrap');
-                            $mediaBorderWrap.addClass('engaged');
-                        },
-                        disengageAll: function(){
-                            //ANT.actions.indicators.utils.borderHilites.disengageAll:
-                            $mediaBorderWrap = $('.ant_media_border_wrap');
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('div.ant_indicator_for_media').hide();
-                        }
-                    }
+                    //             $mediaBorderWrap.removeClass('engaged');
+                    //             $mediaBorderWrap.removeClass('engagedForShareLink');
+                    //             $('#ant_indicator_' + hash).hide();
+                    //         // }
+                    //     },
+                    //     engageAll: function(){
+                    //         //ANT.actions.indicators.utils.borderHilites.engageAll:
+                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
+                    //         $mediaBorderWrap.addClass('engaged');
+                    //     },
+                    //     disengageAll: function(){
+                    //         //ANT.actions.indicators.utils.borderHilites.disengageAll:
+                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
+                    //         $mediaBorderWrap.removeClass('engaged');
+                    //         $mediaBorderWrap.removeClass('engagedForShareLink');
+                    //         $('div.ant_indicator_for_media').hide();
+                    //     }
+                    // }
                 }//end ANT.actions.indicators.utils
             },
             summaries:{
@@ -8926,7 +8959,7 @@ if ( sendData.kind=="page" ) {
                 });
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
-                ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                 ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
@@ -10359,7 +10392,7 @@ function $AFunctions($A){
                 $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
+                    // '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
                     '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
                         '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
