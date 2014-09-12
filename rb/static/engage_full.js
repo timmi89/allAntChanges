@@ -162,7 +162,7 @@ function antenna($A){
                 language: 'en',
                 ab_test_impact: true,
                 ab_test_sample_percentage: 10,
-                img_indicator_show_onload: false,
+                img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
