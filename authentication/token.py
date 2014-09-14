@@ -1,4 +1,4 @@
-from readrboard.rb.models import *
+from antenna.rb.models import *
 from django.utils.hashcompat import sha_constructor
 from datetime import datetime
 from extras.facebook import GraphAPI, GraphAPIError
@@ -13,7 +13,7 @@ def checkCookieToken(request):
     cookies = request.COOKIES
     data = {}
     data['user_id'] = cookies.get('user_id', None)
-    data['readr_token'] = cookies.get('readr_token', None)
+    data['ant_token'] = cookies.get('ant_token', None)
     return checkToken(data)
 
 def checkToken(data):
@@ -65,9 +65,9 @@ def checkToken(data):
         auth_token = 'R3dRB0aRdR0X'
     
     # Create token with passed in credentials
-    readr_token = createToken(data['user_id'], auth_token)
+    ant_token = createToken(data['user_id'], auth_token)
 
-    if(readr_token == data['readr_token']):
+    if(ant_token == data['ant_token']):
         return user
 
     return None

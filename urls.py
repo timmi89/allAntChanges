@@ -120,10 +120,10 @@ urlpatterns = patterns('',
   url(r'^favicon\.ico$', RedirectView.as_view(url='/static/site/images/favicon.ico')),
 
   # API
-  url(r'^api/', include('readrboard.api.urls')),
+  url(r'^api/', include('antenna.api.urls')),
   
   # CHRONS API
-  url(r'^chronos/', include('readrboard.chronos.urls')),
+  url(r'^chronos/', include('antenna.chronos.urls')),
   
   
   # Group Supporting Pages
@@ -135,16 +135,16 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/blocked_reactions/$', 'rb.views.group_blocked_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/all_reactions/$', 'rb.views.group_all_tags'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/allowed_reactions/$', 'rb.views.group_all_tags'),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('readrboard.analytics.urls')),
-  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('readrboard.analytics.urls_v1')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics', include('antenna.analytics.urls')),
+  url(r'^group/(?P<short_name>[\w\-\.]+)/analytics_v1', include('antenna.analytics.urls_v1')),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_request/$', 'rb.views.admin_request'),
 
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/$', 'rb.views.admin_approve'),
   url(r'^group/(?P<short_name>[\w\-\.]+)/admin_approve/(?P<request_id>\d+)/$', 'rb.views.admin_approve'),
 
   #inhouse
-  url(r'^analytics', include('readrboard.analytics.urls')),
-  url(r'^analytics_v1', include('readrboard.analytics.urls_v1')),
+  url(r'^analytics', include('antenna.analytics.urls')),
+  url(r'^analytics_v1', include('antenna.analytics.urls_v1')),
 
 
   # Plugin Settings
@@ -159,8 +159,8 @@ urlpatterns = patterns('',
   url(r'^request_password/$', 'rb.views.request_password_reset'),
   url(r'^user_modify/$', 'rb.views.modify_rb_social_user'),
   
-  url(r'^rb_login/$', 'rb.views.rb_login'),
-  url(r'^rb_login_success/$', 'rb.views.rb_login_success'),
+  url(r'^ant_login/$', 'rb.views.ant_login'),
+  url(r'^ant_login_success/$', 'rb.views.ant_login_success'),
   # For demos
   #url(r'^demo/', settings.STATIC_URL)
 )

@@ -17,31 +17,31 @@
 
         window.prot = ('https:' == document.location.protocol ? 'https:' : 'http:');
         
-        window.RDR_offline = ( window.location.href.indexOf('local.readrboard.com') != -1 ) ? true:false;
+        window.ANT_offline = ( window.location.href.indexOf('local.antenna.is') != -1 ) ? true:false;
             
-        window.RDR_baseUrl = ( RDR_offline ) ?
-                prot+"//local.readrboard.com:8081" :
-                prot+"//www.readrboard.com";
+        window.ANT_baseUrl = ( ANT_offline ) ?
+                prot+"//local.antenna.is:8081" :
+                prot+"//www.antenna.is";
 
-        window.RDR_staticUrl = ( RDR_offline ) ?
-                prot+"//local.readrboard.com:8081/static/" :
+        window.ANT_staticUrl = ( ANT_offline ) ?
+                prot+"//local.antenna.is:8081/static/" :
                 prot+"//s3.amazonaws.com/readrboard/";
 
-        window.RDR_user_script = ( RDR_offline ) ? 
-                "readr_user.js" :
-                "readr_user_min.js" ;
+        window.ANT_user_script = ( ANT_offline ) ? 
+                "ant_user.js" :
+                "ant_user_min.js" ;
         
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
-        document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/'+window.RDR_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'global/js/jquery-1.7.1.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.json-2.2.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.cookie.js" type="text/javascript"%3E%3C/script%3E' ) );
+        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/'+window.ANT_user_script+'" type="text/javascript"%3E%3C/script%3E' ) );
 
     })();
     </script>
     
     <script type="text/javascript">
-        if(!window.RDR_offline){
+        if(!window.ANT_offline){
           window._gaq = window._gaq || [];
           _gaq.push(['_setAccount', 'UA-24372992-1']);
           _gaq.push(['_trackPageview']);
@@ -73,7 +73,7 @@
 
                 FB.init({
                   appId      : '163759626987948', // App ID
-                  channelUrl : window.RDR_staticUrl+'fb_channel.html', // Channel File
+                  channelUrl : window.ANT_staticUrl+'fb_channel.html', // Channel File
                   status     : true, // check login status
                   cookie     : true, // enable cookies to allow the server to access the session
                   xfbml      : true  // parse XFBML
@@ -106,7 +106,7 @@
 		$(document).ready( function() {			
 			
 			if ( localStorage.getItem('location') && localStorage.getItem('container_hash') ) {
-				RDRAuth.notifyParent({message:false}, "sharedLink|" + localStorage.getItem('container_hash') + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('location') ) + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('reaction') ) + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('content') ) + "|" + localStorage.getItem('referring_int_id') + "|" + RDRAuth.decodeDjangoCookie( localStorage.getItem('page_hash') ) );
+				ANTAuth.notifyParent({message:false}, "sharedLink|" + localStorage.getItem('container_hash') + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('location') ) + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('reaction') ) + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('content') ) + "|" + localStorage.getItem('referring_int_id') + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('page_hash') ) );
 				localStorage.setItem( 'container_hash' );
 				localStorage.setItem( 'location' );
 				localStorage.setItem( 'content' );
@@ -114,13 +114,13 @@
 				localStorage.setItem( 'referring_int_id' );
 				localStorage.setItem( 'page_hash' );
 			} else if ( !localStorage.getItem('educatedUser') ) {
-				RDRAuth.notifyParent({message:false}, "educate user");
+				ANTAuth.notifyParent({message:false}, "educate user");
 			}
 
 		});
 
         //from http://www.aaronpeters.nl/blog/prevent-double-callback-execution-in-IE9#comment-175618750
-        function rdr_loadScript(attributes, callbackfunction) {
+        function ant_loadScript(attributes, callbackfunction) {
             var oHead = document.getElementsByTagName('head')[0];
             if(oHead) {
                 var oScript = document.createElement('script');
@@ -148,11 +148,11 @@
         }
 
 
-		var _sf_async_config={uid:26845,domain:"readrboard.com"};
+		var _sf_async_config={uid:26845,domain:"antenna.is"};
 		// var chartbeat_script = (("https:" == document.location.protocol) ? "https://a248.e.akamai.net/chartbeat.download.akamai.com/102508/" : "http://static.chartbeat.com/") + "js/chartbeat.js";
 
-        // if(!RDR_offline){
-        //     rdr_loadScript( {src:chartbeat_script}, function() {
+        // if(!ANT_offline){
+        //     ant_loadScript( {src:chartbeat_script}, function() {
         //         if ( typeof pSUPERFLY != "undefined" ) {
         //             pSUPERFLY.virtualPage(qs_args.parentUrl, decodeURIComponent(qs_args.group_name) );
         //         }

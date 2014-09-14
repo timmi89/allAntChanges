@@ -16,7 +16,7 @@
     </style>
 
     {% block headerText %}
-        <h1>ReadrBoard Beta Signup</h1>
+        <h1>Antenna Beta Signup</h1>
     {% endblock headerText %}
   
   {% if requested %}
@@ -36,11 +36,11 @@
                 {{ form.name }}{{ form.name.errors }}
             </div>
             <div id="formBodySection_short_name" class='formBodySection'>
-                <label for="id_short_name"><span class="labelTitle">Short Name </span><span>Used in URLs on readrboard.com</span></label>
+                <label for="id_short_name"><span class="labelTitle">Short Name </span><span>Used in URLs on antenna.is</span></label>
                 {{ form.short_name }}{{ form.short_name.errors }}
             </div>
             <div class='formBodySection'>
-                <label for="id_site"><span class="labelTitle">Domain </span><span>Your website's domain (example: readrboard.com)</span></label>
+                <label for="id_site"><span class="labelTitle">Domain </span><span>Your website's domain (example: antenna.is)</span></label>
                 {{ form.domain }}{{ form.domain.errors }}
             </div>
             

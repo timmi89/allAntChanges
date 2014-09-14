@@ -108,7 +108,7 @@
 			//we need to use the $R jquery to get the data instead of the one on this page
 			//todo: This won't work later because we will hide this in a closure later.
 			var hash = $R($thisMediaContainer[0]).data('hash');
-			RDR.actions.indicators.utils.updateContainerTracker(hash);
+			ANTN.actions.indicators.utils.updateContainerTracker(hash);
 		}
 
 		$("#promoControls a").click(function(e) {

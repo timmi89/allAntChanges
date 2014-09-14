@@ -1,16 +1,20 @@
-# Django settings for readrboard project.
+# Django settings for antenna project.
 from os import uname
 
 if uname()[1] == "hat" : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
-
+if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
+else: ANTENNA_ARRAY = False
+#if not DEBUG:
+#    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
+    
 # Server e-mail account
 if DEBUG:
-    SERVER_EMAIL = "devserver@readrboard.com"
+    SERVER_EMAIL = "devserver@antenna.is"
 else:
-    SERVER_EMAIL = "server@readrboard.com"
+    SERVER_EMAIL = "server@antenna.is"
 
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
@@ -34,14 +38,12 @@ FACEBOOK_APP_SECRET = '9b7da3d1442f442cec8c25f5bf7ea0d0'
 
 ADMINS = ( 
     ('Porter Bayne', 'porter@readrboard.com'),
-    ('Eric Chaves', 'eric@readrboard.com'),
     ('Michael Shaw', 'michael@readrboard.com')
 )
 
 RB_SOCIAL_ADMINS = [
     'porterbayne@gmail.com',
-    'erchaves@gmail.com',
-    'michael@readrboard.com',
+    'michael@readrboard.com'
 ]
 
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
@@ -49,10 +51,10 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 if DEBUG:
-    URL_NO_PROTO = 'local.readrboard.com:8081'
-    BASE_URL = 'http://local.readrboard.com:8081'
-    BASE_URL_SECURE = 'https://local.readrboard.com:8081'
-    STATIC_URL = '//local.readrboard.com:8081/static/'
+    URL_NO_PROTO = 'local.antenna.is:8081'
+    BASE_URL = 'http://local.antenna.is:8081'
+    BASE_URL_SECURE = 'https://local.antenna.is:8081'
+    STATIC_URL = '//local.antenna.is:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
@@ -107,10 +109,10 @@ if DEBUG:
     
 
 else:
-    ALLOWED_HOSTS = ["www.readrboard.com","readrboard.com","static.readrboard.com"]
-    URL_NO_PROTO = 'www.readrboard.com'
-    BASE_URL = 'http://www.readrboard.com'
-    BASE_URL_SECURE = 'https://www.readrboard.com'
+    ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
+    URL_NO_PROTO = 'www.antenna.is'
+    BASE_URL = 'http://www.antenna.is'
+    BASE_URL_SECURE = 'https://www.antenna.is'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
     #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
@@ -118,52 +120,104 @@ else:
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
     
-    DATABASES = {
-      'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'root',
-        'PASSWORD': '',
-        'HOST':     'localhost',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
+    
+    
+    if not ANTENNA_ARRAY:
+        DATABASES = {
+          'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly1': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly2': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'readr',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          }
+          
         }
-      },
-      'readonly1': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'readr',
-        'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
+        """
+        
+        """
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'LOCATION': '50.116.59.190:11211',
+                'TIMEOUT':300
+            }
         }
-      },
-      'readonly2': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'readrboard',
-        'USER':     'readr',
-        'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
-        'PORT':     '3306',
-        'OPTIONS': {
-            "init_command": "SET storage_engine=INNODB",
+    else:
+        DATABASES = {
+          'default': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'antenna-array',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '69.164.209.143',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly1': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'antenna-array',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          },
+          'readonly2': {
+            'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'antenna-array',
+            'PASSWORD': 'r34drsl4v3',
+            'HOST':     '50.116.59.190',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
+          }
+          
         }
+        """
+        
+        """
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'LOCATION': 'localhost:11211',
+                'TIMEOUT':300
+            }
       }
       
-    }
-    """
-    
-    """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '50.116.59.190:11211',
-            'TIMEOUT':2500000
-        }
-    }
+
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
@@ -241,7 +295,11 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
-ROOT_URLCONF = 'readrboard.urls'
+if not ANTENNA_ARRAY:
+    # ROOT_URLCONF = 'readrboard.urls'
+    ROOT_URLCONF = 'antenna.urls'
+else:
+    ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -249,7 +307,7 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     #todo: make this an absolute path as recommended. Using rel paths for now
     # so it's compatible on all our local machines
-    "readrboard/rb/templates"
+    "antenna/rb/templates"
 )
 
 import os
@@ -260,14 +318,14 @@ EMAIL_TEMPLATE_DIR = RB_SITE_ROOT + "/rb/email_templates"
 if DEBUG:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello-dev@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+    EMAIL_HOST_USER = 'hello@antenna.is'
+    EMAIL_HOST_PASSWORD = 'br04dc45t'
     EMAIL_PORT = 587
 else:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'hello@readrboard.com'
-    EMAIL_HOST_PASSWORD = 'readr4acc0unts'
+    EMAIL_HOST_USER = 'hello@antenna.is'
+    EMAIL_HOST_PASSWORD = 'br04dc45t'
     EMAIL_PORT = 587
 
 
@@ -348,7 +406,7 @@ DEBUG_TOOLBAR_CONFIG = {
 #SOCIAL_AUTH_EXPIRATION = 'expires'
 #FACEBOOK_EXTENDED_PERMISSIONS = ('email')
 
-#SESSION_COOKIE_DOMAIN = '.local.readrboard.com'
+#SESSION_COOKIE_DOMAIN = '.local.antenna.is'
 
 LOGGING = {
     'version': 1,

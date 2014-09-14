@@ -2,13 +2,13 @@
 
 {% block title %}Antenna{%endblock%}
 {% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.readrboard.com:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
+<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
 
 <script>
-// RB.group.short_name = "{{ group.short_name }}";
-// RB.group.full_name = "{{ group.name }}";
-// RB.group.id = "{{ group.id }}";
-// RB.group.id = 1660;
+// ANTsite.group.short_name = "{{ group.short_name }}";
+// ANTsite.group.full_name = "{{ group.name }}";
+// ANTsite.group.id = "{{ group.id }}";
+// ANTsite.group.id = 1660;
 </script>
 <link rel="stylesheet" href="/static/components/morris/morris.css">
 <link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
@@ -24,7 +24,7 @@
 {% block wideContent %}
 <div class="grid-whole banner blue">
   <div class="content left">
-    <h1>This is Antenna.</h1>
+    <h1>This is Antenna.<span class="icon ant-antenna-logo"></span></h1>
     <div class="caption">Learn why we built Antenna. Try it out, too &#8212; we are in beta.</div>
   </div>
 </div>
@@ -125,8 +125,8 @@
 
 <div class="grid-whole banner blue no-rdr vspace">
   <h1>Join our beta</h1>
-  <div class="caption"><a class="get_readrboard" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
-  <div class="get_readrboard_form">
+  <div class="caption"><a class="get_antenna" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
+  <div class="get_antenna_form">
       <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" allowTransparency="true" style="background:transparent;" frameborder="0"></iframe>
   </div>
 </div>
@@ -155,14 +155,14 @@
 
 <div class="grid-whole banner blue no-rdr">
   <h1>Join our beta</h1>
-  <div class="caption"><a class="get_readrboard" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
-  <div class="get_readrboard_form">
+  <div class="caption"><a class="get_antenna" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
+  <div class="get_antenna_form">
       <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" allowTransparency="true" style="background:transparent;" frameborder="0"></iframe>
   </div>
 </div>
 <script>
-    $('.get_readrboard').click( function() {
-        $(this).parents('.grid-whole').find('.get_readrboard_form').toggle(200);
+    $('.get_antenna').click( function() {
+        $(this).parents('.grid-whole').find('.get_antenna_form').toggle(200);
     });
 </script>
 <!--
@@ -171,9 +171,9 @@ Public sentiment is everything. With public sentiment, nothing can fail; without
 http://www.bartleby.com/268/9/23.html
 -->
 <script>
-  document.addEventListener("readrboard.hashed_nodes",function(){
+  document.addEventListener("antenna.hashed_nodes",function(){
     if (typeof console != 'undefined' && typeof console.log != 'undefined')
-    console.log("readrboard.hashed_nodes"); console.log( readrboard.getLastEvent() );
+    console.log("antenna.hashed_nodes"); console.log( antenna.getLastEvent() );
   },false);
 </script>
 

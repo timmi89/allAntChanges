@@ -25,11 +25,11 @@
 	<button class="btn" onclick="direct_registration();" tabindex="3" id="submit_login">Log In</button>
 	<script type="text/javascript">
 
-		RDRAuth.events.track('show_login_form');
-        RDRAuth.events.trackEventToCloud({
+		ANTAuth.events.track('show_login_form');
+        ANTAuth.events.trackEventToCloud({
             category: 'login',
             action: 'show_form',
-            opt_label: 'auth: rb'
+            opt_label: 'auth: ant'
         });
 
 		$('input[name="username"]').focus();
@@ -41,7 +41,7 @@
             }
         });
 		
-		window.opener.RDRAuth.checkRBLoginWindow();
+		window.opener.ANTAuth.checkAntLoginWindow();
 
 		function direct_registration() {
 			var sendData = "username="+$('#direct_registration').find('input[name="username"]').val()+
@@ -51,7 +51,7 @@
 				beforeSend: function( xhr ) {
 					xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken') );
 				},
-				url: "/api/rb/",
+				url: "/api/ant/",
 				type: "post",
 				contentType: "application/x-www-form-urlencoded",
 				dataType: "json",
@@ -63,9 +63,9 @@
                                 .hide()
                                 .fadeIn();
 						} else {
-							RDRAuth.setUser(response);
+							ANTAuth.setUser(response);
                             
-                            window.location.href=RDR_baseUrl+'/rb_login_success/';
+                            window.location.href=ANT_baseUrl+'/ant_login_success/';
 						}
 					}
 				}
@@ -82,8 +82,8 @@
             var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
 
             window.open(
-                RDR_baseUrl+'/user_create/',
-                'readr_create_user',
+                ANT_baseUrl+'/user_create/',
+                'ant_create_user',
                 properties
             );
             window.close();
@@ -99,8 +99,8 @@
             var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
 
             window.open(
-                RDR_baseUrl+'/request_password/',
-                'readr_forgot_pw',
+                ANT_baseUrl+'/request_password/',
+                'ant_forgot_pw',
                 properties
             );
             window.close();

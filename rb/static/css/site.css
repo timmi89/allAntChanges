@@ -34,14 +34,14 @@ DEPRECATED
 }
 
 /* fix the damn box model */
-* { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; font-family:font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif;}
+* { -webkit-box-sizing: border-box;  -moz-box-sizing: border-box; box-sizing: border-box; font-family:font-family:Helvetica,Arial,sans-serif;}
 
 
 /* global for now */
 #page_container { width:1140px; margin: 0 auto; }
 
 h1, 
-h2 { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal;}
+h2 { font-family:Helvetica,'HelveticaBold',Arial; font-weight:normal;}
 label { display:inline-block; }
 
 a { color:#008be4; }
@@ -250,30 +250,30 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
     height:353px; position:relative; 
 }
 .homepage .masthead .message { background:rgba(0,139,228,0.75); width:85%; height:60%; margin:auto; padding:20px 40px; position:absolute; top:0; left:0; right:0; bottom:0; }
-.homepage .masthead .message h2 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:48px; margin:0 0 40px 0; padding:0; }
-.homepage .masthead .message h3 { color:#fff; font-weight:normal; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:24px; margin:0; padding:0; }
+.homepage .masthead .message h2 { color:#fff; font-weight:normal; font-family:Helvetica,Arial,sans-serif; font-size:48px; margin:0 0 40px 0; padding:0; }
+.homepage .masthead .message h3 { color:#fff; font-weight:normal; font-family:Helvetica,Arial,sans-serif; font-size:24px; margin:0; padding:0; }
 .homepage .masthead.secondary { text-align:center; padding:40px; }
-.homepage .masthead.secondary h4 { font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; font-size:18px; color:#555; letter-spacing:0px; margin:0; font-weight:normal;}
+.homepage .masthead.secondary h4 { font-family:Helvetica,Arial,sans-serif; font-size:18px; color:#555; letter-spacing:0px; margin:0; font-weight:normal;}
 .homepage .masthead.secondary h4 a { text-decoration:underline; }
 .homepage .masthead.secondary h4 i { font-size:21px; }
 
 .masthead {letter-spacing:-1px; overflow:auto;}
-.masthead h1 { font-family:'RDR_HelveticaBold'; font-size:48px; margin:40px 0; }
-.masthead p  { font-family:'Helvetica','RDR_Helvetica'; font-size:28px; }
+.masthead h1 { font-family:Helvetica; font-weight:bold; font-size:48px; margin:40px 0; }
+.masthead p  { font-family:'Helvetica'; font-size:28px; }
 .masthead strong {display: block;}
 .engagement_today { padding:20px; background:#dfdfdf; clear:both; margin-top:40px;}
-.engagement_today h2 { font-family:'RDR_HelveticaBold'; font-size:28px; margin-bottom:20px; }
+.engagement_today h2 { font-family:Helvetica, Arial; font-weight:bold; font-size:28px; margin-bottom:20px; }
 .engagement_today .engagement_column { display:inline-block; width:30%; margin-right:3%; }
 .engagement_today .engagement_column:last-child { margin-right:0; }
 .engagement_today .engagement_column i { font-size: 40px; display: block; float: left; margin-right: 10px; }
-.engagement_today .engagement_column p { font-family: 'Helvetica','RDR_Helvetica'; font-size:18px;  }
+.engagement_today .engagement_column p { font-family: 'Helvetica'; font-size:18px;  }
 
 /* tag cloud grid */
 #tag_cloud_container { position:relative; }
 #tag_cloud_container div.image_container { position:absolute;left:0;top:0;width:1138px;height:420px;box-shadow:0px 0px 350px 50px #000 inset; }
 #tag_cloud_container section[role="tag cloud grid"] { height:420px; background:#000;}
 #tag_cloud_container section[role="tag cloud grid"] a { text-decoration:none;}
-#tag_cloud_container .box { text-align:center; font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
+#tag_cloud_container .box { text-align:center; font-family:Helvetica,'HelveticaBold',Arial; font-weight:normal; box-sizing: border-box; overflow:hidden;}
 #tag_cloud_container .box:hover { background:#fff; cursor:pointer; color:#008be4 !important;}
 #tag_cloud_container .box1 div.tag { position:relative; height:100%; bottom:-125%;}
 #tag_cloud_container .box2 div.tag { position:relative; height:100%; top:-125%;}
@@ -333,7 +333,7 @@ section[role="main"] div.card div.meta div.me_too_outcome div.close { font-size:
 .card .main .contentBox iframe,
 .card .main .contentBox.med a,
 .card .main .contentBox.img a { max-height:500px; overflow:hidden; display:block; }
-.card .main .contentBox blockquote { border:0; margin:0; padding:0 24px; font-size:28px; line-height:30px; color:#868686; font-family:'RDR_Helvetica',Helvetica,Arial,sans-serif; }
+.card .main .contentBox blockquote { border:0; margin:0; padding:0 24px; font-size:28px; line-height:30px; color:#868686; font-family:Helvetica,Arial,sans-serif; }
 .card .main .contentBox blockquote a { color:#868686; }
 .card:hover .main .contentBox blockquote a { color:#008be4; }
 .card .main .contentBox blockquote a:hover { text-decoration:none;  }
@@ -365,7 +365,7 @@ section[role="main"] div.card div.content .comments{ padding: 10px; text-align:l
 .card div.comment_container .header .avatar     {float:left;}
 .card div.comment_container .header .avatar img {height:20px; width:20px; max-width:155px; display: block;}
 .card div.comment_container .header .who        {float:left; margin-left:5px; padding-top:4px; height:16px; font:italic bold 12px Arial; color:#999; }
-.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px 'RDR_Helvetica',Helvetica, 'HelveticaRegular';}
+.card div.comment_container .comment   {overflow:hidden; color:#666; clear:both; position:relative; padding:6px 26px; font:normal 24px Helvetica, 'HelveticaRegular';}
 .card div.comment_container .comment .count  {font:normal 12px Arial; }
 .card div.comment_container .comment .comment_body  { font-size:12px; }
 
@@ -674,7 +674,7 @@ h1.sectionBanner{
     color: #BCBCBC;
     font-size: 18px;
     font-weight: bold;
-    font-family: 'RDR_Helvetica',Helvetica, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 
 
 }
@@ -870,7 +870,7 @@ div.splashQuote {
 }
 #splashBlurbs h3.sectionHeader{
   text-align:center;
-  font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial;
+  font-family:Helvetica,'HelveticaBold',Arial;
   font-size:30px;
   margin:30px 0;
 }
@@ -989,7 +989,7 @@ section[role="datepicker"] label  { display:inline; }
 #ui-datepicker-div {z-index:11 !important;}
 section[role="interaction frequency"]         { overflow:auto; text-align:center; }
 
-#interactionBigStats .bigStat h1      { font-family:'RDR_HelveticaBold',Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:5px 0 0; margin:0; color:#638296; background:none;}
+#interactionBigStats .bigStat h1      { font-family:Helvetica,'HelveticaBold',Arial; font-size:130px; text-shadow: 1px 2px 1px #fff; padding:5px 0 0; margin:0; color:#638296; background:none;}
 #interactionBigStats .bigStat h4      { margin:-10px 0 10px;}
 
 #interactionBigStats {

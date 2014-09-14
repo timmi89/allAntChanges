@@ -5,10 +5,10 @@
 {% block extendedHead %}
 <link href="/static/css/embedded_version.css" rel="stylesheet" type="text/css" media="all" />
 <script>
-    RDR_offline = document.domain == "local.readrboard.com";
-    RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8081":"//www.readrboard.com";
-    RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8081/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
-    document.write( unescape( '%3Cscript src="'+RDR_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
+    ANT_offline = document.domain == "local.antenna.is";
+    ANT_baseUrl = ( ANT_offline ) ? "//local.antenna.is:8081":"//www.antenna.is";
+    ANT_staticUrl = ( ANT_offline ) ? httpProtocol+"//local.antenna.is:8081/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";
+    document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
 </script>
 
 <style>
@@ -26,12 +26,12 @@
         //todo: pull these from utils for real
         var utils = {
             getQueryParams: function(optQueryString) {
-                //RDR.util.getQueryParams:
+                //ANTN.util.getQueryParams:
 
                 //thanks: http://stackoverflow.com/a/2880929/1289255
                 //I haven't verfied that this is 100% perfect for every url case, but it's solid.
                 
-                //this function is also in readr_scripts
+                //this function is also in ant_scripts
                 var queryString = optQueryString || window.location.search;
 
                 var urlParams = {};
@@ -85,9 +85,9 @@
         $(function(){
 
 
-            //quick hack to get the user info showing up.  I believe we need to undo the kludge in readr_user.js to undo this.
-            RDRAuth.returnUser();
-            if (RDRAuth.rdr_user && RDRAuth.rdr_user.user_id){
+            //quick hack to get the user info showing up.  I believe we need to undo the kludge in ant_user.js to undo this.
+            ANTAuth.returnUser();
+            if (ANTAuth.ant_user && ANTAuth.ant_user.user_id){
                 $('#logged-in').show().css('visibility','visible');
                 $('#logged-out').hide().css('visibility','hidden');
             }else{
@@ -123,7 +123,7 @@
 </style>
 <div class="rbSubtitle">
     <span>Setup:</span>&nbsp;&nbsp;
-    <span class="step1">(1) &nbsp;Log in to ReadrBoard</span>
+    <span class="step1">(1) &nbsp;Log in to Antenna</span>
     <span class="step2">(2) &nbsp;Register this site</span>
     <span class="step3">(3) &nbsp;You're done!</span>
 </div>
@@ -133,7 +133,7 @@
 
 {% block headerText %}
 <h3 class="defaultHeader">Register this site</h3>
-<h3 class="altHeader">Thanks, your site is registered with ReadrBoard!</h3>
+<h3 class="altHeader">Thanks, your site is registered with Antenna!</h3>
 {% endblock headerText %}
 
 {% block alreadyRequested %}

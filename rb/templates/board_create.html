@@ -26,7 +26,7 @@
       {% if is_popup == "site" %}
       <button class="btn" onclick="self.close();">Return to page</button>
       <script>
-      if (opener && !opener.closed) opener.RB.interactions.add_to_board(RB.querystring('int_id'), '{{ board.id }}', '{{ board.title }}' );
+      if (opener && !opener.closed) opener.ANTsite.interactions.add_to_board(ANTsite.querystring('int_id'), '{{ board.id }}', '{{ board.title }}' );
       </script>
       {% endif %}
       {% if is_popup == None %}
@@ -50,7 +50,7 @@
 
     </script>
   {% else %}
-    <h1>Create a ReadrBoard <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
+    <h1>Create a Antenna <img src="{{ STATIC_URL }}site/images/icon_question_mark.png" style="margin:0 0 6px -3px;" rel="tooltip" title="Boards let you organize all of the content you react to into one place, without using tags.<br/><br/>It's a great way to organize your stuff from different sites around a topic or story." /></h1>
     <form class="big-form" action="/board_create/?{% if is_popup != None %}popup={{ is_popup }}{% endif %}{% if int_id != None %}&int_id={{ int_id }}{% endif %}" enctype="multipart/form-data" method="post" class="in-page">
         <div class="formBody clearfix">
             {% csrf_token %}

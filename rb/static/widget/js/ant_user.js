@@ -19,115 +19,108 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
 
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://96.126.123.57/insert"
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://69.164.203.230/insert"
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://tracker.readrboard.com/insert"
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://events.readrboard.com/insert"
-// var trackingUrl = (document.domain != "local.readrboard.com") ? "http://tracker.readrboard.com/insert" : "http://localnode.com:3000/insert"
-var trackingUrl = (document.domain != "local.readrboard.com") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
+var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert"
 
-// var trackingUrl = "http://events.readrboard.com/insert";
-
-window.RDRAuth = {
-    isOffline: (document.domain == "local.readrboard.com"),
-    rdr_user: {},
+window.ANTAuth = {
+    isOffline: (document.domain == "local.antenna.is"),
+    ant_user: {},
     popups: {},
     //todo: make this stuff better
     openGenericLoginWindow: function(options){
         var windowProps = getWindowProps(options);
-        RDRAuth.checkRBLoginWindow();
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/login/',
-            'readr_login',
+        ANTAuth.checkAntLoginWindow();
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/login/',
+            'ant_login',
             windowProps
         );
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.popups.loginWindow.focus();
         return false;
     },
     openFBLoginWindowFromPopup: function(options){
-        RDRAuth.closeWindowOnSuccess = true;
-        RDRAuth.doFBLogin();
+        ANTAuth.closeWindowOnSuccess = true;
+        ANTAuth.doFBLogin();
         return false;
     },
-    openRbLoginWindow: function(options){   
+    openAntLoginWindow: function(options){   
         var windowProps = getWindowProps(options);
-        RDRAuth.checkRBLoginWindow();
+        ANTAuth.checkAntLoginWindow();
         
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/rb_login/',
-            'readr_login',
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/ant_login/',
+            'ant_login',
             windowProps
         );
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.popups.loginWindow.focus();
         return false;
     },
-    openRbCreateNewAccountWindow: function(options, replaceCurrentWindow){
+    openAntCreateNewAccountWindow: function(options, replaceCurrentWindow){
         var windowProps = getWindowProps(options);
-        RDRAuth.checkRBLoginWindow();
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/user_create/',
-            'readr_create_user',
+        ANTAuth.checkAntLoginWindow();
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/user_create/',
+            'ant_create_user',
             windowProps
         );
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.popups.loginWindow.focus();
         if(replaceCurrentWindow){
             window.close();
         }
         return false;
     },
-    openRbForgotPasswordWindow: function(options){
+    openAntForgotPasswordWindow: function(options){
         var windowProps = getWindowProps(options);
-        RDRAuth.checkRBLoginWindow();
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/request_password/',
-            'readr_forgot_pw',
+        ANTAuth.checkAntLoginWindow();
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/request_password/',
+            'ant_forgot_pw',
             windowProps
         );
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.popups.loginWindow.focus();
         return false;
     },
-    openRbAvatarUploadWindow: function(options){
+    openAntAvatarUploadWindow: function(options){
         var windowProps = getWindowProps(options);
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/user_modify/',
-            'readr_avatar_upload',
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/user_modify/',
+            'ant_avatar_upload',
             windowProps
         );
-        RDRAuth.checkRBLoginWindow();
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.checkAntLoginWindow();
+        ANTAuth.popups.loginWindow.focus();
         return false;
     },
     openChangePasswordWindow: function(options){
         var windowProps = getWindowProps(options);
-        RDRAuth.popups.loginWindow = window.open(
-            RDR_baseUrl+'/change_password/',
-            'readr_change_password',
+        ANTAuth.popups.loginWindow = window.open(
+            ANT_baseUrl+'/change_password/',
+            'ant_change_password',
             windowProps
         );
-        RDRAuth.checkRBLoginWindow();
-        RDRAuth.popups.loginWindow.focus();
+        ANTAuth.checkAntLoginWindow();
+        ANTAuth.popups.loginWindow.focus();
         return false;
     },
     events: {
         track: function( data ) {
-            // RDRAuth.events.track:
+            // ANTAuth.events.track:
             // mirrors the event tracker from the widget
             var standardData = "";
 
-            if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id ) standardData += "||uid::"+RDRAuth.rdr_user.user_id;
+            if ( ANTAuth.ant_user && ANTAuth.ant_user.user_id ) standardData += "||uid::"+ANTAuth.ant_user.user_id;
             if ( (qs_args && (qs_args.group_id) ) ) standardData += "||gid::"+(qs_args.group_id);
             
             var eventSrc = data+standardData,
-                $event = $('<img src="'+RDR_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
+                $event = $('<img src="'+ANT_baseUrl+'/static/widget/images/event.png?'+eventSrc+'" />'); // NOT using STATIC_URL b/c we need the request in our server logs, and not on S3's logs
 
-            $('#rdr_event_pixels').append($event);
+            $('#ant_event_pixels').append($event);
 
-            if(RDRAuth.isOffline){
+            if(ANTAuth.isOffline){
                 //uncomment for debugging
             }
         },
         trackEventToCloud: function(params){
-            // RDRAuth.events.trackEventToCloud
+            // ANTAuth.events.trackEventToCloud
             // if ( trackingUrl.indexOf('localnode') == -1 ) {
                 $.ajax({
                     url: trackingUrl,
@@ -168,7 +161,7 @@ window.RDRAuth = {
             if( typeof Parse !== "undefined" ){
                 //uncomment for debugging
                 // log('trackEventToCloud: '+'category: '+category+', '+'action: '+action+', '+'opt_label: '+opt_label+', '+'opt_value: '+opt_value+', '+'opt_noninteraction: '+opt_noninteraction);
-                var parseTrackingRepo = RDRAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
+                var parseTrackingRepo = ANTAuth.isOffline ? "EventTracking_Dev" : "EventTracking";
                 var ParseTracker = Parse.Object.extend(parseTrackingRepo);
                 var parseTracker = new ParseTracker();
                 parseTracker.save({
@@ -189,18 +182,18 @@ window.RDRAuth = {
             
             //don't log google tracking events while offline
             // killing for now.  we can't make much use of this.
-            // if( typeof _gaq !== "undefined" && !RDRAuth.isOffline ){
+            // if( typeof _gaq !== "undefined" && !ANTAuth.isOffline ){
                 // _gaq.push(['_trackEvent', category, action, opt_label, opt_value, opt_noninteraction]);
             // }
         },
         helpers: {
             trackFBLoginAttempt: function(){
-                // RDRAuth.events.helpers.trackFBLoginAttempt
+                // ANTAuth.events.helpers.trackFBLoginAttempt
 
                 var eventStr = 'FBLogin attempted';
-                RDRAuth.events.track(eventStr);
+                ANTAuth.events.track(eventStr);
 
-                RDRAuth.events.trackEventToCloud({
+                ANTAuth.events.trackEventToCloud({
                     // category: 'login',
                     // action: 'attempted',
                     // opt_label: 'auth: fb'
@@ -209,11 +202,11 @@ window.RDRAuth = {
                 });
             },
             trackFBLoginFail: function(){
-                // RDRAuth.events.helpers.trackFBLoginFail
+                // ANTAuth.events.helpers.trackFBLoginFail
                 var eventStr = 'FBLogin failed or was canceled';
-                RDRAuth.events.track(eventStr);
+                ANTAuth.events.track(eventStr);
 
-                RDRAuth.events.trackEventToCloud({
+                ANTAuth.events.trackEventToCloud({
                     // category: 'login',
                     // action: 'failed_or_canceled',
                     // opt_label: 'auth: fb'
@@ -221,34 +214,34 @@ window.RDRAuth = {
                     event_value: 'fail'
                 });
             },
-            trackRBLoginAttempt: function(){
-                // RDRAuth.events.helpers.trackFBLoginAttempt
+            trackAntLoginAttempt: function(){
+                // ANTAuth.events.helpers.trackFBLoginAttempt
 
-                var eventStr = 'RBLogin attempted';
-                RDRAuth.events.track(eventStr);
+                var eventStr = 'AntLogin attempted';
+                ANTAuth.events.track(eventStr);
 
-                RDRAuth.events.trackEventToCloud({
+                ANTAuth.events.trackEventToCloud({
                     // category: 'login',
                     // action: 'attempted',
-                    // opt_label: 'auth: rb'
-                    event_type: 'login attempt readrboard',
+                    // opt_label: 'auth: ant'
+                    event_type: 'login attempt antenna',
                     event_value: 'start'
                 });
             },
-            trackRBLoginFail: function(){
-                // RDRAuth.events.helpers.trackFBLoginFail
+            trackAntLoginFail: function(){
+                // ANTAuth.events.helpers.trackFBLoginFail
 
                 //I didn't find a clear way to track this yet.  Not being called...
                 return;
 
-                var eventStr = 'RBLogin failed or was canceled';
-                RDRAuth.events.track(eventStr);
+                var eventStr = 'AntLogin failed or was canceled';
+                ANTAuth.events.track(eventStr);
 
-                RDRAuth.events.trackEventToCloud({
+                ANTAuth.events.trackEventToCloud({
                     // category: 'login',
                     // action: 'failed_or_canceled',
-                    // opt_label: 'auth: rb'
-                    event_type: 'login attempt readrboard',
+                    // opt_label: 'auth: ant'
+                    event_type: 'login attempt antenna',
                     event_value: 'fail'
                 });
             }
@@ -266,38 +259,38 @@ window.RDRAuth = {
     notifyParent: function(response, status) {
         response.status = status;
         // send this info up to the widget!
-        RDRAuth.postMessage({
+        ANTAuth.postMessage({
             message: JSON.stringify( response )
         });
     },
     getUser: function() {
-        RDRAuth.readUserCookie();
-        if ( !RDRAuth.rdr_user.readr_token ) {
+        ANTAuth.readUserCookie();
+        if ( !ANTAuth.ant_user.ant_token ) {
             // user is null.  get a tempUser.
-            RDRAuth.createTempUser();
-        } else if ( RDRAuth.rdr_user.readr_token ) {  // temp or non-temp.  doesn't matter.
+            ANTAuth.createTempUser();
+        } else if ( ANTAuth.ant_user.ant_token ) {  // temp or non-temp.  doesn't matter.
             var sendData = {
                 data : {
-                    first_name : RDRAuth.rdr_user.first_name,
-                    full_name : RDRAuth.rdr_user.full_name,
-                    img_url : RDRAuth.rdr_user.img_url,
-                    user_id : RDRAuth.rdr_user.user_id,
-                    readr_token : RDRAuth.rdr_user.readr_token,
-                    user_boards : RDRAuth.rdr_user.user_boards
+                    first_name : ANTAuth.ant_user.first_name,
+                    full_name : ANTAuth.ant_user.full_name,
+                    img_url : ANTAuth.ant_user.img_url,
+                    user_id : ANTAuth.ant_user.user_id,
+                    ant_token : ANTAuth.ant_user.ant_token,
+                    user_boards : ANTAuth.ant_user.user_boards
                 }
             };
-            RDRAuth.notifyParent(sendData, "returning_user");
+            ANTAuth.notifyParent(sendData, "returning_user");
         }
     },
-    getReadrToken: function(fb_response, callback ) {
+    getAntToken: function(fb_response, callback ) {
         // if ( $.cookie('user_type') == "facebook" ) {
             if ( fb_response ) {
                 var fb_session = (fb_response.authResponse) ? fb_response.authResponse:fb_response
                 var sendData = {
                     fb: fb_session,
                     group_id: (qs_args.group_id) ? qs_args.group_id:1, // TODO aaaaaaaaaaaaaaagh remove GROUP ID and replace with NONCE
-                    user_id: RDRAuth.rdr_user.user_id, // might be temp, might be the ID of a valid FB-created user
-                    readr_token: RDRAuth.rdr_user.readr_token
+                    user_id: ANTAuth.ant_user.user_id, // might be temp, might be the ID of a valid FB-created user
+                    ant_token: ANTAuth.ant_user.ant_token
                 };
 
                 $.ajax({
@@ -310,20 +303,20 @@ window.RDRAuth = {
                     },
                     success: function(response){
                         if ( response.status == "fail" ) {
-                            RDRAuth.createTempUser();
+                            ANTAuth.createTempUser();
                         } else {
-                            RDRAuth.setUser(response);
-                            RDRAuth.returnUser();
-                            RDRAuth.notifyParent({}, "close login panel");
+                            ANTAuth.setUser(response);
+                            ANTAuth.returnUser();
+                            ANTAuth.notifyParent({}, "close login panel");
                             if (callback) callback();
                         }
                     },
                     error: function(response) {
-                        RDRAuth.createTempUser();
+                        ANTAuth.createTempUser();
                     }
                 });
             } else {
-                RDRAuth.doFBLogin();
+                ANTAuth.doFBLogin();
             }
         // }
     },
@@ -333,8 +326,8 @@ window.RDRAuth = {
         // if not calling from the iframe, don't create a temp user right now.
         if (parent.location == window.location) return;
 
-        if ( (!RDRAuth.rdr_user.user_id && !RDRAuth.rdr_user.readr_token) ||  // no user data
-             ( RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && !RDRAuth.rdr_user.temp_user) ) { // we have user data but believe it is wrong
+        if ( (!ANTAuth.ant_user.user_id && !ANTAuth.ant_user.ant_token) ||  // no user data
+             ( ANTAuth.ant_user.user_id && ANTAuth.ant_user.ant_token && !ANTAuth.ant_user.temp_user) ) { // we have user data but believe it is wrong
             var sendData = {
                 group_id : qs_args.group_id
             };
@@ -348,58 +341,58 @@ window.RDRAuth = {
                 },
                 success: function(response){
                     // store the data here and in a cookie
-                    RDRAuth.setUser(response);
+                    ANTAuth.setUser(response);
                     var sendData = {
                         data : {
-                            first_name : RDRAuth.rdr_user.first_name,
-                            full_name : RDRAuth.rdr_user.full_name,
-                            img_url : RDRAuth.rdr_user.img_url,
-                            user_id : RDRAuth.rdr_user.user_id,
-                            readr_token : RDRAuth.rdr_user.readr_token,
-                            user_boards : RDRAuth.rdr_user.user_boards
+                            first_name : ANTAuth.ant_user.first_name,
+                            full_name : ANTAuth.ant_user.full_name,
+                            img_url : ANTAuth.ant_user.img_url,
+                            user_id : ANTAuth.ant_user.user_id,
+                            ant_token : ANTAuth.ant_user.ant_token,
+                            user_boards : ANTAuth.ant_user.user_boards
                         }
                     };
-                    RDRAuth.notifyParent(sendData, "got_temp_user");
+                    ANTAuth.notifyParent(sendData, "got_temp_user");
                 }
             });
         } else {
             var sendData = {
                 data : {
-                    first_name : RDRAuth.rdr_user.first_name,
-                    full_name : RDRAuth.rdr_user.full_name,
-                    img_url : RDRAuth.rdr_user.img_url,
-                    user_id : RDRAuth.rdr_user.user_id,
-                    readr_token : RDRAuth.rdr_user.readr_token,
-                    user_boards : RDRAuth.rdr_user.user_boards
+                    first_name : ANTAuth.ant_user.first_name,
+                    full_name : ANTAuth.ant_user.full_name,
+                    img_url : ANTAuth.ant_user.img_url,
+                    user_id : ANTAuth.ant_user.user_id,
+                    ant_token : ANTAuth.ant_user.ant_token,
+                    user_boards : ANTAuth.ant_user.user_boards
                 }
             };
-            RDRAuth.notifyParent(sendData, "got_temp_user");
+            ANTAuth.notifyParent(sendData, "got_temp_user");
         }
     },
     reauthUser : function(args) {
         if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" || ( !$.cookie('user_type') ) ) {
-            RDRAuth.readUserCookie();
+            ANTAuth.readUserCookie();
             if ( !FB.getAuthResponse() ) {
                 FB.getLoginStatus(function(response) {
                     if (response && response.status == "connected") {
-                        RDRAuth.killUser( function(response) {
-                            RDRAuth.getReadrToken(response); // function exists in readr_user.js
+                        ANTAuth.killUser( function(response) {
+                            ANTAuth.getAntToken(response); // function exists in ant_user.js
                         }, response);
                     } else {
-                        RDRAuth.notifyParent({}, "fb_user_needs_to_login");
+                        ANTAuth.notifyParent({}, "fb_user_needs_to_login");
                     }
                 });
             } else {
-                RDRAuth.killUser( function(response) {
-                    RDRAuth.getReadrToken(response); // function exists in readr_user.js
+                ANTAuth.killUser( function(response) {
+                    ANTAuth.getAntToken(response); // function exists in ant_user.js
                 });
             }
         } else {
-            // readrboard user.  we don't have a reauth for RB users yet.  but widget should throw the login panel.
+            // antenna user.  we don't have a reauth for ANT users yet.  but widget should throw the login panel.
         }
     },
     quickFixAjaxLogout: function(){
-        // RDRAuth.quickFixAjaxLogout:
+        // ANTAuth.quickFixAjaxLogout:
         //this will at least give more of an appearance of an ajax log out when the login token expires.
         //it assumes the user will still do a login that will trigger a page refresh to fix it for real.
         $('#group_settings_menu').hide();
@@ -413,18 +406,18 @@ window.RDRAuth = {
         FB.getLoginStatus( function(response) {
             if (response.status && response.status == "connected" ) {
 
-                if( RDRAuth.checkIfWordpressRefresh() ){
+                if( ANTAuth.checkIfWordpressRefresh() ){
                     return;
                 }
-                if( RDRAuth.closeWindowOnSuccess ){
+                if( ANTAuth.closeWindowOnSuccess ){
                     window.close();
                 }
 
                 if (top == self) {
                     // now write the html for the user
-                    if ( $.cookie('user_id') || ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id ) ) {
-                        var user_id = ($.cookie('user_id')) ? $.cookie('user_id'):RDRAuth.rdr_user.user_id;
-                        var img_url = RDRAuth.rdr_user.img_url;
+                    if ( $.cookie('user_id') || ( ANTAuth.ant_user && ANTAuth.ant_user.user_id ) ) {
+                        var user_id = ($.cookie('user_id')) ? $.cookie('user_id'):ANTAuth.ant_user.user_id;
+                        var img_url = ANTAuth.ant_user.img_url;
 
                         $('#logged-in').show().css('visibility','visible');
                         $('#logged-out').hide().css('visibility','hidden');
@@ -454,7 +447,7 @@ window.RDRAuth = {
 
                                 $user_menu.append('<a href="/user/'+user_id+'">My Activity</a>' +
                                     '<a href="/follows/'+user_id+'">Activity I Follow</a>' +
-                                    '<a href="javascript:void(0);" onclick="RDRAuth.logout();">Log Out</a>' +
+                                    '<a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a>' +
                                     '<h5>Settings</h5>' +
                                     '<label for="private_profile">' +
                                       '(Reload the page to edit your setttings.)' +
@@ -464,13 +457,13 @@ window.RDRAuth = {
                         
                         });
                     } else {
-                        RDRAuth.getReadrToken( response.authResponse, function() { });
+                        ANTAuth.getAntToken( response.authResponse, function() { });
                     }
                 } else {
                     // widget
                     $('#logged-in').show().css('visibility','visible');
                     $('#logged-out').hide().css('visibility','hidden');
-                    RDRAuth.returnUser();
+                    ANTAuth.returnUser();
                 }
             } else {
                 if (top == self) {
@@ -482,11 +475,11 @@ window.RDRAuth = {
     },
     FBLoginCallback: function(response) {
         if (response.authResponse) {
-            RDRAuth.getReadrToken( FB.getAuthResponse(), function() {
-                RDRAuth.checkFBStatus();
+            ANTAuth.getAntToken( FB.getAuthResponse(), function() {
+                ANTAuth.checkFBStatus();
             });
         }else{
-            RDRAuth.events.helpers.trackFBLoginFail();
+            ANTAuth.events.helpers.trackFBLoginFail();
         }
     },
     checkIfWordpressRefresh : function() {
@@ -510,20 +503,20 @@ window.RDRAuth = {
         return false;
     },
 
-    checkRBLoginWindow : function() {
-        if (!RDRAuth.checkingRBLoginWindow) {
-            RDRAuth.checkingRBLoginWindow = setInterval( function(popup) {
-                if ( RDRAuth.popups.loginWindow && RDRAuth.popups.loginWindow.closed ) {
-                    RDRAuth.readUserCookie();
-                    RDRAuth.returnUser();
-                    RDRAuth.notifyParent({}, "close login panel");
-                    RDRAuth.popups.loginWindow.close();
-                    clearInterval( RDRAuth.checkingRBLoginWindow );
+    checkAntLoginWindow : function() {
+        if (!ANTAuth.checkingAntLoginWindow) {
+            ANTAuth.checkingAntLoginWindow = setInterval( function(popup) {
+                if ( ANTAuth.popups.loginWindow && ANTAuth.popups.loginWindow.closed ) {
+                    ANTAuth.readUserCookie();
+                    ANTAuth.returnUser();
+                    ANTAuth.notifyParent({}, "close login panel");
+                    ANTAuth.popups.loginWindow.close();
+                    clearInterval( ANTAuth.checkingAntLoginWindow );
                     
                     // we should delete this here yeah?  I don't think clearInterval will make the if statement above false..  doesn't seem to be breaking shit now though.
-                    // delete RDRAuth.checkingRBLoginWindow;
+                    // delete ANTAuth.checkingAntLoginWindow;
 
-                    if( RDRAuth.checkIfWordpressRefresh() ){
+                    if( ANTAuth.checkIfWordpressRefresh() ){
                         return;
                     }
                     if (top == self) {
@@ -534,48 +527,52 @@ window.RDRAuth = {
         }
     },
     setUser : function(response) {
-        RDRAuth.rdr_user = {};
+        ANTAuth.ant_user = {};
         response.data = response.data || {};
         // if no first_name attribute is in the response, this is a temporary user.
-        if ( response.data.first_name || response.data.full_name ) RDRAuth.rdr_user.temp_user = false;
-        else RDRAuth.rdr_user.temp_user = true;
+        if ( response.data.first_name || response.data.full_name ) ANTAuth.ant_user.temp_user = false;
+        else ANTAuth.ant_user.temp_user = true;
 
-        RDRAuth.rdr_user.readr_token = response.data.readr_token;
-        RDRAuth.rdr_user.user_id = response.data.user_id;
-        RDRAuth.rdr_user.full_name = response.data.full_name;
-        RDRAuth.rdr_user.first_name = response.data.full_name;
-        RDRAuth.rdr_user.img_url = response.data.img_url;
-        RDRAuth.rdr_user.user_type = response.data.user_type;
-        RDRAuth.rdr_user.user_boards = JSON.stringify(response.data.user_boards);
+        ANTAuth.ant_user.ant_token = response.data.ant_token;
+        ANTAuth.ant_user.user_id = response.data.user_id;
+        ANTAuth.ant_user.full_name = response.data.full_name;
+        ANTAuth.ant_user.first_name = response.data.full_name;
+        ANTAuth.ant_user.img_url = response.data.img_url;
+        ANTAuth.ant_user.user_type = response.data.user_type;
+        ANTAuth.ant_user.user_boards = JSON.stringify(response.data.user_boards);
 
         var session_expiry = new Date(); 
         session_expiry.setMinutes( session_expiry.getMinutes() + 60 );
-        //Use 1 hour for the rdr_session.  30 days for everything else.
+        //Use 1 hour for the ant_session.  30 days for everything else.
         var expTime = 90;
 
-        $.cookie('temp_user', RDRAuth.rdr_user.temp_user, { expires: expTime, path: '/' });
-        $.cookie('readr_token', RDRAuth.rdr_user.readr_token, { expires: expTime, path: '/' });
-        $.cookie('user_id', RDRAuth.rdr_user.user_id, { expires: expTime, path: '/' });
-        $.cookie('user_type', RDRAuth.rdr_user.user_type, { expires: expTime, path: '/' });
+        $.cookie('temp_user', ANTAuth.ant_user.temp_user, { expires: expTime, path: '/' });
+        $.cookie('ant_token', ANTAuth.ant_user.ant_token, { expires: expTime, path: '/' });
+        $.cookie('user_id', ANTAuth.ant_user.user_id, { expires: expTime, path: '/' });
+        $.cookie('user_type', ANTAuth.ant_user.user_type, { expires: expTime, path: '/' });
 
         //try out just using 90 days for everything - we're checking fb login every time anyway.
-        // $.cookie('rdr_session', 'true', { expires: expTime, path:'/' });
-        // $.cookie('rdr_session', 'true', { expires:session_expiry, path:'/' });
+        // $.cookie('ant_session', 'true', { expires: expTime, path:'/' });
+        // $.cookie('ant_session', 'true', { expires:session_expiry, path:'/' });
     },
     readUserCookie: function() {
         //set everything every time - let it be null if null.  Otherwise, some old values don't get overwritten.
-        RDRAuth.rdr_user.temp_user = $.cookie('temp_user');
-        RDRAuth.rdr_user.readr_token = $.cookie('readr_token');
-        RDRAuth.rdr_user.user_id = $.cookie('user_id');
-        RDRAuth.rdr_user.user_type = $.cookie('user_type');
+        ANTAuth.ant_user.temp_user = $.cookie('temp_user');
+        ANTAuth.ant_user.ant_token = $.cookie('ant_token');
+            // handle readr_token cookie so we don't delete those valuable sessions
+            if (!$.cookie('ant_token')) {
+                ANTAuth.ant_user.ant_token = $.cookie('readr_token');
+            }
+        ANTAuth.ant_user.user_id = $.cookie('user_id');
+        ANTAuth.ant_user.user_type = $.cookie('user_type');
         
     },
     returnUser: function() {
-        RDRAuth.readUserCookie();
+        ANTAuth.readUserCookie();
         if (top == self) {
             // we're on the site
             if ( $.cookie('user_type') && $.cookie('user_type') == "facebook" ) {
-                RDRAuth.checkFBStatus();
+                ANTAuth.checkFBStatus();
             } else {
                 if ( $.cookie('user_id') ) {
                     $('#logged-in').show().css('visibility','visible');
@@ -596,24 +593,24 @@ window.RDRAuth = {
             var sendData = {
                 // arguments are nested under data for consistency with passing values up to the parent
                 data : {
-                    first_name : RDRAuth.rdr_user.first_name,
-                    full_name : RDRAuth.rdr_user.full_name,
-                    img_url : RDRAuth.rdr_user.img_url,
-                    user_id : RDRAuth.rdr_user.user_id,
-                    readr_token : RDRAuth.rdr_user.readr_token,
-                    user_type : RDRAuth.rdr_user.user_type
+                    first_name : ANTAuth.ant_user.first_name,
+                    full_name : ANTAuth.ant_user.full_name,
+                    img_url : ANTAuth.ant_user.img_url,
+                    user_id : ANTAuth.ant_user.user_id,
+                    ant_token : ANTAuth.ant_user.ant_token,
+                    user_type : ANTAuth.ant_user.user_type
                 }
             };
-            RDRAuth.notifyParent(sendData, "returning_user");
+            ANTAuth.notifyParent(sendData, "returning_user");
         }
     },
     killUser : function(callback, callback_args) {
-        // if ( RDRAuth.rdr_user && RDRAuth.rdr_user.user_id && RDRAuth.rdr_user.readr_token && RDRAuth.rdr_user.first_name ) {
-        if ( RDRAuth.rdr_user && RDRAuth.rdr_user.temp_user == "false" ) {
+        // if ( ANTAuth.ant_user && ANTAuth.ant_user.user_id && ANTAuth.ant_user.ant_token && ANTAuth.ant_user.first_name ) {
+        if ( ANTAuth.ant_user && ANTAuth.ant_user.temp_user == "false" ) {
             // deauth a full user
             var sendData = {
-                user_id : RDRAuth.rdr_user.user_id,
-                readr_token : RDRAuth.rdr_user.readr_token
+                user_id : ANTAuth.ant_user.user_id,
+                ant_token : ANTAuth.ant_user.ant_token
             };
 
             $.ajax({
@@ -627,9 +624,9 @@ window.RDRAuth = {
                 },
                 success: function(response){
           
-                    RDRAuth.clearSessionCookies();
+                    ANTAuth.clearSessionCookies();
 
-                    RDRAuth.rdr_user = {};
+                    ANTAuth.ant_user = {};
                     if (callback && this.callback_args) {
                         callback(this.callback_args);
                     } else if (callback) {
@@ -639,7 +636,7 @@ window.RDRAuth = {
             });
         } else {
             // just a temp user
-            RDRAuth.clearSessionCookies();
+            ANTAuth.clearSessionCookies();
           
             if (callback && callback_args) {
                 callback(callback_args);
@@ -650,31 +647,31 @@ window.RDRAuth = {
     },
 
     clearSessionCookies: function(){
-        // RDRAuth.clearSessionCookies
+        // ANTAuth.clearSessionCookies
         $.cookie('temp_user', null, { path: '/' });
-        $.cookie('readr_token', null, { path: '/' });
+        $.cookie('ant_token', null, { path: '/' });
         $.cookie('user_id', null, { path: '/' });
         $.cookie('user_type', null, { path: '/' });
-        $.cookie('rdr_session', null, { path: '/' });
-        $.cookie('rdr_user', null, { path: '/' });
+        $.cookie('ant_session', null, { path: '/' });
+        $.cookie('ant_user', null, { path: '/' });
     },
 
     doFBLogin: function(requesting_action) {
-        // RDRAuth.doFBLogin
+        // ANTAuth.doFBLogin
 
-        RDRAuth.events.helpers.trackFBLoginAttempt();
+        ANTAuth.events.helpers.trackFBLoginAttempt();
 
         FB.login(function(response) {
-            RDRAuth.FBLoginCallback(response);
+            ANTAuth.FBLoginCallback(response);
         }, {scope: 'email'});
     },
-    doRBLogin: function(requesting_action) {
-        // RDRAuth.doRBLogin
-        RDRAuth.events.helpers.trackRBLoginAttempt();
-        RDRAuth.openRbLoginWindow();
+    doAntLogin: function(requesting_action) {
+        // ANTAuth.doAntLogin
+        ANTAuth.events.helpers.trackAntLoginAttempt();
+        ANTAuth.openAntLoginWindow();
     },
-    doRBlogout: function() {
-         RDRAuth.killUser( function() {
+    doAntlogout: function() {
+         ANTAuth.killUser( function() {
                     window.location.reload(); 
                 }); 
     },  
@@ -683,35 +680,35 @@ window.RDRAuth = {
             FB.getLoginStatus(function(response) {
                 if (response) {
                     FB.logout(function(response) {
-                        RDRAuth.killUser( function() {
+                        ANTAuth.killUser( function() {
                             window.location.reload(); 
                         });     
                     }); 
                 } else {
-                    RDRAuth.killUser( function() {
+                    ANTAuth.killUser( function() {
                         window.location.reload(); 
                     }); 
                 }
             });
         } else {
-            RDRAuth.killUser( function() {
+            ANTAuth.killUser( function() {
                 window.location.reload(); 
             }); 
         }
     },
     init : function() {
-    RDRAuth.notifyParent({}, "xdm loaded");
+    ANTAuth.notifyParent({}, "xdm loaded");
         if ( $.cookie('user_type') && $.cookie('user_type') == "facebook") {
             FB.getLoginStatus( function(response) {
                 if ( response.status && response.status == "connected" ) {
-                    RDRAuth.getReadrToken( response.authResponse, function() {});
+                    ANTAuth.getAntToken( response.authResponse, function() {});
                 }else{        
-                    RDRAuth.killUser( function() {
+                    ANTAuth.killUser( function() {
                     });
                 }
             });
         } else {
-          RDRAuth.returnUser();
+          ANTAuth.returnUser();
         }
     },
     decodeDjangoCookie : function(value) {
@@ -721,9 +718,9 @@ window.RDRAuth = {
 
 $(document).ready(function(){
 
-    //wait for fb init initing RDRAuth
+    //wait for fb init initing ANTAuth
     window.fb_loader.done(function(){
-        RDRAuth.init();
+        ANTAuth.init();
     });
     
     //wait for fb init before receiving messages
@@ -740,24 +737,24 @@ $(document).ready(function(){
                     var data;
 
                     if( e.data == "getUser" ) {
-                        RDRAuth.getUser();
+                        ANTAuth.getUser();
                     } else if ( e.data == "reloadXDMframe" ) {
                         window.location.reload();
                     } else if ( e.data == "reauthUser" ) {
-                        RDRAuth.reauthUser();
+                        ANTAuth.reauthUser();
                     } else if ( e.data == "returnUser" ) {
-                        RDRAuth.returnUser();
+                        ANTAuth.returnUser();
                     } else if ( e.data == "killUser" ) {
-                        RDRAuth.killUser();
+                        ANTAuth.killUser();
                     } else if ( e.data == "TESTIT" ) {
-                        RDRAuth.testMessage();
+                        ANTAuth.testMessage();
                     } else if ( e.data.indexOf("page_hash") != -1 ) {
                         //todo: this seems touchy to set this cookie forever like this.
                         $.cookie('page_hash', e.data.split('|')[1], { expires: 365, path: '/' } );
                     } else if ( e.data.indexOf(keys.registerEvent) != -1 ) {
                         jsonData = e.data.split(keys.registerEvent)[1];
                         data = $.parseJSON(jsonData);
-                        RDRAuth.events.trackEventToCloud(data);
+                        ANTAuth.events.trackEventToCloud(data);
                     }
                 },
                 qs_args.parentHost

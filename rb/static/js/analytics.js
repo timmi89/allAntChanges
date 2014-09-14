@@ -18,9 +18,9 @@ function notUndefined(x) {
 
 function topSummary() {
 
-readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_count-readrboardUsageData.rdr_sessions_count);
+antennaUsageData.no_ant_sessions_count = (antennaUsageData.all_sessions_count-antennaUsageData.ant_sessions_count);
 
-// var $temp_readrboardUsage = $('<div><div class="template"></div></div>');
+// var $temp_antennaUsage = $('<div><div class="template"></div></div>');
 
     var summaryHTML = [];
     summaryHTML.push( '<div class="grid-3 s-grid-whole padded right s-center first-column"> ');
@@ -29,17 +29,17 @@ readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_co
         summaryHTML.push( '</div> ');
         
         summaryHTML.push( '<div class="datapoint people-engaged"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.rdr_sessions_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.ant_sessions_count)+'</div> ');
             summaryHTML.push( '<label>engaged sessions</label> ');
         summaryHTML.push( '</div> ');
         
         summaryHTML.push( '<div class="datapoint articles-engaged"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.engaged_page_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.engaged_page_count)+'</div> ');
             summaryHTML.push( '<label>articles actively engaged</label> ');
         summaryHTML.push( '</div> ');
 
         summaryHTML.push( '<div class="datapoint articles-read"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.articles_read_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.articles_read_count)+'</div> ');
             summaryHTML.push( '<label>articles read</label> ');
         summaryHTML.push( '</div> ');
     summaryHTML.push( '</div> ');
@@ -65,7 +65,7 @@ readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_co
                 summaryHTML.push( '<div class="graph-title">Pageviews<br/>per Session</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="pageview-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value" id="rdr_avg_pageviews"></div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="ant_avg_pageviews"></div> ');
                 summaryHTML.push( '<div class="grid-4 graph-value" id="avg_pageviews"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
@@ -73,7 +73,7 @@ readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_co
                 summaryHTML.push( '<div class="graph-title">Time<br/>on Content</div> ');
                 summaryHTML.push( '<div class="graph-canvas" id="time-graph"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-                summaryHTML.push( '<div class="grid-4 graph-value" id="rdr_avg_time"></div> ');
+                summaryHTML.push( '<div class="grid-4 graph-value" id="ant_avg_time"></div> ');
                 summaryHTML.push( '<div class="grid-4 graph-value" id="avg_time"></div> ');
                 summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             summaryHTML.push( '</div> ');
@@ -81,19 +81,19 @@ readrboardUsageData.no_rdr_sessions_count = (readrboardUsageData.all_sessions_co
             //     summaryHTML.push( '<div class="graph-title">Scroll<br/>Depth</div> ');
             //     summaryHTML.push( '<div class="graph-canvas" id="scroll-depth-graph"></div> ');
             //     summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
-            //     summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.rdr_avg_scroll_depth+'%</div> ');
-            //     summaryHTML.push( '<div class="grid-4 graph-value">'+readrboardUsageData.avg_scroll_depth+'%</div> ');
+            //     summaryHTML.push( '<div class="grid-4 graph-value">'+antennaUsageData.ant_avg_scroll_depth+'%</div> ');
+            //     summaryHTML.push( '<div class="grid-4 graph-value">'+antennaUsageData.avg_scroll_depth+'%</div> ');
             //     summaryHTML.push( '<div class="grid-2">&nbsp;</div> ');
             // summaryHTML.push( '</div> ');
         summaryHTML.push( '</div> ');
     summaryHTML.push( '</div> ');
     summaryHTML.push( '<div class="grid-3 s-grid-whole padded left s-center third-column"> ');
         summaryHTML.push( '<div class="datapoint reactions"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.reaction_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.reaction_count)+'</div> ');
             summaryHTML.push( '<label>reactions</label> ');
         summaryHTML.push( '</div> ');
         summaryHTML.push( '<div class="datapoint reaction-views"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(readrboardUsageData.reaction_view_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.reaction_view_count)+'</div> ');
             summaryHTML.push( '<label>reaction views</label> ');
         summaryHTML.push( '</div> ');
 summaryHTML.push( ' ');
@@ -102,8 +102,8 @@ summaryHTML.push( ' ');
 
 var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'</div>');
 
-    if (RB.group.name) {
-        $temp_summarySection.find('.dashboard-name').html(RB.group.name);
+    if (ANTsite.group.name) {
+        $temp_summarySection.find('.dashboard-name').html(ANTsite.group.name);
     }
 
     $('.section.summary').html($temp_summarySection).find('.template').animate({'opacity':1},500);
@@ -112,7 +112,7 @@ var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'<
 
 function timeSummary() {
     if (typeof timeData != 'undefined') {
-        $('#rdr_avg_time').text( notUndefined(timeData.rdr_avg_time) );
+        $('#ant_avg_time').text( notUndefined(timeData.ant_avg_time) );
         $('#avg_time').text( notUndefined(timeData.avg_time) );
         drawSummaryGraphs();
         $(window).smartresize(drawSummaryGraphs);
@@ -120,7 +120,7 @@ function timeSummary() {
 }
 function pageviewSummary() {
     if (typeof pageviewData != 'undefined') {
-        $('#rdr_avg_pageviews').text ( notUndefined(pageviewData.rdr_avg_pageviews) );
+        $('#ant_avg_pageviews').text ( notUndefined(pageviewData.ant_avg_pageviews) );
         $('#avg_pageviews').text ( notUndefined(pageviewData.avg_pageviews) );
         drawSummaryGraphs();
         $(window).smartresize(drawSummaryGraphs);
@@ -140,7 +140,7 @@ if (typeof pageviewData != 'undefined') {
 Morris.Bar({
   element: 'pageview-graph',
   data: [
-    { datatype: 'Pageviews', a: pageviewData.rdr_avg_pageviews, b: pageviewData.avg_pageviews }
+    { datatype: 'Pageviews', a: pageviewData.ant_avg_pageviews, b: pageviewData.avg_pageviews }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -155,7 +155,7 @@ if (typeof timeData != 'undefined') {
 Morris.Bar({
   element: 'time-graph',
   data: [
-    { datatype: 'Session Time', a: timeData.rdr_avg_time, b: timeData.avg_time }
+    { datatype: 'Session Time', a: timeData.ant_avg_time, b: timeData.avg_time }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -168,7 +168,7 @@ Morris.Bar({
 // Morris.Bar({
 //   element: 'scroll-depth-graph',
 //   data: [
-//     { datatype: 'Pageviews', a: readrboardUsageData.rdr_avg_scroll_depth, b: readrboardUsageData.avg_scroll_depth }
+//     { datatype: 'Pageviews', a: antennaUsageData.ant_avg_scroll_depth, b: antennaUsageData.avg_scroll_depth }
 //   ],
 //   xkey: 'datatype',
 //   ykeys: ['a', 'b'],
@@ -178,13 +178,13 @@ Morris.Bar({
 //   barColors:['#92c325','#909090']
 // });
 
-var rdr_session_percentage = ((readrboardUsageData.rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2),
-    session_percentage = ((readrboardUsageData.no_rdr_sessions_count/readrboardUsageData.all_sessions_count) * 100).toFixed(2);
+var ant_session_percentage = ((antennaUsageData.ant_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2),
+    session_percentage = ((antennaUsageData.no_ant_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2);
 
     Morris.Donut({
       element: 'engaged-sessions',
       data: [
-        {label: "Engaged Antenna", value: rdr_session_percentage },
+        {label: "Engaged Antenna", value: ant_session_percentage },
         {label: "Other Sessions", value: session_percentage }
       ],
       formatter: function (y) { if ( isNaN(y) ) return "Data not returned"; else return y + "%" }
@@ -198,8 +198,8 @@ function numOrdDesc(a, b){ return (b-a); }
 
 function pageSummary(pages) {
     var $temp_engagedPages = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
-    // var $table = $('<table><tr><th>Title</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
+    var $table = $('<table><tr><th>Title</th><th>ANT Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    // var $table = $('<table><tr><th>Title</th><th>ANT Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof pages != 'undefined') {
         var pageNum = (pages.length > 30) ? 30 : pages.length;
@@ -263,8 +263,8 @@ function hotTopics(hotTopics) {
 
 function refSummary(referrers) {
     var $temp_engagedReferrers = $('<div><div class="template"></div></div>');
-    var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
-    // var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>RB Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
+    var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>ANT Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th></tr></table>');
+    // var $table = $('<table><tr><th style="text-align:left;">Domain</th><th>ANT Engagement</th><th>Reactions</th><th>Reaction Views</th><th>Reads</th><th>Scroll Depth</th></tr></table>');
 
     if (typeof referrers != 'undefined') {
 
@@ -307,31 +307,31 @@ function refSummary(referrers) {
 (function(){
 
         // put in external file...
-        RB.analytics = {
-            queryHost: (document.domain != "local.readrboard.com") ? "//events.readrboard.com" : "//localnode.com:3000",
+        ANTsite.analytics = {
+            queryHost: (document.domain != "local.antenna.com") ? "//events.antenna.com" : "//localnode.com:3000",
             toggleGlobalLoader: function() {
                 // TODO animate something
             },
             initAnalytics: function() {
-                if (typeof RB.group == "undefined" || typeof RB.group.id == "undefined") {
-                    RB.group = {};
+                if (typeof ANTsite.group == "undefined" || typeof ANTsite.group.id == "undefined") {
+                    ANTsite.group = {};
                 }
-                RB.analytics.getTopPages();
-                RB.analytics.getTopReactions();
-                RB.analytics.getTopReferrers();
-                RB.analytics.getSummaries();
-                RB.analytics.getTime();
-                RB.analytics.getPageviews();
+                ANTsite.analytics.getTopPages();
+                ANTsite.analytics.getTopReactions();
+                ANTsite.analytics.getTopReferrers();
+                ANTsite.analytics.getSummaries();
+                ANTsite.analytics.getTime();
+                ANTsite.analytics.getPageviews();
             },
             getSummaries: function() {
                 $.ajax({
-                url: RB.analytics.queryHost + '/getSummaries',
+                url: ANTsite.analytics.queryHost + '/getSummaries',
                 type: "get",
                 data: {
-                    json: $.toJSON( { gid:RB.group.id } )
+                    json: $.toJSON( { gid:ANTsite.group.id } )
                 },
                 success: function(response) {
-                    readrboardUsageData = response;
+                    antennaUsageData = response;
                     topSummary();
                     timeSummary();
                     pageviewSummary();
@@ -340,10 +340,10 @@ function refSummary(referrers) {
             },
             getTime: function() {
                 $.ajax({
-                url: RB.analytics.queryHost + '/getTime',
+                url: ANTsite.analytics.queryHost + '/getTime',
                 type: "get",
                 data: {
-                    json: $.toJSON( { gid:RB.group.id } )
+                    json: $.toJSON( { gid:ANTsite.group.id } )
                 },
                 success: function(response) {
                     timeData = response;
@@ -353,10 +353,10 @@ function refSummary(referrers) {
             },
             getPageviews: function() {
                 $.ajax({
-                url: RB.analytics.queryHost + '/getPageviews',
+                url: ANTsite.analytics.queryHost + '/getPageviews',
                 type: "get",
                 data: {
-                    json: $.toJSON( { gid:RB.group.id } )
+                    json: $.toJSON( { gid:ANTsite.group.id } )
                 },
                 success: function(response) {
                     pageviewData = response;
@@ -366,10 +366,10 @@ function refSummary(referrers) {
             },
             getTopPages: function() {
                 $.ajax({
-                    url: RB.analytics.queryHost + '/getTopPages',
+                    url: ANTsite.analytics.queryHost + '/getTopPages',
                     type: "get",
                     data: {
-                        json: $.toJSON( { gid:RB.group.id } )
+                        json: $.toJSON( { gid:ANTsite.group.id } )
                     },
                     success: function(response) {
                         pageSummary(response.pages);
@@ -382,10 +382,10 @@ function refSummary(referrers) {
             },
             getTopReferrers: function() {
                 $.ajax({
-                url: RB.analytics.queryHost + '/getTopReferrers',
+                url: ANTsite.analytics.queryHost + '/getTopReferrers',
                 type: "get",
                 data: {
-                    json: $.toJSON( { gid:RB.group.id } )
+                    json: $.toJSON( { gid:ANTsite.group.id } )
                 },
                 success: function(response) {
                     refSummary(response.referrers);
@@ -397,10 +397,10 @@ function refSummary(referrers) {
             },
             getTopReactions: function() {
                 $.ajax({
-                url: RB.analytics.queryHost + '/getTopReactions',
+                url: ANTsite.analytics.queryHost + '/getTopReactions',
                 type: "get",
                 data: {
-                    json: $.toJSON( { gid:RB.group.id } )
+                    json: $.toJSON( { gid:ANTsite.group.id } )
                 },
                 success: function(response) {
 
@@ -409,11 +409,11 @@ function refSummary(referrers) {
 
                     var itemNumber = 1;
                     $.each(popularReactions, function(idx, reaction) {
-                        var searchUrl = (RB.group.short_name) ? '/group/'+RB.group.short_name+'/':'/stream/';
+                        var searchUrl = (ANTsite.group.short_name) ? '/group/'+ANTsite.group.short_name+'/':'/stream/';
                         var size = (itemNumber<3) ? 'large' : (itemNumber < 9) ? 'medium' : 'small';
                         // var charCountModifier = (reaction.body.length>14) ? 'smaller':(reaction.body.length>20) ? 'smallest':'' 
                         var charCountModifier = (reaction.body.length>20) ? 'smallest' : (reaction.body.length>14) ? 'smaller':(reaction.body.length>7) ? 'mediumer':'large';
-                        // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+RB.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
+                        // $temp_popularReactions.find('.template').append('<div class="grid-'+gridNum+'"><span class="reaction-tag '+charCountModifier+'"><a href="/group/'+ANTsite.group.short_name+'/?s='+reaction.body+'" target="_blank">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span></div>'); 
                         $temp_popularReactions.find('.template').append('<span class="reaction-tag '+size+'"><a target="_blank" href="'+searchUrl+'?s='+reaction.body+'" class="'+charCountModifier+'">'+reaction.body+' <span class="counter">'+numberWithCommas(reaction.count)+'</span></a></span>'); 
                         itemNumber++;
                     });
@@ -426,39 +426,39 @@ function refSummary(referrers) {
             updateAll: function() {
             },
             simulate: function() {
-                var readrboardUsageData = {
+                var antennaUsageData = {
                     // sessions, pageviews, scroll, time
-                    // rb_last_30:[14984,2.55,58.1,'4:42'],
-                    // no_rb:[149510,1.56,58.55,'3:48']
+                    // ant_last_30:[14984,2.55,58.1,'4:42'],
+                    // no_ant:[149510,1.56,58.55,'3:48']
                     // sessions, pageviews, NO scroll, time
-                    rb_last_30:[14984,2.55,'4:42'],
-                    no_rb:[149510,1.56,'3:48']
+                    ant_last_30:[14984,2.55,'4:42'],
+                    no_ant:[149510,1.56,'3:48']
                 };
-                topSummary( readrboardUsageData );
+                topSummary( antennaUsageData );
             },
             setDates: function(){
 
                 var nowDate = moment().format("MM/DD/YY");
-                RB.analytics.startDate = RB.util.getHashValue('start') || nowDate;
-                RB.analytics.endDate = RB.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
+                ANTsite.analytics.startDate = ANTsite.util.getHashValue('start') || nowDate;
+                ANTsite.analytics.endDate = ANTsite.util.getHashValue('end') || moment().add('days',1).format("MM/DD/YY");
 
-                RB.analytics.jsStartDate = RB.analytics.startDate ? new Date(RB.analytics.startDate) : new Date();
-                RB.analytics.jsEndDate = RB.analytics.endDate ? new Date(RB.analytics.endDate) : new Date();
+                ANTsite.analytics.jsStartDate = ANTsite.analytics.startDate ? new Date(ANTsite.analytics.startDate) : new Date();
+                ANTsite.analytics.jsEndDate = ANTsite.analytics.endDate ? new Date(ANTsite.analytics.endDate) : new Date();
             }
 
         };
 
         $(function(){
 
-            RB.analytics.setDates();
+            ANTsite.analytics.setDates();
   
             // $('section[role="datepicker"] input' ).datepicker({ dateFormat: 'mm/dd/y' });
 
             var start_date = new Pikaday({ field: $('input[name="start_date"]')[0], format: 'MM/DD/YY' });
             var end_date = new Pikaday({ field: $('input[name="end_date"]')[0], format: 'MM/DD/YY' });
 
-            $('input[name="start_date"]').val( RB.analytics.startDate );
-            $('input[name="end_date"]').val( RB.analytics.endDate );
+            $('input[name="start_date"]').val( ANTsite.analytics.startDate );
+            $('input[name="end_date"]').val( ANTsite.analytics.endDate );
 
             
             // ***** DATE PICKER: re-enable soon.
@@ -467,16 +467,16 @@ function refSummary(referrers) {
             //     var startDate = $('input[name="start_date"]').val();
             //     var endDate = $('input[name="end_date"]').val();
                 
-            //     RB.util.setHashValue('start', startDate );
-            //     RB.util.setHashValue('end', endDate );
+            //     ANTsite.util.setHashValue('start', startDate );
+            //     ANTsite.util.setHashValue('end', endDate );
 
-            //     RB.analytics.updateAll();
+            //     ANTsite.analytics.updateAll();
             //     return false;
             // });
-// RB.group.id = 2352;
+// ANTsite.group.id = 2352;
 
             if ( $('.analyticsReport').length ) {
-                RB.analytics.initAnalytics();
+                ANTsite.analytics.initAnalytics();
             }
 
         });

@@ -93,7 +93,7 @@ $('#cards').addClass('user_profile');
                       <!-- <a rel="tooltip" title="Save to board" class="add_to_board" href="javascript:void(0);"><i class="fa fa-bookmark"></i></a> -->
                     
                       {% if cookie_user and ga_ids and interaction.page.site.group.id in ga_ids %}
-                      <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" class="circle_button" href="javascript:void(0);" onclick="RB.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="fa {% if interaction.approved %}fa-times{% else %}fa-check{% endif %}"></i></a>
+                      <a rel="tooltip" title="{% if interaction.approved %}Block this{% else %}Unblock this{% endif %}" class="circle_button" href="javascript:void(0);" onclick="ANTsite.admin.blockContent({{ interaction.id }});" id="moderate_{{ interaction.id }}"><i class="fa {% if interaction.approved %}fa-times{% else %}fa-check{% endif %}"></i></a>
                       {% endif %}
 
                             <!-- board add/delete ? -->
@@ -159,7 +159,7 @@ $('#cards').addClass('user_profile');
                               <div class="comment_body">{{ comment.interaction_node.body|linebreaksbr|escape }}</div>
                             </div>
                             {% if cookie_user and ga_ids and comment.page.site.group.id in ga_ids %}
-                            <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
+                            <div class="block_content"><a class="block_content" href="javascript:void(0);" onclick="ANTsite.admin.blockContent({{comment.id}});" id="moderate_{{comment.id}}">Block</a></div>
                             {% endif %}
                           </div>
                           {% endif %}
@@ -367,10 +367,10 @@ function writeCardButtons( $card ) {
     // if ( userCookie ) {
       // ADD A NEW REACTION
       $buttons.find('.me_too').click( function() {
-        RB.interactions.me_too( interaction_id );
+        ANTsite.interactions.me_too( interaction_id );
       });
       $buttons.find('.tag_remove').click( function() {
-        RB.interactions.delete_reaction( interaction_id );
+        ANTsite.interactions.delete_reaction( interaction_id );
       });
 
       // add a new reaction
@@ -401,13 +401,13 @@ function writeCardButtons( $card ) {
           },
           afterShow: function() {
             $('#new_reaction_button').click(function() {
-              RB.interactions.add_new_reaction( interaction_id, $('#new_reaction_text').val() );
+              ANTsite.interactions.add_new_reaction( interaction_id, $('#new_reaction_text').val() );
             });
           }
         });
         $obj.find('input').focus().keyup( function(event) {
           if (event.keyCode == '13') { //en
-            RB.interactions.add_new_reaction( interaction_id, $(this).val() );
+            ANTsite.interactions.add_new_reaction( interaction_id, $(this).val() );
           }
         });
       });
@@ -448,11 +448,11 @@ function writeCardButtons( $card ) {
           });
           $obj.find('input').focus().keyup( function(event) {
             if (event.keyCode == '13') { //en
-              RB.interactions.add_new_comment( interaction_id, $(this).val() );
+              ANTsite.interactions.add_new_comment( interaction_id, $(this).val() );
             }
           });
           $obj.find('#new_comment_button').click(function() {
-            RB.interactions.add_new_comment( interaction_id, $('#new_comment_text').val() );
+            ANTsite.interactions.add_new_comment( interaction_id, $('#new_comment_text').val() );
           });
         });
       } else {
@@ -493,15 +493,15 @@ function writeCardButtons( $card ) {
           $user_boards.append('<option value="'+board.id+'">'+board.title+'</option>');
         });
         $user_boards.append('<option value="" class="">----------</option>');
-        $user_boards.append('<option value="create" class="rdr_create_board">Create a new ReadrBoard</option>');
+        $user_boards.append('<option value="create" class="ant_create_board">Create a new Board</option>');
 
         $user_boards.change( function() {
             var $this = $(this).find(':checked');
             if ( !isNaN( parseInt($this.val()) ) ) {
-              RB.interactions.add_to_board(interaction_id, parseInt($this.val()), $this.text() );
+              ANTsite.interactions.add_to_board(interaction_id, parseInt($this.val()), $this.text() );
             } else if ( $this.val() == "create" ) {
                 // pop the board create form
-                RB.boardWindow = window.open(RDR_baseUrl+'/board_create/?popup=site&int_id='+interaction_id, 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
+                ANTsite.boardWindow = window.open(ANT_baseUrl+'/board_create/?popup=site&int_id='+interaction_id, 'readr_board_create','menubar=1,resizable=1,width=626,height=436');
             }
         });
 
@@ -518,7 +518,7 @@ function writeCardButtons( $card ) {
 
       // REMOVE FROM BOARD (only if board admin)
       $buttons.find('.delete_from_board').click( function() {
-        RB.interactions.remove_from_board(interaction_id, "{{ board.id }}" );
+        ANTsite.interactions.remove_from_board(interaction_id, "{{ board.id }}" );
       });
 
 
@@ -564,7 +564,7 @@ function writeCardButtons( $card ) {
 
 //     if ( interaction.moderator ) {
 //         $comment_container.append('<div class="block_content">'
-//           + '<a class="block_content" href="javascript:void(0);" onclick="RB.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
+//           + '<a class="block_content" href="javascript:void(0);" onclick="ANTsite.admin.blockContent('+comment.id+');" id="moderate_'+comment.id+'">Block</a>'
 //           + '</div>'
 //         );
 //     }
@@ -640,7 +640,7 @@ $(document).ready(function(){
 // $.each( metoos, function(interaction_id, count) {
 //   $('.interaction_'+interaction_id).find('.meta .avatar img').before('and <a href="javascript:void(0);">'+count+' more</a>')//chain
 //   .click( function() {
-//     RB.follow.agreed(interaction_id);
+//     ANTsite.follow.agreed(interaction_id);
 //   } );
 // });
 
@@ -649,15 +649,15 @@ $(document).ready(function(){
 {% if profile_user %}
   {% if not query_string %} 
   if (window.location.href.indexOf('follows') == -1 ){
-    RB.interactions.displayUserBoards({{ profile_user.id }});
+    ANTsite.interactions.displayUserBoards({{ profile_user.id }});
   } else {
-    RB.follow.following({{ profile_user.id }},1,["brd"]);
+    ANTsite.follow.following({{ profile_user.id }},1,["brd"]);
   }
   {% endif %}
 {%endif%}
 
 {% if query_string %}
-RB.interactions.searchBoards('{{query_string}}');
+ANTsite.interactions.searchBoards('{{query_string}}');
 {% endif %}
 
 </script>

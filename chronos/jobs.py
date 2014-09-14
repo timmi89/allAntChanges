@@ -2,7 +2,7 @@ import settings
 import httplib
 from django.core.cache import cache
 import traceback
-from readrboard.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict, getGlobalActivity
+from antenna.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict, getGlobalActivity
 import logging
 logger = logging.getLogger('rb.standard')
 

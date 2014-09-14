@@ -6,7 +6,7 @@
 
 <div class="rbSubtitle">
     <span>Setup:</span>&nbsp;
-    <span class="step1">(1) &nbsp;Log in to ReadrBoard</span>
+    <span class="step1">(1) &nbsp;Log in to Antenna</span>
     <span class="step2">(2) &nbsp;Register this site</span>
     <span class="step3">(3) &nbsp;You're done!</span>
 </div>
@@ -25,7 +25,7 @@
 
 
 {% block msgHeader %}
-  <h3>Please log in ReadrBoard to edit your settings.</h3>
+  <h3>Please log in Antenna to edit your settings.</h3>
 {% endblock msgHeader %}
  
     
@@ -33,11 +33,11 @@
     
     <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
       <div id="fb-login-button">
-        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); RDRAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
+        <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
       </div>
     </div>
     <div style="float:left;padding-left:6px;">
-      <a href="javascript:void(0);" onclick="RDRAuth.openRbLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
+      <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png"></a>
     </div>
     
     {% block signupButton %}
@@ -54,19 +54,19 @@
         <!-- no need to show this we'll approve the group when we approve the user's group_admin -->
         <!--
             <div class="loginMsg">
-                <b>Notice:</b> ReadrBoard needs to approve this website.  It should be approved shortly.
+                <b>Notice:</b> Antenna needs to approve this website.  It should be approved shortly.
             </div>
         -->
         {% endif  %}
         {% if user_not_admin %}
             <div class="loginMsg">
-                <b>Notice:</b> It seems that you are logged in, but you are not an administrator for this website.  Please log in as an administrator.  If you believe this account should be an administrator, please contact us at team@readrboard.com. 
+                <b>Notice:</b> It seems that you are logged in, but you are not an administrator for this website.  Please log in as an administrator.  If you believe this account should be an administrator, please contact us at team@antenna.is. 
             </div>
 
         {% endif %}
         {% if user_unapproved_admin %}
             <div class="loginMsg">
-                <b>Notice:</b> ReadrBoard needs to approve you as an administrator for this website.  You will receive a confirmation email shortly.  Please reload this page upon appoval.  Thanks!
+                <b>Notice:</b> Antenna needs to approve you as an administrator for this website.  You will receive a confirmation email shortly.  Please reload this page upon appoval.  Thanks!
             </div>
         {% endif %}
 
@@ -85,9 +85,9 @@
 {% block pageJS %}
 
     <script>
-        RDR_offline = document.domain == "local.readrboard.com";
-        RDR_baseUrl = ( RDR_offline ) ? "//local.readrboard.com:8081":"//www.readrboard.com";
-        RDR_staticUrl = ( RDR_offline ) ? httpProtocol+"//local.readrboard.com:8081/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";        
+        ANT_offline = document.domain == "local.antenna.is";
+        ANT_baseUrl = ( ANT_offline ) ? "//local.antenna.is:8081":"//www.antenna.is";
+        ANT_staticUrl = ( ANT_offline ) ? httpProtocol+"//local.antenna.is:8081/static/":httpProtocol+"//s3.amazonaws.com/readrboard/";        
         
 
         var wordpressEditUrl = '/wordpress_edit/';
@@ -105,8 +105,8 @@
             var properties = 'menubar=1,scrollbars=yes,resizable=1,width='+w+',height='+h+',top='+t+',left='+l;
 
             window.open(
-                RDR_baseUrl+'/user_create/',
-                'readr_create_user',
+                ANT_baseUrl+'/user_create/',
+                'ant_create_user',
                 properties
             );
             window.close();
@@ -120,9 +120,9 @@
 
         $(function(){
 
-            //quick hack to get the user info showing up.  I believe we need to undo the kludge in readr_user.js to undo this.
-            RDRAuth.returnUser();
-            if (RDRAuth.rdr_user && RDRAuth.rdr_user.user_id){
+            //quick hack to get the user info showing up.  I believe we need to undo the kludge in ant_user.js to undo this.
+            ANTAuth.returnUser();
+            if (ANTAuth.ant_user && ANTAuth.ant_user.user_id){
                 $('#logged-in').show().css('visibility','visible');
                 $('#logged-out').hide().css('visibility','hidden');
             }else{

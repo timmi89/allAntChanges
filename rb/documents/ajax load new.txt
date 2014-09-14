@@ -1,6 +1,6 @@
 Objects:
 sent: 
-GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrboard.com&_=1317393836969
+GET http://local.antenna.is:8080/api/settings/22...9&host_name=local.antenna.is&_=1317393836969
 	<group>
 	{
         "img_whitelist": "", 
@@ -20,7 +20,7 @@ GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrbo
         "name": "Racialicious"
 	}
 
-http://local.readrboard.com:8080/api/page/?
+http://local.antenna.is:8080/api/page/?
 	pages: [
 		{
             "topshares": [?], 
@@ -56,7 +56,7 @@ http://local.readrboard.com:8080/api/page/?
 /****************  ON HOVER: *****************/
 
 //hover over text indicator
-http://local.readrboard.com:8080/api/summary/container/content/?
+http://local.antenna.is:8080/api/summary/container/content/?
 	content_nodes: {
 		id: {
 			body
@@ -70,7 +70,7 @@ http://local.readrboard.com:8080/api/summary/container/content/?
 	}
 
 - When we hover over an image or video or hilite text that is not blacklisted:
-	we call http://local.readrboard.com:8080/api/summary/containers/
+	we call http://local.antenna.is:8080/api/summary/containers/
 	and we get back: 
 	jQuery16207673360780798286_1317566863937({
 	    "status": "success", 
@@ -136,7 +136,7 @@ containers: {
 /*****************************************************************************************************************************/
 
 /******** Detailed Page Calls: ********/
-GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrboard.com&_=1317393836969
+GET http://local.antenna.is:8080/api/settings/22...9&host_name=local.antenna.is&_=1317393836969
 
 	jQuery16208937058639921232_1317393836549({
 	    "status": "success", 
@@ -164,7 +164,7 @@ GET http://local.readrboard.com:8080/api/settings/22...9&host_name=local.readrbo
 	    }
 	})
 
-http://local.readrboard.com:8080/api/page/
+http://local.antenna.is:8080/api/page/
 	
 	jQuery16208937058639921232_1317393836550({
 	    "status": "success", 
@@ -242,10 +242,10 @@ http://local.readrboard.com:8080/api/page/
 	    ]
 	})
 
-GET http://local.readrboard.com:8080/api/summary/con...7201edc6c1c3f1386410da7%22%5D%7D&_=1317393838588	
-GET http://local.readrboard.com:8080/api/summary/con...942aa753ee3c45a4efb29e8%22%5D%7D&_=1317393838877
+GET http://local.antenna.is:8080/api/summary/con...7201edc6c1c3f1386410da7%22%5D%7D&_=1317393838588	
+GET http://local.antenna.is:8080/api/summary/con...942aa753ee3c45a4efb29e8%22%5D%7D&_=1317393838877
 ...
-GET http://local.readrboard.com:8080/api/summary/con...3cf33b3606873bbc56b6162%22%5D%7D&_=1317393116010
+GET http://local.antenna.is:8080/api/summary/con...3cf33b3606873bbc56b6162%22%5D%7D&_=1317393116010
 	
 	jQuery16204279832368735369_1317393114340({
 	    "status": "success", 
