@@ -1685,7 +1685,7 @@ function antenna($A){
                                             var strBottom = $helper.offset().bottom;
                                             $helper.remove();
                                             coords.left = strRight - 14; //with a little padding
-                                            coords.top = strBottom + 23;
+                                            coords.top = strBottom + 2;
                                         }
                                     }
 
@@ -2311,7 +2311,7 @@ function antenna($A){
                     img:  _getMediaCoords, //function below (yeah this is a little weird, make nicer later)
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
-                        top: coords.top + 8,  // text actionbar offset.  used to be -33.  tried moving down per CM's feedback at FastCo
+                        top: coords.top - 40,  // text actionbar offset.  used to be -33.  tried moving down per CM's feedback at FastCo
                         left: coords.left + 3
                     }
                 };
@@ -2338,68 +2338,58 @@ function antenna($A){
                 }
                 $new_actionbar.data('hash',hash);
                 
-                $new_actionbar.append('<ul/>');
-
-                var items = [
-                    {
-                        "item":"reaction",
-                        "tipText":ANT.t('main_cta'),
-                        "onclick":function(){
-                            ANT.aWindow.make( 'writeMode', {
-                                "hash": hash,
-                                "kind": kind,
-                                "content": content,
-                                "src_with_path":src_with_path
-                            });
-                        }
-                    }//,
-                    /*
-                    {
-                        "item":"bookmark",
-                        "tipText":"Remember this",
-                        "onclick":function(){
-                            ANT.aWindow.make( 'writeMode', {
-                                "hash": hash,
-                                "kind": kind,
-                                "content": content,
-                                "src_with_path":src_with_path,
-                                "actionType":"bookmark"
-                            });
-                        }
-                    }
-                    */
-                ];
-                // ANT.events.track( 'show_action_bar::'+content );
-
-                // not sure this is valuable and it adds network chatter
-                // ANT.events.trackEventToCloud({
-                //     // category: "actonbar",
-                //     // action: "actionbar_shown",
-                //     // opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
-                //     event_type: 'actionbar',
-                //     event_value: 'show',
-                //     container_hash: hash,
-                //     container_kind: kind,
-                //     page_id: page_id
-                // });
-                $.each( items, function(idx, val){
-                    var $item = $('<li class="ant_icon_' +val.item+ '" />'),
-                    $indicatorAnchor = $(
-                        '<a href="javascript:void(0);" class="ant_tooltip_this" title="'+val.tipText+'">'+
-                            '<span class="ant ant_react_icon">'+val.item+'</span>'+
+                var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this" title="'+ANT.t('main_cta')+'">'+
+                            '<span class="icon ant-antenna-logo"></span>'+
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
+                            '<div class="ant_down_arrow"></div>'+
                             '<div class="ant_clear"></div>'+
-                        '</a>'
-                    );
-                    
-                    $indicatorAnchor.click(function(){
-                        val.onclick();
-                        return false;
+                        '</a>').on('click', function() {
+                    ANT.aWindow.make( 'writeMode', {
+                        "hash": hash,
+                        "kind": kind,
+                        "content": content,
+                        "src_with_path":src_with_path
                     });
-                    $item.addClass('ant_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
+                });
+                // var items = [
+                //     {
+                //         "item":"reaction",
+                //         "tipText":ANT.t('main_cta'),
+                //         "onclick":function(){
+                //             ANT.aWindow.make( 'writeMode', {
+                //                 "hash": hash,
+                //                 "kind": kind,
+                //                 "content": content,
+                //                 "src_with_path":src_with_path
+                //             });
+                //         }
+                //     }
+                // ];
+                
+                // $.each( items, function(idx, val){
+                //     var $item = $('<li class="ant_icon_' +val.item+ '" />'),
+                //     $indicatorAnchor = $(
+                        
+                //     );
+                    
+                //     $indicatorAnchor.click(function(){
+                //         val.onclick();
+                //         return false;
+                //     });
+                //     $item.addClass('ant_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
+                // });
+                $new_actionbar.append( $action ).on('mouseenter', function() {
+                    setTimeout(function() {
+                        $new_actionbar.addClass('ant_hover');
+                    }, 500);
+                }).on('mouseleave', function() {
+                    $new_actionbar.removeClass('ant_hover');
                 });
                 $('#ant_sandbox').append( $new_actionbar );
-                // $('a.ant_tooltip_this').tooltip({});
+                setTimeout(function() {
+                    $new_actionbar.addClass('show');
+                }, 10);
+
 
                 if(kind == "img" || kind == "media" || kind == "med" ){
                     $new_actionbar.addClass('ant_actionbar_for_media');
@@ -2430,22 +2420,19 @@ function antenna($A){
 
             },
             close: function($actionbars, effect){
+                /*debug*/
+                // return;
                 //ANT.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
                         hash = $actionbar.data('hash'),
                         $containerTracker = $('#ant_container_tracker_'+hash);
 
-                    if(typeof effect !== "undefined"){ //quick hack to signal fade effect
-                        //make more robust if we want more animations
-                        //I wanted to combine these into one animation, but jquery didn't like that.
-                        $actionbar.fadeOut(200);
-                    }
-                    else{
+                    $actionbar.removeClass('show');
+                    setTimeout(function() {
                         cleanup($actionbar, hash);
+                    }, 200);
 
-                        var $indicator = $('#ant_indicator_'+hash);
-                    }
                 });
 
                 //helper function

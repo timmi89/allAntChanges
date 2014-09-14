@@ -115,19 +115,53 @@ div.ant.ant_window.w600 { width:600px; }
 
 /* the action bar */
 div.ant_actionbar {
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) );
-    background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
-    padding:0;
-    font:normal 12px Arial, sans-serif;
+    background: #464646;
+    padding:8px 8px 6px 8px;
+    border-radius:8px;
+    font:normal 12px Helvetica, Arial, sans-serif;
     position:relative;
     z-index:11000;
-    /*height:22px;*/
     position:absolute;
+
+    opacity: 0.0;
+    transform: scale(0.5) translate3d(-50%,100%,0);
+    transition: transform 200ms ease, opacity 200ms ease;
+
 }
 
-div.ant_actionbar ul {
+div.ant_actionbar.show {
+  opacity: 1.0;
+  transform: scale(1.0) translate3d(0,0,0);
+}
+
+div.ant_actionbar .ant_tooltip_this {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  max-width:19px;
+  height:20px;
+  width:auto;
+  overflow:hidden;
+  transition: max-width 0.25s;
+}
+/*div.ant_actionbar .ant.ant_tooltip_this:hover,*/
+div.ant_actionbar.ant_hover .ant_tooltip_this {
+  max-width:150px;
+  transition: max-width 0.25s;
+}
+div.ant_actionbar .icon.ant-antenna-logo {
+  font-size:18px;
+  vertical-align: middle;
+}
+div.ant_actionbar .ant.ant_react_label {
+  font-size:12px;
+  color:#ccc;
+  white-space: nowrap;
+}
+
+/*div.ant_actionbar ul {
     margin:0;
-    float: left; /*do this for the ant_indicator_for_media*/
+    float: left; 
 }
 div.ant_actionbar li {
     display:inline-block;
@@ -135,16 +169,16 @@ div.ant_actionbar li {
     list-style: none;
     background: none;
     padding: 0;
-}
+}*/
 
-div.ant_actionbar li a span.ant_react_icon {
+/*div.ant_actionbar li a span.ant_react_icon {
     background:url("../images/readr_icons.png") no-repeat 3px 3px transparent;
     display:block;
     height:22px;
     width:23px;
     text-indent:-9999px;
     float:left;
-}
+}*/
 span.ant_react_label {
   /*font-size:12px;*/
   /*font-weight:bold;*/
