@@ -152,6 +152,11 @@ div.ant_actionbar.ant_hover .ant_tooltip_this {
 div.ant_actionbar .icon.ant-antenna-logo {
   font-size:18px;
   vertical-align: middle;
+  margin-right: 3px;
+  transition: color 500ms;
+}
+div.ant_actionbar:hover .icon.ant-antenna-logo {
+  color:#fff;
 }
 div.ant_actionbar .ant.ant_react_label {
   font-size:12px;
