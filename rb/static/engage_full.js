@@ -2358,10 +2358,9 @@ function antenna($A){
 
                 // HOVERTIMER
                 $new_actionbar.append( $action ).on('mouseenter', function() {
-                    setTimeout(function() {
-                        $new_actionbar.addClass('ant_hover');
-                    }, 500);
+                    ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
                 }).on('mouseleave', function() {
+                    ANT.util.clearFunctionTimer();
                     $new_actionbar.removeClass('ant_hover');
                     // also kill the timer and prevent the aWindow from showing
                 });
@@ -2556,10 +2555,25 @@ function antenna($A){
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
+            clearFunctionTimer: function() {
+                // ANT.util.clearFunctionTimer
+                clearInterval($.data(this, 'ant_functionTimer'));
+            },
+            setFunctionTimer: function(callback, time) {
+                // ANT.util.setFunctionTimer
+                ANT.util.clearFunctionTimer();
+                if (!time) { time = 300};
+                if (typeof callback != 'undefined') {
+                    $.data(this, 'ant_functionTimer', setTimeout(function() {
+                        callback();
+                    }, time));
+                }
+            },
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
             setWindowInterval: function () {
+                // ANT.util.setWindowInterval
                 $.data(this, 'ant_intervalTimer', setInterval(function() {
                     if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
                 }, 1000));
@@ -7151,15 +7165,18 @@ if ( sendData.kind=="page" ) {
                         // HOVERTIMER
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover', function(){
-                                setTimeout(function() {
+                                ANT.util.setFunctionTimer( function() {
                                     if( $indicator.data('isZeroCountIndicator') ){
                                         _updateRindowForHelperIndicator();
                                     } else {
                                         _makeRindow();
                                     }
-                                }, 333);
+                                } , 333);
+
+
                             }).on('mouseleave', function() {
                                 // kill the timer and prevent the aWindow from showing
+                                ANT.util.clearFunctionTimer();
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
