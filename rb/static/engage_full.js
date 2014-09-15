@@ -2338,7 +2338,7 @@ function antenna($A){
                 }
                 $new_actionbar.data('hash',hash);
                 
-                var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this" title="'+ANT.t('main_cta')+'">'+
+                var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this">'+
                             '<span class="icon ant-antenna-logo"></span>'+
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
                             '<div class="ant_down_arrow"></div>'+
@@ -2351,39 +2351,15 @@ function antenna($A){
                         "src_with_path":src_with_path
                     });
                 });
-                // var items = [
-                //     {
-                //         "item":"reaction",
-                //         "tipText":ANT.t('main_cta'),
-                //         "onclick":function(){
-                //             ANT.aWindow.make( 'writeMode', {
-                //                 "hash": hash,
-                //                 "kind": kind,
-                //                 "content": content,
-                //                 "src_with_path":src_with_path
-                //             });
-                //         }
-                //     }
-                // ];
-                
-                // $.each( items, function(idx, val){
-                //     var $item = $('<li class="ant_icon_' +val.item+ '" />'),
-                //     $indicatorAnchor = $(
-                        
-                //     );
-                    
-                //     $indicatorAnchor.click(function(){
-                //         val.onclick();
-                //         return false;
-                //     });
-                //     $item.addClass('ant_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
-                // });
+
+                // HOVERTIMER
                 $new_actionbar.append( $action ).on('mouseenter', function() {
                     setTimeout(function() {
                         $new_actionbar.addClass('ant_hover');
                     }, 500);
                 }).on('mouseleave', function() {
                     $new_actionbar.removeClass('ant_hover');
+                    // also kill the timer and prevent the aWindow from showing
                 });
                 $('#ant_sandbox').append( $new_actionbar );
                 setTimeout(function() {
@@ -7168,13 +7144,14 @@ if ( sendData.kind=="page" ) {
 
 
                     function _setupHoverForShowRindow(){
+                        // HOVERTIMER
                         if (!isTouchBrowser) {
-                            $indicator.on('mouseover.showRindow', function(){
-                                _makeRindow();
-                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
-                                if( hasHelper ){
-                                    // ANT.events.track('paragraph_helper_engage');
-                                }
+                            $indicator.on('mouseover', function(){
+                                setTimeout(function() {
+                                    _makeRindow();
+                                }, 333);
+                            }).on('mouseleave', function() {
+                                // kill the timer and prevent the aWindow from showing
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
