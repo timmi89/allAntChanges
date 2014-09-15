@@ -107,7 +107,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            src.indexOf('antenna') != -1 &&
+            src.indexOf('readrboard') != -1 &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
