@@ -1177,12 +1177,12 @@ function antenna($A){
                                 'data-tag_count="'+tagCount+'" '+
                                 'data-parent_id="'+parent_id+'" '+
                                 'data-content_node_id="'+content_node_id+'" '+
-                            '>'+
+                            '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
                                 tagBodyCrazyHtml+
                                 notWriteModeHtml+
                                 plusOneCTA+
                             '</div>'+
-                        '</div>';
+                        '</div></div></div>';
 
                     
                     var $tagBox = $(tagBoxHTML);
@@ -1460,7 +1460,7 @@ function antenna($A){
                     if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
                         var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" title="view comments"></span>');
 
-                        $commentHover.append( '<i class="ant_icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="ant-comment"></i> '+num_comments );
                         
                         if(isTouchBrowser){
                             $commentHover.bind('tap', function() {
@@ -10434,7 +10434,8 @@ function $AFunctions($A){
 
                 $summary_widget.append(
                     '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
-                        '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
+                        '<span class="ant-antenna-logo"></span>'+
+                        // '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
                 );
 

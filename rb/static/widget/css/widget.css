@@ -1044,41 +1044,17 @@ div.ant.ant-summary {
   padding: 0px 0px 0px 8px;
   height:30px;
   /*fallback*/
-  background: #fff;
-  /*border-top:3px solid #989898;*/
-  /*border-bottom:3px solid #989898;*/
-  /*
-  background: -moz-linear-gradient(
-    top,
-    #ffffff,
-    #eeeeee);
-  background: -webkit-gradient(
-    linear, left top, left bottom, 
-    from(#ffffff),
-    to(#eeeeee));
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  border: 0px solid #c9c9c9;
-    */
+  /*background: #fff;*/
   -moz-box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
+    0px 0px 3px rgba(000,000,000,0.3);
   -webkit-box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
+    0px 0px 3px rgba(000,000,000,0.3);
   box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
-  /*text-shadow:
-    0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1);*/
-  /*without this, the text was jumping down on first load before the styles are cached*/
-  min-width: 114px;
+    0px 0px 3px rgba(000,000,000,0.3);
 
 }
 
-div.ant.ant-summary:hover {
+/*div.ant.ant-summary:hover {*/
   /*background:#fff;*/
   /*background: -moz-linear-gradient(
     top,
@@ -1088,7 +1064,7 @@ div.ant.ant-summary:hover {
     linear, left top, left bottom, 
     from(#ffffff),
     to(#e5f5ff));*/
-}
+/*}*/
 div.ant_shareWidget div.ant.ant-summary {
     border:1px solid #ccc;
 }
@@ -1114,6 +1090,7 @@ div.ant.ant-summary .ant_chevron_cta i {
 */
 div.ant.ant-summary a.ant_logo {
   display: inline-block;
+  margin-right:5px;
 }
 
 /*blunt attack for now*/
@@ -1227,7 +1204,7 @@ div.ant.ant-summary a.ant_reactions_label {
   font-size:14px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
-  padding:10px 0 0;
+  padding:10px 10px 0 0;
   text-decoration:none;
   /*position: relative;
   top: 1px;*/
@@ -2341,16 +2318,16 @@ div.ant div.ant_body.ant_tags_list.ant_grid div.ant_box.ant_animated .ant_commen
 div.ant div.ant_body.ant_tags_list.ant_grid div.ant_tag { margin-top:-125%;}
 div.ant div.ant_body.ant_tags_list.ant_grid div.ant_box.ant_animated div.ant_tag { margin-top:0%;}
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag.ant_tag_split {font-size:18px;}
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:28px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag.ant_tag_split {font-size:14px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:24px;}
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_read_icon,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne {
-    position: absolute;
-    width: 100%;
-    top: 43%;
-    margin-top: 0.5em;
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*top: 43%;*/
+    /*margin-top: 0.5em;*/
     font-weight:100;
     /*using transform so we can match the font-size to the count and use the margin-top in ems*/
     -webkit-transform: scale(0.7, 0.7);
@@ -2364,36 +2341,40 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count {
     opacity: 0.60;
     filter: alpha(opacity=60);
     display: block;
-    position: absolute;
+    position: static;
+    margin:0 0 -10% 0;
+    font-weight:bold;
+    font-size: 15px;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne{
     display: none;  
-    font-size: 1em;
+    font-size: 15px;
+    margin:0 0 -10% 0;
 }
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_tag_read_icon,
+/*div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_tag_read_icon,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_plusOne {
-  margin-top: 1em;
+  margin-top: 0.75em;
 }
-
+*/
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_big {
   width:200px;
   /*tag_height_double*/
-  height:140px;
+  height:120px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium {
   width:100px;
   /*tag_height_double*/
-  height:140px;
+  height:120px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small {
   width:100px;
   /*tag_height*/
-  height:70px;
+  height:60px;
   padding: 0;
 }
 
@@ -2431,21 +2412,31 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_container .ant_box{
 }
 
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap {
     position: absolute !important;
     width: 100% !important;
-    top: 40% !important;
-    margin-top: -0.5em !important;
+    height: 100% !important;
+    display: table;
+}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap .ant_tag_wrap2 {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
+    /*top: 40% !important;*/
+    /*margin-top: -0.5em !important;*/
     text-align: center;
     font-weight:normal;
+    font-weight: bold;
 }
 div.ant.ant_readmode div.ant_body.ant_tags_list.ant_grid .ant_tag_split .ant_tag_body{
-    margin-top: -1em !important;
+    /*margin-top: -1em !important;*/
 }
 
 
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background:rgba(132,184,239,0.95); 
+/*div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
+    background-color:rgba(142, 193, 232, 0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
@@ -2453,35 +2444,77 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background-color:rgba(52, 140, 156, 0.95); 
+    background:rgba(131,176,213,0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
-    color:#2f5e69;
+    color:#446483;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(215, 243, 96, 0.95); 
+    background-color:rgba(153, 202, 241, 0.9); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
-    color:#8d9742;
+    color:#446483;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:rgba(157,213,94,0.95); 
+    background:rgba(172, 212, 240,0.9); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
-    color:#6e8f3b;
+    color:#446483;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background:rgba(82, 149, 182, 0.95);
+    background:rgba(195, 221, 241, 0.9);
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
-    color:#415d6b;
+    color:#446483;
+}*/
+
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
+    background-color:rgba(108, 159, 208, 0.95); 
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
+    color:#18446f;
+}
+
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
+    background:rgba(238,244,249,0.95); 
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
+    color:#6c9fd0;
+}
+
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
+    background-color:rgba(70, 88, 122, 0.9); 
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
+    color:#b4cfe7;
+}
+
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
+    background:rgba(180, 207, 230,0.9); 
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
+    color:#46597a;
+}
+
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
+    background:rgba(229, 170, 156, 0.9);
+    /*background:rgba(229, 140, 121, 0.9);*/
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
+    color:#8c6961;
+    /*color:#8c4637;*/
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover { 
@@ -2552,10 +2585,11 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box span.ant_comment_hover {
     color:#fff;
     bottom: 0;
     right: 0;
-    padding: 5px 8px;
+    padding: 2px 5px;
     opacity: 0.80;
     filter: alpha(opacity=80);
     z-index: 2;
+    vertical-align: top;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover span.ant_comment_hover,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover span.ant_comment_hover i { 
@@ -2613,20 +2647,20 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCou
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small  { font-size:12px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount1,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount2,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount3 { font-size:26px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount4 { font-size:24px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount5 { font-size:22px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount3 { font-size:24px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount4 { font-size:22px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount5 { font-size:20px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount6,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount7 { font-size:20px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount7 { font-size:18px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount8,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount9 { font-size:18px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount9 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount10,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount11 { font-size:18px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount11 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount12,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:16px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:14px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount14,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount15,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount16 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount16 { font-size:12px; }
 
 
 /******** ant_horizontal_bars **********/
