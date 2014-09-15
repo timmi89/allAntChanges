@@ -688,7 +688,7 @@ function antenna($A){
                 
                 // panelEvent - panelhide
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
-console.log('makeTagsListForInline 3');
+
                 var isWriteMode = $aWindow.hasClass('ant_writemode'),
                     $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, isWriteMode );
                 
@@ -1809,7 +1809,7 @@ console.log('makeTagsListForInline 3');
                         if($oldTagList.length){
                             $oldTagList.remove();
                         }
-console.log('makeTagsListForInline 4');
+
                         // write inline tags: initial aWindow instantiation
                         if ( settings.is_page == true ) {
                             var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
@@ -1879,13 +1879,16 @@ console.log('makeTagsListForInline 4');
 
                 var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
 
-                // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
-                setTimeout(function() {
-                    $aWindow.addClass('ant_show');
-                }, 1);
+                if (typeof $aWindow != 'undefined') {
+
+                    // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
+                    setTimeout(function() {
+                        $aWindow.addClass('ant_show');
+                    }, 1);
                 
-                // return $aWindow to whatever called ANT.aWindow.make
-                return $aWindow;
+                    // return $aWindow to whatever called ANT.aWindow.make
+                    return $aWindow;
+                }
 
             },
             draw: function(options) {
@@ -2343,19 +2346,15 @@ console.log('makeTagsListForInline 4');
                 }
                 $new_actionbar.data('hash',hash);
                 
+                var clickAction = (settings.clickAction) ? settings.clickAction : function() { ANT.aWindow.make( 'writeMode', { "hash": hash, "kind": kind, "content": content, "src_with_path":src_with_path }); };
                 var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this">'+
                             '<span class="icon ant-antenna-logo"></span>'+
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
                             '<div class="ant_down_arrow"></div>'+
                             '<div class="ant_clear"></div>'+
-                        '</a>').on('click', function() {
-                    ANT.aWindow.make( 'writeMode', {
-                        "hash": hash,
-                        "kind": kind,
-                        "content": content,
-                        "src_with_path":src_with_path
-                    });
-                });
+                        '</a>').on('click', clickAction );
+
+
 
                 // HOVERTIMER
                 $new_actionbar.append( $action ).on('mouseenter', function() {
@@ -7153,7 +7152,11 @@ if ( sendData.kind=="page" ) {
                         if (!isTouchBrowser) {
                             $indicator.on('mouseover', function(){
                                 setTimeout(function() {
-                                    _makeRindow();
+                                    if( $indicator.data('isZeroCountIndicator') ){
+                                        _updateRindowForHelperIndicator();
+                                    } else {
+                                        _makeRindow();
+                                    }
                                 }, 333);
                             }).on('mouseleave', function() {
                                 // kill the timer and prevent the aWindow from showing
@@ -7200,8 +7203,8 @@ if ( sendData.kind=="page" ) {
                         $indicator.$aWindow = $aWindow;
                         
                         //these should probably be moved under tagMode.make (called by aWindow.make) where the image tracking lives.
-                        if( $indicator.data('isZeroCountIndicator') ){
-                            _updateRindowForHelperIndicator();
+                        // if( $indicator.data('isZeroCountIndicator') ){
+                        //     _updateRindowForHelperIndicator();
 
                             // ANT.events.track('paragraph_helper_show');
 
@@ -7216,7 +7219,7 @@ if ( sendData.kind=="page" ) {
                             //     container_kind: "text",
                             //     page_id: page_id
                             // });
-                        }else{
+                        // }else{
                             // ANT.events.track( 'view_node::'+hash, hash );
                             ANT.events.trackEventToCloud({
                                 // category: "engage",
@@ -7228,26 +7231,48 @@ if ( sendData.kind=="page" ) {
                                 container_kind: "text",
                                 page_id: page_id
                             });
-                        }
+                        // }
 
                     }
                     function _updateRindowForHelperIndicator(){
-                        var $aWindow = $indicator.$aWindow;
-                        var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
-                        $aWindow.addClass('ant_helper_aWindow');
-                        $aWindow.find('.ant_header').replaceWith($header);
-                        // $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
-                        $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
-                        $aWindowBody.html('');
-                        $aWindow.find('div.ant_body_wrap').append($aWindowBody);
-                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
-                        $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
-                            $aWindow.remove();
+                        var actionbarCoords = {
+                            top: $indicator.offset().top+36,
+                            left: $indicator.offset().left
+                        };
+
+                        var clickAction = function() {
+                            // $aWindow.remove();
                             var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
                             $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                        };
+
+                        var $actionbar = ANT.actionbar.draw({
+                            coords:actionbarCoords,
+                            kind:"text",
+                            // content:selected.text,
+                            hash:hash,
+                            clickAction:clickAction
                         });
+
+
+                        // var $aWindow = $indicator.$aWindow;
+                        // var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
+                        // $aWindow.addClass('ant_helper_aWindow');
+                        // $aWindow.find('.ant_header').replaceWith($header);
+                        // // $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
+                        // $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
+                        // $aWindowBody.html('');
+                        // $aWindow.find('div.ant_body_wrap').append($aWindowBody);
+                        // ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
+                        // $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                        //     $aWindow.remove();
+                        //     var $container = $('[ant-hash="'+hash+'"]');
+                        //     var el = $container[0]
+                        //     $('document').selog('selectEl', el);
+                        //     $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                        // });
 
                         // ANT.aWindow.updateSizes(
                         //     $aWindow, {
@@ -7720,7 +7745,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             var $aWindow = $indicator_details;
-                            console.log('makeTagsListForInline 1');
+
                             var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
 
                             $bodyWrap.append($tagsListContainer);
@@ -8903,7 +8928,6 @@ if ( sendData.kind=="page" ) {
                         $().selog('hilite', selState, 'on');
                     }
 
-                    console.log('makeTagsListForInline 2');
                     var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
