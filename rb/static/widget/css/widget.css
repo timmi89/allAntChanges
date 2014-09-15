@@ -239,6 +239,7 @@ div.ant_actionbar_for_media li {
 }
 
 div.ant_about {
+  display: none !important;
   cursor:pointer;
   background: url(../images/readr_icons.png) -93px 0px no-repeat #fff;
   float: right;
@@ -552,6 +553,19 @@ div.ant div.ant_footer {
     -o-box-sizing : border-box;
     box-sizing : border-box;
 }
+div.ant div.ant_footer .antenna-logo-link {
+  display: block;
+  height: 40px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  z-index: -1;
+  margin-top: -16px;
+}
+div.ant div.ant_footer .antenna-logo-link span {
+  color:#ccc;
+  font-size: 50px !important;
+}
 div.ant div.ant_footer em {
   display:block;
   padding:11px 0;
@@ -583,7 +597,7 @@ div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
     content: "";
     width: 0;
     height: 0;
-    right: -8px;
+    right: -6px;
     top: 8px;
     border-top: 4px solid #666;
     border-left: 4px solid transparent;
@@ -591,9 +605,9 @@ div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
     border-bottom: 4px solid transparent;
     z-index: 101;
 }
-div.ant div.ant_footer.ant_cta .ant_cta_msg:hover:after{
+/*div.ant div.ant_footer.ant_cta .ant_cta_msg:hover:after{
     border-top-color: #008be4;
-}
+}*/
 
 div.ant div.ant_footer.ant_cta span:hover {
   color:#008be4;
@@ -633,7 +647,7 @@ div.ant div.ant_body div.jspDrag    {
 }
 
 div.ant div.ant_header h1 {
- font-size:14px;
+ font-size:13px;
  color:#8fb3f2;
  clear:none;
  margin-left:10px;
@@ -1502,9 +1516,9 @@ div#ant-page-summary.defaultSummaryBar .ant-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 .ant_widget{
-    -moz-box-shadow:0 2px 6px #ccc;
-    -webkit-box-shadow:0 2px 6px #ccc;
-    box-shadow:0 2px 6px #ccc;
+    -moz-box-shadow:0 2px 6px #aaa;
+    -webkit-box-shadow:0 2px 6px #aaa;
+    box-shadow:0 2px 6px #aaa;
 }
 
 /*shareWidget*/
@@ -1732,7 +1746,8 @@ div.ant_indicator {
     z-index:11000;
     text-decoration:none;
     border:none;
-    cursor:default;
+    /*cursor:default;*/
+    cursor: wait;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -2129,13 +2144,12 @@ div.ant_container_tracker{
 }
 
 /*the only divs here will be the border elements*/
+/*
 div.ant_media_border_wrap div{
     position:absolute;
 }
 
 div.ant_media_border_wrap.engaged{
-    /*uncomment to turn on media hilites*/    
-    /*hiding....*/
     display: none;
 }
 
@@ -2201,7 +2215,7 @@ div.ant_mediaHilite_left{
     -moz-box-shadow: 0px 0 6px 1px #008BE4;
     box-shadow: 0px 0 6px 1px #008BE4;
     border:none;
-}
+}*/
 /* hiding the wrapper*/
 /*.ant_media_border_wrap div {display:none;}*/
 /*hiliteDesignEdit*/
@@ -2502,13 +2516,13 @@ div.ant div.ant_footer .ant_click_overlay{
     cursor: pointer;
     position: absolute;
     top: 0;
-    height: 100%;
+    height: 35px;
     width: 100%;
     background: none;
 }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:14px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; background:transparent; }
-div.ant div.ant_footer:hover .ant_box .ant_custom_tag input { color:#008be4; }
+div.ant div.ant_footer .ant_box:hover .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   position: absolute;

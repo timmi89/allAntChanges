@@ -590,7 +590,7 @@ function antenna($A){
                 //ANT.aWindow.updateFooter:
                 var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
-                if ( typeof $content != "undefined" ) $footer.html( $content );
+                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="icon ant-antenna-text"></span></a>' );
                 
                 //todo: examine resize
                 // ANT.aWindow.updateSizes( $aWindow );
@@ -1502,7 +1502,7 @@ function antenna($A){
                 // think we don't need $container or actionType
 
                 var $container = $aWindow.find('.ant_footer');
-                $container.append( '<div class="ant_box"></div> ');
+                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="icon ant-antenna-text"></span></a>');
 
                 if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
@@ -9963,7 +9963,6 @@ function $AFunctions($A){
     var css = [];
 
     if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
-        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
         css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
     if ( $A.browser.msie ) {
