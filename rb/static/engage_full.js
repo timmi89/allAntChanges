@@ -4207,7 +4207,7 @@ function antenna($A){
                                         if( $this.hasClass('ant_live_hover') ){
                                             if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
                                                 // $('#ant_indicator_' + hash).show();
-                                                $('#ant_indicator_' + hash).toggleClass('ant_visible');
+                                                $('#ant_indicator_' + hash).addClass('ant_visible');
                                             }
                                         }
                                     });
@@ -4222,7 +4222,7 @@ function antenna($A){
                                     
                                     $this.addClass('ant_live_hover');
                                     if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                        $('#ant_indicator_' + hash).toggleClass('ant_visible');
+                                        $('#ant_indicator_' + hash).addClass('ant_visible');
 
                                         // $('#ant_indicator_' + hash).show();
                                         // ANT.actions.indicators.utils.borderHilites.engage(hash);
@@ -4241,7 +4241,7 @@ function antenna($A){
                             if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
-                            $('#ant_indicator_' + hash).toggleClass('ant_visible');
+                            $('#ant_indicator_' + hash).removeClass('ant_visible');
                     });
                 }
 
@@ -7662,14 +7662,18 @@ if ( sendData.kind=="page" ) {
                             }else{
                                 $indicator
                                     .on('mouseenter', function() {
-                                        if ( summary.counts.interactions == 0 ) {
-                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
-                                        } else {
-                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
-                                        }
-                                        $(this).addClass('ant_live_hover');
+                                        $indicator.addClass('ant_visible');
+                                        ANT.util.setFunctionTimer( function() {
+                                            if ( summary.counts.interactions == 0 ) {
+                                                var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                            } else {
+                                                var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                            }
+                                            $(this).addClass('ant_live_hover');
+                                        } , 500);
                                     })//chain
                                     .on('mouseleave', function() {
+                                        ANT.util.clearFunctionTimer();
                                         $(this).removeClass('ant_live_hover');
                                     });
                             }
