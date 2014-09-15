@@ -86,6 +86,14 @@ div.ant.ant_window {
     background:#fff;
     /*overflow:hidden;*/
     width:100px;
+    opacity: 0.0;
+    /*transform: scale(0.5) translate3d(50%,100%,0);*/
+    transition: opacity 200ms ease;
+      
+}
+div.ant.ant_window.ant_show {
+    opacity: 1.0;
+    /*transform: scale(1.0) translate3d(0,0,0);*/
 }
 div.ant.ant_window .ant_reactUndoSuccess {
   font-size:18px;
@@ -103,9 +111,9 @@ div.ant.ant_window.w200 { width:200px; }
 
 
 .isTouchBrowser div.ant.ant_window.w200 {
-  -moz-transform: scale(0.9);
+  /*-moz-transform: scale(0.9);
   -webkit-transform: scale(0.9);
-  transform: scale(0.9);
+  transform: scale(0.9);*/
   margin-top:-10px;
 }
 div.ant.ant_window.w300 { width:300px; }
@@ -129,7 +137,7 @@ div.ant_actionbar {
 
 }
 
-div.ant_actionbar.show {
+div.ant_actionbar.ant_show {
   opacity: 1.0;
   transform: scale(1.0) translate3d(0,0,0);
 }
@@ -142,12 +150,12 @@ div.ant_actionbar .ant_tooltip_this {
   height:20px;
   width:auto;
   overflow:hidden;
-  transition: max-width 0.25s;
+  transition: max-width 200ms;
 }
 /*div.ant_actionbar .ant.ant_tooltip_this:hover,*/
 div.ant_actionbar.ant_hover .ant_tooltip_this {
   max-width:150px;
-  transition: max-width 0.25s;
+  transition: max-width 200ms;
 }
 div.ant_actionbar .icon.ant-antenna-logo {
   font-size:18px;
@@ -2092,7 +2100,7 @@ div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
 
 div.ant_indicator_for_media_inline {
     max-width:21px;
-    transition: max-width 0.25s;
+    transition: max-width 200ms;
 }
 /*div.ant_indicator_for_media_inline div.ant_indicator_body { */
     /*left:-12px;*/
@@ -2221,7 +2229,7 @@ div.ant_indicator.ant_indicator_for_media span.ant_count {
   margin:0 0 0 1px;
   font-size:11px;
   max-width:0px;
-  transition: max-width 0.25s;
+  transition: max-width 200ms;
   overflow: hidden;
 }
 div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {

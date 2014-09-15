@@ -688,7 +688,7 @@ function antenna($A){
                 
                 // panelEvent - panelhide
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
-
+console.log('makeTagsListForInline 3');
                 var isWriteMode = $aWindow.hasClass('ant_writemode'),
                     $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, isWriteMode );
                 
@@ -1809,7 +1809,7 @@ function antenna($A){
                         if($oldTagList.length){
                             $oldTagList.remove();
                         }
-
+console.log('makeTagsListForInline 4');
                         // write inline tags: initial aWindow instantiation
                         if ( settings.is_page == true ) {
                             var $tagList = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow, settings.mode == "writeMode", page ); // it's usually/always? readMode, so the second arg there wil be false
@@ -1878,6 +1878,11 @@ function antenna($A){
                 //call make function for appropriate type
 
                 var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
+
+                // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
+                setTimeout(function() {
+                    $aWindow.addClass('ant_show');
+                }, 1);
                 
                 // return $aWindow to whatever called ANT.aWindow.make
                 return $aWindow;
@@ -2363,7 +2368,7 @@ function antenna($A){
                 });
                 $('#ant_sandbox').append( $new_actionbar );
                 setTimeout(function() {
-                    $new_actionbar.addClass('show');
+                    $new_actionbar.addClass('ant_show');
                 }, 10);
 
 
@@ -2404,7 +2409,7 @@ function antenna($A){
                         hash = $actionbar.data('hash'),
                         $containerTracker = $('#ant_container_tracker_'+hash);
 
-                    $actionbar.removeClass('show');
+                    $actionbar.removeClass('ant_show');
                     setTimeout(function() {
                         cleanup($actionbar, hash);
                     }, 200);
@@ -7715,6 +7720,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             var $aWindow = $indicator_details;
+                            console.log('makeTagsListForInline 1');
                             var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
 
                             $bodyWrap.append($tagsListContainer);
@@ -8897,6 +8903,7 @@ if ( sendData.kind=="page" ) {
                         $().selog('hilite', selState, 'on');
                     }
 
+                    console.log('makeTagsListForInline 2');
                     var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
                     
                     // for crossPageHashes only - will do nothing if it's not a crosspagehash
