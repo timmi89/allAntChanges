@@ -2352,19 +2352,37 @@ function antenna($A){
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
                             '<div class="ant_down_arrow"></div>'+
                             '<div class="ant_clear"></div>'+
-                        '</a>').on('click', clickAction );
+                        '</a>');
 
 
 
                 // HOVERTIMER
-                $new_actionbar.append( $action ).on('mouseenter', function() {
+                $new_actionbar.append( $action );
+                $new_actionbar.on('mouseenter', function() {
+                    // var $this = $(this);
+
                     ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
+
+                    clearTimeout( $new_actionbar.data( 'ant_actionbarShowTimer') );
                 }).on('mouseleave', function() {
+                    // var $this = $(this);
+
+                    // pause then expand
                     ANT.util.clearFunctionTimer();
                     $new_actionbar.removeClass('ant_hover');
-                    // also kill the timer and prevent the aWindow from showing
-                });
+
+                    // 
+                    $new_actionbar.data( 'ant_actionbarShowTimer', setTimeout(function() {
+                        // ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
+                        ANT.actionbar.close( $new_actionbar );
+                    }, 1000 ) );
+
+                }).on('click', clickAction );
+
                 $('#ant_sandbox').append( $new_actionbar );
+                
+                // apply the class in a way that simulates doing so after the append happens.
+                // saw on stackoverflow that this should accomplish that.
                 setTimeout(function() {
                     $new_actionbar.addClass('ant_show');
                 }, 10);
@@ -2399,8 +2417,6 @@ function antenna($A){
 
             },
             close: function($actionbars, effect){
-                /*debug*/
-                // return;
                 //ANT.actionbar.close:
                 $actionbars.each(function(){
                     var $actionbar = $(this),
@@ -7131,9 +7147,9 @@ if ( sendData.kind=="page" ) {
                                     _setupHoverForShowRindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
-                                        _setupHoverForShowRindow();
                                         _showRindowAfterLoad();
                                     });
+                                    _setupHoverForShowRindow(); // used to be in the above callback.  test.
                                 }
                             }
 
@@ -7164,7 +7180,7 @@ if ( sendData.kind=="page" ) {
                     function _setupHoverForShowRindow(){
                         // HOVERTIMER
                         if (!isTouchBrowser) {
-                            $indicator.on('mouseover', function(){
+                            $indicator.find('.ant_indicator_body').on('mouseenter', function(){
                                 ANT.util.setFunctionTimer( function() {
                                     if( $indicator.data('isZeroCountIndicator') ){
                                         _updateRindowForHelperIndicator();
