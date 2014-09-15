@@ -7666,7 +7666,7 @@ if ( sendData.kind=="page" ) {
                                     })//chain
                                     .on('mouseleave', function() {
                                         ANT.util.clearFunctionTimer();
-                                        $(this).removeClass('ant_live_hover');
+                                        $(this).removeClass('ant_live_hover ant_visible');
                                     });
                             }
 
