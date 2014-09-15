@@ -83,7 +83,8 @@ div.ant.ant_window {
     padding:0px;
     position:absolute;
     z-index:12000 !important;
-    background:#fff;
+    background:transparent;
+    border-radius: 6px;
     /*overflow:hidden;*/
     width:100px;
     opacity: 0.0;
@@ -433,13 +434,15 @@ div.ant li {background:none; padding:0;}
 
 div.ant strong {font-weight:bold;}
 
-div.ant_header div.ant_indicator_stats         { position:absolute; margin:4px 0 0 4px; cursor: move; }
+div.ant_header div.ant_indicator_stats         { position:absolute; margin:6px 0 0 6px; cursor: move; }
 
-div.ant div.ant_header                         { 
-    background:#fff;
+div.ant div.ant_header { 
+    /*background:#fff;*/
+    background:rgba(255,255,255,1);
     position:relative;
     height:32px;
     z-index:5;
+    border-radius: 6px 6px 0px 0px;
     /*border-top:3px solid #989898;*/
     border-bottom: 1px solid #f0f0f0;
     /*todo: revisit the better way to do this*/
@@ -532,8 +535,9 @@ div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap .ant_link a:hover{
 
 div.ant.ant_indicator_details div.ant_header   { padding:3px 0; }
 
-div.ant div.ant_footer                         { 
-    background:#fff;
+div.ant div.ant_footer { 
+    /*background:#fff;*/
+    background:rgba(255,255,255,1);
     position:relative;
     text-align:center;
     z-index:5;
@@ -541,6 +545,7 @@ div.ant div.ant_footer                         {
     font-family:'Helvetica',Arial,sans-serif;
     font-weight:bold;
     font-size:12px;
+    border-radius: 0px 0px 6px 6px;
     /*todo: revisit the better way to do this*/
     -webkit-box-sizing : border-box;
     -moz-box-sizing : border-box;
@@ -628,15 +633,15 @@ div.ant div.ant_body div.jspDrag    {
 }
 
 div.ant div.ant_header h1 {
- font-size:15px;
- color:#5999dc;
+ font-size:14px;
+ color:#8fb3f2;
  clear:none;
- margin-left:12px;
+ margin-left:10px;
+ padding-top:5px;
  white-space: nowrap;
  text-align:left;
  text-transform:none;
  font-style:normal;
- padding-top: 6px;
 }
 div.ant.w100 div.ant_header h1 {
  font-size:13px;
@@ -839,7 +844,7 @@ div.ant div.ant_comment .ant_commentSubmit{
     padding: 5px;
     float: right;
     border: none;
-    background: #5999dc;
+    background: #8fb3f2;
     color: white;
     margin-top: 2px;
 }
@@ -1201,7 +1206,7 @@ div.ant.ant-summary div.ant-sum-headline div.ant-call-to-action {
 div.ant.ant-summary a.ant_reactions_label {
   display:inline-block;
   font-style:normal;
-  color:#5999dc;
+  color:#8fb3f2;
   font-size:14px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
@@ -1497,9 +1502,9 @@ div#ant-page-summary.defaultSummaryBar .ant-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 .ant_widget{
-    -moz-box-shadow:0 2px 10px #ccc;
-    -webkit-box-shadow:0 2px 10px #ccc;
-    box-shadow:0 2px 10px #ccc;
+    -moz-box-shadow:0 2px 6px #ccc;
+    -webkit-box-shadow:0 2px 6px #ccc;
+    box-shadow:0 2px 6px #ccc;
 }
 
 /*shareWidget*/
@@ -1980,7 +1985,7 @@ div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
   padding: 5px 0 0 0;
   height:24px;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.95);
   /*border: 0px solid #c9c9c9;*/
   border-radius: 6px;
 }
@@ -2258,7 +2263,7 @@ span.ant_indicator_categoryTitle{
 div.ant div.ant_body.ant_tags_list { 
     display:block;
     text-decoration:none;
-    background:#fff;
+    /*background:#fff;*/
 }
 
 div.ant.ant_inline div.ant_body.ant_tags_list {
@@ -2266,7 +2271,7 @@ div.ant.ant_inline div.ant_body.ant_tags_list {
 }
 
 div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }
-div.ant div.ant_body.ant_tags_list.ant_grid { background:#fff; width:100px; }
+div.ant div.ant_body.ant_tags_list.ant_grid { width:100px; }
 div.ant.ant_window.w200 div.ant_body.ant_tags_list.ant_grid { width:200px; }
 div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid { width:300px; }
 div.ant.ant_window.w400 div.ant_body.ant_tags_list.ant_grid { width:400px; }
@@ -2423,7 +2428,7 @@ div.ant.ant_readmode div.ant_body.ant_tags_list.ant_grid .ant_tag_split .ant_tag
 
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background:#84b8ef; 
+    background:rgba(132,184,239,0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
@@ -2431,7 +2436,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background-color:rgba(52, 140, 156, 0.66); 
+    background-color:rgba(52, 140, 156, 0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
@@ -2439,7 +2444,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(215, 243, 96, 0.89); 
+    background-color:rgba(215, 243, 96, 0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
@@ -2447,7 +2452,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:#9dd55e; 
+    background:rgba(157,213,94,0.95); 
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
@@ -2455,7 +2460,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background-color:rgba(82, 149, 182, 0.83);
+    background:rgba(82, 149, 182, 0.95);
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
@@ -2502,17 +2507,17 @@ div.ant div.ant_footer .ant_click_overlay{
     background: none;
 }
 
-div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:16px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; }
+div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:14px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; background:transparent; }
 div.ant div.ant_footer:hover .ant_box .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   position: absolute;
-  background: #5999dc;
+  background: #8fb3f2;
   color: white;
-  border: 1px solid;
+  border: 0;
   margin: 0;
   width: 27px;
-  height: 27px;
+  height: 23px;
   right: 27px;
   text-align: center;
   cursor: pointer;

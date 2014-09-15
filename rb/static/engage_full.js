@@ -163,7 +163,7 @@ function antenna($A){
                 ab_test_impact: true,
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
-                img_indicator_show_side: 'right',
+                img_indicator_show_side: 'left',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -1530,7 +1530,7 @@ function antenna($A){
                         }
 
                         $clickOverlay.hide();
-                        $customSubmit.show();
+                        $customSubmit.css('display','inline-block');
 
                         $aWindow.removeClass('ant_rewritable');
 
@@ -10379,20 +10379,25 @@ function $AFunctions($A){
                         // merge default and user parameters
                         settings = options ? $.extend({}, defaults, options) : defaults;
                         settings.parentContainer = this;
+
                         //temp quick fix
+
                         $(this).data('settings', settings);
                         _makeSummaryWidget(settings);
                     });
                 },
                 update: function(){
                     var $this = ( this[0] === document ) ? $('.ant-summary') : this;
+
                     return $this.each(function(index){
                         
                         //grab the basic setting just from the data 
                         var settings = $(this).data('settings');
 
+                        var pageId = (typeof settings != 'undefined') ? settings.id : ANT.util.getPageProperty('id');
+
                         //get the latest page data
-                        settings.summary = ANT.pages[settings.id].summary;
+                        settings.summary = ANT.pages[pageId].summary;
                         _makeSummaryWidget(settings);
                     });
                 }
