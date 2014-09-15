@@ -194,7 +194,7 @@ div.ant_about {
   margin-right: 3px;
   opacity:0.65;
 }
-div.ant_helper_rindow div.ant_about {
+div.ant_helper_aWindow div.ant_about {
   display: none;
 }
 div.ant_about a {
@@ -408,19 +408,19 @@ div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
 
 
 div.ant.ant_window div.ant_header              { cursor:move; padding:4px 0; }
-div.ant.ant_window div.ant_rindowMenu {
+div.ant.ant_window div.ant_aWindowMenu {
     position: absolute;
     top: 0;
     right: 0;
     cursor: default;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown {
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown {
     padding: 10px 8px;
     cursor: pointer;
     float: right;
     font-size: 13px;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown.ant_menu_actions{
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions{
     /*
     bias this off the right edge a little.  
     Don't use margin though, because we want the hover to extend to the end.
@@ -431,10 +431,10 @@ div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown.ant_menu_actions{
 }
 
 
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown .ant_icon-share-override:before{
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-override:before{
     content: none;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown .ant_icon-share-override{
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-override{
     background: url("../images/readr_icons_grey.png") no-repeat -50px 0px transparent;
     display: block;
     height: 16px;
@@ -442,10 +442,10 @@ div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown .ant_icon-share-override
     top: -2px;
     position: relative;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown:hover .ant_icon-share-override{
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-override{
     background: url("../images/readr_icons.png") no-repeat -50px 0px transparent;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_linkWrap {
+div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
     top: 29px;
@@ -455,19 +455,19 @@ div.ant.ant_window div.ant_rindowMenu .ant_linkWrap {
     background: #fff;
     display: none;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown:hover span.ant_menuTrigger,
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown.ant_hover span.ant_menuTrigger{
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover span.ant_menuTrigger,
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_hover span.ant_menuTrigger{
     color:#008be4;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown:hover .ant_linkWrap,
-div.ant.ant_window div.ant_rindowMenu .ant_menuDropDown.ant_hover .ant_linkWrap  {
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_linkWrap,
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_hover .ant_linkWrap  {
     display: block;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_linkWrap .ant_link{
+div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap .ant_link{
     display: block;
     clear: both;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_linkWrap .ant_link a{
+div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap .ant_link a{
     text-decoration: none;
     display: block;
     width: 100%;
@@ -475,7 +475,7 @@ div.ant.ant_window div.ant_rindowMenu .ant_linkWrap .ant_link a{
     text-align: right;
     font-size:12px;
 }
-div.ant.ant_window div.ant_rindowMenu .ant_linkWrap .ant_link a:hover{
+div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap .ant_link a:hover{
     background: #f3f3f3;
 }
 
@@ -1755,7 +1755,7 @@ div.ant_indicator_for_text * {
 }
 /*the indicator body will be moved up to compensate*/
 
-div.ant_helper_rindow div.ant_header h1{
+div.ant_helper_aWindow div.ant_header h1{
     font-size: 13px;
 }
 
