@@ -514,7 +514,7 @@ function antenna($A){
                
                 var $menuDropdownActions = $(
                     '<div class="ant_menuDropDown ant_menu_actions">'+
-                        '<span class="ant_icon-chevron-down ant_menuTrigger"></span>'+
+                        '<span class="icon ant-chevron-down ant_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
@@ -963,13 +963,13 @@ function antenna($A){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<div class="ant_shareLinks">'+ANT.t('share_reaction')+': <ul></ul></div>'),
+                                var $shareLinks = $('<div class="ant_shareLinks"><div class="ant_share_cta">'+ANT.t('share_reaction')+':</div> <ul></ul></div>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="ant_icon-'+val+'"></i></a></li>');
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="icon ant-social-'+val+'"></i></a></li>');
                                     $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
@@ -7707,8 +7707,7 @@ if ( sendData.kind=="page" ) {
                                     }
                                 );
 
-                                // $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body').append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
-                                $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body'); // .append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
+                                $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body');
                                 if(isTouchBrowser){
                                     $indicator.bind('tap', function(){
                                         $(this).toggleClass('ant_hover');
@@ -9218,7 +9217,6 @@ if ( sendData.kind=="page" ) {
                         });
 
                         $comment.html(
-                            // '<span class="ant_quoteImg"></span>'+
                             '<div class="ant_comment_body">'+this_comment.body+'</div>'
                         );
 
@@ -10436,7 +10434,6 @@ function $AFunctions($A){
                 $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    // '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
                     '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
                         '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'

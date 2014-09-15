@@ -871,17 +871,6 @@ div.ant div.ant_comment div.ant_charCount {
     margin-top: 8px;
 }
 
-div.ant div.ant_comment .ant_quoteImg{
-    background: url("../images/quote-icon.png") top left no-repeat;
-    height: 24px;
-    width: 24px;
-    position: absolute;
-    background: url("../images/quote-icon.png") top left no-repeat;
-    margin-top: -2px;
-    opacity:0.2;
-    -moz-opacity:0.2;
-    -khtml-opacity:0.2;
-}
 div.ant div.ant_comment .ant_comment_body{
     margin-left: 27px;
 }
@@ -892,10 +881,14 @@ div.ant .ant_shareLinks {
   font-size:18px;
   color:#999;
   text-align: center;
+  vertical-align: middle;
+}
+div.ant .ant_shareLinks .ant_share_cta {
+  display: inline-block;
 }
 div.ant .ant_shareLinks ul {
     display: inline-block;
-    /*min-width: 95px;*/
+    vertical-align: inherit;
 }
 div.ant .ant_shareLinks ul li {
     padding: 5px 0 5px 5px;
@@ -903,20 +896,21 @@ div.ant .ant_shareLinks ul li {
     list-style:none;
 }
 div.ant .ant_shareLinks ul i {
-    font-size:20px;
+    font-size:28px;
     background:#fff;
     text-decoration: none;
 }
-div.ant .ant_shareLinks ul i:hover {
-    background:#eee;
-}
-div.ant .ant_shareLinks ul i.ant_icon-twitter {
+div.ant .ant_shareLinks ul i.ant-social-twitter {
   color:#55acee;
-  padding:6px;
+  padding:0px;
 }
-div.ant .ant_shareLinks ul i.ant_icon-facebook {
+div.ant .ant_shareLinks ul i.ant-social-facebook:hover,
+div.ant .ant_shareLinks ul i.ant-social-twitter:hover {
+  color:#8fb3f2;
+}
+div.ant .ant_shareLinks ul i.ant-social-facebook {
   color:#3b5998;
-  padding:6px 10px;
+  padding:0px;
 }
 
 /* forms */
