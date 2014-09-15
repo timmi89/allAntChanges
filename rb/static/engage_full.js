@@ -4696,7 +4696,7 @@ function antenna($A){
                     if ( (kind == "img" || kind == "media") && body ) {
 
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
-                        hashText = "ant-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
+                        hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
@@ -4749,7 +4749,7 @@ function antenna($A){
                             hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
-                            hashText = "ant-"+kind+"-"+hashBody;
+                            hashText = "rdr-"+kind+"-"+hashBody;
                             hash = ANT.util.md5.hex_md5( hashText );
 
                         }
@@ -4759,14 +4759,14 @@ function antenna($A){
                           return;
                         }
 
-                        hashText = "ant-"+kind+"-"+body;
+                        hashText = "rdr-"+kind+"-"+body;
                         hash = ANT.util.md5.hex_md5( hashText );
 
                         if ( !$this.hasAttr('ant-hash') )  {
 
                             var iteration = 1;
                             while ( typeof ANT.summaries[hash] != 'undefined' ) {
-                                hashText = "ant-"+kind+"-"+body+"-"+iteration;
+                                hashText = "rdr-"+kind+"-"+body+"-"+iteration;
                                 hash = ANT.util.md5.hex_md5( hashText );
                                 iteration++;
                             }
