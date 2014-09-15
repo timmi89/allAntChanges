@@ -9890,8 +9890,8 @@ function $AFunctions($A){
     var css = [];
 
     if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
-        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
-        css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
+        css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
+        // css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
     if ( $A.browser.msie ) {
         css.push( ANT_staticUrl+"widget/css/ie.css" );
