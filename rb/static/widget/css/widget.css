@@ -1978,10 +1978,11 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_co
 
 div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
-  padding: 6px 0 0 0;
+  padding: 5px 0 0 0;
   height:24px;
   background: rgba(255,255,255,0.9);
-  border: 0px solid #c9c9c9;
+  /*border: 0px solid #c9c9c9;*/
+  border-radius: 6px;
 }
 div.ant_indicator_for_media div.ant_indicator_body .icon.ant-antenna-logo {
   margin-left:4px;

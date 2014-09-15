@@ -163,7 +163,7 @@ function antenna($A){
                 ab_test_impact: true,
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
-                img_indicator_show_side: 'left',
+                img_indicator_show_side: 'right',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -1704,13 +1704,6 @@ function antenna($A){
                                     var coords = {};
                                         coords.top = indicatorOffsets.top;
                                         coords.left =  indicatorOffsets.left;
-
-                                    // var modTop = (kind=='img') ? -24 : -5;
-                                    // var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom + modTop : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
-                                    // var topValue = indicatorOffsets.top;
-                                    // var containerOffsets = $container.offset();
-                                    // var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
-                                    // var cssSideDistance = indicatorOffsets.left;
                                 }
                             } else {
                                 // readMode
@@ -8264,7 +8257,7 @@ if ( sendData.kind=="page" ) {
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
+                            var cssTop = containerOffsets.top - 12 + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
                             var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
                             var indicatorPosition = {};
                             indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
