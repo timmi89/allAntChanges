@@ -43,8 +43,8 @@ ANT_offline = !!(
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
 ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/antenna/";
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 var isTouchBrowser = (
     ('ontouchstart' in window) || 
@@ -107,7 +107,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            src.indexOf('antenna') != -1 &&
+            (src.indexOf('antenna') != -1 || src.indexOf('readrboard') != -1) &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
@@ -4690,7 +4690,7 @@ function antenna($A){
                     if ( (kind == "img" || kind == "media") && body ) {
 
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
-                        hashText = "ant-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
+                        hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
                         
@@ -4743,7 +4743,7 @@ function antenna($A){
                             hash = $this.data('hash');
                         } else {
                         //it didn't have oldhash, so it's an image no one has reacted to yet
-                            hashText = "ant-"+kind+"-"+hashBody;
+                            hashText = "rdr-"+kind+"-"+hashBody;
                             hash = ANT.util.md5.hex_md5( hashText );
 
                         }
@@ -4753,14 +4753,14 @@ function antenna($A){
                           return;
                         }
 
-                        hashText = "ant-"+kind+"-"+body;
+                        hashText = "rdr-"+kind+"-"+body;
                         hash = ANT.util.md5.hex_md5( hashText );
 
                         if ( !$this.hasAttr('ant-hash') )  {
 
                             var iteration = 1;
                             while ( typeof ANT.summaries[hash] != 'undefined' ) {
-                                hashText = "ant-"+kind+"-"+body+"-"+iteration;
+                                hashText = "rdr-"+kind+"-"+body+"-"+iteration;
                                 hash = ANT.util.md5.hex_md5( hashText );
                                 iteration++;
                             }
