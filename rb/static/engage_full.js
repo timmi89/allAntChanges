@@ -496,7 +496,7 @@ function antenna($A){
                         '<div class="ant_loader"></div>'+
                         '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
-                            '<span class="icon ant-antenna-logo"></span>'+
+                            '<span class="ant-antenna-logo"></span>'+
                             '<span class="ant_count"></span>'+
                         '</div>' +
                         '<h1>{{headerText}}</h1>'+
@@ -514,7 +514,7 @@ function antenna($A){
                
                 var $menuDropdownActions = $(
                     '<div class="ant_menuDropDown ant_menu_actions">'+
-                        '<span class="icon ant-chevron-down ant_menuTrigger"></span>'+
+                        '<span class="ant-chevron-down ant_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
@@ -590,7 +590,7 @@ function antenna($A){
                 //ANT.aWindow.updateFooter:
                 var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
-                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="icon ant-antenna-text"></span></a>' );
+                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>' );
                 
                 //todo: examine resize
                 // ANT.aWindow.updateSizes( $aWindow );
@@ -969,7 +969,7 @@ function antenna($A){
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="icon ant-social-'+val+'"></i></a></li>');
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="ant-social-'+val+'"></i></a></li>');
                                     $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
@@ -1502,7 +1502,7 @@ function antenna($A){
                 // think we don't need $container or actionType
 
                 var $container = $aWindow.find('.ant_footer');
-                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="icon ant-antenna-text"></span></a>');
+                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>');
 
                 if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
@@ -2341,11 +2341,11 @@ function antenna($A){
                 
                 var clickAction = (settings.clickAction) ? settings.clickAction : function() { ANT.aWindow.make( 'writeMode', { "hash": hash, "kind": kind, "content": content, "src_with_path":src_with_path }); };
                 var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this">'+
-                            '<span class="icon ant-antenna-logo"></span>'+
+                            '<span class="ant-antenna-logo"></span>'+
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
-                            '<div class="ant_down_arrow"></div>'+
+                            // '<div class="ant_down_arrow"></div>'+
                             '<div class="ant_clear"></div>'+
-                        '</a>');
+                        '</a><div class="ant_down_arrow"></div>');
 
 
 
@@ -3272,7 +3272,7 @@ function antenna($A){
                         //put a better message here
                         // not translated b/c we're not really using.
                         $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="icon ant-antenna-logo"></span> icons.</div>');
+                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="ant-antenna-logo"></span> icons.</div>');
 
                         $msg2.find('a.ant_show_more_pins').click( function() {
                             ANT.actions.summaries.showLessPopularIndicators();
@@ -3280,7 +3280,7 @@ function antenna($A){
                         });
                     }
                     if (typeof $msg1 != "undefined" ) {
-                        $pinIcon = $('<span class="icon ant-antenna-logo"></span>');
+                        $pinIcon = $('<span class="ant-antenna-logo"></span>');
 
                         var $alertContent = $('<div class="ant_alert_box ant ant_' + whichAlert + '" />');
 
@@ -5312,8 +5312,7 @@ function antenna($A){
                                     }
 
                                     // can the header stuff be optional?
-                                    // $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="icon ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="icon ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
                                     ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
@@ -7160,7 +7159,7 @@ if ( sendData.kind=="page" ) {
                             .attr('id',indicatorBodyId)
                             .appendTo($indicator)
                             .append(
-                                '<span class="icon ant-antenna-logo"></span>',
+                                '<span class="ant-antenna-logo"></span>',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
@@ -7262,8 +7261,8 @@ if ( sendData.kind=="page" ) {
                     }
                     function _updateRindowForHelperIndicator(){
                         var actionbarCoords = {
-                            top: $indicator.offset().top+36,
-                            left: $indicator.offset().left
+                            top: $indicator.offset().top+11,
+                            left: $indicator.offset().left-8
                         };
 
                         var clickAction = function() {
@@ -9671,8 +9670,8 @@ if ( sendData.kind=="page" ) {
                     ANT.aWindow.close( $('div.ant.ant_window.ant.ant_rewritable') );
 
                     var actionbarCoords = mouseEvent ? {
-                        top: parseInt(mouseEvent.pageY, 10),
-                        left: parseInt(mouseEvent.pageX, 10)
+                        top: parseInt(mouseEvent.pageY, 10)-7,
+                        left: parseInt(mouseEvent.pageX, 10)-25
                     } : {
                         top: $mouse_target.offset().top,
                         left: $mouse_target.offset().left

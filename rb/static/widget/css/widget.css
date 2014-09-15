@@ -143,6 +143,15 @@ div.ant_actionbar.ant_show {
   transform: scale(1.0) translate3d(0,0,0);
 }
 
+div.ant_actionbar .ant_down_arrow {
+  width: 0; 
+  height: 0; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent; 
+  border-top: 10px solid #464646;
+  margin-bottom: -11px;
+  margin-left: -1px;
+}
 div.ant_actionbar .ant_tooltip_this {
   display: inline-block;
   vertical-align: middle;
@@ -158,13 +167,13 @@ div.ant_actionbar.ant_hover .ant_tooltip_this {
   max-width:150px;
   transition: max-width 200ms;
 }
-div.ant_actionbar .icon.ant-antenna-logo {
+div.ant_actionbar .ant-antenna-logo {
   font-size:18px;
   vertical-align: middle;
   margin-right: 3px;
   transition: color 500ms;
 }
-div.ant_actionbar:hover .icon.ant-antenna-logo {
+div.ant_actionbar:hover .ant-antenna-logo {
   color:#fff;
 }
 div.ant_actionbar .ant.ant_react_label {
@@ -1814,7 +1823,7 @@ div.ant_indicator_for_text * {
     user-select: none;
     /*opacity:0.5;*/
 }
-div.ant_indicator_for_text .icon.ant-antenna-logo {
+div.ant_indicator_for_text .ant-antenna-logo {
   top: 2px;
 }
 /*the indicator body will be moved up to compensate*/
@@ -1998,7 +2007,7 @@ div.ant_indicator_for_media div.ant_indicator_body{
   /*border: 0px solid #c9c9c9;*/
   border-radius: 6px;
 }
-div.ant_indicator_for_media div.ant_indicator_body .icon.ant-antenna-logo {
+div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
   margin-left:4px;
   top: -3px;
   position: relative;
@@ -2250,7 +2259,7 @@ div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
   max-width:130px;
   visibility: visible;
 }
-div.ant_indicator.ant_indicator_for_media .icon {
+div.ant_indicator.ant_indicator_for_media .ant-antenna-logo {
   vertical-align: middle;
 }
 div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
@@ -2744,7 +2753,7 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 
 /* mozille specific */
 @-moz-document url-prefix() {
-  div.ant_indicator_for_media div.ant_indicator_body .icon.ant-antenna-logo {
+  div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
     margin-left: 5px;
   }
 }
