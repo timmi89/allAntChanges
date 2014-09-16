@@ -308,7 +308,7 @@ function refSummary(referrers) {
 
         // put in external file...
         ANTsite.analytics = {
-            queryHost: (document.domain != "local.antenna.com") ? "//events.antenna.com" : "//localnode.com:3000",
+            queryHost: (document.domain != "local.antenna.com") ? "//events.readrboard.com" : "//localnode.com:3000",
             toggleGlobalLoader: function() {
                 // TODO animate something
             },

@@ -166,6 +166,7 @@ function antenna($A){
                 img_indicator_show_side: 'left',
                 tag_box_bg_colors: [ '68,153,203', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
                 tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
+                tag_box_font_family: 'Helvetica,Arial,sans-serif',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -1137,14 +1138,14 @@ function antenna($A){
                     //split long tag onto two lines.
                     if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'ant_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "ant_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
                             charCountText = 'ant_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">' + 
+                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
                             tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "ant_box_small" ) {
                             //     boxSize = "ant_box_medium";
@@ -1158,7 +1159,7 @@ function antenna($A){
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
                             charCountText = 'ant_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
@@ -1173,7 +1174,7 @@ function antenna($A){
 
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
-                        '<span class="ant_count">'+tagCountDisplay+'</span>' +
+                        '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
                         '<i class="ant-search ant_tag_read_icon"></i>';
 
                     var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+'">'+
@@ -1465,9 +1466,10 @@ function antenna($A){
                     // add the comment indicator + comment hover... if we should!
 
                     if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" title="view comments"></span>');
+                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" style="color:#'+commentColor+';" title="view comments"></span>');
 
-                        $commentHover.append( '<i class="ant-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
                         
                         if(isTouchBrowser){
                             $commentHover.bind('tap', function() {
@@ -2573,11 +2575,16 @@ function antenna($A){
                 });
 
                 var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : null;
+                return result ? 
+                    parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
+                : null;
+            },
+            getColorLuma: function(rgb) {
+                var r = rgb.split(',')[0],
+                    g = rgb.split(',')[1],
+                    b = rgb.split(',')[2];
+
+                return 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
             },
             bubblingEvents: {
                 'touchend': false,

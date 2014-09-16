@@ -2285,7 +2285,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box {
     /*border-right:1px solid rgba(0,0,0,0.05);*/
     /*border-top:1px solid rgba(0,0,0,0.05);*/
 
-    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,0.2) ) !important;
+    background-image: linear-gradient(to right, rgba(0,0,0,0.05), rgba(255,255,255,0.2) ) !important;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_tag_read_icon{
@@ -2349,7 +2349,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne {
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count {
-    opacity: 0.60;
+    opacity: 0.85;
     filter: alpha(opacity=60);
     display: block;
     position: static;
@@ -2435,141 +2435,12 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap .ant_tag_wrap2 {
   text-align: center; 
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
-    /*top: 40% !important;*/
-    /*margin-top: -0.5em !important;*/
     text-align: center;
-    font-weight:normal;
     font-weight: bold;
 }
 div.ant.ant_readmode div.ant_body.ant_tags_list.ant_grid .ant_tag_split .ant_tag_body{
     /*margin-top: -1em !important;*/
 }
-
-/*
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background-color:rgba(142, 193, 232, 0.95); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
-    color:#446483;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background:rgba(131,176,213,0.95); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
-    color:#446483;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(153, 202, 241, 0.9); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
-    color:#446483;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:rgba(172, 212, 240,0.9); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
-    color:#446483;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background:rgba(195, 221, 241, 0.9);
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
-    color:#446483;
-}
-*/
-
-
-/*div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background-color:rgba(108, 159, 208, 0.95); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
-    color:#18446f;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background:rgba(238,244,249,0.95); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
-    color:#6c9fd0;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(70, 88, 122, 0.9); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
-    color:#b4cfe7;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:rgba(180, 207, 230,0.9); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
-    color:#46597a;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background:rgba(229, 170, 156, 0.9);
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
-    color:#8c6961;
-}*/
-
-/*
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background-color:rgba(68, 153, 203, 0.85); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
-    color:#225e81;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background:rgba(200,226,38,0.85); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
-    color:#809211;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(111,197,242, 0.85); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
-    color:#4499cb;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:rgba(229,246,98,0.85); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
-    color:#99ae1a;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background-color:rgba(28, 173, 223, 0.85); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
-    color:#225e81;
-}
-
-*/
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover { 
     cursor:pointer;
@@ -2636,7 +2507,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box span.ant_comment_hover {
     position: absolute;
     display:block;
     font-size:10px;
-    color:#fff;
+    /*color:#fff;*/
     bottom: 0;
     right: 0;
     padding: 2px 5px;
