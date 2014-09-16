@@ -2285,11 +2285,11 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box {
     /*border-right:1px solid rgba(0,0,0,0.05);*/
     /*border-top:1px solid rgba(0,0,0,0.05);*/
 
-    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,0.15) );
+    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,0.2) ) !important;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_tag_read_icon{
-    position: absolute;
+    /*position: absolute;*/
     display: none;
     color: white;
 }
@@ -2301,6 +2301,8 @@ div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_tag_read_icon{
     display: block;
     color: #008be4;
+    margin:0 0 -10% 0;
+    font-size:18px;
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag {
@@ -2526,7 +2528,7 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
     color:#8c6961;
 }*/
 
-
+/*
 div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
     background-color:rgba(68, 153, 203, 0.85); 
 }
@@ -2567,11 +2569,11 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
     color:#225e81;
 }
 
-
+*/
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover { 
     cursor:pointer;
-    background:#fff !important;
+    background:rgba(255,255,255,1) !important;
     /*box-shadow:0px 0px 32px #ccc inset;*/
     -moz-box-shadow: 0 0 25px -7px #333 inset;
     -webkit-box-shadow: 0 0 25px -7px #333 inset;
@@ -2581,7 +2583,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover {
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_tag_body,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_plusOne{
-    color:#008be4;
+    color:#008be4 !important;
     opacity: 1;
     filter: alpha(opacity=100);
 }

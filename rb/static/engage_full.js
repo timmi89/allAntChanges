@@ -164,6 +164,8 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
+                tag_box_bg_colors: [ '68,153,203', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
+                tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -1074,7 +1076,7 @@ function antenna($A){
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
                         tagPercent = 0,
                         tagWidth = '',
-                        colorInt = ( params.colorInt ) ? params.colorInt:1,
+                        colorInt = ( params.colorInt ) ? params.colorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1083,6 +1085,11 @@ function antenna($A){
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
+
+                    // get the background color and text color
+                    // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) : ANT.group.tag_box_bg_colors[colorInt];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) : ANT.group.tag_box_text_colors[colorInt];
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
                     var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
@@ -1130,14 +1137,14 @@ function antenna($A){
                     //split long tag onto two lines.
                     if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'ant_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "ant_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
                             charCountText = 'ant_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="ant_tag_body ant_tag_lineone">' + 
+                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">' + 
                             tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "ant_box_small" ) {
                             //     boxSize = "ant_box_medium";
@@ -1151,7 +1158,7 @@ function antenna($A){
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
                             charCountText = 'ant_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
@@ -1167,9 +1174,9 @@ function antenna($A){
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
                         '<span class="ant_count">'+tagCountDisplay+'</span>' +
-                        '<i class="ant_icon-search ant_tag_read_icon"></i>';
+                        '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="ant_color'+colorInt+' '+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -2558,6 +2565,20 @@ function antenna($A){
             //         createCookie(name,"",-1);
             //     }
             // },
+            hexToRgb: function(hex) {
+                // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+                var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                    return r + r + g + g + b + b;
+                });
+
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            },
             bubblingEvents: {
                 'touchend': false,
                 'dragging': false
@@ -8001,7 +8022,8 @@ if ( sendData.kind=="page" ) {
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                colorInt = 1;
+                                colorInt = 0,
+                                numColors = ANT.group.tag_box_bg_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
@@ -8026,20 +8048,20 @@ if ( sendData.kind=="page" ) {
                                   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
-                                    if ( colorInt == 6 ) colorInt = 1;
+                                    if ( colorInt == numColors ) colorInt = 0;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
                                     ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
-                                    if ( colorInt == 6 ) colorInt = 1;
+                                    if ( colorInt == numColors ) colorInt = 0;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
                                   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                   // set next color 
                                   colorInt++;
-                                  if ( colorInt == 6 ) colorInt = 1;
+                                  if ( colorInt == numColors ) colorInt = 0;
                                 }
 
                             }
