@@ -3591,7 +3591,6 @@ function antenna($A){
                         coords.top = 150 + $(window).scrollTop();
                     }
 
-
                     var $aWindow = ANT.aWindow.draw({
                         coords:coords,
                         id: "ant_loginPanel",
@@ -3600,9 +3599,6 @@ function antenna($A){
                         height:175,
                         ignoreWindowEdges:"bt"
                     });
-
-
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
                     if ( args ) $aWindow.data( 'args', args );
@@ -3614,7 +3610,7 @@ function antenna($A){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
-                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="300" height="140" frameborder="0" style="overflow:hidden; width:300px !important;" />' );
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="400" height="140" frameborder="0" style="overflow:hidden; width:400px !important;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
@@ -4160,7 +4156,9 @@ function antenna($A){
                 // init media object on load.
                 // this is new, but we want the experience for images to be faster.
                 $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
-                    ANT.actions.indicators.init( $(this).attr('ant-hash') );
+                    var hash = $(this).attr('ant-hash');
+                    ANT.actions.indicators.init( hash );
+                    ANT.actions.content_nodes.init(hash, function(){});
                 });
 
                 if(isTouchBrowser){
@@ -4231,6 +4229,7 @@ function antenna($A){
                                                 $('#ant_indicator_' + hash).addClass('ant_visible');
                                             }
                                         }
+                                        ANT.actions.content_nodes.init(hash, function(){});
                                     });
                                     //these calls are redundant to the same calls in the callback above,
                                     //but this will make them show up right away,
@@ -5815,6 +5814,7 @@ function antenna($A){
                     //todo: also remove redundant callbacks from the summary widget.
                     //we still need the onSuccessCallbacks to run though.
                     assetLoader.then(function(response) {
+
                         if ( response.status !== "success" ) {
                             return false;
                         }
@@ -6098,7 +6098,12 @@ if ( sendData.kind=="page" ) {
                                             ANT.session.showLoginPanel( args );
                                         }
                                         else {
-                                            ANT.actions.interactions[int_type].onFail(args);
+                                            if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                                // ANT.events.track( 'temp_limit_hit_r' );
+                                                ANT.session.showLoginPanel( args );
+                                            } else {
+                                                ANT.actions.interactions[int_type].onFail(args);
+                                            }
                                         }
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {

@@ -1095,11 +1095,11 @@ div.ant.ant-summary #ant-user a {
 div.ant div.ant_footer.ant_cta .ant_what_is_it { border-left:1px solid #ddd; }
 div.ant.w100 div.ant_footer.ant_cta .ant_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0;}
 
-/*span.ant_no_reactions_msg{
+span.ant_no_reactions_msg{
     display: block;
-    padding: 10px 0;
+    padding: 10px;
 }
-*/
+
 
 div.ant.ant-summary table { border:0;padding:0; margin:0; width:auto; }
 div.ant.ant-summary table td { border:0;padding:0; margin:0; text-align:left; vertical-align: top;}
@@ -2604,6 +2604,8 @@ div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_charCount25
 
 div#ant_loginPanel {
     z-index: 12101;
+    opacity:1;
+    width:400px;
  /*   left: 50% !important;
     margin-left: -240px !important;
     top: 50% !important;
