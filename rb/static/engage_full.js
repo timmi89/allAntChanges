@@ -150,7 +150,7 @@ function antenna($A){
                 comment_length: 500,
                 /*this is basically not used right now*/
                 initial_pin_limit: 300,
-                no_ant: "",
+                no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
                 // call_to_action: ANT.t('main_cta'),
@@ -3832,7 +3832,7 @@ function antenna($A){
 
                         ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANT.group.no_ant).each( function() {
+                        $(ANT.group.no_readr).each( function() {
                             var $this = $(this);
                             $this.addClass('no-ant');
                             $this.find('img').addClass('no-ant');
@@ -4459,7 +4459,7 @@ function antenna($A){
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
+                        if ( $node.closest(ANT.group.no_readr).length ) {return;}
                         if ( $node.hasAttr('ant-item') ) {
                             var antItem = $node.attr('ant-item');
                         } else {
