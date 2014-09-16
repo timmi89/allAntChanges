@@ -9996,6 +9996,8 @@ function $AFunctions($A){
 
     if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
         css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
+        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
+        // css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
     if ( $A.browser.msie ) {
         css.push( ANT_staticUrl+"widget/css/ie.css" );
@@ -10003,7 +10005,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv26"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv28"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

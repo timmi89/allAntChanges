@@ -494,7 +494,21 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions{
     height: 31px;
 }
 
-
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-override:before{
+    content: none;
+}
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-override{
+    background: url("../images/readr_icons_grey.png") no-repeat -50px 0px transparent;
+    display: block;
+    height: 16px;
+    width: 16px;
+    top: -2px;
+    position: relative;
+}
+div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-override{
+    background: url("../images/readr_icons.png") no-repeat -50px 0px transparent;
+}
+>>>>>>> master
 div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
