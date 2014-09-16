@@ -149,7 +149,7 @@ function antenna($A){
                 media_selector: "embed, video, object, iframe",
                 comment_length: 500,
                 /*this is basically not used right now*/
-                initial_pin_limit: 300,
+                // initial_pin_limit: 300,
                 no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
@@ -164,7 +164,7 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
-                tag_box_bg_colors: [ '68,153,203', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
+                tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
                 tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
                 tag_box_font_family: 'Helvetica,Arial,sans-serif',
                 //the scope in which to find parents of <br> tags.  
@@ -497,7 +497,7 @@ function antenna($A){
                             // '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
                         // '</div>'+
                         '<div class="ant_loader"></div>'+
-                        '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
+                        // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
                             '<span class="ant-antenna-logo"></span>'+
                             '<span class="ant_count"></span>'+
@@ -537,9 +537,9 @@ function antenna($A){
                     var $links = $(
                         '<div class="ant_linkWrap">'+
                             '<ul>'+
-                                '<li class="ant_link">'+
-                                    '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
-                                '</li>'+
+                                // '<li class="ant_link">'+
+                                    // '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
+                                // '</li>'+
                                 '<li class="ant_link">'+
                                     '<a target="_blank" href="'+ANT_baseUrl+'/interaction/'+interactionId+'" class="ant_seeit_link">'+ANT.t('view_on_site')+'</a>'+
                                 '</li>'+
@@ -861,21 +861,21 @@ function antenna($A){
                 ANT.aWindow.jspUpdate($aWindow);
             },
             updatePageTagMessage: function(args, action) {
-                if(action == 'tagDeleted'){
-                    var $aWindow = $('div.ant_window:eq(0)');
-                    ANT.aWindow.hideFooter($aWindow);
-                    $aWindow.find('.ant_header h1').text('Reaction Undone');
-                    $aWindow.find('.ant_body').css('height','auto').html(
-                        '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
-                            '<div class="ant_label_icon"></div>'+
-                            '<em>'+
-                                '<span>Your Reaction: </span>'+
-                                '<strong> '+args.tag.body+' </strong>'+
-                                '<span>has been undone.</span>'+
-                            '</em>'+
-                        '</div>' 
-                    );
-                }
+                // if(action == 'tagDeleted'){
+                //     var $aWindow = $('div.ant_window:eq(0)');
+                //     ANT.aWindow.hideFooter($aWindow);
+                //     $aWindow.find('.ant_header h1').text('Reaction Undone');
+                //     $aWindow.find('.ant_body').css('height','auto').html(
+                //         '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
+                //             '<div class="ant_label_icon"></div>'+
+                //             '<em>'+
+                //                 '<span>Your Reaction: </span>'+
+                //                 '<strong> '+args.tag.body+' </strong>'+
+                //                 '<span>has been undone.</span>'+
+                //             '</em>'+
+                //         '</div>' 
+                //     );
+                // }
             },
             updateTagMessage: function(args) {
                 //ANT.aWindow.updateTagMessage
@@ -1959,7 +1959,7 @@ function antenna($A){
                         '<div class="ant ant_header">'+
                             // '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="ant_loader"></div>'+
-                            '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
+                            // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
                         '<div class="ant ant_body_wrap ant_clearfix"></div>'+
                         '<div class="ant ant_footer"></div>'
@@ -3296,17 +3296,17 @@ function antenna($A){
                             }, 200);
                         });
                     }
-                    if( whichAlert == "showMorePins"){
-                        //put a better message here
-                        // not translated b/c we're not really using.
-                        $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="ant-antenna-logo"></span> icons.</div>');
+                    // if( whichAlert == "showMorePins"){
+                    //     //put a better message here
+                    //     // not translated b/c we're not really using.
+                    //     $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
+                    //     $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="ant-antenna-logo"></span> icons.</div>');
 
-                        $msg2.find('a.ant_show_more_pins').click( function() {
-                            ANT.actions.summaries.showLessPopularIndicators();
-                            $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
-                        });
-                    }
+                    //     $msg2.find('a.ant_show_more_pins').click( function() {
+                    //         ANT.actions.summaries.showLessPopularIndicators();
+                    //         $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
+                    //     });
+                    // }
                     if (typeof $msg1 != "undefined" ) {
                         $pinIcon = $('<span class="ant-antenna-logo"></span>');
 
@@ -5340,7 +5340,7 @@ function antenna($A){
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
                                     ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
@@ -5549,7 +5549,7 @@ function antenna($A){
 
                     // create the container sort to see which containers have the most activity
                     ANT.actions.summaries.sortPopularTextContainers();
-                    ANT.actions.summaries.displayPopularIndicators();
+                    // ANT.actions.summaries.displayPopularIndicators();
 
                     $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
@@ -7895,6 +7895,7 @@ if ( sendData.kind=="page" ) {
                                 }
                             } else {
                                 // no t() not used?
+                                // this whole thing is never used:
                                 ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
@@ -8913,30 +8914,30 @@ if ( sendData.kind=="page" ) {
                     ANT.text_container_popularity.sort( SortByCount );
 
                 },
-                displayPopularIndicators: function () {
-                    // ANT.actions.summaries.displayPopularIndicators
-                    // is this used??
+                // displayPopularIndicators: function () {
+                //     // ANT.actions.summaries.displayPopularIndicators
+                //     // is this used??
 
-                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
-                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                    }
-                },
-                showLessPopularIndicators: function() {
-                    // ANT.actions.summaries.showLessPopularIndicators
-                    // is this used??
-                    var hashesToShow = [];
+                //     for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                //         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                //     }
+                // },
+                // showLessPopularIndicators: function() {
+                //     // ANT.actions.summaries.showLessPopularIndicators
+                //     // is this used??
+                //     var hashesToShow = [];
 
-                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                        if ( ANT.text_container_popularity[i] ) {
-                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                                hashesToShow.push( ANT.text_container_popularity[i].hash );
-                            }
-                        }
-                    }
+                //     for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                //         if ( ANT.text_container_popularity[i] ) {
+                //             if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                //                 $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                //                 hashesToShow.push( ANT.text_container_popularity[i].hash );
+                //             }
+                //         }
+                //     }
 
-                    ANT.actions.indicators.show(hashesToShow);
-                }
+                //     ANT.actions.indicators.show(hashesToShow);
+                // }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
