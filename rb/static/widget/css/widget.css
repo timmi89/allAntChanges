@@ -461,18 +461,19 @@ div.ant div.ant_header {
     -o-box-sizing : border-box;
     box-sizing : border-box;
 }
-/*div.ant div.ant_header div.ant_header_arrow    { 
+div.ant div.ant_header div.ant_header_arrow    { 
   bottom: 29px;
   left: 6px;
   position:absolute;
-}*/
-/*div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
+}
+div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
   display:none;
 }
-*/
+
 
 div.ant.ant_window div.ant_header              { cursor:move; padding:4px 0; }
 div.ant.ant_window div.ant_aWindowMenu {
+    /*display: none;*/  /* for now, we are hiding this menu */
     position: absolute;
     top: 0;
     right: 0;
@@ -508,7 +509,7 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-overrid
 div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-override{
     background: url("../images/readr_icons.png") no-repeat -50px 0px transparent;
 }
->>>>>>> master
+
 div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
@@ -1135,7 +1136,7 @@ div#ant-page-summary.defaultSummaryBar div.ant.ant-summary table{
     margin: 0 0 -4px 5px;
 }*/
 
-/*/*/
+
 div.ant.ant-summary td.ant_rb_logo {
   /*todo*/
   display: none;
@@ -1764,6 +1765,7 @@ div.ant_indicator_for_text{
     display: inline;
     position: relative;
     vertical-align: top;
+    line-height: inherit !important;
 }
 body.ant_touch_browser div.ant_indicator_for_text {
   display:block;
@@ -1888,9 +1890,10 @@ div.ant_indicator_details img.ant_pin {
     box-shadow:none;
 }
 */
-.ant_live_hover div.ant_indicator {
-  display:inline-block;
-}
+/*.ant_live_hover div.ant_indicator {*/
+  /*this causes the bumpiness when indicator is after a block element, inside a block element.*/
+  /*display:inline-block;*/
+/*}*/
 .ant_live_hover div.ant_indicator.ant_helper {
   opacity:0.5;
 }
@@ -1929,7 +1932,7 @@ div.ant div.ant_indicator_stats img.ant_pin {
 div.ant_indicator.ant_indicator_for_text div.ant_indicator_body { 
     position:absolute;
     /*don't make important so that our js can update*/
-    top: 4px;
+    top: -2px;
     left: 5px;
 
     margin:0;
@@ -1970,10 +1973,11 @@ div.ant_indicator_for_media div.ant_indicator_body{
   background: rgba(255,255,255,0.95);
   /*border: 0px solid #c9c9c9;*/
   border-radius: 6px;
+
 }
 div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
   margin-left:4px;
-  top: -3px;
+  /*top: -3px;*/
   position: relative;
 }
 
@@ -2214,18 +2218,19 @@ div.ant_indicator.ant_indicator_for_text span.ant_count {
 div.ant_indicator.ant_indicator_for_media span.ant_count {
   display:inline-block;
   visibility: hidden;
-  margin:0 0 0 1px;
+  margin:-3px 0 0 1px;
   font-size:11px;
-  max-width:0px;
+  max-width:20px;
   transition: max-width 200ms;
   overflow: hidden;
+  vertical-align: text-top;
 }
 div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
   max-width:130px;
   visibility: visible;
 }
 div.ant_indicator.ant_indicator_for_media .ant-antenna-logo {
-  vertical-align: middle;
+  vertical-align: text-top;
 }
 div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
   display:inline-block;
