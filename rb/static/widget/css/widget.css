@@ -1890,10 +1890,10 @@ div.ant_indicator_details img.ant_pin {
     box-shadow:none;
 }
 */
-/*.ant_live_hover div.ant_indicator {*/
+.ant_live_hover div.ant_indicator {
   /*this causes the bumpiness when indicator is after a block element, inside a block element.*/
-  /*display:inline-block;*/
-/*}*/
+  display:inline;
+}
 .ant_live_hover div.ant_indicator.ant_helper {
   opacity:0.5;
 }
