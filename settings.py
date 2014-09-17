@@ -26,6 +26,7 @@ AWS_CALLING_FORMAT = ""
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'public, max-age=25200',
+    'Access-Control-Allow-Origin' : '*',
 }
 
 AWS_DEFAULT_ACL='public-read'
