@@ -150,7 +150,7 @@ function antenna($A){
                 comment_length: 500,
                 /*this is basically not used right now*/
                 // initial_pin_limit: 300,
-                no_ant: "",
+                no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
                 // call_to_action: ANT.t('main_cta'),
@@ -167,6 +167,8 @@ function antenna($A){
                 tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
                 tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
                 tag_box_font_family: 'Helvetica,Arial,sans-serif',
+                tag_box_gradient:'',
+                tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -434,6 +436,7 @@ function antenna($A){
                 $.each(settings, function(key, val){
                     ret_settings[key] = !!translators[key] ? translators[key](val) : val;
                 });
+
                 return ret_settings;
             },
             getBlessedTags: function(hash){
@@ -1177,7 +1180,7 @@ function antenna($A){
                         '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
                         '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+'">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';'+ANT.group.tag_box_gradient+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -3839,9 +3842,18 @@ function antenna($A){
                         json: $.toJSON( {host_name : window.location.hostname} )
                     },
                     success: function(response, textStatus, XHR) {
-
                         var group_settings = response.data;
+
+                        // handle deprecated .blessed_tags, change to .default_reactions
+                        if ( typeof group_settings.blessed_tags != 'undefined' ) {
+                            // use .slice() to copy by value
+                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                            group_settings.default_reactions = group_settings.blessed_tags.slice();
+                            delete group_settings.blessed_tags;
+                        }
+
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
+
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
 
                         var a_or_b_or_not = '';
@@ -3855,21 +3867,13 @@ function antenna($A){
                             page_id: ANT.util.getPageProperty('id')
                         });
 
-                        // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof ANT.group.blessed_tags != 'undefined' ) {
-                            // use .slice() to copy by value
-                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            ANT.group.default_reactions = ANT.group.blessed_tags.slice();
-                            delete ANT.group.blessed_tags;
-                        }
-
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
                             return false;
                         }
 
                         ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANT.group.no_ant).each( function() {
+                        $(ANT.group.no_readr).each( function() {
                             var $this = $(this);
                             $this.addClass('no-ant');
                             $this.find('img').addClass('no-ant');
@@ -4507,7 +4511,7 @@ function antenna($A){
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
+                        if ( $node.closest(ANT.group.no_readr).length ) {return;}
                         if ( $node.hasAttr('ant-item') ) {
                             var antItem = $node.attr('ant-item');
                         } else {
@@ -4827,7 +4831,7 @@ function antenna($A){
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
                     // if ( $this.parents('[ant-hash="'+hash+'"]').length ) {
                     //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
-                    //     ANT.actions.stripRdrNode($parentNodes);
+                    //     ANT.actions.stripAntNode($parentNodes);
                     // }
                     
                     // we will use this in the following conditionals
@@ -4840,7 +4844,7 @@ function antenna($A){
                     if ( thisTagName == 'img' ) { 
                         if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
                             var $parentNodes = $this.parents('[ant-hash]');
-                            ANT.actions.stripRdrNode($parentNodes);
+                            ANT.actions.stripAntNode($parentNodes);
                         }
                     }
 
@@ -4872,7 +4876,7 @@ function antenna($A){
                         });
 
                         if (dontHash===true) { 
-                            // ANT.actions.stripRdrNode($this);
+                            // ANT.actions.stripAntNode($this);
                             return;
                         }
                     }
@@ -7119,7 +7123,7 @@ if ( sendData.kind=="page" ) {
                                 }
 
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
-                                    ANT.actions.stripRdrNode($container);
+                                    ANT.actions.stripAntNode($container);
                                     return;
                                 }
 
@@ -7825,7 +7829,7 @@ if ( sendData.kind=="page" ) {
                         var isPage = !hash || hash == "page";
 
                         var summary = !isPage ? ANT.summaries[hash] : {};
-                        
+
                         var default_reactions = ANT.groupSettings.getBlessedTags(hash);
 
                         var reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid';
@@ -7837,8 +7841,8 @@ if ( sendData.kind=="page" ) {
                           }
                         }
 
-                        var $tagsListContainer = $('<div class="ant_body ant_tags_list ant_'+reactionViewStyle+'" />').data('now', Date.now()),
-                            $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
+                        var $tagsListContainer = $('<div class="ant_body ant_tags_list ant_'+reactionViewStyle+'" style="background:'+ANT.group.tags_bg_css+'" />').data('now', Date.now());
+                            // $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $aWindow.find('.ant_tags_list');
                         $aWindow.find('.ant_body_wrap').append($tagsListContainer);
@@ -9751,8 +9755,8 @@ if ( sendData.kind=="page" ) {
                 var $mouse_target = $(e.target);
                 ANT.actions.startSelect($mouse_target, e);
             },
-            stripRdrNode: function($els) {
-                //ANT.actions.stripRdrNode
+            stripAntNode: function($els) {
+                //ANT.actions.stripAntNode
                 $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
             },
             pages: {
