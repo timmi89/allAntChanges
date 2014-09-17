@@ -107,7 +107,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            src.indexOf('readrboard') != -1 &&
+            (src.indexOf('antenna') != -1 || src.indexOf('readrboard') != -1) &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
@@ -149,7 +149,7 @@ function antenna($A){
                 media_selector: "embed, video, object, iframe",
                 comment_length: 500,
                 /*this is basically not used right now*/
-                initial_pin_limit: 300,
+                // initial_pin_limit: 300,
                 no_readr: "",
                 img_blacklist: "",
                 custom_css: "",
@@ -162,6 +162,13 @@ function antenna($A){
                 language: 'en',
                 ab_test_impact: true,
                 ab_test_sample_percentage: 10,
+                img_indicator_show_onload: true,
+                img_indicator_show_side: 'left',
+                tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
+                tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
+                tag_box_font_family: 'Helvetica,Arial,sans-serif',
+                tag_box_gradient:'',
+                tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -429,6 +436,7 @@ function antenna($A){
                 $.each(settings, function(key, val){
                     ret_settings[key] = !!translators[key] ? translators[key](val) : val;
                 });
+
                 return ret_settings;
             },
             getBlessedTags: function(hash){
@@ -488,13 +496,13 @@ function antenna($A){
 
                 var headerTml = $.mustache(
                     '<div class="ant ant_header">'+
-                        '<div class="ant_header_arrow">'+
-                            '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
-                        '</div>'+
+                        // '<div class="ant_header_arrow">'+
+                            // '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
+                        // '</div>'+
                         '<div class="ant_loader"></div>'+
-                        '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
+                        // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
-                            '<img class="no-ant ant_pin" src="{{ANT_staticUrl}}widget/images/blank.png">'+
+                            '<span class="ant-antenna-logo"></span>'+
                             '<span class="ant_count"></span>'+
                         '</div>' +
                         '<h1>{{headerText}}</h1>'+
@@ -512,7 +520,7 @@ function antenna($A){
                
                 var $menuDropdownActions = $(
                     '<div class="ant_menuDropDown ant_menu_actions">'+
-                        '<span class="ant_icon-chevron-down ant_menuTrigger"></span>'+
+                        '<span class="ant-chevron-down ant_menuTrigger"></span>'+
                     '</div>'
                 );
                 var $menuActions = makeActionList();
@@ -532,9 +540,9 @@ function antenna($A){
                     var $links = $(
                         '<div class="ant_linkWrap">'+
                             '<ul>'+
-                                '<li class="ant_link">'+
-                                    '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
-                                '</li>'+
+                                // '<li class="ant_link">'+
+                                    // '<a href="javascript:void(0);" class="ant_undo_link">'+ANT.t('remove_reaction')+'</a>'+
+                                // '</li>'+
                                 '<li class="ant_link">'+
                                     '<a target="_blank" href="'+ANT_baseUrl+'/interaction/'+interactionId+'" class="ant_seeit_link">'+ANT.t('view_on_site')+'</a>'+
                                 '</li>'+
@@ -588,7 +596,7 @@ function antenna($A){
                 //ANT.aWindow.updateFooter:
                 var $footer = $aWindow.find('div.ant_footer');
                 $footer.show(0);
-                if ( typeof $content != "undefined" ) $footer.html( $content );
+                if ( typeof $content != "undefined" ) $footer.html( $content + '<a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>' );
                 
                 //todo: examine resize
                 // ANT.aWindow.updateSizes( $aWindow );
@@ -856,21 +864,21 @@ function antenna($A){
                 ANT.aWindow.jspUpdate($aWindow);
             },
             updatePageTagMessage: function(args, action) {
-                if(action == 'tagDeleted'){
-                    var $aWindow = $('div.ant_window:eq(0)');
-                    ANT.aWindow.hideFooter($aWindow);
-                    $aWindow.find('.ant_header h1').text('Reaction Undone');
-                    $aWindow.find('.ant_body').css('height','auto').html(
-                        '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
-                            '<div class="ant_label_icon"></div>'+
-                            '<em>'+
-                                '<span>Your Reaction: </span>'+
-                                '<strong> '+args.tag.body+' </strong>'+
-                                '<span>has been undone.</span>'+
-                            '</em>'+
-                        '</div>' 
-                    );
-                }
+                // if(action == 'tagDeleted'){
+                //     var $aWindow = $('div.ant_window:eq(0)');
+                //     ANT.aWindow.hideFooter($aWindow);
+                //     $aWindow.find('.ant_header h1').text('Reaction Undone');
+                //     $aWindow.find('.ant_body').css('height','auto').html(
+                //         '<div class="ant_reactionMessage ant_reactUndoSuccess">'+
+                //             '<div class="ant_label_icon"></div>'+
+                //             '<em>'+
+                //                 '<span>Your Reaction: </span>'+
+                //                 '<strong> '+args.tag.body+' </strong>'+
+                //                 '<span>has been undone.</span>'+
+                //             '</em>'+
+                //         '</div>' 
+                //     );
+                // }
             },
             updateTagMessage: function(args) {
                 //ANT.aWindow.updateTagMessage
@@ -894,7 +902,7 @@ function antenna($A){
                         summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
@@ -961,13 +969,13 @@ function antenna($A){
 
                             function makeShareLinks(){
 
-                                var $shareLinks = $('<div class="ant_shareLinks">'+ANT.t('share_reaction')+': <ul></ul></div>'),
+                                var $shareLinks = $('<div class="ant_shareLinks"><div class="ant_share_cta">'+ANT.t('share_reaction')+':</div> <ul></ul></div>'),
                                 // sns sharing links
                                 socialNetworks = ["facebook","twitter"];  //, "tumblr"]; //,"tumblr","linkedin"];
 
                                 // embed icons/links for diff SNS
                                 $.each(socialNetworks, function(idx, val){
-                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="ant_icon-'+val+'"></i></a></li>');
+                                    var $link = $('<li><a href="http://' +val+ '.com" ><i class="ant-social-'+val+'"></i></a></li>');
                                     $shareLinks.find('ul').append($link);
                                     $link.click( function() {
                                         
@@ -1052,14 +1060,14 @@ function antenna($A){
                 setWidth: function( $aWindow, width ) {
                     // ANT.aWindow.tagBox.setWidth
                     // should probably just be ANT.aWindow.setWidth ??
-                    // width must be 320, 480, or 640
+                    // width must be 200, 300, or 400
                     var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
-                    $aWindow.removeClass('w160 w320 w480 w640').addClass('w'+aWindowWidth);
+                    $aWindow.removeClass('w100 w200 w300 w400').addClass('w'+aWindowWidth);
                 },
                 setHeight: function( $aWindow, height ) {
                     // ANT.aWindow.tagBox.setHeight
                     // should probably just be ANT.aWindow.setWidth ??
-                    // width must be 320, 480, or 640
+                    // width must be 200, 300, or 400
                     $aWindow.find('.ant_body, .jspContainer').height( height );
                 },
                 make: function( params ) {
@@ -1072,7 +1080,7 @@ function antenna($A){
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
                         tagPercent = 0,
                         tagWidth = '',
-                        colorInt = ( params.colorInt ) ? params.colorInt:1,
+                        colorInt = ( params.colorInt ) ? params.colorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1081,6 +1089,11 @@ function antenna($A){
                         content_node_id = (tag.content_node_id) ? tag.content_node_id:false,
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
+
+                    // get the background color and text color
+                    // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) : ANT.group.tag_box_bg_colors[colorInt];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) : ANT.group.tag_box_text_colors[colorInt];
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
                     var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
@@ -1128,14 +1141,14 @@ function antenna($A){
                     //split long tag onto two lines.
                     if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
                         charCountText = 'ant_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBodyRaw+'</div>';
+                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
                     } else {
                         tagIsSplitClass = "ant_tag_split";
                         // if no space, hyphenate
                         if ( tagBodyRaw.indexOf(' ') == -1 ) {
                             charCountText = 'ant_charCount15';
                             tagBodyCrazyHtml = 
-                            '<div class="ant_tag_body ant_tag_lineone">' + 
+                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
                             tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
                             // if ( boxSize == "ant_box_small" ) {
                             //     boxSize = "ant_box_medium";
@@ -1149,7 +1162,7 @@ function antenna($A){
                             }
                             tagBody2 = tagBodyRawSplit.join(' ');
                             charCountText = 'ant_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
                         }
                     }
 
@@ -1164,10 +1177,10 @@ function antenna($A){
 
                     var notWriteModeHtml = isWriteMode ?
                         "" : 
-                        '<span class="ant_count">'+tagCountDisplay+'</span>' +
-                        '<i class="ant_icon-search ant_tag_read_icon"></i>';
+                        '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
+                        '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="ant_color'+colorInt+' '+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="'+tagWidth+'">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';'+ANT.group.tag_box_gradient+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -1175,12 +1188,12 @@ function antenna($A){
                                 'data-tag_count="'+tagCount+'" '+
                                 'data-parent_id="'+parent_id+'" '+
                                 'data-content_node_id="'+content_node_id+'" '+
-                            '>'+
+                            '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
                                 tagBodyCrazyHtml+
                                 notWriteModeHtml+
                                 plusOneCTA+
                             '</div>'+
-                        '</div>';
+                        '</div></div></div>';
 
                     
                     var $tagBox = $(tagBoxHTML);
@@ -1194,7 +1207,7 @@ function antenna($A){
 
                             $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                             ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                                 ANT.aWindow.hideFooter($aWindow);
                                 // ANT.aWindow.panelEnsureFloatWidths($aWindow);
@@ -1456,9 +1469,10 @@ function antenna($A){
                     // add the comment indicator + comment hover... if we should!
 
                     if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" title="view comments"></span>');
+                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" style="color:#'+commentColor+';" title="view comments"></span>');
 
-                        $commentHover.append( '<i class="ant_icon-comment"></i> '+num_comments );
+                        $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
                         
                         if(isTouchBrowser){
                             $commentHover.bind('tap', function() {
@@ -1500,7 +1514,7 @@ function antenna($A){
                 // think we don't need $container or actionType
 
                 var $container = $aWindow.find('.ant_footer');
-                $container.append( '<div class="ant_box"></div> ');
+                $container.append( '<div class="ant_box"></div><a class="antenna-logo-link" target="_blank" href="'+ window.location.protocol + '//www.antenna.is/"><span class="ant-antenna-text"></span></a>');
 
                 if ( $container.find('div.ant_custom_tag').not('div.ant_custom_tag.ant_tagged').length == 0) {
                     var actionType = ( actionType ) ? actionType : "react",
@@ -1528,7 +1542,7 @@ function antenna($A){
                         }
 
                         $clickOverlay.hide();
-                        $customSubmit.show();
+                        $customSubmit.css('display','inline-block');
 
                         $aWindow.removeClass('ant_rewritable');
 
@@ -1634,6 +1648,10 @@ function antenna($A){
 
                             var actionType = (settings.actionType) ? settings.actionType:"react";
 
+                            // gets used in both read & write mode aWindow placement calculations
+                            var containerWidth = $container.width();
+                            var containerHeight = $container.height();
+
                             /* START create aWindow based on write vs. read mode */
                             if ( settings.mode == "writeMode" ) {
                                 // show writemode text
@@ -1655,7 +1673,8 @@ function antenna($A){
 
                                 var newSel;
                                 if ( kind == "text" ) {
-                                    
+                                    // TEXTACTIONBAR
+
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
@@ -1678,7 +1697,7 @@ function antenna($A){
                                             var strBottom = $helper.offset().bottom;
                                             $helper.remove();
                                             coords.left = strRight - 14; //with a little padding
-                                            coords.top = strBottom + 23;
+                                            coords.top = strBottom + 2;
                                         }
                                     }
 
@@ -1693,11 +1712,10 @@ function antenna($A){
                                 } else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
-                                    var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom - 5 : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
-                                    var coords = {
-                                        top: topValue,
-                                        left: $container.offset().left
-                                    };
+                                    var indicatorOffsets = summary.$indicator.offset();
+                                    var coords = {};
+                                        coords.top = indicatorOffsets.top;
+                                        coords.left =  indicatorOffsets.left;
                                 }
                             } else {
                                 // readMode
@@ -1710,14 +1728,24 @@ function antenna($A){
 
                                 if ( kind == "text" ) {
                                     coords = {
-                                        top: $indicator_body.offset().top + 22,
-                                        left: $indicator_body.offset().left -5
+                                        top: $indicator_body.offset().top,
+                                        left: $indicator_body.offset().left
                                     };
                                 } else {
-                                    var coords = {
-                                        top: $container.offset().bottom+5,
-                                        left: $container.offset().left
-                                    };
+                                    // var modTop = (kind=='img') ? - 24 : -5;
+                                    // var coords = {
+                                    //     top: $container.offset().bottom+5,
+                                    //     left: $container.offset().left
+                                    // };
+                                    // var topValue = ( !$container.parents( ANT.group.img_container_selectors ).length ) ? $container.offset().bottom + modTop : $container.parents( ANT.group.img_container_selectors ).first().offset().bottom + 5;
+                                    // var coords = {
+                                    //     top: topValue,
+                                    //     left: $container.offset().left + 12
+                                    // };
+                                    var indicatorOffsets = summary.$indicator.offset();
+                                    var coords = {};
+                                        coords.top = indicatorOffsets.top;
+                                        coords.left =  indicatorOffsets.left;
 
                                     //log media readmode
                                     // ANT.events.track( 'view_node::'+hash, hash );
@@ -1855,9 +1883,17 @@ function antenna($A){
                 //call make function for appropriate type
 
                 var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
+
+                if (typeof $aWindow != 'undefined') {
+
+                    // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
+                    setTimeout(function() {
+                        $aWindow.addClass('ant_show');
+                    }, 1);
                 
-                // return $aWindow to whatever called ANT.aWindow.make
-                return $aWindow;
+                    // return $aWindow to whatever called ANT.aWindow.make
+                    return $aWindow;
+                }
 
             },
             draw: function(options) {
@@ -1901,7 +1937,7 @@ function antenna($A){
                     minWidth = settings.minWidth,
                     maxWidth = settings.maxWidth,
                     ant_for = ( typeof settings.container == "string" ) ? 'ant_for_'+settings.container:'ant_for_page',
-                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w160 '+ant_for+'"></div>');
+                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w100 '+ant_for+'"></div>');
 
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
@@ -1924,9 +1960,9 @@ function antenna($A){
                     $new_aWindow.html('');
                     $new_aWindow.append(
                         '<div class="ant ant_header">'+
-                            '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
+                            // '<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>'+
                             '<div class="ant_loader"></div>'+
-                            '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
+                            // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '</div>'+
                         '<div class="ant ant_body_wrap ant_clearfix"></div>'+
                         '<div class="ant ant_footer"></div>'
@@ -1995,11 +2031,11 @@ function antenna($A){
                     $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
 
-                    // if ( $aWindow.data('initialWidth') >= 480 ) {
-                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                    // if ( $aWindow.data('initialWidth') >= 300 ) {
+                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
                     //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
                     // } else {
-                    //     if ( $aWindow.data('initialWidth') == 160 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 160 ); }
+                    //     if ( $aWindow.data('initialWidth') == 100 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 100 ); }
                     //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
                     // }
 
@@ -2288,7 +2324,7 @@ function antenna($A){
                     img:  _getMediaCoords, //function below (yeah this is a little weird, make nicer later)
                     text:  {
                         //the extra offsets here move the actionbar above the click - not exact numbers.
-                        top: coords.top + 8,  // text actionbar offset.  used to be -33.  tried moving down per CM's feedback at FastCo
+                        top: coords.top - 40,  // text actionbar offset.  used to be -33.  tried moving down per CM's feedback at FastCo
                         left: coords.left + 3
                     }
                 };
@@ -2315,68 +2351,47 @@ function antenna($A){
                 }
                 $new_actionbar.data('hash',hash);
                 
-                $new_actionbar.append('<ul/>');
-
-                var items = [
-                    {
-                        "item":"reaction",
-                        "tipText":ANT.t('main_cta'),
-                        "onclick":function(){
-                            ANT.aWindow.make( 'writeMode', {
-                                "hash": hash,
-                                "kind": kind,
-                                "content": content,
-                                "src_with_path":src_with_path
-                            });
-                        }
-                    }//,
-                    /*
-                    {
-                        "item":"bookmark",
-                        "tipText":"Remember this",
-                        "onclick":function(){
-                            ANT.aWindow.make( 'writeMode', {
-                                "hash": hash,
-                                "kind": kind,
-                                "content": content,
-                                "src_with_path":src_with_path,
-                                "actionType":"bookmark"
-                            });
-                        }
-                    }
-                    */
-                ];
-                // ANT.events.track( 'show_action_bar::'+content );
-
-                // not sure this is valuable and it adds network chatter
-                // ANT.events.trackEventToCloud({
-                //     // category: "actonbar",
-                //     // action: "actionbar_shown",
-                //     // opt_label: "kind: "+kind+", hash: "+hash+", content: "+content,
-                //     event_type: 'actionbar',
-                //     event_value: 'show',
-                //     container_hash: hash,
-                //     container_kind: kind,
-                //     page_id: page_id
-                // });
-                $.each( items, function(idx, val){
-                    var $item = $('<li class="ant_icon_' +val.item+ '" />'),
-                    $indicatorAnchor = $(
-                        '<a href="javascript:void(0);" class="ant_tooltip_this" title="'+val.tipText+'">'+
-                            '<span class="ant ant_react_icon">'+val.item+'</span>'+
+                var clickAction = (settings.clickAction) ? settings.clickAction : function() { ANT.aWindow.make( 'writeMode', { "hash": hash, "kind": kind, "content": content, "src_with_path":src_with_path }); };
+                var $action = $('<a href="javascript:void(0);" class="ant_tooltip_this">'+
+                            '<span class="ant-antenna-logo"></span>'+
                             '<span class="ant ant_react_label">'+ANT.t('main_cta')+'</span>'+
+                            // '<div class="ant_down_arrow"></div>'+
                             '<div class="ant_clear"></div>'+
-                        '</a>'
-                    );
-                    
-                    $indicatorAnchor.click(function(){
-                        val.onclick();
-                        return false;
-                    });
-                    $item.addClass('ant_actionbar_first').append( $indicatorAnchor ).appendTo($new_actionbar.children('ul'));
-                });
+                        '</a><div class="ant_down_arrow"></div>');
+
+
+
+                // HOVERTIMER
+                $new_actionbar.append( $action );
+                $new_actionbar.on('mouseenter', function() {
+                    // var $this = $(this);
+
+                    ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
+
+                    clearTimeout( $new_actionbar.data( 'ant_actionbarShowTimer') );
+                }).on('mouseleave', function() {
+                    // var $this = $(this);
+
+                    // pause then expand
+                    ANT.util.clearFunctionTimer();
+                    $new_actionbar.removeClass('ant_hover');
+
+                    // 
+                    $new_actionbar.data( 'ant_actionbarShowTimer', setTimeout(function() {
+                        // ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
+                        ANT.actionbar.close( $new_actionbar );
+                    }, 1000 ) );
+
+                }).on('click', clickAction );
+
                 $('#ant_sandbox').append( $new_actionbar );
-                // $('a.ant_tooltip_this').tooltip({});
+                
+                // apply the class in a way that simulates doing so after the append happens.
+                // saw on stackoverflow that this should accomplish that.
+                setTimeout(function() {
+                    $new_actionbar.addClass('ant_show');
+                }, 10);
+
 
                 if(kind == "img" || kind == "media" || kind == "med" ){
                     $new_actionbar.addClass('ant_actionbar_for_media');
@@ -2413,16 +2428,11 @@ function antenna($A){
                         hash = $actionbar.data('hash'),
                         $containerTracker = $('#ant_container_tracker_'+hash);
 
-                    if(typeof effect !== "undefined"){ //quick hack to signal fade effect
-                        //make more robust if we want more animations
-                        //I wanted to combine these into one animation, but jquery didn't like that.
-                        $actionbar.fadeOut(200);
-                    }
-                    else{
+                    $actionbar.removeClass('ant_show');
+                    setTimeout(function() {
                         cleanup($actionbar, hash);
+                    }, 200);
 
-                        var $indicator = $('#ant_indicator_'+hash);
-                    }
                 });
 
                 //helper function
@@ -2560,16 +2570,50 @@ function antenna($A){
             //         createCookie(name,"",-1);
             //     }
             // },
+            hexToRgb: function(hex) {
+                // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+                var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                    return r + r + g + g + b + b;
+                });
+
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? 
+                    parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
+                : null;
+            },
+            getColorLuma: function(rgb) {
+                var r = rgb.split(',')[0],
+                    g = rgb.split(',')[1],
+                    b = rgb.split(',')[2];
+
+                return 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+            },
             bubblingEvents: {
                 'touchend': false,
                 'dragging': false
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
+            clearFunctionTimer: function() {
+                // ANT.util.clearFunctionTimer
+                clearInterval($.data(this, 'ant_functionTimer'));
+            },
+            setFunctionTimer: function(callback, time) {
+                // ANT.util.setFunctionTimer
+                ANT.util.clearFunctionTimer();
+                if (!time) { time = 300};
+                if (typeof callback != 'undefined') {
+                    $.data(this, 'ant_functionTimer', setTimeout(function() {
+                        callback();
+                    }, time));
+                }
+            },
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
             setWindowInterval: function () {
+                // ANT.util.setWindowInterval
                 $.data(this, 'ant_intervalTimer', setInterval(function() {
                     if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
                 }, 1000));
@@ -3255,19 +3299,19 @@ function antenna($A){
                             }, 200);
                         });
                     }
-                    if( whichAlert == "showMorePins"){
-                        //put a better message here
-                        // not translated b/c we're not really using.
-                        $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
-                        $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" /> icons.</div>');
+                    // if( whichAlert == "showMorePins"){
+                    //     //put a better message here
+                    //     // not translated b/c we're not really using.
+                    //     $msg1 = $('<h1>See <span>more reactions</span> on this page.</h1>');
+                    //     $msg2 = $('<div>Readers like you are reacting to, sharing, and discussing content on this page.  <a class="ant_show_more_pins" href="javascript:void(0);">Click here</a> to see what they\'re saying.<br><br><strong>Tip:</strong> Look for the <span class="ant-antenna-logo"></span> icons.</div>');
 
-                        $msg2.find('a.ant_show_more_pins').click( function() {
-                            ANT.actions.summaries.showLessPopularIndicators();
-                            $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
-                        });
-                    }
+                    //     $msg2.find('a.ant_show_more_pins').click( function() {
+                    //         ANT.actions.summaries.showLessPopularIndicators();
+                    //         $(this).closest('div.ant_alert_box').find('div.ant_alert_box_x').click();
+                    //     });
+                    // }
                     if (typeof $msg1 != "undefined" ) {
-                        $pinIcon = $('<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />');
+                        $pinIcon = $('<span class="ant-antenna-logo"></span>');
 
                         var $alertContent = $('<div class="ant_alert_box ant ant_' + whichAlert + '" />');
 
@@ -3550,7 +3594,6 @@ function antenna($A){
                         coords.top = 150 + $(window).scrollTop();
                     }
 
-
                     var $aWindow = ANT.aWindow.draw({
                         coords:coords,
                         id: "ant_loginPanel",
@@ -3559,9 +3602,6 @@ function antenna($A){
                         height:175,
                         ignoreWindowEdges:"bt"
                     });
-
-
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
 
                     // store the arguments and callback function that were in progress when this Login panel was called
                     if ( args ) $aWindow.data( 'args', args );
@@ -3573,7 +3613,7 @@ function antenna($A){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
-                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="480" height="140" frameborder="0" style="overflow:hidden; width:480px !important;" />' );
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="400" height="140" frameborder="0" style="overflow:hidden; width:400px !important;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
@@ -3802,9 +3842,18 @@ function antenna($A){
                         json: $.toJSON( {host_name : window.location.hostname} )
                     },
                     success: function(response, textStatus, XHR) {
-
                         var group_settings = response.data;
+
+                        // handle deprecated .blessed_tags, change to .default_reactions
+                        if ( typeof group_settings.blessed_tags != 'undefined' ) {
+                            // use .slice() to copy by value
+                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                            group_settings.default_reactions = group_settings.blessed_tags.slice();
+                            delete group_settings.blessed_tags;
+                        }
+
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
+
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
 
                         var a_or_b_or_not = '';
@@ -3817,14 +3866,6 @@ function antenna($A){
                             event_value: a_or_b_or_not,
                             page_id: ANT.util.getPageProperty('id')
                         });
-
-                        // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof ANT.group.blessed_tags != 'undefined' ) {
-                            // use .slice() to copy by value
-                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            ANT.group.default_reactions = ANT.group.blessed_tags.slice();
-                            delete ANT.group.blessed_tags;
-                        }
 
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
                             return false;
@@ -4116,8 +4157,16 @@ function antenna($A){
                 // todo: this is a pretty wide hackey net - rethink later.
                 var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
 
+                // init media object on load.
+                // this is new, but we want the experience for images to be faster.
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                    var hash = $(this).attr('ant-hash');
+                    ANT.actions.indicators.init( hash );
+                    ANT.actions.content_nodes.init(hash, function(){});
+                });
+
                 if(isTouchBrowser){
-                    // init the "indicators" for media objects, on mobile only.
+                    // init the "indicators" for text objects, on mobile only.
                     // so that the image call-to-action is present and populated
                     // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
@@ -4126,9 +4175,6 @@ function antenna($A){
                         ANT.actions.indicators.init( $(node).attr('ant-hash') );
                     });
 
-                    $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
-                        ANT.actions.indicators.init( $(this).attr('ant-hash') );
-                    });
 
                     if ( !localStorage.getItem('hideDoubleTapMessage') && !ANT.group.hideDoubleTapMessage ) {
                         // no t()
@@ -4145,6 +4191,7 @@ function antenna($A){
                     }
 
                 }else if ( ANT.util.activeAB() )  {
+
                     $(ANT.group.active_sections)
                         .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
@@ -4158,7 +4205,7 @@ function antenna($A){
                                 return;
                             }
 
-                            var minImgWidth = 160;
+                            var minImgWidth = 100;
                             if ( $this.width() >= minImgWidth ) {
                                 var hasBeenHashed = $this.hasAttr('ant-hashed'),
                                     isBlacklisted = $this.closest('.ant, .no-ant').length;
@@ -4182,9 +4229,11 @@ function antenna($A){
                                     ANT.actions.sendHashes( hashListsByPageId, function(){
                                         if( $this.hasClass('ant_live_hover') ){
                                             if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                                $('#ant_indicator_' + hash).show();
+                                                // $('#ant_indicator_' + hash).show();
+                                                $('#ant_indicator_' + hash).addClass('ant_visible');
                                             }
                                         }
+                                        ANT.actions.content_nodes.init(hash, function(){});
                                     });
                                     //these calls are redundant to the same calls in the callback above,
                                     //but this will make them show up right away,
@@ -4197,7 +4246,9 @@ function antenna($A){
                                     
                                     $this.addClass('ant_live_hover');
                                     if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                        $('#ant_indicator_' + hash).show();
+                                        $('#ant_indicator_' + hash).addClass('ant_visible');
+
+                                        // $('#ant_indicator_' + hash).show();
                                         // ANT.actions.indicators.utils.borderHilites.engage(hash);
                                     }
 
@@ -4207,13 +4258,14 @@ function antenna($A){
                             }
                         })
                         .on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
-                            var $this = $(this);
-                                // hash = $this.data('hash');
+                            var $this = $(this),
+                                hash = $this.data('hash');
 
                             // only fire the event if NOT in a known image container... otherwise we want the event to fire once, from the container
                             if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
+                            $('#ant_indicator_' + hash).removeClass('ant_visible');
                     });
                 }
 
@@ -4779,7 +4831,7 @@ function antenna($A){
                     // we want the deepest-nested block element to get the hash, so the indicator appears next to the text
                     // if ( $this.parents('[ant-hash="'+hash+'"]').length ) {
                     //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
-                    //     ANT.actions.stripRdrNode($parentNodes);
+                    //     ANT.actions.stripAntNode($parentNodes);
                     // }
                     
                     // we will use this in the following conditionals
@@ -4792,7 +4844,7 @@ function antenna($A){
                     if ( thisTagName == 'img' ) { 
                         if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
                             var $parentNodes = $this.parents('[ant-hash]');
-                            ANT.actions.stripRdrNode($parentNodes);
+                            ANT.actions.stripAntNode($parentNodes);
                         }
                     }
 
@@ -4824,7 +4876,7 @@ function antenna($A){
                         });
 
                         if (dontHash===true) { 
-                            // ANT.actions.stripRdrNode($this);
+                            // ANT.actions.stripAntNode($this);
                             return;
                         }
                     }
@@ -5279,11 +5331,11 @@ function antenna($A){
                                 ANT.util.cssSuperImportant( $reactionView, { height:reactionViewHeight+"px" });
 
                                 if ($reactionView.length) {
-                                    // since currently, our reactionView needs to have a width that's a factor of 160... force that:
-                                    var statedWidthDividedBy160 = parseInt( reactionViewWidth / 160 );
+                                    // since currently, our reactionView needs to have a width that's a factor of 100... force that:
+                                    var statedWidthDividedBy100 = parseInt( reactionViewWidth / 100 );
                                     
-                                    reactionViewWidth = statedWidthDividedBy160 * 160;
-                                    if ( reactionViewWidth > 960 ) { reactionViewWidth=960; }
+                                    reactionViewWidth = statedWidthDividedBy100 * 100;
+                                    if ( reactionViewWidth > 600 ) { reactionViewWidth=600; }
 
                                     // ANT.util.cssSuperImportant( $reactionView, { width:reactionViewWidth+"px" });
                                     if ( !$reactionView.closest('.ant_reactionView_wrapper').length ) {
@@ -5291,7 +5343,7 @@ function antenna($A){
                                     }
 
                                     // can the header stuff be optional?
-                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png"></div><div class="ant_loader"></div><div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div><div class="ant_indicator_stats"><img class="no-ant ant_pin" src="'+ANT_staticUrl+'widget/images/blank.png"><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
+                                    $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
                                     ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
@@ -5500,7 +5552,7 @@ function antenna($A){
 
                     // create the container sort to see which containers have the most activity
                     ANT.actions.summaries.sortPopularTextContainers();
-                    ANT.actions.summaries.displayPopularIndicators();
+                    // ANT.actions.summaries.displayPopularIndicators();
 
                     $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
@@ -5766,6 +5818,7 @@ function antenna($A){
                     //todo: also remove redundant callbacks from the summary widget.
                     //we still need the onSuccessCallbacks to run though.
                     assetLoader.then(function(response) {
+
                         if ( response.status !== "success" ) {
                             return false;
                         }
@@ -6049,7 +6102,12 @@ if ( sendData.kind=="page" ) {
                                             ANT.session.showLoginPanel( args );
                                         }
                                         else {
-                                            ANT.actions.interactions[int_type].onFail(args);
+                                            if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
+                                                // ANT.events.track( 'temp_limit_hit_r' );
+                                                ANT.session.showLoginPanel( args );
+                                            } else {
+                                                ANT.actions.interactions[int_type].onFail(args);
+                                            }
                                         }
                                     } else {
                                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
@@ -7041,6 +7099,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
                             var $indicator = summary.$indicator = $('<div class="ant_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            if (kind!='text' && ANT.group.img_indicator_show_onload===true) { $indicator.addClass('ant_show_on_load'); }
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
 
@@ -7064,7 +7123,7 @@ if ( sendData.kind=="page" ) {
                                 }
 
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
-                                    ANT.actions.stripRdrNode($container);
+                                    ANT.actions.stripAntNode($container);
                                     return;
                                 }
 
@@ -7117,9 +7176,9 @@ if ( sendData.kind=="page" ) {
                                     _setupHoverForShowRindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
-                                        _setupHoverForShowRindow();
                                         _showRindowAfterLoad();
                                     });
+                                    _setupHoverForShowRindow(); // used to be in the above callback.  test.
                                 }
                             }
 
@@ -7137,7 +7196,7 @@ if ( sendData.kind=="page" ) {
                             .attr('id',indicatorBodyId)
                             .appendTo($indicator)
                             .append(
-                                '<img src="'+ANT_staticUrl+'widget/images/blank.png" class="no-ant ant_pin" />',
+                                '<span class="ant-antenna-logo"></span>',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
@@ -7148,13 +7207,21 @@ if ( sendData.kind=="page" ) {
 
 
                     function _setupHoverForShowRindow(){
+                        // HOVERTIMER
                         if (!isTouchBrowser) {
-                            $indicator.on('mouseover.showRindow', function(){
-                                _makeRindow();
-                                var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
-                                if( hasHelper ){
-                                    // ANT.events.track('paragraph_helper_engage');
-                                }
+                            $indicator.find('.ant_indicator_body').on('mouseenter', function(){
+                                ANT.util.setFunctionTimer( function() {
+                                    if( $indicator.data('isZeroCountIndicator') ){
+                                        _updateRindowForHelperIndicator();
+                                    } else {
+                                        _makeRindow();
+                                    }
+                                } , 333);
+
+
+                            }).on('mouseleave', function() {
+                                // kill the timer and prevent the aWindow from showing
+                                ANT.util.clearFunctionTimer();
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
@@ -7198,8 +7265,8 @@ if ( sendData.kind=="page" ) {
                         $indicator.$aWindow = $aWindow;
                         
                         //these should probably be moved under tagMode.make (called by aWindow.make) where the image tracking lives.
-                        if( $indicator.data('isZeroCountIndicator') ){
-                            _updateRindowForHelperIndicator();
+                        // if( $indicator.data('isZeroCountIndicator') ){
+                        //     _updateRindowForHelperIndicator();
 
                             // ANT.events.track('paragraph_helper_show');
 
@@ -7214,7 +7281,7 @@ if ( sendData.kind=="page" ) {
                             //     container_kind: "text",
                             //     page_id: page_id
                             // });
-                        }else{
+                        // }else{
                             // ANT.events.track( 'view_node::'+hash, hash );
                             ANT.events.trackEventToCloud({
                                 // category: "engage",
@@ -7226,26 +7293,48 @@ if ( sendData.kind=="page" ) {
                                 container_kind: "text",
                                 page_id: page_id
                             });
-                        }
+                        // }
 
                     }
                     function _updateRindowForHelperIndicator(){
-                        var $aWindow = $indicator.$aWindow;
-                        var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
-                        $aWindow.addClass('ant_helper_aWindow');
-                        $aWindow.find('.ant_header').replaceWith($header);
-                        $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
-                        $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
-                        $aWindowBody.html('');
-                        $aWindow.find('div.ant_body_wrap').append($aWindowBody);
-                        ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
-                        $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
-                            $aWindow.remove();
+                        var actionbarCoords = {
+                            top: $indicator.offset().top+11,
+                            left: $indicator.offset().left-8
+                        };
+
+                        var clickAction = function() {
+                            // $aWindow.remove();
                             var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
                             $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                        };
+
+                        var $actionbar = ANT.actionbar.draw({
+                            coords:actionbarCoords,
+                            kind:"text",
+                            // content:selected.text,
+                            hash:hash,
+                            clickAction:clickAction
                         });
+
+
+                        // var $aWindow = $indicator.$aWindow;
+                        // var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
+                        // $aWindow.addClass('ant_helper_aWindow');
+                        // $aWindow.find('.ant_header').replaceWith($header);
+                        // // $header.append('<div class="ant_header_arrow"><img src="'+ANT_staticUrl+'widget/images/header_up_arrow.png" /></div>');
+                        // $aWindowBody = $('<div class="ant_body ant_visiblePanel" />');
+                        // $aWindowBody.html('');
+                        // $aWindow.find('div.ant_body_wrap').append($aWindowBody);
+                        // ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">Click to respond</span>' );
+                        // $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                        //     $aWindow.remove();
+                        //     var $container = $('[ant-hash="'+hash+'"]');
+                        //     var el = $container[0]
+                        //     $('document').selog('selectEl', el);
+                        //     $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                        // });
 
                         // ANT.aWindow.updateSizes(
                         //     $aWindow, {
@@ -7568,7 +7657,7 @@ if ( sendData.kind=="page" ) {
                                 indicatorDetailsId = 'ant_indicator_details_'+hash,
                                 page_id = ANT.util.getPageProperty('id', hash );
 
-                            if( $container.width() < 160 ){
+                            if( $container.width() < 100 ){
                                 ANT.safeThrow('Too small to init.');
                                 return;
                             }
@@ -7602,20 +7691,27 @@ if ( sendData.kind=="page" ) {
                             }else{
                                 $indicator
                                     .on('mouseenter', function() {
-                                        if ( summary.counts.interactions == 0 ) {
-                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
-                                        } else {
-                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
-                                        }
-                                        $(this).addClass('ant_live_hover');
+                                        $indicator.addClass('ant_visible');
+                                        ANT.util.setFunctionTimer( function() {
+                                            if ( summary.counts.interactions == 0 ) {
+                                                var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                            } else {
+                                                var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                            }
+                                            $(this).addClass('ant_live_hover');
+                                        } , 500);
                                     })//chain
                                     .on('mouseleave', function() {
-                                        $(this).removeClass('ant_live_hover');
+                                        ANT.util.clearFunctionTimer();
+                                        $(this).removeClass('ant_live_hover ant_visible');
                                     });
                             }
 
                             //todo: move this from init
                             ANT.actions.indicators.utils.updateContainerTracker(hash);
+
+                            /*debug*/
+                            // $('#ant_indicator_'+hash).addClass('ant_visible');
 
                             function _commonSetup(){
                                 // NEWVIDEO TEST
@@ -7647,8 +7743,7 @@ if ( sendData.kind=="page" ) {
                                     }
                                 );
 
-                                // $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body').append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
-                                $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body'); // .append('<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>');
+                                $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body');
                                 if(isTouchBrowser){
                                     $indicator.bind('tap', function(){
                                         $(this).toggleClass('ant_hover');
@@ -7715,6 +7810,7 @@ if ( sendData.kind=="page" ) {
                             }
 
                             var $aWindow = $indicator_details;
+
                             var $tagsListContainer = ANT.actions.indicators.utils.makeTagsListForInline( $aWindow );
 
                             $bodyWrap.append($tagsListContainer);
@@ -7733,7 +7829,7 @@ if ( sendData.kind=="page" ) {
                         var isPage = !hash || hash == "page";
 
                         var summary = !isPage ? ANT.summaries[hash] : {};
-                        
+
                         var default_reactions = ANT.groupSettings.getBlessedTags(hash);
 
                         var reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid';
@@ -7745,8 +7841,8 @@ if ( sendData.kind=="page" ) {
                           }
                         }
 
-                        var $tagsListContainer = $('<div class="ant_body ant_tags_list ant_'+reactionViewStyle+'" />').data('now', Date.now()),
-                            $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
+                        var $tagsListContainer = $('<div class="ant_body ant_tags_list ant_'+reactionViewStyle+'" style="background:'+ANT.group.tags_bg_css+'" />').data('now', Date.now());
+                            // $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $aWindow.find('.ant_tags_list');
                         $aWindow.find('.ant_body_wrap').append($tagsListContainer);
@@ -7808,6 +7904,7 @@ if ( sendData.kind=="page" ) {
                                 }
                             } else {
                                 // no t() not used?
+                                // this whole thing is never used:
                                 ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
@@ -7942,22 +8039,23 @@ if ( sendData.kind=="page" ) {
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                colorInt = 1;
+                                colorInt = 0,
+                                numColors = ANT.group.tag_box_bg_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                                     }else{
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 480 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
-                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 320 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
                                 }
                             }
 
@@ -7967,20 +8065,20 @@ if ( sendData.kind=="page" ) {
                                   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
-                                    if ( colorInt == 6 ) colorInt = 1;
+                                    if ( colorInt == numColors ) colorInt = 0;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
                                     ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                     // set next color 
                                     colorInt++;
-                                    if ( colorInt == 6 ) colorInt = 1;
+                                    if ( colorInt == numColors ) colorInt = 0;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
                                   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
                                   // set next color 
                                   colorInt++;
-                                  if ( colorInt == 6 ) colorInt = 1;
+                                  if ( colorInt == numColors ) colorInt = 0;
                                 }
 
                             }
@@ -7990,7 +8088,7 @@ if ( sendData.kind=="page" ) {
                         function isotopeTags( $tagsListContainer ) {
                         $tagsListContainer.isotope({
                           masonry: {
-                            columnWidth: 160
+                            columnWidth: 100
                           }
                         }, function() {
 
@@ -8078,7 +8176,7 @@ if ( sendData.kind=="page" ) {
                                     height: 'auto',
                                     width: 'auto',
                                     top: lastTagDims.top,
-                                    left: (lastTagDims.left > 0 && lastTagDims.left < 160) ? 160:lastTagDims.left,
+                                    left: (lastTagDims.left > 0 && lastTagDims.left < 100) ? 100:lastTagDims.left,
                                     bottom: 0,
                                     right: 0
                                 });  
@@ -8119,11 +8217,16 @@ if ( sendData.kind=="page" ) {
                         paddingOffset.top = !hasBorder ? padding.top : 0;
                         paddingOffset.left = !hasBorder ? padding.left : 0;
 
+                        // var containerWidth = $container.width() + 'px';
+                        // var containerHeight = $container.height() + 'px';
+
                         //compensate for padding - which we want to ignore
-                        ANT.util.cssSuperImportant($container_tracker, {
-                            top: $container.offset().top + paddingOffset.top+'px',
-                            left: $container.offset().left + paddingOffset.left+'px'
-                        }, true);
+                        // ANT.util.cssSuperImportant($container_tracker, {
+                        //     // width: containerWidth,
+                        //     // height: containerHeight,
+                        //     top: $container.offset().top + paddingOffset.top+'px',
+                        //     left: $container.offset().left + paddingOffset.left+'px'
+                        // }, true);
 
                         this.updateMediaTracker(hash);
 
@@ -8159,6 +8262,8 @@ if ( sendData.kind=="page" ) {
 
                             //todo: consolodate this with the other case of it
                             var containerWidth, containerHeight;
+                            var containerOffsets = $container.offset();
+
                             //this will calc to 0 if there is no border.
                             var hasBorder = parseInt( $container.css('border-top-width'), 10 ) +
                                 parseInt( $container.css('border-bottom-width'), 10 ) +
@@ -8173,29 +8278,34 @@ if ( sendData.kind=="page" ) {
                                 containerHeight = $container.height();
                             }
 
-                            var padding = {
-                                top: parseInt( $container.css('padding-top'), 10 ),
-                                right: parseInt( $container.css('padding-right'), 10 ),
-                                bottom: parseInt( $container.css('padding-bottom'), 10 ),
-                                left: parseInt( $container.css('padding-left'), 10 )
-                            };
+                            // not used currently
+                            // var padding = {
+                            //     top: parseInt( $container.css('padding-top'), 10 ),
+                            //     right: parseInt( $container.css('padding-right'), 10 ),
+                            //     bottom: parseInt( $container.css('padding-bottom'), 10 ),
+                            //     left: parseInt( $container.css('padding-left'), 10 )
+                            // };
+
+                            // $indicator.offset({ top:containerOffsets.top+'px', left:containerOffsets.left+'px' });
+                            // $indicator.width( containerWidth );
+                            // $indicator.height( containerHeight );
 
                             var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width(),
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
 
-                            var cssTop = (summary.kind=="media") ? $container.height()+modIEHeight+36:$container.height()+modIEHeight+12;
-                            $indicator.data('top', cssTop);
+                            var cssTop = containerOffsets.top - 12 + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
+                            var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
+                            var indicatorPosition = {};
+                            indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
+                            indicatorPosition['top'] = cssTop+'px';
 
+                            ANT.util.cssSuperImportant( $indicator, indicatorPosition, true);
+
+                            $indicator.data('top', cssTop);
                             if (summary.kind=="media") {
                                 $indicator.addClass('ant_indicator_not_img');
                             }
-
-                            ANT.util.cssSuperImportant( $indicator, {
-                                left: 12+'px',
-                                top: cssTop+'px'
-                            }, true);
-
                             var has_inline_indicator = (summary.kind=="text") ? false:true; //$container.data('inlineIndicator'); //boolean                        
                             if(has_inline_indicator){
                                 ANT.actions.indicators.utils.updateInlineIndicator(hash);
@@ -8206,207 +8316,207 @@ if ( sendData.kind=="page" ) {
 
                         // ANT.actions.indicators.utils.borderHilites.update(hash);
                     },
-                    borderHilites: {
-                        //ANT.actions.indicators.utils.borderHilites:
+                    // borderHilites: {
+                    //     //ANT.actions.indicators.utils.borderHilites:
                         
-                        //hiliteDesignEdit
-                        //our old blue version
-                        // designVersion: 1,
+                    //     //hiliteDesignEdit
+                    //     //our old blue version
+                    //     // designVersion: 1,
 
-                        //black border and black box shadow fade
-                        designVersion: 2,
+                    //     //black border and black box shadow fade
+                    //     designVersion: 2,
                         
 
-                        makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                        make: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.make:
+                    //     makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
+                    //     make: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.make:
 
-                            var $indicator = $('#ant_indicator_'+hash),
-                                $container = $('[ant-hash="'+hash+'"]'),
-                                $container_tracker = $('#ant_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
+                    //         var $indicator = $('#ant_indicator_'+hash),
+                    //             $container = $('[ant-hash="'+hash+'"]'),
+                    //             $container_tracker = $('#ant_container_tracker_'+hash),
+                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
                                                         
-                            if( !$container_tracker.hasClass('ant_inline_video') ){
+                    //         if( !$container_tracker.hasClass('ant_inline_video') ){
                                 
-                                if( !$mediaBorderWrap.length ){
-                                    $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
-                                    $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
-                                }
-                                $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                    //             if( !$mediaBorderWrap.length ){
+                    //                 $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
+                    //                 $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
+                    //             }
+                    //             $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                                var borders = {
-                                    'top': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'right': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'bottom': {
-                                        $side: null,
-                                        css: {}
-                                    },
-                                    'left': {
-                                        $side: null,
-                                        css: {}
-                                    }
-                                };
+                    //             var borders = {
+                    //                 'top': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'right': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'bottom': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 },
+                    //                 'left': {
+                    //                     $side: null,
+                    //                     css: {}
+                    //                 }
+                    //             };
 
-                                $mediaBorderWrap.data('borders',borders);
-                                // ANT.actions.indicators.utils.borderHilites.update(hash);
-                            }
+                    //             $mediaBorderWrap.data('borders',borders);
+                    //             // ANT.actions.indicators.utils.borderHilites.update(hash);
+                    //         }
 
-                        },
-                        update: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.update:
-                            // var Section = ANT.actions.indicators.utils.borderHilites;
+                    //     },
+                    //     update: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.update:
+                    //         // var Section = ANT.actions.indicators.utils.borderHilites;
 
-                            // var $indicator = $('#ant_indicator_'+hash),
-                            //     $container = $('[ant-hash="'+hash+'"]'),
-                            //     $container_tracker = $('#ant_container_tracker_'+hash),
-                            //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //         // var $indicator = $('#ant_indicator_'+hash),
+                    //         //     $container = $('[ant-hash="'+hash+'"]'),
+                    //         //     $container_tracker = $('#ant_container_tracker_'+hash),
+                    //         //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
                             
-                            // if( !$mediaBorderWrap.length ){
-                            //     //failsafe that shouldnt be needed.
-                            //     if( this.makeAttempt > 1 ) return;
-                            //     this.makeAttempt ++;
-                            //     ANT.actions.indicators.utils.borderHilites.make(hash);
-                            //     //just return here.  the make function will call this update function again and this will be bypassed.
-                            //     return;
-                            // }
-                            // //else
-                            // this.makeAttempt = 0;
+                    //         // if( !$mediaBorderWrap.length ){
+                    //         //     //failsafe that shouldnt be needed.
+                    //         //     if( this.makeAttempt > 1 ) return;
+                    //         //     this.makeAttempt ++;
+                    //         //     ANT.actions.indicators.utils.borderHilites.make(hash);
+                    //         //     //just return here.  the make function will call this update function again and this will be bypassed.
+                    //         //     return;
+                    //         // }
+                    //         // //else
+                    //         // this.makeAttempt = 0;
 
-                            // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
+                    //         // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
 
-                            // var borders = {
-                            //     'top': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'right': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'bottom': {
-                            //         $side: null,
-                            //         css: {}
-                            //     },
-                            //     'left': {
-                            //         $side: null,
-                            //         css: {}
-                            //     }
-                            // };
+                    //         // var borders = {
+                    //         //     'top': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'right': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'bottom': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     },
+                    //         //     'left': {
+                    //         //         $side: null,
+                    //         //         css: {}
+                    //         //     }
+                    //         // };
                             
-                            // //hiliteDesignEdit
-                            // // var hiliteThickness = 2,
-                            // var hiliteThickness = 
-                            //     Section.designVersion === 1 ? 2 : 
-                            //     Section.designVersion === 2 ? 3 : 
-                            //     2;
+                    //         // //hiliteDesignEdit
+                    //         // // var hiliteThickness = 2,
+                    //         // var hiliteThickness = 
+                    //         //     Section.designVersion === 1 ? 2 : 
+                    //         //     Section.designVersion === 2 ? 3 : 
+                    //         //     2;
                             
-                            // var containerWidth,
-                            //     containerHeight;
+                    //         // var containerWidth,
+                    //         //     containerHeight;
 
-                            // var hasBorder = false;
-                            // //for checking if it has a border.
-                            // //If so we'll use outerWidth and outerHeight to take it into account.
-                            // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
+                    //         // var hasBorder = false;
+                    //         // //for checking if it has a border.
+                    //         // //If so we'll use outerWidth and outerHeight to take it into account.
+                    //         // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
 
-                            // $.each( borders, function(side, data){
-                            //     //set the value in the object using the key's string as a helper
-                            //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
+                    //         // $.each( borders, function(side, data){
+                    //         //     //set the value in the object using the key's string as a helper
+                    //         //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
                       
-                            //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                            //     if( !data.$side.length ){
-                            //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                            //     }
+                    //         //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
+                    //         //     if( !data.$side.length ){
+                    //         //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
+                    //         //     }
 
-                            //     //if any side has a border - set hasBorder to true
-                            //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                            //         hasBorder = true;
-                            //     }
+                    //         //     //if any side has a border - set hasBorder to true
+                    //         //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
+                    //         //         hasBorder = true;
+                    //         //     }
 
-                            // });
+                    //         // });
                             
-                            // //figure out dims
-                            // if(hasBorder){
-                            //     containerWidth = $container.outerWidth();
-                            //     containerHeight = $container.outerHeight();
-                            // }else{
-                            //     containerWidth = $container.width();
-                            //     containerHeight = $container.height();
-                            // }
+                    //         // //figure out dims
+                    //         // if(hasBorder){
+                    //         //     containerWidth = $container.outerWidth();
+                    //         //     containerHeight = $container.outerHeight();
+                    //         // }else{
+                    //         //     containerWidth = $container.width();
+                    //         //     containerHeight = $container.height();
+                    //         // }
 
-                            // //use dims to make the css rules for each border side
-                            // var widthCap = 2*hiliteThickness;
+                    //         // //use dims to make the css rules for each border side
+                    //         // var widthCap = 2*hiliteThickness;
 
-                            // borders.top.css = {
-                            //     width: containerWidth+widthCap+'px',
-                            //     height: 0+'px',
-                            //     top: -hiliteThickness+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
-                            // borders.right.css = {
-                            //     width:0+'px',
-                            //     height: containerHeight+'px',
-                            //     top: 0+'px',
-                            //     left: containerWidth+'px'
-                            // };
-                            // borders.bottom.css = {
-                            //     width: containerWidth+widthCap+'px',
-                            //     height: 0+'px',
-                            //     top: containerHeight+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
-                            // borders.left.css = {
-                            //     width: 0+'px',
-                            //     height: containerHeight+'px',
-                            //     top: 0+'px',
-                            //     left: -hiliteThickness+'px'
-                            // };
+                    //         // borders.top.css = {
+                    //         //     width: containerWidth+widthCap+'px',
+                    //         //     height: 0+'px',
+                    //         //     top: -hiliteThickness+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
+                    //         // borders.right.css = {
+                    //         //     width:0+'px',
+                    //         //     height: containerHeight+'px',
+                    //         //     top: 0+'px',
+                    //         //     left: containerWidth+'px'
+                    //         // };
+                    //         // borders.bottom.css = {
+                    //         //     width: containerWidth+widthCap+'px',
+                    //         //     height: 0+'px',
+                    //         //     top: containerHeight+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
+                    //         // borders.left.css = {
+                    //         //     width: 0+'px',
+                    //         //     height: containerHeight+'px',
+                    //         //     top: 0+'px',
+                    //         //     left: -hiliteThickness+'px'
+                    //         // };
 
-                            // $.each( borders, function( side, data ){
-                            //     ANT.util.cssSuperImportant( data.$side, data.css, true );
-                            // });                       
+                    //         // $.each( borders, function( side, data ){
+                    //         //     ANT.util.cssSuperImportant( data.$side, data.css, true );
+                    //         // });                       
                     
-                        },
-                        engage: function(hash, isShareLink){
-                            //ANT.actions.indicators.utils.borderHilites.engage:
-                            var $container_tracker = $('#ant_container_tracker_'+hash),
-                                $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //     },
+                    //     engage: function(hash, isShareLink){
+                    //         //ANT.actions.indicators.utils.borderHilites.engage:
+                    //         var $container_tracker = $('#ant_container_tracker_'+hash),
+                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
-                            $mediaBorderWrap.addClass('engaged');
+                    //         $mediaBorderWrap.addClass('engaged');
                             
-                            if (isShareLink) {
-                                $mediaBorderWrap.addClass('engagedForShareLink');
-                            }
-                        },
-                        disengage: function(hash){
-                            //ANT.actions.indicators.utils.borderHilites.disengage:
-                            // if ( !$('ant_for_'+hash).length ) {
-                                var $container_tracker = $('#ant_container_tracker_'+hash),
-                                    $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
+                    //         if (isShareLink) {
+                    //             $mediaBorderWrap.addClass('engagedForShareLink');
+                    //         }
+                    //     },
+                    //     disengage: function(hash){
+                    //         //ANT.actions.indicators.utils.borderHilites.disengage:
+                    //         // if ( !$('ant_for_'+hash).length ) {
+                    //             var $container_tracker = $('#ant_container_tracker_'+hash),
+                    //                 $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
 
-                                $mediaBorderWrap.removeClass('engaged');
-                                $mediaBorderWrap.removeClass('engagedForShareLink');
-                                $('#ant_indicator_' + hash).hide();
-                            // }
-                        },
-                        engageAll: function(){
-                            //ANT.actions.indicators.utils.borderHilites.engageAll:
-                            $mediaBorderWrap = $('.ant_media_border_wrap');
-                            $mediaBorderWrap.addClass('engaged');
-                        },
-                        disengageAll: function(){
-                            //ANT.actions.indicators.utils.borderHilites.disengageAll:
-                            $mediaBorderWrap = $('.ant_media_border_wrap');
-                            $mediaBorderWrap.removeClass('engaged');
-                            $mediaBorderWrap.removeClass('engagedForShareLink');
-                            $('div.ant_indicator_for_media').hide();
-                        }
-                    }
+                    //             $mediaBorderWrap.removeClass('engaged');
+                    //             $mediaBorderWrap.removeClass('engagedForShareLink');
+                    //             $('#ant_indicator_' + hash).hide();
+                    //         // }
+                    //     },
+                    //     engageAll: function(){
+                    //         //ANT.actions.indicators.utils.borderHilites.engageAll:
+                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
+                    //         $mediaBorderWrap.addClass('engaged');
+                    //     },
+                    //     disengageAll: function(){
+                    //         //ANT.actions.indicators.utils.borderHilites.disengageAll:
+                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
+                    //         $mediaBorderWrap.removeClass('engaged');
+                    //         $mediaBorderWrap.removeClass('engagedForShareLink');
+                    //         $('div.ant_indicator_for_media').hide();
+                    //     }
+                    // }
                 }//end ANT.actions.indicators.utils
             },
             summaries:{
@@ -8813,30 +8923,30 @@ if ( sendData.kind=="page" ) {
                     ANT.text_container_popularity.sort( SortByCount );
 
                 },
-                displayPopularIndicators: function () {
-                    // ANT.actions.summaries.displayPopularIndicators
-                    // is this used??
+                // displayPopularIndicators: function () {
+                //     // ANT.actions.summaries.displayPopularIndicators
+                //     // is this used??
 
-                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
-                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                    }
-                },
-                showLessPopularIndicators: function() {
-                    // ANT.actions.summaries.showLessPopularIndicators
-                    // is this used??
-                    var hashesToShow = [];
+                //     for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                //         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                //     }
+                // },
+                // showLessPopularIndicators: function() {
+                //     // ANT.actions.summaries.showLessPopularIndicators
+                //     // is this used??
+                //     var hashesToShow = [];
 
-                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                        if ( ANT.text_container_popularity[i] ) {
-                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                                hashesToShow.push( ANT.text_container_popularity[i].hash );
-                            }
-                        }
-                    }
+                //     for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                //         if ( ANT.text_container_popularity[i] ) {
+                //             if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                //                 $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                //                 hashesToShow.push( ANT.text_container_popularity[i].hash );
+                //             }
+                //         }
+                //     }
 
-                    ANT.actions.indicators.show(hashesToShow);
-                }
+                //     ANT.actions.indicators.show(hashesToShow);
+                // }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
@@ -8926,7 +9036,7 @@ if ( sendData.kind=="page" ) {
                 });
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
-                ANT.aWindow.tagBox.setWidth( $aWindow, 320 );
+                ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
                 ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
@@ -9145,7 +9255,6 @@ if ( sendData.kind=="page" ) {
                         });
 
                         $comment.html(
-                            // '<span class="ant_quoteImg"></span>'+
                             '<div class="ant_comment_body">'+this_comment.body+'</div>'
                         );
 
@@ -9600,8 +9709,8 @@ if ( sendData.kind=="page" ) {
                     ANT.aWindow.close( $('div.ant.ant_window.ant.ant_rewritable') );
 
                     var actionbarCoords = mouseEvent ? {
-                        top: parseInt(mouseEvent.pageY, 10),
-                        left: parseInt(mouseEvent.pageX, 10)
+                        top: parseInt(mouseEvent.pageY, 10)-7,
+                        left: parseInt(mouseEvent.pageX, 10)-25
                     } : {
                         top: $mouse_target.offset().top,
                         left: $mouse_target.offset().left
@@ -9646,8 +9755,8 @@ if ( sendData.kind=="page" ) {
                 var $mouse_target = $(e.target);
                 ANT.actions.startSelect($mouse_target, e);
             },
-            stripRdrNode: function($els) {
-                //ANT.actions.stripRdrNode
+            stripAntNode: function($els) {
+                //ANT.actions.stripAntNode
                 $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
             },
             pages: {
@@ -9890,7 +9999,8 @@ function $AFunctions($A){
     var css = [];
 
     if ( !$A.browser.msie || ( $A.browser.msie && parseInt( $A.browser.version, 10 ) > 8 ) ) {
-        css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
+        css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
+        // css.push( ANT_staticUrl+"css/fonts/fontawesome.css" );
         // css.push( ANT_staticUrl+"css/antenna-font/antenna-font.css" );
     }
     if ( $A.browser.msie ) {
@@ -9899,7 +10009,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv28"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv29"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10306,20 +10416,25 @@ function $AFunctions($A){
                         // merge default and user parameters
                         settings = options ? $.extend({}, defaults, options) : defaults;
                         settings.parentContainer = this;
+
                         //temp quick fix
+
                         $(this).data('settings', settings);
                         _makeSummaryWidget(settings);
                     });
                 },
                 update: function(){
                     var $this = ( this[0] === document ) ? $('.ant-summary') : this;
+
                     return $this.each(function(index){
                         
                         //grab the basic setting just from the data 
                         var settings = $(this).data('settings');
 
+                        var pageId = (typeof settings != 'undefined') ? settings.id : ANT.util.getPageProperty('id');
+
                         //get the latest page data
-                        settings.summary = ANT.pages[settings.id].summary;
+                        settings.summary = ANT.pages[pageId].summary;
                         _makeSummaryWidget(settings);
                     });
                 }
@@ -10359,9 +10474,9 @@ function $AFunctions($A){
                 $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
 
                 $summary_widget.append(
-                    '<div class="ant_chevron_cta"><i class="ant_icon-chevron-down"></i></div>' +
                     '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
-                        '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
+                        '<span class="ant-antenna-logo"></span>'+
+                        // '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
                     '</a>'
                 );
 

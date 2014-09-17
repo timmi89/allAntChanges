@@ -83,9 +83,18 @@ div.ant.ant_window {
     padding:0px;
     position:absolute;
     z-index:12000 !important;
-    background:#fff;
+    background:transparent;
+    border-radius: 6px;
     /*overflow:hidden;*/
-    width:160px;
+    width:100px;
+    opacity: 0.0;
+    /*transform: scale(0.5) translate3d(50%,100%,0);*/
+    transition: opacity 200ms ease;
+      
+}
+div.ant.ant_window.ant_show {
+    opacity: 1.0;
+    /*transform: scale(1.0) translate3d(0,0,0);*/
 }
 div.ant.ant_window .ant_reactUndoSuccess {
   font-size:18px;
@@ -99,35 +108,83 @@ div.ant.ant_window .ant_reactUndoSuccess strong {
   font-weight:bold;
 }
 
-div.ant.ant_window.w320 { width:320px; }
+div.ant.ant_window.w200 { width:200px; }
 
 
-.isTouchBrowser div.ant.ant_window.w320 {
-  -moz-transform: scale(0.9);
+.isTouchBrowser div.ant.ant_window.w200 {
+  /*-moz-transform: scale(0.9);
   -webkit-transform: scale(0.9);
-  transform: scale(0.9);
+  transform: scale(0.9);*/
   margin-top:-10px;
 }
-div.ant.ant_window.w480 { width:480px; }
-div.ant.ant_window.w640 { width:640px; }
-div.ant.ant_window.w800 { width:800px; }
-div.ant.ant_window.w960 { width:960px; }
+div.ant.ant_window.w300 { width:300px; }
+div.ant.ant_window.w400 { width:400px; }
+div.ant.ant_window.w500 { width:500px; }
+div.ant.ant_window.w600 { width:600px; }
 
 /* the action bar */
 div.ant_actionbar {
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(236,236,236)), color-stop(0.39, rgb(255,255,255)) );
-    background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
-    padding:0;
-    font:normal 12px Arial, sans-serif;
+    background: #464646;
+    padding:8px 8px 6px 8px;
+    border-radius:8px;
+    font:normal 12px Helvetica, Arial, sans-serif;
     position:relative;
     z-index:11000;
-    /*height:22px;*/
     position:absolute;
+
+    opacity: 0.0;
+    transform: scale(0.5) translate3d(-50%,100%,0);
+    transition: transform 200ms ease, opacity 200ms ease;
+
 }
 
-div.ant_actionbar ul {
+div.ant_actionbar.ant_show {
+  opacity: 1.0;
+  transform: scale(1.0) translate3d(0,0,0);
+}
+
+div.ant_actionbar .ant_down_arrow {
+  width: 0; 
+  height: 0; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent; 
+  border-top: 10px solid #464646;
+  margin-bottom: -11px;
+  margin-left: -1px;
+}
+div.ant_actionbar .ant_tooltip_this {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  max-width:19px;
+  height:20px;
+  width:auto;
+  overflow:hidden;
+  transition: max-width 200ms;
+}
+/*div.ant_actionbar .ant.ant_tooltip_this:hover,*/
+div.ant_actionbar.ant_hover .ant_tooltip_this {
+  max-width:150px;
+  transition: max-width 200ms;
+}
+div.ant_actionbar .ant-antenna-logo {
+  font-size:18px;
+  vertical-align: middle;
+  margin-right: 3px;
+  transition: color 500ms;
+}
+div.ant_actionbar:hover .ant-antenna-logo {
+  color:#fff;
+}
+div.ant_actionbar .ant.ant_react_label {
+  font-size:12px;
+  color:#ccc;
+  white-space: nowrap;
+}
+
+/*div.ant_actionbar ul {
     margin:0;
-    float: left; /*do this for the ant_indicator_for_media*/
+    float: left; 
 }
 div.ant_actionbar li {
     display:inline-block;
@@ -135,22 +192,26 @@ div.ant_actionbar li {
     list-style: none;
     background: none;
     padding: 0;
-}
+}*/
 
-div.ant_actionbar li a span.ant_react_icon {
+/*div.ant_actionbar li a span.ant_react_icon {
     background:url("../images/readr_icons.png") no-repeat 3px 3px transparent;
     display:block;
     height:22px;
     width:23px;
     text-indent:-9999px;
     float:left;
-}
+}*/
 span.ant_react_label {
-  font-size:12px;
-  font-weight:bold;
-  padding:0px;
-  display: inline-block;
+  /*font-size:12px;*/
+  /*font-weight:bold;*/
+  /*padding:0px;*/
+  /*display: inline-block;*/
+  color:#888;
   cursor:pointer;
+}
+div.ant_indicator_for_text span.ant_react_label {
+  margin-left:1px;
 }
 
 div.ant_actionbar span.ant_react_label {
@@ -186,7 +247,8 @@ div.ant_actionbar_for_media li {
     clear:both;
 }
 
-div.ant_about {
+/*div.ant_about {
+  display: none !important;
   cursor:pointer;
   background: url(../images/readr_icons.png) -93px 0px no-repeat #fff;
   float: right;
@@ -205,7 +267,7 @@ div.ant_about a {
 }
 div.ant_about a:hover {
   text-decoration: none;
-}
+}*/
 div.ant_loader {
     background: url(../images/loader.gif) 0px 0px no-repeat #fff;
     height: 20px;
@@ -273,16 +335,16 @@ div.ant_tooltip.ant_tooltip_sideways div.ant.ant_tooltip-arrow { border-color:tr
 
 div.ant_actionbar_for_media div.ant.ant_tooltip-arrow-border,
 div.ant_tooltip.ant_tooltip_sideways div.ant.ant_tooltip-arrow-border {
-border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px}
+border-color:transparent #80aec9 transparent transparent; border-style:solid; border-width:7px; height:0; width:0; position:absolute; top:5px; left:-16px;}
 
 
-div.ant.ant_tooltip div.ant_tag_share    { display:block; width:12px; height:13px; background:url(../images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
+/*div.ant.ant_tooltip div.ant_tag_share    { display:block; width:12px; height:13px; background:url(../images/tag_icons.png) -50px -13px no-repeat; left:45px; position:absolute;top:-20px; 
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:3px;
 }
-
-div.ant_tag_share:hover div.ant_tooltip     { display:block; }
+*/
+/*div.ant_tag_share:hover div.ant_tooltip     { display:block; }*/
 
 
 /* from Bootstrap CSS */
@@ -382,13 +444,15 @@ div.ant li {background:none; padding:0;}
 
 div.ant strong {font-weight:bold;}
 
-div.ant_header div.ant_indicator_stats         { position:absolute; margin:4px 0 0 4px; cursor: move; }
+div.ant_header div.ant_indicator_stats         { position:absolute; margin:6px 0 0 6px; cursor: move; }
 
-div.ant div.ant_header                         { 
-    background:#fff;
+div.ant div.ant_header { 
+    /*background:#fff;*/
+    background:rgba(255,255,255,1);
     position:relative;
     height:32px;
     z-index:5;
+    border-radius: 6px 6px 0px 0px;
     /*border-top:3px solid #989898;*/
     border-bottom: 1px solid #f0f0f0;
     /*todo: revisit the better way to do this*/
@@ -409,6 +473,7 @@ div.ant.ant_page_summary div.ant_header div.ant_header_arrow {
 
 div.ant.ant_window div.ant_header              { cursor:move; padding:4px 0; }
 div.ant.ant_window div.ant_aWindowMenu {
+    /*display: none;*/  /* for now, we are hiding this menu */
     position: absolute;
     top: 0;
     right: 0;
@@ -430,7 +495,6 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions{
     height: 31px;
 }
 
-
 div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-override:before{
     content: none;
 }
@@ -445,6 +509,7 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown .ant_icon-share-overrid
 div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-override{
     background: url("../images/readr_icons.png") no-repeat -50px 0px transparent;
 }
+
 div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
@@ -481,8 +546,9 @@ div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap .ant_link a:hover{
 
 div.ant.ant_indicator_details div.ant_header   { padding:3px 0; }
 
-div.ant div.ant_footer                         { 
-    background:#fff;
+div.ant div.ant_footer { 
+    /*background:#fff;*/
+    background:rgba(255,255,255,1);
     position:relative;
     text-align:center;
     z-index:5;
@@ -490,11 +556,25 @@ div.ant div.ant_footer                         {
     font-family:'Helvetica',Arial,sans-serif;
     font-weight:bold;
     font-size:12px;
+    border-radius: 0px 0px 6px 6px;
     /*todo: revisit the better way to do this*/
     -webkit-box-sizing : border-box;
     -moz-box-sizing : border-box;
     -o-box-sizing : border-box;
     box-sizing : border-box;
+}
+div.ant div.ant_footer .antenna-logo-link {
+  display: block;
+  height: 40px;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  z-index: -1;
+  margin-top: -16px;
+}
+div.ant div.ant_footer .antenna-logo-link span {
+  color:#ccc;
+  font-size: 50px !important;
 }
 div.ant div.ant_footer em {
   display:block;
@@ -517,7 +597,8 @@ div.ant div.ant_footer.ant_cta span {
 }
 div.ant div.ant_footer.ant_cta .ant_cta_msg{
   position: relative;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight:bold;
   left: -3px;
 }
 div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
@@ -526,7 +607,7 @@ div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
     content: "";
     width: 0;
     height: 0;
-    right: -8px;
+    right: -6px;
     top: 8px;
     border-top: 4px solid #666;
     border-left: 4px solid transparent;
@@ -534,9 +615,9 @@ div.ant div.ant_footer.ant_cta .ant_cta_msg:after{
     border-bottom: 4px solid transparent;
     z-index: 101;
 }
-div.ant div.ant_footer.ant_cta .ant_cta_msg:hover:after{
+/*div.ant div.ant_footer.ant_cta .ant_cta_msg:hover:after{
     border-top-color: #008be4;
-}
+}*/
 
 div.ant div.ant_footer.ant_cta span:hover {
   color:#008be4;
@@ -576,17 +657,17 @@ div.ant div.ant_body div.jspDrag    {
 }
 
 div.ant div.ant_header h1 {
- font-size:15px;
- color:#5999dc;
+ font-size:13px;
+ color:#8fb3f2;
  clear:none;
- margin-left:12px;
+ margin-left:10px;
+ padding-top:5px;
  white-space: nowrap;
  text-align:left;
  text-transform:none;
  font-style:normal;
- padding-top: 6px;
 }
-div.ant.w160 div.ant_header h1 {
+div.ant.w100 div.ant_header h1 {
  font-size:13px;
 }
 
@@ -744,7 +825,6 @@ div.ant div.ant_commentBox                     { clear:both; display:block; text
 
 div.ant div.ant_back { position:relative; z-index:1; background:#bbb; font-size:11px; text-transform:uppercase; color:#fff; cursor:pointer; padding: 5px 12px 2px 12px; margin-bottom:4px;text-align:left;}
 div.ant div.ant_back:hover { background:#999; }
-div.ant_indicator_details_for_media div.ant_body div.ant_back { }
 
 div.ant div.ant_back.ant_hide { margin-top:-10px;}
 /*for now, just hide this button*/
@@ -788,7 +868,7 @@ div.ant div.ant_comment .ant_commentSubmit{
     padding: 5px;
     float: right;
     border: none;
-    background: #5999dc;
+    background: #8fb3f2;
     color: white;
     margin-top: 2px;
 }
@@ -801,17 +881,6 @@ div.ant div.ant_comment div.ant_charCount {
     margin-top: 8px;
 }
 
-div.ant div.ant_comment .ant_quoteImg{
-    background: url("../images/quote-icon.png") top left no-repeat;
-    height: 24px;
-    width: 24px;
-    position: absolute;
-    background: url("../images/quote-icon.png") top left no-repeat;
-    margin-top: -2px;
-    opacity:0.2;
-    -moz-opacity:0.2;
-    -khtml-opacity:0.2;
-}
 div.ant div.ant_comment .ant_comment_body{
     margin-left: 27px;
 }
@@ -822,10 +891,14 @@ div.ant .ant_shareLinks {
   font-size:18px;
   color:#999;
   text-align: center;
+  vertical-align: middle;
+}
+div.ant .ant_shareLinks .ant_share_cta {
+  display: inline-block;
 }
 div.ant .ant_shareLinks ul {
     display: inline-block;
-    /*min-width: 95px;*/
+    vertical-align: inherit;
 }
 div.ant .ant_shareLinks ul li {
     padding: 5px 0 5px 5px;
@@ -833,20 +906,21 @@ div.ant .ant_shareLinks ul li {
     list-style:none;
 }
 div.ant .ant_shareLinks ul i {
-    font-size:20px;
+    font-size:28px;
     background:#fff;
     text-decoration: none;
 }
-div.ant .ant_shareLinks ul i:hover {
-    background:#eee;
-}
-div.ant .ant_shareLinks ul i.ant_icon-twitter {
+div.ant .ant_shareLinks ul i.ant-social-twitter {
   color:#55acee;
-  padding:6px;
+  padding:0px;
 }
-div.ant .ant_shareLinks ul i.ant_icon-facebook {
+div.ant .ant_shareLinks ul i.ant-social-facebook:hover,
+div.ant .ant_shareLinks ul i.ant-social-twitter:hover {
+  color:#8fb3f2;
+}
+div.ant .ant_shareLinks ul i.ant-social-facebook {
   color:#3b5998;
-  padding:6px 10px;
+  padding:0px;
 }
 
 /* forms */
@@ -971,41 +1045,17 @@ div.ant.ant-summary {
   padding: 0px 0px 0px 8px;
   height:30px;
   /*fallback*/
-  background: #fff;
-  /*border-top:3px solid #989898;*/
-  /*border-bottom:3px solid #989898;*/
-  /*
-  background: -moz-linear-gradient(
-    top,
-    #ffffff,
-    #eeeeee);
-  background: -webkit-gradient(
-    linear, left top, left bottom, 
-    from(#ffffff),
-    to(#eeeeee));
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  border: 0px solid #c9c9c9;
-    */
+  /*background: #fff;*/
   -moz-box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
+    0px 0px 3px rgba(000,000,000,0.3);
   -webkit-box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
+    0px 0px 3px rgba(000,000,000,0.3);
   box-shadow:
-    0px 0px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
-  /*text-shadow:
-    0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1);*/
-  /*without this, the text was jumping down on first load before the styles are cached*/
-  min-width: 114px;
+    0px 0px 3px rgba(000,000,000,0.3);
 
 }
 
-div.ant.ant-summary:hover {
+/*div.ant.ant-summary:hover {*/
   /*background:#fff;*/
   /*background: -moz-linear-gradient(
     top,
@@ -1015,13 +1065,13 @@ div.ant.ant-summary:hover {
     linear, left top, left bottom, 
     from(#ffffff),
     to(#e5f5ff));*/
-}
+/*}*/
 div.ant_shareWidget div.ant.ant-summary {
     border:1px solid #ccc;
 }
 
-div.ant.ant-summary .ant_chevron_cta {
-  display: none;
+/*div.ant.ant-summary .ant_chevron_cta {*/
+  /*display: none;*/
   /*float: right;*/
   /*border-left: 1px solid #ddd;*/
   /*height: 30px;
@@ -1030,17 +1080,18 @@ div.ant.ant-summary .ant_chevron_cta {
   padding-left: 6px;
   margin-left: 6px;
   text-align: left;*/
-}
-div.ant.ant-summary:hover .ant_chevron_cta i:before,
+/*}*/
+/*div.ant.ant-summary:hover .ant_chevron_cta i:before,
 div.ant.ant-summary.ant_hover .ant_chevron_cta i:before {
   content: "\f077";
 }
 div.ant.ant-summary .ant_chevron_cta i {
   color:#999;
 }
-
+*/
 div.ant.ant-summary a.ant_logo {
   display: inline-block;
+  margin-right:5px;
 }
 
 /*blunt attack for now*/
@@ -1057,24 +1108,13 @@ div.ant.ant-summary #ant-user a {
   color:#008be4;
 }
 div.ant div.ant_footer.ant_cta .ant_what_is_it { border-left:1px solid #ddd; }
-div.ant.w160 div.ant_footer.ant_cta .ant_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0;}
+div.ant.w100 div.ant_footer.ant_cta .ant_what_is_it { border-top:1px solid #ccc; border-left:none;padding:8px 4px 0;}
 
-div.ant.ant-summary div.ant-see-more {
-    background: url("../images/readr_icons.png") repeat scroll -225px 0px transparent;
-    height:16px;
-    width:25px;
-    position:absolute;
-    left:6px;
-    bottom:10px;
-    display:none;;
-}
-div.ant.ant-summary.ant-too-many-reactions div.ant-see-more {
-    display:block;
-}
 span.ant_no_reactions_msg{
     display: block;
-    padding: 10px 0;
+    padding: 10px;
 }
+
 
 div.ant.ant-summary table { border:0;padding:0; margin:0; width:auto; }
 div.ant.ant-summary table td { border:0;padding:0; margin:0; text-align:left; vertical-align: top;}
@@ -1091,12 +1131,12 @@ div#ant-page-summary.defaultSummaryBar div.ant.ant-summary table{
     margin: 0px 200px 0 0px ;
 }
 
-div.ant.ant-summary img.ant_logo {
+/*div.ant.ant-summary img.ant_logo {
     background:url("../images/readr_icons.png") no-repeat scroll 0 1px transparent;
     margin: 0 0 -4px 5px;
-}
+}*/
 
-/*/*/
+
 div.ant.ant-summary td.ant_rb_logo {
   /*todo*/
   display: none;
@@ -1150,11 +1190,11 @@ div.ant.ant-summary div.ant-sum-headline div.ant-call-to-action {
 div.ant.ant-summary a.ant_reactions_label {
   display:inline-block;
   font-style:normal;
-  color:#5999dc;
+  color:#8fb3f2;
   font-size:14px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
-  padding:10px 0 0;
+  padding:10px 10px 0 0;
   text-decoration:none;
   /*position: relative;
   top: 1px;*/
@@ -1237,13 +1277,11 @@ div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle.ant_noReactions {
   margin-left:-13px;
   padding-left:0;
 }
-div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle img.ant_logo {
-  /*todo*/
+/*div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle img.ant_logo {
   display: none;
-
   background:url("../images/readr_icons.png") no-repeat scroll 0 1px transparent;
   margin:0 0 -2px 0;
-}
+}*/
 div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle.ant_noReactions img.ant_logo {
   background:none;
 }
@@ -1265,7 +1303,7 @@ div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle:hover img.ant_arr
     background:url("../images/summary_box_arrow.png") no-repeat scroll 0 -19px transparent;
 }
 div.ant.ant_window div.ant_tags_list .ant_info {
-  max-width:320px;
+  max-width:200px;
   text-align:left;
   max-height:350px;
   overflow-y:auto;
@@ -1346,7 +1384,7 @@ div.ant.ant_window div.ant_tags_list .ant_info .feedbackMsg {
     clear: both;
     font-size: 12px;
 }
-div.ant.ant_window div.ant_tags_list .ant_info .feedbackMsg .ant_label_icon{
+/*div.ant.ant_window div.ant_tags_list .ant_info .feedbackMsg .ant_label_icon{
     height: 18px;
     width: 18px;
     float: left;
@@ -1354,7 +1392,7 @@ div.ant.ant_window div.ant_tags_list .ant_info .feedbackMsg .ant_label_icon{
     position: relative;
     margin: 0 4px 0 0;
     background: url(../images/readr_icons_grey.png) no-repeat -110px 0 transparent;
-}
+}*/
 
 div.ant.ant_window div.ant_tags_list .ant_info .shareWrapper,
 div.ant.ant_window div.ant_tags_list .ant_info .ant_select_user_board,
@@ -1446,9 +1484,9 @@ div#ant-page-summary.defaultSummaryBar .ant-summary{
 
 /*style for our widget components like the actionbar, indicator details etc.  Does rounded cornders, shadow, etc.*/
 .ant_widget{
-    -moz-box-shadow:0 0 20px #bbb;
-    -webkit-box-shadow:0 0 20px #bbb;
-    box-shadow:0 0 20px #bbb;
+    -moz-box-shadow:0 2px 6px #aaa;
+    -webkit-box-shadow:0 2px 6px #aaa;
+    box-shadow:0 2px 6px #aaa;
 }
 
 /*shareWidget*/
@@ -1610,7 +1648,7 @@ div.ant_socialShareWrap.locateWithSummaryWidget div.ant_shareWidget .ant_innerWr
 
 
 div.ant_reactions {
-    min-width:120px;
+    min-width:100px;
 }
 
 /* user education bar */
@@ -1622,14 +1660,14 @@ div.ant_alert_box_1 h1   { padding:11px 0 0 26px; cursor:text; clear:none;}
 div.ant_alert_box_2      { background: #f0f0f0; padding:10px 10px; font-size:12px; color:#666;}
 div.ant_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
 div.ant_alert_box_2 span {
-    background:url(../images/actionbar_icons.png) no-repeat -8px -8px transparent;
+    /*background:url(../images/actionbar_icons.png) no-repeat -8px -8px transparent;*/
     display:inline-block;
     height:22px;
     width:16px;
     text-indent:-9999px;
 }
 
-div.ant_alert_box_1 img.ant_pin { 
+/*div.ant_alert_box_1 img.ant_pin { 
     position:static;
     margin:10px 0px 10px 7px;
     float:left;
@@ -1640,7 +1678,7 @@ div.ant_alert_box_2 img.ant_pin {
     margin: 0 0 -4px;
     position: static;
 }
-
+*/
 div.ant_alert_box.ant_fromShareLink .reactionText{
     display: block;
     margin: 10px 0;
@@ -1671,12 +1709,13 @@ div.ant_indicator {
     position: relative;
     margin: 0;
     padding: 0;
-    top: 0;
-    left: 0;
+    /*top: 0;
+    left: 0;*/
     z-index:11000;
     text-decoration:none;
     border:none;
-    cursor:default;
+    /*cursor:default;*/
+    cursor: wait;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -1684,10 +1723,6 @@ div.ant_indicator {
     user-select: none;
 }
 .no-ant-icon div.ant_indicator { display:none !important; }
-
-div.ant_indicator.ant_indicator_for_media {
-    /*cursor:pointer;*/
-}
 
 /*touchBrowser overrides for sandbox*/
 #ant_sandbox.isTouchBrowser div.ant_indicator.ant_indicator_for_media {
@@ -1730,6 +1765,7 @@ div.ant_indicator_for_text{
     display: inline;
     position: relative;
     vertical-align: top;
+    line-height: inherit !important;
 }
 body.ant_touch_browser div.ant_indicator_for_text {
   display:block;
@@ -1752,6 +1788,9 @@ div.ant_indicator_for_text * {
     -o-user-select: none;
     user-select: none;
     /*opacity:0.5;*/
+}
+div.ant_indicator_for_text .ant-antenna-logo {
+  top: 2px;
 }
 /*the indicator body will be moved up to compensate*/
 
@@ -1778,7 +1817,7 @@ div.ant_helper_text {
   text-align: center;
   margin: 0 6px 8px 0;
   padding: 4px 7px 0px;
-  width: 160px;
+  width: 100px;
   line-height: 1.2em;
 }
 #ant_indicator_details_wrapper{
@@ -1842,7 +1881,7 @@ div.ant_indicator_details
 }
 
 /*indicator pin both*/
-div.ant_indicator img.ant_pin,
+/*div.ant_indicator img.ant_pin,
 img.ant_pin,
 div.ant_indicator_details img.ant_pin { 
     background:url("../images/readr_icons.png") no-repeat -179px -1px; 
@@ -1850,10 +1889,11 @@ div.ant_indicator_details img.ant_pin {
     margin:0;
     box-shadow:none;
 }
-
-.ant_live_hover div.ant_indicator {
-  display:inline-block;
-}
+*/
+/*.ant_live_hover div.ant_indicator {*/
+  /*this causes the bumpiness when indicator is after a block element, inside a block element.*/
+  /*display:inline-block;*/
+/*}*/
 .ant_live_hover div.ant_indicator.ant_helper {
   opacity:0.5;
 }
@@ -1868,31 +1908,33 @@ body.no-ant div.ant-summary,
 }
 
 
-.ant_live_hover div.ant_indicator img.ant_pin,
+/*.ant_live_hover div.ant_indicator img.ant_pin,
 div.ant div.ant_indicator_stats img.ant_pin {
   background-position:1px -1px;
-}
-div.ant_indicator.ant_indicator_for_media img.ant_pin { 
+}*/
+/*div.ant_indicator.ant_indicator_for_media img.ant_pin { 
     background:url("../images/readr_icons.png") no-repeat -2px -1px;
     position:absolute;
     margin:6px 0 0;
-}
-body.ant_touch_browser div.ant_indicator.ant_indicator_for_media img.ant_pin {
+}*/
+/*body.ant_touch_browser div.ant_indicator.ant_indicator_for_media img.ant_pin {
   background-position: -182px -1px;
-}
+}*/
 /*indicator pin inline indicator only*/
-div.ant_indicator img.ant_pin{ 
+/*div.ant_indicator img.ant_pin{ 
     top: auto;
     left: auto;
-}
+}*/
 /*indicator pin indicator details only*/
-div.ant_indicator_details img.ant_pin{ 
+/*div.ant_indicator_details img.ant_pin{ 
 }
-
-div.ant_indicator div.ant_indicator_body { 
+*/
+div.ant_indicator.ant_indicator_for_text div.ant_indicator_body { 
     position:absolute;
-    top:0; /*don't make important so that our js can update*/
-    left:0; /*don't make important so that our js can update*/
+    /*don't make important so that our js can update*/
+    top: -2px;
+    left: 5px;
+
     margin:0;
     overflow:hidden;
     min-height:16px;
@@ -1900,8 +1942,8 @@ div.ant_indicator div.ant_indicator_body {
 
 /*for now give the text indicators a small offset so the details don't cover the end of content todo: id:12345*/
 div.ant_indicator_for_text div.ant_indicator_body{
-    left: 4px;
-    /*top: -15px;*/
+    left: 6px;
+    top: 5px;
 }
 
 body.ant_touch_browser div.ant_indicator_for_text.ant_no_reactions {
@@ -1924,29 +1966,21 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_co
 }
 
 
-
 div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
-  padding: 0 0 0 4px;
+  padding: 5px 0 0 0;
   height:24px;
-  /*fallback*/
-  background: rgba(255,255,255,0.9);
-  /*background: -moz-linear-gradient(
-    top,
-    #ffffff 100%,
-    #eeeeee);*/
-  /*background: -webkit-gradient(
-    linear, left top, left bottom, 
-    from(#ffffff),
-    to(#eeeeee));*/
-  /*-moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;*/
-  border: 0px solid #c9c9c9;
-  text-shadow:
-    0px -1px 0px rgba(000,000,000,0.1),
-    0px 1px 0px rgba(255,255,255,1);
+  background: rgba(255,255,255,0.95);
+  /*border: 0px solid #c9c9c9;*/
+  border-radius: 6px;
+
 }
+div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
+  margin-left:4px;
+  /*top: -3px;*/
+  position: relative;
+}
+
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body{
 background: rgba(255,255,255,0.75);
   text-shadow:none;
@@ -1963,8 +1997,8 @@ div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
     inset 0px 0px 3px rgba(255,255,255,1);
 }
 
-div.ant_indicator_for_media div.ant_indicator_body:hover {
-  background: #fff;
+/*div.ant_indicator_for_media div.ant_indicator_body:hover {*/
+  /*background: #fff;*/
   /*background: -moz-linear-gradient(
     top,
     #ffffff 100%,
@@ -1973,11 +2007,11 @@ div.ant_indicator_for_media div.ant_indicator_body:hover {
     linear, left top, left bottom, 
     from(#ffffff),
     to(#e5f5ff));*/
-}
+/*}*/
 
-div.ant_indicator_for_media .ant_chevron_cta {
+/*div.ant_indicator_for_media .ant_chevron_cta {
   display: inline-block;
-  /*border-left: 1px solid #ddd;*/
+  border-left: 1px solid #ddd;
   height: 30px;
   width:23px;
   padding-top: 6px;
@@ -1990,7 +2024,7 @@ body.ant_touch_browser div.ant_indicator_for_media .ant_chevron_cta {
 div.ant_indicator_for_media:hover .ant_chevron_cta i:before,
 div.ant_indicator_for_media.ant_hover .ant_chevron_cta i:before {
   content: "\f077";
-  /*background: -moz-linear-gradient(
+  background: -moz-linear-gradient(
     top,
     #f7f7f7 100%,
     #dddddd);
@@ -1998,8 +2032,9 @@ div.ant_indicator_for_media.ant_hover .ant_chevron_cta i:before {
     linear, left top, left bottom, 
     from(#f7f7f7),
     to(#dddddd));
-  border-left:1px solid #eee;*/
+  border-left:1px solid #eee;
 }
+*/
 
 
 
@@ -2017,11 +2052,16 @@ div.ant_indicator_details_for_media div.ant_indicator_details_body {
 
 /*now override styles for the image containers*/
 div.ant_indicator_for_media {
-    /*display:absolute;*/
+    position:absolute;;
     display:none;;
-    opacity:1 !important;
-    -moz-opacity:1 !important;
-    -khtml-opacity:1 !important;
+    opacity:0.6 !important;
+}
+div.ant_indicator_for_media.ant_visible {
+  opacity:1 !important;
+  display: block !important;
+}
+div.ant_indicator_for_media.ant_show_on_load {
+  display: block !important;
 }
 
 div.ant_indicator_for_media.ant_live_hover {
@@ -2035,7 +2075,7 @@ div.ant_indicator_details_for_media {
     overflow:hidden; /*for the animate() out to work nicely*/
     height:0;;
     /*should be hidden by default*/
-    display: none;;
+    /*display: none;;*/
     /*display:block;*/
     margin:0;
     box-shadow: 0 0px 4px #ccc;
@@ -2043,6 +2083,7 @@ div.ant_indicator_details_for_media {
     -webkit-box-shadow: 0 0px 4px #ccc;
     background: #fff;
 }
+
 div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
   height:auto;
   box-shadow: 0;
@@ -2050,9 +2091,20 @@ div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
   -webkit-box-shadow:  0;
 }
 
-div.ant_indicator_for_media_inline div.ant_indicator_body { 
-    left:-12px;
-    top:-36px;    
+div.ant_indicator_for_media_inline {
+    max-width:21px;
+    transition: max-width 200ms;
+}
+/*div.ant_indicator_for_media_inline div.ant_indicator_body { */
+    /*left:-12px;*/
+    /*top:-36px;    */
+    /*width:22px;*/
+    /*text-align: center;;*/
+/*}*/
+
+div.ant_indicator_for_media_inline.ant_visible {
+  width:auto;
+  max-width:150px;
 }
 
 div#ant_event_pixels {
@@ -2060,16 +2112,16 @@ div#ant_event_pixels {
 }
 div.ant_container_tracker{
     position:absolute;
+    width:100%;
 }
 
 /*the only divs here will be the border elements*/
+/*
 div.ant_media_border_wrap div{
     position:absolute;
 }
 
 div.ant_media_border_wrap.engaged{
-    /*uncomment to turn on media hilites*/    
-    /*hiding....*/
     display: none;
 }
 
@@ -2135,27 +2187,53 @@ div.ant_mediaHilite_left{
     -moz-box-shadow: 0px 0 6px 1px #008BE4;
     box-shadow: 0px 0 6px 1px #008BE4;
     border:none;
-}
+}*/
 /* hiding the wrapper*/
 /*.ant_media_border_wrap div {display:none;}*/
 /*hiliteDesignEdit*/
 
 
 div.ant_indicator span.ant_count, 
-div.ant_indicator_details span.ant_count { 
+div.ant_indicator_details span.ant_count {
     position:relative;
-    margin-left:13px;
     font-size:11px;
     font-weight:bold;
-    padding:4px 8px 4px 4px;
+    padding:0px 8px 0px 3px;
     line-height:16px;
-    /*color:#4d92da;*/
     color:#888;
+    /*vertical-align: baseline;*/
 }
+
+div.ant_indicator.ant_indicator_for_text span.ant_count {
+  opacity:0;
+  /*transition:left 300ms ease, opacity 300ms ease;*/
+}
+
+.ant_live_hover div.ant_indicator span.ant_count, 
+.ant_live_hover div.ant_indicator_details span.ant_count {
+  /*left:0px;*/
+  opacity:1;
+}
+
 div.ant_indicator.ant_indicator_for_media span.ant_count {
-    margin:1px 0 0 13px;
-    font-size:12px;
-    display:inline-block;
+  display:inline-block;
+  visibility: hidden;
+  margin:-3px 0 0 1px;
+  font-size:11px;
+  max-width:20px;
+  transition: max-width 200ms;
+  overflow: hidden;
+  vertical-align: text-top;
+}
+div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
+  max-width:130px;
+  visibility: visible;
+}
+div.ant_indicator.ant_indicator_for_media .ant-antenna-logo {
+  vertical-align: text-top;
+}
+div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
+  display:inline-block;
 }
 body.ant_touch_browser div.ant_indicator.ant_indicator_for_media span.ant_count {
   font-size:11px;
@@ -2172,7 +2250,7 @@ span.ant_indicator_categoryTitle{
 div.ant div.ant_body.ant_tags_list { 
     display:block;
     text-decoration:none;
-    background:#fff;
+    /*background:#fff;*/
 }
 
 div.ant.ant_inline div.ant_body.ant_tags_list {
@@ -2180,23 +2258,31 @@ div.ant.ant_inline div.ant_body.ant_tags_list {
 }
 
 div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }
-div.ant div.ant_body.ant_tags_list.ant_grid { background:#fff; width:160px; }
-div.ant.ant_window.w320 div.ant_body.ant_tags_list.ant_grid { width:320px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid { width:480px; }
-div.ant.ant_window.w640 div.ant_body.ant_tags_list.ant_grid { width:640px; }
-div.ant.ant_window.w800 div.ant_body.ant_tags_list.ant_grid { width:800px; }
-div.ant.ant_window.w960 div.ant_body.ant_tags_list.ant_grid { width:960px; }
+/*div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; background:url(../../images/congruent_outline_light.png); }*/
+div.ant div.ant_body.ant_tags_list.ant_grid { width:100px; }
+div.ant.ant_window.w200 div.ant_body.ant_tags_list.ant_grid { width:200px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid { width:300px; }
+div.ant.ant_window.w400 div.ant_body.ant_tags_list.ant_grid { width:400px; }
+div.ant.ant_window.w500 div.ant_body.ant_tags_list.ant_grid { width:500px; }
+div.ant.ant_window.w600 div.ant_body.ant_tags_list.ant_grid { width:600px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box { 
     text-align:center; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; box-sizing: border-box; overflow:hidden; letter-spacing:-1px;
     position: relative;
+
     /*a slight faded border so when the same color stacks up there is a little separation*/
-    -moz-box-shadow: 0 0 2px -1px #bbb;
-    -webkit-box-shadow: 0 0 2px -1px #bbb;
-    box-shadow: 0 0 2px -1px #bbb;
+    /*-moz-box-shadow: 0 0 2px -1px #bbb;*/
+    /*-webkit-box-shadow: 0 0 2px -1px #bbb;*/
+    /*box-shadow: 0 0 2px -1px #bbb;*/
+    /*-webkit-box-shadow: inset -1px -1px 2px 0px rgba(0, 0, 0, 0.1);*/
+    /*-moz-box-shadow:    inset -1px -1px 2px 0px rgba(0, 0, 0, 0.1);*/
+    /*box-shadow:         inset -1px -1px 2px 0px rgba(0, 0, 0, 0.1);*/
+    /*border-right:1px solid rgba(0,0,0,0.05);*/
+    /*border-top:1px solid rgba(0,0,0,0.05);*/
+
 }
 
 div.ant div.ant_body.ant_tags_list .ant_tag_read_icon{
-    position: absolute;
+    /*position: absolute;*/
     display: none;
     color: white;
 }
@@ -2208,12 +2294,15 @@ div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_tag_read_icon{
     display: block;
     color: #008be4;
+    margin:0 0 -10% 0;
+    font-size:18px;
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag {
     position:relative;
     height:100%;
     word-spacing:0;
+
     -webkit-transition: margin-top 0.6s ease;
     -moz-transition: margin-top 0.6s ease;
     -o-transition: margin-top 0.6s ease;
@@ -2233,16 +2322,16 @@ div.ant div.ant_body.ant_tags_list.ant_grid div.ant_box.ant_animated .ant_commen
 div.ant div.ant_body.ant_tags_list.ant_grid div.ant_tag { margin-top:-125%;}
 div.ant div.ant_body.ant_tags_list.ant_grid div.ant_box.ant_animated div.ant_tag { margin-top:0%;}
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag.ant_tag_split {font-size:18px;}
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:28px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag.ant_tag_split {font-size:14px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:24px;}
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_read_icon,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne {
-    position: absolute;
-    width: 100%;
-    top: 43%;
-    margin-top: 0.5em;
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*top: 43%;*/
+    /*margin-top: 0.5em;*/
     font-weight:100;
     /*using transform so we can match the font-size to the count and use the margin-top in ems*/
     -webkit-transform: scale(0.7, 0.7);
@@ -2253,55 +2342,59 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne {
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count {
-    opacity: 0.60;
+    opacity: 0.85;
     filter: alpha(opacity=60);
     display: block;
-    position: absolute;
+    position: static;
+    margin:0 0 -10% 0;
+    font-weight:bold;
+    font-size: 15px;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne{
     display: none;  
-    font-size: 1em;
+    font-size: 15px;
+    margin:0 0 -10% 0;
 }
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_tag_read_icon,
+/*div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_tag_read_icon,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_tag_split .ant_plusOne {
-  margin-top: 1em;
+  margin-top: 0.75em;
 }
-
+*/
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_big {
-  width:320px;
+  width:200px;
   /*tag_height_double*/
-  height:140px;
+  height:120px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium {
-  width:160px;
+  width:100px;
   /*tag_height_double*/
-  height:140px;
+  height:120px;
   padding: 0;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small {
-  width:160px;
+  width:100px;
   /*tag_height*/
-  height:70px;
+  height:60px;
   padding: 0;
 }
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium.ant_wide { width:320px;}
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:320px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_medium.ant_wide { width:200px;}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:200px; }
 
 
-div.ant.ant_window.w160 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:160px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:480px; }
-div.ant.ant_window.w480 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w640 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w800 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
-div.ant.ant_window.w960 div.ant_body.ant_tags_list.ant_grid .ant_contains1{
+div.ant.ant_window.w100 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:100px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:300px; }
+div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w400 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w500 div.ant_body.ant_tags_list.ant_grid .ant_contains1,
+div.ant.ant_window.w600 div.ant_body.ant_tags_list.ant_grid .ant_contains1{
     /*tag_height_double*/
     height:140px;
-    width: 160px;
+    width: 100px;
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box_small.ant_wide { width:100%; }
@@ -2323,62 +2416,28 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_container .ant_box{
 }
 
 
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap {
     position: absolute !important;
     width: 100% !important;
-    top: 40% !important;
-    margin-top: -0.5em !important;
+    height: 100% !important;
+    display: table;
+}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap .ant_tag_wrap2 {
+  display: table-cell; 
+  vertical-align: middle; 
+  text-align: center; 
+}
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
     text-align: center;
-    font-weight:normal;
+    font-weight: bold;
 }
 div.ant.ant_readmode div.ant_body.ant_tags_list.ant_grid .ant_tag_split .ant_tag_body{
-    margin-top: -1em !important;
-}
-
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1{
-    background:#84b8ef; 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_count{
-    color:#446483;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2{
-    background-color:rgba(52, 140, 156, 0.66); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_count{
-    color:#2f5e69;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3{
-    background-color:rgba(215, 243, 96, 0.89); 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_count{
-    color:#8d9742;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4{
-    background:#9dd55e; 
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_count{
-    color:#6e8f3b;
-}
-
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5{
-    background-color:rgba(82, 149, 182, 0.83);
-}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_count{
-    color:#415d6b;
+    /*margin-top: -1em !important;*/
 }
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover { 
     cursor:pointer;
-    background:#fff !important;
+    background:rgba(255,255,255,1) !important;
     /*box-shadow:0px 0px 32px #ccc inset;*/
     -moz-box-shadow: 0 0 25px -7px #333 inset;
     -webkit-box-shadow: 0 0 25px -7px #333 inset;
@@ -2388,7 +2447,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover {
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_tag_body,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_count,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_plusOne{
-    color:#008be4;
+    color:#008be4 !important;
     opacity: 1;
     filter: alpha(opacity=100);
 }
@@ -2411,29 +2470,29 @@ div.ant div.ant_footer .ant_click_overlay{
     cursor: pointer;
     position: absolute;
     top: 0;
-    height: 100%;
+    height: 35px;
     width: 100%;
     background: none;
 }
 
-div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:16px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; }
-div.ant div.ant_footer:hover .ant_box .ant_custom_tag input { color:#008be4; }
+div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:14px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; background:transparent; }
+div.ant div.ant_footer .ant_box:hover .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   position: absolute;
-  background: #5999dc;
+  background: #8fb3f2;
   color: white;
-  border: 1px solid;
+  border: 0;
   margin: 0;
   width: 27px;
-  height: 27px;
+  height: 23px;
   right: 27px;
   text-align: center;
   cursor: pointer;
   display: none;
 }
 
-div.ant.w160 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
+div.ant.w100 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   margin-right:-22px;
 }
 
@@ -2441,13 +2500,14 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box span.ant_comment_hover {
     position: absolute;
     display:block;
     font-size:10px;
-    color:#fff;
+    /*color:#fff;*/
     bottom: 0;
     right: 0;
-    padding: 5px 8px;
+    padding: 2px 5px;
     opacity: 0.80;
     filter: alpha(opacity=80);
     z-index: 2;
+    vertical-align: top;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover span.ant_comment_hover,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover span.ant_comment_hover i { 
@@ -2505,20 +2565,20 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCou
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small  { font-size:12px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount1,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount2,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount3 { font-size:26px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount4 { font-size:24px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount5 { font-size:22px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount3 { font-size:24px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount4 { font-size:22px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount5 { font-size:20px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount6,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount7 { font-size:20px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount7 { font-size:18px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount8,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount9 { font-size:18px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount9 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount10,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount11 { font-size:18px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount11 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount12,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:16px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:14px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount14,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount15,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount16 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount16 { font-size:12px; }
 
 
 /******** ant_horizontal_bars **********/
@@ -2563,6 +2623,8 @@ div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_charCount25
 
 div#ant_loginPanel {
     z-index: 12101;
+    opacity:1;
+    width:400px;
  /*   left: 50% !important;
     margin-left: -240px !important;
     top: 50% !important;
@@ -2570,9 +2632,9 @@ div#ant_loginPanel {
     position: relative;*/
 }
 
-div#ant_loginPanel .ant_header_arrow{
+/*div#ant_loginPanel .ant_header_arrow{*/
     /*display: none !important;*/
-}
+/*}*/
 
 
 /*rarely used html tag to wrap br-separated text when the group settings specifies*/
@@ -2632,9 +2694,30 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
   padding-top:4px;
 }
 
+
+/***** brand new styles *****/
+.ant_indicator .ant-antenna-logo { color:#bbb; }
+.ant_live_hover .ant_indicator .ant-antenna-logo,
+.ant-antenna-logo { color:#8fb3f2; }
+
 /* mobile */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {
   div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_count            { margin-top: -1px; font-size: 12px; }
 }
 
+/* mozille specific */
+@-moz-document url-prefix() {
+  div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
+    margin-left: 5px;
+  }
+}
 
+
+/****** DEBUG WHILE REBRANDING *****/
+/*div.ant_indicator.ant_indicator_for_media {
+    display: block !important;
+    opacity:1.0 !important;
+    -moz-opacity:1.0 !important;
+    -khtml-opacity:1.0 !important;
+    visibility: visible;;
+}*/
