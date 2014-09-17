@@ -19,8 +19,9 @@
 
   {% block css %}
   <link rel="stylesheet" href="{{ STATIC_URL }}site/css/esrg_grid.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20140828">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20140917">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/antenna-font/antenna-font.css">
+  <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> -->
   <link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
   {% endblock %}
 
@@ -170,7 +171,7 @@
               </div>
             </div>
             <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-              <a href="javascript:void(0);" style="margin-left:5px;" onclick="ANTAuth.openAtnLoginWindow();">Log In / Sign Up</a>
+              <a href="javascript:void(0);" style="margin-left:5px;" onclick="ANTAuth.openAntLoginWindow();">Log In / Sign Up</a>
               <i class="fa fa-sign-in"></i>
               <div id="login-options" style="overflow:auto;">
                 <div style="margin-bottom:10px;">
@@ -178,10 +179,12 @@
                     <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
                   </div>
                 </div>
-                <div style="float:left;padding-left:6px;">
-                  <a href="javascript:void(0);" onclick="ANTAuth.openAtnLoginWindow();"><img src="/static/widget/images/rb-login_to_readrboard.png" /></a>
+                <div style="border-top:1px solid #ccc;text-align:center;padding-top: 10px;">
+                  <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+                    <span class="ant-antenna-logo"></span> Login to <span class="ant-antenna-text"></span>
+                  </a>
                 </div>
-                <div style="clear:both;margin-top:45px;padding-top:5px;border-top:1px solid #ccc;">
+                <div style="clear:both;margin-top:10px;padding-top:5px;border-top:1px solid #ccc;">
                   <a style="font-weight:100;font-size:11px;font-family:Arial;display:block;text-align:center;color:rgb(0,0,238);font-style:italic;" href="javascript:void(0);" onclick="ANTAuth.openAtnCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
                 </div>
               </div>    
