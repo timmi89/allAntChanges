@@ -164,8 +164,9 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
-                tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
-                tag_box_text_colors: [ '34,94,129','128,146,17','37, 117, 163','153,174,26','34,94,129' ],
+                // tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
+                tag_box_bg_colors: '90,168,214; 200,226,38; 111,197,242; 229,246,98; 28,173,223',
+                tag_box_text_colors: '34,94,129; 128,146,17; 37,117,163; 153,174,26; 34,94,129',
                 tag_box_font_family: 'Helvetica,Arial,sans-serif',
                 tag_box_gradient:'',
                 tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
@@ -3845,7 +3846,7 @@ function antenna($A){
                         var group_settings = response.data;
 
                         // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof group_settings.blessed_tags != 'undefined' ) {
+                        if ( typeof group_settings != 'undefined' && typeof group_settings.blessed_tags != 'undefined' ) {
                             // use .slice() to copy by value
                             // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
                             group_settings.default_reactions = group_settings.blessed_tags.slice();
@@ -3855,6 +3856,9 @@ function antenna($A){
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
 
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
+
+                        ANT.group.tag_box_bg_colors = ANT.group.tag_box_bg_colors.split(';');
+                        ANT.group.tag_box_text_colors = ANT.group.tag_box_text_colors.split(';');
 
                         var a_or_b_or_not = '';
                         if ( ANT.group.ab_test_impact === true ) {
@@ -4100,7 +4104,7 @@ function antenna($A){
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
                             // ANT.events.track( 'load' );
-
+                            
                             // var load_event_value = '',
                             //     pages_count = $(ANT.group.post_selector).length;
                             // if (ANT.group.useDefaultSummaryBar){
