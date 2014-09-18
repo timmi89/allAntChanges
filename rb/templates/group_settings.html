@@ -270,8 +270,11 @@
                     color: #777;
                 }
                 #id_custom_css {
-                    height:350px;
+                    height:200px;
+                    width:100%;
                 }
+
+                .formRow.text textarea { width:100%; height:75px; }
                 </style>
             </div>
             {% if group.premium == True %}
@@ -290,8 +293,41 @@
                     <span>Paragraphs with no reactions will display an icon when you hover over them.  When you hover over the icon it explains how to select text and react with Antenna.</span>
                 </label>
             </div>
-
+            <hr/>
             <div class="formRow">
+                <label for="id_img_indicator_show_onload">
+                    {{ form.img_indicator_show_onload}}{{ form.img_indicator_show_onload.errors }}
+                    <span class="labelTitle">Show call-to-action for images at page load? </span>
+                    <span>If so, a small Antenna logo will appear on images to encourage interaction.</span>
+                </label>
+            </div>
+            <div class="formRow text">
+                <label for="id_img_indicator_show_side"><span class="labelTitle">Images Call-to-Action: show on which side? </span><span>Display the call-to-action for images on the left or right side of the image?</span></label>
+                {{ form.img_indicator_show_side }}{{ form.img_indicator_show_side.errors }}
+            </div>
+            <div class="formRow text">
+                <label for="id_tags_bg_css"><span class="labelTitle">CSS: Background for Reaction Treemap </span><span>Provide a background image or color behind the entire treemap of reactions.  It will be partly-visible underneath the reaction boxes. e.g. <strong>#f00</strong> or <strong>url(your-image.jpg)</strong></span></label>
+                {{ form.tags_bg_css }}{{ form.tags_bg_css.errors }}
+            </div>
+            <div class="formRow text">
+                <label for="id_tag_box_bg_colors"><span class="labelTitle">CSS: Background Colors for Reaction boxes </span><span>Provide a semicolon-separated list of colors for your reactions in the treemap.  Hex or rgb() values are allowed.  You can mix-n-match.  e.g.:  "#fff; #123123; 90,168,214; 200,226,38;</span></label>
+                {{ form.tag_box_bg_colors }}{{ form.tag_box_bg_colors.errors }}
+            </div>
+            <div class="formRow text">
+                <label for="id_tag_box_gradient"><span class="labelTitle">CSS: Gradient for Reaction Boxes </span><span>Provide a CSS background-image rule if you want to apply a gradient to your reaction boxes. e.g. linear-gradient(to right, rgba(250,250,250,0.5), rgba(150,150,150,0.2) );</span></label>
+                {{ form.tag_box_gradient }}{{ form.tag_box_gradient.errors }}
+            </div>
+            <div class="formRow text">
+                <label for="id_tag_box_text_colors"><span class="labelTitle">CSS: Text Colors for Reaction boxes </span><span>Provide a semicolon-separated list of colors for your reaction fonts in the treemap.  Hex or rgb() values are allowed. You can mix-n-match. e.g.: "#fff; #123123; 90,168,214; 200,226,38;</span></label>
+                {{ form.tag_box_text_colors }}{{ form.tag_box_text_colors.errors }}
+            </div>
+            <div class="formRow text">
+                <label for="id_tag_box_font_family"><span class="labelTitle">CSS: Font for Reaction boxes </span><span>Provide a CSS font-family definition for your reactions.  The font must be available on your pages already.</span></label>
+                {{ form.tag_box_font_family }}{{ form.tag_box_font_family.errors }}
+            </div>
+            
+
+            <!-- <div class="formRow">
                 <label for="id_logo_url_sm"><span class="labelTitle">Small Logo </span><span>URL to a small logo file (max 64x18)</span></label>
                 {{ form.logo_url_sm }}{{ form.logo_url_sm.errors }}
             </div>
@@ -302,7 +338,7 @@
             <div class="formRow">
                 <label for="id_logo_url_lg"><span class="labelTitle">Large Logo </span><span>URL to a large logo file (max 300x250)</span></label>
                 {{ form.logo_url_lg }}{{ form.logo_url_lg.errors }}
-            </div>
+            </div> -->
 
         </section>
     </div>

@@ -196,13 +196,13 @@ class Group(models.Model):
     section_attribute = models.CharField(max_length=255, blank=True)  # jquery .attr()
 
     # new attributes for updated antenna design.
-    # img_indicator_show_onload = models.BooleanField(default=True)
-    # img_indicator_show_side = models.CharField(max_length=25, default='', blank=True)
-    # tag_box_bg_colors = models.TextField(blank=True, null=True)
-    # tag_box_text_colors = models.TextField(blank=True, null=True)
-    # tag_box_font_family = models.TextField(blank=True, null=True)
-    # tag_box_gradient = models.TextField(blank=True, null=True)
-    # tags_bg_css = models.TextField(blank=True, null=True)
+    img_indicator_show_onload = models.BooleanField(default=True)
+    img_indicator_show_side = models.CharField(max_length=25, default='', blank=True)
+    tag_box_bg_colors = models.TextField(blank=True, null=True)
+    tag_box_text_colors = models.TextField(blank=True, null=True)
+    tag_box_font_family = models.TextField(blank=True, null=True)
+    tag_box_gradient = models.TextField(blank=True, null=True)
+    tags_bg_css = models.TextField(blank=True, null=True)
 
     # mobile settings
     hideOnMobile = models.BooleanField(default=False)

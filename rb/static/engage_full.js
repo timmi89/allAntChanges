@@ -1081,7 +1081,8 @@ function antenna($A){
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
                         tagPercent = 0,
                         tagWidth = '',
-                        colorInt = ( params.colorInt ) ? params.colorInt:0,
+                        bgColorInt = ( params.bgColorInt ) ? params.bgColorInt:0,
+                        textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1093,8 +1094,8 @@ function antenna($A){
 
                     // get the background color and text color
                     // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) : ANT.group.tag_box_bg_colors[colorInt];
-                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) : ANT.group.tag_box_text_colors[colorInt];
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
                     var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
@@ -1181,7 +1182,7 @@ function antenna($A){
                         '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
                         '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';'+ANT.group.tag_box_gradient+'">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';background-image:'+ANT.group.tag_box_gradient+';">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -2572,16 +2573,20 @@ function antenna($A){
             //     }
             // },
             hexToRgb: function(hex) {
-                // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-                var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-                hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-                    return r + r + g + g + b + b;
-                });
+                if (hex) {
+                    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+                    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                        return r + r + g + g + b + b;
+                    });
 
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? 
-                    parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
-                : null;
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? 
+                        parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
+                    : null;
+                } else {
+                    return '0,0,0';
+                }
             },
             getColorLuma: function(rgb) {
                 var r = rgb.split(',')[0],
@@ -3846,17 +3851,25 @@ function antenna($A){
                         var group_settings = response.data;
 
                         // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof group_settings != 'undefined' && typeof group_settings.blessed_tags != 'undefined' ) {
-                            // use .slice() to copy by value
-                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            group_settings.default_reactions = group_settings.blessed_tags.slice();
-                            delete group_settings.blessed_tags;
+                        if ( typeof group_settings != 'undefined' ) {
+                            if ( typeof group_settings.blessed_tags != 'undefined' ) {
+                                // use .slice() to copy by value
+                                // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                                group_settings.default_reactions = group_settings.blessed_tags.slice();
+                                delete group_settings.blessed_tags;
+                            }
+
+                            if (typeof group_settings.img_indicator_show_side !='undefined' && !group_settings.img_indicator_show_side ) { delete group_settings.img_indicator_show_side; }
+                            if (typeof group_settings.tag_box_bg_colors !='undefined' && !group_settings.tag_box_bg_colors ) { delete group_settings.tag_box_bg_colors; }
+                            if (typeof group_settings.tag_box_text_colors !='undefined' && !group_settings.tag_box_text_colors ) { delete group_settings.tag_box_text_colors; }
+                            if (typeof group_settings.tag_box_font_family !='undefined' && !group_settings.tag_box_font_family ) { delete group_settings.tag_box_font_family; }
+                            if (typeof group_settings.tag_box_gradient !='undefined' && !group_settings.tag_box_gradient ) { delete group_settings.tag_box_gradient; }
+                            if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
 
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
 
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
-
                         ANT.group.tag_box_bg_colors = ANT.group.tag_box_bg_colors.split(';');
                         ANT.group.tag_box_text_colors = ANT.group.tag_box_text_colors.split(';');
 
@@ -8043,8 +8056,10 @@ if ( sendData.kind=="page" ) {
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                colorInt = 0,
-                                numColors = ANT.group.tag_box_bg_colors.length;
+                                bgColorInt = 0,
+                                textColorInt = 0,
+                                numBgColors = ANT.group.tag_box_bg_colors.length,
+                                numTextColors = ANT.group.tag_box_text_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
@@ -8066,23 +8081,29 @@ if ( sendData.kind=="page" ) {
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                     // set next color 
-                                    colorInt++;
-                                    if ( colorInt == numColors ) colorInt = 0;
+                                    bgColorInt++;
+                                    textColorInt++;
+                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    if ( textColorInt == numTextColors ) textColorInt = 0;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                     // set next color 
-                                    colorInt++;
-                                    if ( colorInt == numColors ) colorInt = 0;
+                                    bgColorInt++;
+                                    textColorInt++;
+                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    if ( textColorInt == numTextColors ) textColorInt = 0;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                   // set next color 
-                                  colorInt++;
-                                  if ( colorInt == numColors ) colorInt = 0;
+                                  bgColorInt++;
+                                  textColorInt++;
+                                  if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                  if ( textColorInt == numTextColors ) textColorInt = 0;
                                 }
 
                             }
