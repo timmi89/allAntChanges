@@ -1,4 +1,5 @@
 # Django settings for antenna project.
+from __future__ import absolute_import
 from os import uname
 
 if uname()[1] == "hat" : DEBUG = True
@@ -26,7 +27,6 @@ AWS_CALLING_FORMAT = ""
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'public, max-age=25200',
-    'Access-Control-Allow-Origin' : '*',
 }
 
 AWS_DEFAULT_ACL='public-read'
@@ -107,7 +107,7 @@ if DEBUG:
         }
     }
     """
-    
+    BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
     ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
@@ -170,6 +170,7 @@ else:
                 'TIMEOUT':300
             }
         }
+        BROKER_URL = "amqp://myuser:mypassword@localhost:5672/myvhost"
     else:
         DATABASES = {
           'default': {
@@ -216,8 +217,16 @@ else:
                 'LOCATION': 'localhost:11211',
                 'TIMEOUT':300
             }
-      }
+        }
+        
+        BROKER_URL = "amqp://myuser:mypassword@localhost:5672/myvhost"
       
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
 # Facebook shit
@@ -345,10 +354,12 @@ INSTALLED_APPS = [
     'api',
     'rb',
     'chronos',
+    'analytics',
     # 'piston',
     'south',
     'storages',
-    'gunicorn'
+    'gunicorn',
+    'djcelery'
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',
