@@ -17,6 +17,10 @@ if DEBUG:
 else:
     SERVER_EMAIL = "server@antenna.is"
 
+EVENTS_PROJECT_NUMBER = '774436620412'
+EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
+EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@developer.gserviceaccount.com'
+
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
 AWS_SECRET_ACCESS_KEY = '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'
@@ -59,37 +63,38 @@ if DEBUG:
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
-      'default': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'default': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '4rc4n30n3',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         },
-      'readonly1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'readonly1': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '4rc4n30n3',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         },
-      'readonly2': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        },
-        'slave1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'readonly2': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '4rc4n30n3',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         }
     }
     CACHES = {
