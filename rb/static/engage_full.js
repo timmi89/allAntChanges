@@ -358,15 +358,32 @@ function antenna($A){
                         };
                     var data = $.toJSON( trackData );
 
-                    if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
-                        $.postMessage(
-                            "register-event::"+data,
-                            ANT_baseUrl + "/static/xdm.html",
-                            window.frames['ant-xdm-hidden']
-                        );
-                    } else {
-                        ANT.events.queue.push(params);
-                    }
+                    // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
+                    var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
+
+                    $.ajax({
+                        url: trackingUrl,
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: data
+                        },
+                        success : function(response)
+                        {
+                        }
+                    });
+
+
+                    // if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
+                    //     $.postMessage(
+                    //         "register-event::"+data,
+                    //         ANT_baseUrl + "/static/xdm.html",
+                    //         window.frames['ant-xdm-hidden']
+                    //     );
+                    // } else {
+                    //     ANT.events.queue.push(params);
+                    // }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {

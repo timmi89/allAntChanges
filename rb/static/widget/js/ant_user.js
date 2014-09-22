@@ -19,7 +19,7 @@ function getWindowProps(options){
     return 'menubar=1,resizable=1,scrollbars=yes,width='+w+',height='+h+',top='+t+',left='+l;
 };
 
-var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert"
+var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
 
 window.ANTAuth = {
     isOffline: (document.domain == "local.antenna.is"),
