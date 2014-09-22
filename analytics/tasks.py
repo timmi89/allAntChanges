@@ -20,26 +20,31 @@ def group_event_stats():
     groups = Group.objects.filter(id__in=[2352,1441,1660]) #dlisted, fastcolabs, okayplayer
     group_data_sets = {}
     for group in groups:
-        group_data = {}
+        group_data = []
         hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
         for hash_tuple in hash_tuples:
+            hash_data = {}
+            hash_data['container_hash'] = hash_tuple[0]
+            
             interactions = Interaction.objects.filter(container__hash=hash_tuple[0])
             logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
-            node_counts = {}
+            
+            hash_data['contents'] = {}
             for interaction in interactions:
-                if node_counts.has_key(interaction.content.body):
-                    node_counts[interaction.content.body] = node_counts[interaction.content.body] + 1
+                if hash_data['contents'].has_key(interaction.content.id):
+                    hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
                 else:
-                    node_counts[interaction.content.body] = 1
-                node_counts['page'] = model_to_dict(interaction.page)
-                node_counts['content'] = model_to_dict(interaction.content)
-                node_counts['container'] = model_to_dict(interaction.container)
-                node_counts['reaction_count'] = node_counts[interaction.content.body]
-            node_counts['reaction_views'] = hash_tuple[1]
-            group_data[hash_tuple[0]] = node_counts
+                    hash_data['contents'][interaction.content.id] = {}
+                    hash_data['contents'][interaction.content.id]['count'] = 1
+                hash_data['page'] = model_to_dict(interaction.page)
+                hash_data['container'] = model_to_dict(interaction.container)
+                hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
+                
+            hash_data['reaction_views'] = hash_tuple[1]
+            group_data.append( hash_data )
             
         group_data_sets[group.id] = group_data
-        logger.info(json.dumps(group_data, sort_keys=True,indent=4, separators=(',', ': ')))
+        logger.info(json.dumps(group_data_sets, sort_keys=True,indent=4, separators=(',', ': ')))
     logger.info("Task GROUP EVENTS finished")
     
     
