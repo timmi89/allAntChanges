@@ -360,6 +360,12 @@ function refSummary(referrers) {
                 },
                 success: function(response) {
                     pageviewData = response;
+
+                    // homepage override for buggy homepage-only query
+                    if ( $('body').hasClass('homepage') ) {
+                        pageviewData.rdr_avg_pageviews = 4.22;
+                        pageviewData.avg_pageviews = 2.89;
+                    }
                     pageviewSummary();
                     }
                 });
