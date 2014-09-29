@@ -9,44 +9,6 @@ from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 
-# A periodic task that will run every minute (the symbol "*" means every)
-@periodic_task(run_every=(crontab(hour="*", minute="45", day_of_week="*")))
-def group_event_stats():
-    logger.info("Start group events task")
-    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
-                                      'keyFile':settings.EVENTS_KEY_FILE,
-                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
-    now = datetime.datetime.now()
-    groups = Group.objects.filter(id__in=[2352,1441,1660]) #dlisted, fastcolabs, okayplayer
-    group_data_sets = {}
-    for group in groups:
-        group_data = []
-        hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
-        for hash_tuple in hash_tuples:
-            hash_data = {}
-            hash_data['container_hash'] = hash_tuple[0]
-            
-            interactions = Interaction.objects.filter(container__hash=hash_tuple[0])
-            logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
-            
-            hash_data['contents'] = {}
-            for interaction in interactions:
-                if hash_data['contents'].has_key(interaction.content.id):
-                    hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
-                else:
-                    hash_data['contents'][interaction.content.id] = {}
-                    hash_data['contents'][interaction.content.id]['count'] = 1
-                hash_data['page'] = model_to_dict(interaction.page)
-                hash_data['container'] = model_to_dict(interaction.container)
-                hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
-                
-            hash_data['reaction_views'] = hash_tuple[1]
-            group_data.append( hash_data )
-            
-        group_data_sets[group.id] = group_data
-        logger.info(json.dumps(group_data_sets, sort_keys=True,indent=4, separators=(',', ': ')))
-    logger.info("Task GROUP EVENTS finished")
-    
 ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168, 
               1169, 117, 1207, 1215, 1224, 1278, 1339, 1350, 1355, 1358, 1362, 
               1376, 140, 1419, 1431, 1441, 1443, 1454, 1460, 1468, 1491, 15, 1509, 
@@ -77,6 +39,50 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
               2696, 2700, 2701, 2702, 2706, 2708, 2709, 2715, 2716, 28, 29, 32, 
               341, 35, 378, 4, 5, 501, 508, 55, 571, 6, 624, 648, 658, 66, 662, 
               667, 729, 738, 77, 778, 80, 83, 848, 853, 894, 918, 960, 997]
+
+# A periodic task that will run every minute (the symbol "*" means every)
+@periodic_task(run_every=(crontab(hour="*", minute="*/10", day_of_week="*")))
+def group_event_stats():
+    logger.info("Start group events task")
+    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
+                                      'keyFile':settings.EVENTS_KEY_FILE,
+                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
+    now = datetime.datetime.now()
+    
+    groups = Group.objects.filter(id__in=ALL_GROUPS) #use ALL_GROUPS until queue mechanism in place
+    group_data_sets = {}
+    
+    for group in groups:
+        group_data = []
+        hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
+        for hash_tuple in hash_tuples:
+            hash_data = {}
+            hash_data['container_hash'] = hash_tuple[0]
+            
+            interactions = Interaction.objects.filter(container__hash=hash_tuple[0])
+            logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
+            
+            hash_data['contents'] = {}
+            for interaction in interactions:
+                if hash_data['contents'].has_key(interaction.content.id):
+                    hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
+                else:
+                    hash_data['contents'][interaction.content.id] = {}
+                    hash_data['contents'][interaction.content.id]['count'] = 1
+                hash_data['page'] = model_to_dict(interaction.page)
+                hash_data['container'] = model_to_dict(interaction.container)
+                hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
+                
+            hash_data['reaction_views'] = hash_tuple[1]
+            group_data.append( hash_data )
+            
+        group_data_sets[group.id] = group_data
+        logger.info(json.dumps(group_data_sets, sort_keys=True,indent=4, separators=(',', ': ')))
+    logger.info("Task GROUP EVENTS finished")
+    
+
+
+
  
 @periodic_task(run_every=(crontab(hour="*", minute="*/2", day_of_week="*")))
 def query_all_groups():
@@ -85,6 +91,9 @@ def query_all_groups():
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
+    first_of_month = datetime.datetime(now.year,now. month, now.day, 0, 0, 1)
+    
+    
     groups = Group.objects.filter(id__in=ALL_GROUPS) #dlisted, fastcolabs, okayplayer
     all_groups = []
     for group in groups:
@@ -95,7 +104,7 @@ def query_all_groups():
             hash_data['widget_loads'] = hash_tuple[0][1]
             hash_data['total_events'] = hash_tuple[0][2]
             
-            interactions = Interaction.objects.filter(page__site__group__id = group.id )
+            interactions = Interaction.objects.filter(page__site__group__id = group.id, created__gt = first_of_month )
             hash_data['interaction_count'] = len(interactions)
             
             all_groups.append(hash_data) 
