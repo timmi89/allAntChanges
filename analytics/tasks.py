@@ -6,6 +6,7 @@ import datetime, json
 from antenna.rb.models import * 
 from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
+from models import *
 
 logger = get_task_logger(__name__)
 
@@ -77,8 +78,10 @@ def group_event_stats():
             group_data.append( hash_data )
             
         group_data_sets[group.id] = group_data
-        logger.info(json.dumps(group_data_sets, sort_keys=True,indent=4, separators=(',', ': ')))
-    logger.info("Task GROUP EVENTS finished")
+        JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
+        
+    logger.info(json.dumps(group_data_sets, sort_keys=True,indent=2, separators=(',', ': ')))
+    logger.info("Task GROUP REACTION VIEWS finished")
     
 
 
@@ -108,7 +111,6 @@ def query_all_groups():
             hash_data['interaction_count'] = len(interactions)
             
             all_groups.append(hash_data) 
-            logger.info(hash_data) 
         except Exception, ex:
             logger.warn(ex)
             
