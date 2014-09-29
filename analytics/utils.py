@@ -69,6 +69,42 @@ class OAuth2EventsUtility(object):
         except Exception, ex:
             logger.warn(ex)
     
+    
+    
+    def get_group_widget_loads(self, group, month, year, maxResults = 100):
+        table = self.get_table_name(group, month, year)
+        query = 'select count(et) as counts  from ' + table + ' where et = "wl"'
+        
+        body = {
+                "timeoutMs": 60000, 
+                "kind": "bigquery#queryRequest", 
+                "dryRun": False, 
+                "useQueryCache": False, 
+                "defaultDataset": { 
+                                   "projectId": self.PROJECT_NUMBER, 
+                                   "datasetId": "events"
+                                   },
+                "maxResults": maxResults, 
+                "query": query 
+                }
+
+        try:
+            result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+            rows = result['rows']
+            hash_tuples = []
+            for row in rows:
+                if row['f'][0]['v'] != '0':
+                    hash_tuples.append( (group.id,row['f'][0]['v'], 0)  )
+                    logger.info("VALUE: " + row['f'][0]['v'] )
+                else:
+                    body['query'] = 'select count(*) from ' + table
+                    total_events = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+                    hash_tuples.append( (group.id,row['f'][0]['v'],total_events['rows'][0]['f'][0]['v'] ) )
+                    
+            return hash_tuples
+        except Exception, ex:
+            logger.warn(ex)
+    
     def get_table_name(self, group, month, year):
         return '[events.events_' + str(year) + '_' + str(month) + '_' + str(group.id) + ']'
     
