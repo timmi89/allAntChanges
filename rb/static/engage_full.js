@@ -7023,8 +7023,8 @@ if ( sendData.kind=="page" ) {
                 //end ANT.actions.interactions
             },
             indicators: {
-                show: function(hashes, boolDontFade){
-                    boolDontFade = true;
+                show: function(hashes){
+
                     //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
@@ -7032,22 +7032,22 @@ if ( sendData.kind=="page" ) {
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
+                    // var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
 
-                    if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
-                        $indicators.not('.ant_dont_show').css({
-                            'opacity':'0',
-                            'visibility':'visible'
-                        });
-                        if(boolDontFade){
-                            $indicators.not('.ant_dont_show').css({
-                                'opacity':textIndicatorOpacity
-                            });
-                            return;
-                        } else {
-                            $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                        }
-                    }
+                    // if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
+                    //     $indicators.not('.ant_dont_show').css({
+                    //         'opacity':'0',
+                    //         'visibility':'visible'
+                    //     });
+                    //     // if(boolDontFade){
+                    //         $indicators.not('.ant_dont_show').css({
+                    //             'opacity':textIndicatorOpacity
+                    //         });
+                    //         return;
+                    //     // } else {
+                    //         // $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                    //     // }
+                    // }
 
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
@@ -7231,7 +7231,7 @@ if ( sendData.kind=="page" ) {
                             .appendTo($indicator)
                             .append(
                                 '<span class="ant-antenna-logo"></span>',
-                                '<span class="ant_count" />', //the count will get added automatically later, and on every update.
+                                '<span class="ant_count ant_counts" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
 
@@ -7654,7 +7654,8 @@ if ( sendData.kind=="page" ) {
                         if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
                         }else{
-                            ANT.util.cssSuperImportant( $indicator, { display:"none" });
+                            // ANT.util.cssSuperImportant( $indicator, { opacity:0 });
+                            // ANT.util.cssSuperImportant( $indicator, { display:"none" });
                         }
                     }
                 },

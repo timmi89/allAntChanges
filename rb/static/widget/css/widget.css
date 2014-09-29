@@ -1092,6 +1092,7 @@ div.ant.ant-summary .ant_chevron_cta i {
 div.ant.ant-summary a.ant_logo {
   display: inline-block;
   margin-right:5px;
+  text-decoration: none;
 }
 
 /*blunt attack for now*/
@@ -1763,6 +1764,8 @@ div.ant_inline_video div.ant_indicator.ant_indicator_for_media {
 /*todo: should all these things really be in the * part (the all children part) ?  */
 div.ant_indicator_for_text{
     display: inline;
+    /*display: inline-block;*/
+    opacity:0.4;
     position: relative;
     vertical-align: top;
     line-height: inherit !important;
@@ -1804,10 +1807,9 @@ div.ant_helper_aWindow div.ant_header h1{
   -khtml-opacity:1.0 !important;
 }
 div.ant_indicator_for_text.ant_helper {
-    opacity:0.6;;
-    -moz-opacity:0.6;;
-    -khtml-opacity:0.6;;
-    display:none;
+    opacity:0;;
+    -moz-opacity:0;;
+    -khtml-opacity:0;;
     cursor:pointer;
 }
 div.ant_indicator_for_text.ant_helper div.ant_indicator_body {

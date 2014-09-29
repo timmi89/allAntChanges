@@ -20,36 +20,41 @@
 {% block wideContent %}
 <div class="know grid-whole">
   <div class="content">
-    <div class="grid-half m-grid-whole s-grid-whole">
+    <div class="grid-half m-grid-whole s-grid-whole no-ant">
       <div class="message">More engagement than you’ve ever had.</div>
       <!-- <div class="message">For free.</div> -->
-      <div class="caption first">Get up to <strong>25% more pageviews</strong>, more time&#8209;on&#8209;site, and more return visits with our dead&#8209;simple,<br/>free content engagement tool.</div>
+      <div class="caption first">Get up to <strong>25% more pageviews</strong>, more time&#8209;on&#8209;site, and more return visits with our dead&#8209;simple, <br/> free content engagement tool.</div>
       <div class="caption">Your visitors will love it.<br/>You will, too. <strong><a href="/see">See it now &raquo;</a></strong></div>
       <!-- <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="/see">See it now &raquo;</a></strong></div> -->
     </div>
     <div class="grid-half m-hidden s-hidden reaction-cloud">&nbsp;</div>
   </div>
 </div>
-
+<style>
+.caption div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
+    top: 5px;
+    left: 0px;
+}
+</style>
 <div class="grid-whole benefits">
     <div class="content">
         <div class="first benefit grid-third m-grid-whole s-grid-whole center">
             <span class="ant-icon ant-gauge"></span>
-            <div class="message">Up to 25% more pageviews</div>
+            <div class="message no-ant">Up to 25% more pageviews</div>
             <div class="caption">
                 We ran a network-wide A/B test to find out.  The more active your visitors are, the greater the lift.
             </div>
         </div>
         <div class="second benefit grid-third m-grid-whole s-grid-whole center">
             <span class="ant-icon ant-magnet"></span>
-            <div class="message">More return<br/>visitors</div>
+            <div class="message no-ant">More return<br/>visitors</div>
             <div class="caption">
                 Visitors who use Antenna come back more often, and we'll be driving even more returns soon.
             </div>
         </div>
         <div class="third benefit grid-third m-grid-whole s-grid-whole center">
             <span class="ant-icon ant-organization"></span>
-            <div class="message">See what people care about</div>
+            <div class="message no-ant">See what people care about</div>
             <div class="caption">
                 Antenna shows you what content even your "lurkers" are most curious about.
             </div>
@@ -161,6 +166,7 @@
   <div class="caption"><a href="/see">Right now.  Just takes a minute. &raquo;</a></div>
 </div>
 </div>
+<script defer src="/static/engage_full.js"></script>
 {% endblock wideContent %}
 
 {% block mainContent %}
