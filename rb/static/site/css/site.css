@@ -274,7 +274,7 @@ section[role="subheader"].admin {
 }
 
 /****** know ******/
-.know { background: #ec8575 url(../../images/widget_pic.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; padding:50px 0 30px;} 
+.know { background: #ec8575 url(../../images/masthead_red.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; padding:50px 0 30px;} 
 /*.know { background: url(../../images/world_reactions.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; } */
 .know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:0px 20px 30px 0px; }
 .know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fde1dc; font-weight:100; font-size:22px; margin-right:20px; margin-bottom: 30px; letter-spacing: 1px; font-style: normal;}
