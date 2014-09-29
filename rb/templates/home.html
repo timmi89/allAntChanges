@@ -20,19 +20,24 @@
 {% block wideContent %}
 <div class="know grid-whole">
   <div class="content">
-    <div class="grid-half m-grid-whole s-grid-whole no-ant">
-      <div class="message">More engagement than you’ve ever had.</div>
+    <div class="grid-half m-grid-whole s-grid-whole">
+      <div class="message no-ant">More engagement than you’ve ever had.</div>
       <!-- <div class="message">For free.</div> -->
-      <div class="caption first">Get up to <strong>25% more pageviews</strong>, more time&#8209;on&#8209;site, and more return visits with our dead&#8209;simple, <br/> free content engagement tool.</div>
-      <div class="caption">Your visitors will love it.<br/>You will, too. <strong><a href="/see">See it now &raquo;</a></strong></div>
+      <div class="caption first"><strong><a href="/see/">Publishers:</a></strong> Get up to <strong>25% more pageviews</strong>, more time&#8209;on&#8209;site, and more return visits.</div>
+      <div class="caption first"><strong><a href="/retailers/">Retailers:</a></strong> Increase conversions and loyalty with on-brand engagement and 1-click reviews.</div>
+      <!-- <div class="caption">Your visitors will love it.<br/>You will, too. <strong><a href="/see">See it now &raquo;</a></strong></div> -->
       <!-- <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="/see">See it now &raquo;</a></strong></div> -->
     </div>
     <div class="grid-half m-hidden s-hidden reaction-cloud">&nbsp;</div>
   </div>
 </div>
 <style>
+.know .ant_count,
+.know .ant-antenna-logo { color:#fff !important; } 
 .caption div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
     top: 5px;
+}
+.benefits .caption div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
     left: 0px;
 }
 </style>
@@ -166,6 +171,14 @@
   <div class="caption"><a href="/see">Right now.  Just takes a minute. &raquo;</a></div>
 </div>
 </div>
+
+<script>
+window.antenna_extend = {
+    active_sections:'[role="wideContent"]',
+    anno_whitelist: '.know .caption, .benefits .caption,.quote p'
+};
+</script>
+
 <script defer src="/static/engage_full.js"></script>
 {% endblock wideContent %}
 

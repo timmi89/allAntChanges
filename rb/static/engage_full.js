@@ -2590,6 +2590,7 @@ function antenna($A){
             //     }
             // },
             hexToRgb: function(hex) {
+                hex = $.trim(hex);
                 if (hex) {
                     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
                     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -7231,7 +7232,7 @@ if ( sendData.kind=="page" ) {
                             .appendTo($indicator)
                             .append(
                                 '<span class="ant-antenna-logo"></span>',
-                                '<span class="ant_count ant_counts" />', //the count will get added automatically later, and on every update.
+                                '<span class="ant_count" />', //the count will get added automatically later, and on every update.
                                 '<span class="ant_count_label" />' 
                             );
 
