@@ -2706,6 +2706,8 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 /* mobile */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {
   div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_count            { margin-top: -1px; font-size: 12px; }
+  div.ant_indicator span.ant_count { padding-right:3px; }
+  div.ant_indicator.ant_indicator_for_text span.ant_count { opacity:1; }
 }
 
 /* mozille specific */
