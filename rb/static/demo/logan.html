@@ -1810,11 +1810,15 @@ $(function() {
     // console.log("antenna.reaction");
     var lastEvent = antenna.getLastEvent();
     if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
-      $('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
+      // $('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
+      $('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
     }
   },false); 
   </script>
-
+<style>
+#antenna_test_notice { padding:20px; font-size:18px; width:300px; bottom:-300px; right:20px; position:fixed; background:#fff; transition:bottom 0.5s;}
+</style>
+<div id="antenna_test_notice"></div>
 </div>
 
   </body>
