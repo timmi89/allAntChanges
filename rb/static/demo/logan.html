@@ -1796,6 +1796,7 @@ $(function() {
       }, 300);
   });
   $('#ant_demo_explanation a.close').on('click', function() { 
+    $('.ant-summary').css('z-index', 'auto');
     $('#ant_demo_overlay, #ant_demo_explanation').css('opacity', 0);
     setTimeout(function(){
         $('#ant_demo_overlay, #ant_demo_explanation').remove();
