@@ -775,19 +775,21 @@ p { font-size:18px; }
 	height:300px;
 	padding-top:125px;
 }*/
-.retailers_page .masthead { padding-top:0; text-align: center;}
-.retailers_page .masthead .ant-summary { margin-top:40px; }
+.retailers_page .masthead { padding-top:0 0 20px; text-align: center;}
+.retailers_page .masthead .ant-summary { margin-top:20px; }
 .retailers_page .masthead h1 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:48px; margin:0 0 40px 0; background: transparent; color:#3b3b3b;}
-.retailers_page .masthead p { text-align: left; font-size: 22px; line-height: 28px; color:#555;}
-.retailers_page .masthead p strong { color:#65b4e7; font-weight:normal;}
+.retailers_page .masthead p { text-align: left; color:#555;}
+.retailers_page .masthead p strong { color:#ef6b58; font-weight:normal;}
 .retailers_page .masthead .average_increase { box-sizing:border-box; background:#9dd55e; box-sizing: border-box; background: #9dd55e; height: 220px; margin-top: -10px; text-align: center;}
-.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; font-size:24px; font-weight:100; letter-spacing:1px; display: block;}
+.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; font-size:23px; font-weight:100; letter-spacing:1px; display: block;}
 .retailers_page .masthead .average_increase i { color:#446024; font-size:85px; margin:0; display:inline-block; text-shadow: 0px 0px 6px rgba(48, 51, 45, 0.44); }
 .retailers_page .masthead .average_increase h2 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; color:#fff; font-size:125px; margin:0 0 -10px 0; text-shadow: 0px 0px 10px #777; padding:0; display:inline-block; background: transparent;}
-.retailers_page .new-section { margin-top:60px; padding-top:60px; border-top:1px solid #ccc;}
+.retailers_page .masthead .citation { display:block; margin-top:20px; font-size: 14px; color:#999; }
+.retailers_page .new-section { margin-top:30px; padding-top:30px; border-top:1px solid #ccc;}
 .retailers_page .new-section.demo button { display: block; padding: 10px 20px; font-size: 24px; color: #fff; background: #e5422b; width: 270px; margin: 0 auto; border:none; font-weight:normal; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; margin-top: 40px; }
 .retailers_page .new-section.demo button a { color:#fff; }
 .retailers_page .new-section.demo em { display:block;margin:50px 0 30px; text-align: center; }
+.retailers_page .new-section.demo h1 { text-align:center; }
 .retailers_page .new-section h2 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:28px; margin:0px 0 40px; background: transparent; color:#3b3b3b; letter-spacing: 0px; text-align: center; }
 .retailers_page .new-section .grid-third h2,
 .retailers_page .new-section .grid-two-thirds h2,

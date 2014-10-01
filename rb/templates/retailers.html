@@ -23,22 +23,24 @@
                     <h1>Increase ecommerce engagement instantly</h1>
                 </div>
                 <div class="grid-7 s-grid-whole padded">
+                    <p><strong>Did you know?</strong>  63% of customers are more likely to make a purchase from a site which has user reviews (bad ones <em>help</em>, too).  And people who interact with reviews are 105% more likely to purchase.</p>
                     <p>Retailers know that engaging with visitors turns them into customers.</p>
                     <p>Antenna is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
-                    <p>Capture insights, contact information, and customers.</p>
+                    <p>Capture insights, contact information, and customers.  Use Antenna to power 1-click reviews, feedback, community polls, and more.</p>
                 </div>
                 <div class="grid-5 s-grid-whole padded">
                     <div class="average_increase no-ant">
                         <i class="rdr_icon-circle-arrow-up"></i>
-                        <h2>12%</h2>
-                        <label>Average Increase in Engagement</label>
+                        <h2>18%</h2>
+                        <label>lift in sales from reviews & other feedback</label>
                     </div>
+                    <em class="citation">Data compiled by <a href="https://econsultancy.com/blog/9366-ecommerce-consumer-reviews-why-you-need-them-and-how-to-use-them#i.nw2g75sjjcyc10" target="_blank">eConsultancy.com</a></em>
                 </div>
             </div>
         </div>
         <div class="grid-whole s-grid-whole padded new-section demo">
             <div class="content">
-                <h2>Try it out now.</h2>
+                <h1>Try it out now.</h1>
                 <button><a href="/static/demo/logan.html" target="_blank">Live Demo</a></button>
                 <!-- <em>Or, check out this video:</em>
                 <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div> -->
@@ -104,6 +106,11 @@
         .on('click', function() { $(this).css('bottom', '-300px'); }); 
       }
     },false); 
+
+    $('.contact').on('click', function(e) {
+        e.preventDefault();
+        $('#ant_try_overlay, .try-antenna-form').show(0).css('opacity', 1);
+    });
     </script>
 
 

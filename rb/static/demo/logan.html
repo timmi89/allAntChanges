@@ -821,18 +821,18 @@ window.antenna_extend = {
   <h1 class="column">Reviews of the Logan Buffet</h1>
   <div class="column">
     <h3 ant-item="design" ant-reactions="Matches Photo;Better than hoped!;Different than expected">Expectations</h3>
-    <div ant-cta-for="design" ant-mode="write" ant-offset-x="50" ant-offset-y="40" class="answer">Your take?</div>
-    <div ant-cta-for="design" ant-mode="read" ant-offset-x="30" ant-offset-y="50" class="answers"><span ant-counter-for="design"></span> Responses</div>
+    <div ant-cta-for="design" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="design" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="design"></span> Responses</div>
   </div>
   <div class="column">
     <h3 ant-item="setup" ant-reactions="Easy;None;Needed Help">Setup</h3>
-    <div ant-cta-for="setup" ant-mode="write" ant-offset-x="50" ant-offset-y="40" class="answer">Your take?</div>
-    <div ant-cta-for="setup" ant-mode="read" ant-offset-x="30" ant-offset-y="50" class="answers"><span ant-counter-for="design"></span> Responses</div>
+    <div ant-cta-for="setup" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="setup" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="setup"></span> Responses</div>
   </div>
   <div class="column">
     <h3 ant-item="durability" ant-reactions="Excellent;Good;Less than expected;Rugrat-proof">Durability</h3>
-    <div ant-cta-for="durability" ant-mode="write" ant-offset-x="50" ant-offset-y="40" class="answer">Your take?</div>
-    <div ant-cta-for="durability" ant-mode="read" ant-offset-x="30" ant-offset-y="50" class="answers"><span ant-counter-for="design"></span> Responses</div>
+    <div ant-cta-for="durability" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="durability" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="durability"></span> Responses</div>
   </div>
 </div>
 
@@ -840,13 +840,13 @@ window.antenna_extend = {
   <h1 class="column">Community Taste Test -- see how you compare!</h1>
   <div class="column2">
     <h3 ant-item="question1" ant-reactions="Modern;Shabby Chic;Vintage;DIY">What's your style?</h3>
-    <div ant-cta-for="question1" ant-mode="write" ant-offset-x="50" ant-offset-y="40" class="answer">Your take?</div>
-    <div ant-cta-for="question1" ant-mode="read" ant-offset-x="30" ant-offset-y="50" class="answers"><span ant-counter-for="design"></span> Responses</div>
+    <div ant-cta-for="question1" ant-mode="write" ant-offset-x="10" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="question1" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="question1"></span> Responses</div>
   </div>
   <div class="column2">
     <h3 ant-item="question2" ant-reactions="Always;Of course;A bit tired of it;Sometimes">Do you like exposed wood?</h3>
-    <div ant-cta-for="question2" ant-mode="write" ant-offset-x="50" ant-offset-y="40" class="answer">Your take?</div>
-    <div ant-cta-for="question2" ant-mode="read" ant-offset-x="30" ant-offset-y="50" class="answers"><span ant-counter-for="design"></span> Responses</div>
+    <div ant-cta-for="question2" ant-mode="write" ant-offset-x="10" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="question2" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="question2"></span> Responses</div>
   </div>
 </div>
   <section class="related-products">
@@ -1717,6 +1717,103 @@ $(function() {
 
   <script src="https://apis.google.com/js/plusone.js" type="text/javascript"></script>
   <script src="/static/engage_full.js" defer type="text/javascript"></script>
+
+  <style>
+  .ant-summary { z-index:100002; position: relative; background:#fff; }
+  #ant_demo_overlay { position: fixed;top:0;bottom:0;left:0;right:0;background: rgba(0,0,0,0.85); z-index:100000;  opacity:0; transition:opacity 0.3s ease;}
+  #ant_demo_explanation { height:50%; width:50%; max-width:500px; max-height:500px; margin: auto; position: fixed; top: 0; left: 0; bottom: 0; right: 0; text-align: center; z-index:100001;  opacity:0; transition:all 0.3s ease;}
+  #ant_demo_explanation h1 { font-size:24px; color:#fff; }
+  #ant_demo_explanation h2 { font-size:18px; color:#fff; font-weight:300; margin:40px;}
+  #ant_demo_explanation .step { display:none; opacity:0; transition:all 0.3s ease; border-radius: 10px; padding: 20px;}
+  #ant_demo_explanation .step.active { opacity:1; display:block; }
+  #ant_demo_explanation p { font-size:16px; color:#aaa; }
+  #ant_demo_explanation a { font-size:18px; display:block; }
+  #ant_demo_explanation a.exit { font-size:14px; display:block; margin:30px auto 0; color:#aaa; border-top:1px solid #aaa; padding-top:10px; width:150px;}
+  </style>
+
+  <div id="ant_demo_overlay"></div>
+  <div id="ant_demo_explanation">
+    <div class="step active">
+      <h1>Let's look at how Antenna can be used to get product feedback, 1-click reviews, and poll responses your community.</h1>
+      <a class="next" href="javascript:void(0);">Next</a>
+    </div>
+    <div class="step">
+      <h1>Organic Product Feedback</h1>
+      <p>You can optionally enable visitors to react to product images, descriptions, specs, and more.  They can select text, or roll their mouse over an image, and look for this icon: <span class="ant-antenna-logo"></span></p>
+      <p>The gray "Reactions" box to the right sums up all reactions on the page about the product.  You can customize how this appears!</p>
+      <a class="next" href="javascript:void(0);">Next</a>
+    </div>
+    <div class="step">
+      <h1>1-Click Reviews</h1>
+      <p>Ask about specific product traits -- price, durability, anything you want.  Frame responses by providing default reactions that visitors can click.</p>
+      <p>To respond, people simply mouse over (or tap, on mobile) on the call to action, and click to "review". You control the look and feel for the call-to-action.</p>
+      <p>Viewing community responses is easy, fast, and informative.</p>
+      <a class="next" href="javascript:void(0);">Next</a>
+    </div>
+    <div class="step">
+      <h1>Simple Community Q&amp;A</h1>
+      <p>Just like 1-Click Reviews, you can pose relevant questions to your community to learn more about them, and increase engagement further.</p>
+      <p>You can capture visitors responses, 1-click reviews, and reactions as they occur.</p>
+      <a class="close" href="javascript:void(0);">Done -- Let me play around!</a>
+    </div>
+    <a class="close exit" href="javsacript:void(0);">Exit Tour</a>
+  </div>
+
+  <script>
+  var stepFunctions = {
+    start2: function() {
+      var scrollTo = $('.ant-summary').offset().top - $(window).height() * 0.15;
+      $('html,body').animate({scrollTop: scrollTo}, 1000);
+      $('#ant_demo_overlay').css('opacity', 0.6);
+      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
+    },
+    start3: function() {
+      var scrollTo = $('.ant-questions:eq(0)').offset().top - $(window).height() * 0.5;
+      $('html,body').animate({scrollTop: scrollTo}, 1000);
+      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
+    },
+    start4: function() {
+      var scrollTo = $('.ant-questions:eq(1)').offset().top - $(window).height() * 0.5;
+      $('html,body').animate({scrollTop: scrollTo}, 1000);
+      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
+    }
+  };
+  $('#ant_demo_explanation a.next').on('click', function() {
+    var $this = $(this),
+        $step = $this.closest('.step'),
+        $steps = $('.step'),
+        nextStepNumber = $steps.index($step) + 2;
+
+      $step.css('opacity', 0);
+      setTimeout(function(){
+          $step.removeClass('active');
+          $step.next().addClass('active');
+
+          if (typeof stepFunctions['start'+nextStepNumber] == 'function') {
+            stepFunctions['start'+nextStepNumber]();
+          }
+
+      }, 300);
+  });
+  $('#ant_demo_explanation a.close').on('click', function() { 
+    $('#ant_demo_overlay, #ant_demo_explanation').css('opacity', 0);
+    setTimeout(function(){
+        $('#ant_demo_overlay, #ant_demo_explanation').remove();
+    }, 300);
+  });
+  setTimeout(function(){
+      $('#ant_demo_overlay, #ant_demo_explanation').css('opacity', 1);
+  }, 200);
+
+  // event listener
+  document.addEventListener("antenna.reaction", function(){
+    // console.log("antenna.reaction");
+    var lastEvent = antenna.getLastEvent();
+    if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
+      $('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
+    }
+  },false); 
+  </script>
 
 </div>
 

@@ -1151,7 +1151,6 @@ window.antenna_extend = {premium:true,
 document.addEventListener("antenna.reaction", function(){
   // console.log("antenna.reaction");
   var lastEvent = antenna.getLastEvent();
-  console.log(lastEvent);
   if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
   	$('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
   }

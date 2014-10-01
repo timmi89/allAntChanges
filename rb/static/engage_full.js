@@ -3445,6 +3445,7 @@ function antenna($A){
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
+
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and localStorage
@@ -3468,15 +3469,22 @@ function antenna($A){
                         if ( typeof ANT.user.user_type != "undefined" && ANT.user.user_type == "antenna") {
                             ANT.session.showLoginPanel( args, callback );
                         } else {
-                            // the token is out of sync.  could be a mistake or a hack.
-                            ANT.session.receiveMessage( args, callback );
-                            // ANT.session.showLoginPanel( args, callback );
-                            $.postMessage(
-                                "reauthUser",
-                                // "killUser",
-                                ANT_baseUrl + "/static/xdm.html",
-                                window.frames['ant-xdm-hidden']
-                            );
+                            // ANT.session.showLoginPanel( args, callback ); is untested, just seeing if it can handle blocked FB popups.
+                            ANT.user.getUserAttempts = ANT.user.getUserAttempts || 1;
+                            if ( ANT.user.getUserAttempts < 2 ) {
+                                // the token is out of sync.  could be a mistake or a hack.
+                                ANT.session.receiveMessage( args, callback );
+                                // ANT.session.showLoginPanel( args, callback );
+                                $.postMessage(
+                                    "reauthUser",
+                                    // "killUser",
+                                    ANT_baseUrl + "/static/xdm.html",
+                                    window.frames['ant-xdm-hidden']
+                                );
+                            } else {
+                                ANT.session.killUser();
+                                ANT.session.showLoginPanel( args, callback );
+                            }
                         }
 
                         // // init a new receiveMessage handler to fire this callback if it's successful
@@ -3514,7 +3522,6 @@ function antenna($A){
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-
 
                                 for ( var i in message.data ) {
                                     ANT.user = ANT.user || {};
@@ -6182,6 +6189,11 @@ if ( sendData.kind=="page" ) {
                     args.ant_token = ANT.user.ant_token;
                     args.group_id = ANT.group.id;
                     args.page_id = (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', args.hash);
+
+                    if ( ANT.user.user_id === null || isNaN(ANT.user.user_id)) {
+                        delete ANT.user.user_id;
+                        delete args.user_id;
+                    }
 
                     return args;
 
