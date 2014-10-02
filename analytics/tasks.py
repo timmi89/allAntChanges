@@ -41,6 +41,10 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
               341, 35, 378, 4, 5, 501, 508, 55, 571, 6, 624, 648, 658, 66, 662, 
               667, 729, 738, 77, 778, 80, 83, 848, 853, 894, 918, 960, 997]
 
+
+
+
+
 # A periodic task that will run every minute (the symbol "*" means every)
 @periodic_task(run_every=(crontab(hour="*", minute="*/10", day_of_week="*")))
 def group_event_stats():
@@ -50,35 +54,37 @@ def group_event_stats():
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
     
-    groups = Group.objects.filter(id__in=ALL_GROUPS) #use ALL_GROUPS until queue mechanism in place
+    groups = Group.objects.filter(id__in=ALL_GROUPS, approved = True) #use ALL_GROUPS until queue mechanism in place
     group_data_sets = {}
     
     for group in groups:
         group_data = []
         hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
-        for hash_tuple in hash_tuples:
-            hash_data = {}
-            hash_data['container_hash'] = hash_tuple[0]
-            
-            interactions = Interaction.objects.filter(container__hash=hash_tuple[0])
-            logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
-            
-            hash_data['contents'] = {}
-            for interaction in interactions:
-                if hash_data['contents'].has_key(interaction.content.id):
-                    hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
-                else:
-                    hash_data['contents'][interaction.content.id] = {}
-                    hash_data['contents'][interaction.content.id]['count'] = 1
-                hash_data['page'] = model_to_dict(interaction.page)
-                hash_data['container'] = model_to_dict(interaction.container)
-                hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
+        #only continue processing for groups with at least one reaction view...
+        if int(hash_tuple[1]) > 0:
+            for hash_tuple in hash_tuples:
+                hash_data = {}
+                hash_data['container_hash'] = hash_tuple[0]
                 
-            hash_data['reaction_views'] = hash_tuple[1]
-            group_data.append( hash_data )
-            
-        group_data_sets[group.id] = group_data
-        JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
+                interactions = Interaction.objects.filter(container__hash=hash_tuple[0], created__gt = first_of_month )
+                logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
+                
+                hash_data['contents'] = {}
+                for interaction in interactions:
+                    if hash_data['contents'].has_key(interaction.content.id):
+                        hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
+                    else:
+                        hash_data['contents'][interaction.content.id] = {}
+                        hash_data['contents'][interaction.content.id]['count'] = 1
+                    hash_data['page'] = model_to_dict(interaction.page)
+                    hash_data['container'] = model_to_dict(interaction.container)
+                    hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
+                    
+                hash_data['reaction_views'] = hash_tuple[1]
+                group_data.append( hash_data )
+                
+            group_data_sets[group.id] = group_data
+            JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
         
     logger.info(json.dumps(group_data_sets, sort_keys=True,indent=2, separators=(',', ': ')))
     logger.info("Task GROUP REACTION VIEWS finished")
@@ -87,7 +93,7 @@ def group_event_stats():
 
 
  
-@periodic_task(run_every=(crontab(hour="*", minute="*/2", day_of_week="*")))
+@periodic_task(run_every=(crontab(hour="*", minute="*/20", day_of_week="*")))
 def query_all_groups():
     logger.info("Start group events task")
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
@@ -96,24 +102,27 @@ def query_all_groups():
     now = datetime.datetime.now()
     first_of_month = datetime.datetime(now.year,now. month, now.day, 0, 0, 1)
     
-    
     groups = Group.objects.filter(id__in=ALL_GROUPS) #dlisted, fastcolabs, okayplayer
-    all_groups = []
+    
     for group in groups:
         try:
-            hash_tuple = event_util.get_group_widget_loads(group, now.month, now.year, 1)
+            A_widget_loads = event_util.get_group_AB_widget_loads(group, now.month, now.year, 1, 'A')
+            A_script_loads = event_util.get_group_AB_script_loads(group, now.month, now.year, 1, 'A')
+            B_widget_loads = event_util.get_group_AB_widget_loads(group, now.month, now.year, 1, 'B')
+            B_script_loads = event_util.get_group_AB_script_loads(group, now.month, now.year, 1, 'B')
             hash_data = {}
-            hash_data['group_id'] = hash_tuple[0][0]
-            hash_data['widget_loads'] = hash_tuple[0][1]
-            hash_data['total_events'] = hash_tuple[0][2]
+            hash_data['group_id'] = group.id
+            hash_data['A_widget_loads'] = A_widget_loads
+            hash_data['A_script_loads'] = A_script_loads
+            hash_data['B_widget_loads'] = B_widget_loads
+            hash_data['B_script_loads'] = B_script_loads
             
             interactions = Interaction.objects.filter(page__site__group__id = group.id, created__gt = first_of_month )
             hash_data['interaction_count'] = len(interactions)
+            JSONGroupReport.objects.create(body=json.dumps(hash_data), group=group)
             
-            all_groups.append(hash_data) 
         except Exception, ex:
             logger.warn(ex)
             
-    logger.info(json.dumps(all_groups, sort_keys=True,indent=4, separators=(',', ': ')))
     logger.info("ALL GROUPS finished")
          

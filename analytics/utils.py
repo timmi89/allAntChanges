@@ -59,9 +59,9 @@ class OAuth2EventsUtility(object):
     
     
     
-    def get_group_widget_loads(self, group, month, year, maxResults = 1):
+    def get_group_AB_widget_loads(self, group, month, year, maxResults = 1, ab_group = 'A'):
         table = self.get_table_name(group, month, year)
-        query = 'select count(et) as counts  from ' + table + ' where et = "wl"'
+        query = 'select count(et) as counts  from ' + table + ' where et = "wl" and ev = "' + ab_group + '"'
         
         body = self.get_request_body(query, maxResults)
 
@@ -74,9 +74,9 @@ class OAuth2EventsUtility(object):
             logger.warn(ex)
         return None
     
-    def get_group_script_loads(self, group, month, year, maxResults = 1):
+    def get_group_AB_script_loads(self, group, month, year, maxResults = 1, ab_group = 'A'):
         table = self.get_table_name(group, month, year)
-        query = 'select count(et) as counts  from ' + table + ' where et = "sl"'
+        query = 'select count(et) as counts  from ' + table + ' where et = "sl" and ev = "' + ab_group + '"'
         
         body = self.get_request_body(query, maxResults)
         try:
