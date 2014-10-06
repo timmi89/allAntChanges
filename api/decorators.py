@@ -16,22 +16,23 @@ def status_response(func):
         except JSONException as error:
             res['status'] =  'fail'
             res['message'] = error.msg
-            logger.info( traceback.format_exc())
+            logger.info( error.msg )
+            logger.debug( traceback.format_exc())
         except KeyError as error:
             res['status'] = 'fail'
             res['message'] = error.message
-            logger.info(traceback.format_exc())
+            logger.debug(traceback.format_exc())
         except ObjectDoesNotExist as error:
             res['status'] = 'fail'
             res['message'] = error
-            logger.info(traceback.format_exc())
+            logger.debug(traceback.format_exc())
         # except DoesNotExist as error:
         #     res['status'] = 'fail'
         #     res['message'] = error
         except Exception as error:
             res['status'] =  'fail'
             res['message'] = error
-            logger.info(traceback.format_exc())
+            logger.debug(traceback.format_exc())
             #res['stack'] = traceback.format_exc()
         else:
             res['data'] = dataout

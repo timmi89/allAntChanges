@@ -132,6 +132,8 @@ else:
             'PASSWORD': '',
             'HOST':     'localhost',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -143,6 +145,8 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -154,6 +158,8 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -165,9 +171,22 @@ else:
         """
         CACHES = {
             'default': {
-                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'BACKEND': 'memcachepool.cache.UMemcacheCache',
                 'LOCATION': '50.116.59.190:11211',
-                'TIMEOUT':300
+                'TIMEOUT':86400,
+                'OPTIONS': {
+                    'MAX_POOL_SIZE': 100,
+                    'BLACKLIST_TIME': 20,
+                    'SOCKET_TIMEOUT': 5,
+                    'MAX_ITEM_SIZE': 1000*100,
+                }
+            },
+            'query_cache': {
+                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+                'LOCATION': '50.116.59.190:11211',
+                'TIMEOUT':86400,
+                'JOHNNY_CACHE':True,
+
             }
         }
     else:
@@ -179,6 +198,8 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '69.164.209.143',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -190,6 +211,8 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -201,24 +224,38 @@ else:
             'PASSWORD': 'r34drsl4v3',
             'HOST':     '50.116.59.190',
             'PORT':     '3306',
+            'CONN_MAX_AGE':  60,
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
           }
           
         }
-        """
         
-        """
         CACHES = {
             'default': {
-                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-                'LOCATION': 'localhost:11211',
-                'TIMEOUT':300
-            }
-      }
-      
+                'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                'LOCATION': '50.116.59.190:11211',
+                'TIMEOUT':86400,
+                'OPTIONS': {
+                    'MAX_POOL_SIZE': 100,
+                    'BLACKLIST_TIME': 20,
+                    'SOCKET_TIMEOUT': 5,
+                    'MAX_ITEM_SIZE': 1000*100,
+                }
+            },
+            'query_cache': {
+                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+                'LOCATION': '50.116.59.190:11211',
+                'TIMEOUT':86400,
+                'JOHNNY_CACHE':True,
 
+            }
+
+        }
+      
+JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
@@ -460,7 +497,7 @@ LOGGING = {
         },
         'rb.standard': {
             'handlers': ['console', 'rb_standard'],
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
         'django.db': {
             'handlers': ['console','rb_standard'],
