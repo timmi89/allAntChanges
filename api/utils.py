@@ -158,9 +158,9 @@ def getPage(host, page_request):
     section = page_request.get('section', None)
 
     try:
-        site = Site.objects.get(domain=host, group=int(group_id))
+        site = Site.objects.get( group=int(group_id))
     except Site.DoesNotExist:
-        raise JSONException("Site doesn't exist!")
+        raise JSONException("Site doesn't exist! "  + host + " " + str(group_id))
     except ValueError:
         raise JSONException("Bad Group ID!")
 
