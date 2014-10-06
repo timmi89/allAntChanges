@@ -215,22 +215,22 @@ function antenna($A){
                     ANT.events.trackEventToCloud(event_params);
                 });
             },
-            checkTime: function() {
-                if ( document.hasFocus() === true ){
-                    if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
-                        ANT.events.trackEventToCloud({
-                            event_type: 'ti',
-                            event_value: ANT.events.focusedSeconds.toString()
-                        });
-                    }
-                    ANT.events.focusedSeconds++;
+            // checkTime: function() {
+                // if ( document.hasFocus() === true ){
+                //     if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
+                //         ANT.events.trackEventToCloud({
+                //             event_type: 'ti',
+                //             event_value: ANT.events.focusedSeconds.toString()
+                //         });
+                //     }
+                //     ANT.events.focusedSeconds++;
                     // if (ANT.events.justFocused === false ) {
                     //     ANT.events.focusedSeconds++;
                     // } else {
                     //     ANT.events.justFocused = false;
                     // }
-                }
-            },
+                // }
+            // },
             // track : function( data, hash ) {
                 // ANT.events.track:
                 
@@ -2636,12 +2636,12 @@ function antenna($A){
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
-            setWindowInterval: function () {
+            // setWindowInterval: function () {
                 // ANT.util.setWindowInterval
-                $.data(this, 'ant_intervalTimer', setInterval(function() {
-                    if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
-                }, 1000));
-            },
+                // $.data(this, 'ant_intervalTimer', setInterval(function() {
+                    // if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
+                // }, 1000));
+            // },
             checkForSelectedTextAndLaunchRindow: function(){
                 //ANT.util.checkForSelectedTextAndLaunchRindow
                     
@@ -4141,6 +4141,8 @@ function antenna($A){
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
+                            // console.log('page response');
+                            // console.log(response);
                             // ANT.events.track( 'load' );
                             
                             // var load_event_value = '',
@@ -4255,8 +4257,10 @@ function antenna($A){
                                 $this.addClass('ant_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
-
+// console.log('not yet hashed');
                                     var hashListsByPageId = ANT.actions.hashNodes( $(this) );
+// console.log('hashListsByPageId');
+// console.log(hashListsByPageId);
                                     //we expect just the one here, so just get that one.
                                     var hash;
                                     $.each( hashListsByPageId, function(page_id, hashArray) {
@@ -4284,6 +4288,7 @@ function antenna($A){
                                     // ANT.actions.indicators.utils.borderHilites.engage(hash);
 
                                 } else {
+// console.log('already hashed');
                                     var hash = $this.data('hash');
                                     
                                     $this.addClass('ant_live_hover');
@@ -4407,7 +4412,7 @@ function antenna($A){
                 // });
 
                 // Antenna Timer?  unsure
-                ANT.util.setWindowInterval();
+                // ANT.util.setWindowInterval();
 
                 ANT.util.fixBodyBorderOffsetIssue();
                 
@@ -4636,6 +4641,8 @@ function antenna($A){
             },
             hashNodes: function( $node, nomedia ) {
                 //ANT.actions.hashNodes:
+                // console.log('ANT.actions.hashNodes');
+                // console.log($node);
 
                 // [porter]: needs a node or nodes
                 if ( typeof $node==="undefined" || (!ANT.util.activeAB()) ) { return; }
@@ -4663,6 +4670,8 @@ function antenna($A){
                         setupFunc: function(){
                             //var body = $(this).attr('src');
                             var body = this.src;
+                            // console.log('img SETUP FUNCCCCCCCCCCCCCCCCCCCCC');
+                            // console.log(this);
                             $(this).data({
                                 'body':body
                             });
@@ -4685,6 +4694,8 @@ function antenna($A){
                             }
                         },
                         setupFunc: function(){
+                            // console.log('TEXT SETUP FUNCCCCCCCCCCCCCCCCCCCCC');
+                            // console.log(this);
                             var $this = $(this),
                                 body = ANT.util.getCleanText($this);
                             $this.data('body',body);
@@ -4721,7 +4732,8 @@ function antenna($A){
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
 
-
+                    // if (group.kind=='img') console.log('IMAGES!!!!!');
+                    // if (group.kind=='img') console.log('number: '+$(ANT.group.active_sections_with_anno_whitelist).length);
                     // add vaild descendants of the $node
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
@@ -4741,12 +4753,14 @@ function antenna($A){
                         $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
                     }
 
+                    // if (group.kind=='img')  console.log($group.$nodes);
                     //filter out blacklisted stuff and already hashed stuff
                     $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
                     group.$nodes = $group;
 
                     //setup the group as needed
                     $group.each( function(){
+                        // console.log(this);
                         group.setupFunc.apply(this);
                         $(this).data('kind', group.kind);
                     });
@@ -4766,7 +4780,9 @@ function antenna($A){
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) { return false; }
+                if( !$allNodes.data('body') ) { 
+                    return false;
+                }
                 //else
                 var hashList = {};
 
@@ -4788,7 +4804,10 @@ function antenna($A){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
-
+// if (kind=='img')  {
+    // console.log('wtf 1');
+    // console.log( $this.get(0).src );
+// }
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
@@ -4914,6 +4933,7 @@ function antenna($A){
 
                             } else {
                                 dontHash = true;
+                                // console.log( $(childNode).get(0).nodeName.toLowerCase() );
                             }
                         });
 
