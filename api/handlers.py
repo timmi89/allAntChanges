@@ -597,7 +597,6 @@ class PageDataHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data, pageid=None):
-        print "api page * * * * * * * * * * * * * * * * "
         # print data
         requested_pages = data['pages']
         host = getHost(request)
@@ -644,6 +643,8 @@ class SettingsHandler(AnonymousBaseHandler):
         if cached_result is not None:
             return cached_result
         else:
+            #remove this logging after testing
+            logger.warning("Settings cache miss: group_settings_"+ str(host))
             if not group_id:
                 # Get site object
                 try:
