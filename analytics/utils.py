@@ -27,7 +27,6 @@ class OAuth2EventsUtility(object):
         self.authorize()
     
     def authorize(self):
-
         with open(self.KEY_FILE, 'r') as fd:
             key = fd.read()
                
