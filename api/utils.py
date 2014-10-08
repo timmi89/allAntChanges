@@ -285,10 +285,10 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                     raise JSONException("Group has blocked this tag.")
 
         if group and group.word_blacklist:
+            print "** * * * * * * * * *  CHECKING IF ITS BAD"
             # Check body for blacklisted word
             # if in the blacklist, block it
             blacklist = [word.strip().lower() for word in group.word_blacklist.split(',')]
-
 
             # strip punctuation and whitespace, so that f!u ck is not OK
             tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', interaction_node.body.lower())
@@ -298,11 +298,54 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             if tagLowerCased in blacklist:
                 approveOnCreate = False
 
+            tagNoNumbers = re.sub("^\d+\s|\s\d+\s|\s\d+$", " ", interaction_node.body.lower() )
+            tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.punctuation), '', tagNoNumbers)
+            tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.whitespace), '', tagLowerCasedNoNumbers)
+
+            # check the whole reaction but with loose digits removed.  does not remove numbers inside a word.
+            # so fuck1 is still "fuck1" but "fuck 1" is now "fuck"
+            if tagLowerCasedNoNumbers in blacklist:
+                approveOnCreate = False
+
+            # let's check for words ending in "er" and see if they match bad words.
+            # so check to see if "fucker" --> "fuck" --> blackword match
+            if tagLowerCased.endswith('er'):
+                if tagLowerCased[:-2] in blacklist:
+                    approveOnCreate = False
+
             # also check individual words, by splitting on a space
             # also, replace dashes with a space first.  a bit simple but a good start.
-            for word in tagLowerCased.replace('-', ' ').split(' '):
+            # for word in tagLowerCased.replace('-', ' ').split(' '):
+            for word in interaction_node.body.lower().replace('-', ' ').split(' '):
+                print word
                 if word.lower() in blacklist:
                     approveOnCreate = False
+
+                
+                #### DO ALL THE SAME STUFF FOR EACH 'word'.  should abstract to a function, but not right now.
+                # strip punctuation and whitespace, so that f!u ck is not OK
+                tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', word)
+                tagLowerCased = re.sub('[%s]' % re.escape(string.whitespace), '', tagLowerCased)
+
+                # check the whole reaction (i.e. 'f u c k'), and smash case
+                if tagLowerCased in blacklist:
+                    approveOnCreate = False
+
+                tagNoNumbers = re.sub("^\d+\s|\s\d+\s|\s\d+$", " ", word )
+                tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.punctuation), '', tagNoNumbers)
+                tagLowerCasedNoNumbers = re.sub('[%s]' % re.escape(string.whitespace), '', tagLowerCasedNoNumbers)
+
+                # check the whole reaction but with loose digits removed.  does not remove numbers inside a word.
+                # so fuck1 is still "fuck1" but "fuck 1" is now "fuck"
+                if tagLowerCasedNoNumbers in blacklist:
+                    approveOnCreate = False
+
+                # let's check for words ending in "er" and see if they match bad words.
+                # so check to see if "fucker" --> "fuck" --> blackword match
+                if tagLowerCased.endswith('er'):
+                    if tagLowerCased[:-2] in blacklist:
+                        approveOnCreate = False
+
 
             if approveOnCreate == False:
                 raise JSONException("Group has blocked this tag.")
