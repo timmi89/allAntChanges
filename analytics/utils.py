@@ -87,6 +87,10 @@ class OAuth2EventsUtility(object):
             logger.warn(ex)
         return None
     
+    def get_most_reacted_content(self, group, month, year):
+        pass
+    
+    
     def get_table_name(self, group, month, year):
         return '[events.events_' + str(year) + '_' + str(month) + '_' + str(group.id) + ']'
     
