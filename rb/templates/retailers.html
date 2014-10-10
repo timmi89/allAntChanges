@@ -38,10 +38,57 @@
                 </div>
             </div>
         </div>
+        <style type="text/css">
+        .quick-demo button {
+            /*display: block;*/
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            background: #e5422b;
+            /*width: 200px;*/
+            margin: 0 auto;
+            border:none;
+        }
+        .quick-demo button.responses { margin-right:20px; }
+        .quick-demo button.response { background:#ccc; color:#333; }
+        .quick-demo .padded { margin-bottom:2rem; }
+        </style>
+        <div class="grid-whole s-grid-whole padded new-section quick-demo">
+            <div class="content" style="text-align:center;">
+                <div class="grid-whole s-grid-whole padded">
+                    <h1 style="margin-bottom:10px;">Here is what a 1-Click Review can look like</h1>
+                    <em>Roll your mouse over the button to react.</em>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <h3 ant-item="satisfied" ant-reactions="Very;Mostly;Afraid Not;Not at all">Are you satisfied with your Acme widget?</h3>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <button ant-cta-for="satisfied" ant-mode="write" class="response">Your response?</button>
+                    <button ant-cta-for="satisfied" ant-mode="read" class="responses"><span ant-counter-for="satisfied"></span> Community Responses</button>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <h3 ant-item="match" ant-reactions="Yes, perfectly;Not quite;">Did your Acme widget match the photos on our website?</h3>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <button ant-cta-for="match" ant-mode="write" class="response">Your response?</button>
+                    <button ant-cta-for="match" ant-mode="read" class="responses"><span ant-counter-for="match"></span> Community Responses</button>
+                </div>
+                <div class="grid-whole s-grid-whole padded">
+                    <em>You customize the reactions, the colors, and more!</em>
+                </div>
+            </div>
+        </div>
         <div class="grid-whole s-grid-whole padded new-section demo">
-            <div class="content">
-                <h1>Try it out now.</h1>
-                <button><a href="/static/demo/logan.html" target="_blank">Live Demo</a></button>
+            <div class="content" style="text-align:center;">
+                <h1>Watch Antenna power 1-Click reviews on a demo ecommerce site.</h1>
+                <br/>
+                <style>
+                #antenna_retail_video { width:960px; height:540px;  margin:0 auto;}
+                </style>
+                <iframe src="//player.vimeo.com/video/108516416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen id="antenna_retail_video"></iframe> 
+                <br/><br/><br/><br/>
+                <h1>Try a live demo.</h1>
+                <button><a href="/static/demo/loot.html" target="_blank">Live Demo</a></button>
                 <!-- <em>Or, check out this video:</em>
                 <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div> -->
             </div>
@@ -99,7 +146,6 @@
     // $('.antenna_is_better').waypoint('sticky', { offset: 75 });
 
     document.addEventListener("antenna.reaction", function(){
-      // console.log("antenna.reaction");
       var lastEvent = antenna.getLastEvent();
       if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
         $('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
@@ -132,7 +178,7 @@ window.antenna_extend = {
     premium:true
 };
 </script>
-<script src="/static/engage.js" defer></script>
+<script src="/static/engage_full.js" defer></script>
 {% include "footer_join_beta.html" %}
 {% endblock %}
 <!-- widget for slideshow -->

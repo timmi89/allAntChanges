@@ -215,22 +215,22 @@ function antenna($A){
                     ANT.events.trackEventToCloud(event_params);
                 });
             },
-            checkTime: function() {
-                if ( document.hasFocus() === true ){
-                    if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
-                        ANT.events.trackEventToCloud({
-                            event_type: 'ti',
-                            event_value: ANT.events.focusedSeconds.toString()
-                        });
-                    }
-                    ANT.events.focusedSeconds++;
+            // checkTime: function() {
+                // if ( document.hasFocus() === true ){
+                //     if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
+                //         ANT.events.trackEventToCloud({
+                //             event_type: 'ti',
+                //             event_value: ANT.events.focusedSeconds.toString()
+                //         });
+                //     }
+                //     ANT.events.focusedSeconds++;
                     // if (ANT.events.justFocused === false ) {
                     //     ANT.events.focusedSeconds++;
                     // } else {
                     //     ANT.events.justFocused = false;
                     // }
-                }
-            },
+                // }
+            // },
             // track : function( data, hash ) {
                 // ANT.events.track:
                 
@@ -2636,12 +2636,12 @@ function antenna($A){
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
-            setWindowInterval: function () {
+            // setWindowInterval: function () {
                 // ANT.util.setWindowInterval
-                $.data(this, 'ant_intervalTimer', setInterval(function() {
-                    if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
-                }, 1000));
-            },
+                // $.data(this, 'ant_intervalTimer', setInterval(function() {
+                    // if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
+                // }, 1000));
+            // },
             checkForSelectedTextAndLaunchRindow: function(){
                 //ANT.util.checkForSelectedTextAndLaunchRindow
                     
@@ -4255,8 +4255,8 @@ function antenna($A){
                                 $this.addClass('ant_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
-
                                     var hashListsByPageId = ANT.actions.hashNodes( $(this) );
+
                                     //we expect just the one here, so just get that one.
                                     var hash;
                                     $.each( hashListsByPageId, function(page_id, hashArray) {
@@ -4407,7 +4407,7 @@ function antenna($A){
                 // });
 
                 // Antenna Timer?  unsure
-                ANT.util.setWindowInterval();
+                // ANT.util.setWindowInterval();
 
                 ANT.util.fixBodyBorderOffsetIssue();
                 
@@ -4663,6 +4663,7 @@ function antenna($A){
                         setupFunc: function(){
                             //var body = $(this).attr('src');
                             var body = this.src;
+
                             $(this).data({
                                 'body':body
                             });
@@ -4721,7 +4722,6 @@ function antenna($A){
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
 
-
                     // add vaild descendants of the $node
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
@@ -4766,7 +4766,9 @@ function antenna($A){
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) { return false; }
+                if( !$allNodes.data('body') ) { 
+                    return false;
+                }
                 //else
                 var hashList = {};
 
@@ -7974,6 +7976,9 @@ if ( sendData.kind=="page" ) {
                                 timeoutCloseEvt = setTimeout(function(){
                                     if ( $this.hasClass('ant_rewritable') ) {
                                         $this.remove();
+                                        if (!$('.ant_writemode').length) {
+                                            $().selog('hilite', true, 'off');
+                                        }
                                     }
                                 },300);
 
@@ -7988,22 +7993,26 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('div.ant_box').each( function() {
                                     $(this).hover(
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $aWindow.data('selState', selState);
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'on');
+                                                    $aWindow.data('selState', selState);
+                                                }
                                             }
                                         },
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'off');                                        
+                                                }
                                             }
                                         }
                                     );

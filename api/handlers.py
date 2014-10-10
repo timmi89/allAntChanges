@@ -506,7 +506,6 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         # Guard against undefined page string being passed in
         if not isinstance(page, int): 
             errorStr = "Bad Page ID ***" + str(page)+ "***"
-            logger.info(errorStr)
             raise JSONException("Bad Page ID ***" + str(page)+ "***")
 
         if len(hashes) == 1:
