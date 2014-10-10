@@ -7976,6 +7976,9 @@ if ( sendData.kind=="page" ) {
                                 timeoutCloseEvt = setTimeout(function(){
                                     if ( $this.hasClass('ant_rewritable') ) {
                                         $this.remove();
+                                        if (!$('.ant_writemode').length) {
+                                            $().selog('hilite', true, 'off');
+                                        }
                                     }
                                 },300);
 
@@ -7990,22 +7993,26 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('div.ant_box').each( function() {
                                     $(this).hover(
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $aWindow.data('selState', selState);
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'on');
+                                                    $aWindow.data('selState', selState);
+                                                }
                                             }
                                         },
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'off');                                        
+                                                }
                                             }
                                         }
                                     );
