@@ -343,7 +343,7 @@ class GroupForm(forms.ModelForm):
             m.save()
         try:
             site = Site.objects.get(group=self.instance)
-            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance, host=host.domain)
+            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance, host=site.domain)
             t = Thread(target=cache_updater, kwargs={})
             t.start()
         except Exception, e:
