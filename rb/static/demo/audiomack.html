@@ -421,7 +421,7 @@ var fwbb_collapsed_src = [
 
 							<div class="player-wrap song-player-wrap">
 					<div class="player">
-<iframe rdr-item="song-embed" rdr-reactions="Amazing;Legit;Meh;WTF" src='http://www.audiomack.com/embed3/thaproducesectioncom/the-followers-1?c1=fc881e&bg=f2f2f2&c2=222222' scrolling='no' width='100%' height='144' scrollbars='no' frameborder='0'></iframe>
+<iframe ant-item="song-embed" ant-reactions="Amazing;Legit;Meh;WTF" src='http://www.audiomack.com/embed3/thaproducesectioncom/the-followers-1?c1=fc881e&bg=f2f2f2&c2=222222' scrolling='no' width='100%' height='144' scrollbars='no' frameborder='0'></iframe>
 					</div><!--/.player-->
 
 					<div class="player-meta">
@@ -433,12 +433,12 @@ var fwbb_collapsed_src = [
 								<div class="share-page-player">
 										<style>
 										.readrboard { margin-bottom:10px; }
-										.readrboard .rdr-cta { display:inline-block; font-family: 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#000; padding: 8px 12px; border-radius:4px;}
-										.readrboard .rdr-cta.write { display:inline-block; background:#ffa200;}
+										.readrboard .ant-cta { display:inline-block; font-family: 'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#000; padding: 8px 12px; border-radius:4px;}
+										.readrboard .ant-cta.write { display:inline-block; background:#ffa200;}
 										</style>
 										<div class="readrboard">
-											<div class="rdr-cta write" rdr-cta-for="song-embed" rdr-mode="write" rdr-offset-x="0" rdr-offset-y="35">Your reaction?</div>
-											<div class="rdr-cta read" rdr-cta-for="song-embed" rdr-mode="read" rdr-offset-x="0" rdr-offset-y="35"><span rdr-counter-for="song-embed"></span> reactions</div>
+											<div class="ant-cta write" ant-cta-for="song-embed" ant-mode="write" ant-offset-x="0" ant-offset-y="35">Your reaction?</div>
+											<div class="ant-cta read" ant-cta-for="song-embed" ant-mode="read" ant-offset-x="0" ant-offset-y="35"><span ant-counter-for="song-embed"></span> reactions</div>
 										</div>
 
 									<ul>
@@ -1142,11 +1142,15 @@ The War on Drugs Plays "Red Eyes" On Letterman
 <div id="antenna_test_notice"></div>
 
 <script>
-window.antenna_extend = {premium:true, custom_css: "/* to change the colors of the Antenna boxes, tweak these settings: */ body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color1 { background:#ffa200; } body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color1 .rdr_tag_body, body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color1 .rdr_tag .rdr_count { color:#000; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color2 { background:#000; } body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color2 .rdr_tag_body, body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color2 .rdr_tag .rdr_count { color:#ffa200; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color3 { background:#F8C366; } body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color3 .rdr_tag_body, body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color3 .rdr_tag .rdr_count { color:#444; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color4 { background:#444; } body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color4 .rdr_tag_body, body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color4 .rdr_tag .rdr_count { color:#ffa200; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color5 { background:#ddd; } body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color5 .rdr_tag_body, body div.rdr div.rdr_body.rdr_tags_list .rdr_box.rdr_color5 .rdr_tag .rdr_count { color:#444; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;}" };
+window.antenna_extend = {premium:true, 
+	tag_box_bg_colors: '#ffa200;#000;#F8C366;#444;#ddd;',
+	tag_box_text_colors: '#000;#ffa200;#444;#ffa200;#444;',
+	// tag_box_font_family: "'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+	// custom_css: "/* to change the colors of the Antenna boxes, tweak these settings: */ body div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 { ; } body div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag_body, body div.ant div.ant_body.ant_tags_list .ant_box.ant_color1 .ant_tag .ant_count { ; font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 { #000; } body div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag_body, body div.ant div.ant_body.ant_tags_list .ant_box.ant_color2 .ant_tag .ant_count {  font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 { #F8C366; } body div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag_body, body div.ant div.ant_body.ant_tags_list .ant_box.ant_color3 .ant_tag .ant_count {  font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 { ; } body div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag_body, body div.ant div.ant_body.ant_tags_list .ant_box.ant_color4 .ant_tag .ant_count {  font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;} body div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 { ; } body div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag_body, body div.ant div.ant_body.ant_tags_list .ant_box.ant_color5 .ant_tag .ant_count {  font-family:'Open Sans', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight:bold;}" 
+};
 document.addEventListener("antenna.reaction", function(){
   // console.log("antenna.reaction");
   var lastEvent = antenna.getLastEvent();
-  console.log(lastEvent);
   if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
   	$('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
   }

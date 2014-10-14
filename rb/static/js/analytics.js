@@ -18,7 +18,7 @@ function notUndefined(x) {
 
 function topSummary() {
 
-antennaUsageData.no_ant_sessions_count = (antennaUsageData.all_sessions_count-antennaUsageData.ant_sessions_count);
+antennaUsageData.no_rdr_sessions_count = (antennaUsageData.all_sessions_count-antennaUsageData.rdr_sessions_count);
 
 // var $temp_antennaUsage = $('<div><div class="template"></div></div>');
 
@@ -29,7 +29,7 @@ antennaUsageData.no_ant_sessions_count = (antennaUsageData.all_sessions_count-an
         summaryHTML.push( '</div> ');
         
         summaryHTML.push( '<div class="datapoint people-engaged"> ');
-            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.ant_sessions_count)+'</div> ');
+            summaryHTML.push( '<div class="number">'+numberWithCommas(antennaUsageData.rdr_sessions_count)+'</div> ');
             summaryHTML.push( '<label>engaged sessions</label> ');
         summaryHTML.push( '</div> ');
         
@@ -112,7 +112,7 @@ var $temp_summarySection = $('<div class="template">'+ summaryHTML.join('')  +'<
 
 function timeSummary() {
     if (typeof timeData != 'undefined') {
-        $('#ant_avg_time').text( notUndefined(timeData.ant_avg_time) );
+        $('#ant_avg_time').text( notUndefined(timeData.rdr_avg_time) );
         $('#avg_time').text( notUndefined(timeData.avg_time) );
         drawSummaryGraphs();
         $(window).smartresize(drawSummaryGraphs);
@@ -120,7 +120,7 @@ function timeSummary() {
 }
 function pageviewSummary() {
     if (typeof pageviewData != 'undefined') {
-        $('#ant_avg_pageviews').text ( notUndefined(pageviewData.ant_avg_pageviews) );
+        $('#ant_avg_pageviews').text ( notUndefined(pageviewData.rdr_avg_pageviews) );
         $('#avg_pageviews').text ( notUndefined(pageviewData.avg_pageviews) );
         drawSummaryGraphs();
         $(window).smartresize(drawSummaryGraphs);
@@ -140,7 +140,7 @@ if (typeof pageviewData != 'undefined') {
 Morris.Bar({
   element: 'pageview-graph',
   data: [
-    { datatype: 'Pageviews', a: pageviewData.ant_avg_pageviews, b: pageviewData.avg_pageviews }
+    { datatype: 'Pageviews', a: pageviewData.rdr_avg_pageviews, b: pageviewData.avg_pageviews }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -155,7 +155,7 @@ if (typeof timeData != 'undefined') {
 Morris.Bar({
   element: 'time-graph',
   data: [
-    { datatype: 'Session Time', a: timeData.ant_avg_time, b: timeData.avg_time }
+    { datatype: 'Session Time', a: timeData.rdr_avg_time, b: timeData.avg_time }
   ],
   xkey: 'datatype',
   ykeys: ['a', 'b'],
@@ -178,8 +178,8 @@ Morris.Bar({
 //   barColors:['#92c325','#909090']
 // });
 
-var ant_session_percentage = ((antennaUsageData.ant_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2),
-    session_percentage = ((antennaUsageData.no_ant_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2);
+var ant_session_percentage = ((antennaUsageData.rdr_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2),
+    session_percentage = ((antennaUsageData.no_rdr_sessions_count/antennaUsageData.all_sessions_count) * 100).toFixed(2);
 
     Morris.Donut({
       element: 'engaged-sessions',
@@ -308,7 +308,7 @@ function refSummary(referrers) {
 
         // put in external file...
         ANTsite.analytics = {
-            queryHost: (document.domain != "local.antenna.com") ? "//events.readrboard.com" : "//localnode.com:3000",
+            queryHost: (document.domain != "local.antenna.is") ? "//events.antenna.is" : "//localnode.com:3000",
             toggleGlobalLoader: function() {
                 // TODO animate something
             },
@@ -360,6 +360,12 @@ function refSummary(referrers) {
                 },
                 success: function(response) {
                     pageviewData = response;
+
+                    // homepage override for buggy homepage-only query
+                    if ( $('body').hasClass('homepage') ) {
+                        pageviewData.rdr_avg_pageviews = 4.22;
+                        pageviewData.avg_pageviews = 2.89;
+                    }
                     pageviewSummary();
                     }
                 });
@@ -474,6 +480,7 @@ function refSummary(referrers) {
             //     return false;
             // });
 // ANTsite.group.id = 2352;
+// ANTsite.group.id = 1660;
 
             if ( $('.analyticsReport').length ) {
                 ANTsite.analytics.initAnalytics();

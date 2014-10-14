@@ -215,22 +215,22 @@ function antenna($A){
                     ANT.events.trackEventToCloud(event_params);
                 });
             },
-            checkTime: function() {
-                if ( document.hasFocus() === true ){
-                    if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
-                        ANT.events.trackEventToCloud({
-                            event_type: 'ti',
-                            event_value: ANT.events.focusedSeconds.toString()
-                        });
-                    }
-                    ANT.events.focusedSeconds++;
+            // checkTime: function() {
+                // if ( document.hasFocus() === true ){
+                //     if ( ANT.events.focusedSeconds > 0 && ANT.events.focusedSeconds % 20 == 0 ) {  // && ANT.events.justFocused === false 
+                //         ANT.events.trackEventToCloud({
+                //             event_type: 'ti',
+                //             event_value: ANT.events.focusedSeconds.toString()
+                //         });
+                //     }
+                //     ANT.events.focusedSeconds++;
                     // if (ANT.events.justFocused === false ) {
                     //     ANT.events.focusedSeconds++;
                     // } else {
                     //     ANT.events.justFocused = false;
                     // }
-                }
-            },
+                // }
+            // },
             // track : function( data, hash ) {
                 // ANT.events.track:
                 
@@ -358,15 +358,32 @@ function antenna($A){
                         };
                     var data = $.toJSON( trackData );
 
-                    if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
-                        $.postMessage(
-                            "register-event::"+data,
-                            ANT_baseUrl + "/static/xdm.html",
-                            window.frames['ant-xdm-hidden']
-                        );
-                    } else {
-                        ANT.events.queue.push(params);
-                    }
+                    // NO LONGER USER XDM FRAME FOR EVENT RECORDING.  WTF PORTER.  :)
+                    var trackingUrl = (document.domain != "local.antenna.is") ? "http://events.readrboard.com/insert" : "http://localnode.com:3000/insert";
+
+                    $.ajax({
+                        url: trackingUrl,
+                        type: "get",
+                        contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: data
+                        },
+                        success : function(response)
+                        {
+                        }
+                    });
+
+
+                    // if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
+                    //     $.postMessage(
+                    //         "register-event::"+data,
+                    //         ANT_baseUrl + "/static/xdm.html",
+                    //         window.frames['ant-xdm-hidden']
+                    //     );
+                    // } else {
+                    //     ANT.events.queue.push(params);
+                    // }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
@@ -1081,7 +1098,8 @@ function antenna($A){
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
                         tagPercent = 0,
                         tagWidth = '',
-                        colorInt = ( params.colorInt ) ? params.colorInt:0,
+                        bgColorInt = ( params.bgColorInt ) ? params.bgColorInt:0,
+                        textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1093,8 +1111,8 @@ function antenna($A){
 
                     // get the background color and text color
                     // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[colorInt] ) : ANT.group.tag_box_bg_colors[colorInt];
-                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[colorInt] ) : ANT.group.tag_box_text_colors[colorInt];
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
                     var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
@@ -1181,7 +1199,7 @@ function antenna($A){
                         '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
                         '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';'+ANT.group.tag_box_gradient+'">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';background-image:'+ANT.group.tag_box_gradient+';">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -2572,16 +2590,21 @@ function antenna($A){
             //     }
             // },
             hexToRgb: function(hex) {
-                // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-                var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-                hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-                    return r + r + g + g + b + b;
-                });
+                hex = $.trim(hex);
+                if (hex) {
+                    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+                    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                        return r + r + g + g + b + b;
+                    });
 
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? 
-                    parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
-                : null;
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? 
+                        parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16)
+                    : null;
+                } else {
+                    return '0,0,0';
+                }
             },
             getColorLuma: function(rgb) {
                 var r = rgb.split(',')[0],
@@ -2613,12 +2636,12 @@ function antenna($A){
             clearWindowInterval: function () {
                 // clearInterval($.data(this, 'ant_intervalTimer'));
             },
-            setWindowInterval: function () {
+            // setWindowInterval: function () {
                 // ANT.util.setWindowInterval
-                $.data(this, 'ant_intervalTimer', setInterval(function() {
-                    if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
-                }, 1000));
-            },
+                // $.data(this, 'ant_intervalTimer', setInterval(function() {
+                    // if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
+                // }, 1000));
+            // },
             checkForSelectedTextAndLaunchRindow: function(){
                 //ANT.util.checkForSelectedTextAndLaunchRindow
                     
@@ -3422,6 +3445,7 @@ function antenna($A){
             },
             handleGetUserFail: function(args, callback) {
                 var response = args.response;
+
                 switch ( response.message ) {
                     case "Error getting user!":
                         // kill the user object and localStorage
@@ -3445,15 +3469,22 @@ function antenna($A){
                         if ( typeof ANT.user.user_type != "undefined" && ANT.user.user_type == "antenna") {
                             ANT.session.showLoginPanel( args, callback );
                         } else {
-                            // the token is out of sync.  could be a mistake or a hack.
-                            ANT.session.receiveMessage( args, callback );
-                            // ANT.session.showLoginPanel( args, callback );
-                            $.postMessage(
-                                "reauthUser",
-                                // "killUser",
-                                ANT_baseUrl + "/static/xdm.html",
-                                window.frames['ant-xdm-hidden']
-                            );
+                            // ANT.session.showLoginPanel( args, callback ); is untested, just seeing if it can handle blocked FB popups.
+                            ANT.user.getUserAttempts = ANT.user.getUserAttempts || 1;
+                            if ( ANT.user.getUserAttempts < 2 ) {
+                                // the token is out of sync.  could be a mistake or a hack.
+                                ANT.session.receiveMessage( args, callback );
+                                // ANT.session.showLoginPanel( args, callback );
+                                $.postMessage(
+                                    "reauthUser",
+                                    // "killUser",
+                                    ANT_baseUrl + "/static/xdm.html",
+                                    window.frames['ant-xdm-hidden']
+                                );
+                            } else {
+                                ANT.session.killUser();
+                                ANT.session.showLoginPanel( args, callback );
+                            }
                         }
 
                         // // init a new receiveMessage handler to fire this callback if it's successful
@@ -3491,7 +3522,6 @@ function antenna($A){
                             if ( message.status == "returning_user" || message.status == "got_temp_user" ) {
                                 // currently, we don't care HERE what user type it is.  we just need a user ID and token to finish the action
                                 // the response of the action itself (say, tagging) will tell us if we need to message the user about temp, log in, etc
-
 
                                 for ( var i in message.data ) {
                                     ANT.user = ANT.user || {};
@@ -3846,17 +3876,25 @@ function antenna($A){
                         var group_settings = response.data;
 
                         // handle deprecated .blessed_tags, change to .default_reactions
-                        if ( typeof group_settings != 'undefined' && typeof group_settings.blessed_tags != 'undefined' ) {
-                            // use .slice() to copy by value
-                            // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
-                            group_settings.default_reactions = group_settings.blessed_tags.slice();
-                            delete group_settings.blessed_tags;
+                        if ( typeof group_settings != 'undefined' ) {
+                            if ( typeof group_settings.blessed_tags != 'undefined' ) {
+                                // use .slice() to copy by value
+                                // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                                group_settings.default_reactions = group_settings.blessed_tags.slice();
+                                delete group_settings.blessed_tags;
+                            }
+
+                            if (typeof group_settings.img_indicator_show_side !='undefined' && !group_settings.img_indicator_show_side ) { delete group_settings.img_indicator_show_side; }
+                            if (typeof group_settings.tag_box_bg_colors !='undefined' && !group_settings.tag_box_bg_colors ) { delete group_settings.tag_box_bg_colors; }
+                            if (typeof group_settings.tag_box_text_colors !='undefined' && !group_settings.tag_box_text_colors ) { delete group_settings.tag_box_text_colors; }
+                            if (typeof group_settings.tag_box_font_family !='undefined' && !group_settings.tag_box_font_family ) { delete group_settings.tag_box_font_family; }
+                            if (typeof group_settings.tag_box_gradient !='undefined' && !group_settings.tag_box_gradient ) { delete group_settings.tag_box_gradient; }
+                            if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
 
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
 
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
-
                         ANT.group.tag_box_bg_colors = ANT.group.tag_box_bg_colors.split(';');
                         ANT.group.tag_box_text_colors = ANT.group.tag_box_text_colors.split(';');
 
@@ -4217,8 +4255,8 @@ function antenna($A){
                                 $this.addClass('ant_live_hover');
 
                                 if(!hasBeenHashed && !isBlacklisted){
-
                                     var hashListsByPageId = ANT.actions.hashNodes( $(this) );
+
                                     //we expect just the one here, so just get that one.
                                     var hash;
                                     $.each( hashListsByPageId, function(page_id, hashArray) {
@@ -4369,7 +4407,7 @@ function antenna($A){
                 // });
 
                 // Antenna Timer?  unsure
-                ANT.util.setWindowInterval();
+                // ANT.util.setWindowInterval();
 
                 ANT.util.fixBodyBorderOffsetIssue();
                 
@@ -4529,7 +4567,7 @@ function antenna($A){
                         //     $node.attr('ant-crossPageContent', 'true');
                         // }
 
-                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
+                        $node.after('<div class="ant-custom-cta-container" ant-tag-type="'+tagName+'"><div class="ant-custom-cta" ant-cta-for="'+antItem+'" ant-mode="read write"><span class="ant-antenna-logo"></span> <span ant-counter-for="'+antItem+'"></span> <span ant-reactions-label-for="'+antItem+'">'+ANT.t('your_reaction')+'</span></div> </div>');
                         separateCtaCount++;
                     });
                 }
@@ -4625,6 +4663,7 @@ function antenna($A){
                         setupFunc: function(){
                             //var body = $(this).attr('src');
                             var body = this.src;
+
                             $(this).data({
                                 'body':body
                             });
@@ -4683,7 +4722,6 @@ function antenna($A){
                     // take the $node passed in, add it to group via filters
                     var $group = $node.filter( group.filterParam );
 
-
                     // add vaild descendants of the $node
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
@@ -4728,7 +4766,9 @@ function antenna($A){
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) { return false; }
+                if( !$allNodes.data('body') ) { 
+                    return false;
+                }
                 //else
                 var hashList = {};
 
@@ -6152,6 +6192,11 @@ if ( sendData.kind=="page" ) {
                     args.group_id = ANT.group.id;
                     args.page_id = (args.page_id) ? args.page_id : ANT.util.getPageProperty('id', args.hash);
 
+                    if ( ANT.user.user_id === null || isNaN(ANT.user.user_id)) {
+                        delete ANT.user.user_id;
+                        delete args.user_id;
+                    }
+
                     return args;
 
                 },
@@ -6993,8 +7038,8 @@ if ( sendData.kind=="page" ) {
                 //end ANT.actions.interactions
             },
             indicators: {
-                show: function(hashes, boolDontFade){
-                    boolDontFade = true;
+                show: function(hashes){
+
                     //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
@@ -7002,22 +7047,22 @@ if ( sendData.kind=="page" ) {
                     //todo: this works for now, but use a differnet signal later
                     if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
+                    // var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
 
-                    if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
-                        $indicators.not('.ant_dont_show').css({
-                            'opacity':'0',
-                            'visibility':'visible'
-                        });
-                        if(boolDontFade){
-                            $indicators.not('.ant_dont_show').css({
-                                'opacity':textIndicatorOpacity
-                            });
-                            return;
-                        } else {
-                            $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                        }
-                    }
+                    // if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
+                    //     $indicators.not('.ant_dont_show').css({
+                    //         'opacity':'0',
+                    //         'visibility':'visible'
+                    //     });
+                    //     // if(boolDontFade){
+                    //         $indicators.not('.ant_dont_show').css({
+                    //             'opacity':textIndicatorOpacity
+                    //         });
+                    //         return;
+                    //     // } else {
+                    //         // $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
+                    //     // }
+                    // }
 
                     //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
@@ -7624,7 +7669,8 @@ if ( sendData.kind=="page" ) {
                         if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
                         }else{
-                            ANT.util.cssSuperImportant( $indicator, { display:"none" });
+                            // ANT.util.cssSuperImportant( $indicator, { opacity:0 });
+                            // ANT.util.cssSuperImportant( $indicator, { display:"none" });
                         }
                     }
                 },
@@ -7930,6 +7976,9 @@ if ( sendData.kind=="page" ) {
                                 timeoutCloseEvt = setTimeout(function(){
                                     if ( $this.hasClass('ant_rewritable') ) {
                                         $this.remove();
+                                        if (!$('.ant_writemode').length) {
+                                            $().selog('hilite', true, 'off');
+                                        }
                                     }
                                 },300);
 
@@ -7944,22 +7993,26 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('div.ant_box').each( function() {
                                     $(this).hover(
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'on');
-                                                $aWindow.data('selState', selState);
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'on');
+                                                    $aWindow.data('selState', selState);
+                                                }
                                             }
                                         },
                                         function() {
-                                            var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
-                                            //make sure it's not already transitiontion into a success state
-                                            //hacky because sometimes it doesnt have the data for 1 yet
-                                            var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
-                                            if( isPanelState1 ){
-                                                $().selog('hilite', selState, 'off');                                        
+                                            if ( typeof summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')] != 'undefined' ) {
+                                                var selState = summary.content_nodes[$(this).find('div.ant_tag').data('content_node_id')].selState;
+                                                //make sure it's not already transitiontion into a success state
+                                                //hacky because sometimes it doesnt have the data for 1 yet
+                                                var isPanelState1 = !$aWindow.data('panelState') || $aWindow.data('panelState') === 1;
+                                                if( isPanelState1 ){
+                                                    $().selog('hilite', selState, 'off');                                        
+                                                }
                                             }
                                         }
                                     );
@@ -8043,8 +8096,10 @@ if ( sendData.kind=="page" ) {
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                colorInt = 0,
-                                numColors = ANT.group.tag_box_bg_colors.length;
+                                bgColorInt = 0,
+                                textColorInt = 0,
+                                numBgColors = ANT.group.tag_box_bg_colors.length,
+                                numTextColors = ANT.group.tag_box_text_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
@@ -8066,23 +8121,29 @@ if ( sendData.kind=="page" ) {
                             while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
                                 if ( buckets.big.length ) {
                                   var thisTag = buckets.big.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                     // set next color 
-                                    colorInt++;
-                                    if ( colorInt == numColors ) colorInt = 0;
+                                    bgColorInt++;
+                                    textColorInt++;
+                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    if ( textColorInt == numTextColors ) textColorInt = 0;
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                     // set next color 
-                                    colorInt++;
-                                    if ( colorInt == numColors ) colorInt = 0;
+                                    bgColorInt++;
+                                    textColorInt++;
+                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    if ( textColorInt == numTextColors ) textColorInt = 0;
     
                                 } else if ( buckets.small.length ) {
                                   var thisTag = buckets.small.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, colorInt:colorInt });
+                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
                                   // set next color 
-                                  colorInt++;
-                                  if ( colorInt == numColors ) colorInt = 0;
+                                  bgColorInt++;
+                                  textColorInt++;
+                                  if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                  if ( textColorInt == numTextColors ) textColorInt = 0;
                                 }
 
                             }
@@ -10013,7 +10074,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv29"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv31"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

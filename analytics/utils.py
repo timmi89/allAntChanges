@@ -56,36 +56,25 @@ class OAuth2EventsUtility(object):
         except Exception, ex:
             logger.warn(ex)
     
-    
-    
-    def get_group_AB_widget_loads(self, group, month, year, maxResults = 1, ab_group = 'A'):
-        table = self.get_table_name(group, month, year)
-        query = 'select count(et) as counts  from ' + table + ' where et = "wl" and ev = "' + ab_group + '"'
-        
-        body = self.get_request_body(query, maxResults)
 
-        try:
-            result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-            rows = result['rows']
-            return rows[0]['f'][0]['v']
-            
-        except Exception, ex:
-            logger.warn(ex)
-        return None
     
     def get_group_AB_script_loads(self, group, month, year, maxResults = 1, ab_group = 'A'):
         table = self.get_table_name(group, month, year)
         query = 'select count(et) as counts  from ' + table + ' where et = "sl" and ev = "' + ab_group + '"'
         
         body = self.get_request_body(query, maxResults)
-        try:
-            result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-            rows = result['rows']
-            return rows[0]['f'][0]['v']
-            
-        except Exception, ex:
-            logger.warn(ex)
-        return None
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        rows = result['rows']
+        return rows[0]['f'][0]['v']
+
+    def get_event_type_count_by_event_value(self, group, month, year, maxResults = 1, event_type = 'sl', event_value = 'A'):
+        table = self.get_table_name(group, month, year)
+        query = 'select count(et) as counts  from ' + table + ' where et = "' + event_type + '" and ev = "' + event_value + '"'
+        
+        body = self.get_request_body(query, maxResults)
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        rows = result['rows']
+        return rows[0]['f'][0]['v']
     
     def get_most_reacted_content(self, group, month, year):
         pass

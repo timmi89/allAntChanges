@@ -506,7 +506,6 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         # Guard against undefined page string being passed in
         if not isinstance(page, int): 
             errorStr = "Bad Page ID ***" + str(page)+ "***"
-            logger.info(errorStr)
             raise JSONException("Bad Page ID ***" + str(page)+ "***")
 
         if len(hashes) == 1:
@@ -597,7 +596,6 @@ class PageDataHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data, pageid=None):
-        print "api page * * * * * * * * * * * * * * * * "
         # print data
         requested_pages = data['pages']
         host = getHost(request)
@@ -637,43 +635,45 @@ class SettingsHandler(AnonymousBaseHandler):
     """
     @status_response
     def read(self, request, group_id=None):
-        if not group_id:
-            # Get hostname, stripping www if present
-            host = getHost(request)
-            
-            # Get site object
-            try:
-                site = Site.objects.get(domain=host)
-                # Get Group
-                group = Group.objects.get(id=site.group.id)
-
-            except Site.DoesNotExist:
-
-                cookie_user = checkCookieToken(request)
-                cleaned_data = dict(
-                    name=host,
-                    short_name=host,
-                    domain=host
-                )
-
-                group = autoCreateGroup(cleaned_data, cookie_user)
-        else:
-            group = Group.objects.get(id=group_id)
-            
-        #if group.approved == False:   
-        #    return HttpResponse("Group not approved")
-        cached_result = cache.get('group_settings'+ str(group.id))
+        host = getHost(request)
+        
+        #check cache by new key:
+        cached_result = cache.get('group_settings_'+ str(host))
         if cached_result is not None:
             return cached_result
-        settings_dict = getSettingsDict(group)
-        try:
-            cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group)
-            t = Thread(target=cache_updater, kwargs={})
-            t.start()
-        except Exception, e:
-            logger.warning(traceback.format_exc(50))   
-              
-        return settings_dict
+        else:
+            #remove this logging after testing
+            logger.warning("Settings cache miss: group_settings_"+ str(host))
+            if not group_id:
+                # Get site object
+                try:
+                    site = Site.objects.get(domain=host)
+                    # Get Group
+                    group = Group.objects.get(id=site.group.id)
+    
+                except Site.DoesNotExist:
+    
+                    cookie_user = checkCookieToken(request)
+                    cleaned_data = dict(
+                        name=host,
+                        short_name=host,
+                        domain=host
+                    )
+    
+                    group = autoCreateGroup(cleaned_data, cookie_user)
+            else:
+                group = Group.objects.get(id=group_id)
+            
+        
+            settings_dict = getSettingsDict(group)
+            try:
+                cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group, host=host)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))   
+                  
+            return settings_dict
 
 
 class UnFollowHandler(InteractionHandler):

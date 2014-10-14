@@ -1,7 +1,7 @@
-
 <!DOCTYPE html>
   <html class="no-js">
-<!-- Providence 3.3.0 Shopify theme by Empyre (http://empy.re) - Proudly powered by Shopify (http://shopify.com) -->
+  <!-- Antenna is borrowing this theme, and modifying, from the excellent Shopify theme library.  For more, check out shopify.com -->
+  <!-- Providence 3.3.0 Shopify theme by Empyre (http://empy.re) - Proudly powered by Shopify (http://shopify.com) -->
   <head>
     
 
@@ -14,7 +14,7 @@
     <meta charset="utf-8">
 
 
- <title>Logan Buffet | Providence Birch</title>
+ <title>Antenna Ecommerce Demo</title>
 
 
 
@@ -29,7 +29,7 @@
 <meta property="og:site_name" content="Providence Birch">
 
 
-<meta itemprop="name" content="Logan Buffet">
+<meta itemprop="name" content="A">
 <meta itemprop="description" content="So this is a product. The text you see here is a Product Description. Every product has a price, a...">
 <meta itemprop="image" content="//cdn.shopify.com/s/files/1/0170/3174/products/08_grande.jpg?v=1345047437">
 <meta property="og:image" content="//cdn.shopify.com/s/files/1/0170/3174/products/08_grande.jpg?v=1345047437">
@@ -78,11 +78,11 @@
 
 
 
+<link href='http://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
 
 <link href="http://fonts.googleapis.com/css?family=Libre+Baskerville:400,500,700,400italic,700italic" rel="stylesheet" type="text/css">
 
 <link href="http://fonts.googleapis.com/css?family=Droid+Serif:400,500,700,400italic,700italic" rel="stylesheet" type="text/css">
-
 
 
     <link rel="alternate" type="application/json+oembed" href="http://providence-birch.myshopify.com/products/logan-buffet.oembed" />
@@ -129,21 +129,20 @@ var __st={"a":1703174,"offset":-18000,"u":"52c23e82ec87","s":"products-100054176
   
 
 <script>
-// readrboard settings overrides
+// antenna settings overrides
 window.antenna_extend = {
     blessed_tags: [
         "Beautiful",
         "Not for me",
-        "Creative",
         "Useful",
         "Well made"
     ],
     premium:true,
     no_readr:".footer.section,.block-grid",
-    tag_box_bg_colors:'e29492; ebbdbb; ccced5; e3e2ef; f2f1f8',
-    tag_box_text_colors:'993a37; bf655e; 7a7b88; 898a99; 9796aa',
-    custom_css: "body .ant-summary .ant-antenna-logo { color:#fff !important; }  body div.ant.ant-summary a.ant_reactions_label {font-family: Helvetica,Arial,sans-serif;color:#fff;letter-spacing: 0.5px;} body div.ant.ant-summary { border-radius:3px;padding:2% 4% 2.5% 3%;box-shadow:none; background:#c3c3cb; float:right; margin-top:-49px;height:auto;}div.ant.ant-summary .ant_chevron_cta{display:none;} ",
-    summary_widget_selector: ".form-actions",
+    tag_box_bg_colors:'ff4629; 000; ff654d; 444',
+    tag_box_text_colors:'fff; fff; fff; fff',
+    // custom_css: "body .ant-summary .ant-antenna-logo { color:#fff !important; }  body div.ant.ant-summary a.ant_reactions_label {font-family: Helvetica,Arial,sans-serif;color:#fff;letter-spacing: 0.5px;} body div.ant.ant-summary { border-radius:3px;padding:2% 4% 2.5% 3%;box-shadow:none; background:#c3c3cb; float:right; margin-top:-49px;height:auto;}div.ant.ant-summary .ant_chevron_cta{display:none;} ",
+    summary_widget_selector: ".product-reactions",
     active_sections:"article.hproduct"
 };
 </script>
@@ -160,28 +159,7 @@ window.antenna_extend = {
 
   <body class="product" id="logan-buffet">
     <style>
-    body { padding-top:40px; }
-    .ant-wrap {
-      position:fixed;
-      height:40px;
-      background:#65b4e7;
-      color:#fff;
-      text-align:center;
-      box-sizing:border-box;
-      padding-top:15px;
-      font-family:Helvetica,Arial,sans-serif;
-      width:100%;
-      z-index:1000;
-      top:0;
-    }
-    .ant-wrap a {
-      color:#fff;
-      text-decoration: underline;
-    }
     </style>
-    <header class="ant-wrap">
-      This is a demo page of Antenna for Retailers, using the excellent <a href="http://providence-birch.myshopify.com/" target="_blank">Birch Theme</a> at <a href="http://www.shopify.com" target="_blank">Shopify</a>. &nbsp; <a href="/retailers">Return to Antenna</a>
-    </header>
     <div id="app-wrap">
       <div id="header-actions">
   <div class="row padded-h">
@@ -239,8 +217,11 @@ window.antenna_extend = {
         <div class="table">
           <div class="cell text-left">
             <div id="brand">
-  
-    <h1 id="brand-primary-text"><a href="http://providence-birch.myshopify.com" target="_blank">Birch<span>.</span></a></h1>
+  <style>
+  #brand-primary-text { font-family:Bangers,Arial !important; letter-spacing: 1px !important; font-size: 80px !important;}
+  #site-body { background:#fff !important; }
+  </style>
+    <h1 id="brand-primary-text"><a href="http://providence-birch.myshopify.com" target="_blank">Loot<span>!</span></a></h1>
   
 
   
@@ -477,7 +458,7 @@ window.antenna_extend = {
 
       <div class="table">
         <div class="cell align-top">
-          <h1>Logan Buffet</h1>
+          <h1 style="font-family:Arial;font-size:30px;">Awesome Camera</h1>
         </div>
         <div class="cell">
           <div id="page-header-actions">
@@ -491,10 +472,10 @@ window.antenna_extend = {
   <!-- Product -->
   
     
-      <li><a href="#" title="Furniture">Furniture</a></li>
+      <li><a href="#" title="Furniture">Fake Electronics</a></li>
     
 
-  <li><span>Logan Buffet</span></li>
+  <li><span>Awesome Camera</span></li>
 
   <!-- Blog -->
   
@@ -541,63 +522,39 @@ window.antenna_extend = {
     <div class="large-5 columns">
       <div class="images">
         <!-- Featured image -->
-<img src="/static/demo/logan/main-image.jpg"/>
+<a href="https://unsplash.imgix.net/26/camera-keys.jpg?q=75&fm=jpg&auto=format&s=86747786bc70d16dfc054027a4ee50f4" target="_blank"><img src="https://unsplash.imgix.net/26/camera-keys.jpg?q=75&fm=jpg&auto=format&s=86747786bc70d16dfc054027a4ee50f4"/></a>
 <!-- <div id="primary-image">
   
 </div> -->
 
 <!-- Thumbs -->
-<ul class="product-thumbs large-block-grid-4">
-  
-    <li class="product-thumb">
-      <div class="icon-zoom"><i class="icon-angle-up"></i></div>
-      <a class="fancybox" rel="product-thumb" href="//cdn.shopify.com/s/files/1/0170/3174/products/08.jpg?v=1345047437" title="Logan Buffet" data-primary-image="//cdn.shopify.com/s/files/1/0170/3174/products/08_1024x1024.jpg?v=1345047437" data-image-index="1"><img src="//cdn.shopify.com/s/files/1/0170/3174/products/08_medium.jpg?v=1345047437" alt="Logan Buffet" /></a>
-    </li>
-  
-    <li class="product-thumb">
-      <div class="icon-zoom"><i class="icon-angle-up"></i></div>
-      <a class="fancybox" rel="product-thumb" href="//cdn.shopify.com/s/files/1/0170/3174/products/09.jpg?v=1345047442" title="Logan Buffet" data-primary-image="//cdn.shopify.com/s/files/1/0170/3174/products/09_1024x1024.jpg?v=1345047442" data-image-index="2"><img src="//cdn.shopify.com/s/files/1/0170/3174/products/09_medium.jpg?v=1345047442" alt="Logan Buffet" /></a>
-    </li>
-  
-</ul>
+<div style="padding:1em 0;">
+  <p><strong>Awesome Camera is awesome.</strong>  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quis nulla nec augue feugiat lacinia. Duis massa ex, feugiat ut elit sit amet, pellentesque sagittis ipsum. </p>
+  <p>Fusce vel euismod erat:</p>
+  <ul>
+    <li>Product trait 1</li>
+    <li>Product trait 2</li>
+    <li>Product trait 3</li>
+  </ul>
+  <div class="product-reactions"></div>
+</div>
       </div>
     </div>
 
     <div class="large-7 columns">
       <div class="details hidden" style="display:none;">
 
-        
 
-        
 
+        <div class="price section" style="overflow:auto;margin-bottom:0.25em;">
         
-        <div class="brand section">
-          <a href="/collections/vendors?q=Rustica+Design" title="Rustica Design">Rustica Design</a>
+          <div class="form-actions variant-selects-true" style="float:right;">
+            <button style="font-size:1rem;margin:0;" type="submit" name="add" class="button add-to-cart" onclick="return false;">Add to Cart</button>
+          </div>
+
+          <span class="price-label">$99.00</span>
+
         </div>
-        
-
-        <div class="price section">
-        
-          $1,575.00
-        
-        </div>
-
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <div class="variants section">
@@ -605,39 +562,134 @@ window.antenna_extend = {
 
     
       <div class="row">
-
         <!-- Variant select -->
         
 
         <!-- Quantity select -->
         
-          <div class="large-4 columns">
-            <div class="selector-qty">
-            <label for="quantity">Qty.</label>
-            <select id="quantity" name="quantity">
+          <div class="large-12 columns">
+
+<style>
+.price button { font-family:Bangers,Arial !important; font-size:24px !important; letter-spacing:1px; }
+.ant-reviews {
+  clear:both;
+  overflow: auto;
+}
+
+.ant-reviews h1 {
+  font-size:38px;
+  padding:0;
+  margin:0;
+  font-family:Bangers,Arial;
+}
+
+
+.ant-reviews h3 {
+  font-size:14px;
+  padding:0;
+  margin-bottom:10px;
+}
+
+.ant-reviews .answers {
+  padding:10px;
+  background:#eee;
+  border-radius: 3px;
+  width:35%;
+  display:inline-block;
+  margin:0 auto;
+}
+.ant-reviews .answer {
+  padding:10px;
+  font-size:11px;
+  border-radius: 3px;
+  width:45%;
+  display:inline-block;
+  margin:20px auto;
+}
+
+.related-products {
+  margin-top:0 !important;
+}
+
+table.reviews h3 { font-family:Arial !important; font-size:16px; font-weight:700; }
+table.reviews td { padding:0; }
+</style>
+          <div class="ant-reviews">
+            <h1>User Reviews</h1>
+            <table class="reviews" cellpadding="0" cellspacing="0">
               
-              <option value="1">1</option>
-              
-              <option value="2">2</option>
-              
-              <option value="3">3</option>
-              
-              <option value="4">4</option>
-              
-              <option value="5">5</option>
-              
-              <option value="6">6</option>
-              
-              <option value="7">7</option>
-              
-              <option value="8">8</option>
-              
-              <option value="9">9</option>
-              
-              <option value="10">10</option>
-              
-            </select>
+              <tr>
+                <td class="show_question">
+                  <h3 ant-item="imagequality" ant-reactions="Stunning;Crisp;OK;Not good">Image Quality</h3>
+                </td>
+                <td class="show_answer">
+                  <div ant-cta-for="imagequality" ant-mode="read" ant-offset-x="0" ant-offset-y="0" class="answers"><span ant-counter-for="imagequality"></span> Responses</div>                  
+                  <div ant-cta-for="imagequality" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="show_question">
+                  <h3 ant-item="features" ant-reactions="Excellent;Standard;Lacking">Features</h3>
+                </td>
+                <td class="show_answer">
+                  <div ant-cta-for="features" ant-mode="read" ant-offset-x="0" ant-offset-y="0" class="answers"><span ant-counter-for="features"></span> Responses</div>
+                  <div ant-cta-for="features" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="show_question">
+                  <h3 ant-item="setup" ant-reactions="Easy;None;Needed Help">Setup</h3>
+                </td>
+                <td class="show_answer">
+                  <div ant-cta-for="setup" ant-mode="read" ant-offset-x="0" ant-offset-y="0" class="answers"><span ant-counter-for="setup"></span> Responses</div>
+                  <div ant-cta-for="setup" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="show_question">
+                  <h3 ant-item="durability" ant-reactions="Excellent;Good;Less than expected;Rugrat-proof">Durability</h3>
+                </td>
+                <td class="show_answer">
+                  <div ant-cta-for="durability" ant-mode="read" ant-offset-x="0" ant-offset-y="0" class="answers"><span ant-counter-for="durability"></span> Responses</div>
+                  <div ant-cta-for="durability" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+                </td>
+              </tr>
+
+
+            </table>
+          </div>
+
+
+            <div class="selector-qty" style="display:none;">
+              <label for="quantity">Qty.</label>
+              <select id="quantity" name="quantity">
+                
+                <option value="1">1</option>
+                
+                <option value="2">2</option>
+                
+                <option value="3">3</option>
+                
+                <option value="4">4</option>
+                
+                <option value="5">5</option>
+                
+                <option value="6">6</option>
+                
+                <option value="7">7</option>
+                
+                <option value="8">8</option>
+                
+                <option value="9">9</option>
+                
+                <option value="10">10</option>
+                
+              </select>
             </div>
+
           </div>
         
 
@@ -650,9 +702,9 @@ window.antenna_extend = {
       </div>
     
 
-    <div class="form-actions variant-selects-true">
+    <!-- <div class="form-actions variant-selects-true">
       <button type="submit" name="add" class="button large add-to-cart" onclick="return false;">Add to Cart</button>
-    </div>
+    </div> -->
 
   </form>
 
@@ -670,13 +722,6 @@ window.antenna_extend = {
   
 
 </div>
-          <div class="body section">
-            <p>Reclaimed and refined.</p>
-            <p>Inspired by the spirited, industrial character of an early 20th-century work table, this beautiful buffet provides a bold accent to your urban farmhouse, or your house on the farm.  Grooves and saw marks on the wood’s surface create the look of salvaged lumber.</p>
-            <p>Crafted from thick planks of kiln-dried birch and poplar that are meticulously weathered and distressed, then accented with grooves and saw marks to create the look of salvaged lumber.  The drawers and top piece rest upon slightly angled legs, that create a sense of openness, even in small spaces.</p>
-            <p>1" thick, finished limestone top is durable, easy to clean, and matches almost any interior.</p>
-            <p>Buffet is fitted with two standard drawers, each with handpainted accents, and two mini-drawers for your hand-sized essentials.  Handpainted shelf below creates refreshing open space, or is a perfect place for bin or shoe storage.</p>
-          </div>
         
 
         <div class="footer section">
@@ -684,70 +729,6 @@ window.antenna_extend = {
 
 
 
-
-<div class="tags">
-<i class="icon-tags"></i>
-<ul>
-
-<li>
-<a href="/collections/all/Rustic" class="button secondary" rel="tag">Rustic</a>
-</li>
-
-<li>
-<a href="/collections/all/Wood" class="button secondary" rel="tag">Wood</a>
-</li>
-
-</ul>
-</div>
-
-<!--
-
-<div class="readr-qa no-ant">
-  <h3 ant-custom-display="question1">What's your favorite wood finish?</h3>
-  <div class="ant_answers" ant-cta-for="question1" ant-mode="read" ant-offset-x="0" ant-offset-y="31">Answers</div>
-  <div class="ant_respond" ant-cta-for="question1" ant-mode="write" ant-offset-x="0" ant-offset-y="31">Add your answer</div>
-</div>
-
--->
-
-
-
-
-
-
-
-  <div class="sharing">
-    <i class="icon-heart"></i>
-
-    <div class="sharing-links">
-
-  
-      <div class="share-google">
-        <g:plusone size="medium" annotation="none"></g:plusone>
-      </div>
-      
-
-      
-      <div class="share-twitter">
-        <a href="http://twitter.com/share" data-url="http://providence-birch.myshopify.com/products/logan-buffet" data-text="Logan Buffet by Rustica Design" class="twitter-share-button" data-count="none">Tweet</a>
-        <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-      </div>
-      
-
-      
-      <div class="share-fb">
-        <iframe src="http://www.facebook.com/plugins/like.php?href=http://providence-birch.myshopify.com/products/logan-buffet&amp;layout=button_count&amp;display_faces=true&amp;width=48&amp;action=like&amp;colorscheme=light&amp;height=21" style="border:none; overflow:hidden; width:48px; height:21px"></iframe>
-      </div>
-      
-
-      
-      <div class="share-pinterest">
-        <a href="http://pinterest.com/pin/create/button/?url=http://providence-birch.myshopify.com/products/logan-buffet&amp;media=//cdn.shopify.com/s/files/1/0170/3174/products/08_1024x1024.jpg?v=1345047437&amp;description=So this is a product. The text you see here is a Product Description. Every product has a price, a..." class="pin-it-button">Pin It</a>
-        <script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>
-      </div>
-    </div>
-
-</div>
 
 <style>
 .readr-qa { margin-top: 40px; }
@@ -788,7 +769,8 @@ window.antenna_extend = {
 }
 
 .ant-questions h1.column {
-  font-size:18px;
+  font-size:28px;
+  font-family:Bangers,Arial !important; 
   padding:0;
   padding-top:40px;
 }
@@ -817,236 +799,21 @@ window.antenna_extend = {
 }
 
 </style>
-<div class="ant-questions">
-  <h1 class="column">Reviews of the Logan Buffet</h1>
-  <div class="column">
-    <h3 ant-item="design" ant-reactions="Matches Photo;Better than hoped!;Different than expected">Expectations</h3>
-    <div ant-cta-for="design" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
-    <div ant-cta-for="design" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="design"></span> Responses</div>
-  </div>
-  <div class="column">
-    <h3 ant-item="setup" ant-reactions="Easy;None;Needed Help">Setup</h3>
-    <div ant-cta-for="setup" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
-    <div ant-cta-for="setup" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="setup"></span> Responses</div>
-  </div>
-  <div class="column">
-    <h3 ant-item="durability" ant-reactions="Excellent;Good;Less than expected;Rugrat-proof">Durability</h3>
-    <div ant-cta-for="durability" ant-mode="write" ant-offset-x="-20" ant-offset-y="0" class="answer">Your take?</div>
-    <div ant-cta-for="durability" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="durability"></span> Responses</div>
-  </div>
-</div>
 
 <div class="ant-questions">
-  <h1 class="column">Community Taste Test -- see how you compare!</h1>
+  <h1 class="column">What sort of photographer are you?</h1>
   <div class="column2">
-    <h3 ant-item="question1" ant-reactions="Modern;Shabby Chic;Vintage;DIY">What's your style?</h3>
-    <div ant-cta-for="question1" ant-mode="write" ant-offset-x="10" ant-offset-y="0" class="answer">Your take?</div>
-    <div ant-cta-for="question1" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="question1"></span> Responses</div>
+    <h3 ant-item="question1" ant-reactions="Outside;Inside;Public Spaces;Studio">What's your favorite place to take photos?</h3>
+    <div ant-cta-for="question1" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="question1" ant-mode="read" ant-offset-x="60" ant-offset-y="0" class="answers"><span ant-counter-for="question1"></span> Responses</div>
   </div>
   <div class="column2">
-    <h3 ant-item="question2" ant-reactions="Always;Of course;A bit tired of it;Sometimes">Do you like exposed wood?</h3>
-    <div ant-cta-for="question2" ant-mode="write" ant-offset-x="10" ant-offset-y="0" class="answer">Your take?</div>
-    <div ant-cta-for="question2" ant-mode="read" ant-offset-x="30" ant-offset-y="0" class="answers"><span ant-counter-for="question2"></span> Responses</div>
+    <h3 ant-item="question2" ant-reactions="Digital;Film;Both!;Smartphone :)">Digital or film?</h3>
+    <div ant-cta-for="question2" ant-mode="write" ant-offset-x="0" ant-offset-y="0" class="answer">Your take?</div>
+    <div ant-cta-for="question2" ant-mode="read" ant-offset-x="60" ant-offset-y="0" class="answers"><span ant-counter-for="question2"></span> Responses</div>
   </div>
 </div>
-  <section class="related-products">
-  <div class="row">
-    <div class="large-12 columns">
-      
-
-      
-
-      <div class="products cards">
-        <ul class="block-grid small-block-grid-2 large-block-grid-4">
-        
-          
-            <li><div class="product card">
-
-  <article class="hproduct product-100054134 driftwood-table-lamp" data-url="/products/driftwood-table-lamp" >
-
-    <div class="image-wrap">
-    <div class="image">
-      <a href="/products/driftwood-table-lamp" title="Candlestick Table Lamp">
-      <img src="http://cdn.shopify.com/s/files/1/0170/3174/products/jpeg-49.jpg?v=1392408606" alt="Candlestick Table Lamp" />
-      </a>
-    </div>
-    </div>
-
-    <div class="details">
-
-      <header>
-        <h1 class="header-color">
-          <a href="/products/driftwood-table-lamp" title="Candlestick Table Lamp">
-            <span class="name">Candlestick Table Lamp</span>
-          </a>
-        </h1>
-      </header>
-
-      
-      <span class="brand">Rustica Design</span>
-      
-
-      
-        <span class="price">
   
-    <span class="from">from</span>
-  
-  
-  $445.00
-</span>
-      
-
-      
-      
-      
-    </div>
-
-  </article>
-
-</div></li>
-          
-            <li><div class="product card">
-
-  <article class="hproduct product-100054176 logan-buffet" data-url="/products/logan-buffet" >
-
-    <div class="image-wrap">
-    <div class="image">
-      <a href="/products/logan-buffet" title="Logan Buffet">
-      <img src="http://cdn.shopify.com/s/files/1/0170/3174/products/jpeg-41_large.jpg?v=1392408479" alt="Logan Buffet" />
-      </a>
-    </div>
-    </div>
-
-    <div class="details">
-
-      <header>
-        <h1 class="header-color">
-          <a href="/products/logan-buffet" title="Logan Buffet">
-            <span class="name">Logan Buffet</span>
-          </a>
-        </h1>
-      </header>
-
-      
-      <span class="brand">Rustica Design</span>
-      
-
-      
-        <span class="price">
-  
-  
-  $1,575.00
-</span>
-      
-
-      
-      
-      
-    </div>
-
-  </article>
-
-</div></li>
-          
-            <li><div class="product card">
-
-  <article class="hproduct product-100054356 pascal-sofa" data-url="/products/pascal-sofa" >
-
-    <div class="image-wrap">
-    <div class="image">
-      <a href="/products/pascal-sofa" title="Pascal Armchair">
-      <img src="http://cdn.shopify.com/s/files/1/0170/3174/products/jpeg-50.jpg?v=1392408969" alt="Pascal Armchair"  />
-      </a>
-    </div>
-    </div>
-
-    <div class="details">
-
-      <header>
-        <h1 class="header-color">
-          <a href="/products/pascal-sofa" title="Pascal Armchair">
-            <span class="name">Pascal Armchair</span>
-          </a>
-        </h1>
-      </header>
-
-      
-      <span class="brand">Softliving Inc.</span>
-      
-
-      
-        <span class="price">
-  
-  
-    <span class="compare">$3,295.00</span>
-  
-  $2,875.00
-</span>
-      
-
-      
-      
-      <span class="sticker">
-        <span>Sale</span>
-      </span>
-      
-      
-    </div>
-
-  </article>
-
-</div></li>
-          
-            <li><div class="product card">
-
-  <article class="hproduct product-100054402 stratton-wicker-lounge-chair" data-url="/products/stratton-wicker-lounge-chair" >
-
-    <div class="image-wrap">
-    <div class="image">
-      <a href="/products/stratton-wicker-lounge-chair" title="Stratton Wicker Lounge Chair">
-      <img src="http://cdn.shopify.com/s/files/1/0170/3174/products/jpeg-38.jpg?v=1392408200" alt="Stratton Wicker Lounge Chair" style="max-width:100%;"/>
-      </a>
-    </div>
-    </div>
-
-    <div class="details">
-
-      <header>
-        <h1 class="header-color">
-          <a href="/products/stratton-wicker-lounge-chair" title="Stratton Wicker Lounge Chair">
-            <span class="name">Stratton Wicker Lounge Chair</span>
-          </a>
-        </h1>
-      </header>
-
-      
-      <span class="brand">Rustica Design</span>
-      
-
-      
-        <span class="price">
-  
-  
-  $895.00
-</span>
-      
-
-      
-      
-      
-    </div>
-
-  </article>
-
-</div></li>
-          
-        
-        </ul>
-      </div>
-
-    </div>
-  </div>
-</section>
 
 
 
@@ -1098,13 +865,13 @@ window.antenna_extend = {
     <div class="widget-inner">
 
 <header class="widget-header">
-  <h2>Providence</h2>
+  <h2>Antenna for Ecommerce</h2>
 </header>
 
 
     <div class="page-content">
-  <p><span>Providence is a feature-rich, completely responsive Shopify theme that looks beautiful on all screens, from phones to desktops.</span></p>
-<p><span>Let your customers enjoy its clean, user-friendly design as-is or tailor it to your liking through the extensive array of theme options.</span></p>
+  <p><span>Reviews and engagement drive conversions, simple as that.</span></p>
+<p><span>The only thing easier than installing Antenna is using it.  Get more feedback from customers with our simple tool.</span></p>
 </div>
 
     </div>
@@ -1136,7 +903,7 @@ window.antenna_extend = {
   
   
 
-  <section class="widget widget-articles ">
+  <section class="widget widget-articles " style="display:none;">
     <div class="widget-inner">
 
 
@@ -1153,15 +920,6 @@ window.antenna_extend = {
   </header>
 
   
-
-
-
-
-
-
-
-  <!-- Article list -->
-
   
 
 
@@ -1268,7 +1026,7 @@ window.antenna_extend = {
   
   
 
-  <section class="widget widget-newsletter ">
+  <section class="widget widget-newsletter " style="display:none;">
     <div class="widget-inner">
 
 <header class="widget-header">
@@ -1331,12 +1089,8 @@ window.antenna_extend = {
 
     <ul class="link-list">
 
-  <li><a href="#">Home</a></li>
-  <li><a href="#">Catalog</a></li>
-  <li><a href="#">Blog</a></li>
-  <li><a href="#">About Us</a></li>
-  <li><a href="#">Styles</a></li>
-  <li><a href="#">Theme</a></li>
+  <li><a href="//antenna.is/">Home</a></li>
+  <li><a href="/retailers/">Retailer Info</a></li>
 
 </ul>
     </div>
@@ -1425,7 +1179,7 @@ window.antenna_extend = {
 </div>
 
 
-      <div id="fine-print">
+      <div id="fine-print" style="visibility:hidden;">
 
         <!-- Copyright -->
         <div id="copyright">
@@ -1438,7 +1192,7 @@ window.antenna_extend = {
           <p>All rights reserved.</p>
 
           
-           <p id="shop-currency-notice">All prices in CAD.</p>
+           <p id="shop-currency-notice">All prices in USD.</p>
           
         </div>
 
@@ -1458,7 +1212,7 @@ window.antenna_extend = {
       <nav id="nav-footer">
   <h2 class="hidden">Menu: Footer</h2>
 
-  <ul class="inline-list">
+  <ul class="inline-list" style="visibility:hidden;">
     
 
       
@@ -1502,7 +1256,7 @@ window.antenna_extend = {
       
 
 
-<div id="payment-methods">
+<div id="payment-methods" style="visibility:hidden;">
 
 <p id="accepted-text">We Accept</p>
 
@@ -1606,11 +1360,11 @@ $(function() {
   var selectCallback = function(variant, selector) {
     updateQtySelect(variant);
 
-    $price = $('.product .single .price');
+    $price = $('.product .single .price .price-label');
 
     // if item is backordered yet can still be ordered, we'll show special message.
     if (variant && variant.inventory_management && variant.inventory_quantity <= 0 && variant.available) {
-      $('.backorder-notice .variant-name').text("Logan Buffet" + ' - ' + variant.title);
+      $('.backorder-notice .variant-name').text("Awesome Camera" + ' - ' + variant.title);
       $('.backorder-notice:hidden').fadeIn(300)
     } else {
       $('.backorder-notice:visible').hide();
@@ -1622,13 +1376,13 @@ $(function() {
       $('.add-to-cart').removeClass('disabled').removeAttr('disabled').text("Add to Cart").fadeTo(200,1);
 
       if(variant.compare_at_price > variant.price){
-        var comp = Shopify.formatMoney(variant.compare_at_price, "${{amount}} CAD");
+        var comp = Shopify.formatMoney(variant.compare_at_price, "${{amount}} USD");
 
         
-          $price.addClass('compared').html(Shopify.formatMoney(variant.price, "${{amount}} CAD") + "<em class='compare'>" + comp + "</em>");
+          $price.addClass('compared').html(Shopify.formatMoney(variant.price, "${{amount}} USD") + "<em class='compare'>" + comp + "</em>");
         
       } else {
-        $price.html(Shopify.formatMoney(variant.price, "${{amount}} CAD"));
+        $price.html(Shopify.formatMoney(variant.price, "${{amount}} USD"));
       }
 
     } else {
@@ -1660,7 +1414,7 @@ $(function() {
   // Option Select
 
   // Replace option selectors with Shopify custom selects
-  new Shopify.OptionSelectors("product-select", { product: {"id":100054176,"title":"Logan Buffet","handle":"logan-buffet","description":"\u003Cp\u003ESo this is a product.\u003C/p\u003E\n\u003Cp\u003EThe text you see here is a Product Description. Every product has a price, a weight, a picture and a description. To edit the description of this product or to create a new product you can go to the Products Tab of the administration menu.\u003C/p\u003E\n\u003Cp\u003EOnce you have mastered the creation and editing of products you will want your products to show up on your Shopify site. There is a two step process to do this.\u003C/p\u003E\n\u003Cp\u003EFirst you need to add your products to a Collection. A Collection is an easy way to group products together. If you go to the Collections Tab of the administration menu you can begin creating collections and adding products to them.\u003C/p\u003E\n\u003Cp\u003ESecond youll need to create a link from your shops navigation menu to your Collections. You can do this by going to the Navigations Tab of the administration menu and clicking on Add a link.\u003C/p\u003E\n\u003Cp\u003EGood luck with your shop!\u003C/p\u003E","published_at":"2012-08-15T12:13:41-04:00","created_at":"2012-08-15T12:13:41-04:00","vendor":"Rustica Design","type":"Furniture","tags":["Rustic","Wood"],"price":157500,"price_min":157500,"price_max":157500,"available":true,"price_varies":false,"compare_at_price":null,"compare_at_price_min":0,"compare_at_price_max":0,"compare_at_price_varies":false,"variants":[{"id":232965812,"title":"Default Title","options":["Default Title"],"option1":"Default Title","option2":null,"option3":null,"price":157500,"weight":0,"compare_at_price":null,"inventory_quantity":1,"inventory_management":"","inventory_policy":"deny","available":true,"sku":"","requires_shipping":true,"taxable":true,"barcode":null}],"images":["//cdn.shopify.com/s/files/1/0170/3174/products/08.jpg?v=1345047437","//cdn.shopify.com/s/files/1/0170/3174/products/09.jpg?v=1345047442"],"featured_image":"//cdn.shopify.com/s/files/1/0170/3174/products/08.jpg?v=1345047437","options":["Title"],"content":"\u003Cp\u003ESo this is a product.\u003C/p\u003E\n\u003Cp\u003EThe text you see here is a Product Description. Every product has a price, a weight, a picture and a description. To edit the description of this product or to create a new product you can go to the Products Tab of the administration menu.\u003C/p\u003E\n\u003Cp\u003EOnce you have mastered the creation and editing of products you will want your products to show up on your Shopify site. There is a two step process to do this.\u003C/p\u003E\n\u003Cp\u003EFirst you need to add your products to a Collection. A Collection is an easy way to group products together. If you go to the Collections Tab of the administration menu you can begin creating collections and adding products to them.\u003C/p\u003E\n\u003Cp\u003ESecond youll need to create a link from your shops navigation menu to your Collections. You can do this by going to the Navigations Tab of the administration menu and clicking on Add a link.\u003C/p\u003E\n\u003Cp\u003EGood luck with your shop!\u003C/p\u003E"}, onVariantSelected: selectCallback });
+  new Shopify.OptionSelectors("product-select", { product: {"id":100054176,"title":"Logan Buffet","handle":"logan-buffet","description":"\u003Cp\u003ESo this is a product.\u003C/p\u003E\n\u003Cp\u003EThe text you see here is a Product Description. Every product has a price, a weight, a picture and a description. To edit the description of this product or to create a new product you can go to the Products Tab of the administration menu.\u003C/p\u003E\n\u003Cp\u003EOnce you have mastered the creation and editing of products you will want your products to show up on your Shopify site. There is a two step process to do this.\u003C/p\u003E\n\u003Cp\u003EFirst you need to add your products to a Collection. A Collection is an easy way to group products together. If you go to the Collections Tab of the administration menu you can begin creating collections and adding products to them.\u003C/p\u003E\n\u003Cp\u003ESecond youll need to create a link from your shops navigation menu to your Collections. You can do this by going to the Navigations Tab of the administration menu and clicking on Add a link.\u003C/p\u003E\n\u003Cp\u003EGood luck with your shop!\u003C/p\u003E","published_at":"2012-08-15T12:13:41-04:00","created_at":"2012-08-15T12:13:41-04:00","vendor":"Rustica Design","type":"Furniture","tags":["Rustic","Wood"],"price":9900,"price_min":9900,"price_max":9900,"available":true,"price_varies":false,"compare_at_price":null,"compare_at_price_min":0,"compare_at_price_max":0,"compare_at_price_varies":false,"variants":[{"id":232965812,"title":"Default Title","options":["Default Title"],"option1":"Default Title","option2":null,"option3":null,"price":9900,"weight":0,"compare_at_price":null,"inventory_quantity":1,"inventory_management":"","inventory_policy":"deny","available":true,"sku":"","requires_shipping":true,"taxable":true,"barcode":null}],"images":["//cdn.shopify.com/s/files/1/0170/3174/products/08.jpg?v=1345047437","//cdn.shopify.com/s/files/1/0170/3174/products/09.jpg?v=1345047442"],"featured_image":"//cdn.shopify.com/s/files/1/0170/3174/products/08.jpg?v=1345047437","options":["Title"],"content":"\u003Cp\u003ESo this is a product.\u003C/p\u003E\n\u003Cp\u003EThe text you see here is a Product Description. Every product has a price, a weight, a picture and a description. To edit the description of this product or to create a new product you can go to the Products Tab of the administration menu.\u003C/p\u003E\n\u003Cp\u003EOnce you have mastered the creation and editing of products you will want your products to show up on your Shopify site. There is a two step process to do this.\u003C/p\u003E\n\u003Cp\u003EFirst you need to add your products to a Collection. A Collection is an easy way to group products together. If you go to the Collections Tab of the administration menu you can begin creating collections and adding products to them.\u003C/p\u003E\n\u003Cp\u003ESecond youll need to create a link from your shops navigation menu to your Collections. You can do this by going to the Navigations Tab of the administration menu and clicking on Add a link.\u003C/p\u003E\n\u003Cp\u003EGood luck with your shop!\u003C/p\u003E"}, onVariantSelected: selectCallback });
 
   // Set labels
   $('.selector-wrapper:eq(0)').find('label').remove();
@@ -1718,93 +1472,24 @@ $(function() {
   <script src="https://apis.google.com/js/plusone.js" type="text/javascript"></script>
   <script src="/static/engage_full.js" defer type="text/javascript"></script>
 
+
   <style>
   .ant-summary { z-index:100002; position: relative; background:#fff; }
-  #ant_demo_overlay { position: fixed;top:0;bottom:0;left:0;right:0;background: rgba(0,0,0,0.85); z-index:100000;  opacity:0; transition:opacity 0.3s ease;}
-  #ant_demo_explanation { height:50%; width:50%; max-width:500px; max-height:500px; margin: auto; position: fixed; top: 0; left: 0; bottom: 0; right: 0; text-align: center; z-index:100001;  opacity:0; transition:all 0.3s ease;}
+  #ant_demo_overlay { position: fixed;top:0;bottom:0;left:0;right:0;background: rgba(0,0,0,0.65); z-index:100000;  opacity:0; transition:opacity 0.3s ease;}
+  #ant_demo_explanation { height:300px; width:350px; margin: auto; position: fixed; top: 0; left: 0; bottom: 0; right: 0; text-align: center; z-index:100001;  opacity:0; transition:opacity 0.3s ease;}
   #ant_demo_explanation h1 { font-size:24px; color:#fff; }
   #ant_demo_explanation h2 { font-size:18px; color:#fff; font-weight:300; margin:40px;}
-  #ant_demo_explanation .step { display:none; opacity:0; transition:all 0.3s ease; border-radius: 10px; padding: 20px;}
-  #ant_demo_explanation .step.active { opacity:1; display:block; }
-  #ant_demo_explanation p { font-size:16px; color:#aaa; }
-  #ant_demo_explanation a { font-size:18px; display:block; }
-  #ant_demo_explanation a.exit { font-size:14px; display:block; margin:30px auto 0; color:#aaa; border-top:1px solid #aaa; padding-top:10px; width:150px;}
-
-  @media (max-width: 480px) {
-    #ant_demo_explanation { height:100%; width:80%; }
-    #ant_demo_explanation h1 { font-size:18px; }
-    #ant_demo_explanation h2 { font-size:14px; }
-    #ant_demo_explanation p { font-size:13px; color:#aaa; }
-    .ant-summary { position: static;}
-  }
   </style>
 
   <div id="ant_demo_overlay"></div>
   <div id="ant_demo_explanation">
-    <div class="step active">
-      <h1>Let's look at how Antenna can be used to get product feedback, 1-click reviews, and poll responses your community.</h1>
-      <a class="next" href="javascript:void(0);">Next</a>
-    </div>
-    <div class="step">
-      <h1>Organic Product Feedback</h1>
-      <p>You can optionally enable visitors to react to product images, descriptions, specs, and more.  They can select text, or roll their mouse over an image, and look for this icon: <span class="ant-antenna-logo"></span></p>
-      <p>The gray "Reactions" box to the right sums up all reactions on the page about the product.  You can customize how this appears!</p>
-      <a class="next" href="javascript:void(0);">Next</a>
-    </div>
-    <div class="step">
-      <h1>1-Click Reviews</h1>
-      <p>Ask about specific product traits -- price, durability, anything you want.  Frame responses by providing default reactions that visitors can click.</p>
-      <p>To respond, people simply mouse over (or tap, on mobile) on the call to action, and click to "review". You control the look and feel for the call-to-action.</p>
-      <p>Viewing community responses is easy, fast, and informative.</p>
-      <a class="next" href="javascript:void(0);">Next</a>
-    </div>
-    <div class="step">
-      <h1>Simple Community Q&amp;A</h1>
-      <p>Just like 1-Click Reviews, you can pose relevant questions to your community to learn more about them, and increase engagement further.</p>
-      <p>You can capture visitors responses, 1-click reviews, and reactions as they occur.</p>
-      <a class="close" href="javascript:void(0);">Done -- Let me play around!</a>
-    </div>
-    <a class="close exit" href="javsacript:void(0);">Exit Tour</a>
+    <h1>Drive conversions with 1-Click Reviews and simple Community Q&amp;A.</h1>
+    <h2>Visitors can also react directly to product pictures and descriptions.</h2>
+    <a href="javascript:void(0);">Close this</a>
   </div>
 
   <script>
-  var stepFunctions = {
-    start2: function() {
-      var scrollTo = $('.ant-summary').offset().top - $(window).height() * 0.15;
-      $('html,body').animate({scrollTop: scrollTo}, 1000);
-      $('#ant_demo_overlay').css('opacity', 0.6);
-      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
-    },
-    start3: function() {
-      var scrollTo = $('.ant-questions:eq(0)').offset().top - $(window).height() * 0.5;
-      $('html,body').animate({scrollTop: scrollTo}, 1000);
-      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
-    },
-    start4: function() {
-      var scrollTo = $('.ant-questions:eq(1)').offset().top - $(window).height() * 0.5;
-      $('html,body').animate({scrollTop: scrollTo}, 1000);
-      $('#ant_demo_explanation .active').css('background', 'rgba(0,0,0,0.85)');
-    }
-  };
-  $('#ant_demo_explanation a.next').on('click', function() {
-    var $this = $(this),
-        $step = $this.closest('.step'),
-        $steps = $('.step'),
-        nextStepNumber = $steps.index($step) + 2;
-
-      $step.css('opacity', 0);
-      setTimeout(function(){
-          $step.removeClass('active');
-          $step.next().addClass('active');
-
-          if (typeof stepFunctions['start'+nextStepNumber] == 'function') {
-            stepFunctions['start'+nextStepNumber]();
-          }
-
-      }, 300);
-  });
-  $('#ant_demo_explanation a.close').on('click', function() { 
-    $('.ant-summary').css('z-index', 'auto');
+  $('#ant_demo_explanation a').on('click', function() { 
     $('#ant_demo_overlay, #ant_demo_explanation').css('opacity', 0);
     setTimeout(function(){
         $('#ant_demo_overlay, #ant_demo_explanation').remove();
@@ -1813,23 +1498,7 @@ $(function() {
   setTimeout(function(){
       $('#ant_demo_overlay, #ant_demo_explanation').css('opacity', 1);
   }, 200);
-
-  // event listener
-  document.addEventListener("antenna.reaction", function(){
-    // console.log("antenna.reaction");
-    var lastEvent = antenna.getLastEvent();
-    if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
-      // $('#antenna_test_notice').html('<h1>for demo only</h1><p>someone just reacted <strong>'+lastEvent.value+'</strong></p>').css('bottom','30px'); 
-      $('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
-      .on('click', function() { $(this).css('bottom', '-300px'); }); 
-    }
-  },false); 
   </script>
-<style>
-#antenna_test_notice { box-shadow:0px 0px 10px #aaa; padding:20px; font-size:18px; width:300px; bottom:-300px; right:20px; position:fixed; background:#fff; transition:bottom 0.5s;}
-</style>
-<div id="antenna_test_notice"></div>
-</div>
 
   </body>
 </html>

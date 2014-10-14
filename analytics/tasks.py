@@ -1,6 +1,6 @@
 import settings
 from celery.task.schedules import crontab
-from celery.decorators import periodic_task
+from celery.decorators import periodic_task, task
 from antenna.analytics.utils import OAuth2EventsUtility
 import datetime, json
 from antenna.rb.models import * 
@@ -43,83 +43,113 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
 
 
 
-
-
 # A periodic task that will run every minute (the symbol "*" means every)
-@periodic_task(run_every=(crontab(hour="*", minute="*/10", day_of_week="*")))
-def group_event_stats():
+@periodic_task(name='periodic_top_reaction_view_hash_counts', ignore_result=True, 
+               run_every=(crontab(hour="*", minute="*/2", day_of_week="*")))
+def periodic_top_reaction_view_hash_counts():
+    top_reaction_view_hash_counts()
+
+def top_reaction_view_hash_counts():
     logger.info("Start group events task")
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
-    
     groups = Group.objects.filter(id__in=ALL_GROUPS, approved = True) #use ALL_GROUPS until queue mechanism in place
-    group_data_sets = {}
-    
+   
     for group in groups:
-        group_data = []
-        hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
-        #only continue processing for groups with at least one reaction view...
-        if int(hash_tuple[1]) > 0:
-            for hash_tuple in hash_tuples:
-                hash_data = {}
-                hash_data['container_hash'] = hash_tuple[0]
-                
-                interactions = Interaction.objects.filter(container__hash=hash_tuple[0], created__gt = first_of_month )
-                logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
-                
-                hash_data['contents'] = {}
-                for interaction in interactions:
-                    if hash_data['contents'].has_key(interaction.content.id):
-                        hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
-                    else:
-                        hash_data['contents'][interaction.content.id] = {}
-                        hash_data['contents'][interaction.content.id]['count'] = 1
-                    hash_data['page'] = model_to_dict(interaction.page)
-                    hash_data['container'] = model_to_dict(interaction.container)
-                    hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
-                    
-                hash_data['reaction_views'] = hash_tuple[1]
-                group_data.append( hash_data )
-                
-            group_data_sets[group.id] = group_data
+        group_data = group_top_reaction_view_hash_count(event_util, now, group)
+        if group_data:
             JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
-        
-    logger.info(json.dumps(group_data_sets, sort_keys=True,indent=2, separators=(',', ': ')))
+        else:
+            logger.info("No group data generated: " + str(group.id))
     logger.info("Task GROUP REACTION VIEWS finished")
     
 
 
+@task(name='ad_hoc_top_reaction_view_hash_counts', ignore_result=True)   
+def ad_hoc_group_top_reaction_view_hash_counts(group_id):
+    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
+                                      'keyFile':settings.EVENTS_KEY_FILE,
+                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
+    now = datetime.datetime.now()
+    group = Group.objects.get(id=int(group_id))
+    group_data = group_top_reaction_view_hash_count(event_util, now, group)
+    if group_data:
+        JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
+    else:
+        logger.info("No Group Data generated")    
+    logger.info("Task GROUP REACTION VIEWS finished")
+  
+  
+def group_top_reaction_view_hash_count(event_util, now, group):
+    group_data = []
+    hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 3)
+    if hash_tuples is None:
+        return None
+    
+    first_of_month = datetime.datetime(now.year,now. month, now.day, 0, 0, 1)
+    
+    for hash_tuple in hash_tuples:
+        #only continue processing for groups with at least one reaction view...
+        if int(hash_tuple[1]) > 0:
+            hash_data = {}
+            hash_data['container_hash'] = hash_tuple[0]
+            
+            interactions = Interaction.objects.filter(container__hash=hash_tuple[0], created__gt = first_of_month )
+            logger.info("Interactions for: " + hash_tuple[0] + " " + str(len(interactions)))
+            
+            hash_data['contents'] = {}
+            for interaction in interactions:
+                if hash_data['contents'].has_key(interaction.content.id):
+                    hash_data['contents'][interaction.content.id]['count'] = hash_data['contents'][interaction.content.id]['count'] + 1
+                else:
+                    hash_data['contents'][interaction.content.id] = {}
+                    hash_data['contents'][interaction.content.id]['count'] = 1
+                hash_data['page'] = model_to_dict(interaction.page)
+                hash_data['container'] = model_to_dict(interaction.container)
+                hash_data['contents'][interaction.content.id]['content'] = model_to_dict(interaction.content)
+                
+            hash_data['reaction_views'] = hash_tuple[1]
+            group_data.append( hash_data )
+    return group_data
+  
+
+
 
  
-@periodic_task(run_every=(crontab(hour="*", minute="*/20", day_of_week="*")))
-def query_all_groups():
+@periodic_task(name='periodic_A_B_script_loads', ignore_result=True, 
+               run_every=(crontab(hour="*", minute="*/59", day_of_week="*")))
+def periodic_A_B_script_loads():
+    A_B_script_loads()
+    
+@task(name='ad_hoc_A_B_script_loads', ignore_result=True)   
+def ad_hoc_A_B_script_loads():
+    A_B_script_loads()
+
+
+def A_B_script_loads():
     logger.info("Start group events task")
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
     first_of_month = datetime.datetime(now.year,now. month, now.day, 0, 0, 1)
-    
-    groups = Group.objects.filter(id__in=ALL_GROUPS) #dlisted, fastcolabs, okayplayer
+    logger.info(first_of_month)
+    groups = Group.objects.filter(id__in=ALL_GROUPS) 
     
     for group in groups:
         try:
-            A_widget_loads = event_util.get_group_AB_widget_loads(group, now.month, now.year, 1, 'A')
-            A_script_loads = event_util.get_group_AB_script_loads(group, now.month, now.year, 1, 'A')
-            B_widget_loads = event_util.get_group_AB_widget_loads(group, now.month, now.year, 1, 'B')
-            B_script_loads = event_util.get_group_AB_script_loads(group, now.month, now.year, 1, 'B')
+            A_script_loads = event_util.get_event_type_count_by_event_value(group, now.month, now.year, 1, 'sl', 'A')
+            B_script_loads = event_util.get_event_type_count_by_event_value(group, now.month, now.year, 1, 'sl', 'B')
             hash_data = {}
             hash_data['group_id'] = group.id
-            hash_data['A_widget_loads'] = A_widget_loads
             hash_data['A_script_loads'] = A_script_loads
-            hash_data['B_widget_loads'] = B_widget_loads
             hash_data['B_script_loads'] = B_script_loads
             
             interactions = Interaction.objects.filter(page__site__group__id = group.id, created__gt = first_of_month )
             hash_data['interaction_count'] = len(interactions)
-            JSONGroupReport.objects.create(body=json.dumps(hash_data), group=group)
+            JSONGroupReport.objects.create(body=json.dumps(hash_data), group=group, kind='ABsld')
             
         except Exception, ex:
             logger.warn(ex)

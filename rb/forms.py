@@ -342,7 +342,8 @@ class GroupForm(forms.ModelForm):
         if commit:
             m.save()
         try:
-            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance)
+            site = Site.objects.get(group=self.instance)
+            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance, host=site.domain)
             t = Thread(target=cache_updater, kwargs={})
             t.start()
         except Exception, e:
@@ -392,7 +393,14 @@ class GroupForm(forms.ModelForm):
             'topics_selector',
             'topics_attribute',
             'section_selector',
-            'section_attribute'
+            'section_attribute',
+            'img_indicator_show_onload',
+            'img_indicator_show_side',
+            'tag_box_bg_colors',
+            'tag_box_text_colors',
+            'tag_box_font_family',
+            'tag_box_gradient',
+            'tags_bg_css'
         )
 
 

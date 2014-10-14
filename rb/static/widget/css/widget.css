@@ -1092,6 +1092,7 @@ div.ant.ant-summary .ant_chevron_cta i {
 div.ant.ant-summary a.ant_logo {
   display: inline-block;
   margin-right:5px;
+  text-decoration: none;
 }
 
 /*blunt attack for now*/
@@ -1196,6 +1197,7 @@ div.ant.ant-summary a.ant_reactions_label {
   letter-spacing:0px;
   padding:10px 10px 0 0;
   text-decoration:none;
+  text-transform: capitalize;
   /*position: relative;
   top: 1px;*/
 }
@@ -1763,6 +1765,8 @@ div.ant_inline_video div.ant_indicator.ant_indicator_for_media {
 /*todo: should all these things really be in the * part (the all children part) ?  */
 div.ant_indicator_for_text{
     display: inline;
+    /*display: inline-block;*/
+    opacity:0.4;
     position: relative;
     vertical-align: top;
     line-height: inherit !important;
@@ -1804,10 +1808,9 @@ div.ant_helper_aWindow div.ant_header h1{
   -khtml-opacity:1.0 !important;
 }
 div.ant_indicator_for_text.ant_helper {
-    opacity:0.6;;
-    -moz-opacity:0.6;;
-    -khtml-opacity:0.6;;
-    display:none;
+    opacity:0;;
+    -moz-opacity:0;;
+    -khtml-opacity:0;;
     cursor:pointer;
 }
 div.ant_indicator_for_text.ant_helper div.ant_indicator_body {
@@ -2348,7 +2351,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_count {
     position: static;
     margin:0 0 -10% 0;
     font-weight:bold;
-    font-size: 15px;
+    font-size: 17px;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_plusOne{
     display: none;  
@@ -2531,35 +2534,35 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount3
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount4 { font-size:46px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount5 { font-size:44px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount6,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount7 { font-size:42px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount7 { font-size:40px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount8,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount9 { font-size:40px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount9 { font-size:34px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount10,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount11,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount12,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount13 { font-size:38px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount13 { font-size:30px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount14,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount15,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount16 { font-size:34px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_big .ant_charCount16 { font-size:23px; }
 
 /* medium*/
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium  {font-size:16px;}
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount1,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount2,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount3 { font-size:40px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount4 { font-size:36px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount3 { font-size:38px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount4 { font-size:34px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount5 { font-size:30px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount6,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount7 { font-size:26px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount7 { font-size:24px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount8,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount9 { font-size:24px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount9 { font-size:19px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount10,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount11,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount12,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount13 { font-size:21px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount13 { font-size:15px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount14,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount15,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount16 { font-size:18px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_medium .ant_charCount16 { font-size:12px; }
 
 /* small:  max size:  18px */
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small  { font-size:12px; }
@@ -2574,8 +2577,8 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCoun
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount9 { font-size:16px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount10,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount11 { font-size:16px; }
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount12,
-div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount12 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount13 { font-size:13px; }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount14,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount15,
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box.ant_box_small .ant_charCount16 { font-size:12px; }
@@ -2703,6 +2706,8 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 /* mobile */
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px), only screen and (min-device-width : 320px) and (max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2) {
   div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_count            { margin-top: -1px; font-size: 12px; }
+  div.ant_indicator span.ant_count { padding-right:3px; }
+  div.ant_indicator.ant_indicator_for_text span.ant_count { opacity:1; }
 }
 
 /* mozille specific */

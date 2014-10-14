@@ -274,17 +274,20 @@ section[role="subheader"].admin {
 }
 
 /****** know ******/
-.know { background: url(../../images/world_reactions.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; } 
-.know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:40px 20px 50px 0px; text-align: right;}
-.know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:100; font-size:18px; margin-right:20px; width:62%; float:right; margin-bottom: 30px; letter-spacing: 1px; text-align: right;}
-.know .caption strong a { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:500;color:#fff; font-size:18px; margin-left:0px; letter-spacing: 1px; border-bottom:1px dashed #fff; padding:2px;}
+.know { background: #ec8575 url(../../images/masthead_red.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; padding:50px 0 30px;} 
+/*.know { background: url(../../images/world_reactions.jpg) center center no-repeat; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; } */
+.know .message { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fff; font-weight:500; font-size:52px; margin:0px 20px 30px 0px; }
+.know .caption { font-family: 'Helvetica Neue','Helvetica',Arial,sans-serif; color:#fde1dc; font-weight:100; font-size:22px; margin-right:20px; margin-bottom: 30px; letter-spacing: 1px; font-style: normal;}
+.know .caption strong a { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:500;color:#fff; font-size:22px; margin-left:0px; letter-spacing: 1px; border-bottom:1px dashed #fff; padding:2px;}
 .know .caption strong a:hover { color:#278ac9; background:#fff; }
 
 /* ESRG media queries */
 @media (max-width: 480px) {
+  .know {padding:0;}
   .know .content { background: rgba(0,0,0,0.2); overflow: auto; }
   .know .message { font-size:28px; text-align: center; margin:30px auto; width:85%; text-shadow: 0px 0px 8px #5A5A5A;}
   .know .caption { font-size:16px; text-align: center; margin:0px auto 40px; width:81%; float:none;text-shadow: 0px 0px 8px #5A5A5A;}
+  .know .caption strong a { display: block; border:0; }
 }
 @media (min-width: 481px) and (max-width: 800px) {
   .know .content { background: rgba(0,0,0,0.2); overflow: auto; }
@@ -295,12 +298,30 @@ section[role="subheader"].admin {
   .reaction-cloud {margin-top:5%;}
 }
 
+.benefits { margin:70px auto; }
+.benefits .benefit { padding:0 2.5%; }
+.benefits .ant-icon { font-size: 100px; margin-bottom: -35px; display: inline-block; }
+.benefits .message { font-size:36px; font-weight:200; margin-bottom:20px;}
+.benefits .caption { font-style: normal; font-weight:100; letter-spacing:1px; color:#666; }
+.benefits .first.benefit { color:#ff5c41; }
+.benefits .second.benefit { color:#5eb0e3; }
+.benefits .third.benefit { color:#8bd52a; }
+
+@media (max-width: 480px) {
+  .benefits { margin:30px auto; }
+  .benefits .benefit { margin-bottom:30px; }
+}
+
+.contact-form { }
+.contact-form .content { text-align: center;   }
+.contact-form .get_antenna { border-top:1px solid #666; color:#666; margin:0 200px; padding:40px 0; font-size: 42px; }
+
+
 .endorsements .content {
-  padding:40px 0 60px;
+  padding: 80px 0 30px;
   margin-bottom: 20px;
   clear:both;
   overflow: auto;
-  border-bottom:1px solid #ccc;
 }
 .endorsements .caption,
 .logos .caption {
@@ -309,24 +330,31 @@ section[role="subheader"].admin {
 }
 .quote p {
   text-align: left;
-  color:#777;
-  width:70%;
-  margin:20px auto;
+  color: #e0e0e0;
+  width: 70%;
+  margin: 20px auto;
+  font-size: 28px;
 }
 .quote em {
-  color:#438CB6;
+  color:#ff5c41;
+  font-size:22px;
+  font-weight:200;
 }
 
 .fastco img {
   width:253px;
 }
 
+.endorsements {
+  background: url(../../images/congruent_outline_dark_gray.png);
+}
 .alexis .image {
   margin-top:0rem;
   margin-bottom:2rem;
+  margin-left:3rem;
   float: left;
-  width: 7rem;
-  height: 7rem;
+  width: 10rem;
+  height: 10rem;
   margin-right: 2%;
   background: url(https://phaven-prod.s3.amazonaws.com/files/image_part/asset/944382/g-DEOt9ByPbrv1BKO8IBZCiaYfE/medium_Alexis_Ohanian_shot_by_Tanya_Kechichian.jpg);
   background-size: 225%;
@@ -345,8 +373,11 @@ section[role="subheader"].admin {
 }
 
 @media (max-width: 480px) {
-  .alexis {margin-top:3rem; margin-left:10%; }
-  .alexis .image {width:5rem; height:5rem; }
+  .endorsements .content { padding: 40px 0 30px; }
+  .alexis {text-align: center;}
+  .alexis .image {display: inline-block; float:none; margin:0 0 2rem 0; }
+  .quote p { text-align: center; font-size: 21px; }
+  .quote em { font-size:18px; }
 }
 @media (min-width: 481px) and (max-width: 800px) {
   .alexis {margin-top:3rem; margin-left:10%;}
@@ -744,18 +775,21 @@ p { font-size:18px; }
 	height:300px;
 	padding-top:125px;
 }*/
-.retailers_page .masthead { padding-top:0; text-align: center;}
-.retailers_page .masthead h1 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:48px; margin:40px 0; background: transparent; color:#3b3b3b;}
-.retailers_page .masthead p { text-align: left; font-size: 22px; line-height: 28px; color:#555;}
-.retailers_page .masthead p strong { color:#65b4e7; font-weight:normal;}
-.retailers_page .masthead .average_increase { box-sizing:border-box; background:#9dd55e; box-sizing: border-box; background: url(../../site/images/retailers_engagement_increase_bg.png) top right #9dd55e; height: 220px; margin-top: -10px; text-align: center;}
-.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; font-size:24px; font-weight:100; letter-spacing:1px; display: block;}
+.retailers_page .masthead { padding-top:0 0 20px; text-align: center;}
+.retailers_page .masthead .ant-summary { margin-top:20px; }
+.retailers_page .masthead h1 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:48px; margin:0 0 40px 0; background: transparent; color:#3b3b3b;}
+.retailers_page .masthead p { text-align: left; color:#555;}
+.retailers_page .masthead p strong { color:#ef6b58; font-weight:normal;}
+.retailers_page .masthead .average_increase { box-sizing:border-box; background:#9dd55e; box-sizing: border-box; background: #9dd55e; height: 220px; margin-top: -10px; text-align: center;}
+.retailers_page .masthead .average_increase label { color:#fff; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; font-size:23px; font-weight:100; letter-spacing:1px; display: block;}
 .retailers_page .masthead .average_increase i { color:#446024; font-size:85px; margin:0; display:inline-block; text-shadow: 0px 0px 6px rgba(48, 51, 45, 0.44); }
 .retailers_page .masthead .average_increase h2 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; color:#fff; font-size:125px; margin:0 0 -10px 0; text-shadow: 0px 0px 10px #777; padding:0; display:inline-block; background: transparent;}
-.retailers_page .new-section { margin-top:60px; padding-top:60px; border-top:1px solid #ccc;}
+.retailers_page .masthead .citation { display:block; margin-top:20px; font-size: 14px; color:#999; }
+.retailers_page .new-section { margin-top:30px; padding-top:30px; border-top:1px solid #ccc;}
 .retailers_page .new-section.demo button { display: block; padding: 10px 20px; font-size: 24px; color: #fff; background: #e5422b; width: 270px; margin: 0 auto; border:none; font-weight:normal; font-family:'Helvetica Neue','Helvetica',Arial,sans-serif; margin-top: 40px; }
 .retailers_page .new-section.demo button a { color:#fff; }
 .retailers_page .new-section.demo em { display:block;margin:50px 0 30px; text-align: center; }
+.retailers_page .new-section.demo h1 { text-align:center; }
 .retailers_page .new-section h2 { font-family:'Helvetica Neue','Helvetica',Arial,sans-serif;font-weight:bold; font-size:28px; margin:0px 0 40px; background: transparent; color:#3b3b3b; letter-spacing: 0px; text-align: center; }
 .retailers_page .new-section .grid-third h2,
 .retailers_page .new-section .grid-two-thirds h2,

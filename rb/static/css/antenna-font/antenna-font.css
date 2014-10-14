@@ -95,3 +95,54 @@
 .ant-antenna-text:before {
   content: "s";
 }
+.ant-organization:before {
+  content: "t";
+}
+.ant-pulse:before {
+  content: "u";
+}
+.ant-microscope:before {
+  content: "v";
+}
+.ant-chart-line:before {
+  content: "w";
+}
+.ant-chart-area:before {
+  content: "x";
+}
+.ant-chart-bar:before {
+  content: "y";
+}
+.ant-attention:before {
+  content: "z";
+}
+.ant-device-mobile:before {
+  content: "A";
+}
+.ant-device-desktop:before {
+  content: "B";
+}
+.ant-gauge:before {
+  content: "C";
+}
+.ant-burst-new:before {
+  content: "D";
+}
+.ant-burst:before {
+  content: "E";
+}
+.ant-ccw:before {
+  content: "F";
+}
+.ant-heart-empty:before {
+  content: "G";
+}
+.ant-heart:before {
+  content: "H";
+}
+.ant-graduation-cap:before {
+  content: "I";
+}
+.ant-magnet:before {
+  content: "J";
+}

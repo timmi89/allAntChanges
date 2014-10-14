@@ -141,10 +141,11 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
 class GroupSettingsDataCacheUpdater(CacheUpdater):        
     def __init__(self, **kwargs):
         self.group = kwargs['group']
+        self.host = kwargs['host']
         self.method = kwargs['method']
         
     def hydrate(self):
-        self.key = 'group_settings' + str(self.group.id)
+        self.key = 'group_settings_' + str(self.host)
         if self.method == 'update':  
             self.value = getSettingsDict(self.group)
         

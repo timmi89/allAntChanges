@@ -884,11 +884,14 @@ def admin_approve(request, request_id=None, **kwargs):
         approved=False
     ).exclude(social_user=cookie_user.social_user)
     
-    if request_id:
-        admin_request = requests.get(id=request_id)
-        admin_request.approved = True
-        admin_request.save()
-        requests.exclude(id=request_id)
+    try:
+        if request_id:
+            admin_request = requests.get(id=request_id)
+            admin_request.approved = True
+            admin_request.save()
+            requests.exclude(id=request_id)
+    except Exception, ex:
+        pass
     
     context['requests'] = requests
     context['fb_client_id'] = FACEBOOK_APP_ID
