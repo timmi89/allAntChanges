@@ -11,3 +11,7 @@ class JSONGroupReport(models.Model):
     group = group = models.ForeignKey(Group)
     created = models.DateTimeField(auto_now_add=True, editable=False)
     body = models.TextField()
+    
+    def __unicode__(self):
+        return self.kind + " " + str(self.group.id) + " " + str(self.created)
+        

@@ -45,7 +45,7 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
 
 # A periodic task that will run every minute (the symbol "*" means every)
 @periodic_task(name='periodic_top_reaction_view_hash_counts', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/2", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="*/30", day_of_week="*")))
 def periodic_top_reaction_view_hash_counts():
     top_reaction_view_hash_counts()
 
@@ -55,7 +55,7 @@ def top_reaction_view_hash_counts():
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
-    groups = Group.objects.filter(id__in=ALL_GROUPS, approved = True) #use ALL_GROUPS until queue mechanism in place
+    groups = Group.objects.filter(approved = True) #use ALL_GROUPS until queue mechanism in place?
    
     for group in groups:
         group_data = group_top_reaction_view_hash_count(event_util, now, group)
@@ -119,7 +119,7 @@ def group_top_reaction_view_hash_count(event_util, now, group):
 
  
 @periodic_task(name='periodic_A_B_script_loads', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/59", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="15,45", day_of_week="*")))
 def periodic_A_B_script_loads():
     A_B_script_loads()
     
@@ -136,7 +136,7 @@ def A_B_script_loads():
     now = datetime.datetime.now()
     first_of_month = datetime.datetime(now.year,now. month, now.day, 0, 0, 1)
     logger.info(first_of_month)
-    groups = Group.objects.filter(id__in=ALL_GROUPS) 
+    groups = Group.objects.filter(approved=True) 
     
     for group in groups:
         try:
