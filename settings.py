@@ -194,7 +194,7 @@ else:
 
             }
         }
-        BROKER_URL = "amqp://myuser:mypassword@localhost:5672/myvhost"
+        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
     else:
         DATABASES = {
           'default': {
@@ -202,7 +202,7 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '69.164.209.143',
+            'HOST':     '192.168.142.147',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'JOHNNY_CACHE_KEY': 'query_cache',
@@ -260,7 +260,7 @@ else:
             }
         }
         
-        BROKER_URL = "amqp://myuser:mypassword@localhost:5672/myvhost"
+        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
       
 
 CELERY_ACCEPT_CONTENT = ['json']
