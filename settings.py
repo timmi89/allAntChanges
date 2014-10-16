@@ -67,7 +67,7 @@ if DEBUG:
           'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
-            'PASSWORD': '4rc4n30n3',
+            'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
             'OPTIONS': {
@@ -78,7 +78,7 @@ if DEBUG:
           'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
-            'PASSWORD': '4rc4n30n3',
+            'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
             'OPTIONS': {
@@ -89,7 +89,7 @@ if DEBUG:
           'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'root',
-            'PASSWORD': '4rc4n30n3',
+            'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
             'OPTIONS': {

@@ -1,15 +1,22 @@
 from itertools import groupby
 from rb.models import *
+from models import *
+import tasks
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from datetime import datetime
 from django.db.models import Count, Sum
+from django.forms.models import model_to_dict
 from django.core import serializers
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin, requires_admin_super
 from django.template import RequestContext
 from authentication.token import checkCookieToken
+import logging, json
+logger = logging.getLogger('rb.standard')
+
+
 
 @requires_admin
 def analytics(request, short_name=None, **kwargs):
@@ -262,3 +269,53 @@ class InhouseAnalyticsJSONHandler(InhouseAnalyticsHandler):
         sites = Site.objects.filter(id__in=site_ids)
 
         return sites
+    
+  
+def global_snapshot(request):
+    context = {}
+    
+    active_groups = tasks.get_approved_active_groups()
+    active_approved = []
+    for group in active_groups:
+        group_info = {}
+        group_info['group_id'] = group.id
+        group_info['group'] = model_to_dict(group)
+        try:
+            group_info['ABsld'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='ABsld').order_by('-created')[0].body)
+        except:
+            group_info['ABsld']  = {}  #not in template, yet
+        try:
+            group_info['tvhrc'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='tvhrc').order_by('-created')[0].body)
+        except Exception, ex:
+            group_info['tvhrc'] = []
+        try:
+            group_info['mrcon'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='mrcon').order_by('-created')[0].body)
+        except Exception, ex:
+            group_info['mrcon'] = []
+        try:
+            group_info['guser'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='guser').order_by('-created')[0].body)
+        except Exception, ex:
+            group_info['guser'] = []
+            
+        try:
+            group_info['A_page_ratio'] = float(group_info['ABsld']['A_script_loads']) / float(group_info['guser']['A_user_count'])
+            group_info['B_page_ratio'] = float(group_info['ABsld']['B_script_loads']) / float(group_info['guser']['B_user_count'])
+            group_info['engage_ratio'] = float(group_info['guser']['engaged_user_count'])  / float(group_info['guser']['A_user_count'])
+            
+        except Exception, ex:
+            group_info['A_page_ratio'] = 0
+            group_info['B_page_ratio'] = 0
+            group_info['engage_ratio'] = 0
+            
+        active_approved.append(group_info)
+        
+    context['num_active_groups'] = len(active_groups)
+    context['active_approved'] = active_approved
+    
+    return render_to_response(
+        "global_snapshot.html",
+        context,
+        context_instance=RequestContext(request)
+    )
+
+    

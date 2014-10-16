@@ -43,7 +43,7 @@ class OAuth2EventsUtility(object):
 
     def get_top_reaction_view_hash_counts(self, group, month, year, maxResults = 100):
         table = self.get_table_name(group, month, year)
-        query = 'select ch, count(ch) as counts  from ' + table + ' where ch != "null" group by ch order by counts desc'
+        query = 'select ch, count(ch) as counts  from ' + table + ' where ch != "null" and et = "rs" and ev="rd" group by ch order by counts desc'
         
         body = self.get_request_body(query, maxResults)
         try:
@@ -76,10 +76,45 @@ class OAuth2EventsUtility(object):
         rows = result['rows']
         return rows[0]['f'][0]['v']
     
-    def get_most_reacted_content(self, group, month, year):
-        pass
+    def check_activity(self, group, month, year):
+        table = self.get_table_name(group, month, year)
+        query = 'select ev from ' + table + ' where et="sl" limit 1'
+        body = self.get_request_body(query, 1)
+        try:
+            result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+            return True
+        except Exception, her:
+            logger.info(her)
+            return False
     
+    def get_group_general_user_data(self, group, month, year, maxResults = 1000):
+        table = self.get_table_name(group, month, year)
+        
+        query = 'select count(distinct lts) from ' + table + ' where et = "sl" and ev = "A"'
+        body = self.get_request_body(query, 1)
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        rows = result['rows']
+        A_user_count = rows[0]['f'][0]['v']
+        
+        query = 'select count(distinct lts) from ' + table + ' where et = "sl" and ev = "B"'
+        body = self.get_request_body(query, 1)
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        rows = result['rows']
+        B_user_count = rows[0]['f'][0]['v']
+        
+        query = 'select count(distinct lts) from ' + table + ' where (et = "re" OR (et = "rs" and ev="rd") OR ( et="sb" and ev="show" ) OR ( et="sb" and ev="vw" ) )'
+        body = self.get_request_body(query, 1)
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        rows = result['rows']
+        engaged_user_count = rows[0]['f'][0]['v']
+        
+        return {'A_user_count' : A_user_count, 'B_user_count' : B_user_count, 'engaged_user_count' : engaged_user_count}
+        
     
+    def get_page_views(self, group, month, year):
+        table = self.get_table_name(group, month, year)
+       
+        
     def get_table_name(self, group, month, year):
         return '[events.events_' + str(year) + '_' + str(month) + '_' + str(group.id) + ']'
     
