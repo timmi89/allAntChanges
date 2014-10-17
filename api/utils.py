@@ -285,7 +285,6 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                     raise JSONException("Group has blocked this tag.")
 
         if group and group.word_blacklist:
-            print "** * * * * * * * * *  CHECKING IF ITS BAD"
             # Check body for blacklisted word
             # if in the blacklist, block it
             blacklist = [word.strip().lower() for word in group.word_blacklist.split(',')]
@@ -317,11 +316,9 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             # also, replace dashes with a space first.  a bit simple but a good start.
             # for word in tagLowerCased.replace('-', ' ').split(' '):
             for word in interaction_node.body.lower().replace('-', ' ').split(' '):
-                print word
                 if word.lower() in blacklist:
                     approveOnCreate = False
-
-                
+                    
                 #### DO ALL THE SAME STUFF FOR EACH 'word'.  should abstract to a function, but not right now.
                 # strip punctuation and whitespace, so that f!u ck is not OK
                 tagLowerCased = re.sub('[%s]' % re.escape(string.punctuation), '', word)
@@ -398,14 +395,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             else:
                 raise JSONException(u"sign in required for organic reactions")
             
-    
     try:
-        
-        # print "***************** which content node was passed in? **********************"
-        # print content
-        # print "***************** which content_node did we find in an existing interaction? **********************"
-        # print content_node
-
         new_interaction = Interaction(
             page=page,
             container=container,
@@ -487,10 +477,10 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             t = Thread(target=page_container_cache_updater, kwargs={})
             t.start()
 
-        if not new_interaction.parent or new_interaction.kind == 'com':
-            global_cache_updater = GlobalActivityCacheUpdater(method="update")
-            t = Thread(target=global_cache_updater, kwargs={})
-            t.start()
+        #if not new_interaction.parent or new_interaction.kind == 'com':
+        #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+        #    t = Thread(target=global_cache_updater, kwargs={})
+        #    t.start()
 
     except Exception, e:
         logger.warning(traceback.format_exc(50))   

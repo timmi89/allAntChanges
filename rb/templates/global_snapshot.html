@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}In-house Analytics{%endblock%}
+
+
+{% block extendedHead %}
+<script src="{{ STATIC_URL }}js/jquery.bigtext.js"></script>
+<script src="{{ STATIC_URL }}global/js/jquery-ui-datepicker.custom.min.js"></script>
+<script src="{{ STATIC_URL }}site/js/highcharts/highcharts.js"></script>
+<link rel="stylesheet" href="{{ STATIC_URL }}global/css/datepicker_css/ui-lightness/jquery-ui-1.8.15.custom.css">
+<style>
+    section[role="datepicker"] button {
+        position: relative;
+        top:-4px;
+    }
+    #sites_chart_raw{
+        font-size: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block wideContent %}
+<div class="mostlyWide">
+    <h1>Global Snapshot of {{ num_active_groups }} Groups </h1>
+    {% for group_dict in active_approved %}
+    <div>
+        <section>
+            <div>
+                <span><h2>{{ group_dict.group.short_name }}<h2></span>
+                <span>{{ group_dict.ABsld.A_script_loads }} A Script Loads </span><br>
+                <span>{{ group_dict.guser.A_user_count }} A User Count </span><br>
+                <span>{{ group_dict.guser.engaged_user_count }} Engaged With Antenna User Count </span><br>
+                <span>{{ group_dict.ABsld.B_script_loads }} B Script Loads </span><br>
+                <span>{{ group_dict.guser.B_user_count }} B User Count </span><br>
+                
+                <span>{{ group_dict.A_page_ratio }} A Group Ratio<br>
+                <span>{{ group_dict.B_page_ratio }} B Group Ratio<br>
+                
+                <span>{{ group_dict.engage_ratio }} Engagement Ratio<br>
+            </div>
+            <!--
+            <div>
+                {% for most_reacted in group_dict.mrcon %}
+                    <div>
+                        <div>
+                        {{ most_reacted.count }} Reactions <br>
+                        </div>
+                        <div>
+                        {% if most_reacted.content.kind == 'pag' %}
+                        PAGE REACTION
+                        {% endif %}
+                        {{ most_reacted.content.body }}
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+            <div>
+                {% for most_viewed in group_dict.tvhrc %}
+                    <div>
+                        <div>
+                        {% if most_viewed.page %}
+                        <a href="{{ most_viewed.page.canonical_url }}"/>
+                        {% endif %}{{ most_viewed.reaction_views }}  Views 
+                        {% if most_viewed.page %}
+                        </a>
+                        {% endif %}
+                        </div>
+                        <div>
+                        {% for value in most_viewed.contents.values %}
+                            <a href="{{ most_viewed.page.canonical_url }}"/>
+                            {% if value.content.kind == 'pag' %}
+                            PAGE
+                            {% else %}
+                            {{ value.content.body }} 
+                            {% endif %}
+                            </a>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+            -->
+        </section>
+    </div>
+    <hr>
+    <hr>
+    {% endfor %}
+    
+    
+</div>
+{% endblock wideContent %}

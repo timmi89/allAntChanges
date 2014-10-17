@@ -1,4 +1,5 @@
 # Django settings for antenna project.
+from __future__ import absolute_import
 from os import uname
 
 if uname()[1] == "hat" : DEBUG = True
@@ -16,6 +17,10 @@ if DEBUG:
 else:
     SERVER_EMAIL = "server@antenna.is"
 
+EVENTS_PROJECT_NUMBER = '774436620412'
+EVENTS_KEY_FILE = 'ssl/antenna_events.p12'
+EVENTS_SERVICE_ACCOUNT_EMAIL = '774436620412-esk3bm6ov5otu9kl49dsjke61b0rpv58@developer.gserviceaccount.com'
+
 # For Amazon web services
 AWS_ACCESS_KEY_ID = 'AKIAINM2FE35X6K77P2A'
 AWS_SECRET_ACCESS_KEY = '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'
@@ -26,7 +31,6 @@ AWS_CALLING_FORMAT = ""
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'public, max-age=25200',
-    'Access-Control-Allow-Origin' : '*',
 }
 
 AWS_DEFAULT_ACL='public-read'
@@ -59,37 +63,38 @@ if DEBUG:
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     
     DATABASES = {
-      'default': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'default': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '0bscur31nt3nt',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         },
-      'readonly1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'readonly1': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '0bscur31nt3nt',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         },
-      'readonly2': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
-        },
-        'slave1': {
-          'ENGINE':   'django.db.backends.sqlite3',
-          'NAME':     'readrdb.db',
-          'USER':     '',
-          'PASSWORD': '',
-          'HOST':     '', 
-          'PORT':     '',
+        'readonly2': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '0bscur31nt3nt',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         }
     }
     CACHES = {
@@ -107,7 +112,7 @@ if DEBUG:
         }
     }
     """
-    
+    BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
     ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
@@ -189,6 +194,7 @@ else:
 
             }
         }
+        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
     else:
         DATABASES = {
           'default': {
@@ -196,7 +202,7 @@ else:
             'NAME':     'readrboard',
             'USER':     'antenna-array',
             'PASSWORD': 'r34drsl4v3',
-            'HOST':     '69.164.209.143',
+            'HOST':     '192.168.142.147',
             'PORT':     '3306',
             'CONN_MAX_AGE':  60,
             'JOHNNY_CACHE_KEY': 'query_cache',
@@ -252,10 +258,19 @@ else:
                 'JOHNNY_CACHE':True,
 
             }
-
         }
+        
+        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
       
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+              
 JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
+
 
 # Facebook shit
 LOGIN_REDIRECT_URL = '/'
@@ -382,10 +397,12 @@ INSTALLED_APPS = [
     'api',
     'rb',
     'chronos',
+    'analytics',
     # 'piston',
     'south',
     'storages',
-    'gunicorn'
+    'gunicorn',
+    'djcelery'
     #'treebeard',
     #'debug_toolbar',
     #'autofixture',

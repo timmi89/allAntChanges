@@ -4,21 +4,22 @@ from django.core.cache import cache
 import traceback
 from antenna.api.utils import getSinglePageDataDict, getKnownUnknownContainerSummaries, getSettingsDict, getGlobalActivity
 import logging
+import time
+
 logger = logging.getLogger('rb.standard')
 
 class AbstractAsynchronousNotification(object):
     url = None
     
     def __call__(self, **kwargs):
-        #self.url = self.generate_url(**kwargs)
         self.fire(self.generate_url(**kwargs))
     
     def generate_url(self, **kwargs):
         raise NotImplementedError("generate_url not implemented")
     
     def fire(self, url):
-        logger.info("NO PROTO URL: " + str(settings.URL_NO_PROTO) + " *** " + str(url))
         try:
+            time.sleep(1)
             hcon = httplib.HTTPConnection(settings.URL_NO_PROTO, timeout=30)
             hcon.request('GET', url)
             resp = hcon.getresponse()
@@ -83,7 +84,6 @@ class CacheUpdater(object):
     
     def __call__(self, **kwargs):
         self.hydrate()
-        #logger.info("hydrated")
         if self.method == 'update':
             try:
                 cache.set(self.key, self.value)
@@ -94,7 +94,6 @@ class CacheUpdater(object):
                 cache.set_many(self.dick)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
-
         
         elif self.method == 'delete':
             try:
@@ -132,14 +131,10 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         self.method = kwargs['method']
         
     def hydrate(self):
-        
         if len(self.hashes) == 1:
             self.key = 'page_containers' + str(self.page_id) + ":" + str(self.hashes)
         else:
             self.key = 'page_containers' + str(self.page_id)
-           
-        #self.key = 'page_containers' + str(self.page_id)
-        #logger.info('hydrating using key: ' + self.key)
         if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes, self.crossPageHashes)
         
@@ -159,7 +154,6 @@ class ViewCacheUpdater(CacheUpdater):
     def __init__(self, **kwargs):
         self.view = kwargs['view']
         self.page = kwargs['page_num']
-        
         self.method = kwargs['method']
         
     def hydrate(self):

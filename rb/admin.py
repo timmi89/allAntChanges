@@ -1,5 +1,6 @@
 from rb.models import *
 from chronos.models import *
+from analytics.models import *
 from django.contrib import admin
 #from piston.models import Nonce, Consumer, Token 
 #admin.site.unregister(Consumer) 
@@ -188,4 +189,5 @@ admin.site.register(InteractionNotification)
 admin.site.register(Board)
 admin.site.register(BoardAdmin)
 admin.site.register(BoardInteraction)
+admin.site.register(JSONGroupReport)
 
