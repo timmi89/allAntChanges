@@ -1,5 +1,8 @@
 import settings
-from apiclient.discovery import build
+try:
+    from apiclient.discovery import build
+except ImportError, ie:
+    from googleapiclient.discovery import build
 from oauth2client.file import Storage
 from oauth2client.client import AccessTokenRefreshError
 from oauth2client.client import OAuth2WebServerFlow

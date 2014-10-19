@@ -1201,6 +1201,12 @@ div.ant.ant-summary a.ant_reactions_label {
   /*position: relative;
   top: 1px;*/
 }
+div.ant.ant-summary a.ant_reactions_label span {
+  color:#8fb3f2;
+  font-size:14px;
+  font-family:'Helvetica',Arial,sans-serif;
+  letter-spacing:0px;
+}
 div.ant.ant-summary.ant-summary-no-reactions div.ant-sum-reactions a.ant_reactions_label {
     display: none;
 }

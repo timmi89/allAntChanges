@@ -547,7 +547,7 @@ function antenna($A){
                 var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('tap', '.ant_menuDropDown', function(){
+                    $menu.on('tap.ant', '.ant_menuDropDown', function(){
                         $(this).toggleClass('ant_hover');
                     });
                 }
@@ -785,8 +785,8 @@ function antenna($A){
 
             },
 
-            mediaRindowShow: function ( $mediaItem ) {
-                //ANT.aWindow.mediaRindowShow
+            mediaAWindowShow: function ( $mediaItem ) {
+                //ANT.aWindow.mediaAWindowShow
                 var hash = $mediaItem.data('hash'),
                     $aWindow = $('#ant_indicator_details_'+hash);
 
@@ -803,8 +803,8 @@ function antenna($A){
                 }
                 $aWindow.addClass('ant_engaged')
             },
-            mediaRindowHide: function ( $mediaItem ) {
-                //ANT.aWindow.mediaRindowHide:
+            mediaAWindowHide: function ( $mediaItem ) {
+                //ANT.aWindow.mediaAWindowHide:
                 var hash = $mediaItem.data('hash'),
                     $aWindow = $('#ant_indicator_details_'+hash);
 
@@ -1251,8 +1251,8 @@ function antenna($A){
 
 
                             //temp fix because the aWindow scrollpane re-init isnt working
-                            var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
-                            if(!isViewForRindow){
+                            var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
+                            if(!isViewForAWindow){
                                 ANT.aWindow.close($aWindow);
                                 return;
                             }
@@ -1416,7 +1416,7 @@ function antenna($A){
                         if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
-                            $tagBox.bind('tap', function() {
+                            $tagBox.on('tap.ant', function() {
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
@@ -1494,7 +1494,7 @@ function antenna($A){
                         $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
                         
                         if(isTouchBrowser){
-                            $commentHover.bind('tap', function() {
+                            $commentHover.on('tap.ant', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
                                 ANT.actions.viewCommentContent({
@@ -2019,7 +2019,7 @@ function antenna($A){
 
                 $new_aWindow.settings = settings;
 
-                $new_aWindow.on( "resizestop", function(event, ui) {
+                $new_aWindow.on( "resizestop.ant", function(event, ui) {
                     var $this = $(this);
                     
                     //todo: examine resize
@@ -2078,10 +2078,10 @@ function antenna($A){
                 });
             },
             closeAll: function() {
-                var $allRindows = $('div.ant.ant_window').not('.ant_no_clear');
-                ANT.aWindow.close( $allRindows );
+                var $allAWindows = $('div.ant.ant_window').not('.ant_no_clear');
+                ANT.aWindow.close( $allAWindows );
                 $('.ant_shared').removeClass('ant_shared');
-                $(document).unbind('keydown.ant'); // remove the "start typing to immediately add a custom tag" feature
+                $(document).off('keydown.ant'); // remove the "start typing to immediately add a custom tag" feature
             },
             clearHilites: function( $aWindows ){
                 var selStates = [];
@@ -2178,13 +2178,13 @@ function antenna($A){
 
                     $tag.addClass('ant_comment_indicator');
                     _tempCopyOfCommentHover(diffNode, $tag, $aWindow);
-                    _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment( $aWindow ); // deprecated?
+                    _tempMakeAWindowResizeIfOneColumnWhenAddingFirstComment( $aWindow ); // deprecated?
                     _addLinkToViewComs(diffNode, $tag, $aWindow);
 
 
                 }
 
-                function _tempMakeRindowResizeIfOneColumnWhenAddingFirstComment($aWindow) {
+                function _tempMakeAWindowResizeIfOneColumnWhenAddingFirstComment($aWindow) {
                     // deprecated?
                     var $tag_table = $aWindow.find('table.ant_tags')
 
@@ -2193,12 +2193,12 @@ function antenna($A){
                         $tag_table.addClass('ant-one-column');
 
                         if(!isTouchBrowser){
-                            $tag_table.find('td.ant_has_pillHover').on('mouseenter, mousemove', function() {
+                            $tag_table.find('td.ant_has_pillHover').on('mouseenter.ant, mousemove.ant', function() {
                                 var $this = $(this),
                                     $aWindow = $this.closest('div.ant_window');
 
                                 thisWidth = $aWindow.data('initialWidth');
-                            }).on('mouseleave', function() {
+                            }).on('mouseleave.ant', function() {
                                 var $this = $(this),
                                     $aWindow = $this.closest('div.ant_window');
                                 thisWidth = $aWindow.width();
@@ -2382,13 +2382,13 @@ function antenna($A){
 
                 // HOVERTIMER
                 $new_actionbar.append( $action );
-                $new_actionbar.on('mouseenter', function() {
+                $new_actionbar.on('mouseenter.ant', function() {
                     // var $this = $(this);
 
                     ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
 
                     clearTimeout( $new_actionbar.data( 'ant_actionbarShowTimer') );
-                }).on('mouseleave', function() {
+                }).on('mouseleave.ant', function() {
                     // var $this = $(this);
 
                     // pause then expand
@@ -2401,7 +2401,7 @@ function antenna($A){
                         ANT.actionbar.close( $new_actionbar );
                     }, 1000 ) );
 
-                }).on('click', clickAction );
+                }).on('click.ant', clickAction );
 
                 $('#ant_sandbox').append( $new_actionbar );
                 
@@ -2642,8 +2642,8 @@ function antenna($A){
                     // if (typeof ANT.events != 'undefined') { ANT.events.checkTime(); }
                 // }, 1000));
             // },
-            checkForSelectedTextAndLaunchRindow: function(){
-                //ANT.util.checkForSelectedTextAndLaunchRindow
+            checkForSelectedTextAndLaunchAWindow: function(){
+                //ANT.util.checkForSelectedTextAndLaunchAWindow
                     
                 //this function is really hacky and gross.
                 //But there are functions we want within actionbar that I don't have time to parse out, so just make one in order to click it.
@@ -2681,7 +2681,7 @@ function antenna($A){
                 if(isTouchBrowser && ANT.util.activeAB() ){
                     $('body').addClass('ant_touch_browser');
                     // mobiletodo: DO WE NEED
-                    $(window).on('scrollend', function() {
+                    $(window).on('scrollend.ant', function() {
                         ANT.util.mobileHelperToggle();
                     });
                 }
@@ -3850,7 +3850,7 @@ function antenna($A){
                     //next fired on ajax success
                 });
                 $ANT.queue('initAjax', function(next){
-                   ANT.util.checkForSelectedTextAndLaunchRindow();
+                   ANT.util.checkForSelectedTextAndLaunchAWindow();
                    ANT.util.initPublicEvents();
                 });
                 $ANT.queue('initAjax', function(next){
@@ -4235,7 +4235,7 @@ function antenna($A){
                 }else if ( ANT.util.activeAB() )  {
 
                     $(ANT.group.active_sections)
-                        .on( 'mouseenter', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
+                        .on( 'mouseenter.ant', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
 
                             var $this = $(this);
                             
@@ -4299,7 +4299,7 @@ function antenna($A){
 
                             }
                         })
-                        .on( 'mouseleave', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
+                        .on( 'mouseleave.ant', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
                             var $this = $(this),
                                 hash = $this.data('hash');
 
@@ -4946,11 +4946,11 @@ function antenna($A){
                     if ( HTMLkind != 'body' && !isTouchBrowser ) {
                         // // todo: touchHover
                         
-                        $this.on('mouseenter', function() {
+                        $this.on('mouseenter.ant', function() {
                             ANT.actions.indicators.init(hash);
                             $(this).addClass('ant_live_hover');
                         })//chain
-                        .on('mouseleave', function() {
+                        .on('mouseleave.ant', function() {
                             // var $hash_helper = $('.ant_helper_aWindow.ant_for_'+hash);
                             // if ( $hash_helper.length ) {
                             //     $hash_helper.remove();
@@ -5421,7 +5421,7 @@ function antenna($A){
 
                         //     $mediaItem.data('hover',true).data('hash', hash);
                         //     ANT.actions.indicators.utils.updateContainerTracker(hash);
-                        //     ANT.aWindow.mediaRindowShow( $mediaItem );
+                        //     ANT.aWindow.mediaAWindowShow( $mediaItem );
                         //     // $indicator_details.addClass('ant_has_border');
                         // }
 
@@ -5445,7 +5445,7 @@ function antenna($A){
                         //     var containerInfo = ANT.containers[hash];
                         //     if ( containerInfo ) {
                         //         $mediaItem.data('hover',false).data('hash', hash);
-                        //         ANT.aWindow.mediaRindowHide( $mediaItem );
+                        //         ANT.aWindow.mediaAWindowHide( $mediaItem );
                         //     }
                         // },100);
                         // $mediaItem.data('timeoutCloseEvt_'+hash, timeoutCloseEvt);
@@ -6224,7 +6224,7 @@ if ( sendData.kind=="page" ) {
                                 //messy fixes for success responses in crossPageHash containers.
                                 ANT.actions.content_nodes.quickFixReset(hash);
 
-                                var isInlineRindow = ($aWindow.hasClass('ant_inline') || $aWindow.find('.ant_inline').length);
+                                var isInlineAWindow = ($aWindow.hasClass('ant_inline') || $aWindow.find('.ant_inline').length);
                                 
                                 var $responseMsg = $('<span class="success_msg" >'+ANT.t('thanks_for_comment')+' </span>');
                                 var $doneButton = $('<a class="ant_doneButton" href="#">'+ANT.t('close')+'</a>')
@@ -7129,8 +7129,8 @@ if ( sendData.kind=="page" ) {
                                 $counter.addClass('ant_count');
                             }
                             if ( $cta.length ) {
-                                _customDisplaySetupHoverForShowRindow($cta);
-                                _showRindowAfterLoad();
+                                _customDisplaySetupHoverForShowAWindow($cta);
+                                _showAWindowAfterLoad();
                             }
                             if ( $grid.length ) {
                             }
@@ -7178,17 +7178,17 @@ if ( sendData.kind=="page" ) {
 
 
 
-                                $container.unbind('.ant_helper');
+                                $container.off('.ant_helper');
                                 // todo: touchHover
                                 
                                 if(!isTouchBrowser){
-                                    $container.bind('mouseenter.ant_helper', function() {
+                                    $container.on('mouseenter.ant_helper', function() {
                                         var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper) {
                                             ANT.actions.indicators.helpers.over($indicator);
                                         }
                                     });
-                                    $container.bind('mouseleave.ant_helper', function(e) {
+                                    $container.on('mouseleave.ant_helper', function(e) {
                                         var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                         if ( hasHelper ) {
                                             ANT.actions.indicators.helpers.out($indicator);
@@ -7222,12 +7222,12 @@ if ( sendData.kind=="page" ) {
                                     // if(isTouchBrowser){
                                     //     $indicator.addClass('isTouchBrowser');
                                     // }
-                                    _setupHoverForShowRindow();
+                                    _setupHoverForShowAWindow();
                                 }else{
                                     _setupHoverToFetchContentNodes(function(){
-                                        _showRindowAfterLoad();
+                                        _showAWindowAfterLoad();
                                     });
-                                    _setupHoverForShowRindow(); // used to be in the above callback.  test.
+                                    _setupHoverForShowAWindow(); // used to be in the above callback.  test.
                                 }
                             }
 
@@ -7255,20 +7255,20 @@ if ( sendData.kind=="page" ) {
 
 
 
-                    function _setupHoverForShowRindow(){
+                    function _setupHoverForShowAWindow(){
                         // HOVERTIMER
                         if (!isTouchBrowser) {
-                            $indicator.find('.ant_indicator_body').on('mouseenter', function(){
+                            $indicator.find('.ant_indicator_body').on('mouseenter.ant', function(){
                                 ANT.util.setFunctionTimer( function() {
                                     if( $indicator.data('isZeroCountIndicator') ){
-                                        _updateRindowForHelperIndicator();
+                                        _updateAWindowForHelperIndicator();
                                     } else {
-                                        _makeRindow();
+                                        _makeAWindow();
                                     }
                                 } , 333);
 
 
-                            }).on('mouseleave', function() {
+                            }).on('mouseleave.ant', function() {
                                 // kill the timer and prevent the aWindow from showing
                                 ANT.util.clearFunctionTimer();
                             });
@@ -7277,7 +7277,7 @@ if ( sendData.kind=="page" ) {
                                 if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                                 ANT.util.bubblingEvents['touchend'] = true;
 
-                                _makeRindow();
+                                _makeAWindow();
                                 var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 if( hasHelper ){
                                     // ANT.events.track('paragraph_helper_engage');
@@ -7285,7 +7285,7 @@ if ( sendData.kind=="page" ) {
                             });
                         }
                     }
-                    function _makeRindow(){
+                    function _makeAWindow(){
                         //only allow one indicator aWindow.
                         //todo - replace this with the code below - but need to deal with selstate hilites first
                         if($indicator.$aWindow){
@@ -7315,7 +7315,7 @@ if ( sendData.kind=="page" ) {
                         
                         //these should probably be moved under tagMode.make (called by aWindow.make) where the image tracking lives.
                         // if( $indicator.data('isZeroCountIndicator') ){
-                        //     _updateRindowForHelperIndicator();
+                        //     _updateAWindowForHelperIndicator();
 
                             // ANT.events.track('paragraph_helper_show');
 
@@ -7345,7 +7345,7 @@ if ( sendData.kind=="page" ) {
                         // }
 
                     }
-                    function _updateRindowForHelperIndicator(){
+                    function _updateAWindowForHelperIndicator(){
                         var actionbarCoords = {
                             top: $indicator.offset().top+11,
                             left: $indicator.offset().left-8
@@ -7413,19 +7413,19 @@ if ( sendData.kind=="page" ) {
                             });
                         }
                     }
-                    function _showRindowAfterLoad(){
-                        $indicator.unbind('mouseover.contentNodeInit');
+                    function _showAWindowAfterLoad(){
+                        $indicator.off('mouseover.contentNodeInit');
                         if (isTouchBrowser) {
-                            $indicator.triggerHandler('touchend.showRindow');
+                            $indicator.triggerHandler('touchend.showAWindow');
                         } else {
-                            $indicator.triggerHandler('mouseover.showRindow');
+                            $indicator.triggerHandler('mouseover.showAWindow');
                         }
                     }
 
-                    function _customDisplaySetupHoverForShowRindow($cta){
+                    function _customDisplaySetupHoverForShowAWindow($cta){
                         // SUPPORTS ONE:
-                        // $cta.on('mouseover.showRindow', function(){
-                        //     _customDisplayMakeRindow($cta);
+                        // $cta.on('mouseover.showAWindow', function(){
+                        //     _customDisplayMakeAWindow($cta);
                         //     var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                         //     if( hasHelper ){
                         //         // ANT.events.track('paragraph_helper_engage');
@@ -7435,8 +7435,8 @@ if ( sendData.kind=="page" ) {
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
-                            $thisCTA.attr('ant-kind', kind).unbind('mouseover.showRindow, touchend.showRindow').on('mouseover.showRindow, touchend.showRindow', function(){
-                                _customDisplayMakeRindow($thisCTA);
+                            $thisCTA.attr('ant-kind', kind).off('mouseover.showAWindow, touchend.showAWindow').on('mouseover.showAWindow, touchend.showAWindow', function(){
+                                _customDisplayMakeAWindow($thisCTA);
                                 // var hasHelper = $indicator.hasClass('ant_helper') && ANT.group.paragraph_helper;
                                 // if( hasHelper ){
                                     // ANT.events.track('paragraph_helper_engage');
@@ -7444,7 +7444,7 @@ if ( sendData.kind=="page" ) {
                             });
                         });
                     }
-                    function _customDisplayMakeRindow($cta) {
+                    function _customDisplayMakeAWindow($cta) {
                         // see if this is a read+write mode cta, or just one "mode"
                         if ( $cta.attr('ant-mode').indexOf('write') != -1 && $cta.attr('ant-mode').indexOf('read') != -1 ) {
                             var mode = ( summary.counts.tags > 0 ) ? "readMode":"writeMode";
@@ -7730,7 +7730,7 @@ if ( sendData.kind=="page" ) {
                             $indicator.appendTo($container_tracker);
                             
                             if(isTouchBrowser){
-                                $indicator.bind('tap', function(){
+                                $indicator.on('tap.ant', function(){
                                     if ( summary.counts.interactions == 0 ) {
                                         var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     } else {
@@ -7740,7 +7740,7 @@ if ( sendData.kind=="page" ) {
                                 });
                             }else{
                                 $indicator
-                                    .on('mouseenter', function() {
+                                    .on('mouseenter.ant', function() {
                                         $indicator.addClass('ant_visible');
                                         ANT.util.setFunctionTimer( function() {
                                             if ( summary.counts.interactions == 0 ) {
@@ -7751,7 +7751,7 @@ if ( sendData.kind=="page" ) {
                                             $(this).addClass('ant_live_hover');
                                         } , 500);
                                     })//chain
-                                    .on('mouseleave', function() {
+                                    .on('mouseleave.ant', function() {
                                         ANT.util.clearFunctionTimer();
                                         $(this).removeClass('ant_live_hover ant_visible');
                                     });
@@ -7795,7 +7795,7 @@ if ( sendData.kind=="page" ) {
 
                                 $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body');
                                 if(isTouchBrowser){
-                                    $indicator.bind('tap', function(){
+                                    $indicator.on('tap.ant', function(){
                                         $(this).toggleClass('ant_hover');
                                     });
                                 }
@@ -7969,7 +7969,7 @@ if ( sendData.kind=="page" ) {
 
                         // mode-specific addition functionality that needs to come AFTER writing the $aWindow to the DOM
                         if ( !isTouchBrowser) {
-                            $aWindow.on( 'mouseleave', function(e) {
+                            $aWindow.on( 'mouseleave.ant', function(e) {
                                 var $this = $(this),
                                     timeoutCloseEvt;
 
@@ -7983,7 +7983,7 @@ if ( sendData.kind=="page" ) {
                                 },300);
 
                                 $(this).data('timeoutCloseEvt', timeoutCloseEvt);
-                            }).on('mouseenter', function() {
+                            }).on('mouseenter.ant', function() {
                                 var timeoutCloseEvt = $(this).data('timeoutCloseEvt');
                                 clearTimeout(timeoutCloseEvt);
                             });
@@ -9248,8 +9248,8 @@ if ( sendData.kind=="page" ) {
                     $backButton.click( function() {
     
                         //temp fix because the aWindow scrollpane re-init isnt working
-                        var isViewForRindow = !!$aWindow.attr('ant-view-reactions-for');
-                        if(!isViewForRindow){
+                        var isViewForAWindow = !!$aWindow.attr('ant-view-reactions-for');
+                        if(!isViewForAWindow){
                             ANT.aWindow.close($aWindow);
                             return;
                         }
@@ -10074,7 +10074,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv31"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv32"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10382,7 +10382,7 @@ function $AFunctions($A){
                 var $elements = $selected;
 
 
-                $elements.on('mousedown', function(e) {
+                $elements.on('mousedown.ant', function(e) {
 
                     if ( (opt.handle !== "" ) && !$(e.target).closest('.ant_header').length ) {
                         // has a handle, but the handle is not clicked
@@ -10402,7 +10402,7 @@ function $AFunctions($A){
                             top: e.pageY + pos_y - drg_h,
                             left: e.pageX + pos_x - drg_w
                         });
-                    }).on("mouseup", function() {
+                    }).on("mouseup.ant", function() {
                         $(this).off("mousemove.ant_drag"); // Unbind events from document
                     });
 
@@ -10510,7 +10510,6 @@ function $AFunctions($A){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-                
                 var page = settings;
                 
                 var widgetClass = 'ant-summary-key-'+page.key;
@@ -10566,7 +10565,7 @@ function $AFunctions($A){
                 };
 
                 if(isTouchBrowser){
-                    $summary_widget.bind('tap', function(){
+                    $summary_widget.on('tap.ant', function(){
                         onActiveEvent.call(this);
                         $(this).toggleClass('ant_hover');
                     });
@@ -10598,10 +10597,10 @@ function $AFunctions($A){
                 }
 
                 var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" " + ANT.t('plural_reaction') :
+                    total_reactions+" " + '<span>'+ANT.t('plural_reaction')+'</span>' :
                         ( total_reactions > 0 ) ? 
-                            total_reactions+" " + ANT.t('single_reaction') :
-                            ANT.t('plural_reaction');
+                            total_reactions+" " + '<span>'+ANT.t('single_reaction')+'</span>' :
+                            '<span>'+ANT.t('plural_reaction')+'</span>';
                 $summary_widget.append(
                     '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                 );
