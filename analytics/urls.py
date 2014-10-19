@@ -26,4 +26,5 @@ urlpatterns = patterns('',
     # e.g. /analytics/inhouse/#start=1/03/13#end=11/04/13
     url(r'^/inhouse/$', 'analytics.views.analytics_inhouse'),
     url(r'^/inhouse/test/$', InhouseAnalytics),
+    url(r'^/global/$', 'analytics.views.global_snapshot'),
 )
