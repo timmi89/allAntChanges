@@ -4202,6 +4202,8 @@ function antenna($A){
                 // init media object on load.
                 // this is new, but we want the experience for images to be faster.
                 $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                    // hash not present and that's the problem.
+                    // why does listing article FIRST cause this break?
                     var hash = $(this).attr('ant-hash');
                     ANT.actions.indicators.init( hash );
                     ANT.actions.content_nodes.init(hash, function(){});
@@ -4646,7 +4648,7 @@ function antenna($A){
                     {
                         kind: 'media',
                         $group: null,
-                        whiteList: ANT.group.media_selector,
+                        whiteList: function() { return ANT.group.media_selector; },
                         filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var body = this.src;
@@ -4658,7 +4660,17 @@ function antenna($A){
                     {
                         kind: 'img',
                         $group: null,
-                        whiteList: ANT.group.active_sections + ' img',
+                        whiteList: function() {
+                            var whiteListConcat = '',
+                                whiteListArray = ANT.group.active_sections.split(',');
+
+                            $.each(whiteListArray, function(idx, selector) {
+                                whiteListConcat += selector + ' img,'
+                            });
+                            whiteListConcat = whiteListConcat.substring(0, whiteListConcat.length-1);
+
+                            return whiteListConcat;
+                        },
                         filterParam: 'img',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
@@ -4672,7 +4684,7 @@ function antenna($A){
                     {
                         kind: 'text',
                         $group: null,
-                        whiteList: ANT.group.active_sections_with_anno_whitelist,
+                        whiteList: function() { return ANT.group.active_sections_with_anno_whitelist; },
                         filterParam: function(idx, node){
                             //todo: reconsider using this - it's not super efficient to grab the text just to verify it's a node that has text.
                             // - Prob fine though since we're only testing hashes we pass in manually.
@@ -4695,7 +4707,7 @@ function antenna($A){
                     {
                         kind: 'custom',
                         $group: null,
-                        whiteList: '',
+                        whiteList: function() { return ''; },
                         filterParam: function(idx, node){
                             // look for a ant-src
                             var $node = $(this);
@@ -4725,7 +4737,7 @@ function antenna($A){
                     // add vaild descendants of the $node
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
-                    $group = $group.add( $node.find( group.whiteList ) );
+                    $group = $group.add( $node.find( group.whiteList() ) );
                     
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
