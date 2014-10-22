@@ -1637,9 +1637,10 @@ function antenna($A){
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.ant-summary-'+page.id),
+                                $summary_widget_icon = $summary_widget.find('.ant_logo'),
                                 coords = {
-                                    top: $summary_widget.offset().top,
-                                    left: $summary_widget.offset().left
+                                    top: $summary_widget_icon.offset().top - 2,
+                                    left: $summary_widget_icon.offset().left - 2
                                 };
 
                             // don't redraw summary aWindow if already showing
@@ -10090,7 +10091,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv32"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv33"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
