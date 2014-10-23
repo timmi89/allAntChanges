@@ -1,13 +1,14 @@
 import settings
 from celery.task.schedules import crontab
-from celery.decorators import periodic_task, task
-from antenna.analytics.utils import OAuth2EventsUtility
+from celery.decorators import periodic_task
+from analytics.utils import OAuth2EventsUtility
 import datetime, json
 from antenna.rb.models import * 
 from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
 from models import *
 from django.db.models import Count
+from django.core.cache import cache
 
 logger = get_task_logger(__name__)
 
@@ -42,9 +43,92 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
               341, 35, 378, 4, 5, 501, 508, 55, 571, 6, 624, 648, 658, 66, 662, 
               667, 729, 738, 77, 778, 80, 83, 848, 853, 894, 918, 960, 997]
 
+
+@periodic_task(name='do_all_groups_recirc', ignore_result=True, 
+               run_every=(crontab(hour="*", minute="20,50", day_of_week="*")))
+def do_all_groups_recirc():
+    TVHRC_SLOTS = 5
+    MRCON_SLOTS = 5
     
+    try:
+        groups = get_approved_active_groups()
+    except:
+        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
+    
+    for group in groups:
+        logger.info("STARTING GROUP RECIRC: " + str(group.id))
+        unique_pages = {}
+        final_recs = []
+        try:
+            tvhrc = json.loads(JSONGroupReport.objects.filter(group=group, kind='tvhrc').order_by('-created')[0].body)
+            for hash_report in tvhrc:
+                if  not hash_report.has_key('page'):
+                    continue
+                
+                page_dict = hash_report['page']
+                if unique_pages.has_key(page_dict['id']):
+                    continue
+                
+                unique_pages[page_dict['id']] = True
+                if len(unique_pages) == TVHRC_SLOTS:
+                    break
+                else:
+                    (display_interaction, display_vote) = get_display_interaction_and_count(hash_report['container_hash'], group)
+                    recirc = {}
+                    recirc['page'] = page_dict
+                    recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
+                    recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
+                    recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
+                                          'id':display_interaction.id, 'count':display_vote}
+                    final_recs.append(recirc)
+                
+         
+            mrcon = json.loads(JSONGroupReport.objects.filter(group=group, kind='mrcon').order_by('-created')[0].body)
+            for mrc in mrcon:
+                if  not mrc.has_key('page'):
+                    continue
+                
+                page_dict = mrc['page']
+                if unique_pages.has_key(page_dict['id']):
+                    continue
+                
+                content_dict = mrc['content']
+                unique_pages[page_dict['id']] = True
+                if len(unique_pages) == TVHRC_SLOTS + MRCON_SLOTS:
+                    break
+                
+                (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group)       
+                recirc = {}
+                recirc['page'] = page_dict
+                recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
+                recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
+                recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
+                                      'id':display_interaction.id, 'count':display_vote}
+                
+                final_recs.append(recirc)
+            JSONGroupReport.objects.create(body=json.dumps(final_recs), group=group, kind='recrc')
+            cache.set('group_recirc_' + str(group.id), json.dumps(final_recs))
+        except Exception, ex:
+            logger.warn(ex)
+            
+            
+def get_display_interaction_and_count(hash, group):
+    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group)
+    i_count = {}
+    display_interaction = None
+    display_vote = 0
+    for interaction in interactions:
+        if i_count.has_key(interaction.interaction_node.body):
+            i_count[interaction.interaction_node.body] = i_count[interaction.interaction_node.body] + 1
+        else:
+            i_count[interaction.interaction_node.body] = 1
+        if i_count[interaction.interaction_node.body] > display_vote:
+            display_interaction = interaction
+            display_vote = i_count[interaction.interaction_node.body]
+    return (display_interaction, display_vote)
+                
 @periodic_task(name='do_all_group_reports', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/33", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="*/30", day_of_week="*")))
 def do_all_group_reports():
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
@@ -58,18 +142,27 @@ def do_all_group_reports():
     global_data = {'A_user_count' : 0, 'B_user_count' : 0, 'engaged_user_count' : 0}
     group_count = len(groups)
     for group in groups:
-        logger.info("STARTING GROUP: " + str(group.id))
-        group_data = group_top_reaction_view_hash_count(event_util, now, group)
-        if group_data:
-            JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
-        else:
-            logger.info("No group tvhrc data generated: " + str(group.id))
-        
-        A_B_script_loads(event_util, now, group)
-        most_reacted_content(now,group)
-        group_count = group_count - 1
-        logger.info("Groups left: " + str(group_count))
-    JSONGlobalReport.objects.create(body=json.dumps(global_data), kind='guser') 
+        try:
+            logger.info("STARTING GROUP: " + str(group.id))
+            group_data = group_top_reaction_view_hash_count(event_util, now, group)
+            if group_data:
+                JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
+            else:
+                logger.info("No group tvhrc data generated: " + str(group.id))
+            
+            A_B_script_loads(event_util, now, group)
+            most_reacted_content(now,group)
+            group_general = event_util.get_group_general_user_data(group, now.month, now.year)
+            JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
+            global_data['A_user_count'] = int(global_data['A_user_count']) + int(group_general['A_user_count'])
+            global_data['B_user_count'] = int(global_data['B_user_count']) + int(group_general['B_user_count'])
+            global_data['engaged_user_count'] = int(global_data['engaged_user_count']) + int(group_general['engaged_user_count'])
+            group_count = group_count - 1
+            logger.info("Groups left: " + str(group_count))
+        except Exception, ex:
+            logger.warn("Group Report: " + str(group.id), ex)
+            
+    JSONGlobalReport.objects.create(body=json.dumps(global_data), kind='guser')
     logger.info('DO ALL GROUPS FINISHED')
 
             
@@ -78,9 +171,7 @@ def group_top_reaction_view_hash_count(event_util, now, group):
     hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 10)
     if hash_tuples is None:
         return None
-    
-    first_of_month = datetime.datetime(now.year,now.month, 1, 0, 0, 1)
-    
+ 
     for hash_tuple in hash_tuples:
         #only continue processing for groups with at least one reaction view...
         if int(hash_tuple[1]) > 0:
@@ -107,20 +198,6 @@ def group_top_reaction_view_hash_count(event_util, now, group):
   
 
 
-def group_user_data(event_util, now, group):
-    group_general = event_util.get_group_general_user_data(group, now.month, now.year)
-    JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
-    global_data['A_user_count'] = int(global_data['A_user_count']) + int(group_general['A_user_count'])
-    global_data['B_user_count'] = int(global_data['B_user_count']) + int(group_general['B_user_count'])
-    global_data['engaged_user_count'] = int(global_data['engaged_user_count']) + int(group_general['engaged_user_count'])
-    logger.info("Group User Data Finished")
-    
-# A periodic task that will run every minute (the symbol "*" means every)
-#@periodic_task(name='periodic_top_reaction_view_hash_counts', ignore_result=True, 
-#               run_every=(crontab(hour="*", minute="*/55", day_of_week="*")))
-def periodic_top_reaction_view_hash_counts():
-    top_reaction_view_hash_counts()
-
 def top_reaction_view_hash_counts():
     logger.info("Start group view hash events task")
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
@@ -141,22 +218,6 @@ def top_reaction_view_hash_counts():
     logger.info("Task GROUP REACTION HASH VIEWS finished")
 
 
- 
-#@periodic_task(name='periodic_A_B_script_loads', ignore_result=True, 
-#               run_every=(crontab(hour="*", minute="45", day_of_week="*")))
-def periodic_A_B_script_loads():
-    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
-                                      'keyFile':settings.EVENTS_KEY_FILE,
-                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
-    now = datetime.datetime.now()
-    try:
-        groups = get_approved_active_groups()
-    except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
-    
-    for group in groups:
-        A_B_script_loads(event_util, now, group)
-
 
 def A_B_script_loads(event_util, now, group):
     try:
@@ -176,20 +237,6 @@ def A_B_script_loads(event_util, now, group):
             
     logger.info("A_B script loads finished")
 
-#@periodic_task(name='periodic_most_reacted_content', ignore_result=True, 
-#               run_every=(crontab(hour="*", minute="*/20", day_of_week="*"))) 
-def periodic_most_reacted_content():
-    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
-                                      'keyFile':settings.EVENTS_KEY_FILE,
-                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
-    now = datetime.datetime.now()
-    try:
-        groups = get_approved_active_groups()
-    except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
-    
-    for group in groups:
-        most_reacted_content(now,group)
     
 def most_reacted_content(now, group):
     first_of_month = datetime.datetime(now.year,now.month, 1, 0, 0, 1)
@@ -218,13 +265,12 @@ def most_reacted_content(now, group):
 
     
 @periodic_task(name='generate_approved_active_groups', ignore_result=True, 
-               run_every=(crontab(hour="2,8,11,12,13,14,20", minute="0", day_of_week="*")))
+               run_every=(crontab(hour="2,11,20", minute="0", day_of_week="*")))
 def generate_approved_active_groups():  
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
-    first_of_month = datetime.datetime(now.year,now.month, 1, 0, 0, 1)
     groups = Group.objects.filter(approved=True)
     group_report = {}
     for group in groups:

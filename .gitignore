@@ -8,8 +8,5 @@ readrdb.db
 *.sublime-project
 *.sublime-project.*
 *.orig
-*.project
-*.pydevproject
 .settings/
-settings.py
 logs/

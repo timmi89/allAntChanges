@@ -257,6 +257,9 @@ class Group(models.Model):
     sharebox_reddit  = models.BooleanField(default=False)
     sharebox_google  = models.BooleanField(default=False) 
     
+    show_recirc = models.BooleanField(default=False)
+    recirc_selector = models.CharField(max_length=255, blank=True)
+    recirc_title = models.CharField(max_length=255, blank=True)
     
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
