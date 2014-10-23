@@ -318,14 +318,12 @@ def global_snapshot(request, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
-
-class RecirculationModuleHandler(InhouseAnalyticsHandler):
-    
-    def read(self, request, data, group_id, **kwargs):
-        cached_report = cache.get('group_recirc_' + str(group_id))
-        if cached_report is None:
-            group = Group.objects.get(id=int(group_id))
-            cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
-            cache.set('group_recirc_' + str(group_id), cached_report.body)
-            
-        return cached_report
+   
+def recirculate(request, group_id):
+    cached_report = cache.get('group_recirc_' + str(group_id))
+    if cached_report is None:
+        group = Group.objects.get(id=int(group_id))
+        cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
+        cache.set('group_recirc_' + str(group_id), cached_report.body)
+        
+    return cached_report
