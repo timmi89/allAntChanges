@@ -271,8 +271,8 @@ class InhouseAnalyticsJSONHandler(InhouseAnalyticsHandler):
 
         return sites
     
-@requires_admin
-def global_snapshot(request):
+@requires_admin_super
+def global_snapshot(request, **kwargs):
     context = {}
     
     active_groups = tasks.get_approved_active_groups()
