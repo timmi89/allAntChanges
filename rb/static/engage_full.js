@@ -1774,7 +1774,8 @@ function antenna($A){
                                         // action: "aWindow_shown_readmode",
                                         // opt_label: "kind: "+kind+", hash: " + hash,
                                         event_type: 'rs',
-                                        event_value: 'rd',
+                                        // event_value: 'rd',
+                                        event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
                                         container_hash: hash,
                                         container_kind: kind,
                                         page_id: page_id
@@ -7354,7 +7355,7 @@ if ( sendData.kind=="page" ) {
                                 // action: "aWindow_shown_readmode",
                                 // opt_label: "kind: text, hash: " + hash,
                                 event_type: 'rs',
-                                event_value: 'rd',
+                                event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
                                 container_hash: hash,
                                 container_kind: "text",
                                 page_id: page_id
