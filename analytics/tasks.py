@@ -45,7 +45,7 @@ ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168,
 
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="20,50", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="14,44", day_of_week="*")))
 def do_all_groups_recirc():
     TVHRC_SLOTS = 5
     MRCON_SLOTS = 5
@@ -128,7 +128,7 @@ def get_display_interaction_and_count(hash, group):
     return (display_interaction, display_vote)
                 
 @periodic_task(name='do_all_group_reports', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/30", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="45", day_of_week="*")))
 def do_all_group_reports():
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
