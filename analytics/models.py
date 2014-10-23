@@ -7,6 +7,8 @@ class JSONGroupReport(models.Model):
         ('tvhrc', 'TopViewedReactions'),
         ('ABsld', 'ABScriptLoads'),
         ('mrcon', 'MostReactedContent'),
+        ('recrc', 'Recirculation'),
+        ('guser', 'General User Counts'),
     )
     kind = models.CharField(max_length=5, choices=TYPES, default='tvhrc')
     group = group = models.ForeignKey(Group)

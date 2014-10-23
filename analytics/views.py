@@ -8,6 +8,7 @@ from datetime import datetime
 from django.db.models import Count, Sum
 from django.forms.models import model_to_dict
 from django.core import serializers
+from django.core.cache import cache
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin, requires_admin_super
@@ -270,8 +271,8 @@ class InhouseAnalyticsJSONHandler(InhouseAnalyticsHandler):
 
         return sites
     
-  
-def global_snapshot(request):
+@requires_admin_super
+def global_snapshot(request, **kwargs):
     context = {}
     
     active_groups = tasks.get_approved_active_groups()
@@ -317,5 +318,12 @@ def global_snapshot(request):
         context,
         context_instance=RequestContext(request)
     )
-
-    
+   
+def recirculate(request, group_id):
+    cached_report = cache.get('group_recirc_' + str(group_id))
+    if cached_report is None:
+        group = Group.objects.get(id=int(group_id))
+        cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
+        cache.set('group_recirc_' + str(group_id), cached_report.body)
+        
+    return HttpResponse(cached_report, 'application/json')
