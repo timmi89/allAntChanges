@@ -1637,9 +1637,10 @@ function antenna($A){
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.ant-summary-'+page.id),
+                                $summary_widget_icon = $summary_widget.find('.ant_logo'),
                                 coords = {
-                                    top: $summary_widget.offset().top,
-                                    left: $summary_widget.offset().left
+                                    top: $summary_widget_icon.offset().top - 2,
+                                    left: $summary_widget_icon.offset().left - 2
                                 };
 
                             // don't redraw summary aWindow if already showing
@@ -3891,7 +3892,6 @@ function antenna($A){
                             if (typeof group_settings.tag_box_gradient !='undefined' && !group_settings.tag_box_gradient ) { delete group_settings.tag_box_gradient; }
                             if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
-
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
 
                         ANT.group = $.extend({}, ANT.group.defaults, group_settings, custom_group_settings );
@@ -3929,7 +3929,6 @@ function antenna($A){
                         var active_sections = ANT.group.active_sections.split(','),
                             active_sections_with_anno_whitelist = "",
                             anno_whitelist = ANT.group.anno_whitelist.split(',');
-                        
                         
                         $.each(active_sections, function(active_idx, active_selector) {
                             active_selector = $.trim( active_selector );
@@ -4010,7 +4009,6 @@ function antenna($A){
                         ANT.group.post_href_selector !== "" && 
                         ANT.group.summary_widget_selector !== ""
                     ) {
-
                         var $posts = $(ANT.group.post_selector),
                             num_posts = $posts.length;
                         //if $(ANT.group.post_selector).length is 0, this will just do nothing
@@ -4018,6 +4016,12 @@ function antenna($A){
                             // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
+
+                            if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
+                                url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
+                            } else {
+                                url = $post_href.attr('href');
+                            }
 
                             var $summary_widget = $post.find(ANT.group.summary_widget_selector).eq(0);
 
@@ -4039,9 +4043,11 @@ function antenna($A){
                                 }
 
                             }
-                            if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
+
+                            // if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
+                            if ( nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
                                 $post.attr('ant-page-checked', true);
-                                url = $post_href.attr('href');
+                                // url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
                                 if (!window.location.origin) {
@@ -4071,6 +4077,7 @@ function antenna($A){
                                     canonical_url: 'same',
                                     title: $post_href.text()
                                 };
+
                                 pagesArr.push(thisPage);
                                 pageDict[key] = thisPage;
 
@@ -4327,7 +4334,6 @@ function antenna($A){
             },
             initEnvironment: function(){
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
-            
                 var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
                 
                 if(isTouchBrowser){
@@ -4454,7 +4460,6 @@ function antenna($A){
           
                 //div to hold indicators, filled with insertContainerIcon(), and then shown.
                 // $('<div id="ant_indicator_details_wrapper" />').appendTo($antSandbox);
-
                 //div to hold event pixels
                 // $('<div id="ant_event_pixels" />').appendTo($antSandbox);
 
@@ -10086,7 +10091,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv32"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv33"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
