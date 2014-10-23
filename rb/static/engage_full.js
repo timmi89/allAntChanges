@@ -7233,6 +7233,7 @@ if ( sendData.kind=="page" ) {
 
                                 //This will be either a helperIndicator or a hidden indicator
                                 var isZeroCountIndicator = !( summary.counts.tags > 0 );
+                                // var isZeroCountIndicator = (typeof summary.counts.highest_tag_count == 'undefined') ? true:false;
 
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
@@ -7276,9 +7277,10 @@ if ( sendData.kind=="page" ) {
                     function _setupHoverForShowAWindow(){
                         // HOVERTIMER
                         if (!isTouchBrowser) {
+                            var isZeroCountIndicator = !( summary.counts.tags > 0 );
                             $indicator.find('.ant_indicator_body').on('mouseenter.ant', function(){
                                 ANT.util.setFunctionTimer( function() {
-                                    if( $indicator.data('isZeroCountIndicator') ){
+                                    if( isZeroCountIndicator ){
                                         _updateAWindowForHelperIndicator();
                                     } else {
                                         _makeAWindow();
@@ -7972,7 +7974,6 @@ if ( sendData.kind=="page" ) {
                                 }
                             } else {
                                 // no t() not used?
-                                // this whole thing is never used:
                                 ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
