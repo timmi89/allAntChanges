@@ -271,7 +271,7 @@ class InhouseAnalyticsJSONHandler(InhouseAnalyticsHandler):
 
         return sites
     
-  
+@requires_admin_super
 def global_snapshot(request):
     context = {}
     
