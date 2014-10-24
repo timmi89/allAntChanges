@@ -1774,7 +1774,8 @@ function antenna($A){
                                         // action: "aWindow_shown_readmode",
                                         // opt_label: "kind: "+kind+", hash: " + hash,
                                         event_type: 'rs',
-                                        event_value: 'rd',
+                                        // event_value: 'rd',
+                                        event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
                                         container_hash: hash,
                                         container_kind: kind,
                                         page_id: page_id
@@ -7232,6 +7233,7 @@ if ( sendData.kind=="page" ) {
 
                                 //This will be either a helperIndicator or a hidden indicator
                                 var isZeroCountIndicator = !( summary.counts.tags > 0 );
+                                // var isZeroCountIndicator = (typeof summary.counts.highest_tag_count == 'undefined') ? true:false;
 
                                 $indicator.data('isZeroCountIndicator', isZeroCountIndicator);
                                 if(isZeroCountIndicator){
@@ -7275,9 +7277,10 @@ if ( sendData.kind=="page" ) {
                     function _setupHoverForShowAWindow(){
                         // HOVERTIMER
                         if (!isTouchBrowser) {
+                            var isZeroCountIndicator = !( summary.counts.tags > 0 );
                             $indicator.find('.ant_indicator_body').on('mouseenter.ant', function(){
                                 ANT.util.setFunctionTimer( function() {
-                                    if( $indicator.data('isZeroCountIndicator') ){
+                                    if( isZeroCountIndicator ){
                                         _updateAWindowForHelperIndicator();
                                     } else {
                                         _makeAWindow();
@@ -7354,7 +7357,7 @@ if ( sendData.kind=="page" ) {
                                 // action: "aWindow_shown_readmode",
                                 // opt_label: "kind: text, hash: " + hash,
                                 event_type: 'rs',
-                                event_value: 'rd',
+                                event_value: (typeof summary.counts.highest_tag_count != 'undefined') ? 'rd':'rd-zero',
                                 container_hash: hash,
                                 container_kind: "text",
                                 page_id: page_id
@@ -7971,7 +7974,6 @@ if ( sendData.kind=="page" ) {
                                 }
                             } else {
                                 // no t() not used?
-                                // this whole thing is never used:
                                 ANT.aWindow.updateFooter( $aWindow, '<span class="ant_no_reactions_msg ant_clearfix">No reactions yet!</span>' );
                             }
                         }
@@ -9934,8 +9936,8 @@ if ( sendData.kind=="page" ) {
                     var widgetSummarySettings = page;
 
                     widgetSummarySettings.key = key;
-                    
-                    if ( $container.find( ANT.group.summary_widget_selector).length == 1 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
+
+                    if ( $container.find( ANT.group.summary_widget_selector).length > 0 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
                         widgetSummarySettings.$anchor = $container.find(ANT.group.summary_widget_selector).eq(0);
                         
                     } else if( $(".ant-page-summary").length==1 ){
