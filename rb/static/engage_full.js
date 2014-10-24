@@ -9936,8 +9936,8 @@ if ( sendData.kind=="page" ) {
                     var widgetSummarySettings = page;
 
                     widgetSummarySettings.key = key;
-                    
-                    if ( $container.find( ANT.group.summary_widget_selector).length == 1 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
+
+                    if ( $container.find( ANT.group.summary_widget_selector).length > 0 && $container.find( ANT.group.summary_widget_selector+'[ant-page-widget-key="' + key + '"]') ) {
                         widgetSummarySettings.$anchor = $container.find(ANT.group.summary_widget_selector).eq(0);
                         
                     } else if( $(".ant-page-summary").length==1 ){
