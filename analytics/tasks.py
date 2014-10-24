@@ -113,7 +113,7 @@ def do_all_groups_recirc():
             
             
 def get_display_interaction_and_count(hash, group):
-    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group)
+    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group, approved=True)
     i_count = {}
     display_interaction = None
     display_vote = 0

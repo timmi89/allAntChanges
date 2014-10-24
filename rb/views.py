@@ -390,10 +390,6 @@ def board(request, board_id=None, **kwargs):
     except Board.DoesNotExist:
         raise Http404
     
-    # print "-------- BOARD ----------"
-    # print board.owner.id
-    # print board.owner.first_name
-    # print board.owner.last_name
     interactions = board.interactions.all()
     
     interactions_paginator = Paginator(interactions, 50)
@@ -492,28 +488,7 @@ def wordpress(request, **kwargs):
     else:
         return HttpResponseRedirect(isNotAdminUrl)
 
-# dont expose the signup form anymore for now.  We'll use the wufoo form and onboard ourselves - redirect them.
-# def create_group(request, **kwargs):
-#     context = kwargs.get('context', {})
-#     cookie_user = checkCookieToken(request)
-#     if not cookie_user: return HttpResponseRedirect('/')
-    
-#     if request.method == 'POST':
-#         form = CreateGroupForm(request.POST)
-#         if form.is_valid():
-#             form.save(cookie_user)
-#             context['requested'] = True
-#     else:
-#         form = CreateGroupForm()
-        
-#     context['form'] = form
-#     context['fb_client_id'] = FACEBOOK_APP_ID
 
-#     return render_to_response(
-#         "group_create.html",
-#         context,
-#         context_instance=RequestContext(request)
-#     )
 
 @requires_admin_wordpress
 def create_group_wordpress(request, **kwargs):
@@ -851,11 +826,6 @@ def settings_wordpress(request, **kwargs):
         if form.is_valid():
             form.save()
             context['saved'] = True
-
-        else:
-            #handle errors
-            # print form.errors
-            pass
 
     else:
         form = GroupForm(instance=group)

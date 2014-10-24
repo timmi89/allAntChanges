@@ -104,14 +104,6 @@ if DEBUG:
             'TIMEOUT':60
         }
     }
-    """
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '127.0.0.1:11211',
-        }
-    }
-    """
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
@@ -120,13 +112,9 @@ else:
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    #STATICFILES_STORAGE = 'rb.s3boto.S3BotoStorage'
-    #DEFAULT_FILE_STORAGE = 'rb.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
-    
-    
     
     if not ANTENNA_ARRAY:
         DATABASES = {
@@ -171,9 +159,7 @@ else:
           }
           
         }
-        """
         
-        """
         CACHES = {
             'default': {
                 'BACKEND': 'memcachepool.cache.UMemcacheCache',
@@ -349,17 +335,11 @@ MIDDLEWARE_CLASSES = (
 )
 
 if not ANTENNA_ARRAY:
-    # ROOT_URLCONF = 'readrboard.urls'
     ROOT_URLCONF = 'antenna.urls'
 else:
     ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    #todo: make this an absolute path as recommended. Using rel paths for now
-    # so it's compatible on all our local machines
     "antenna/rb/templates"
 )
 
@@ -382,11 +362,6 @@ else:
     EMAIL_PORT = 587
 
 
-"""
-SERIALIZATION_MODULES = {
-    'json': 'wadofstuff.django.serializers.json'
-}
-"""
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -426,11 +401,6 @@ DEVSERVER_MODULES = (
 
 DEVSERVER_IGNORED_PREFIXES = ['/media', '/uploads']
 
-# for get_profile()
-#AUTH_PROFILE_MODULE = 'rb.Profile'
-
-# for sessions
-#SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 
 AUTHENTICATION_BACKENDS = (
   'django.contrib.auth.backends.ModelBackend',
@@ -455,13 +425,6 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS": False
 }
 
-
-# for social auth
-#SOCIAL_AUTH_ERROR_KEY = 'social_errors'
-#SOCIAL_AUTH_EXPIRATION = 'expires'
-#FACEBOOK_EXTENDED_PERMISSIONS = ('email')
-
-#SESSION_COOKIE_DOMAIN = '.local.antenna.is'
 
 LOGGING = {
     'version': 1,

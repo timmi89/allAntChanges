@@ -318,12 +318,48 @@ def global_snapshot(request, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
+    
+def group_report(request, group_id):
+    group = Group.objects.get(id=int(group_id))
+    
+    group_info = {}
+    group_info['group_id'] = group.id
+    group_info['group'] = model_to_dict(group)
+    try:
+        group_info['ABsld'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='ABsld').order_by('-created')[0].body)
+    except:
+        group_info['ABsld']  = {}  #not in template, yet
+    try:
+        group_info['tvhrc'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='tvhrc').order_by('-created')[0].body)
+    except Exception, ex:
+        group_info['tvhrc'] = []
+    try:
+        group_info['mrcon'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='mrcon').order_by('-created')[0].body)
+    except Exception, ex:
+        group_info['mrcon'] = []
+    try:
+        group_info['guser'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='guser').order_by('-created')[0].body)
+    except Exception, ex:
+        group_info['guser'] = []
+        
+    try:
+        group_info['A_page_ratio'] = float(group_info['ABsld']['A_script_loads']) / float(group_info['guser']['A_user_count'])
+        group_info['B_page_ratio'] = float(group_info['ABsld']['B_script_loads']) / float(group_info['guser']['B_user_count'])
+        group_info['engage_ratio'] = float(group_info['guser']['engaged_user_count'])  / float(group_info['guser']['A_user_count'])
+        
+    except Exception, ex:
+        group_info['A_page_ratio'] = 0
+        group_info['B_page_ratio'] = 0
+        group_info['engage_ratio'] = 0
+        
+
+    return HttpResponse(json.dumps(group_info), 'application/json')
    
 def recirculate(request, group_id):
     cached_report = cache.get('group_recirc_' + str(group_id))
     if cached_report is None:
         group = Group.objects.get(id=int(group_id))
         cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
-        cache.set('group_recirc_' + str(group_id), cached_report.body)
+        cache.set('group_recirc_' + str(group_id), cached_report)
         
     return HttpResponse(cached_report, 'application/json')

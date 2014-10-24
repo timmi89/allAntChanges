@@ -49,7 +49,6 @@ def agree(request, interaction_id = None, **kwargs):
         logger.info("agree: CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
         logger.info("agree: CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
         if social_user.notification_email_option and group.send_notifications:
-        # if social_user.notification_email_option:
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
             child_count = child_interactions.count()
             thresholds = NotificationType.objects.filter(name__startswith = 'agreethreshold')
@@ -94,11 +93,7 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
     context = {}
     try:
         interaction = Interaction.objects.get(id = interaction_id)
-        # comment-out to re-enable the bad reaction emails
-        social_user = SocialUser.objects.get(user = interaction.user)
         group = Group.objects.get(id = group_id)
-        
-        
         admin_index = 0
         for admin in group.admins.all():
             #SEND EMAIL!
@@ -113,9 +108,6 @@ def group_node(request, interaction_id = None, group_id = None, **kwargs):
         
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
-    # comment-out to re-enable the bad reaction emails
-    except SocialUser.DoesNotExist:
-        logger.info("NO SOCIAL USER")
     except Exception, ex:
         logger.info(ex)
     

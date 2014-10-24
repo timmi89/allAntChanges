@@ -27,5 +27,6 @@ urlpatterns = patterns('',
     url(r'^/inhouse/$', 'analytics.views.analytics_inhouse'),
     url(r'^/inhouse/test/$', InhouseAnalytics),
     url(r'^/global/$', 'analytics.views.global_snapshot'),
+    url(r'^/snapshot/v1/(?P<group_id>\d+)/$', 'analytics.views.group_report'),
     url(r'^/recirc/v1/(?P<group_id>\d+)/$', 'analytics.views.recirculate'),
 )
