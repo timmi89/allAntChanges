@@ -1,14 +1,14 @@
 .ant * {
     /*temp reset*/
-    margin:0;;
-    padding:0;;
+    margin:0;
+    padding:0;
     color:#666;
     font-variant:normal;
     font-style:normal;
-    line-height:1em;;
-    letter-spacing:normal;;
-    width:auto;;
-    text-indent:0;;
+    line-height:1em;
+    letter-spacing:normal;
+    width:auto;
+    text-indent:0;
     -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing:border-box;
 }
 
@@ -18,7 +18,7 @@
 .ant p
 {
     /*this was clobbering the select element border when user above */
-    border: none;;
+    border: none;
 }
 
 /*temp hack exceptions to some of these.  Do this better later*/
@@ -273,7 +273,7 @@ div.ant_loader {
     height: 20px;
     margin-right: 5px;
     width: 20px;
-    visibility:hidden;;
+    visibility:hidden;
     /*position:relative;*/
     z-index:1;
     position:absolute;
@@ -352,11 +352,11 @@ border-color:transparent #80aec9 transparent transparent; border-style:solid; bo
   position: absolute;
   z-index: 111020;
   display: block;
-  visibility: visible;;
+  visibility: visible;
   padding: 5px;
   font-size: 11px;
-  opacity: 0;;
-  filter: alpha(opacity=0);;
+  opacity: 0;
+  filter: alpha(opacity=0);
   font-family:Arial,sans-serif;
   letter-spacing:0.5px;
   line-height:13px;
@@ -632,7 +632,7 @@ div.ant_body   {
     /*max-height:266px;*/
     float:left;
     display:block;
-    position: relative;;
+    position: relative;
 }
 div.ant_indicator_details div.ant_body   {
     width: 100%;
@@ -644,7 +644,7 @@ div.ant div.ant_body div.ant_commentsWrap{
 }
 div.ant div.jspScrollable   { outline:none!important; }
 
-div.ant div.ant_body div.jspHorizontalBar  { display:none;; }
+div.ant div.ant_body div.jspHorizontalBar  { display:none; }
 
 
 div.ant div.ant_body div.jspVerticalBar    {
@@ -957,7 +957,7 @@ div.ant .ant_narrow input[type="text"].ant_inlineComment{
 }
 
 div.ant-board-create-div {
-  position:fixed;top:100px;left:50%;margin-left:-323px;;z-index:1000000000000000;padding:10px;background:#fff;
+  position:fixed;top:100px;left:50%;margin-left:-323px;z-index:1000000000000000;padding:10px;background:#fff;
 }
 div.ant-board-create-div iframe {
   width:625px;
@@ -968,13 +968,13 @@ div.ant_tag_details {
   position:absolute;
   background:#fff;
   z-index:100000;
-  min-width:80px;;
+  min-width:80px;
   -webkit-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
   -moz-box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
   box-shadow: 0 1px 2px rgba(128, 128, 128, 0.7);
   border-top:1px solid #ddd;
   padding:0px;
-  display:none;;
+  display:none;
 }
 div.ant_tag_details.ant_boomarklet {
   position:fixed;
@@ -1023,7 +1023,7 @@ div.ant_tag_details div.ant_counts.ant_text img {
     top: 5px;
 }
 
-div.ant.ant-summary div.ant_info            { clear: both; margin: 5px; padding: 10px; border: 1px solid #ccc; background:#fff; display:none;; }
+div.ant.ant-summary div.ant_info            { clear: both; margin: 5px; padding: 10px; border: 1px solid #ccc; background:#fff; display:none; }
 div.ant.ant-summary div.ant_info em         { font-style:italic; }
 div.ant.ant-summary div.ant_info ins        { text-decoration:none; }
 div.ant.ant-summary div.ant_info ins img    { margin:0; padding:0; border:0;}
@@ -1038,7 +1038,7 @@ div.ant_info {padding: 10px 10px 2px 10px;}
 
 div.ant.ant-summary {
   margin:10px 0;
-  float:none;;
+  float:none;
   cursor:default;
   display:inline-block;
   color: #eee;
@@ -1173,7 +1173,7 @@ div.ant.ant-summary div.ant-sum-headline {
     display:inline-block;
     color:#787878;
     line-height: 32px;
-    max-height:64px;; /* so it can animate-larger when there are many reactions */
+    max-height:64px; /* so it can animate-larger when there are many reactions */
     overflow:hidden;
     float:left;
 }
@@ -1206,6 +1206,7 @@ div.ant.ant-summary a.ant_reactions_label span {
   font-size:14px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
+  font-weight: normal;
 }
 div.ant.ant-summary.ant-summary-no-reactions div.ant-sum-reactions a.ant_reactions_label {
     display: none;
@@ -1660,7 +1661,7 @@ div.ant_reactions {
 }
 
 /* user education bar */
-div.ant_alert_box        { position:fixed; top:-400px;; left:10px; background:#f0f0f0; min-width:220px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa ; -webkit-box-shadow:0 0 10px 1px #aaa ; box-shadow:0 0 10px 1px #aaa; }
+div.ant_alert_box        { position:fixed; top:-400px; left:10px; background:#f0f0f0; min-width:220px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa ; -webkit-box-shadow:0 0 10px 1px #aaa ; box-shadow:0 0 10px 1px #aaa; }
 div.ant_alert_box a      { color:#008be4; }
 div.ant_alert_box_1      { background: #fff; height:30px; }
 div.ant_alert_box_1 h1   { padding:11px 0 0 26px; cursor:text; clear:none;}
@@ -1711,9 +1712,9 @@ div.ant_alert_box .seeItLinkText {
 div.ant_indicator {
     /*start with 0 opacity so it can fade in properly*/
     /* opacity for .ant_indicator set in js instead of here. Fade it in on load so we can still use display:inline; */
-    opacity:0.0;;
-    -moz-opacity:0.0;;
-    -khtml-opacity:0.0;;
+    opacity:0.0;
+    -moz-opacity:0.0;
+    -khtml-opacity:0.0;
     position: relative;
     margin: 0;
     padding: 0;
@@ -1738,7 +1739,7 @@ div.ant_indicator {
     opacity:1.0 !important;
     -moz-opacity:1.0 !important;
     -khtml-opacity:1.0 !important;
-    visibility: visible;;
+    visibility: visible;
 }
 /*
 #ant_sandbox.isTouchBrowser div.ant_indicator.ant_indicator_for_media.ant_indicator_not_img {
@@ -1814,9 +1815,9 @@ div.ant_helper_aWindow div.ant_header h1{
   -khtml-opacity:1.0 !important;
 }
 div.ant_indicator_for_text.ant_helper {
-    opacity:0;;
-    -moz-opacity:0;;
-    -khtml-opacity:0;;
+    opacity:0;
+    -moz-opacity:0;
+    -khtml-opacity:0;
     cursor:pointer;
 }
 div.ant_indicator_for_text.ant_helper div.ant_indicator_body {
@@ -1854,7 +1855,7 @@ div.ant_indicator_details {
     background-image: -moz-linear-gradient(center bottom , #ECECEC 0%, #fff 39%);
     margin:-5px 0 0 -4px;
     overflow:hidden;
-    display:none;; /*start with them hidden by default - will override with js*/
+    display:none; /*start with them hidden by default - will override with js*/
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -2061,8 +2062,8 @@ div.ant_indicator_details_for_media div.ant_indicator_details_body {
 
 /*now override styles for the image containers*/
 div.ant_indicator_for_media {
-    position:absolute;;
-    display:none;;
+    position:absolute;
+    display:none;
     opacity:0.6 !important;
 }
 div.ant_indicator_for_media.ant_visible {
@@ -2082,9 +2083,9 @@ div.ant_indicator_for_media.ant_live_hover.ant_hidden {
 
 div.ant_indicator_details_for_media {
     overflow:hidden; /*for the animate() out to work nicely*/
-    height:0;;
+    height:0;
     /*should be hidden by default*/
-    /*display: none;;*/
+    /*display: none;*/
     /*display:block;*/
     margin:0;
     box-shadow: 0 0px 4px #ccc;
@@ -2108,7 +2109,7 @@ div.ant_indicator_for_media_inline {
     /*left:-12px;*/
     /*top:-36px;    */
     /*width:22px;*/
-    /*text-align: center;;*/
+    /*text-align: center;*/
 /*}*/
 
 div.ant_indicator_for_media_inline.ant_visible {
@@ -2266,8 +2267,8 @@ div.ant.ant_inline div.ant_body.ant_tags_list {
   background:none;
 }
 
-div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }
-/*div.ant div.ant_body.ant_tags_list { height:auto;; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; background:url(../../images/congruent_outline_light.png); }*/
+div.ant div.ant_body.ant_tags_list { height:auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }
+/*div.ant div.ant_body.ant_tags_list { height:auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; background:url(../../images/congruent_outline_light.png); }*/
 div.ant div.ant_body.ant_tags_list.ant_grid { width:100px; }
 div.ant.ant_window.w200 div.ant_body.ant_tags_list.ant_grid { width:200px; }
 div.ant.ant_window.w300 div.ant_body.ant_tags_list.ant_grid { width:300px; }
@@ -2464,6 +2465,9 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_plusOne{
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_count{
     display: none;
 }
+div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant-comment{
+  color:#333 !important;
+}
 
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box:hover .ant_plusOne{
     display: block;
@@ -2484,7 +2488,7 @@ div.ant div.ant_footer .ant_click_overlay{
     background: none;
 }
 
-div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:14px; border:none; letter-spacing:-1px; padding: 3px; max-width:100%; height:auto; background:transparent; }
+div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto 0 -1.5em; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:14px; border:none; letter-spacing:-1px; padding: 3px; max-width:75%; height:auto; background:transparent; }
 div.ant div.ant_footer .ant_box:hover .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
@@ -2499,6 +2503,7 @@ div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
   text-align: center;
   cursor: pointer;
   display: none;
+  margin-right: -1.5em;
 }
 
 div.ant.w100 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
@@ -2730,5 +2735,5 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
     opacity:1.0 !important;
     -moz-opacity:1.0 !important;
     -khtml-opacity:1.0 !important;
-    visibility: visible;;
+    visibility: visible;
 }*/
