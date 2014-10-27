@@ -1788,16 +1788,17 @@ function antenna($A){
 
                             // if there is a custom CTA element, override the coordinates with its location
                             if ( typeof settings.$custom_cta != "undefined" ) {
+                                var offsets = settings.$custom_cta.offset();
                                 if (isTouchBrowser) {
                                     var coords = {
-                                        top: settings.$custom_cta.offset().bottom+5,
-                                        left: settings.$custom_cta.left
+                                        top: offsets.bottom+5,
+                                        left: offsets.left
                                     };
                                 } else {
                                     var ant_offset_x = (settings.$custom_cta.attr('ant-offset-x')) ? parseInt(settings.$custom_cta.attr('ant-offset-x')) : 0;
                                     var ant_offset_y = (settings.$custom_cta.attr('ant-offset-y')) ? parseInt(settings.$custom_cta.attr('ant-offset-y')) : 0;
-                                    coords.top = settings.$custom_cta.offset().top + ant_offset_y;
-                                    coords.left = settings.$custom_cta.offset().left + ant_offset_x;
+                                    coords.top = offsets.top + ant_offset_y;
+                                    coords.left = offsets.left + ant_offset_x;
                                 }
 
                             }
@@ -4246,7 +4247,6 @@ function antenna($A){
 
                     $(ANT.group.active_sections)
                         .on( 'mouseenter.ant', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
-
                             var $this = $(this);
                             
                             var hash = $this.data('hash');
@@ -4256,9 +4256,9 @@ function antenna($A){
                             if ( $this.closest('.no-ant').length ) {
                                 return;
                             }
-
                             var minImgWidth = 100;
                             if ( $this.width() >= minImgWidth ) {
+
                                 var hasBeenHashed = $this.hasAttr('ant-hashed'),
                                     isBlacklisted = $this.closest('.ant, .no-ant').length;
 
@@ -4295,7 +4295,7 @@ function antenna($A){
 
                                 } else {
                                     var hash = $this.data('hash');
-                                    
+
                                     $this.addClass('ant_live_hover');
                                     if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
                                         $('#ant_indicator_' + hash).addClass('ant_visible');
@@ -4517,7 +4517,8 @@ function antenna($A){
                     $(document).on('touchmove.ant',function(e) {
                         ANT.util.bubblingEvents['dragging'] = true;
                     });
-                    $(document).on('touchstart.ant',function(e) {
+                    // $(document).on('touchstart.ant',function(e) {
+                    $(document).on('touchend.ant',function(e) {
                         ANT.util.bubblingEvents['dragging'] = false;
                     });
                 }
@@ -4657,7 +4658,7 @@ function antenna($A){
                         whiteList: function() { return ANT.group.media_selector; },
                         filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
-                            var body = this.src;
+                            var body = (typeof this.src != 'undefined') ? this.src : this.data;
                             $(this).data({
                                 'body':body
                             });
@@ -4744,7 +4745,7 @@ function antenna($A){
                     // PERFORMANCE ISSUE?
                     // LAYOUT INVALIDATED?
                     $group = $group.add( $node.find( group.whiteList() ) );
-                    
+
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
                     if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
@@ -4770,7 +4771,7 @@ function antenna($A){
                     });
 
                     $allNodes = $allNodes.add($group);
-                    
+
                     //flag exceptions for inline_indicators
                     var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
 
@@ -4779,7 +4780,6 @@ function antenna($A){
                     });
 
                 });
-
 
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
@@ -10093,7 +10093,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv33"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv34"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
