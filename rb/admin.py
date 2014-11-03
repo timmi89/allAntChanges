@@ -60,7 +60,8 @@ class RBGroupAdmin(admin.ModelAdmin):
         ('Customization', {
             'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
                        'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook', 
-                       'sharebox_twitter', 'sharebox_stumble', 'sharebox_digg', 'sharebox_reddit', 'sharebox_google')
+                       'sharebox_twitter', 'sharebox_stumble', 'sharebox_digg', 'sharebox_reddit', 'sharebox_google',
+                       'show_recirc', 'recirc_selector', 'recirc_title', 'image_selector', 'image_attribute')
             
         }),
      )
