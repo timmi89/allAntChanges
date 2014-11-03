@@ -152,7 +152,7 @@ def getPage(host, page_request):
     url = page_request.get('url', None)
     title = page_request.get('title', None)
     group_id = page_request.get('group_id', 1)
-    
+    image = page_request.get('image', None)
     author = page_request.get('author', None)
     topics = page_request.get('topics', None)
     section = page_request.get('section', None)
@@ -181,12 +181,22 @@ def getPage(host, page_request):
     else:
         canonical = ""
 
-    page = Page.objects.get_or_create(
-        url = url,
-        canonical_url = canonical,
-        defaults = {'site': site, 'title':title}
-    )
-    return page[0]
+    try:
+        page = Page.objects.get(
+            url = url,
+            canonical_url = canonical
+        )
+        if page.image and len(page.image) < 1 and image:
+            page.image = image
+            page.save()
+        return page   
+    except Page.DoesNotExist:
+        page = Page.objects.get_or_create(
+            url = url,
+            canonical_url = canonical,
+            defaults = {'site': site, 'title':title, 'image':image}
+        )
+        return page[0]
     
 def createInteractionNode(node_id=None, body=None, group=None):
     # Get or create InteractionNode for share
@@ -196,21 +206,6 @@ def createInteractionNode(node_id=None, body=None, group=None):
     
     # Body was passed rather than id
     elif body:
-        # commenting this out.  
-        # the Interaction Node can have profanity.  we'll set the Interaction to unapproved instead.
-        # if group.word_blacklist:
-        #     # Check body for blacklisted word
-        #     """ for bad, good in blacklist.iteritems(): body = body.replace(bad, good) """
-        #     blacklist = [word.strip() for word in group.word_blacklist.split(',')]
-        #     #blacklist = ["%r" % word.strip() for word in group.word_blacklist.split(',')]
-        
-        #     # For demo search for bad words inside other bad words
-        #     inside_words = True if group.id == 1 else False
-        
-        #     pf = ProfanitiesFilter(blacklist, replacements="*", complete=False, inside_words=inside_words)
-        #     body = pf.clean(body)
-        
-        
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
         
@@ -524,17 +519,10 @@ def getSinglePageDataDict(page_id):
             
     # Retrieve containers
     containers = Container.objects.filter(id__in=iop.values('container'))
-
-    # parents = iop.filter(page=current_page, parent=None)
-    # par_con = []
-    # for parent in parents:
-        # par_con.append({parent.container.id:parent.id})
-    # Get page interaction counts, grouped by kind
     values = iop.order_by('kind').values('kind')
     # Annotate values with count of interactions
     summary = values.annotate(count=Count('id'))
 
-    # ---Find top 10 tags on a given page---
     tags = InteractionNode.objects.filter(
         interaction__kind='tag',
         interaction__page=current_page,
@@ -547,29 +535,12 @@ def getSinglePageDataDict(page_id):
     tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
     toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
 
-    # singletagcounts = ordered_tags.annotate(tag_count=Count('interaction')).filter(tag_count__lt=2)
-    # singletoptags_with_containers = singletagcounts.values('id','interaction__container')
-  
-    # ---Find top 10 shares on a give page---
-    # content = Content.objects.filter(interaction__page=current_page.id)
-    # shares = content.filter(interaction__kind='shr')
-    # sharecounts = shares.annotate(Count("id"))
-    # topshares = sharecounts.values("body").order_by()[:10]
-
-    # ---Find top 10 non-temp users on a given page---
-    # socialusers = SocialUser.objects.filter(user__interaction__page=current_page.id)
-    # userinteract = socialusers.annotate(interactions=Count('user__interaction')).select_related('user')
-    # topusers = userinteract.order_by('-interactions').values('user','full_name','img_url','interactions')[:10]
     result_dict = dict(
             id=current_page.id,
             summary=summary,
             toptags=toptags,
-            # singletoptags_with_containers=singletoptags_with_containers,
-            # topusers=topusers,
-            # topshares=topshares,
             urlhash = urlhash,
             containers=containers
-            # parents = par_con
         )
     return result_dict
     

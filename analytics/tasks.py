@@ -65,17 +65,16 @@ def do_all_groups_recirc():
                 if  not hash_report.has_key('page'):
                     continue
                 
-                page_dict = hash_report['page']
-                if unique_pages.has_key(page_dict['id']):
+                if unique_pages.has_key(hash_report['page']['id']):
                     continue
                 
-                unique_pages[page_dict['id']] = True
+                unique_pages[hash_report['page']['id']] = True
                 if len(unique_pages) == TVHRC_SLOTS:
                     break
                 else:
                     (display_interaction, display_vote) = get_display_interaction_and_count(hash_report['container_hash'], group)
                     recirc = {}
-                    recirc['page'] = page_dict
+                    recirc['page'] = hash_report['page']
                     recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
                     recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
                     recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
@@ -88,18 +87,17 @@ def do_all_groups_recirc():
                 if  not mrc.has_key('page'):
                     continue
                 
-                page_dict = mrc['page']
-                if unique_pages.has_key(page_dict['id']):
+                if unique_pages.has_key(mrc['page']['id']):
                     continue
                 
                 content_dict = mrc['content']
-                unique_pages[page_dict['id']] = True
+                unique_pages[mrc['page']['id']] = True
                 if len(unique_pages) == TVHRC_SLOTS + MRCON_SLOTS:
                     break
                 
                 (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group)       
                 recirc = {}
-                recirc['page'] = page_dict
+                recirc['page'] = mrc['page']
                 recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
                 recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
                 recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
