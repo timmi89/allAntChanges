@@ -324,7 +324,7 @@ def group_report(request, group_id):
     
     group_info = {}
     group_info['group_id'] = group.id
-    group_info['group'] = model_to_dict(group)
+    group_info['group'] = model_to_dict(group,fields = ['id', 'short_name', 'name'])
     try:
         group_info['ABsld'] = json.loads(JSONGroupReport.objects.filter(group=group, kind='ABsld').order_by('-created')[0].body)
     except:

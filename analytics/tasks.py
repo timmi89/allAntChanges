@@ -132,6 +132,7 @@ def do_all_group_reports():
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
+    td = datetime.timedelta(days=30)
     try:
         groups = get_approved_active_groups()
     except:
@@ -150,7 +151,7 @@ def do_all_group_reports():
             
             A_B_script_loads(event_util, now, group)
             most_reacted_content(now,group)
-            group_general = event_util.get_group_general_user_data(group, now.month, now.year)
+            group_general = event_util.get_group_general_user_data(group, now - td, now)
             JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
             global_data['A_user_count'] = int(global_data['A_user_count']) + int(group_general['A_user_count'])
             global_data['B_user_count'] = int(global_data['B_user_count']) + int(group_general['B_user_count'])
@@ -166,7 +167,8 @@ def do_all_group_reports():
             
 def group_top_reaction_view_hash_count(event_util, now, group):
     group_data = []
-    hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now.month, now.year, 10)
+    td = datetime.timedelta(days=30)
+    hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now - td, now, 10)
     if hash_tuples is None:
         return None
  
@@ -196,31 +198,12 @@ def group_top_reaction_view_hash_count(event_util, now, group):
   
 
 
-def top_reaction_view_hash_counts():
-    logger.info("Start group view hash events task")
-    event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
-                                      'keyFile':settings.EVENTS_KEY_FILE,
-                                      'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
-    now = datetime.datetime.now()
-    try:
-        groups = get_approved_active_groups()
-    except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
-    
-    for group in groups:
-        group_data = group_top_reaction_view_hash_count(event_util, now, group)
-        if group_data:
-            JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
-        else:
-            logger.info("No group data generated: " + str(group.id))
-    logger.info("Task GROUP REACTION HASH VIEWS finished")
-
-
 
 def A_B_script_loads(event_util, now, group):
     try:
-        A_script_loads = event_util.get_event_type_count_by_event_value(group, now.month, now.year, 1, 'sl', 'A')
-        B_script_loads = event_util.get_event_type_count_by_event_value(group, now.month, now.year, 1, 'sl', 'B')
+        td = datetime.timedelta(days=30)
+        A_script_loads = event_util.get_event_type_count_by_event_value(group, now - td, now, 1, 'sl', 'A')
+        B_script_loads = event_util.get_event_type_count_by_event_value(group, now - td, now, 1, 'sl', 'B')
         hash_data = {}
         hash_data['group_id'] = group.id
         hash_data['A_script_loads'] = A_script_loads
@@ -237,8 +220,9 @@ def A_B_script_loads(event_util, now, group):
 
     
 def most_reacted_content(now, group):
-    first_of_month = datetime.datetime(now.year,now.month, 1, 0, 0, 1)
-    interactions = Interaction.objects.filter(page__site__group = group, created__gt = first_of_month)
+    td = datetime.timedelta(days=30)
+    thirty_days = datetime.now() - td
+    interactions = Interaction.objects.filter(page__site__group = group, created__gt = thirty_days)
     content_data = {}
     content_counts = {}
     most_reacted = []
