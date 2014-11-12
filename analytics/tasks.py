@@ -2,8 +2,9 @@ import settings
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from analytics.utils import OAuth2EventsUtility
-import datetime, json
+import datetime, json, random
 from antenna.rb.models import * 
+from antenna.utils import cache as antenna_cache
 from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
 from models import *
@@ -244,6 +245,65 @@ def most_reacted_content(now, group):
         most_reacted.append(c_d)
     
     JSONGroupReport.objects.create(body=json.dumps(most_reacted), group=group, kind='mrcon')  
+
+@periodic_task(name='generate_approved_active_groups', ignore_result=True, 
+               run_every=(crontab(hour="*", minute="*/12", day_of_week="*")))
+def sowing_seeds_of_love():
+    try:
+        groups = get_approved_active_groups()
+    except:
+        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
+    
+    now = datetime.datetime.now()
+    td = datetime.timedelta(minutes=12)
+    then = now - td
+    for group in groups:
+        pages = Page.objects.filter(site__group = group, createdAt >= then)
+        for page in pages:
+            love_seed = random.choice(group.blessed_tags)
+            inseminator = randcom.choice(User.objects.filter(id__in = settings.SEEDERS))   
+            
+            interactions = Interaction.objects.filter(page = page)
+            for interaction in interactions:
+                if interaction.parent is None:
+                    try:
+                        zygote = Interaction(
+                            page=page,
+                            container=interaction.container,
+                            content=interation.content,
+                            user=inseminator,
+                            kind=interaction.kind,
+                            interaction_node=interaction.interaction_node,
+                            parent=interaction,
+                            rank = 0,
+                            approved = true
+                        )
+                        zygote.save()
+                        antenna_cache.clear_interaction_caches(page, interaction.container)
+                        break
+                    except Exception as e:
+                        logger.warn("Error seeding interactions")
+                    
+            #page level seed
+            page_container = Container.objects.get_or_create(hash='page') 
+            page_content = Content.objects.get_or_create(kind='pag', body='')
+            
+            try:
+                zygote = Interaction(
+                    page=page,
+                    container=page_container,
+                    content=page_content,
+                    user=inseminator,
+                    kind='tag',
+                    interaction_node=love_seed.node,
+                    parent=None,
+                    rank = 0,
+                    approved = true
+                )
+                zygote.save()
+            except Exception as e:
+                logger.warn("Error seeding page interaction")
+            antenna_cache.clear_interaction_caches(page, page_container)
 
     
 @periodic_task(name='generate_approved_active_groups', ignore_result=True, 

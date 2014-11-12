@@ -538,13 +538,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data):
-        known = {}
-
-        # Quick fix for now.  I'm still throwing an error, but doing it intentionally.
-        # The important thing is we're no longer get_or_creating an adhock text container which was just craziness and causing all kinds of nasty.
-        
-        # TODO: figure out why the container_id is not getting sent - 
-        # I think it might be because the cache's result of summary/container call is taking a while to send back a known result... looking into it.
+        known = {}    
         try:
             container_id = data['container_id']
 
@@ -556,18 +550,6 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         
         page_id = data['page_id']
 
-        # hash = data['hash']
-        # print "- - - - - - - - - "
-        # print "contentSummaryHandler:  page_id is: " + str(page_id)
-        # print "- - - - - - - - - - - - - - - - - - - - - - - - - - - "
-        # print data
-
-
-        # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
-
-        # Force queryset evaluation by making lists - reduces interaction queries to 1
-        #logger.info("C:" + str(dir(container_id)))
-        #logger.info("P:" + str(dir(page_id)))
         if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
             raise JSONException(u"Bad page id or container_id in content summary call")
 

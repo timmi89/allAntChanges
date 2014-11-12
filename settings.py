@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from os import uname
 
-if uname()[1] == "hat" : DEBUG = True
+if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
