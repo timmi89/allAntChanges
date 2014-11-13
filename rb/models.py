@@ -261,6 +261,8 @@ class Group(models.Model):
     recirc_selector = models.CharField(max_length=255, blank=True)
     recirc_title = models.CharField(max_length=255, blank=True)
     
+    image_selector = models.CharField(max_length=255, blank=True)
+    image_attribute = models.CharField(max_length=255, blank=True)
     # temporary user settings
     temp_interact = models.IntegerField(default=5)
 
@@ -370,7 +372,7 @@ class Page(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=255, blank=True)
     canonical_url = models.URLField(blank=True)
-    
+    image = models.CharField(max_length=255, blank=True)
     # new for data dashboard v2
     author = models.CharField(max_length=255, blank=True) # text, i.e. "John Dear"
     topics = models.CharField(max_length=255, blank=True) # comma-delimited, i.e. "politics, healthcare, lovin"

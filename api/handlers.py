@@ -606,11 +606,7 @@ class PageDataHandler(AnonymousBaseHandler):
         
         pages_data = []
         
-        # Explicitly call list to evaluate queryset here
-        interactions = Interaction.objects.filter(page__in=pages)
-        
         for current_page in pages:
-            # Find all the interactions on page
             cached_result = cache.get('page_data' + str(current_page.id))
             if cached_result is not None:
                 #logger.info('returning page data cached result')
