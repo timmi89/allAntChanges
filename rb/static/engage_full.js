@@ -1631,9 +1631,9 @@ function antenna($A){
                     //ANT.aWindow._aWindowTypes.tagMode.make(settings);
                     // [porter] we should change the name of this function.  no need to nest under _aWindowTypes anymore, right?
                     make: function(settings){
-                        //ANT.aWindow._aWindowTypes.writeMode.make:
-                        //as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
-
+                        // ANT.aWindow._aWindowTypes.writeMode.make:
+                        // as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
+                        // this is where we freaking make windows.  makewindow.  yay abstracting parameters into functions.
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.ant-summary-'+page.id),
@@ -1677,7 +1677,6 @@ function antenna($A){
                                 // show writemode text
                                 // writeMode
                                 
-
                                 // ANT.events.track('start_react_text');
                                 ANT.events.trackEventToCloud({
                                     // category: "engage",
@@ -1690,13 +1689,13 @@ function antenna($A){
                                     page_id: page_id
                                 });
 
-
                                 var newSel;
                                 if ( kind == "text" ) {
                                     // TEXTACTIONBAR
 
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
+
                                     if(!newSel) return false;
                                     //temp fix to set the content (the text) of the selection to the new selection
                                     //todo: make selog more integrated with the rest of the code
@@ -1720,7 +1719,6 @@ function antenna($A){
                                             coords.top = strBottom + 2;
                                         }
                                     }
-
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
                                         var $container = $('[ant-hash="'+hash+'"]');
@@ -4170,8 +4168,6 @@ function antenna($A){
                             if (ANT.group.useDefaultSummaryBar){
                                 load_event_value = 'def';
                             } else {
-                                console.log('response');
-                                console.log(response);
                                 if (response.data.length === 1) {
                                     load_event_value = 'si'; // single page load
                                 } else if (response.data.length > 1) {
@@ -4897,6 +4893,13 @@ function antenna($A){
                     //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
                     //     ANT.actions.stripAntNode($parentNodes);
                     // }
+
+                    // prevent nested block element parents from having a hash?
+                    var $hashParents = $this.parents('[ant-hash]');
+                    if ( $hashParents.length ) {
+                        // console.log('IS THIS OK');
+                        ANT.actions.stripAntNode($hashParents);
+                    }
                     
                     // we will use this in the following conditionals
                     var thisTagName = $this.get(0).nodeName.toLowerCase();
@@ -4906,9 +4909,9 @@ function antenna($A){
                     // both HTML and text.
                     // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
                     if ( thisTagName == 'img' ) { 
-                        if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
-                            var $parentNodes = $this.parents('[ant-hash]');
-                            ANT.actions.stripAntNode($parentNodes);
+                        if ( $hashParents.length && !$this.siblings(ANT.group.anno_whitelist).length ) {
+                            // var $parentNodes = $this.parents('[ant-hash]');
+                            ANT.actions.stripAntNode($hashParents);
                         }
                     }
 
@@ -9843,7 +9846,7 @@ if ( sendData.kind=="page" ) {
             },
             stripAntNode: function($els) {
                 //ANT.actions.stripAntNode
-                $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
+                $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').off('mouseenter.ant').find('.ant_indicator').remove();
             },
             pages: {
                 //ANT.actions.pages:
@@ -10772,6 +10775,7 @@ function $AFunctions($A){
 
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
+
                     if(!selState){
                         return false;
                     }
