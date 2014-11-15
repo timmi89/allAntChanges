@@ -4170,6 +4170,8 @@ function antenna($A){
                             if (ANT.group.useDefaultSummaryBar){
                                 load_event_value = 'def';
                             } else {
+                                console.log('response');
+                                console.log(response);
                                 if (response.data.length === 1) {
                                     load_event_value = 'si'; // single page load
                                 } else if (response.data.length > 1) {
