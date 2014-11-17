@@ -1677,6 +1677,7 @@ function antenna($A){
                                 // show writemode text
                                 // writeMode
                                 
+
                                 // ANT.events.track('start_react_text');
                                 ANT.events.trackEventToCloud({
                                     // category: "engage",
@@ -1689,13 +1690,13 @@ function antenna($A){
                                     page_id: page_id
                                 });
 
+
                                 var newSel;
                                 if ( kind == "text" ) {
                                     // TEXTACTIONBAR
 
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
-
                                     if(!newSel) return false;
                                     //temp fix to set the content (the text) of the selection to the new selection
                                     //todo: make selog more integrated with the rest of the code
@@ -1719,6 +1720,7 @@ function antenna($A){
                                             coords.top = strBottom + 2;
                                         }
                                     }
+
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
                                         var $container = $('[ant-hash="'+hash+'"]');
@@ -4897,7 +4899,6 @@ function antenna($A){
                     // prevent nested block element parents from having a hash?
                     var $hashParents = $this.parents('[ant-hash]');
                     if ( $hashParents.length ) {
-                        // console.log('IS THIS OK');
                         ANT.actions.stripAntNode($hashParents);
                     }
                     
@@ -10775,7 +10776,6 @@ function $AFunctions($A){
 
                     //todo:checkout why first range is picking up new selState range (not a big deal)
                     var selState = _fetchselState(idxOrSelState);
-
                     if(!selState){
                         return false;
                     }
@@ -10919,6 +10919,9 @@ function $AFunctions($A){
                     return range;
                 },
                 stripWhiteSpace: function(range){
+                    // this function breaks stuff
+                    return range;
+
                     var rangeStr = range.toString(),
                     s = {}, //start
                     e = {}; //end
