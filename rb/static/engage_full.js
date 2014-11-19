@@ -1944,7 +1944,10 @@ function antenna($A){
                 */
 
                 //at least for now, always close all other aWindows.
-                ANT.aWindow.closeAll();
+                // unless its the login window.   i know,i know, bad parameter to use for this.
+                if (!options.purpose || options.purpose != 'login'){
+                    ANT.aWindow.closeAll();
+                }
 
                 if ( options.selector && !options.container ) {
                     options.container = options.selector.substr(5);
@@ -3434,6 +3437,8 @@ function antenna($A){
                 }
             },
             getUser: function(args, callback) {
+                //ANT.session.getUser
+
                 if ( callback && args ) {
                     ANT.session.receiveMessage( args, callback );
                 } else if ( callback ) {
@@ -3536,7 +3541,6 @@ function antenna($A){
                                 }
 
                                 if ( callbackFunction && args ) {
-                                    
                                     //quick fix for page level data
                                     if(!args.kind && args.aWindow){
                                         args.kind = $(args.aWindow).data('kind');
@@ -3634,7 +3638,8 @@ function antenna($A){
                         // pnlWidth:360,
                         pnls:1,
                         height:175,
-                        ignoreWindowEdges:"bt"
+                        ignoreWindowEdges:"bt",
+                        purpose:'login'
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
@@ -6054,7 +6059,6 @@ function antenna($A){
                         summary = ANT.summaries[hash],
                         kind = (summary) ? summary.kind:"";
 
-
                     if ( !action_type ) action_type = "create";
 
                     if( !ANT.actions.interactions.hasOwnProperty(int_type) ){
@@ -6072,11 +6076,22 @@ function antenna($A){
                         var defaultSendData = ANT.actions.interactions.defaultSendData(newArgs),
                             customSendData = ANT.actions.interactions[int_type].customSendData(newArgs),
                             sendData = $.extend( {}, defaultSendData, customSendData, crossPageSendData );
+
+                        // sendData = $.extend( {}, sendData, args);
                         newArgs.sendData = sendData;
 
                         //fix hash
                         newArgs.hash = hash;
                         newArgs.sendData.hash = hash;
+                        
+                        // BAND-AID for re-reacting after a tempuser create
+                        if (typeof newArgs.sendData != 'undefined' && typeof newArgs.sendData.sendData != 'undefined') {
+                            newArgs.sendData = $.extend( {}, newArgs.sendData, newArgs.sendData.sendData );
+
+                            if ( typeof newArgs.sendData.user != 'undefined' && typeof newArgs.sendData.user.ant_token != 'undefined') {
+                                newArgs.sendData.ant_token = newArgs.sendData.user.ant_token;
+                            }
+                        }
 
                         //run the send function for the appropriate interaction type
                         //ANT.actions.interactions[int_type].send(args);
@@ -6089,10 +6104,12 @@ function antenna($A){
                     // /api/comment/create
                     // hack to cleanup the send data
                     var sendData = $.extend( true, {}, args.sendData);
+
                     if (sendData.aWindow) delete sendData.aWindow;
                     if (sendData.settings) delete sendData.settings;
                     if (sendData.selState) delete sendData.selState;
                     if (sendData.content_node ) delete sendData.content_node;
+                    if (sendData.response ) delete sendData.response;           // if there's a response, it's bc we're passing sendData from a past failed call.  remove the response.
                     if (sendData.content_node_data && sendData.content_node_data.selState ) delete sendData.content_node_data.selState;
                     if (sendData.content_node_data && sendData.content_node_data.counts ) delete sendData.content_node_data.counts;
                     if (sendData.content_node_data && sendData.content_node_data.top_interactions ) delete sendData.content_node_data.top_interactions;
@@ -6116,6 +6133,7 @@ if (sendData.content_node_data && sendData.content_node_data.container ) delete 
 if ( typeof sendData.tag != "undefined" ) {
     sendData.tag.body = ( sendData.tag.body ) ? sendData.tag.body:sendData.tag.tag_body;
 }
+
 // TODO forcing.  react-to-page code seems to need a hash, and stores it.  IE is not hashing page correctly.
 // and not sure we want that, anyway -- since the page hash would change often.  so, forcing the hash to be "page"
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
@@ -6140,6 +6158,10 @@ if ( sendData.kind=="page" ) {
                             data: { json: $.toJSON(sendData) },
                             success: function(response) {
                                 args.response = response;
+
+                                if (typeof args.sendData != 'undefined' && typeof args.sendData.sendData != 'undefined') {
+                                    args.content_node_data = args.sendData.sendData.content_node_data;
+                                }
 
                                 //this will be here for new containers only
                                 if( response.data && response.data.container ){
@@ -7034,27 +7056,29 @@ if ( sendData.kind=="page" ) {
                         //todo: we prob want to move most of this to a general onFail for all interactions.
                         // So this function would look like: doSpecificOnFailStuff....; ANT.actions.interactions.genericOnFail();
 
+                        var theseArgs = args;
+
                         //clear loader
-                        var $aWindow = args.aWindow,
-                            response = args.response;
+                        var $aWindow = theseArgs.aWindow,
+                            response = theseArgs.response;
                         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
                         if (response.message.indexOf( "Temporary user interaction limit reached" ) != -1 ) {
-                            ANT.session.receiveMessage( args, function() { ANT.actions.interactions.ajax( args, 'react', 'create' ); } );
-                            ANT.session.showLoginPanel( args );
+                            ANT.session.receiveMessage( theseArgs, function() { ANT.actions.interactions.ajax( theseArgs, 'react', 'create' ); } );
+                            ANT.session.showLoginPanel( theseArgs );
                         } else if ( response.message == "existing interaction" ) {
                             //todo: I think we should use adapt the showTempUserMsg function to show a message "you have already said this" or something.
                             //showTempUserMsg should be adapted to be aWindowUserMessage:{show:..., hide:...}
                                 //with a message param.
                                 //and a close 'x' button.
-                                args.msgType = "existingInteraction";
-                                ANT.session.aWindowUserMessage.show( args );
+                                theseArgs.msgType = "existingInteraction";
+                                ANT.session.aWindowUserMessage.show( theseArgs );
                         } else if ( response.message.indexOf("blocked this tag") != -1 ) {
                             alert( ANT.t('bad_language_warning') );
                         } else {
                             // if it failed, see if we can fix it, and if so, try this function one more time
-                            ANT.session.handleGetUserFail( args, function() {
-                                ANT.actions.interactions.ajax( args, 'react', 'create' );
+                            ANT.session.handleGetUserFail( theseArgs, function() {
+                                ANT.actions.interactions.ajax( theseArgs, 'react', 'create' );
                             });
                         }
                     }
