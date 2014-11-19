@@ -1631,9 +1631,9 @@ function antenna($A){
                     //ANT.aWindow._aWindowTypes.tagMode.make(settings);
                     // [porter] we should change the name of this function.  no need to nest under _aWindowTypes anymore, right?
                     make: function(settings){
-                        //ANT.aWindow._aWindowTypes.writeMode.make:
-                        //as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
-
+                        // ANT.aWindow._aWindowTypes.writeMode.make:
+                        // as the underscore suggests, this should not be called directly.  Instead, use ANT.aWindow.make(aWindowType [,options])
+                        // this is where we freaking make windows.  makewindow.  yay abstracting parameters into functions.
                         if ( settings.is_page == true ) {
                             var page = settings.page,
                                 $summary_widget = $('.ant-summary-'+page.id),
@@ -4895,6 +4895,12 @@ function antenna($A){
                     //     var $parentNodes = $this.parents('[ant-hash="'+hash+'"]');
                     //     ANT.actions.stripAntNode($parentNodes);
                     // }
+
+                    // prevent nested block element parents from having a hash?
+                    var $hashParents = $this.parents('[ant-hash]');
+                    if ( $hashParents.length ) {
+                        ANT.actions.stripAntNode($hashParents);
+                    }
                     
                     // we will use this in the following conditionals
                     var thisTagName = $this.get(0).nodeName.toLowerCase();
@@ -4904,9 +4910,9 @@ function antenna($A){
                     // both HTML and text.
                     // update 7/2014:  stunningly, this applies to body tag, and apparently, we want that.
                     if ( thisTagName == 'img' ) { 
-                        if ( $this.parents('[ant-hash]').length && !$this.siblings(ANT.group.anno_whitelist).length ) {
-                            var $parentNodes = $this.parents('[ant-hash]');
-                            ANT.actions.stripAntNode($parentNodes);
+                        if ( $hashParents.length && !$this.siblings(ANT.group.anno_whitelist).length ) {
+                            // var $parentNodes = $this.parents('[ant-hash]');
+                            ANT.actions.stripAntNode($hashParents);
                         }
                     }
 
@@ -9841,7 +9847,7 @@ if ( sendData.kind=="page" ) {
             },
             stripAntNode: function($els) {
                 //ANT.actions.stripAntNode
-                $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').find('.ant_indicator').remove();
+                $els.removeAttr('ant-node ant-hasIndicator ant-hashed ant_summary_loaded ant-hash').off('mouseenter.ant').find('.ant_indicator').remove();
             },
             pages: {
                 //ANT.actions.pages:
@@ -10913,6 +10919,9 @@ function $AFunctions($A){
                     return range;
                 },
                 stripWhiteSpace: function(range){
+                    // this function breaks stuff
+                    return range;
+
                     var rangeStr = range.toString(),
                     s = {}, //start
                     e = {}; //end
