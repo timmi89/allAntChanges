@@ -46,10 +46,12 @@ ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8
 ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-var isTouchBrowser = (
-    ('ontouchstart' in window) || 
-    (window.DocumentTouch && document instanceof DocumentTouch)
-);
+// var isTouchBrowser = (
+//     ('ontouchstart' in window) || 
+//     (window.DocumentTouch && document instanceof DocumentTouch)
+// );
+
+var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
 
 ANT.safeThrow = function(msg){
     //this will never actually throw in production (if !ANT_offline)
