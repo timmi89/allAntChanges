@@ -5,26 +5,77 @@
 <body>
 <h1>Recirc this.</h1>
 <!--
-  media
-  overlay
-  reaction
-  reaction count
-  headline
-  link to
+  DISPLAY
+    media
+    overlay
+    headline
+    link to
 
-  events to track
+  DATA TO TRACK
+    reaction
+    reaction count
+    link position
 
 -->
 <style>
-.imasidebar {  }
+/* :nth-of-type, :first-of-type, :last-of-type, :nth-last-of-type, :only-of-type  */
 
-.antenna-broadcast {}
+.imasidebar { width:600px; }
+
+.antenna-broadcast { width:100%; background:#eee; clear:both; overflow:auto; box-sizing: border-box; }
+
+.ant-featured { width:100%; height:50px; overflow:hidden; position:relative; display:block; float:left; padding:0; margin:0; box-sizing: border-box; word-wrap: break-word; }
+.ant-featured:nth-of-type(even) {  max-width:150px; width:50%; }
+.ant-featured:nth-of-type(odd) {  max-width:150px; width:50%; }
+.ant-featured:first-of-type { height:100px; max-width:300px; }
+
+.ant-featured img { max-width:100%; }
+.ant-featured iframe { max-width:100%; }
+.ant-featured .ant-featured-overlay { position:absolute; top:0; left:0; width:110%; height:110%; background:rgba(0,0,0,0.8); }
+
+
+/* debug only */
+/*.ant-featured:nth-of-type(even) { background:#ff5c41; border:1px solid red; border-left:0;border-right:0;  }*/
+/*.ant-featured:nth-of-type(odd) { background:#5eb0e3; border:1px solid blue; border-left:0;border-right:0;  }*/
+/*.ant-featured:first-of-type { background:#8bd52a; max-width:300px; border:1px solid green; border-left:0;border-right:0; border:1px solid green; border-left:0;border-right:0;  }*/
+
 </style>
+
 <div class="imasidebar">
 <h4>hi i'm some content above</h4>
 
-<div class="antenna-broadcast">
-</div>
+  <div class="antenna-broadcast">
+    <div class="ant-featured ant-featured-image">
+      <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/64877969/cd8c548f1d041559ff70a2a756d3bfd8cc46db27/2048.jpg" /></div>
+      <div class="ant-featured-overlay"></div>
+      <div class="ant-featured-reaction">Love it</div>
+      <div class="ant-featured-link">Mt Hood headline goes here</div>
+    </div>
+    <div class="ant-featured ant-featured-image">
+      <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/58528446/3f3c9710409351f63a7cdf6ab7bbda697b24d5cf/2048.jpg" /></div>
+      <div class="ant-featured-overlay"></div>
+      <div class="ant-featured-reaction">Amazing</div>
+      <div class="ant-featured-link">Tokyo headline goes here</div>
+    </div>
+    <div class="ant-featured ant-featured-text">
+      <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
+      <div class="ant-featured-overlay"></div>
+      <div class="ant-featured-reaction">Clever</div>
+      <div class="ant-featured-link">Long text headline goes here</div>
+    </div>
+    <div class="ant-featured ant-featured-media">
+      <div class="ant-featured-content"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/LfR8Su4ulX0"></iframe></div>
+      <div class="ant-featured-overlay"></div>
+      <div class="ant-featured-reaction">Incredible</div>
+      <div class="ant-featured-link">Cinderella headline goes here</div>
+    </div>
+    <div class="ant-featured ant-featured-text">
+      <div class="ant-featured-content">The real difference is the Right believes that we can agree to disagree. The Left doesn’t agree to that.</div>
+      <div class="ant-featured-overlay"></div>
+      <div class="ant-featured-reaction">Love it</div>
+      <div class="ant-featured-link">Short text headline goes here</div>
+    </div>
+  </div>
 
 <h4>hi i'm some content below</h4>
 </div>
