@@ -227,7 +227,7 @@ def A_B_script_loads(event_util, now, group):
     
 def most_reacted_content(now, group):
     td = datetime.timedelta(days=30)
-    thirty_days = datetime.now() - td
+    thirty_days = datetime.datetime.now() - td
     interactions = Interaction.objects.filter(page__site__group = group, created__gt = thirty_days)
     content_data = {}
     content_counts = {}
