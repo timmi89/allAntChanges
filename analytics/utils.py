@@ -112,7 +112,7 @@ class OAuth2EventsUtility(object):
         return ','.join(tables)    
     
     def query_date_limits(self, start, end):
-        return ' createdAt >= "' + start.strftime('%Y-%m-%d') + ' 00:00:00" and createdAt <= "' + end.strftime('%Y-%m-%d') + ' 23:59:59'
+        return ' createdAt >= "' + start.strftime('%Y-%m-%d') + ' 00:00:00" and createdAt <= "' + end.strftime('%Y-%m-%d') + ' 23:59:59"'
     
     def mod_query_for_dates(self, query, group, start, end):
         logger.info(query % (self.query_table_names_by_dates(group, start, end), self.query_date_limits(start, end)))
