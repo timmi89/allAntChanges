@@ -73,13 +73,13 @@ class OAuth2EventsUtility(object):
         return rows[0]['f'][0]['v']
     
     def check_activity(self, group, month, year):
+        table= self.get_table_name(group, month, year)
         query = 'select ev from ' + table + ' where et="sl" limit 1'
         body = self.get_request_body(query, 1)
         try:
             result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
             return True
         except Exception, her:
-            logger.info(her)
             return False
     
     def get_group_general_user_data(self, group, start, end, maxResults = 1000):
@@ -115,6 +115,7 @@ class OAuth2EventsUtility(object):
         return ' createdAt >= "' + start.strftime('%Y-%m-%d') + ' 00:00:00" and createdAt <= "' + end.strftime('%Y-%m-%d') + ' 23:59:59'
     
     def mod_query_for_dates(self, query, group, start, end):
+        logger.info(query % (self.query_table_names_by_dates(group, start, end), self.query_date_limits(start, end)))
         return query % (self.query_table_names_by_dates(group, start, end), self.query_date_limits(start, end))
     
     def get_rows(self, query, maxResults):

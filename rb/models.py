@@ -377,7 +377,9 @@ class Page(models.Model):
     author = models.CharField(max_length=255, blank=True) # text, i.e. "John Dear"
     topics = models.CharField(max_length=255, blank=True) # comma-delimited, i.e. "politics, healthcare, lovin"
     section = models.CharField(max_length=255, blank=True)  # publisher defined, i.e. "Politics"
-
+    
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    
     def interactions(self):
         return Interaction.objects.filter(page=self)
 

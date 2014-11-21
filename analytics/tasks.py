@@ -144,6 +144,10 @@ def do_all_group_reports():
     for group in groups:
         try:
             logger.info("STARTING GROUP: " + str(group.id))
+            
+            group_general = event_util.get_group_general_user_data(group, now - td, now)
+            JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
+            
             group_data = group_top_reaction_view_hash_count(event_util, now, group)
             if group_data:
                 JSONGroupReport.objects.create(body=json.dumps(group_data), group=group)
@@ -151,16 +155,17 @@ def do_all_group_reports():
                 logger.info("No group tvhrc data generated: " + str(group.id))
             
             A_B_script_loads(event_util, now, group)
+            
             most_reacted_content(now,group)
-            group_general = event_util.get_group_general_user_data(group, now - td, now)
-            JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
+            
             global_data['A_user_count'] = int(global_data['A_user_count']) + int(group_general['A_user_count'])
             global_data['B_user_count'] = int(global_data['B_user_count']) + int(group_general['B_user_count'])
             global_data['engaged_user_count'] = int(global_data['engaged_user_count']) + int(group_general['engaged_user_count'])
             group_count = group_count - 1
             logger.info("Groups left: " + str(group_count))
         except Exception, ex:
-            logger.warn("Group Report: " + str(group.id), ex)
+            logger.warn("Group Report Exception: " + str(group.id))
+            logger.warn(ex)
             
     JSONGlobalReport.objects.create(body=json.dumps(global_data), kind='guser')
     logger.info('DO ALL GROUPS FINISHED')
@@ -246,7 +251,7 @@ def most_reacted_content(now, group):
     
     JSONGroupReport.objects.create(body=json.dumps(most_reacted), group=group, kind='mrcon')  
 
-@periodic_task(name='generate_approved_active_groups', ignore_result=True, 
+@periodic_task(name='generate_seeds', ignore_result=True, 
                run_every=(crontab(hour="*", minute="*/12", day_of_week="*")))
 def sowing_seeds_of_love():
     try:
@@ -258,10 +263,10 @@ def sowing_seeds_of_love():
     td = datetime.timedelta(minutes=12)
     then = now - td
     for group in groups:
-        pages = Page.objects.filter(site__group = group, createdAt >= then)
+        pages = Page.objects.filter(site__group = group, created__gt = then ).all()
         for page in pages:
-            love_seed = random.choice(group.blessed_tags)
-            inseminator = randcom.choice(User.objects.filter(id__in = settings.SEEDERS))   
+            love_seed = random.choice(group.blessed_tags.all())
+            inseminator = random.choice(User.objects.filter(id__in = settings.SEEDERS).all())   
             
             interactions = Interaction.objects.filter(page = page)
             for interaction in interactions:
@@ -270,24 +275,26 @@ def sowing_seeds_of_love():
                         zygote = Interaction(
                             page=page,
                             container=interaction.container,
-                            content=interation.content,
+                            content=interaction.content,
                             user=inseminator,
                             kind=interaction.kind,
                             interaction_node=interaction.interaction_node,
                             parent=interaction,
                             rank = 0,
-                            approved = true
+                            approved = True
                         )
                         zygote.save()
+                        logger.info('zygote saved')
                         antenna_cache.clear_interaction_caches(page, interaction.container)
                         break
-                    except Exception as e:
-                        logger.warn("Error seeding interactions")
+                    except Exception, e:
+                        logger.warn(e)
                     
             #page level seed
-            page_container = Container.objects.get_or_create(hash='page') 
-            page_content = Content.objects.get_or_create(kind='pag', body='')
-            
+            logger.info('container and content get or create')
+            page_container = Container.objects.get_or_create(hash='page')[0]
+            page_content = Content.objects.get_or_create(kind='pag', body='')[0]
+            logger.info('got container and content')
             try:
                 zygote = Interaction(
                     page=page,
@@ -295,19 +302,20 @@ def sowing_seeds_of_love():
                     content=page_content,
                     user=inseminator,
                     kind='tag',
-                    interaction_node=love_seed.node,
+                    interaction_node=love_seed,
                     parent=None,
                     rank = 0,
-                    approved = true
+                    approved = True
                 )
                 zygote.save()
-            except Exception as e:
-                logger.warn("Error seeding page interaction")
+                logger.info("saved zygote")
+            except Exception, e:
+                logger.warn(e)
             antenna_cache.clear_interaction_caches(page, page_container)
 
     
 @periodic_task(name='generate_approved_active_groups', ignore_result=True, 
-               run_every=(crontab(hour="2,11,20", minute="0", day_of_week="*")))
+               run_every=(crontab(hour="7", minute="0", day_of_week="*")))
 def generate_approved_active_groups():  
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,

@@ -362,6 +362,8 @@ else:
     EMAIL_PORT = 587
 
 
+SEEDERS=[119507,119500,119495,119494,119493,119492,11940,119487,119485,119483]
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
