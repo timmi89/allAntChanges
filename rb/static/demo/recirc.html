@@ -18,7 +18,12 @@
 
 -->
 <style>
-.antenna-broadcast { width:100%; background:#eee; clear:both; overflow:auto; box-sizing: border-box; }
+.antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; }
+.antenna-broadcast .ant-broadcast-header { min-height:22px; }
+.antenna-broadcast .ant-headline { font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; display:inline-block; }
+.antenna-broadcast .ant-logo { display:inline-block; float:right; padding:4px 4px 0 4px; font-size: 14px; cursor: pointer;}
+
+.antenna-broadcast .ant-tiles { margin-left:-4px; }
 
 .antenna-broadcast .ant-featured { width:100%; height:91px; overflow:hidden; display:block; float:left; padding:0; margin:0; box-sizing: border-box; word-wrap: break-word; }
 .antenna-broadcast .ant-featured a { text-decoration: none !important; }
@@ -45,7 +50,7 @@
 .antenna-broadcast .ant-featured:hover .ant-featured-overlay { background:rgba(0,0,0,0.25); box-shadow:0px 0px 40px rgba(0,0,0,0.5) inset; }
 .antenna-broadcast .ant-featured .ant-featured-gradient { position:absolute; bottom:0; left:0; width:100%; height:40%; background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.8)); border: 4px solid white; border-top:0;border-bottom:0;}
 
-.antenna-broadcast .ant-featured.ant-featured-text .ant-featured-content { max-width: 90%; padding:32px 12px 12px 12px; font-size:12px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:300; letter-spacing:0.5px;  }
+.antenna-broadcast .ant-featured.ant-featured-text .ant-featured-content { max-width: 90%; padding:32px 12px 12px 12px; font-size:11px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; letter-spacing:0.5px; color:#333; }
 
 
 /* debug only */
@@ -61,60 +66,65 @@
 <div class="imasidebar one">
 
   <div class="antenna-broadcast ant-thin">
-    <div class="ant-featured ant-featured-image">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/64877969/cd8c548f1d041559ff70a2a756d3bfd8cc46db27/2048.jpg" /></div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Love it</div>
-          <div class="ant-featured-link">Mt Hood headline goes here</div>
-        </a>
-      </div>
+    <div class="ant-broadcast-header">
+      <div class="ant-headline">Popular Reactions</div>
+      <div class="ant-logo"><span class="ant-antenna-logo"></span></div>
     </div>
-    <div class="ant-featured ant-featured-image">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><img src="http://i.dlisted.com/wp-content/uploads/2014/11/hsotdbelona2014.jpg" /></div>
-          <!-- <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/58528446/3f3c9710409351f63a7cdf6ab7bbda697b24d5cf/2048.jpg" /></div> -->
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Yo dead nips IS the look!</div>
-          <div class="ant-featured-link">Tokyo headline goes here</div>
-        </a>
+    <div class="ant-tiles">
+      <div class="ant-featured ant-featured-image">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/64877969/cd8c548f1d041559ff70a2a756d3bfd8cc46db27/2048.jpg" /></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Love it</div>
+            <div class="ant-featured-link">Mt Hood headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-text">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">YAASSSSS</div>
-          <div class="ant-featured-link">Long text headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-image">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><img src="http://i.dlisted.com/wp-content/uploads/2014/11/hsotdbelona2014.jpg" /></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Yo dead nips IS the look!</div>
+            <div class="ant-featured-link">Tokyo headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-media">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/LfR8Su4ulX0"></iframe></div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Incredible</div>
-          <div class="ant-featured-link">Cinderella headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-text">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">YAASSSSS</div>
+            <div class="ant-featured-link">Long text headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-text">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content">The real difference is the Right believes that we can agree to disagree. The Left doesn’t agree to that.</div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">B*tch, please</div>
-          <div class="ant-featured-link">Short text headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-media">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/LfR8Su4ulX0"></iframe></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Incredible</div>
+            <div class="ant-featured-link">Cinderella headline goes here</div>
+          </a>
+        </div>
+      </div>
+      <div class="ant-featured ant-featured-text">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content">The real difference is the Right believes that we can agree to disagree. The Left doesn’t agree to that.</div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">B*tch, please</div>
+            <div class="ant-featured-link">Short text headline goes here</div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -124,59 +134,65 @@
 <div class="imasidebar">
 
   <div class="antenna-broadcast">
-    <div class="ant-featured ant-featured-image">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/64877969/cd8c548f1d041559ff70a2a756d3bfd8cc46db27/2048.jpg" /></div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Love it</div>
-          <div class="ant-featured-link">Mt Hood headline goes here</div>
-        </a>
-      </div>
+    <div class="ant-broadcast-header">
+      <div class="ant-headline">Popular Reactions</div>
+      <div class="ant-logo"><span class="ant-antenna-logo"></span></div>
     </div>
-    <div class="ant-featured ant-featured-image">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/58528446/3f3c9710409351f63a7cdf6ab7bbda697b24d5cf/2048.jpg" /></div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Yo dead nips IS the look!</div>
-          <div class="ant-featured-link">Tokyo headline goes here</div>
-        </a>
+    <div class="ant-tiles">
+      <div class="ant-featured ant-featured-image">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><img src="https://gp1.wac.edgecastcdn.net/806614/photos/photos.500px.net/64877969/cd8c548f1d041559ff70a2a756d3bfd8cc46db27/2048.jpg" /></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Love it</div>
+            <div class="ant-featured-link">Mt Hood headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-text">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">YAASSSSS</div>
-          <div class="ant-featured-link">Long text headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-image">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><img src="http://i.dlisted.com/wp-content/uploads/2014/11/hsotdbelona2014.jpg" /></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Yo dead nips IS the look!</div>
+            <div class="ant-featured-link">Tokyo headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-media">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/LfR8Su4ulX0"></iframe></div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">Incredible</div>
-          <div class="ant-featured-link">Cinderella headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-text">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">YAASSSSS</div>
+            <div class="ant-featured-link">Long text headline goes here</div>
+          </a>
+        </div>
       </div>
-    </div>
-    <div class="ant-featured ant-featured-text">
-      <div class="ant-featured-container">
-        <a href="http://google.com" target="_blank">
-          <div class="ant-featured-content">The real difference is the Right believes that we can agree to disagree. The Left doesn’t agree to that.</div>
-          <div class="ant-featured-overlay"></div>
-          <div class="ant-featured-gradient"></div>
-          <div class="ant-featured-reaction">B*tch, please</div>
-          <div class="ant-featured-link">Short text headline goes here</div>
-        </a>
+      <div class="ant-featured ant-featured-media">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content"><iframe class="contentBody" width="300" height="250" frameborder="0" src="http://www.youtube.com/embed/LfR8Su4ulX0"></iframe></div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">Incredible</div>
+            <div class="ant-featured-link">Cinderella headline goes here</div>
+          </a>
+        </div>
+      </div>
+      <div class="ant-featured ant-featured-text">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content">The real difference is the Right believes that we can agree to disagree. The Left doesn’t agree to that.</div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">B*tch, please</div>
+            <div class="ant-featured-link">Short text headline goes here</div>
+          </a>
+        </div>
       </div>
     </div>
   </div>
