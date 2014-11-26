@@ -608,7 +608,17 @@ def getSettingsDict(group):
              'search',
              'logo_url_sm',
              'logo_url_med',
-             'logo_url_lg']
+             'logo_url_lg',
+             'sharebox_digg',
+             'sharebox_facebook',
+             'sharebox_fade',
+             'sharebox_google',
+             'sharebox_reddit',
+             'sharebox_selector',
+             'sharebox_should_own',
+             'sharebox_show',
+             'sharebox_stumble',
+             'sharebox_twitter']
      )
     
     blessed_tags = InteractionNode.objects.filter(

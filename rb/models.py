@@ -204,6 +204,12 @@ class Group(models.Model):
     tag_box_gradient = models.TextField(blank=True, null=True)
     tags_bg_css = models.TextField(blank=True, null=True)
 
+    # Antenna Broadcast widget settings
+    broadcast_selector = models.CharField(max_length=255, blank=True)
+    broadcast_headline = models.CharField(max_length=255, default='Popular Reactions', blank=True)
+    broadcast_background = models.TextField(blank=True, null=True)
+    broadcast_jquery_method = models.CharField(max_length=255, blank=True)
+
     # mobile settings
     hideOnMobile = models.BooleanField(default=False)
     hideDoubleTapMessage = models.BooleanField(default=False)

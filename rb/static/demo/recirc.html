@@ -18,10 +18,10 @@
 
 -->
 <style>
-.antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; }
+.antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; text-align: left;}
 .antenna-broadcast .ant-broadcast-header { min-height:22px; }
 .antenna-broadcast .ant-headline { font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; display:inline-block; }
-.antenna-broadcast .ant-logo { display:inline-block; float:right; padding:4px 4px 0 4px; font-size: 14px; cursor: pointer;}
+.antenna-broadcast .ant-logo { display:inline-block; float:right; padding:4px 0px 0 4px; font-size: 14px; cursor: pointer;}
 
 .antenna-broadcast .ant-tiles { margin-left:-4px; }
 
@@ -50,9 +50,10 @@
 .antenna-broadcast .ant-featured:hover .ant-featured-overlay { background:rgba(0,0,0,0.25); box-shadow:0px 0px 40px rgba(0,0,0,0.5) inset; }
 .antenna-broadcast .ant-featured .ant-featured-gradient { position:absolute; bottom:0; left:0; width:100%; height:40%; background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.8)); border: 4px solid white; border-top:0;border-bottom:0;}
 
-.antenna-broadcast .ant-featured.ant-featured-text .ant-featured-content { max-width: 90%; padding:32px 12px 12px 12px; font-size:11px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; letter-spacing:0.5px; color:#333; }
+.antenna-broadcast .ant-featured.ant-featured-txt .ant-featured-content { max-width: 90%; padding:32px 12px 12px 12px; font-size:11px; line-height:13px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; letter-spacing:0.5px; color:#333; }
+.antenna-broadcast .ant-featured:first-of-type.ant-featured-txt .ant-featured-content { padding-top:42px; }
 
-
+.antenna-broadcast .ant-featured:nth-last-of-type(1) { float:left; }
 /* debug only */
 /*.ant-featured:nth-of-type(even) { background:#ff5c41; border:1px solid red; border-left:0;border-right:0;  }*/
 /*.ant-featured:nth-of-type(odd) { background:#5eb0e3; border:1px solid blue; border-left:0;border-right:0;  }*/
@@ -71,6 +72,17 @@
       <div class="ant-logo"><span class="ant-antenna-logo"></span></div>
     </div>
     <div class="ant-tiles">
+      <div class="ant-featured ant-featured-text">
+        <div class="ant-featured-container">
+          <a href="http://google.com" target="_blank">
+            <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
+            <div class="ant-featured-overlay"></div>
+            <div class="ant-featured-gradient"></div>
+            <div class="ant-featured-reaction">YAASSSSS</div>
+            <div class="ant-featured-link">Long text headline goes here</div>
+          </a>
+        </div>
+      </div>
       <div class="ant-featured ant-featured-image">
         <div class="ant-featured-container">
           <a href="http://google.com" target="_blank">
@@ -90,17 +102,6 @@
             <div class="ant-featured-gradient"></div>
             <div class="ant-featured-reaction">Yo dead nips IS the look!</div>
             <div class="ant-featured-link">Tokyo headline goes here</div>
-          </a>
-        </div>
-      </div>
-      <div class="ant-featured ant-featured-text">
-        <div class="ant-featured-container">
-          <a href="http://google.com" target="_blank">
-            <div class="ant-featured-content">With relative value (eg. em or %), the font size, line-height and margin spacing can be inherited. For example, I can change the font size on all descendant elements by simply changing the font-size on the parent element.</div>
-            <div class="ant-featured-overlay"></div>
-            <div class="ant-featured-gradient"></div>
-            <div class="ant-featured-reaction">YAASSSSS</div>
-            <div class="ant-featured-link">Long text headline goes here</div>
           </a>
         </div>
       </div>

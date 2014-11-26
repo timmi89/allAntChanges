@@ -2570,6 +2570,82 @@ function antenna($A){
                 bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
             }
         },
+        broadcast: {
+            init: function() {
+                console.log('antenna broadcast init 1');
+
+                var $broadcastSelector = $(ANT.group.broadcast_selector).first();
+
+                if ( $broadcastSelector.length ) {
+                    $.ajax({
+                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        type: "get",
+                        contentType: "application/json",
+                        // dataType: "jsonp",
+                        // data: {
+                        //     json: $.toJSON(sendData)
+                        // },
+                        success: function(response) {
+                            console.log('response * * * * * * * * * * * * *');
+                            console.log(response);
+
+
+                            //   <div class="ant-broadcast-header">
+                            //     <div class="ant-headline">Popular Reactions</div>
+                            //     <div class="ant-logo"><span class="ant-antenna-logo"></span></div>
+                            //   </div>
+                            //   <div class="ant-tiles">
+
+                            var $broadcast = $('<div class="antenna-broadcast"></div>'),
+                                $broadcast_tiles = $('<div class="ant-tiles"></div>');
+
+                            if ( $broadcastSelector.width() < 400 ) {
+                                $broadcast.addClass('ant-thin');
+                            }
+
+                            var broadcastHeadline = (ANT.group.broadcast_headline!='') ? ANT.group.broadcast_headline:'Popular Reactions';
+                            $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
+
+                            console.log('number of items: ' + response.length);
+
+                            $.each(response, function(idx, item) {
+                                console.log('idx: '+idx);
+                                if (idx < 5) {
+                                    var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
+                                                    (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
+                                                    item.content.body;
+                                    
+                                    var itemHTML = '' +
+                                    '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
+                                        '<div class="ant-featured-container">' +
+                                            '<a href="'+item.page.url+'" target="_blank">' +
+                                              '<div class="ant-featured-content">'+content+'</div>' +
+                                              '<div class="ant-featured-overlay"></div>' +
+                                              '<div class="ant-featured-gradient"></div>' +
+                                              '<div class="ant-featured-reaction">'+item.reaction.body+'</div>' +
+                                              '<div class="ant-featured-headline">'+item.page.title+'</div>' +
+                                            '</a>' +
+                                        '</div>' +
+                                    '</div>';
+
+                                    $broadcast_tiles.append(itemHTML);
+                                }
+                            });
+
+                            $broadcast.append($broadcast_tiles);
+
+                            var broadcastInsertionMethod = ( ANT.group.broadcast_jquery_method != "" ) ? ANT.group.broadcast_jquery_method : "after";
+                            console.log('broadcastInsertionMethod: '+broadcastInsertionMethod);
+                            $broadcastSelector[ broadcastInsertionMethod ]( $broadcast );
+
+
+
+                        }
+                    });
+                }
+            }
+        },
         util: {
             // cookies: {
             //     create: function(name,value,days) {
@@ -3641,7 +3717,7 @@ function antenna($A){
                         pnls:1,
                         height:175,
                         ignoreWindowEdges:"bt",
-                        purpose:'login'
+                        purpose:'login'  // will prevent the other windows from being hidden
                     });
 
                     // store the arguments and callback function that were in progress when this Login panel was called
@@ -4341,6 +4417,8 @@ function antenna($A){
 
             },
             initEnvironment: function(){
+
+                ANT.broadcast.init();
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
                 
@@ -4401,7 +4479,9 @@ function antenna($A){
                     //     if ( ANT.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['20'] ) { ANT.events.fireScrollEvent('20'); ANT.group.active_section_milestones['fired'] = 20; }
                     // }, 250));
                     
+                    // i'm sure there is a good reason for this, but i don't recall what it is
                     ANT.actions.initPageData();
+
                     // return ANT.util._.throttle(
                     //     ANT.actions.initPageData,
                     // 100

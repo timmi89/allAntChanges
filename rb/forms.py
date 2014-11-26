@@ -400,7 +400,11 @@ class GroupForm(forms.ModelForm):
             'tag_box_text_colors',
             'tag_box_font_family',
             'tag_box_gradient',
-            'tags_bg_css'
+            'tags_bg_css',
+            'broadcast_selector',
+            'broadcast_headline',
+            'broadcast_background',
+            'broadcast_jquery_method'
         )
 
 

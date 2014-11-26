@@ -57,6 +57,9 @@ class RBGroupAdmin(admin.ModelAdmin):
         ('JQuery', {
             'fields': ('inline_selector', 'inline_func', 'author_selector', 'author_attribute', 'topics_selector', 'topics_attribute', 'section_selector', 'section_attribute')
         }),
+        ('Broadcast', {
+            'fields': ('broadcast_selector', 'broadcast_headline', 'broadcast_background', 'broadcast_jquery_method')
+        }),
         ('Customization', {
             'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
                        'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook', 

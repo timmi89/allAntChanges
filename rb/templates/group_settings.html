@@ -99,19 +99,20 @@
             -->
             <div class="formRow">
                 <label for="id_summary_widget_selector">
-                    <span class="labelTitle">Summary Widget Selector (jQuery selector)</span>
+                    <span class="labelTitle">Summary Button Selector (jQuery selector)</span>
                     <span>Looks in each post to find where to append the summary bar widget.</span>
                 </label>
                 {{ form.summary_widget_selector }}{{ form.summary_widget_selector.errors }}
             </div>
             <div class="formRow">
                 <label for="id_summary_widget_method">
-                    <span class="labelTitle">Summary Widget Insertion Method</span>
-                    <span>Should Antenna insert the Summary Widget before, inside, or after the Summary Widget Selector.  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                    <span class="labelTitle">Summary Button Insertion Method</span>
+                    <span>How should Antenna insert the Summary Button?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
                 </label>
                 {{ form.summary_widget_method.as_hidden }}{{ form.summary_widget_method.errors }}
                 <select id="summary_widget_method_selector">
                     <option {% if group.summary_widget_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                    <option {% if group.summary_widget_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
                     <option {% if group.summary_widget_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
                     <option {% if group.summary_widget_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
                 </select>
@@ -184,6 +185,43 @@
                 $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
                 {{ form.section_selector.errors }}
                 {{ form.section_attribute.errors }}
+            </div>
+        </section>
+        <section class="configurationSection">        
+            <h3>Broadcast Widget</h3>
+            <div class="formRow">
+                <label for="id_broadcast_headline">
+                    <span class="labelTitle">Broadcast Title</span>
+                    <span>What headline should the widget have?</span>
+                </label>
+                {{ form.broadcast_headline }}{{ form.broadcast_headline.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_broadcast_selector">
+                    <span class="labelTitle">Broadcast Selector (jQuery selector)</span>
+                    <span>Where should the Broadcast be inserted?</span>
+                </label>
+                {{ form.broadcast_selector }}{{ form.broadcast_selector.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_broadcast_jquery_method">
+                    <span class="labelTitle">Broadcast Widget Insertion Method</span>
+                    <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                </label>
+                {{ form.broadcast_jquery_method.as_hidden }}{{ form.broadcast_jquery_method.errors }}
+                <select id="broadcast_jquery_method_selector">
+                    <option {% if group.broadcast_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                    <option {% if group.broadcast_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
+                    <option {% if group.broadcast_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                    <option {% if group.broadcast_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                </select>
+            </div>
+            <div class="formRow text">
+                <label for="id_broadcast_background">
+                    <span class="labelTitle">Broadcast Background</span>
+                    <span>CSS Background property for the Antenna Broadcast widget</span>
+                </label>
+                {{ form.broadcast_background }}{{ form.broadcast_background.errors }}
             </div>
         </section>
     </div>
@@ -392,6 +430,10 @@
 
             $('#summary_widget_method_selector').change( function() {
                 $('#id_summary_widget_method').val( $(this).val() );
+            });
+
+            $('#broadcast_jquery_method_selector').change( function() {
+                $('#id_broadcast_jquery_method').val( $(this).val() );
             });
 
             $('#doubleTapMessagePosition_selector').change( function() {
