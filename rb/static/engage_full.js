@@ -2572,7 +2572,6 @@ function antenna($A){
         },
         broadcast: {
             init: function() {
-                console.log('antenna broadcast init 1');
 
                 var $broadcastSelector = $(ANT.group.broadcast_selector).first();
 
@@ -2587,18 +2586,10 @@ function antenna($A){
                         //     json: $.toJSON(sendData)
                         // },
                         success: function(response) {
-                            console.log('response * * * * * * * * * * * * *');
-                            console.log(response);
-
-
-                            //   <div class="ant-broadcast-header">
-                            //     <div class="ant-headline">Popular Reactions</div>
-                            //     <div class="ant-logo"><span class="ant-antenna-logo"></span></div>
-                            //   </div>
-                            //   <div class="ant-tiles">
-
+                            
                             var $broadcast = $('<div class="antenna-broadcast"></div>'),
-                                $broadcast_tiles = $('<div class="ant-tiles"></div>');
+                                $broadcast_tiles = $('<div class="ant-tiles"></div>'),
+                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>What is this thing?</p></div>');
 
                             if ( $broadcastSelector.width() < 400 ) {
                                 $broadcast.addClass('ant-thin');
@@ -2607,10 +2598,7 @@ function antenna($A){
                             var broadcastHeadline = (ANT.group.broadcast_headline!='') ? ANT.group.broadcast_headline:'Popular Reactions';
                             $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
 
-                            console.log('number of items: ' + response.length);
-
                             $.each(response, function(idx, item) {
-                                console.log('idx: '+idx);
                                 if (idx < 5) {
                                     var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
                                                     (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
@@ -2633,14 +2621,10 @@ function antenna($A){
                                 }
                             });
 
-                            $broadcast.append($broadcast_tiles);
+                            $broadcast.append($broadcast_tiles, $broadcast_explanation);
 
                             var broadcastInsertionMethod = ( ANT.group.broadcast_jquery_method != "" ) ? ANT.group.broadcast_jquery_method : "after";
-                            console.log('broadcastInsertionMethod: '+broadcastInsertionMethod);
                             $broadcastSelector[ broadcastInsertionMethod ]( $broadcast );
-
-
-
                         }
                     });
                 }

@@ -2731,7 +2731,7 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 
 /* Antenna Broadcast widget */
 
-.antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; text-align: left; }
+.antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; text-align: left; position:relative; }
 .antenna-broadcast .ant-broadcast-header { min-height:22px; }
 .antenna-broadcast .ant-headline { font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; display:inline-block; }
 .antenna-broadcast .ant-logo { display:inline-block; float:right; padding:4px 2px 0 4px; font-size: 14px; cursor: pointer;}
@@ -2776,6 +2776,12 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 .antenna-broadcast .ant-featured.ant-featured-txt .ant-featured-content { max-width: 90%; padding:32px 12px 12px 12px; font-size:11px; line-height:13px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:400; letter-spacing:0.5px; color:#333; }
 .antenna-broadcast .ant-featured:first-of-type.ant-featured-txt .ant-featured-content { padding-top:44px; }
 
+.antenna-broadcast .ant-explanation { width:100%; max-width:200px; position: absolute; top:45px; right:0; left:0; margin:auto; background:#fff; text-align: center; padding:10px; box-shadow: 0px 0px 4px #aaa;}
+.antenna-broadcast .ant-explanation .ant-antenna-text { font-size: 50px !important; position:relative; top:4px; left:4px; line-height: 0px !important; display: inline-block; }
+.antenna-broadcast .ant-explanation .ant-antenna-text:before { line-height: 0px !important; }
+.antenna-broadcast .ant-explanation .ant-antenna-logo { display: inline-block; top: -12px; position: relative; }
+.antenna-broadcast .ant-explanation p { padding:0; margin-bottom:5px; }
+.antenna-broadcast .ant-explanation p:last-of-type { margin-bottom:0; }
 
 
 /****** DEBUG WHILE REBRANDING *****/
