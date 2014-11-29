@@ -266,7 +266,7 @@ function antenna($A){
 
                     var referrer_url_array = document.referrer.split('/');
                     var referrer_url = referrer_url_array.splice(2).join('/');
-                    
+
                     var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
                     var referrer_domain = referrer_url.split('/').splice(0,1).join('/').split(':')[0]; // get domain, strip port
                     var referrer_tld = (referrer_domain) ? HOSTDOMAIN.exec( referrer_domain )[0] : '';
@@ -282,7 +282,7 @@ function antenna($A){
                             pid : page_id
                             lts : long_term_session
                             sts : short_term_session
-                            ref : referrer_tld
+                            ref : referrer_url    // referrer_tld
                             cid : content_id
                             ah : article_height
                             ch : container_hash
@@ -312,7 +312,7 @@ function antenna($A){
                             pid: page_id,
                             lts: ANT.user.lts || null,
                             sts: ANT.user.sts || null,
-                            ref: referrer_tld || null,
+                            ref: referrer_url || null,
                             cid: params.content_id || null,
                             ah: (params.event_type == 'sl') ? 'na' : parseInt(ANT.group.active_section_milestones[100]) || null,
                             ch: params.container_hash || null,
@@ -2589,7 +2589,7 @@ function antenna($A){
                             
                             var $broadcast = $('<div class="antenna-broadcast"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
-                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>What is this thing?</p></div>');
+                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/" target="_blank">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
 
                             if ( $broadcastSelector.width() < 400 ) {
                                 $broadcast.addClass('ant-thin');
@@ -2622,6 +2622,10 @@ function antenna($A){
                             });
 
                             $broadcast.append($broadcast_tiles, $broadcast_explanation);
+
+                            $broadcast.find('.ant-logo, .ant-close').click(function() {
+                                $broadcast.find('.ant-explanation').toggleClass('ant-visible');
+                            });
 
                             var broadcastInsertionMethod = ( ANT.group.broadcast_jquery_method != "" ) ? ANT.group.broadcast_jquery_method : "after";
                             $broadcastSelector[ broadcastInsertionMethod ]( $broadcast );
@@ -3975,7 +3979,8 @@ function antenna($A){
                         ANT.events.trackEventToCloud({
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
-                            page_id: ANT.util.getPageProperty('id')
+                            page_id: ANT.util.getPageProperty('id'),
+                            content_attributes: ( $(ANT.group.broadcast_selector).first().length ) ? 'broadcast':null
                         });
 
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
