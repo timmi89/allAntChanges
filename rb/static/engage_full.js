@@ -2570,6 +2570,10 @@ function antenna($A){
                 bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
             }
         },
+        status: {
+            group: false,
+            page: false
+        },
         util: {
             // cookies: {
             //     create: function(name,value,days) {
@@ -4157,6 +4161,13 @@ function antenna($A){
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
+
+                            if ( response.status !== "success" ) {
+                                return false;
+                            } else {
+                                ANT.status.page = true;
+                            }
+
                             // ANT.events.track( 'load' );
                             
                             // var load_event_value = '',
@@ -5106,6 +5117,7 @@ function antenna($A){
             },
             sendHashesForSinglePage: function(sendData, onSuccessCallback){
                 // ANT.actions.sendHashesForSinglePage:
+                if (ANT.status.page === true) {
 
                     var pageId = sendData.pageID;
 
@@ -5208,7 +5220,7 @@ function antenna($A){
                             }
                         }
                     });
-
+                }
                 
             },
             hashCustomDisplayHashes: function() {
@@ -5835,142 +5847,144 @@ function antenna($A){
                 },
                 init: function(hash, onSuccessCallback){
                     //ANT.actions.content_nodes.init:
+                    if (ANT.status.page === true) {
 
-                    // if ( $('.ant-'+hash).hasClass('ant_summary_loaded') ) {
-                    //     return;
-                    // }
+                        // if ( $('.ant-'+hash).hasClass('ant_summary_loaded') ) {
+                        //     return;
+                        // }
 
-                    // po' man's throttling
-                    // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
-                    // if ( $.inArray( hash, ANT.inProgress) != -1 ) {
-                    //     return false;
-                    // } else {
-                    //     ANT.inProgress.push( hash );
-                    // }
-
-                    //gets this summary's content_nodes from the server and populates the summary with them.
-                    var summary = ANT.summaries[hash],
-                        container_id = (typeof summary != "undefined") ? summary.id:"";
-
-                    if(!container_id){
-                        //this still happens if container is an unknown container and has no reactions.
-                        //It's save to just return for now though.
-                        
-                        // ANT.safeThrow('container_id is not valid for hash: '+hash);
-                    
-                        return;
-                    }
-
-                    var pageId = ANT.util.getPageProperty('id', hash);
-
-                    //quick fix add pageId to summary becuase we need it in the summary widget content lookup
-                    // todo: #summaryContentByPageFix
-                    summary.pageId = pageId;
-
-                    var sendData = {
-                        "page_id" : pageId,
-                        "container_id":container_id,
-                        "hash":hash,
-                        "cross_page": ( summary.$container.hasAttr('ant-crossPageContent') ) ? true:false
-                    };
-
-                    //use an assetLoader that returns a deferred to ensure it gets loaded only once
-                    //and callbacks will run on success - or immediately if it has already returned.
-                    var assetLoader = ANT.assetLoaders.content_nodes[container_id];
-
-                    if(!assetLoader){
-                        assetLoader = $.ajax({
-                            url: ANT_baseUrl+"/api/summary/container/content/",
-                            type: "get",
-                            contentType: "application/json",
-                            dataType: "jsonp",
-                            data: { json: $.toJSON(sendData) }
-                        });
-
-                        ANT.assetLoaders.content_nodes[container_id] = assetLoader;
-                    }
-                    
-                    //todo: also remove redundant callbacks from the summary widget.
-                    //we still need the onSuccessCallbacks to run though.
-                    assetLoader.then(function(response) {
-
-                        if ( response.status !== "success" ) {
-                            return false;
-                        }
-
-                        var content_nodes = response.data;
-                        //todo: make this generic interactions instead of just tags
-                        //summary.interactions.tags =
-
-                        //todo: think about this more later:
-                        //make selStates for these nodes and give the nodes a reference to them
-                        $.each(content_nodes, function(key, node){
-
-                            var $container = $('[ant-hash="'+hash+'"]');
-
-                            try{
-                                node.selState = $container.selog('save', { 'serialRange': node.location });
-                            }
-                            catch(err){
-                                node.selState = undefined;
-                            }
-
-                        });
-
-                        //throw the content_nodes into the container summary
-
-                        ANT.content_nodes[hash] = content_nodes;
-                        summary.content_nodes = content_nodes;
-
-                        if(summary.kind == "text"){
-                        }else{
-                            //this is weird because there is only one content_node - the img
-                            //this whole thing is gross.  Fix our data structure later.
-
-                            summary.top_interactions.coms = {};
-
-                            $.each(content_nodes, function(contentNodeId, contentNodeData){
-                                var comsArr = contentNodeData.top_interactions.coms;
-
-                                $.each(comsArr, function(idx, com){
-                                    summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
-                                    summary.top_interactions.coms[ com.tag_id ].push(com);
-                                });
-
-                            });
-                        }
-
-                        // add a class so we note that the content summary was retrieved
-                        $('[ant-hash="'+hash+'"]').attr('ant_summary_loaded', 'true');
-
-                        // fix for ant-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
-                        ANT.actions.indicators.update(hash);
-
-                        // remove from po' man's throttling array
                         // po' man's throttling
-                        // ANT.inProgress.splice( ANT.inProgress.indexOf( hash ) ,1);
-                        // var y = [1, 2, 3]
-                        // var removeItem = 2;
-
                         // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
-                        // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
-                        //   return value != hash;
-                        // });
+                        // if ( $.inArray( hash, ANT.inProgress) != -1 ) {
+                        //     return false;
+                        // } else {
+                        //     ANT.inProgress.push( hash );
+                        // }
 
+                        //gets this summary's content_nodes from the server and populates the summary with them.
+                        var summary = ANT.summaries[hash],
+                            container_id = (typeof summary != "undefined") ? summary.id:"";
 
-                        //finally, run the success callback function
-                        if ( onSuccessCallback ) {
-                            onSuccessCallback();
+                        if(!container_id){
+                            //this still happens if container is an unknown container and has no reactions.
+                            //It's save to just return for now though.
+                            
+                            // ANT.safeThrow('container_id is not valid for hash: '+hash);
+                        
+                            return;
                         }
 
-                        //also run any callbacks that get queued up on the summarybar hover
-                        if(ANT.contentNodeQueue && ANT.contentNodeQueue[hash] && ANT.contentNodeQueue[hash].length ){
-                            $.each(ANT.contentNodeQueue[hash], function(){
-                                var func = ANT.contentNodeQueue[hash].pop();
-                                func(hash);
+                        var pageId = ANT.util.getPageProperty('id', hash);
+
+                        //quick fix add pageId to summary becuase we need it in the summary widget content lookup
+                        // todo: #summaryContentByPageFix
+                        summary.pageId = pageId;
+
+                        var sendData = {
+                            "page_id" : pageId,
+                            "container_id":container_id,
+                            "hash":hash,
+                            "cross_page": ( summary.$container.hasAttr('ant-crossPageContent') ) ? true:false
+                        };
+
+                        //use an assetLoader that returns a deferred to ensure it gets loaded only once
+                        //and callbacks will run on success - or immediately if it has already returned.
+                        var assetLoader = ANT.assetLoaders.content_nodes[container_id];
+
+                        if(!assetLoader){
+                            assetLoader = $.ajax({
+                                url: ANT_baseUrl+"/api/summary/container/content/",
+                                type: "get",
+                                contentType: "application/json",
+                                dataType: "jsonp",
+                                data: { json: $.toJSON(sendData) }
                             });
+
+                            ANT.assetLoaders.content_nodes[container_id] = assetLoader;
                         }
-                    });
+                        
+                        //todo: also remove redundant callbacks from the summary widget.
+                        //we still need the onSuccessCallbacks to run though.
+                        assetLoader.then(function(response) {
+
+                            if ( response.status !== "success" ) {
+                                return false;
+                            }
+
+                            var content_nodes = response.data;
+                            //todo: make this generic interactions instead of just tags
+                            //summary.interactions.tags =
+
+                            //todo: think about this more later:
+                            //make selStates for these nodes and give the nodes a reference to them
+                            $.each(content_nodes, function(key, node){
+
+                                var $container = $('[ant-hash="'+hash+'"]');
+
+                                try{
+                                    node.selState = $container.selog('save', { 'serialRange': node.location });
+                                }
+                                catch(err){
+                                    node.selState = undefined;
+                                }
+
+                            });
+
+                            //throw the content_nodes into the container summary
+
+                            ANT.content_nodes[hash] = content_nodes;
+                            summary.content_nodes = content_nodes;
+
+                            if(summary.kind == "text"){
+                            }else{
+                                //this is weird because there is only one content_node - the img
+                                //this whole thing is gross.  Fix our data structure later.
+
+                                summary.top_interactions.coms = {};
+
+                                $.each(content_nodes, function(contentNodeId, contentNodeData){
+                                    var comsArr = contentNodeData.top_interactions.coms;
+
+                                    $.each(comsArr, function(idx, com){
+                                        summary.top_interactions.coms[ com.tag_id ] = summary.top_interactions.coms[ com.tag_id ] || [];
+                                        summary.top_interactions.coms[ com.tag_id ].push(com);
+                                    });
+
+                                });
+                            }
+
+                            // add a class so we note that the content summary was retrieved
+                            $('[ant-hash="'+hash+'"]').attr('ant_summary_loaded', 'true');
+
+                            // fix for ant-item not initted on pageload on a blogroll.  band-aid.  wtf.  ugh.
+                            ANT.actions.indicators.update(hash);
+
+                            // remove from po' man's throttling array
+                            // po' man's throttling
+                            // ANT.inProgress.splice( ANT.inProgress.indexOf( hash ) ,1);
+                            // var y = [1, 2, 3]
+                            // var removeItem = 2;
+
+                            // if ( typeof ANT.inProgress === "undefined" ) { ANT.inProgress = []; }
+                            // ANT.inProgress = $.grep(ANT.inProgress, function(value) {
+                            //   return value != hash;
+                            // });
+
+
+                            //finally, run the success callback function
+                            if ( onSuccessCallback ) {
+                                onSuccessCallback();
+                            }
+
+                            //also run any callbacks that get queued up on the summarybar hover
+                            if(ANT.contentNodeQueue && ANT.contentNodeQueue[hash] && ANT.contentNodeQueue[hash].length ){
+                                $.each(ANT.contentNodeQueue[hash], function(){
+                                    var func = ANT.contentNodeQueue[hash].pop();
+                                    func(hash);
+                                });
+                            }
+                        });
+                    }
 
                 },
                 utils: {
@@ -10561,100 +10575,103 @@ function $AFunctions($A){
 
             //helper function for ajax above
             function _makeSummaryWidget(settings){
-                var page = settings;
-                
-                var widgetClass = 'ant-summary-key-'+page.key;
 
-                //first kill any existing instances; we're going to recreate them.
-                $('.'+widgetClass).remove();
+                if (ANT.status.page === true) {
+                    var page = settings;
+                    
+                    var widgetClass = 'ant-summary-key-'+page.key;
 
-                var $summary_widget_parent = $(page.parentContainer),
-                    $summary_widget = $('<div class="ant ant-summary ant-summary-'+page.id+' ant-border-box" ant-page-id="'+page.id+'"></div>').addClass(widgetClass);
+                    //first kill any existing instances; we're going to recreate them.
+                    $('.'+widgetClass).remove();
 
-                if ( ANT.engageScriptParams.bookmarklet == "true" ) {
-                    $summary_widget.addClass('ant_bookmarklet');
-                }
-                $summary_widget.data({
-                    page_id:page.id,
-                    page_key:page.key
-                });
+                    var $summary_widget_parent = $(page.parentContainer),
+                        $summary_widget = $('<div class="ant ant-summary ant-summary-'+page.id+' ant-border-box" ant-page-id="'+page.id+'"></div>').addClass(widgetClass);
 
-                var summaryWidgetInsertionMethod = ( ANT.group.summary_widget_method != "" ) ? ANT.group.summary_widget_method : "after";
-
-                //page.jqFunc would be something like 'append' or 'after',
-                //so this would read $summary_widget_parent.append($summary_widget);
-                $summary_widget_parent[ summaryWidgetInsertionMethod ]($summary_widget);
-
-                var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
-                $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
-
-                $summary_widget.append(
-                    '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
-                        '<span class="ant-antenna-logo"></span>'+
-                        // '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
-                    '</a>'
-                );
-
-                $summary_widget.find('.ant-logo').click( function() {
-                    // ANT.events.track('click_ant_icon_summ');
-                });
-
-                $summary_widget.find('.ant-logo').tooltip({});
-
-                var onActiveEvent = function(){
-                    // let's get the reaction summaries for the page here.
-                    getReactedContent();
-                    var page_id = $(this).data('page_id');
-
-                    var $aWindow = ANT.aWindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
-
-                    ANT.events.trackEventToCloud({
-                        event_type: 'sb',
-                        event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
-                        page_id: page_id
+                    if ( ANT.engageScriptParams.bookmarklet == "true" ) {
+                        $summary_widget.addClass('ant_bookmarklet');
+                    }
+                    $summary_widget.data({
+                        page_id:page.id,
+                        page_key:page.key
                     });
-                };
 
-                if(isTouchBrowser){
-                    $summary_widget.on('tap.ant', function(){
-                        onActiveEvent.call(this);
-                        $(this).toggleClass('ant_hover');
+                    var summaryWidgetInsertionMethod = ( ANT.group.summary_widget_method != "" ) ? ANT.group.summary_widget_method : "after";
+
+                    //page.jqFunc would be something like 'append' or 'after',
+                    //so this would read $summary_widget_parent.append($summary_widget);
+                    $summary_widget_parent[ summaryWidgetInsertionMethod ]($summary_widget);
+
+                    var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
+                    $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
+
+                    $summary_widget.append(
+                        '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
+                            '<span class="ant-antenna-logo"></span>'+
+                            // '<span class="no-ant ant-logo" title="This is <strong style=\'color:#4d92da;\'>Antenna</strong>. Click to visit our site and learn more!" src="'+ANT_staticUrl+'widget/images/blank.png" ></span>'+
+                        '</a>'
+                    );
+
+                    $summary_widget.find('.ant-logo').click( function() {
+                        // ANT.events.track('click_ant_icon_summ');
                     });
-                }else{
-                    $summary_widget.hover(
-                        onActiveEvent,
-                        function() {
-                        }
+
+                    $summary_widget.find('.ant-logo').tooltip({});
+
+                    var onActiveEvent = function(){
+                        // let's get the reaction summaries for the page here.
+                        getReactedContent();
+                        var page_id = $(this).data('page_id');
+
+                        var $aWindow = ANT.aWindow.make( "readMode", {is_page:true, page:page, tags:page.toptags} );
+
+                        ANT.events.trackEventToCloud({
+                            event_type: 'sb',
+                            event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
+                            page_id: page_id
+                        });
+                    };
+
+                    if(isTouchBrowser){
+                        $summary_widget.on('tap.ant', function(){
+                            onActiveEvent.call(this);
+                            $(this).toggleClass('ant_hover');
+                        });
+                    }else{
+                        $summary_widget.hover(
+                            onActiveEvent,
+                            function() {
+                            }
+                        );
+                    }
+
+                    //quick fix - I don't know if settings.summary.where(kind =="tag").count is reliable.
+                    var trueTotal;
+                    if(settings.summary){
+                        $.each(settings.summary, function(){
+                            if(this.kind == "tag"){
+                                trueTotal = this.count;
+                            }
+                        });
+                    }
+
+                    var total_reactions = 0;
+                    if(trueTotal){
+                        total_reactions = trueTotal;
+                    }else{
+                        $.each( page.toptags, function(idx, tag) {
+                            total_reactions +=  tag.tag_count;
+                        });
+                    }
+
+                    var total_reactions_label = ( total_reactions > 1 ) ?
+                        total_reactions+" " + '<span>'+ANT.t('plural_reaction')+'</span>' :
+                            ( total_reactions > 0 ) ? 
+                                total_reactions+" " + '<span>'+ANT.t('single_reaction')+'</span>' :
+                                '<span>'+ANT.t('plural_reaction')+'</span>';
+                    $summary_widget.append(
+                        '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                     );
                 }
-
-                //quick fix - I don't know if settings.summary.where(kind =="tag").count is reliable.
-                var trueTotal;
-                if(settings.summary){
-                    $.each(settings.summary, function(){
-                        if(this.kind == "tag"){
-                            trueTotal = this.count;
-                        }
-                    });
-                }
-
-                var total_reactions = 0;
-                if(trueTotal){
-                    total_reactions = trueTotal;
-                }else{
-                    $.each( page.toptags, function(idx, tag) {
-                        total_reactions +=  tag.tag_count;
-                    });
-                }
-
-                var total_reactions_label = ( total_reactions > 1 ) ?
-                    total_reactions+" " + '<span>'+ANT.t('plural_reaction')+'</span>' :
-                        ( total_reactions > 0 ) ? 
-                            total_reactions+" " + '<span>'+ANT.t('single_reaction')+'</span>' :
-                            '<span>'+ANT.t('plural_reaction')+'</span>';
-                $summary_widget.append(
-                    '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
-                );
                 
             }
 
