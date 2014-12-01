@@ -98,6 +98,8 @@ class CacheUpdater(object):
         elif self.method == 'delete':
             try:
                 cache.delete(self.key)
+                logger.info('value: ' + str(self.value))
+                cache.set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
         elif self.method == 'delete_many':
@@ -118,7 +120,7 @@ class PageDataCacheUpdater(CacheUpdater):
         
     def hydrate(self):
         self.key = 'page_data' + str(self.page_id)
-        if self.method == 'update':  
+        if self.method == 'update' or self.method == 'delete':  
             self.value = getSinglePageDataDict(self.page_id)
         
         
@@ -135,7 +137,7 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
             self.key = 'page_containers' + str(self.page_id) + ":" + str(self.hashes)
         else:
             self.key = 'page_containers' + str(self.page_id)
-        if self.method == 'update':  
+        if self.method == 'update' or self.method == 'delete':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes, self.crossPageHashes)
         
 class GroupSettingsDataCacheUpdater(CacheUpdater):        
@@ -146,7 +148,7 @@ class GroupSettingsDataCacheUpdater(CacheUpdater):
         
     def hydrate(self):
         self.key = 'group_settings_' + str(self.host)
-        if self.method == 'update':  
+        if self.method == 'update' or self.method == 'delete':  
             self.value = getSettingsDict(self.group)
         
 
@@ -158,7 +160,7 @@ class ViewCacheUpdater(CacheUpdater):
         
     def hydrate(self):
         self.key = self.view + ":" + str(self.page)
-        if self.method == 'update':  
+        if self.method == 'update' or self.method == 'delete':  
             self.value = getSettingsDict(self.group)
          
 

@@ -70,6 +70,7 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -81,17 +82,7 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-        },
-        'readonly2': {
-          'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'root',
-            'PASSWORD': '0bscur31nt3nt',
-            'HOST':     'localhost',
-            'PORT':     '3306',
+            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -99,10 +90,23 @@ if DEBUG:
     }
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'readr.cache',
-            'TIMEOUT':60
-        }
+                'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                'LOCATION': '127.0.0.1:11211',
+                'TIMEOUT':86400,
+                'OPTIONS': {
+                    'MAX_POOL_SIZE': 100,
+                    'BLACKLIST_TIME': 20,
+                    'SOCKET_TIMEOUT': 5,
+                    'MAX_ITEM_SIZE': 1000*100,
+                }
+            },
+            'query_cache': {
+                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+                'LOCATION': '127.0.0.1:11211',
+                'TIMEOUT':86400,
+                'JOHNNY_CACHE':True,
+
+            }
     }
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
@@ -143,21 +147,7 @@ else:
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
-          },
-          'readonly2': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'readr',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '50.116.59.190',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
           }
-          
         }
         
         CACHES = {
@@ -197,19 +187,6 @@ else:
             }
           },
           'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '50.116.59.190',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-          },
-          'readonly2': {
             'ENGINE':   'django.db.backends.mysql',
             'NAME':     'readrboard',
             'USER':     'antenna-array',

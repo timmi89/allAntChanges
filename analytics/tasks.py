@@ -164,6 +164,7 @@ def do_all_group_reports():
             group_count = group_count - 1
             logger.info("Groups left: " + str(group_count))
         except Exception, ex:
+            group_count = group_count - 1
             logger.warn("Group Report Exception: " + str(group.id))
             logger.warn(ex)
             
