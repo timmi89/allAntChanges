@@ -120,110 +120,72 @@ else:
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
     
-    if not ANTENNA_ARRAY:
-        DATABASES = {
-          'default': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'root',
-            'PASSWORD': '',
-            'HOST':     'localhost',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-          },
-          'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'readr',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '50.116.59.190',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-          }
-        }
         
-        CACHES = {
-            'default': {
-                'BACKEND': 'memcachepool.cache.UMemcacheCache',
-                'LOCATION': '50.116.59.190:11211',
-                'TIMEOUT':86400,
-                'OPTIONS': {
-                    'MAX_POOL_SIZE': 100,
-                    'BLACKLIST_TIME': 20,
-                    'SOCKET_TIMEOUT': 5,
-                    'MAX_ITEM_SIZE': 1000*100,
-                }
-            },
-            'query_cache': {
-                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-                'LOCATION': '192.168.182.48:11211',
-                'TIMEOUT':86400,
-                'JOHNNY_CACHE':True,
+    DATABASES = {
+      'default': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'antenna-array',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '192.168.142.147',
+        'PORT':     '3306',
+        'CONN_MAX_AGE':  60,
+        'JOHNNY_CACHE_KEY': 'query_cache',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'readonly1': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'antenna-array',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '50.116.59.190',
+        'PORT':     '3306',
+        'CONN_MAX_AGE':  60,
+        'JOHNNY_CACHE_KEY': 'query_cache',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      },
+      'readonly2': {
+        'ENGINE':   'django.db.backends.mysql',
+        'NAME':     'readrboard',
+        'USER':     'antenna-array',
+        'PASSWORD': 'r34drsl4v3',
+        'HOST':     '192.168.178.62',
+        'PORT':     '3306',
+        'CONN_MAX_AGE':  60,
+        'JOHNNY_CACHE_KEY': 'query_cache',
+        'OPTIONS': {
+            "init_command": "SET storage_engine=INNODB",
+        }
+      }
+      
+    }
+    
+    CACHES = {
+        'default': {
+            'BACKEND': 'memcachepool.cache.UMemcacheCache',
+            'LOCATION': '50.116.59.190:11211',
+            'TIMEOUT':86400,
+            'OPTIONS': {
+                'MAX_POOL_SIZE': 100,
+                'BLACKLIST_TIME': 20,
+                'SOCKET_TIMEOUT': 5,
+                'MAX_ITEM_SIZE': 1000*100,
+            }
+        },
+        'query_cache': {
+            'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+            'LOCATION': '192.168.182.48:11211',
+            'TIMEOUT':86400,
+            'JOHNNY_CACHE':True,
 
-            }
         }
-        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
-    else:
-        DATABASES = {
-          'default': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '192.168.142.147',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-          },
-          'readonly1': {
-            'ENGINE':   'django.db.backends.mysql',
-            'NAME':     'readrboard',
-            'USER':     'antenna-array',
-            'PASSWORD': 'r34drsl4v3',
-            'HOST':     '50.116.59.190',
-            'PORT':     '3306',
-            'CONN_MAX_AGE':  60,
-            'JOHNNY_CACHE_KEY': 'query_cache',
-            'OPTIONS': {
-                "init_command": "SET storage_engine=INNODB",
-            }
-          }
-          
-        }
-        
-        CACHES = {
-            'default': {
-                'BACKEND': 'memcachepool.cache.UMemcacheCache',
-                'LOCATION': '50.116.59.190:11211',
-                'TIMEOUT':86400,
-                'OPTIONS': {
-                    'MAX_POOL_SIZE': 100,
-                    'BLACKLIST_TIME': 20,
-                    'SOCKET_TIMEOUT': 5,
-                    'MAX_ITEM_SIZE': 1000*100,
-                }
-            },
-            'query_cache': {
-                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-                'LOCATION': '192.168.182.48:11211',
-                'TIMEOUT':86400,
-                'JOHNNY_CACHE':True,
-
-            }
-        }
-        
-        BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
+    }
+    
+    BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
       
 
 CELERY_ACCEPT_CONTENT = ['json']
