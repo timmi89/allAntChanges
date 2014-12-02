@@ -98,7 +98,6 @@ class CacheUpdater(object):
         elif self.method == 'delete':
             try:
                 cache.delete(self.key)
-                logger.info('value: ' + str(self.value))
                 cache.set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
