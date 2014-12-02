@@ -13,40 +13,9 @@ from django.core.cache import cache
 
 logger = get_task_logger(__name__)
 
-ALL_GROUPS = [102, 1027, 105, 108, 1097, 1104, 1125, 1153, 1163, 1167, 1168, 
-              1169, 117, 1207, 1215, 1224, 1278, 1339, 1350, 1355, 1358, 1362, 
-              1376, 140, 1419, 1431, 1441, 1443, 1454, 1460, 1468, 1491, 15, 1509, 
-              1514, 1524, 1545, 1548, 1554, 1557, 156, 1563, 1584, 1585, 1587, 
-              1590, 1594, 1602, 1612, 1614, 1626, 1629, 1634, 1642, 1647, 1648, 
-              1655, 1657, 1659, 1660, 1661, 1669, 1673, 1679, 1680, 1681, 1682, 
-              1687, 1688, 1689, 1693, 1699, 17, 1700, 1702, 1706, 1707, 1710, 
-              1717, 172, 1727, 1734, 1741, 1754, 1757, 1758, 1760, 1761, 1766, 
-              1772, 1774, 1776, 1782, 1783, 1784, 179, 1790, 1794, 1796, 
-              1797, 1799, 1802, 1814, 1818, 1820, 1835, 1843, 1844, 1846, 1851, 
-              1854, 1864, 1867, 1873, 1880, 1883, 1884, 1888, 1891, 1892, 1899, 
-              1901, 1905, 1910, 1914, 1919, 1926, 1927, 1928, 1933, 1934, 1935, 
-              1937, 1990, 1992, 2007, 2014, 2015, 2016, 2018, 2022, 2024, 2026,
-              2034, 2043, 2048, 2050, 2061, 2069, 2074, 208, 2081, 2084, 2099, 
-              2102, 2107, 2109, 2111, 2113, 2122, 2124, 2129, 2133, 2135, 2140, 
-              2147, 2150, 2153, 2155, 2156, 2169, 2178, 2182, 2184, 2185, 2189, 
-              2196, 2198, 2199, 2215, 2216, 2217, 2218, 2227, 2243, 2249, 2250, 
-              2252, 2254, 2268, 2281, 2293, 2297, 2298, 2301, 2303, 2310, 2330, 
-              2343, 2347, 2350, 2352, 2353, 2357, 2361, 2383, 2385, 2390, 2393, 
-              2394, 2395, 2398, 2399, 2400, 2401, 2402, 2403, 2405, 2406, 2408, 
-              2409, 2411, 2415, 2418, 2424, 2426, 2427, 2430, 2433, 2434, 2436, 
-              2437, 2438, 2440, 2450, 2460, 2461, 2464, 2468, 2469, 2473, 2475, 
-              2477, 2480, 2488, 2498, 2499, 2507, 2529, 2545, 2566, 2568, 2570, 
-              2581, 2582, 2584, 2595, 2612, 2616, 2617, 2620, 2621, 2623, 2625, 
-              2630, 2631, 2633, 2639, 2641, 2643, 2646, 2647, 2649, 2650, 2653, 
-              2654, 2655, 2656, 2658, 2659, 2661, 2665, 2667, 2668, 2669, 2670, 
-              2672, 2673, 2674, 2677, 2680, 2683, 2686, 2689, 269, 2692, 2693, 
-              2696, 2700, 2701, 2702, 2706, 2708, 2709, 2715, 2716, 28, 29, 32, 
-              341, 35, 378, 4, 5, 501, 508, 55, 571, 6, 624, 648, 658, 66, 662, 
-              667, 729, 738, 77, 778, 80, 83, 848, 853, 894, 918, 960, 997]
-
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="14,44", day_of_week="*")))
+               run_every=(crontab(hour="*", minute="14", day_of_week="*")))
 def do_all_groups_recirc():
     TVHRC_SLOTS = 5
     MRCON_SLOTS = 5
@@ -54,7 +23,7 @@ def do_all_groups_recirc():
     try:
         groups = get_approved_active_groups()
     except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
+        groups = Group.objects.filter(approved=True, activated=True) 
     
     for group in groups:
         logger.info("STARTING GROUP RECIRC: " + str(group.id))
@@ -74,14 +43,15 @@ def do_all_groups_recirc():
                     break
                 else:
                     (display_interaction, display_vote) = get_display_interaction_and_count(hash_report['container_hash'], group)
-                    recirc = {}
-                    recirc['page'] = hash_report['page']
-                    recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
-                    recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
-                    recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
-                                          'id':display_interaction.id, 'count':display_vote}
-                    final_recs.append(recirc)
-                
+                    if display_interaction is not None:
+                        recirc = {}
+                        recirc['page'] = hash_report['page']
+                        recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
+                        recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
+                        recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
+                                              'id':display_interaction.id, 'count':display_vote}
+                        final_recs.append(recirc)
+                    
          
             mrcon = json.loads(JSONGroupReport.objects.filter(group=group, kind='mrcon').order_by('-created')[0].body)
             for mrc in mrcon:
@@ -96,15 +66,16 @@ def do_all_groups_recirc():
                 if len(unique_pages) == TVHRC_SLOTS + MRCON_SLOTS:
                     break
                 
-                (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group)       
-                recirc = {}
-                recirc['page'] = mrc['page']
-                recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
-                recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
-                recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
-                                      'id':display_interaction.id, 'count':display_vote}
-                
-                final_recs.append(recirc)
+                (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group)
+                if display_interaction is not None:       
+                    recirc = {}
+                    recirc['page'] = mrc['page']
+                    recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
+                    recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
+                    recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
+                                          'id':display_interaction.id, 'count':display_vote}
+                    
+                    final_recs.append(recirc)
             JSONGroupReport.objects.create(body=json.dumps(final_recs), group=group, kind='recrc')
             cache.set('group_recirc_' + str(group.id), json.dumps(final_recs))
         except Exception, ex:
@@ -112,7 +83,7 @@ def do_all_groups_recirc():
             
             
 def get_display_interaction_and_count(hash, group):
-    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group, approved=True)
+    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group, approved=True, promotable=True)
     i_count = {}
     display_interaction = None
     display_vote = 0
@@ -137,7 +108,7 @@ def do_all_group_reports():
     try:
         groups = get_approved_active_groups()
     except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
+        groups = Group.objects.filter(approved=True, activated=True) 
     
     global_data = {'A_user_count' : 0, 'B_user_count' : 0, 'engaged_user_count' : 0}
     group_count = len(groups)
@@ -258,7 +229,7 @@ def sowing_seeds_of_love():
     try:
         groups = get_approved_active_groups()
     except:
-        groups = Group.objects.filter(id__in=ALL_GROUPS, approved=True) 
+        groups = Group.objects.filter(approved=True, activated=True) 
     
     now = datetime.datetime.now()
     td = datetime.timedelta(minutes=12)
@@ -322,7 +293,7 @@ def generate_approved_active_groups():
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
-    groups = Group.objects.filter(approved=True)
+    groups = Group.objects.filter(approved=True, activated=True)
     group_report = {}
     for group in groups:
         active = event_util.check_activity(group, now.month, now.year)

@@ -168,6 +168,7 @@ class Group(models.Model):
     short_name = models.CharField(max_length=50, unique=True)
     language = models.CharField(max_length=25, default="en")
     approved = models.BooleanField(default=False)
+    activated = models.BooleanField(default=False)
     requires_approval = models.BooleanField(default=False)
     signin_organic_required = models.BooleanField(default=False)
     demo_group = models.BooleanField(default=False)
@@ -215,6 +216,8 @@ class Group(models.Model):
     blessed_tags = models.ManyToManyField(InteractionNode, through='GroupBlessedTag', related_name = 'Blessed Tag')
 
     blocked_tags = models.ManyToManyField(InteractionNode, through='BlockedTag', related_name = 'Blocked Tag')
+    blocked_promo_tags = models.ManyToManyField(InteractionNode, through='BlockedPromoTag', related_name = 'Blocked Promo Tag')
+    
     all_tags = models.ManyToManyField(InteractionNode, through='AllTag', related_name = 'All Tag')
 
     
@@ -260,6 +263,8 @@ class Group(models.Model):
     show_recirc = models.BooleanField(default=False)
     recirc_selector = models.CharField(max_length=255, blank=True)
     recirc_title = models.CharField(max_length=255, blank=True)
+    recirc_background = models.TextField(blank=True, null=True)
+    recirc_jquery_method = models.CharField(max_length=255, blank=True)
     
     image_selector = models.CharField(max_length=255, blank=True)
     image_attribute = models.CharField(max_length=255, blank=True)
@@ -287,6 +292,18 @@ class GroupBlessedTag(models.Model):
         ordering = ['order']
 
 class BlockedTag(models.Model):
+    group = models.ForeignKey(Group)
+    node = models.ForeignKey(InteractionNode)
+    order =  models.IntegerField()
+    
+    def __unicode__(self):
+        return str(self.group) + ":" + str(self.node) + "" + str(self.order)
+    
+    class Meta:
+        ordering = ['order']
+        unique_together = ('group', 'node')
+        
+class BlockedPromoTag(models.Model):
     group = models.ForeignKey(Group)
     node = models.ForeignKey(InteractionNode)
     order =  models.IntegerField()
@@ -439,6 +456,7 @@ class Interaction(DateAwareModel, UserAwareModel):
     content = models.ForeignKey(Content)
     interaction_node = models.ForeignKey(InteractionNode)
     approved = models.BooleanField(default=True)
+    promotable = models.BooleanField(default=True)
     anonymous = models.BooleanField(default=False)
     parent= models.ForeignKey('self', blank=True, null=True)
     kind = models.CharField(max_length=3, choices=INTERACTION_TYPES)

@@ -86,6 +86,18 @@ if DEBUG:
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
+        },
+        'readonly2': {
+          'ENGINE':   'django.db.backends.mysql',
+            'NAME':     'readrboard',
+            'USER':     'root',
+            'PASSWORD': '0bscur31nt3nt',
+            'HOST':     'localhost',
+            'PORT':     '3306',
+            'JOHNNY_CACHE_KEY': 'query_cache',
+            'OPTIONS': {
+                "init_command": "SET storage_engine=INNODB",
+            }
         }
     }
     CACHES = {

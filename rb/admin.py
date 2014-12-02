@@ -40,7 +40,7 @@ class RBGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required', 'premium', 'send_notifications')
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required', 'premium', 'send_notifications')
+            'fields': ('name', 'short_name', 'demo_group', 'approved', 'activated', 'signin_organic_required', 'premium', 'send_notifications')
         }),
         ('Advanced', {
             'fields': ('custom_css', 'active_sections', 'anno_whitelist', 'separate_cta', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist', 'img_indicator_show_onload', 'img_indicator_show_side', 'tag_box_bg_colors', 'tag_box_text_colors', 'tag_box_font_family', 'tag_box_gradient', 'tags_bg_css' )
