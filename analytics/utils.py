@@ -8,6 +8,7 @@ from oauth2client.client import AccessTokenRefreshError
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
 import time, httplib2, json
+from datetime import timedelta
 from oauth2client.client import SignedJwtAssertionCredentials
 import logging
 logger = logging.getLogger('rb.standard')
@@ -44,11 +45,10 @@ class OAuth2EventsUtility(object):
     def refresh(self):
         self.credentials._do_refresh_request(self.http_auth.request)
 
-    def get_top_reaction_view_hash_counts(self, group, month, year, maxResults = 100):
-        table = self.get_table_name(group, month, year)
-        query = 'select ch, count(ch) as counts  from ' + table + ' where ch != "null" and et = "rs" and ev="rd" group by ch order by counts desc'
+    def get_top_reaction_view_hash_counts(self, group, start, end, maxResults = 100):
         
-        body = self.get_request_body(query, maxResults)
+        query = 'select ch, count(ch) as counts  from %s where ch != "null" and et = "rs" and ev="rd" and %s group by ch order by counts desc'
+        body = self.get_request_body(self.mod_query_for_dates(query, group, start, end), maxResults)
         try:
             result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
             rows = result['rows']
@@ -61,67 +61,68 @@ class OAuth2EventsUtility(object):
     
 
     
-    def get_group_AB_script_loads(self, group, month, year, maxResults = 1, ab_group = 'A'):
-        table = self.get_table_name(group, month, year)
-        query = 'select count(et) as counts  from ' + table + ' where et = "sl" and ev = "' + ab_group + '"'
-        
-        body = self.get_request_body(query, maxResults)
-        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-        rows = result['rows']
+    def get_group_AB_script_loads(self, group, start, end, maxResults = 1, ab_group = 'A'):     
+        query = 'select count(et) as counts  from %s where et = "sl" and ev = "' + ab_group + '" and %s'      
+        rows = self.get_rows(self.mod_query_for_dates(query, group, start, end), maxResults)
         return rows[0]['f'][0]['v']
 
-    def get_event_type_count_by_event_value(self, group, month, year, maxResults = 1, event_type = 'sl', event_value = 'A'):
-        table = self.get_table_name(group, month, year)
-        query = 'select count(et) as counts  from ' + table + ' where et = "' + event_type + '" and ev = "' + event_value + '"'
+    def get_event_type_count_by_event_value(self, group, start, end, maxResults = 1, event_type = 'sl', event_value = 'A'):
+        query = 'select count(et) as counts  from %s where et = "' + event_type + '" and ev = "' + event_value + '" and %s'
         
-        body = self.get_request_body(query, maxResults)
-        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-        rows = result['rows']
+        rows = self.get_rows(self.mod_query_for_dates(query, group, start, end), maxResults)
         return rows[0]['f'][0]['v']
     
     def check_activity(self, group, month, year):
-        table = self.get_table_name(group, month, year)
+        table= self.get_table_name(group, month, year)
         query = 'select ev from ' + table + ' where et="sl" limit 1'
         body = self.get_request_body(query, 1)
         try:
             result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
             return True
         except Exception, her:
-            logger.info(her)
             return False
     
-    def get_group_general_user_data(self, group, month, year, maxResults = 1000):
-        table = self.get_table_name(group, month, year)
+    def get_group_general_user_data(self, group, start, end, maxResults = 1000):
         
-        query = 'select count(distinct lts) from ' + table + ' where et = "sl" and ev = "A"'
-        body = self.get_request_body(query, 1)
-        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-        rows = result['rows']
+        query = 'select count(distinct lts) from %s where et = "sl" and ev = "A" and %s'
+        rows = self.get_rows(self.mod_query_for_dates(query, group, start, end), 1)
         A_user_count = rows[0]['f'][0]['v']
         
-        query = 'select count(distinct lts) from ' + table + ' where et = "sl" and ev = "B"'
-        body = self.get_request_body(query, 1)
-        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-        rows = result['rows']
+        query = 'select count(distinct lts) from %s where et = "sl" and ev = "B" and %s'
+        rows = self.get_rows(self.mod_query_for_dates(query, group, start, end), 1)
         B_user_count = rows[0]['f'][0]['v']
         
-        query = 'select count(distinct lts) from ' + table + ' where (et = "re" OR (et = "rs" and ev="rd") OR ( et="sb" and ev="show" ) OR ( et="sb" and ev="vw" ) )'
-        body = self.get_request_body(query, 1)
-        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
-        rows = result['rows']
+        query = 'select count(distinct lts) from %s where (et = "re" OR (et = "rs" and ev="rd") OR ( et="sb" and ev="show" ) OR ( et="sb" and ev="vw" ) ) and %s'
+        rows = self.get_rows(self.mod_query_for_dates(query, group, start, end), 1)
         engaged_user_count = rows[0]['f'][0]['v']
         
         return {'A_user_count' : A_user_count, 'B_user_count' : B_user_count, 'engaged_user_count' : engaged_user_count}
-        
-    
-    def get_page_views(self, group, month, year):
-        table = self.get_table_name(group, month, year)
+          
        
-        
     def get_table_name(self, group, month, year):
         return '[events.events_' + str(year) + '_' + str(month) + '_' + str(group.id) + ']'
     
     
+    def query_table_names_by_dates(self, group, start, end):
+        td = timedelta(days=30)
+        tables = set()
+        while start <= end:
+            tables.add(self.get_table_name(group, start.month, start.year))
+            start = start + td
+        return ','.join(tables)    
+    
+    def query_date_limits(self, start, end):
+        return ' createdAt >= "' + start.strftime('%Y-%m-%d') + ' 00:00:00" and createdAt <= "' + end.strftime('%Y-%m-%d') + ' 23:59:59"'
+    
+    def mod_query_for_dates(self, query, group, start, end):
+        logger.info(query % (self.query_table_names_by_dates(group, start, end), self.query_date_limits(start, end)))
+        return query % (self.query_table_names_by_dates(group, start, end), self.query_date_limits(start, end))
+    
+    def get_rows(self, query, maxResults):
+        body = self.get_request_body(query, maxResults)
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=body).execute()
+        return result['rows']
+        
     def get_request_body(self, query, maxResults):
         return {
                 "timeoutMs": 60000, 

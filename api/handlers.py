@@ -538,13 +538,7 @@ class ContentSummaryHandler(AnonymousBaseHandler):
     @status_response
     @json_data
     def read(self, request, data):
-        known = {}
-
-        # Quick fix for now.  I'm still throwing an error, but doing it intentionally.
-        # The important thing is we're no longer get_or_creating an adhock text container which was just craziness and causing all kinds of nasty.
-        
-        # TODO: figure out why the container_id is not getting sent - 
-        # I think it might be because the cache's result of summary/container call is taking a while to send back a known result... looking into it.
+        known = {}    
         try:
             container_id = data['container_id']
 
@@ -556,18 +550,6 @@ class ContentSummaryHandler(AnonymousBaseHandler):
         
         page_id = data['page_id']
 
-        # hash = data['hash']
-        # print "- - - - - - - - - "
-        # print "contentSummaryHandler:  page_id is: " + str(page_id)
-        # print "- - - - - - - - - - - - - - - - - - - - - - - - - - - "
-        # print data
-
-
-        # tag_ids = data['top_tags'] # [porter] removing this on 12/28/2011, don't see why it's needed here.
-
-        # Force queryset evaluation by making lists - reduces interaction queries to 1
-        #logger.info("C:" + str(dir(container_id)))
-        #logger.info("P:" + str(dir(page_id)))
         if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
             raise JSONException(u"Bad page id or container_id in content summary call")
 
@@ -1046,6 +1028,82 @@ class BlockedTagHandler(AnonymousBaseHandler):
         blocked.delete()
         existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
         existing_interactions.update(approved = True)
+        self.clear_caches(existing_interactions)
+        return {"deleted":True}
+       
+    def clear_caches(self, interactions):
+        for interaction in interactions:
+            page = interaction.page
+            container = interaction.container
+            
+            try:
+                cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=cache_updater, kwargs={})
+                t.start()
+                
+                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
+                t = Thread(target=container_cache_updater, kwargs={})
+                t.start()
+                
+                page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
+                t = Thread(target=page_container_cache_updater, kwargs={})
+                t.start()
+ 
+                if not interaction.parent or interaction.kind == 'com':
+                    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                    t = Thread(target=global_cache_updater, kwargs={})
+                    t.start()
+        
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+            
+class BlockedPromoTagHandler(AnonymousBaseHandler):
+    allowed_methods = ('GET', 'POST', 'DELETE', 'PUT')
+
+    @requires_admin_rest
+    def create(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedPromoTag.objects.create(group=group, node = i_node, order=0)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(promotable = False)
+        self.clear_caches(existing_interactions)
+
+        if group and group.word_blacklist:
+            group.word_blacklist += ','+i_node.body
+            group.save()
+
+        return {"created":True}    
+    
+        
+    @requires_admin_rest
+    def read(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedPromoTag.objects.filter(group=group, node=i_node)
+        if len(blocked) == 0:
+            return {"blocked":False}
+        return {"blocked":True}
+        
+        
+    @requires_admin_rest
+    def update(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked, existed = BlockedPromoTag.objects.get_or_create(group=group, node = i_node, order=0)
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(promotable = False)
+        self.clear_caches(existing_interactions)
+        return {"updated":True}
+    
+    @requires_admin_rest
+    def delete(self, request, group_id = None, node_id = None, **kwargs):
+        group = Group.objects.get(id=int(group_id))
+        i_node = InteractionNode.objects.get(id=int(node_id))
+        blocked = BlockedPromoTag.objects.get(group=group, node = i_node)
+        blocked.delete()
+        existing_interactions = Interaction.objects.filter(page__site__group=group, interaction_node=i_node)
+        existing_interactions.update(promotable = True)
         self.clear_caches(existing_interactions)
         return {"deleted":True}
        

@@ -40,7 +40,7 @@ class RBGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'demo_group', 'approved', 'requires_approval','signin_organic_required', 'premium', 'send_notifications')
     fieldsets = (
         (None, {
-            'fields': ('name', 'short_name', 'demo_group', 'approved','signin_organic_required', 'premium', 'send_notifications')
+            'fields': ('name', 'short_name', 'demo_group', 'approved', 'activated', 'signin_organic_required', 'premium', 'send_notifications')
         }),
         ('Advanced', {
             'fields': ('custom_css', 'active_sections', 'anno_whitelist', 'separate_cta', 'temp_interact', 'img_whitelist', 'img_blacklist', 'no_readr', 'word_blacklist', 'img_indicator_show_onload', 'img_indicator_show_side', 'tag_box_bg_colors', 'tag_box_text_colors', 'tag_box_font_family', 'tag_box_gradient', 'tags_bg_css' )
@@ -58,13 +58,13 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('inline_selector', 'inline_func', 'author_selector', 'author_attribute', 'topics_selector', 'topics_attribute', 'section_selector', 'section_attribute')
         }),
         ('Broadcast', {
-            'fields': ('broadcast_selector', 'broadcast_headline', 'broadcast_background', 'broadcast_jquery_method')
+            'fields': ('show_recirc', 'recirc_selector', 'recirc_title', 'recirc_background', 'recirc_jquery_method')
         }),
         ('Customization', {
             'fields': ('media_url_ignore_query','paragraph_helper','call_to_action','media_display_pref', 'sharebox_show', 'sharebox_fade', 
                        'sharebox_should_own', 'sharebox_selector', 'sharebox_facebook', 
                        'sharebox_twitter', 'sharebox_stumble', 'sharebox_digg', 'sharebox_reddit', 'sharebox_google',
-                       'show_recirc', 'recirc_selector', 'recirc_title', 'image_selector', 'image_attribute')
+                       'image_selector', 'image_attribute')
             
         }),
      )

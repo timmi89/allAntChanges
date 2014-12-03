@@ -1067,9 +1067,10 @@ def group_all_tags(request, **kwargs):
     all_set = set(group.all_tags.all())
     blocked_set = set(group.blocked_tags.all())
     all_unblocked = all_set - blocked_set
-    
+    all_promo_unblocked = all_set - set(group.blocked_promo_tags.all())
     
     context['all_unblocked'] = all_unblocked
+    context['all_promo_unblocked'] = all_promo_unblocked
     
     return render_to_response(
         "group_all_tags.html",

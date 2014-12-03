@@ -190,38 +190,38 @@
         <section class="configurationSection">        
             <h3>Broadcast Widget</h3>
             <div class="formRow">
-                <label for="id_broadcast_headline">
+                <label for="id_recirc_title">
                     <span class="labelTitle">Broadcast Title</span>
                     <span>What headline should the widget have?</span>
                 </label>
-                {{ form.broadcast_headline }}{{ form.broadcast_headline.errors }}
+                {{ form.recirc_title }}{{ form.recirc_title.errors }}
             </div>
             <div class="formRow">
-                <label for="id_broadcast_selector">
+                <label for="id_recirc_selector">
                     <span class="labelTitle">Broadcast Selector (jQuery selector)</span>
                     <span>Where should the Broadcast be inserted?</span>
                 </label>
-                {{ form.broadcast_selector }}{{ form.broadcast_selector.errors }}
+                {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
             </div>
             <div class="formRow">
-                <label for="id_broadcast_jquery_method">
+                <label for="id_recirc_jquery_method">
                     <span class="labelTitle">Broadcast Widget Insertion Method</span>
                     <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
                 </label>
-                {{ form.broadcast_jquery_method.as_hidden }}{{ form.broadcast_jquery_method.errors }}
-                <select id="broadcast_jquery_method_selector">
-                    <option {% if group.broadcast_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
-                    <option {% if group.broadcast_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
-                    <option {% if group.broadcast_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
-                    <option {% if group.broadcast_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
+                <select id="recirc_jquery_method_selector">
+                    <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                    <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
+                    <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                    <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
                 </select>
             </div>
             <div class="formRow text">
-                <label for="id_broadcast_background">
+                <label for="id_recirc_background">
                     <span class="labelTitle">Broadcast Background</span>
                     <span>CSS Background property for the Antenna Broadcast widget</span>
                 </label>
-                {{ form.broadcast_background }}{{ form.broadcast_background.errors }}
+                {{ form.recirc_background }}{{ form.recirc_background.errors }}
             </div>
         </section>
     </div>
@@ -432,8 +432,8 @@
                 $('#id_summary_widget_method').val( $(this).val() );
             });
 
-            $('#broadcast_jquery_method_selector').change( function() {
-                $('#id_broadcast_jquery_method').val( $(this).val() );
+            $('#recirc_jquery_method_selector').change( function() {
+                $('#id_recirc_jquery_method').val( $(this).val() );
             });
 
             $('#doubleTapMessagePosition_selector').change( function() {

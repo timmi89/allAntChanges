@@ -39,6 +39,27 @@
     {% endfor %}  
 		</tbody>
 	</table>
+	
+	<div class="notice info">
+        <p>These are reactions that have been used on your site.  If you want to prevent them from appearing in promotional modules, click the Block from Promos button.</p>
+    </div>
+	<table role="block_promo_tags">
+        <thead>
+            <tr>
+                <th>Reaction</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for tag in all_promo_unblocked|dictsortreversed:"id" %}
+            <tr>
+                <td width="300">{{tag.body}}</td>
+                <td><button data-group-id="{{ group.id }}" data-node-id="{{ tag.id }}">Block From Promos</button></td>
+            </tr>
+    {% endfor %}  
+        </tbody>
+    </table>
+  
   
 </section>
 </div>
@@ -63,6 +84,27 @@ $('table[role="block_tags"] button').click( function() {
         error: function(response) {
         	console.log('FUCK -- error');
         	console.log(response);
+        }
+    });
+});
+
+$('table[role="block_promo_tags"] button').click( function() {
+    var $button = $(this);
+    // send the data!
+    $.ajax({
+        url: "/api/promotag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
+        type: "post",
+        // contentType: "application/json",
+        // dataType: "jsonp",
+        // data: { json: JSON.stringify(sendData) },
+        success: function(response) {
+            console.log('successs!!!!!');
+            console.log(response);
+            $button.closest('tr').html('<td colspan="2">This reaction has been blocked from promotion slots!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/blocked_reactions/">list of blocked reactions</a> to unblock it.</td>');
+        },
+        error: function(response) {
+            console.log('FUCK -- error');
+            console.log(response);
         }
     });
 });

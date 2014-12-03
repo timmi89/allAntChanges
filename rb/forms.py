@@ -401,10 +401,10 @@ class GroupForm(forms.ModelForm):
             'tag_box_font_family',
             'tag_box_gradient',
             'tags_bg_css',
-            'broadcast_selector',
-            'broadcast_headline',
-            'broadcast_background',
-            'broadcast_jquery_method'
+            'recirc_selector',
+            'recirc_title',
+            'recirc_background',
+            'recirc_jquery_method'
         )
 
 

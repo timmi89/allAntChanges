@@ -34,6 +34,28 @@
     {% endfor %}  
 		</tbody>
 	</table>
+	
+	
+	<h1>Blocked Reactions</h1>
+    <div class="notice info">
+        <p>These are the reactions on your site that you have <strong>blocked</strong> from appearing in promotion slots, but not on the site overall.</p>
+    </div>
+	<table role="unblock_promo_tags">
+        <thead>
+            <tr>
+                <th>Reaction</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for blocked in group.blocked_promo_tags.all|dictsortreversed:"id" %}
+            <tr>
+                <td width="300">{{blocked.body}}</td>
+                <td><button data-group-id="{{ group.id }}" data-node-id="{{ blocked.id }}">Unblock</button></td>
+            </tr>
+    {% endfor %}  
+        </tbody>
+    </table>
   
 </section>
 </div>
@@ -55,6 +77,24 @@ $('table[role="unblock_tags"] button').click( function() {
         error: function(response) {
         	console.log('FUCK -- error');
         	console.log(response);
+        }
+    });
+});
+
+$('table[role="unblock_promo_tags"] button').click( function() {
+    var $button = $(this);
+    // send the data!
+    $.ajax({
+        url: "/api/promotag/block/"+$button.data('groupId')+"/"+$button.data('nodeId')+"/",
+        type: "delete",
+        success: function(response) {
+            console.log('successs!!!!!');
+            console.log(response);
+            $button.closest('tr').html('<td colspan="2">This reaction has been unblocked!  If this was an accident, go visit your <a href="/group/{{ group.short_name }}/all_reactions/">list of allowed reactions</a> to re-block it.</td>');
+        },
+        error: function(response) {
+            console.log('FUCK -- error');
+            console.log(response);
         }
     });
 });
