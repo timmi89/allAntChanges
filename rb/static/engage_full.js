@@ -2577,8 +2577,8 @@ function antenna($A){
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
                     $.ajax({
-                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
-                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
                         contentType: "application/json",
                         success: function(response) {
