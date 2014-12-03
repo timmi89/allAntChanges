@@ -2574,7 +2574,7 @@ function antenna($A){
             init: function() {
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
-                if ( $broadcastSelector.length ) {
+                if ( ANT.group.show_recirc && $broadcastSelector.length ) {
                     $.ajax({
                         url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
@@ -4068,6 +4068,7 @@ function antenna($A){
                     key,
                     url,
                     canonical_url,
+                    page_image,
                     title;
 
                 // temp used as a helper to get the pageurl.
@@ -4088,6 +4089,8 @@ function antenna($A){
                             // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
+
+                            page_image = $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute );
 
                             if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
@@ -4147,7 +4150,8 @@ function antenna($A){
                                     group_id: parseInt(ANT.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
-                                    title: $post_href.text()
+                                    title: $post_href.text(),
+                                    image:page_image
                                 };
 
                                 pagesArr.push(thisPage);
@@ -4165,9 +4169,13 @@ function antenna($A){
                 var pageUrl = ANT.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
-                    if ( !$( 'body' ).hasAttr('ant-page-checked') ) {
+                    var $body = $('body');
+
+                    if ( !$body.hasAttr('ant-page-checked') ) {
                         canonical_url = ANT.util.getPageProperty('canonical_url');
                         title = ANT.util.getPageProperty('title');
+                        
+                        page_image = $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute );
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
@@ -4179,7 +4187,8 @@ function antenna($A){
                             group_id: parseInt(ANT.group.id, 10),
                             url: pageUrl,
                             canonical_url: (pageUrl == canonical_url) ? "same" : canonical_url,
-                            title: title
+                            title: title,
+                            image:page_image
                         };
 
                         ANT.group.thisPage = thisPage;
@@ -4189,14 +4198,14 @@ function antenna($A){
                         // key = ANT.util.md5.hex_md5(pageUrl);
                         pageDict[key] = thisPage;
 
-                        if ( !$( 'body' ).hasAttr('ant-page-container') ) {
-                            // $( 'body' ).attr( 'ant-page-container', 'true' ).attr('ant-page-key',key).attr('ant-page-checked', true);
-                            $( 'body' ).attr('ant-page-key',key).attr('ant-page-checked', true);;
+                        if ( !$body.hasAttr('ant-page-container') ) {
+                            // $body.attr( 'ant-page-container', 'true' ).attr('ant-page-key',key).attr('ant-page-checked', true);
+                            $body.attr('ant-page-key',key).attr('ant-page-checked', true);;
 
                             if ( $('.ant-page-summary').length == 1 ) {
                                 $('.ant-page-summary').attr('ant-page-widget-key',key);
                             } else {
-                                var $widget_key_last = $( 'body' ).find(ANT.group.summary_widget_selector).eq(0);
+                                var $widget_key_last = $body.find(ANT.group.summary_widget_selector).eq(0);
                                 // this seems unnecessary, but, on a blogroll, we don't want to have two widget keys on the first post's summary box
                                 if ( $widget_key_last.attr('ant-page-widget-key') != "0" ) {
                                     $widget_key_last.attr('ant-page-widget-key', key);

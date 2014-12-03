@@ -157,6 +157,20 @@
         <section class="configurationSection">
             <h3>Page Attributes</h3>
             <div class="formRow">
+                <label for="id_image_selector">
+                    <span class="labelTitle">Page Image Selector (jQuery selector)</span>
+                    <span>Where is the primary image for the page?  (e.g. "article header img.masthead")</span>
+                </label>
+                {{ form.image_selector }}{{ form.image_selector.errors }}
+            </div>
+            <div class="formRow">
+                <label for="id_image_attribute">
+                    <span class="labelTitle">Page Image URL Attribute</span>
+                    <span>Which attribute contains the Page Image's URL?  Typically, this is <strong>src</strong>.</span>
+                </label>
+                {{ form.image_attribute }}{{ form.image_attribute.errors }}
+            </div>
+            <div class="formRow">
                 <label for="">
                     <span class="labelTitle">Author(s)</span>
                     <span>Tell Antenna which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
@@ -190,38 +204,47 @@
         <section class="configurationSection">        
             <h3>Broadcast Widget</h3>
             <div class="formRow">
-                <label for="id_recirc_title">
-                    <span class="labelTitle">Broadcast Title</span>
-                    <span>What headline should the widget have?</span>
+                <label for="id_show_recirc">
+                    {{ form.show_recirc}}{{ form.show_recirc.errors }}
+                    <span class="labelTitle">Show Broadcast widget?</span>
+                    <!-- <span>Simply ch</span> -->
                 </label>
-                {{ form.recirc_title }}{{ form.recirc_title.errors }}
             </div>
-            <div class="formRow">
-                <label for="id_recirc_selector">
-                    <span class="labelTitle">Broadcast Selector (jQuery selector)</span>
-                    <span>Where should the Broadcast be inserted?</span>
-                </label>
-                {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
-            </div>
-            <div class="formRow">
-                <label for="id_recirc_jquery_method">
-                    <span class="labelTitle">Broadcast Widget Insertion Method</span>
-                    <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
-                </label>
-                {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
-                <select id="recirc_jquery_method_selector">
-                    <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
-                    <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
-                    <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
-                    <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
-                </select>
-            </div>
-            <div class="formRow text">
-                <label for="id_recirc_background">
-                    <span class="labelTitle">Broadcast Background</span>
-                    <span>CSS Background property for the Antenna Broadcast widget</span>
-                </label>
-                {{ form.recirc_background }}{{ form.recirc_background.errors }}
+            <div class="recirc_options {% if group.show_recirc == True %}visible{% endif %}">
+                <div class="formRow">
+                    <label for="id_recirc_title">
+                        <span class="labelTitle">Broadcast Title</span>
+                        <span>What headline should the widget have?</span>
+                    </label>
+                    {{ form.recirc_title }}{{ form.recirc_title.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_recirc_selector">
+                        <span class="labelTitle">Broadcast Selector (jQuery selector)</span>
+                        <span>Where should the Broadcast be inserted?</span>
+                    </label>
+                    {{ form.recirc_selector }}{{ form.recirc_selector.errors }}
+                </div>
+                <div class="formRow">
+                    <label for="id_recirc_jquery_method">
+                        <span class="labelTitle">Broadcast Widget Insertion Method</span>
+                        <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
+                    </label>
+                    {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
+                    <select id="recirc_jquery_method_selector">
+                        <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
+                        <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
+                        <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
+                        <option {% if group.recirc_jquery_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
+                    </select>
+                </div>
+                <div class="formRow text">
+                    <label for="id_recirc_background">
+                        <span class="labelTitle">Broadcast Background</span>
+                        <span>CSS Background property for the Antenna Broadcast widget</span>
+                    </label>
+                    {{ form.recirc_background }}{{ form.recirc_background.errors }}
+                </div>
             </div>
         </section>
     </div>
@@ -401,6 +424,10 @@
     {% endblock %}
 
 {% block pageJS %}
+    <style>
+    .recirc_options             { height:0; overflow:hidden; }
+    .recirc_options.visible     { height:auto; overflow:visible; }
+    </style>
     <script>
         $(function(){
 
@@ -438,6 +465,10 @@
 
             $('#doubleTapMessagePosition_selector').change( function() {
                 $('#id_doubleTapMessagePosition').val( $(this).val() );
+            });
+
+            $('#id_show_recirc').change( function() {
+                $('.recirc_options').toggleClass('visible')
             });
 
         });
