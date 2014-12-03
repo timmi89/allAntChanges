@@ -2572,6 +2572,7 @@ function antenna($A){
         },
         broadcast: {
             init: function() {
+                //ANT.broadcast.init();
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
@@ -2626,6 +2627,13 @@ function antenna($A){
                         }
                     });
                 }
+            },
+            forceDisplay: function(selector) {
+                ANT.group.show_recirc = true;
+                if (selector) {
+                    ANT.group.recirc_selector = selector;
+                }
+                ANT.broadcast.init();
             }
         },
         status: {
