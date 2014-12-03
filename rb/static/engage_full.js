@@ -2576,8 +2576,8 @@ function antenna($A){
 
                 if ( $broadcastSelector.length ) {
                     $.ajax({
-                        // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
-                        url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
                         contentType: "application/json",
                         success: function(response) {
@@ -2633,32 +2633,32 @@ function antenna($A){
             page: false
         },
         util: {
-            // cookies: {
-            //     create: function(name,value,days) {
-            //         if (days) {
-            //             var date = new Date();
-            //             date.setTime(date.getTime()+(days*24*60*60*1000));
-            //             var expires = "; expires="+date.toGMTString();
-            //         }
-            //         else var expires = "";
-            //         document.cookie = name+"="+value+expires+"; path=/";
-            //     },
+            cookies: {
+                create: function(name,value,days) {
+                    if (days) {
+                        var date = new Date();
+                        date.setTime(date.getTime()+(days*24*60*60*1000));
+                        var expires = "; expires="+date.toGMTString();
+                    }
+                    else var expires = "";
+                    document.cookie = name+"="+value+expires+"; path=/";
+                },
 
-            //     read: function(name) {
-            //         var nameEQ = name + "=";
-            //         var ca = document.cookie.split(';');
-            //         for(var i=0;i < ca.length;i++) {
-            //             var c = ca[i];
-            //             while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            //             if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            //         }
-            //         return null;
-            //     },
+                read: function(name) {
+                    var nameEQ = name + "=";
+                    var ca = document.cookie.split(';');
+                    for(var i=0;i < ca.length;i++) {
+                        var c = ca[i];
+                        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                    }
+                    return null;
+                },
 
-            //     erase: function(name) {
-            //         createCookie(name,"",-1);
-            //     }
-            // },
+                erase: function(name) {
+                    createCookie(name,"",-1);
+                }
+            },
             hexToRgb: function(hex) {
                 hex = $.trim(hex);
                 if (hex) {
@@ -3486,7 +3486,7 @@ function antenna($A){
 
                 //note: the "\054" is actually the octal for a comma.  The back end is passing it back that way. It's working fine though.
                 //, so it seems that "2:10\0542:32" == "2:10,2:32"
-                if ( localStorage.getItem('ant_content_type') != 'pag' ) {
+                if ( ANT.util.cookies.read('content_type') != 'pag' ) {
                     
                     // quick fix
                     // todo  - do this better later;

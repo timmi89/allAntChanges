@@ -104,16 +104,48 @@
 	 <script type="text/javascript">
         
 		$(document).ready( function() {			
+            var utils = {};
+            $.extend(utils, {
+                cookies: {
+                    create: function(name,value,days) {
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime()+(days*24*60*60*1000));
+                            var expires = "; expires="+date.toGMTString();
+                        }
+                        else var expires = "";
+                        document.cookie = name+"="+value+expires+"; path=/";
+                    },
+
+                    read: function(name) {
+                        var nameEQ = name + "=";
+                        var ca = document.cookie.split(';');
+                        for(var i=0;i < ca.length;i++) {
+                            var c = ca[i];
+                            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                        }
+                        return null;
+                    },
+
+                    erase: function(name) {
+                        utils.cookies.create(name,"",-1);
+                    }
+                }
+            });
 			
-			if ( localStorage.getItem('location') && localStorage.getItem('container_hash') ) {
-				ANTAuth.notifyParent({message:false}, "sharedLink|" + localStorage.getItem('container_hash') + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('location') ) + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('reaction') ) + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('content') ) + "|" + localStorage.getItem('referring_int_id') + "|" + ANTAuth.decodeDjangoCookie( localStorage.getItem('page_hash') ) );
-				localStorage.setItem( 'container_hash' );
-				localStorage.setItem( 'location' );
-				localStorage.setItem( 'content' );
-				localStorage.setItem( 'reaction' );
-				localStorage.setItem( 'referring_int_id' );
-				localStorage.setItem( 'page_hash' );
-			} else if ( !localStorage.getItem('educatedUser') ) {
+			if ( utils.cookies.read('location') && utils.cookies.read('container_hash') ) {
+            
+				ANTAuth.notifyParent({message:false}, "sharedLink|" + utils.cookies.read('container_hash') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('location') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('reaction') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('content') ) + "|" + utils.cookies.read('referring_int_id') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('page_hash') ) );
+				utils.cookies.erase( 'container_hash' );
+				utils.cookies.erase( 'location' );
+				utils.cookies.erase( 'content' );
+				utils.cookies.erase( 'reaction' );
+				utils.cookies.erase( 'referring_int_id' );
+				utils.cookies.erase( 'page_hash' );
+
+
+			} else if ( !utils.cookies.read('educatedUser') ) {
 				ANTAuth.notifyParent({message:false}, "educate user");
 			}
 

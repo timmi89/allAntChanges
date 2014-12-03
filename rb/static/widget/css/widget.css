@@ -1664,7 +1664,8 @@ div.ant_reactions {
 div.ant_alert_box        { position:fixed; top:-400px; left:10px; background:#f0f0f0; min-width:220px; max-width:300px; padding:0px; z-index:12000; overflow:hidden; -moz-box-shadow:0 0 10px 1px #aaa ; -webkit-box-shadow:0 0 10px 1px #aaa ; box-shadow:0 0 10px 1px #aaa; }
 div.ant_alert_box a      { color:#008be4; }
 div.ant_alert_box_1      { background: #fff; height:30px; }
-div.ant_alert_box_1 h1   { padding:11px 0 0 26px; cursor:text; clear:none;}
+div.ant_alert_box_1 h1                  { padding:12px 0 0 26px; cursor:text; clear:none;}
+div.ant_alert_box_1 .ant-antenna-logo   { display:block;float:left; margin-top: 10px; margin-left: 8px;}
 
 div.ant_alert_box_2      { background: #f0f0f0; padding:10px 10px; font-size:12px; color:#666;}
 div.ant_alert_box_x      { position:absolute; right:10px; top:7px; font-size:14px; cursor:pointer; color:#999; }
