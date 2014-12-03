@@ -2593,26 +2593,42 @@ function antenna($A){
                             var broadcastHeadline = (ANT.group.recirc_title!='') ? ANT.group.recirc_title:'Popular Reactions';
                             $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
 
+                            var tileCount = 0;
                             $.each(response, function(idx, item) {
-                                if (idx < 5) {
-                                    var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
-                                                    (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
-                                                    item.content.body;
-                                    
-                                    var itemHTML = '' +
-                                    '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
-                                        '<div class="ant-featured-container">' +
-                                            '<a href="//antenna.is/r/'+item.reaction.id+'" target="_blank">' +
-                                              '<div class="ant-featured-content">'+content+'</div>' +
-                                              '<div class="ant-featured-overlay"></div>' +
-                                              '<div class="ant-featured-gradient"></div>' +
-                                              '<div class="ant-featured-reaction">'+item.reaction.body+'</div>' +
-                                              '<div class="ant-featured-headline">'+item.page.title+'</div>' +
-                                            '</a>' +
-                                        '</div>' +
-                                    '</div>';
+                                if (tileCount < 5) {
 
-                                    $broadcast_tiles.append(itemHTML);
+                                    var validTile = false;
+                                    if (item.content.kind == 'pag') {
+                                        if (item.page.image) {
+                                            validTile = true;
+                                            content = '<img src="'+item.page.image+'" />';
+                                        }
+                                    } else {
+                                        var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
+                                                        (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
+                                                        item.content.body;
+
+                                        validTile = true;
+                                    }
+                                    
+                                    if (validTile === true) {
+                                        var itemHTML = '' +
+                                        '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
+                                            '<div class="ant-featured-container">' +
+                                                '<a href="//antenna.is/r/'+item.reaction.id+'" target="_blank">' +
+                                                  '<div class="ant-featured-content">'+content+'</div>' +
+                                                  '<div class="ant-featured-overlay"></div>' +
+                                                  '<div class="ant-featured-gradient"></div>' +
+                                                  '<div class="ant-featured-reaction">'+item.reaction.body+'</div>' +
+                                                  '<div class="ant-featured-headline">'+item.page.title+'</div>' +
+                                                '</a>' +
+                                            '</div>' +
+                                        '</div>';
+
+                                        $broadcast_tiles.append(itemHTML);
+
+                                        tileCount++;
+                                    }
                                 }
                             });
 
