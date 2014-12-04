@@ -2577,8 +2577,8 @@ function antenna($A){
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
                     $.ajax({
-                        // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
-                        url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
                         contentType: "application/json",
                         success: function(response) {
@@ -4114,7 +4114,7 @@ function antenna($A){
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
 
-                            page_image = $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute );
+                            page_image = (ANT.group.image_selector) ? $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
 
                             if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
@@ -4199,7 +4199,7 @@ function antenna($A){
                         canonical_url = ANT.util.getPageProperty('canonical_url');
                         title = ANT.util.getPageProperty('title');
                         
-                        page_image = $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute );
+                        page_image = (ANT.group.image_selector) ? $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
@@ -10235,7 +10235,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv34"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv35"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
