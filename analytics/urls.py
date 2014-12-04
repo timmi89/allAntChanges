@@ -9,6 +9,7 @@ Active = Resource(handler=ActiveHandler)
 Tagged = Resource(handler=TaggedHandler)
 Recent = Resource(handler=RecentHandler)
 InhouseAnalytics = Resource(handler=InhouseAnalyticsJSONHandler)
+RecircHandler = Resource(handler=RecircHandler)
 
 urlpatterns = patterns('',
     url(r'^/$', 'analytics.views.analytics'),
@@ -28,5 +29,5 @@ urlpatterns = patterns('',
     url(r'^/inhouse/test/$', InhouseAnalytics),
     url(r'^/global/$', 'analytics.views.global_snapshot'),
     url(r'^/snapshot/v1/(?P<group_id>\d+)/$', 'analytics.views.group_report'),
-    url(r'^/recirc/v1/(?P<group_id>\d+)/$', 'analytics.views.recirculate'),
+    url(r'^/recirc/v1/(?P<group_id>\d+)/$', RecircHandler),
 )

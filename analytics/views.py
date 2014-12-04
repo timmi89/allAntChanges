@@ -12,6 +12,7 @@ from django.core.cache import cache
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin, requires_admin_super
+from api.decorators import status_response, json_data
 from django.template import RequestContext
 from authentication.token import checkCookieToken
 import logging, json
@@ -354,7 +355,20 @@ def group_report(request, group_id):
         
 
     return HttpResponse(json.dumps(group_info), 'application/json')
-   
+
+class RecircHandler(AnonymousBaseHandler):
+    @status_response
+    def read(self, request, group_id = None, **kwargs):
+        cached_report = cache.get('group_recirc_' + str(group_id))
+        if cached_report is None:
+            group = Group.objects.get(id=int(group_id))
+            cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
+            cache.set('group_recirc_' + str(group_id), cached_report)
+    
+        return json.loads(cached_report)
+    
+    
+        
 def recirculate(request, group_id):
     cached_report = cache.get('group_recirc_' + str(group_id))
     if cached_report is None:
@@ -362,7 +376,4 @@ def recirculate(request, group_id):
         cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
         cache.set('group_recirc_' + str(group_id), cached_report)
     
-    wrapped_cache_report = {}
-    wrapped_cache_report['success'] = True
-    wrapped_cache_report['data'] = cached_report
-    return HttpResponse(json.dumps(wrapped_cache_report), 'application/json')
+    return cached_report
