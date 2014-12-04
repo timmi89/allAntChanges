@@ -2598,7 +2598,7 @@ function antenna($A){
                             $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
 
                             var tileCount = 0;
-                            $.each(response, function(idx, item) {
+                            $.each(response.data, function(idx, item) {
                                 if (tileCount < 5) {
 
                                     var validTile = false;
