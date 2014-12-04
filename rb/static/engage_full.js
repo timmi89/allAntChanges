@@ -2578,8 +2578,8 @@ function antenna($A){
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
                     $.ajax({
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
-                        // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
-                        url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2620,7 +2620,7 @@ function antenna($A){
                                         var itemHTML = '' +
                                         '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
                                             '<div class="ant-featured-container">' +
-                                                '<a href="//antenna.is/r/'+item.reaction.id+'" target="_blank">' +
+                                                '<a href="//www.antenna.is/r/'+item.reaction.id+'" target="_blank">' +
                                                   '<div class="ant-featured-content">'+content+'</div>' +
                                                   '<div class="ant-featured-overlay"></div>' +
                                                   '<div class="ant-featured-gradient"></div>' +
@@ -3401,7 +3401,13 @@ function antenna($A){
 
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         var decodedContent = unescape($.evalJSON('"'+data.content+'"'));
-                        
+
+                        ANT.events.trackEventToCloud({
+                            event_type: 'rc',
+                            event_value: ''+ANT.session.referring_int_id,
+                            page_id: ANT.util.getPageProperty('id'),
+                            content_attributes: data.redirect_type
+                        });
                         $msg1 = $('<h1>Shared with <span>Antenna</span></h1>');
 
                         if ( $('img[ant-hash="'+data.container_hash+'"]').length == 1 ) {
@@ -3685,7 +3691,7 @@ function antenna($A){
                                     ANT.session.referring_int_id = parseInt( sharedLink[5], 10 ); // TODO what is this used for any more?
                                 }
                                 // TODO sharedLink[6] is SHARE HACK REMOVE THIS DAILYCANDY ONLY
-                                ANT.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6] } );
+                                ANT.session.getSharedLinkInfo( { container_hash:sharedLink[1], location:sharedLink[2], reaction:sharedLink[3], content:sharedLink[4], page_hash:sharedLink[6], redirect_type:sharedLink[7] } );
                             }
                         }
                     },
@@ -10240,7 +10246,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv36"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv37"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

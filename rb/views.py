@@ -935,6 +935,7 @@ def expander(request, short):
     redirect_response.set_cookie(key='reaction', value=smart_str(interaction.interaction_node.body))
     redirect_response.set_cookie(key='referring_int_id', value=smart_str(interaction.id))
     redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
+    redirect_response.set_cookie(key='redirect_type', value=smart_str('/s/'))
 
     return redirect_response
 
@@ -959,6 +960,7 @@ def interaction_redirect(request, short):
     redirect_response.set_cookie(key='reaction', value=smart_str(interaction.interaction_node.body))
     redirect_response.set_cookie(key='referring_int_id', value=smart_str(interaction.id))
     redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
+    redirect_response.set_cookie(key='redirect_type', value=smart_str('/i/'))
 
     return redirect_response
 
@@ -982,6 +984,7 @@ def click_redirect(request, short):
     redirect_response.set_cookie(key='reaction', value=smart_str(interaction.interaction_node.body))
     redirect_response.set_cookie(key='referring_int_id', value=smart_str(interaction.id))
     redirect_response.set_cookie(key='content_type', value=smart_str(interaction.content.kind))
+    redirect_response.set_cookie(key='redirect_type', value=smart_str('/r/'))
     redirect_response['Referer'] = 'www.antenna.is/r/'
     return redirect_response
 
