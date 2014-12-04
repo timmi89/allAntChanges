@@ -1,8 +1,8 @@
-ARRAY="array1 array2 array3 array4 array5"
+ARRAY="array1 array2 array3 array4 array5 array6 array7 array8"
 UTIL="util1"
 
-BASIC='ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master;'
-FULL='ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master; ./manage.py collectstatic;./manage.py migrate rb; ./manage.py migrate chronos; ./manage.py migrate analytics;'
+BASIC='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master;'
+FULL='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master; ./manage.py collectstatic;./manage.py migrate rb; ./manage.py migrate chronos; ./manage.py migrate analytics;'
 
 SUPER='supervisorctl restart antenna'
 NGINX='service nginx restart'

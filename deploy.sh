@@ -5,4 +5,4 @@ echo "Configuring environment."
 . deploytasks.sh
 
 foreach_exec_broadcaster "$ARRAY" "Basic update" "$BASIC"
-foreach_exec_root "$ARRAY" "supervisorctl restart antenna" "$SUPER"
+foreach_exec_root "$ARRAY" "Restart antenna" "$SUPER"
