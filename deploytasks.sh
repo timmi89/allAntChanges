@@ -4,7 +4,7 @@ UTIL="util1"
 BASIC='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master;'
 FULL='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master; ./manage.py collectstatic;./manage.py migrate rb; ./manage.py migrate chronos; ./manage.py migrate analytics;'
 
-SUPER='supervisorctl restart antenna'
+SUPER='supervisorctl restart antenna; service nginx restart'
 NGINX='service nginx restart'
 
 
