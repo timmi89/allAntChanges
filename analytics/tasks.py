@@ -42,7 +42,7 @@ def do_all_groups_recirc():
                 if len(unique_pages) == TVHRC_SLOTS:
                     break
                 else:
-                    (display_interaction, display_vote) = get_display_interaction_and_count(hash_report['container_hash'], group)
+                    (display_interaction, display_vote) = get_display_interaction_and_count(hash_report['container_hash'], group, hash_report['page']['id'])
                     if display_interaction is not None:
                         recirc = {}
                         recirc['page'] = hash_report['page']
@@ -65,25 +65,25 @@ def do_all_groups_recirc():
                 unique_pages[mrc['page']['id']] = True
                 if len(unique_pages) == TVHRC_SLOTS + MRCON_SLOTS:
                     break
-                
-                (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group)
-                if display_interaction is not None:       
-                    recirc = {}
-                    recirc['page'] = mrc['page']
-                    recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
-                    recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
-                    recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
-                                          'id':display_interaction.id, 'count':display_vote}
-                    
-                    final_recs.append(recirc)
+                else:
+                    (display_interaction, display_vote) = get_display_interaction_and_count(mrc['container_hash'], group, mrc['page']['id'])
+                    if display_interaction is not None:       
+                        recirc = {}
+                        recirc['page'] = mrc['page']
+                        recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
+                        recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
+                        recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
+                                              'id':display_interaction.id, 'count':display_vote}
+                        
+                        final_recs.append(recirc)
             JSONGroupReport.objects.create(body=json.dumps(final_recs), group=group, kind='recrc')
             cache.set('group_recirc_' + str(group.id), json.dumps(final_recs))
         except Exception, ex:
             logger.warn(ex)
             
             
-def get_display_interaction_and_count(hash, group):
-    interactions = Interaction.objects.filter(container__hash=hash, page__site__group = group, approved=True, promotable=True)
+def get_display_interaction_and_count(hash, group, page_id):
+    interactions = Interaction.objects.filter(container__hash=hash, page__id = int(page_id), page__site__group = group, approved=True, promotable=True)
     i_count = {}
     display_interaction = None
     display_vote = 0
