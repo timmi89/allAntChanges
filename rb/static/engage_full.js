@@ -2581,6 +2581,10 @@ function antenna($A){
                         // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
                         contentType: "application/json",
+                        dataType: "jsonp",
+                        data: {
+                            json: $.toJSON( {} )
+                        },
                         success: function(response) {
                             var $broadcast = $('<div class="antenna-broadcast no-ant"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
