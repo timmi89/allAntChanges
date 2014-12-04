@@ -2577,6 +2577,7 @@ function antenna($A){
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
                     $.ajax({
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
                         url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
                         type: "get",
@@ -4118,7 +4119,7 @@ function antenna($A){
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
 
-                            page_image = (ANT.group.image_selector) ? $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                            page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
 
                             if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
@@ -4203,7 +4204,7 @@ function antenna($A){
                         canonical_url = ANT.util.getPageProperty('canonical_url');
                         title = ANT.util.getPageProperty('title');
                         
-                        page_image = (ANT.group.image_selector) ? $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                        page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
