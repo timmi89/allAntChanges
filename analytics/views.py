@@ -361,5 +361,8 @@ def recirculate(request, group_id):
         group = Group.objects.get(id=int(group_id))
         cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
         cache.set('group_recirc_' + str(group_id), cached_report)
-        
-    return HttpResponse(cached_report, 'application/json')
+    
+    wrapped_cache_report = {}
+    wrapped_cache_report['success'] = True
+    wrapped_cache_report['data'] = cached_report
+    return HttpResponse(json.dumps(wrapped_cache_report), 'application/json')
