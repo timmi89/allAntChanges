@@ -177,7 +177,7 @@ else:
         },
         'query_cache': {
             'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-            'LOCATION': '192.168.182.48:11211',
+            'LOCATION': ['192.168.182.48:11211'],
             'TIMEOUT':86400,
             'JOHNNY_CACHE':True,
 
@@ -262,6 +262,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.UpdateCacheMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
