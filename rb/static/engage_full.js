@@ -2611,6 +2611,7 @@ function antenna($A){
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
                                                         (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
+                                                        (item.page.image) ? '<img src="'+item.page.image+'" />' :
                                                         item.content.body;
 
                                         validTile = true;
