@@ -4179,13 +4179,16 @@ function antenna($A){
                                 $summary_widget.attr('ant-page-widget-key',urlHash);
 
                                 urlsArr.push(url);
-
+                                if (num_posts == 1) {
+                                	page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                                }
+                                
                                 thisPage = {
                                     group_id: parseInt(ANT.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text(),
-                                    image:''
+                                    image: page_image
                                 };
 
                                 pagesArr.push(thisPage);
