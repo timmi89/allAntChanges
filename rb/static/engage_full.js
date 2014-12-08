@@ -2576,10 +2576,13 @@ function antenna($A){
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
+                    // local debug, use 2878 or 2350
+                    var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2878/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
-                        url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        url: ajaxUrl,
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2587,6 +2590,7 @@ function antenna($A){
                             json: $.toJSON( {} )
                         },
                         success: function(response) {
+                            console.log(response);
                             var $broadcast = $('<div class="antenna-broadcast no-ant"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
                                 $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/" target="_blank">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
@@ -2611,15 +2615,16 @@ function antenna($A){
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
                                                         (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
-                                                        // (item.page.image) ? '<img src="'+item.page.image+'" />' :
                                                         item.content.body;
-
+                                        
+                                        // add a bg image to text when the content is too short.  15 characters was picked arbitrailty.
+                                        var backgroundImage = (item.content.kind == 'txt' && item.content.body.length < 16) ? item.page.image : '';
                                         validTile = true;
                                     }
                                     
                                     if (validTile === true) {
                                         var itemHTML = '' +
-                                        '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
+                                        '<div class="ant-featured ant-featured-'+item.content.kind+'" style="background-image:url('+backgroundImage+')">' +
                                             '<div class="ant-featured-container">' +
                                                 '<a href="//www.antenna.is/r/'+item.reaction.id+'" target="_blank">' +
                                                   '<div class="ant-featured-content">'+content+'</div>' +
@@ -10249,7 +10254,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv37"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv38"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
