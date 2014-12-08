@@ -2590,7 +2590,6 @@ function antenna($A){
                             json: $.toJSON( {} )
                         },
                         success: function(response) {
-                            console.log(response);
                             var $broadcast = $('<div class="antenna-broadcast no-ant"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
                                 $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/" target="_blank">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
@@ -2603,8 +2602,20 @@ function antenna($A){
                             $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
 
                             var tileCount = 0;
-                            $.each(response.data, function(idx, item) {
-                                if (tileCount < 5) {
+                            var tiles = [];
+
+                            while(tiles.length < 5){
+                              var randomnumber=Math.ceil(Math.random()*response.data.length)
+                              var found=false;
+                              for(var i=0;i<tiles.length;i++){
+                                if(tiles[i]==randomnumber){found=true;break}
+                              }
+                              if(!found)tiles[tiles.length]=randomnumber;
+                            }
+
+                            $.each(tiles, function(idx, tileNum) {
+                                var item = response.data[ (tileNum-1) ];
+                                // if (tileCount < 5) {
 
                                     var validTile = false;
                                     if (item.content.kind == 'pag') {
@@ -2640,7 +2651,7 @@ function antenna($A){
 
                                         tileCount++;
                                     }
-                                }
+                                // }
                             });
 
                             $broadcast.append($broadcast_tiles, $broadcast_explanation);
