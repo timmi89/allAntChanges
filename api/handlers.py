@@ -511,27 +511,17 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         if len(hashes) == 1:
             cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
         else:
-            #logger.info("PAGE CONTAINERS CACHE")
             cached_result = cache.get('page_containers' + str(page))
         
         if cached_result is not None:
-            #logger.info("returning cached container summary results: " + str(cached_result))
             return cached_result
         else:
-            # Force evaluation by making lists
-            #logger.info("knownUnknown started " + str(page))
-
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
-            #logger.info(cacheable_result)
-
-            #logger.info("knownUnknown done " + str(page))
-            try:
-                cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page, hashes=hashes, crossPageHashes=crossPageHashes)
-                
-                t = Thread(target=cache_updater, kwargs={})
-                t.start()
-            except Exception, e:
-                logger.warning(traceback.format_exc(50))  
+            if len(hashes) == 1:
+                cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+            else:
+                cache.set('page_containers' + str(page), cacheable_result)
+        
             return cacheable_result
 
 class ContentSummaryHandler(AnonymousBaseHandler):
