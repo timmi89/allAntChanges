@@ -2576,8 +2576,8 @@ function antenna($A){
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
-                    // local debug, use 2878 or 2350
-                    var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2878/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
+                    // local debug, use 2878 or 2350 or 2352
+                    var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
@@ -2604,7 +2604,7 @@ function antenna($A){
                             var tileCount = 0;
                             var tiles = [];
 
-                            while(tiles.length < 5){
+                            while(tiles.length < response.data.length){
                               var randomnumber=Math.ceil(Math.random()*response.data.length)
                               var found=false;
                               for(var i=0;i<tiles.length;i++){
@@ -2615,7 +2615,7 @@ function antenna($A){
 
                             $.each(tiles, function(idx, tileNum) {
                                 var item = response.data[ (tileNum-1) ];
-                                // if (tileCount < 5) {
+                                if (tileCount < 5) {
 
                                     var validTile = false;
                                     if (item.content.kind == 'pag') {
@@ -2626,13 +2626,13 @@ function antenna($A){
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
                                                         (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
-                                                        item.content.body;
+                                                        (item.content.body.split(' ').length < 2 ) ? '':item.content.body;
                                         
                                         // add a bg image to text when the content is too short.  15 characters was picked arbitrailty.
                                         var backgroundImage = (item.content.kind == 'txt' && item.content.body.length < 16) ? item.page.image : '';
                                         validTile = true;
                                     }
-                                    
+
                                     if (validTile === true) {
                                         var itemHTML = '' +
                                         '<div class="ant-featured ant-featured-'+item.content.kind+'" style="background-image:url('+backgroundImage+')">' +
@@ -2651,7 +2651,7 @@ function antenna($A){
 
                                         tileCount++;
                                     }
-                                // }
+                                }
                             });
 
                             $broadcast.append($broadcast_tiles, $broadcast_explanation);
@@ -10265,7 +10265,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv38"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv39"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
