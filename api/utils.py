@@ -186,7 +186,7 @@ def getPage(host, page_request):
             url = url,
             canonical_url = canonical
         )
-        if page.image and len(page.image) < 1 and image:
+        if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
             page.image = image
             page.save()
         return page   

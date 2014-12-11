@@ -3,7 +3,7 @@
 {% block title %}Antenna{%endblock%}
 {% block extendedHead %}
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
-
+<script async src="/static/engage_full.js"></script>
 <script>
 // ANTsite.group.short_name = "{{ group.short_name }}";
 // ANTsite.group.full_name = "{{ group.name }}";
@@ -82,7 +82,7 @@
       <p></p>
     </div>
     <div class="grid-5 s-grid-whole right s-center">
-      <div class="rec-holder" style="float:right;width:300px;"></div>
+      <div class="rec-holder" style="float:right;width:300px;margin-bottom:20px;"></div>
       <img src="/static/images/photos/what-are-they-thinking.jpg" class="main-image"/>
       <div class="credit">photo by <a href="https://www.flickr.com/photos/boo-x/8468293074" target="_blank">Marc Cornelis</a></div>
     </div>
@@ -209,7 +209,7 @@ window.antenna_extend = {
   // summary_widget_selector: '.sample-content'
 };
 </script>
-<script defer src="/static/engage_full.js"></script>
+
 <!-- 
 <style>
 .ant-summary { z-index:100002; position: relative; background:#fff; }

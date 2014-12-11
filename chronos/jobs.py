@@ -89,21 +89,11 @@ class CacheUpdater(object):
                 cache.set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
-        elif self.method == 'update_many':
-            try:
-                cache.set_many(self.dick)
-            except Exception, e:
-                logger.warning(traceback.format_exc(50))
         
         elif self.method == 'delete':
             try:
                 cache.delete(self.key)
                 cache.set(self.key, self.value)
-            except Exception, e:
-                logger.warning(traceback.format_exc(50))
-        elif self.method == 'delete_many':
-            try:
-                cache.delete_many(self.keys)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
     
@@ -131,12 +121,26 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
         self.crossPageHashes = kwargs.get('crossPageHashes',[])
         self.method = kwargs['method']
         
+    def __call__(self, **kwargs):
+        self.hydrate()
+        if self.method == 'update':
+            try:
+                cache.set(self.key, self.value)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+        
+        elif self.method == 'delete':
+            try:
+                cache.delete(self.key)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+                
     def hydrate(self):
         if len(self.hashes) == 1:
             self.key = 'page_containers' + str(self.page_id) + ":" + str(self.hashes)
         else:
             self.key = 'page_containers' + str(self.page_id)
-        if self.method == 'update' or self.method == 'delete':  
+        if self.method == 'update':  
             self.value = getKnownUnknownContainerSummaries(self.page_id, self.hashes, self.crossPageHashes)
         
 class GroupSettingsDataCacheUpdater(CacheUpdater):        

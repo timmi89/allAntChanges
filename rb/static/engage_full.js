@@ -2576,10 +2576,13 @@ function antenna($A){
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
                 if ( ANT.group.show_recirc && $broadcastSelector.length ) {
+                    // local debug, use 2878 or 2350 or 2352
+                    var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
                         // url: ANT_baseUrl+"/analytics/recirc/v1/2878/",
-                        url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
+                        // url: ANT_baseUrl+"/analytics/recirc/v1/2350/",
                         // url: ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/",
+                        url: ajaxUrl,
                         type: "get",
                         contentType: "application/json",
                         dataType: "jsonp",
@@ -2599,7 +2602,19 @@ function antenna($A){
                             $broadcast.append('<div class="ant-broadcast-header"><div class="ant-headline">'+broadcastHeadline+'</div><div class="ant-logo"><span class="ant-antenna-logo"></span></div></div>');
 
                             var tileCount = 0;
-                            $.each(response.data, function(idx, item) {
+                            var tiles = [];
+
+                            while(tiles.length < response.data.length){
+                              var randomnumber=Math.ceil(Math.random()*response.data.length)
+                              var found=false;
+                              for(var i=0;i<tiles.length;i++){
+                                if(tiles[i]==randomnumber){found=true;break}
+                              }
+                              if(!found)tiles[tiles.length]=randomnumber;
+                            }
+
+                            $.each(tiles, function(idx, tileNum) {
+                                var item = response.data[ (tileNum-1) ];
                                 if (tileCount < 5) {
 
                                     var validTile = false;
@@ -2611,14 +2626,16 @@ function antenna($A){
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
                                                         (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
-                                                        item.content.body;
-
+                                                        (item.content.body.split(' ').length < 2 ) ? '':item.content.body;
+                                        
+                                        // add a bg image to text when the content is too short.  15 characters was picked arbitrailty.
+                                        var backgroundImage = (item.content.kind == 'txt' && item.content.body.length < 16) ? item.page.image : '';
                                         validTile = true;
                                     }
-                                    
+
                                     if (validTile === true) {
                                         var itemHTML = '' +
-                                        '<div class="ant-featured ant-featured-'+item.content.kind+'">' +
+                                        '<div class="ant-featured ant-featured-'+item.content.kind+'" style="background-image:url('+backgroundImage+')">' +
                                             '<div class="ant-featured-container">' +
                                                 '<a href="//www.antenna.is/r/'+item.reaction.id+'" target="_blank">' +
                                                   '<div class="ant-featured-content">'+content+'</div>' +
@@ -4125,8 +4142,7 @@ function antenna($A){
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
 
-                            page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $post.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
-
+                            
                             if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
@@ -4180,13 +4196,16 @@ function antenna($A){
                                 $summary_widget.attr('ant-page-widget-key',urlHash);
 
                                 urlsArr.push(url);
-
+                                if (num_posts == 1) {
+                                	page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                                }
+                                
                                 thisPage = {
                                     group_id: parseInt(ANT.group.id, 10),
                                     url: url,
                                     canonical_url: 'same',
                                     title: $post_href.text(),
-                                    image:page_image
+                                    image: page_image
                                 };
 
                                 pagesArr.push(thisPage);
@@ -4210,7 +4229,7 @@ function antenna($A){
                         canonical_url = ANT.util.getPageProperty('canonical_url');
                         title = ANT.util.getPageProperty('title');
                         
-                        page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $body.find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                        page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
 
                         // is this OK?  it is for when the <link rel="canonical" ...> tag has an href like href="//somesite.com/index.html"
                         // if (canonical_url.indexOf('//') === 0) {
@@ -10246,7 +10265,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv37"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv39"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
