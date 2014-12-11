@@ -10,3 +10,4 @@ readrdb.db
 *.orig
 .settings/
 logs/
+nohup.out
