@@ -4799,11 +4799,22 @@ function antenna($A){
                     {
                         kind: 'media',
                         $group: null,
-                        whiteList: function() { return ANT.group.media_selector; },
+                        whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="video"]'; },
                         filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
-                            var body = (typeof this.src != 'undefined') ? this.src : this.data;
-                            $(this).data({
+                            var $this = $(this);
+
+                            var body = (typeof this.src != 'undefined') ? this.src : 
+                                       (typeof this.data != 'undefined') ? this.data : $this.attr('ant-item-content');
+
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+
+                            $this.data({
                                 'body':body
                             });
                         }
@@ -4822,12 +4833,20 @@ function antenna($A){
 
                             return whiteListConcat;
                         },
-                        filterParam: 'img',
+                        filterParam: 'img,[ant-item-type="image"]',
                         setupFunc: function(){
                             //var body = $(this).attr('src');
-                            var body = this.src;
+                            // var body = this.src;
+                            var $this = $(this);
+                            var body = (typeof this.src != 'undefined') ? this.src : $this.attr('ant-item-content');
 
-                            $(this).data({
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+                            $this.data({
                                 'body':body
                             });
                         }
@@ -4843,6 +4862,10 @@ function antenna($A){
                             var $node = $(node),
                                 node_text = $node.text(),
                                 node_parent_text = $node.parent().text();
+
+                            if ( $node.hasAttr('ant-item-content') ) {
+                                if ( $node.attr('ant-item-content') ) return false;
+                            }
                             if ( node_text != node_parent_text ) {
                                 // bang bang:  http://stackoverflow.com/questions/784929/what-is-the-not-not-operator-in-javascript
                                 return !!node_text;
@@ -4952,12 +4975,11 @@ function antenna($A){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
-
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
                         $this.data('oldHash', oldHash);
-                        
+
                         // now, handle "new hash"... which accounts for rotating subdomains (i.e., differing CDN names for image hosts)
 
                         // regex from http://stackoverflow.com/questions/6449340/how-to-get-top-level-domain-base-domain-from-the-url-in-javascript
@@ -5009,9 +5031,7 @@ function antenna($A){
                         //it didn't have oldhash, so it's an image no one has reacted to yet
                             hashText = "rdr-"+kind+"-"+hashBody;
                             hash = ANT.util.md5.hex_md5( hashText );
-
                         }
-
                     } else {
                         if(!body){
                           return;
@@ -5021,7 +5041,6 @@ function antenna($A){
                         hash = ANT.util.md5.hex_md5( hashText );
 
                         if ( !$this.hasAttr('ant-hash') )  {
-
                             var iteration = 1;
                             while ( typeof ANT.summaries[hash] != 'undefined' ) {
                                 hashText = "rdr-"+kind+"-"+body+"-"+iteration;
