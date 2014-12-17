@@ -4799,7 +4799,7 @@ function antenna($A){
                     {
                         kind: 'media',
                         $group: null,
-                        whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="video"]'; },
+                        whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="media"]'; },
                         filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var $this = $(this);
@@ -6716,7 +6716,8 @@ if ( sendData.kind=="page" ) {
                                 };
 
                             } else if(kind == 'img' || kind == 'media' || kind == 'med'){
-                                var hashBody = $container[0].src;
+                                // a bit inconsistent with how we get the body in hashNodes()...
+                                var hashBody = (typeof $container[0].src != 'undefined') ? $container[0].src : $container.data('body');
 
 
                                 // // clean the image src in case it's a CDN w/ rotating subdomains.
