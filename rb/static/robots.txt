@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /static/
+Disallow: /follows/
+Disallow: /user/
+Disallow: /i/
