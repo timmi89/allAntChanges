@@ -15,10 +15,10 @@ logger = get_task_logger(__name__)
 
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="14", day_of_week="*")))
+               run_every=(crontab(hour="5,17", minute="14", day_of_week="*")))
 def do_all_groups_recirc():
-    TVHRC_SLOTS = 5
-    MRCON_SLOTS = 5
+    TVHRC_SLOTS = 15
+    MRCON_SLOTS = 15
     
     try:
         groups = get_approved_active_groups()
@@ -98,7 +98,7 @@ def get_display_interaction_and_count(hash, group, page_id):
     return (display_interaction, display_vote)
                 
 @periodic_task(name='do_all_group_reports', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="45", day_of_week="*")))
+               run_every=(crontab(hour="7,22", minute="45", day_of_week="*")))
 def do_all_group_reports():
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
@@ -287,7 +287,7 @@ def sowing_seeds_of_love():
 
     
 @periodic_task(name='generate_approved_active_groups', ignore_result=True, 
-               run_every=(crontab(hour="7", minute="0", day_of_week="*")))
+               run_every=(crontab(hour="7", minute="30", day_of_week="*")))
 def generate_approved_active_groups():  
     event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
