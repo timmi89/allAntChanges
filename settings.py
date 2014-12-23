@@ -186,7 +186,7 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            'LOCATION': '50.116.59.190:11211',
+            'LOCATION': '192.168.171.12:11211',
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
