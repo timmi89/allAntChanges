@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /static/
+Disallow: /stream/
 Disallow: /follows/
 Disallow: /user/
 Disallow: /i/

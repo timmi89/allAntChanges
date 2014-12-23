@@ -159,7 +159,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
+        'HOST':     '192.168.171.12',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'JOHNNY_CACHE_KEY': 'query_cache',
@@ -172,7 +172,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '192.168.178.62',
+        'HOST':     '192.168.142.147',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'JOHNNY_CACHE_KEY': 'query_cache',
@@ -186,7 +186,7 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            'LOCATION': '50.116.59.190:11211',
+            'LOCATION': '192.168.171.12:11211',
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,

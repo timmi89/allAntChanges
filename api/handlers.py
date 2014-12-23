@@ -587,9 +587,7 @@ class PageDataHandler(AnonymousBaseHandler):
                 result_dict = getSinglePageDataDict(current_page.id)
                 pages_data.append(result_dict)
                 try:
-                    cache_updater = PageDataCacheUpdater(method="update", page_id=current_page.id)
-                    t = Thread(target=cache_updater, kwargs={})
-                    t.start()
+                    cache.set('page_data' + str(current_page.id))
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))   
               
@@ -1027,22 +1025,16 @@ class BlockedTagHandler(AnonymousBaseHandler):
             container = interaction.container
             
             try:
-                cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
-                t = Thread(target=cache_updater, kwargs={})
-                t.start()
+                cache.delete('page_data' + str(page.id))
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
-                t = Thread(target=container_cache_updater, kwargs={})
-                t.start()
+                cache.delete('page_containers' + str(page.id))
                 
-                page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
-                t = Thread(target=page_container_cache_updater, kwargs={})
-                t.start()
- 
-                if not interaction.parent or interaction.kind == 'com':
-                    global_cache_updater = GlobalActivityCacheUpdater(method="update")
-                    t = Thread(target=global_cache_updater, kwargs={})
-                    t.start()
+                cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
+                
+                #if not interaction.parent or interaction.kind == 'com':
+                #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                #    t = Thread(target=global_cache_updater, kwargs={})
+                #    t.start()
         
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
