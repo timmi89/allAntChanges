@@ -248,17 +248,11 @@ def deleteInteraction(interaction, user):
         try:
             interaction.delete();
             try:
-                cache_updater = PageDataCacheUpdater(method="delete", page_id=interaction.page.id)
-                t = Thread(target=cache_updater, kwargs={})
-                t.start()
+                cache.delete('page_data' + str(interaction.page.id))
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=interaction.page.id)
-                t = Thread(target=container_cache_updater, kwargs={})
-                t.start()
+                cache.delete('page_containers' + str(interaction.page.id))
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(interaction.page.id) + ":" + [interaction.container.hash])
-                t = Thread(target=container_cache_updater, kwargs={})
-                t.start()
+                cache.delete('page_containers' + str(interaction.page.id) + ":" + str([interaction.container.hash]))
                 
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
@@ -434,17 +428,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         container=container
     )
     try:
-        cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
-        t = Thread(target=cache_updater, kwargs={})
-        t.start()
+        cache.delete('page_data' + str(page.id))
+                
+        cache.delete('page_containers' + str(page.id))
         
-        container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
-        t = Thread(target=container_cache_updater, kwargs={})
-        t.start()
-        
-        page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
-        t = Thread(target=page_container_cache_updater, kwargs={})
-        t.start()
+        cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
         
         notification = AsynchPageNotification()
         t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
@@ -460,17 +448,11 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         for other in other_interactions:
             other_pages.add(other.page)
         for other_page in other_pages:
-            cache_updater = PageDataCacheUpdater(method="delete", page_id=other_page.id)
-            t = Thread(target=cache_updater, kwargs={})
-            t.start()
-        
-            container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=other_page.id)
-            t = Thread(target=container_cache_updater, kwargs={})
-            t.start()
-        
-            page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(other_page.id),hashes=[container.hash])
-            t = Thread(target=page_container_cache_updater, kwargs={})
-            t.start()
+            cache.delete('page_data' + str(page.id))
+                
+            cache.delete('page_containers' + str(page.id))
+            
+            cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
 
         #if not new_interaction.parent or new_interaction.kind == 'com':
         #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
@@ -564,13 +546,6 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     if len(crossPageHashes) > 0:
         crossPageContainers = list(Container.objects.filter(hash__in=crossPageHashes).values_list('id','hash','kind'))
         crossPageIds = [container[0] for container in crossPageContainers]
-        # MIKE: verify / do?
-        # this interaction request should filter by group
-        # to do so, we think we need a django query or queries that does this:
-            # 1. takes the page_id to find the site its on
-            # 2. uses the site_id to find the group_id
-            # 3. gets a list of page_ids associated with the group_id (group > site > page)... lets call this group_page_ids
-            # ...then that is used in the commented-out part of this query:
         crossPageInteractions = list(Interaction.objects.filter(
             container__in=crossPageIds,
             page__site__group = page.site.group,
@@ -581,9 +556,6 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
         crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
 
         
-    #logger.info("K KEYS: " + str(known.keys()))
-    # MIKE: verify / do?
-        # does my solution here correctly handle cache for when there is, and isn't, a crossPageKnown list?
     unknown = list(set(hashes) - set(known.keys()))
     if 'crossPageKnown' in locals():
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
