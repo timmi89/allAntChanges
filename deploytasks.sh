@@ -1,4 +1,4 @@
-ARRAY="array1 array2 array3 array4 array5 array6 array7 array8"
+ARRAY="array1 array2 array3 array4 array5 array6 array7 array8 array9 array10"
 UTIL="util1"
 
 BASIC='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin master;'
