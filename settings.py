@@ -159,7 +159,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '50.116.59.190',
+        'HOST':     '192.168.171.12',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'JOHNNY_CACHE_KEY': 'query_cache',
