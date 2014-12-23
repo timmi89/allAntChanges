@@ -3,6 +3,7 @@
 
 var ANT = {};
 if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
+    // reinit custom display hashes only
     window.ANTENNAIS.actions.reInit();
     return;
 }
