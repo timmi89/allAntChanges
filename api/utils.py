@@ -3,6 +3,7 @@ from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.chronos.jobs import *
 from django.db.models import Q
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.cache import cache
 from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
 import random
@@ -652,4 +653,17 @@ def getGlobalActivity():
         
             
     return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
+
+def retry_cache_get(key):
+    for x in range(1,9):
+        result = cache.get(key)
+        if result is not None:
+            return result
+        else:
+            time.sleep( x * 0.25 )
+    return None
+
     
+    
+    
+     
