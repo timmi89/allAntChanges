@@ -587,7 +587,7 @@ class PageDataHandler(AnonymousBaseHandler):
                 result_dict = getSinglePageDataDict(current_page.id)
                 pages_data.append(result_dict)
                 try:
-                    cache.set('page_data' + str(current_page.id))
+                    cache.set('page_data' + str(current_page.id), result_dict)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))   
               
