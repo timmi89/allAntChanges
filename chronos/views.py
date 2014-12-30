@@ -45,9 +45,7 @@ def agree(request, interaction_id = None, **kwargs):
         interaction.rank = new_rank
         interaction.save()
         group = interaction.page.site.group
-
-        logger.info("agree: CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
-        logger.info("agree: CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
+        
         if social_user.notification_email_option and group.send_notifications:
             child_interactions = Interaction.objects.filter(parent = interaction, kind = 'tag').order_by('-created')
             child_count = child_interactions.count()
@@ -71,14 +69,15 @@ def agree(request, interaction_id = None, **kwargs):
                                            [social_user.user.email])
                         msg.content_subtype='html'
                         msg.send(False)
-                        logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
+                        #logger.info("SHOULD SEND NOTIFICATION: " + threshold.name)
                 else:
                     logger.info("DID NOT PASS: " + threshold.name)
                     
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
     except SocialUser.DoesNotExist:
-        logger.info("NO SOCIAL USER")
+        pass
+        #logger.info("NO SOCIAL USER")
     except Exception, ex:
         logger.info(ex)
     
@@ -163,7 +162,8 @@ def comment(request, interaction_id = None, **kwargs):
     except Interaction.DoesNotExist:
         logger.info("BAD INTERACTION ID")
     except SocialUser.DoesNotExist:
-        logger.info("NO SOCIAL USER")
+        pass
+        #logger.info("NO SOCIAL USER")
     
     
     return render_to_response(
@@ -189,8 +189,6 @@ def page(request, interaction_id = None, **kwargs):
             ):
                 try:
                     social_user = SocialUser.objects.get(user = p_i.user)
-                    logger.info("CHECK IF SEND NOTIFICATION: " + str(social_user.notification_email_option))
-                    logger.info("CHECK IF GROUP SEND NOTIFICATION: " + str(group.send_notifications))
                     if social_user.notification_email_option and group.send_notifications:
                     # if social_user.notification_email_option:
                         for threshold in page_rules:
@@ -208,7 +206,8 @@ def page(request, interaction_id = None, **kwargs):
                                 user_set.add(p_i.user)
 
                 except SocialUser.DoesNotExist:
-                    logger.info("NO SOCIAL USER")
+                    pass
+                    #logger.info("NO SOCIAL USER")
 
                 distance += 1
 
