@@ -4,6 +4,7 @@ from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.antenna_celery import app as celery_app
 from antenna.analytics.tasks import update_page_cache, update_page_container_hash_cache
 from django.db.models import Q
+from django.core.cache import cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.forms.models import model_to_dict
 from datetime import datetime, timedelta
