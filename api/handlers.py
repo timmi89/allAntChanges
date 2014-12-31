@@ -517,6 +517,7 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         if cached_result is not None:
             return cached_result
         else:
+            logger.info("Missed cache container summaries")
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
             if len(hashes) == 1:
                 cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
@@ -585,6 +586,7 @@ class PageDataHandler(AnonymousBaseHandler):
                 #logger.info('returning page data cached result')
                 pages_data.append(cached_result)
             else:
+                logger.info('missed page settings cache')
                 result_dict = getSinglePageDataDict(current_page.id)
                 pages_data.append(result_dict)
                 try:
