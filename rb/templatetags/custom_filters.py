@@ -17,7 +17,6 @@ def calculate_image_height(content):
     try:
         return int((content.height * 500)/content.width)
     except ZeroDivisionError:
-        logger.info("An image had a width of 0: "+str(content))
         # let it fill the html height attribute with an empty string.
         return ""
 
