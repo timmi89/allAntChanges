@@ -509,9 +509,10 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             raise JSONException("Bad Page ID ***" + str(page)+ "***")
 
         if len(hashes) == 1:
-            cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
+            #check_and_get_locked_cache(key)
+            cached_result = check_and_get_locked_cache('page_containers' + str(page) + ":" + str(hashes))
         else:
-            cached_result = cache.get('page_containers' + str(page))
+            cached_result = check_and_get_locked_cache('page_containers' + str(page))
         
         if cached_result is not None:
             return cached_result
@@ -579,7 +580,7 @@ class PageDataHandler(AnonymousBaseHandler):
         pages_data = []
         
         for current_page in pages:
-            cached_result = cache.get('page_data' + str(current_page.id))
+            cached_result = check_and_get_locked_cache('page_data' + str(current_page.id))
             if cached_result is not None:
                 #logger.info('returning page data cached result')
                 pages_data.append(cached_result)
