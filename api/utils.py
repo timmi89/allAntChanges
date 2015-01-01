@@ -667,7 +667,7 @@ def getGlobalActivity():
 def check_and_get_locked_cache(key):
     cached_result = cache.get(key)
     if cached_result is None and cache.get('LOCKED'+key) is None:
-        cache.add('LOCKED_'+key,'locked',15)
+        cache.add('LOCKED_'+key,'locked')
         logger.info("locking to continue for DB: " + key)
         return None
     elif cached_result is None:    
