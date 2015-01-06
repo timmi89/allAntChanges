@@ -26,10 +26,12 @@ def update_page_cache(page_id):
 def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
     if len(hashes) == 1:
         key = 'page_containers' + str(page_id) + ":" + str(hashes)
+        cache.delete('page_containers' + str(page_id))
     else:
         key = 'page_containers' + str(page_id)
     if cache.get('LOCKED_'+key) is None:
         cache.set('LOCKED_'+key,'locked')
+        logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
         cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
         cache.delete('LOCKED_'+key)
 
