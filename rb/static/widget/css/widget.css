@@ -1980,12 +1980,14 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_co
 div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
   padding: 5px 0 0 0;
-  height:24px;
+  height:22px;
   background: rgba(255,255,255,0.95);
   /*border: 0px solid #c9c9c9;*/
-  border-radius: 6px;
-
+  /*border-radius: 6px;*/
 }
+/*div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
+  background: rgba(255,255,255,0.95);
+}*/
 div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
   margin-left:4px;
   /*top: -3px;*/
@@ -2712,6 +2714,8 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 
 /***** brand new styles *****/
 .ant_indicator .ant-antenna-logo { color:#bbb; }
+/*.ant_indicator .ant-antenna-logo { color:#fff; }
+.ant_indicator_for_media.ant_indicator_not_img .ant-antenna-logo { color:#bbb; }*/
 .ant_live_hover .ant_indicator .ant-antenna-logo,
 .ant-antenna-logo { color:#8fb3f2; }
 
