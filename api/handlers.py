@@ -509,13 +509,15 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             raise JSONException("Bad Page ID ***" + str(page)+ "***")
 
         if len(hashes) == 1:
-            cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
+            #check_and_get_locked_cache(key)
+            cached_result = check_and_get_locked_cache('page_containers' + str(page) + ":" + str(hashes))
         else:
-            cached_result = cache.get('page_containers' + str(page))
+            cached_result = check_and_get_locked_cache('page_containers' + str(page))
         
         if cached_result is not None:
             return cached_result
         else:
+            logger.info("Missed cache container summaries")
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
             if len(hashes) == 1:
                 cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
@@ -579,15 +581,16 @@ class PageDataHandler(AnonymousBaseHandler):
         pages_data = []
         
         for current_page in pages:
-            cached_result = cache.get('page_data' + str(current_page.id))
+            cached_result = check_and_get_locked_cache('page_data' + str(current_page.id))
             if cached_result is not None:
                 #logger.info('returning page data cached result')
                 pages_data.append(cached_result)
             else:
+                logger.info('missed page settings cache')
                 result_dict = getSinglePageDataDict(current_page.id)
                 pages_data.append(result_dict)
                 try:
-                    cache.set('page_data' + str(current_page.id))
+                    cache.set('page_data' + str(current_page.id), result_dict)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))   
               
@@ -764,7 +767,6 @@ class FollowedEntityHandler(InteractionHandler):
         follows = {}
         follows['paginated_follows'] = []
         user_is_follower = False
-        logger.info("entity: " + str(follow_id) + " type: " + entity_type)
         if entity_type == 'pag':
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
             if cookie_user is not None:

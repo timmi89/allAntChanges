@@ -172,7 +172,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '192.168.142.147',
+        'HOST':     '192.168.178.62',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'JOHNNY_CACHE_KEY': 'query_cache',
@@ -210,7 +210,6 @@ else:
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
 CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
               
 JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
