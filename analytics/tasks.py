@@ -18,7 +18,7 @@ logger = get_task_logger(__name__)
 @task(name='page.cache.update')
 def update_page_cache(page_id):
     if cache.get('LOCKED_page_data' + str(page_id)) is None:
-        cache.set('LOCKED_page_data' + str(page_id),'locked')
+        cache.set('LOCKED_page_data' + str(page_id),'locked',15)
         cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
         cache.delete('LOCKED_page_data' + str(page_id))
 
@@ -30,8 +30,8 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
     else:
         key = 'page_containers' + str(page_id)
     if cache.get('LOCKED_'+key) is None:
-        cache.set('LOCKED_'+key,'locked')
         logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+        cache.set('LOCKED_'+key,'locked',15)
         cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
         cache.delete('LOCKED_'+key)
 

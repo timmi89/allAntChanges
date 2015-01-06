@@ -665,18 +665,18 @@ def getGlobalActivity():
     return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
     
 def check_and_get_locked_cache(key):
-    cached_result = cache.get(key)
-    if cached_result is None and cache.get('LOCKED'+key) is None:
-        cache.add('LOCKED_'+key,'locked',15)
-        logger.info("locking to continue for DB: " + key)
+    cached_result = cache.get(str(key))
+    if cached_result is None and cache.get('LOCKED'+str(key)) is None:
+        cache.set('LOCKED_'+ str(key),'locked',15)
+        logger.info("locking to continue for DB: " + str(key))
         return None
     elif cached_result is None:    
         for x in range(1,10):
             time.sleep(x * 0.25)
-            cached_result = cache.get(key)
+            cached_result = cache.get(str(key))
             if cached_result is not None:
-                cache.delete('LOCKED_'+key)
-                logger.info('return cached result and cleared LOCKED'+key)
+                cache.delete('LOCKED_'+ str(key))
+                logger.info('return cached result and cleared LOCKED'+str(key))
                 return cached_result
     return cached_result    
 

@@ -767,7 +767,6 @@ class FollowedEntityHandler(InteractionHandler):
         follows = {}
         follows['paginated_follows'] = []
         user_is_follower = False
-        logger.info("entity: " + str(follow_id) + " type: " + entity_type)
         if entity_type == 'pag':
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
             if cookie_user is not None:
