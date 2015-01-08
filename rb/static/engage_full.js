@@ -1733,12 +1733,16 @@ function antenna($A){
                                         };
                                     }
                                 } else {
+                                    if (typeof settings.coords != 'undefined' && settings.coords.force) {
+                                        var coords = settings.coords;
+                                    }else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
                                     var indicatorOffsets = summary.$indicator.offset();
                                     var coords = {};
                                         coords.top = indicatorOffsets.top;
                                         coords.left =  indicatorOffsets.left;
+                                    }
                                 }
                             } else {
                                 // readMode
@@ -4481,6 +4485,11 @@ function antenna($A){
             },
             initEnvironment: function(){
 
+                // if B group, ensure separate CTAs are not visible, but try not to reflow
+                if ( !ANT.util.activeAB() ) {
+                    $('.ant-custom-cta').css('visibility','hidden');
+                }
+
                 ANT.broadcast.init();
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
                 var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
@@ -4488,8 +4497,6 @@ function antenna($A){
                 if(isTouchBrowser){
                     $('#ant_sandbox').addClass('isTouchBrowser');
                 }
-
-                // ANT.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
@@ -4528,22 +4535,6 @@ function antenna($A){
 
         
                 $(window).on('scroll.ant', function() {
-                    // ANT.actions.indicators.utils.updateContainerTrackers();
-                    // clearTimeout($.data(this, 'ant_scrollTimer'));
-                    // $.data(this, 'ant_scrollTimer', setTimeout(function() {
-                        // ANT.actions.indicators.utils.updateContainerTrackers();
-
-                    // disable scroll event tracking....
-                    //     var scrolltop = $(window).scrollTop();
-                    //     var windowHeight = $(window).height();
-
-                    //     if ( ANT.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['100'] ) { ANT.events.fireScrollEvent('100'); ANT.group.active_section_milestones['fired'] = 100; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['80'] ) { ANT.events.fireScrollEvent('80'); ANT.group.active_section_milestones['fired'] = 80; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['40'] ) { ANT.events.fireScrollEvent('40'); ANT.group.active_section_milestones['fired'] = 40; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['60'] ) { ANT.events.fireScrollEvent('60'); ANT.group.active_section_milestones['fired'] = 60; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['20'] ) { ANT.events.fireScrollEvent('20'); ANT.group.active_section_milestones['fired'] = 20; }
-                    // }, 100));
-                    
                     // i'm sure there is a good reason for this, but i don't recall what it is
                     // blog rolls maybe
                     ANT.actions.initPageData();
@@ -4690,7 +4681,7 @@ function antenna($A){
             handleDeprecated: function() {
                 //ant-content-type ????  could be come ant-content-attributes="question"
                 // rewrite some deprecated Antenna attributes into their newer versions
-                if (!ANT.util.activeAB()) {
+                if (ANT.util.activeAB()) {
                     $('[ant-custom-display]').each( function() {
                         var $this = $(this);
                         $this.attr('ant-item', $this.attr('ant-custom-display') );
@@ -4751,7 +4742,6 @@ function antenna($A){
                             $.each(reactions.split(';'), function(idx, tag) {
                                 itemDefinition.default_reactions.push( $.trim(tag) );
                             });
-
                             window.antenna_extend_per_container[itemName] = itemDefinition;
                         }
                     });
@@ -7333,7 +7323,6 @@ if ( sendData.kind=="page" ) {
                         $container.attr('ant-hasIndicator', 'true');
 
                         if ( $container.hasAttr('ant-item') ) {
-
                             var customDisplayName = $container.attr('ant-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
@@ -7652,7 +7641,6 @@ if ( sendData.kind=="page" ) {
                         //         // ANT.events.track('paragraph_helper_engage');
                         //     }
                         // });
-                        
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
@@ -8169,8 +8157,10 @@ if ( sendData.kind=="page" ) {
                                 } else {
                                     ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                     $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                                        var offsets = $aWindow.offset();
+                                        var coords = { left:offsets.left, top:offsets.top, force:true }; // ugh, force is a one-time override
                                         $aWindow.remove();
-                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash, coords:coords} );
                                     });
                                 }
                             } else {
