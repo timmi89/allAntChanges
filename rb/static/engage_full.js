@@ -3563,13 +3563,11 @@ function antenna($A){
             },
             getUser: function(args, callback) {
                 //ANT.session.getUser
-
                 if ( callback && args ) {
                     ANT.session.receiveMessage( args, callback );
                 } else if ( callback ) {
                     ANT.session.receiveMessage( false, callback );
                 }
-
                 $.postMessage(
                     "getUser",
                     ANT_baseUrl + "/static/xdm.html",
@@ -3644,11 +3642,11 @@ function antenna($A){
                 $ANT.dequeue('initAjax');
             },
             receiveMessage: function(args, callbackFunction) {
+                //ANT.session.receiveMessage
                 //args is passed through this function into the callback as a parameter.
                 //The only side effect is that it adds a user property to args ( args[user] ).
                 $.receiveMessage(
                     function(e){
-                        
                         var message = $.evalJSON( e.data );
                         
                         if ( message.status ) {
@@ -4484,7 +4482,6 @@ function antenna($A){
 
             },
             initEnvironment: function(){
-
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
                 if ( !ANT.util.activeAB() ) {
                     $('.ant-custom-cta').css('visibility','hidden');
@@ -6243,16 +6240,14 @@ function antenna($A){
                         //fix hash
                         newArgs.hash = hash;
                         newArgs.sendData.hash = hash;
-                        
+
                         // BAND-AID for re-reacting after a tempuser create
                         if (typeof newArgs.sendData != 'undefined' && typeof newArgs.sendData.sendData != 'undefined') {
                             newArgs.sendData = $.extend( {}, newArgs.sendData, newArgs.sendData.sendData );
-
                             if ( typeof newArgs.sendData.user != 'undefined' && typeof newArgs.sendData.user.ant_token != 'undefined') {
                                 newArgs.sendData.ant_token = newArgs.sendData.user.ant_token;
                             }
                         }
-
                         //run the send function for the appropriate interaction type
                         //ANT.actions.interactions[int_type].send(args);
                         ANT.actions.interactions.send(newArgs, int_type, action_type);
@@ -7321,7 +7316,6 @@ if ( sendData.kind=="page" ) {
                         //else
 
                         $container.attr('ant-hasIndicator', 'true');
-
                         if ( $container.hasAttr('ant-item') ) {
                             var customDisplayName = $container.attr('ant-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
@@ -10565,7 +10559,10 @@ function $AFunctions($A){
              * Dual licensed under the MIT and GPL licenses.
              * http://benalman.com/about/license/
              */
-            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+            // var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+            
+            // removing the browser.opera check, it breaks latest opera (which does have postMessage)
+            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h];$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
         }
         //end function plugin_jquery_postMessage
 
