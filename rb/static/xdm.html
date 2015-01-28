@@ -134,6 +134,10 @@
                 }
             });
 			
+            if ( utils.cookies.read('redirect_type') ) {
+                ANTAuth.notifyParent({message:false}, "recircClick|"+utils.cookies.read('referring_int_id'));
+                utils.cookies.erase( 'redirect_type' );
+            }
 			if ( utils.cookies.read('location') && utils.cookies.read('container_hash') ) {
             
 				ANTAuth.notifyParent({message:false}, "sharedLink|" + utils.cookies.read('container_hash') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('location') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('reaction') ) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('content') ) + "|" + utils.cookies.read('referring_int_id') + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('page_hash')) + "|" + ANTAuth.decodeDjangoCookie( utils.cookies.read('redirect_type')) );
@@ -143,8 +147,6 @@
 				utils.cookies.erase( 'reaction' );
 				utils.cookies.erase( 'referring_int_id' );
                 utils.cookies.erase( 'page_hash' );
-				utils.cookies.erase( 'redirect_type' );
-
 
 			} else if ( !utils.cookies.read('educatedUser') ) {
 				ANTAuth.notifyParent({message:false}, "educate user");

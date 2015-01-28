@@ -2642,7 +2642,7 @@ function antenna($A){
                                         var itemHTML = '' +
                                         '<div class="ant-featured ant-featured-'+item.content.kind+'" style="background-image:url('+backgroundImage+')">' +
                                             '<div class="ant-featured-container">' +
-                                                '<a href="//www.antenna.is/r/'+item.reaction.id+'" target="_blank">' +
+                                                '<a href="//www.antenna.is/r/'+item.reaction.id+'/">' +
                                                   '<div class="ant-featured-content">'+content+'</div>' +
                                                   '<div class="ant-featured-overlay"></div>' +
                                                   '<div class="ant-featured-gradient"></div>' +
@@ -3428,12 +3428,8 @@ function antenna($A){
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         var decodedContent = unescape($.evalJSON('"'+data.content+'"'));
 
-                        ANT.events.trackEventToCloud({
-                            event_type: 'rc',
-                            event_value: ''+ANT.session.referring_int_id,
-                            page_id: ANT.util.getPageProperty('id'),
-                            content_attributes: data.redirect_type
-                        });
+                        // recirc tracker USED to be here
+
                         $msg1 = $('<h1>Shared with <span>Antenna</span></h1>');
 
                         if ( $('img[ant-hash="'+data.container_hash+'"]').length == 1 ) {
@@ -3709,6 +3705,16 @@ function antenna($A){
                                 $('#ant_loginPanel div.ant_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             // } else if ( message.status == "educate user" ) {
                                 // ANT.session.alertBar.make('educateUser');
+                            } else if ( message.status.indexOf('recircClick') != -1 ) {
+                                var linkData = message.status.split('|');
+                                if ( linkData[1] ) {
+                                    ANT.session.referring_int_id = parseInt( linkData[1], 10 ); // TODO what is this used for any more?
+                                }
+                                ANT.events.trackEventToCloud({
+                                    event_type: 'rc',
+                                    event_value: ''+ANT.session.referring_int_id,
+                                    page_id: ANT.util.getPageProperty('id')
+                                });
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
