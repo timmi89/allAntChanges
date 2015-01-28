@@ -2580,7 +2580,7 @@ function antenna($A){
                 //ANT.broadcast.init();
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
-                if ( ANT.group.show_recirc && $broadcastSelector.length ) {
+                if ( ANT.util.activeAB() && ANT.group.show_recirc && $broadcastSelector.length ) {
                     // local debug, use 2878 or 2350 or 2352
                     var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
@@ -4043,7 +4043,7 @@ function antenna($A){
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
                             page_id: ANT.util.getPageProperty('id'),
-                            content_attributes: ( $(ANT.group.recirc_selector).first().length ) ? 'broadcast':null
+                            content_attributes: ( ANT.util.activeAB() && $(ANT.group.recirc_selector).first().length ) ? 'broadcast':null
                         });
 
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
