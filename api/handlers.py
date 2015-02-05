@@ -636,9 +636,7 @@ class SettingsHandler(AnonymousBaseHandler):
         
             settings_dict = getSettingsDict(group)
             try:
-                cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group, host=host)
-                t = Thread(target=cache_updater, kwargs={})
-                t.start()
+                cache.set('group_settings_'+ str(host), settings_dict)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
                   

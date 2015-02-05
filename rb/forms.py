@@ -342,10 +342,7 @@ class GroupForm(forms.ModelForm):
         if commit:
             m.save()
         try:
-            site = Site.objects.get(group=self.instance)
-            cache_updater = GroupSettingsDataCacheUpdater(method="delete", group=self.instance, host=site.domain)
-            t = Thread(target=cache_updater, kwargs={})
-            t.start()
+            cache.delete('group_settings_'+ str(site.domain))
         except Exception, e:
             logger.warning('BAd nEWz, bOnz0!')
         
