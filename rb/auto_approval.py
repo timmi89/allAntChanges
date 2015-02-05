@@ -34,7 +34,9 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
                 requires_approval=False,
             )
         except Exception, e:
-            # logger.warn(e)
+            print "* * * ** * * * * * * * EXCEPTION "
+            print e
+            logger.warn(e)
             groups = Group.objects.filter(
                 short_name=cleaned_data['short_name']
             )

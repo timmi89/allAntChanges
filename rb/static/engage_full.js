@@ -44,13 +44,13 @@ ANT_offline = !!(
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 // fails on iPhone?
 // var isTouchBrowser = (
