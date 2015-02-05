@@ -3,7 +3,7 @@ from rb.models import *
 import re
 from api import userutils
 from auto_approval import autoCreateGroup
-
+from api.utils import getSettingsDict
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
@@ -342,9 +342,9 @@ class GroupForm(forms.ModelForm):
         if commit:
             m.save()
         try:
-            cache.delete('group_settings_'+ str(site.domain))
+            cache.set('group_settings_'+ str(site.domain), getSettingsDict(self.instance))
         except Exception, e:
-            logger.warning('BAd nEWz, bOnz0!')
+            logger.warning(e)
         
 
         return m
