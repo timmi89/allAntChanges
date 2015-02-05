@@ -560,7 +560,7 @@ function antenna($A){
                 var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('tap.ant', '.ant_menuDropDown', function(){
+                    $menu.on('touchend.ant', '.ant_menuDropDown', function(){
                         $(this).toggleClass('ant_hover');
                     });
                 }
@@ -993,7 +993,7 @@ function antenna($A){
                                 };
 
                                 if(isTouchBrowser){
-                                    $aWindow.find('a.ant_undo_link').on('tap.ant', {args:args}, onAction);
+                                    $aWindow.find('a.ant_undo_link').on('touchend.ant', {args:args}, onAction);
                                 }else{
                                     $aWindow.find('a.ant_undo_link').on('click.ant', {args:args}, onAction);
                                 }
@@ -1429,7 +1429,7 @@ function antenna($A){
                         if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
-                            $tagBox.on('tap.ant', function() {
+                            $tagBox.on('touchend.ant', function() {
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
@@ -1507,7 +1507,7 @@ function antenna($A){
                         $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
                         
                         if(isTouchBrowser){
-                            $commentHover.on('tap.ant', function() {
+                            $commentHover.on('touchend.ant', function() {
                                 // replacewith bug
                                 $(this).tooltip('hide');
                                 ANT.actions.viewCommentContent({
@@ -7956,7 +7956,7 @@ if ( sendData.kind=="page" ) {
                             $indicator.appendTo($container_tracker);
                             
                             if(isTouchBrowser){
-                                $indicator.on('tap.ant', function(){
+                                $indicator.on('touchend.ant', function(){
                                     if ( summary.counts.interactions == 0 ) {
                                         var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     } else {
@@ -8021,7 +8021,7 @@ if ( sendData.kind=="page" ) {
 
                                 $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body');
                                 if(isTouchBrowser){
-                                    $indicator.on('tap.ant', function(){
+                                    $indicator.on('touchend.ant', function(){
                                         $(this).toggleClass('ant_hover');
                                     });
                                 }
@@ -10302,7 +10302,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv42"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv43"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10799,7 +10799,7 @@ function $AFunctions($A){
                     };
 
                     if(isTouchBrowser){
-                        $summary_widget.on('tap.ant', function(){
+                        $summary_widget.on('touchend.ant', function(){
                             onActiveEvent.call(this);
                             $(this).toggleClass('ant_hover');
                         });

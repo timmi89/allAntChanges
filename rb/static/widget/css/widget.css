@@ -2720,7 +2720,7 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
   div.ant_indicator.ant_indicator_for_text span.ant_count { opacity:1; }
 
   div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag {
-    marign-top:0;
+    margin-top:0;
     transition: none;
   }
   /*div.ant.ant_window {
