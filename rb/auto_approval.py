@@ -34,13 +34,16 @@ def autoCreateGroup(cleaned_data, cookie_user, isAutoApproved=False, querystring
                 requires_approval=False,
             )
         except Exception, e:
+            # logger.warn(e)
             groups = Group.objects.filter(
                 short_name=cleaned_data['short_name']
             )
             if len(groups) == 1:
                 group = groups[0]
+            elif len(groups) > 1:
+                raise Exception("More than one group with shortname found: " + cleaned_data['short_name'])
             else:
-                raise Exception("More or less than one group with shortname found: " + cleaned_data['short_name'])
+                raise Exception("No groups found with shortname: " + cleaned_data['short_name'])
         
         site = Site.objects.create(
             name=cleaned_data['domain'],

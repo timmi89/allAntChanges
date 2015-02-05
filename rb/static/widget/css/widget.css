@@ -1207,6 +1207,7 @@ div.ant.ant-summary a.ant_reactions_label span {
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
   font-weight: normal;
+  display:inline;
 }
 div.ant.ant-summary.ant-summary-no-reactions div.ant-sum-reactions a.ant_reactions_label {
     display: none;
@@ -2316,17 +2317,9 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag {
     height:100%;
     word-spacing:0;
 
-    -webkit-transition: margin-top 0.6s ease;
-    -moz-transition: margin-top 0.6s ease;
-    -o-transition: margin-top 0.6s ease;
-    -ms-transition: margin-top 0.6s ease;
     transition: margin-top 0.6s ease;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_box .ant_comment_hover {
-    -webkit-transition: margin-right 0.8s ease;
-    -moz-transition: margin-right 0.8s ease;
-    -o-transition: margin-right 0.8s ease;
-    -ms-transition: margin-right 0.8s ease;
     transition: margin-right 0.8s ease;
 }
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_comment_hover { margin-right:-100%;}
@@ -2443,6 +2436,7 @@ div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_wrap .ant_tag_wrap2 {
 div.ant div.ant_body.ant_tags_list.ant_grid .ant_tag_body{
     text-align: center;
     font-weight: bold;
+    text-shadow: none;
 }
 div.ant.ant_readmode div.ant_body.ant_tags_list.ant_grid .ant_tag_split .ant_tag_body{
     /*margin-top: -1em !important;*/
@@ -2724,6 +2718,21 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
   div.ant div.ant_body.ant_tags_list.ant_horizontal_bars .ant_box .ant_count            { margin-top: -1px; font-size: 12px; }
   div.ant_indicator span.ant_count { padding-right:3px; }
   div.ant_indicator.ant_indicator_for_text span.ant_count { opacity:1; }
+
+  div.ant div.ant_body.ant_tags_list.ant_grid .ant_box div.ant_tag {
+    marign-top:0;
+    transition: none;
+  }
+  /*div.ant.ant_window {
+    left:-400%;
+    transition:left 0.6s;
+  }*/
+  div.ant.ant_window.ant_show {
+    /*position: absolute;*/
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto !important;
+   }
 }
 
 /* mozille specific */

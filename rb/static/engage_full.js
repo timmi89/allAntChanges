@@ -39,20 +39,30 @@ ANT_scriptPaths = {},
 //check if this script is the offline version
 //note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
 ANT_offline = !!(
+    ANT.engageScriptSrc.indexOf('localhost') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+
+// fails on iPhone?
 // var isTouchBrowser = (
 //     ('ontouchstart' in window) || 
 //     (window.DocumentTouch && document instanceof DocumentTouch)
 // );
 
-var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
+// works?
+var isTouchBrowser = ("ontouchstart" in window || navigator.msMaxTouchPoints);
+
+// fails
+// var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
 
 ANT.safeThrow = function(msg){
     //this will never actually throw in production (if !ANT_offline)
@@ -110,7 +120,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            (src.indexOf('antenna') != -1 || src.indexOf('readrboard') != -1) &&
+            (src.indexOf('antenna') != -1 || src.indexOf('localhost') != -1 || src.indexOf('readrboard') != -1) &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
@@ -4007,7 +4017,8 @@ function antenna($A){
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        json: $.toJSON( {host_name : window.location.hostname} )
+                        // json: $.toJSON( {host_name : window.location.host} ) // has port
+                        json: $.toJSON( {host_name : window.location.hostname} )  // no port
                     },
                     success: function(response, textStatus, XHR) {
                         var group_settings = response.data;
@@ -4340,10 +4351,16 @@ function antenna($A){
                                 ANT.actions.pages.initPageContainer(page.id);
                             });
 
+                            var a_or_b_or_not = '';
+                            if ( ANT.group.ab_test_impact === true ) {
+                                a_or_b_or_not = ( ANT.util.activeAB() ) ? 'A':'B';
+                            }
+
                             ANT.events.trackEventToCloud({
                                 event_type: 'wl',
-                                event_value: load_event_value,
-                                page_id: ANT.util.getPageProperty('id')
+                                event_value: a_or_b_or_not,
+                                page_id: ANT.util.getPageProperty('id'),
+                                content_attributes: load_event_value
                             });
 
                             $ANT.dequeue('initAjax');
@@ -10285,7 +10302,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv40"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv42"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

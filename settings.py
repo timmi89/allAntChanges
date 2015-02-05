@@ -59,6 +59,7 @@ if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
     BASE_URL = 'http://local.antenna.is:8081'
     BASE_URL_SECURE = 'https://local.antenna.is:8081'
+    # STATIC_URL = '//localhost:8081/static/'
     STATIC_URL = '//local.antenna.is:8081/static/'
     DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']
     

@@ -3,9 +3,8 @@
 {% block title %}Antenna{%endblock%}
 {% block extendedHead %}
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
-<script async src="/static/engage_full.js"></script>
 <script>
-// ANTsite.group.short_name = "{{ group.short_name }}";
+// ANTsite.group.short_name = "localhost";
 // ANTsite.group.full_name = "{{ group.name }}";
 // ANTsite.group.id = "{{ group.id }}";
 // ANTsite.group.id = 1660;
@@ -104,7 +103,8 @@
   </div>
 </div>
 
-<!-- <div class="grid-whole sample-content separator">
+
+<div class="grid-whole sample-content separator">
   <div class="content">
     <h1>Images, Video, Audio, Oh my.</h1>
     <div class="grid-whole s-grid-whole">
@@ -124,7 +124,7 @@
       <div class="credit center">via Antenna partner, <a href="http://burtoncummings.com/lyrics/american-woman/" target="_blank">BurtonCummings.com</a></div>
     </div>
   </div>
-</div> -->
+</div>
 
 <a name="anotherway"></a>
 <div class="grid-whole sample-content separator separate-ctas">
@@ -206,11 +206,12 @@ http://www.bartleby.com/268/9/23.html
 </script>
 <script>
 window.antenna_extend = {
-  // default_reactions:['what','yes','ok']
-  // summary_widget_selector: '.sample-content'
+  default_reactions:['what','yes','ok','why not','OMGLOL'],
+  active_sections: '.sample-content'
 };
 </script>
 
+<script async src="/static/engage_full.js"></script>
 <!-- 
 <style>
 .ant-summary { z-index:100002; position: relative; background:#fff; }
