@@ -21,6 +21,24 @@ import logging
 import hashlib
 logger = logging.getLogger('rb.standard')
 
+
+# BEGIN for the html tag stripping
+from HTMLParser import HTMLParser  
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+# END for the html tag stripping
+
 blacklist = ['fuck','shit','poop','cock','cunt']
     
 def getTagCommentData(comment):
@@ -209,6 +227,7 @@ def createInteractionNode(node_id=None, body=None, group=None):
     
     # Body was passed rather than id
     elif body:
+        body = strip_tags(body)
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
         
@@ -270,6 +289,10 @@ def deleteInteraction(interaction, user):
 
 def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
     approveOnCreate = False if group.requires_approval else True
+
+    interaction_node.body = strip_tags(interaction_node.body)
+    if interaction_node.body == '':
+        raise JSONException("Group has blocked this tag.")
 
     if kind and kind == 'tag':
         if group and group.blocked_tags:
