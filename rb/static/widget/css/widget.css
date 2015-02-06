@@ -491,7 +491,7 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions{
     Don't use margin though, because we want the hover to extend to the end.
     */
     padding-right: 10px;
-    background: #fff;
+    /*background: #fff;*/
     height: 27px;
 }
 
