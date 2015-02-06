@@ -71,7 +71,6 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
-            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -83,7 +82,6 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
-            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -95,7 +93,6 @@ if DEBUG:
             'PASSWORD': '0bscur31nt3nt',
             'HOST':     'localhost',
             'PORT':     '3306',
-            'JOHNNY_CACHE_KEY': 'query_cache',
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
@@ -119,13 +116,6 @@ if DEBUG:
                     'SOCKET_TIMEOUT': 5,
                     'MAX_ITEM_SIZE': 1000*100,
                 }
-            },
-            'query_cache': {
-                'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-                'LOCATION': ['127.0.0.1:11211'],
-                'TIMEOUT':86400,
-                'JOHNNY_CACHE':True,
-
             }
         }
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
@@ -150,7 +140,6 @@ else:
         'HOST':     '192.168.142.147',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
-        'JOHNNY_CACHE_KEY': 'query_cache',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
         }
@@ -163,7 +152,6 @@ else:
         'HOST':     '192.168.171.12',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
-        'JOHNNY_CACHE_KEY': 'query_cache',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
         }
@@ -176,7 +164,6 @@ else:
         'HOST':     '192.168.178.62',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
-        'JOHNNY_CACHE_KEY': 'query_cache',
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
         }
@@ -195,13 +182,6 @@ else:
                 'SOCKET_TIMEOUT': 5,
                 'MAX_ITEM_SIZE': 1000*100,
             }
-        },
-        'query_cache': {
-            'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-            'LOCATION': ['192.168.182.177:11211'],
-            'TIMEOUT':86400,
-            'JOHNNY_CACHE':True,
-
         }
     }
     
@@ -213,7 +193,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
               
-JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
+#JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_antenna'
 
 
 # Facebook shit
@@ -282,8 +262,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.UpdateCacheMiddleware',
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
+    #'johnny.middleware.LocalStoreClearMiddleware',
+    #'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
