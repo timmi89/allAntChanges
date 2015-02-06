@@ -342,7 +342,7 @@ class GroupForm(forms.ModelForm):
         if commit:
             m.save()
         try:
-            cache.set('group_settings_'+ str(site.domain), getSettingsDict(self.instance))
+            cache.set('group_settings_'+ str(self.instance.short_name), getSettingsDict(self.instance))
         except Exception, e:
             logger.warning(e)
         
