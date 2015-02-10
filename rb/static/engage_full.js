@@ -61,6 +61,9 @@ ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.a
 // works?
 var isTouchBrowser = ("ontouchstart" in window || navigator.msMaxTouchPoints);
 
+// DEBUG
+// var isTouchBrowser = true;
+
 // fails
 // var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
 
@@ -4616,7 +4619,7 @@ function antenna($A){
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: all; -khtml-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;} </style>');
 
 
 

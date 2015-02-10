@@ -513,7 +513,8 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-o
 div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
-    top: 29px;
+    top: 26px;
+    z-index:20;
     box-shadow: 0 0px 4px #ccc;
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;
