@@ -12,6 +12,8 @@
     -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing:border-box;
 }
 
+ins { text-decoration: none; }
+
 /* the above * is too aggresive for some stuff */
 .ant div,
 .ant span,

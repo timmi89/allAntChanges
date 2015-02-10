@@ -10305,7 +10305,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv44"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv45"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -11369,7 +11369,7 @@ function $AFunctions($A){
                     hiliter.applyToRange(range);
                     //log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
-                    $('.'+hiliter['class']).addClass(styleClass);
+                    $('.'+hiliter['class']).addClass('ant_hilite '+styleClass);
                     //apply css classes to start and end so we can style those specially
                     hiliter['get$start']().addClass(styleClass+'_start');
                     hiliter['get$end']().addClass(styleClass+'_end');
