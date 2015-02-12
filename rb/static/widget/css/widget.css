@@ -12,6 +12,8 @@
     -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing:border-box;
 }
 
+ins { text-decoration: none; }
+
 /* the above * is too aggresive for some stuff */
 .ant div,
 .ant span,
@@ -491,7 +493,7 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown.ant_menu_actions{
     Don't use margin though, because we want the hover to extend to the end.
     */
     padding-right: 10px;
-    background: #fff;
+    /*background: #fff;*/
     height: 27px;
 }
 
@@ -513,7 +515,8 @@ div.ant.ant_window div.ant_aWindowMenu .ant_menuDropDown:hover .ant_icon-share-o
 div.ant.ant_window div.ant_aWindowMenu .ant_linkWrap {
     position: absolute;
     right: 0;
-    top: 29px;
+    top: 26px;
+    z-index:20;
     box-shadow: 0 0px 4px #ccc;
     -moz-box-shadow: 0 0px 4px #ccc;
     -webkit-box-shadow: 0 0px 4px #ccc;

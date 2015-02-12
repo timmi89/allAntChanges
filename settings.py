@@ -107,15 +107,23 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
-                'BACKEND': 'memcachepool.cache.UMemcacheCache',
-                'LOCATION': '127.0.0.1:11211',
-                'TIMEOUT':86400,
-                'OPTIONS': {
-                    'MAX_POOL_SIZE': 100,
-                    'BLACKLIST_TIME': 20,
-                    'SOCKET_TIMEOUT': 5,
-                    'MAX_ITEM_SIZE': 1000*100,
-                }
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+                # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                # 'LOCATION': '127.0.0.1:11211',
+                # 'TIMEOUT':86400,
+                # 'OPTIONS': {
+                #     'MAX_POOL_SIZE': 100,
+                #     'BLACKLIST_TIME': 20,
+                #     'SOCKET_TIMEOUT': 5,
+                #     'MAX_ITEM_SIZE': 1000*100,
+                # }
+            },
+            'query_cache': {
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+                # 'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+                # 'LOCATION': ['127.0.0.1:11211'],
+                # 'TIMEOUT':86400,
+                # 'JOHNNY_CACHE':True,
             }
         }
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"

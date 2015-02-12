@@ -44,13 +44,13 @@ ANT_offline = !!(
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 // fails on iPhone?
 // var isTouchBrowser = (
@@ -60,6 +60,9 @@ ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localho
 
 // works?
 var isTouchBrowser = ("ontouchstart" in window || navigator.msMaxTouchPoints);
+
+// DEBUG
+// var isTouchBrowser = true;
 
 // fails
 // var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
@@ -4616,7 +4619,7 @@ function antenna($A){
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: all; -khtml-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;} </style>');
 
 
 
@@ -10302,7 +10305,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv43"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv45"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -11366,7 +11369,7 @@ function $AFunctions($A){
                     hiliter.applyToRange(range);
                     //log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
-                    $('.'+hiliter['class']).addClass(styleClass);
+                    $('.'+hiliter['class']).addClass('ant_hilite '+styleClass);
                     //apply css classes to start and end so we can style those specially
                     hiliter['get$start']().addClass(styleClass+'_start');
                     hiliter['get$end']().addClass(styleClass+'_end');
