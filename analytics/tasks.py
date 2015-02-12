@@ -17,10 +17,13 @@ logger = get_task_logger(__name__)
 
 @task(name='page.cache.update')
 def update_page_cache(page_id):
-    if cache.get('LOCKED_page_data' + str(page_id)) is None:
-        cache.set('LOCKED_page_data' + str(page_id),'locked',15)
-        cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
-        cache.delete('LOCKED_page_data' + str(page_id))
+#    if cache.get('LOCKED_page_data' + str(page_id)) is None:
+#        cache.set('LOCKED_page_data' + str(page_id),'locked',15)
+#        cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
+#        cache.delete('LOCKED_page_data' + str(page_id))
+    logger.info('updating page_data: ' + str(page_id))
+    cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
+
 
 @task(name='page.containers.cache.update')
 def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
@@ -29,11 +32,14 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         cache.delete('page_containers' + str(page_id))
     else:
         key = 'page_containers' + str(page_id)
-    if cache.get('LOCKED_'+key) is None:
-        logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
-        cache.set('LOCKED_'+key,'locked',15)
-        cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
-        cache.delete('LOCKED_'+key)
+#    if cache.get('LOCKED_'+key) is None:
+#        logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+#        cache.set('LOCKED_'+key,'locked',15)
+#        cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
+#        cache.delete('LOCKED_'+key)
+    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
+
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
                run_every=(crontab(hour="5,17", minute="14", day_of_week="*")))
@@ -342,6 +348,7 @@ def get_approved_active_groups():
 
 
 def getSinglePageDataDict(page_id):
+    logger.info('getting singlePageDataDict: ' + str(page_id))
     current_page = Page.objects.get(id=page_id)
     urlhash = hashlib.md5( current_page.url ).hexdigest()
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
