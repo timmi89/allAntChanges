@@ -2376,6 +2376,10 @@ function antenna($A){
 
                 coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img(coords);
 
+                // ensure the "actionbar" stays inside the expected space
+                // this prevents that errant actionbar thing (well, it's a band-aid)
+                if (coords.top < 0 || coords.left < 0) {return false;}
+
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
                 if (kind == 'text') {
                     //rewrite coords if needed
@@ -4200,6 +4204,7 @@ function antenna($A){
                             // if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
                             if ( nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
                                 $post.attr('ant-page-checked', true);
+
                                 // url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
@@ -4421,6 +4426,7 @@ function antenna($A){
 
                     $(ANT.group.active_sections) // imagemouseover
                         .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
+
                             var $this = $(this);
                             
                             var hash = $this.data('hash');
@@ -4559,7 +4565,8 @@ function antenna($A){
         
                 $(window).on('scroll.ant', function() {
                     // i'm sure there is a good reason for this, but i don't recall what it is
-                    // blog rolls maybe
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.
                     ANT.actions.initPageData();
 
                 });
