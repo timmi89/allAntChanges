@@ -181,11 +181,11 @@ function antenna($A){
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
                 // tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
-                tag_box_bg_colors: '90,168,214; 200,226,38; 111,197,242; 229,246,98; 28,173,223',
-                tag_box_text_colors: '34,94,129; 128,146,17; 37,117,163; 153,174,26; 34,94,129',
-                tag_box_font_family: 'Helvetica,Arial,sans-serif',
-                tag_box_gradient:'',
-                tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
+                tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
+                tag_box_text_colors: '#fff;#fff;#fff;#fff',
+                tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
+                // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
+                tags_bg_css: '',
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -390,16 +390,6 @@ function antenna($A){
                         }
                     });
 
-
-                    // if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
-                    //     $.postMessage(
-                    //         "register-event::"+data,
-                    //         ANT_baseUrl + "/static/xdm.html",
-                    //         window.frames['ant-xdm-hidden']
-                    //     );
-                    // } else {
-                    //     ANT.events.queue.push(params);
-                    // }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
@@ -519,7 +509,7 @@ function antenna($A){
                 defaultHeight:260,
                 minHeight: 10,
                 maxHeight: 300,
-                minWidth: 100,
+                minWidth: 125,
                 maxWidth: 600,
                 forceHeight: false,
                 rewritable: true
@@ -647,6 +637,8 @@ function antenna($A){
                 // later, I want to add the ability for this to create an absolutely-positioned panel
                 // that will slide OVER, not next to, current content... like a login panel sliding over the content.
 
+                console.log('panelCreate');
+
                 // create a new panel for the aWindow
                 if ( !$aWindow ) return;
 
@@ -664,6 +656,7 @@ function antenna($A){
             },
             panelUpdate: function( $aWindow, className, $newPanel, shouldAppendNotReplace ) {
                 //ANT.aWindow.panelUpdate:
+                console.log('panelUpdate');
 
                 if ( !$aWindow ) return;
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
@@ -681,6 +674,7 @@ function antenna($A){
             panelShow: function( $aWindow, $showPanel, callback ) {
                 //ANT.aWindow.panelShow: 
                 // panelEvent - panelShow
+                console.log('panelShow');
                 
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
                 var $hidePanel = $aWindow.find('.ant_visiblePanel');
@@ -725,6 +719,7 @@ function antenna($A){
             },
             panelHide: function( $aWindow, callback ) {
                 //ANT.aWindow.panelHide:
+                console.log('panelHide');
                 
                 // panelEvent - panelhide
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
@@ -766,32 +761,12 @@ function antenna($A){
 
                 });
             },
-            panelEnsureFloatWidths: function( $aWindow ) {
-                //ANT.aWindow.panelEnsureFloatWidths:
-
-                //this function keeps messing stuff up and causing the aWindow panel to jump.
-                //we shouldn't need it anyway while the success state just has a close button instead of a back button
-                return;
-
-                //this is needed becuase after the tagList updates, the width of panel1 can change.
-                // var $panelWrap = $aWindow.find('.ant_body_wrap');
-                // var $showPanel = $aWindow.find('.ant_visiblePanel');
-                // var $hidePanel = $aWindow.find('.ant_hiddenPanel');
-
-                // var xOffset = $hidePanel.width();
-
-                // $panelWrap.css({
-                //     left: -xOffset
-                // });
-                // $showPanel.css({
-                //     left: xOffset
-                // });
-
-            },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             updateTagPanel: function ( $aWindow ) {
                 // ANT.aWindow.updateTagPanel:
                 // panelEvent - backButton
+
+                console.log('updateTagPanel');
 
                 var hash = $aWindow.data('hash');
 
@@ -936,7 +911,7 @@ function antenna($A){
                         summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
@@ -1093,10 +1068,11 @@ function antenna($A){
             tagBox: {
                 setWidth: function( $aWindow, width ) {
                     // ANT.aWindow.tagBox.setWidth
+                    console.log('tagBox.setWidth: '+width);
                     // should probably just be ANT.aWindow.setWidth ??
                     // width must be 200, 300, or 400
                     var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
-                    $aWindow.removeClass('w100 w200 w300 w400').addClass('w'+aWindowWidth);
+                    $aWindow.removeClass('w111 w222').addClass('w'+aWindowWidth);
                 },
                 setHeight: function( $aWindow, height ) {
                     // ANT.aWindow.tagBox.setHeight
@@ -1112,10 +1088,9 @@ function antenna($A){
                         $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$aWindow ) ? params.$aWindow.find('div.ant_body.ant_tags_list') : null,
                         reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
-                        tagPercent = 0,
-                        tagWidth = '',
                         bgColorInt = ( params.bgColorInt ) ? params.bgColorInt:0,
-                        textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
+                        rowNum = ( params.rowNum ) ? params.rowNum:0,
+                        // textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1125,17 +1100,17 @@ function antenna($A){
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
-                    // get the background color and text color
-                    // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
-                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
+                    // // get the background color and text color
+                    // // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
 
                         // later, we'll allow rendering percentages on grids/etc, as an option
-                    var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
-                    if (renderPercentages===true) {
-                        tagPercent = parseInt(tagCount/totalReactions*100);
-                        tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
-                    }
+                    // var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
+                    // if (renderPercentages===true) {
+                    //     tagPercent = parseInt(tagCount/totalReactions*100);
+                    //     tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
+                    // }
 
                     // if (content_node_id == 'undefined'){
                         // return;
@@ -1148,12 +1123,11 @@ function antenna($A){
                     // for ex,
 
                     // this can go away if we change CSS class names
-                    var boxSize = ( boxSize == "big" ) ? "ant_box_big" : ( boxSize == "medium" ) ? "ant_box_medium" : "ant_box_small",
-                    // var boxSize = "ant_box_"+ boxSize, 
+                    var boxSize = ( boxSize == "big" ) ? "ant_box_big" : "ant_box_medium",
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'ant_writeMode' : '',
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
-                      tagBodyCrazyHtml = "",
+                      tagBodyHtml = "",
                       tagIsSplitClass = "";
 
                     
@@ -1173,39 +1147,41 @@ function antenna($A){
                     }
                     
                     var charCountText = ""
+
+                    //CHANGETHIS ?
+                    // can we avoid this now?  just use css?
+
                     //split long tag onto two lines.
-                    if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
-                        charCountText = 'ant_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
-                    } else {
-                        tagIsSplitClass = "ant_tag_split";
-                        // if no space, hyphenate
-                        if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            charCountText = 'ant_charCount15';
-                            tagBodyCrazyHtml = 
-                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
-                            tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
-                            // if ( boxSize == "ant_box_small" ) {
-                            //     boxSize = "ant_box_medium";
-                            // }
-                        } else {
-                            var tagBody1 = "", tagBody2 = "", keepLooping = true;
-                            tagBodyRawSplit = tagBodyRaw.split(' ');
-                            while ( keepLooping ) {
-                                tagBody1 += tagBodyRawSplit.shift() + ' ';
-                                if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
-                            }
-                            tagBody2 = tagBodyRawSplit.join(' ');
-                            charCountText = 'ant_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
-                        }
-                    }
+                    // if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 ) {
+                    //     charCountText = 'ant_charCount'+tagBodyRaw.length;
+                    //     tagBodyCrazyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
+                    // } else {
+                    //     tagIsSplitClass = "ant_tag_split";
+                    //     // if no space, hyphenate
+                    //     if ( tagBodyRaw.indexOf(' ') == -1 ) {
+                    //         charCountText = 'ant_charCount15';
+                    //         tagBodyCrazyHtml = 
+                    //         '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
+                    //         tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
+                    //     } else {
+                    //         var tagBody1 = "", tagBody2 = "", keepLooping = true;
+                    //         tagBodyRawSplit = tagBodyRaw.split(' ');
+                    //         while ( keepLooping ) {
+                    //             tagBody1 += tagBodyRawSplit.shift() + ' ';
+                    //             if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
+                    //         }
+                    //         tagBody2 = tagBodyRawSplit.join(' ');
+                    //         charCountText = 'ant_charCount'+tagBody1.length;
+                    //         tagBodyCrazyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
+                    //     }
+                    // }
+                    tagBodyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
 
                     var tag_id = tag.id;
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'ant_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
-                    var tagCountDisplay = (renderPercentages===true) ? tagPercent+'%':tagCount;
+                    var tagCountDisplay = tagCount;
                     var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
                         "" : 
                         '<span class="ant_plusOne">+1</span>';
@@ -1215,7 +1191,7 @@ function antenna($A){
                         '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
                         '<i class="ant-search ant_tag_read_icon"></i>';
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';background-image:'+ANT.group.tag_box_gradient+';">'+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.95);">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -1224,7 +1200,7 @@ function antenna($A){
                                 'data-parent_id="'+parent_id+'" '+
                                 'data-content_node_id="'+content_node_id+'" '+
                             '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
-                                tagBodyCrazyHtml+
+                                tagBodyHtml+
                                 notWriteModeHtml+
                                 plusOneCTA+
                             '</div>'+
@@ -1242,10 +1218,9 @@ function antenna($A){
 
                             $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                             ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                                 ANT.aWindow.hideFooter($aWindow);
-                                // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                             });
                         } else {
                             $aWindow.find('.ant_body').html( $reactionsTable );
@@ -1927,7 +1902,7 @@ function antenna($A){
                 var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
 
                 if (typeof $aWindow != 'undefined') {
-
+//CHANGETHIS?
                     // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
                     setTimeout(function() {
                         $aWindow.addClass('ant_show');
@@ -1982,7 +1957,7 @@ function antenna($A){
                     minWidth = settings.minWidth,
                     maxWidth = settings.maxWidth,
                     ant_for = ( typeof settings.container == "string" ) ? 'ant_for_'+settings.container:'ant_for_page',
-                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w100 '+ant_for+'"></div>');
+                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w111 '+ant_for+'"></div>');
 
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
@@ -2075,14 +2050,6 @@ function antenna($A){
 
                     $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
-
-                    // if ( $aWindow.data('initialWidth') >= 300 ) {
-                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
-                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
-                    // } else {
-                    //     if ( $aWindow.data('initialWidth') == 100 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 100 ); }
-                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
-                    // }
 
                 return true;
               }
@@ -2647,7 +2614,7 @@ function antenna($A){
                                         }
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
-                                                        (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
+                                                        (item.content.kind == 'med') ? '<iframe class="contentBody" width="250" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
                                                         (item.content.body.split(' ').length < 2 ) ? '':item.content.body;
                                         
                                         // add a bg image to text when the content is too short.  15 characters was picked arbitrailty.
@@ -4043,7 +4010,6 @@ function antenna($A){
                             if (typeof group_settings.tag_box_bg_colors !='undefined' && !group_settings.tag_box_bg_colors ) { delete group_settings.tag_box_bg_colors; }
                             if (typeof group_settings.tag_box_text_colors !='undefined' && !group_settings.tag_box_text_colors ) { delete group_settings.tag_box_text_colors; }
                             if (typeof group_settings.tag_box_font_family !='undefined' && !group_settings.tag_box_font_family ) { delete group_settings.tag_box_font_family; }
-                            if (typeof group_settings.tag_box_gradient !='undefined' && !group_settings.tag_box_gradient ) { delete group_settings.tag_box_gradient; }
                             if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
@@ -4315,7 +4281,6 @@ function antenna($A){
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
-
                             if ( response.status !== "success" ) {
                                 return false;
                             } else {
@@ -4514,6 +4479,7 @@ function antenna($A){
 
             },
             initEnvironment: function(){
+                console.clear();
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
                 if ( !ANT.util.activeAB() ) {
                     $('.ant-custom-cta').css('visibility','hidden');
@@ -4793,7 +4759,7 @@ function antenna($A){
                     ANT.actionbar.closeAll();
                     ANT.actions.containers.media.disengageAll();
                     // ANT.actions.indicators.utils.borderHilites.disengageAll();
-                    $('div.ant.ant_tag_details.ant_sbRollover').remove();
+                    // $('div.ant.ant_tag_details.ant_sbRollover').remove();
                     
                     if (!isTouchBrowser) { 
                         $('div.ant_indicator_for_media').hide();
@@ -5577,13 +5543,12 @@ function antenna($A){
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
                                 $reactionView = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
-                                reactionViewStyle = $reactionView.attr('ant-view-style') || 'grid',
                                 reactionViewWidth = $reactionView.width(),
                                 reactionViewHeight = $reactionView.height();
 
                             $reactionView.data('hash', hash).data('container', hash).addClass('no-ant');
 
-                            if ( reactionViewStyle == "grid" ) {
+
 
                                 // if the reactionView grid has no height specified, give it one
                                 // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
@@ -5609,10 +5574,6 @@ function antenna($A){
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
                                 }
-                            } else if ( reactionViewStyle == "horizontal_bars" ) {
-                                $reactionView.html('<div class="ant ant_inline ant_body_wrap ant_horizontal_bars ant_clearfix"></div>'); // gotta insert the ant_body_wrap or there is no container to attach to in makeTagsListForInline 
-                                ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
-                            }
                         }
                     });
                 },
@@ -6624,58 +6585,58 @@ if ( sendData.kind=="page" ) {
                     }
                 },
                 // breaks the interaction convention:
-                boardadd: {
-                    preAjax: function(){
-                        var $aWindow = args.aWindow;
-                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
-                    },
-                    customSendData: function(){
-                        return {};
-                    },
-                    onSuccess: {
-                        //ANT.actions.interactions.react.onSuccess:
-                        create: function(args){
-                            //clear loader
+                // boardadd: {
+                //     preAjax: function(){
+                //         var $aWindow = args.aWindow;
+                //         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
+                //     },
+                //     customSendData: function(){
+                //         return {};
+                //     },
+                //     onSuccess: {
+                //         //ANT.actions.interactions.react.onSuccess:
+                //         create: function(args){
+                //             //clear loader
                             
-                            //carefull with this.. $('div.ant_tag_details.ant_reacted') without the ant_live_hover was returning 2 nodes. shore this up later.
-                            var $aWindow = (args.aWindow) ? args.aWindow : $('div.ant_tag_details.ant_reacted.ant_live_hover');
-                            $aWindow.find('div.ant_loader').css('visibility','hidden');
+                //             //carefull with this.. $('div.ant_tag_details.ant_reacted') without the ant_live_hover was returning 2 nodes. shore this up later.
+                //             var $aWindow = (args.aWindow) ? args.aWindow : $('div.ant_tag_details.ant_reacted.ant_live_hover');
+                //             $aWindow.find('div.ant_loader').css('visibility','hidden');
 
-                            var safe_board_name = args.board_name.replace(/\s/g,"_"),
-                                newArgs = { board_id:args.board_id, int_id:args.int_id },
-                                $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
+                //             var safe_board_name = args.board_name.replace(/\s/g,"_"),
+                //                 newArgs = { board_id:args.board_id, int_id:args.int_id },
+                //                 $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
                             
-                            $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
+                //             $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
 
-                            $success.find('a.ant_undo').click( function() {
+                //             $success.find('a.ant_undo').click( function() {
                                 
-                                args.aWindow = $aWindow;
-                                // panelEvent
-                                ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
-                            });
-                        }
-                    }
-                },
-                // breaks the interaction convention:
-                boarddelete: {
-                    preAjax: function(){
-                        var $aWindow = args.aWindow;
-                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
-                    },
-                    customSendData: function(){
-                        return {};
-                    },
-                    onSuccess: {
-                        //ANT.actions.interactions.react.onSuccess:
-                        create: function(args){
-                            //clear loader
+                //                 args.aWindow = $aWindow;
+                //                 // panelEvent
+                //                 ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
+                //             });
+                //         }
+                //     }
+                // },
+                // // breaks the interaction convention:
+                // boarddelete: {
+                //     preAjax: function(){
+                //         var $aWindow = args.aWindow;
+                //         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
+                //     },
+                //     customSendData: function(){
+                //         return {};
+                //     },
+                //     onSuccess: {
+                //         //ANT.actions.interactions.react.onSuccess:
+                //         create: function(args){
+                //             //clear loader
                             
-                            var $aWindow = args.aWindow;
-                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
+                //             var $aWindow = args.aWindow;
+                //             if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
-                        }
-                    }
-                },
+                //         }
+                //     }
+                // },
                 react: {
                     preAjax: function(args, action_type){
                         var $aWindow = args.aWindow;
@@ -8262,28 +8223,31 @@ if ( sendData.kind=="page" ) {
                             
                         }
 
+                        
+//CHANGETHIS
+// or delete this whole comment block
                         // $tagsListContainer.append($tag_table);
                         // ANT.aWindow.jspUpdate($aWindow);
                         // $aWindow.find('.ant_body_wrap').append($tagsListContainer);
-                        if ( reactionViewStyle == "grid" || isWriteMode ) {
-                            isotopeTags( $tagsListContainer );
-                            isotopeFillGap($tagsListContainer);
-                        } else {
-                            // $tagsListContainer.find('.ant_box').addClass('ant_animated');
-                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
-                                currentTagBoxAnimating = 0;
-                            // var animationQueue = setInterval( animateNextBox, 10 );
-                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
+                        // if ( reactionViewStyle == "grid" || isWriteMode ) {
+                        //     // isotopeTags( $tagsListContainer );
+                        //     // isotopeFillGap($tagsListContainer);
+                        // } else {
+                        //     // $tagsListContainer.find('.ant_box').addClass('ant_animated');
+                        //     var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
+                        //         currentTagBoxAnimating = 0;
+                        //     // var animationQueue = setInterval( animateNextBox, 10 );
+                        //     var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
-                            function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('ant_animated');
-                                currentTagBoxAnimating++;
-                                if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                    clearInterval( animationQueue );
-                                }
-                            }
-                        }
+                        //     function animateNextBox() {
+                        //         var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
+                        //         $thisBox.addClass('ant_animated');
+                        //         currentTagBoxAnimating++;
+                        //         if ( currentTagBoxAnimating > tagBoxesCount ) {
+                        //             clearInterval( animationQueue );
+                        //         }
+                        //     }
+                        // }
 
                         return $tagsListContainer;
 
@@ -8291,7 +8255,6 @@ if ( sendData.kind=="page" ) {
                         // sort a list of tags into their buckets
                         // private function, but could be a ANT.util or ANT.tagBox function
                         function createTagBuckets( tagList ) {
-                            // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
                             $.each( tagList, function(idx,tag){
@@ -8312,14 +8275,15 @@ if ( sendData.kind=="page" ) {
 
                             $.each( tagList, function(idx, tag) {
                                 var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
-                                if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                // if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                    // buckets.big.push( tag );
+                                    // return;
+                                // } else if ( tag.tag_count > midValue ) {
+                                if ( tag.tag_count > midValue ) {
                                     buckets.big.push( tag );
                                     return;
-                                } else if ( tag.tag_count > midValue ) {
-                                    buckets.medium.push( tag );
-                                    return;
                                 } else {
-                                    buckets.small.push( tag );
+                                    buckets.medium.push( tag );
                                     return;
                                 }
                             });
@@ -8328,162 +8292,97 @@ if ( sendData.kind=="page" ) {
                         }
 
 
+                        //CHANGETHIS
+                        // make this do rows, and otherwise not really bucket things
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                bgColorInt = 0,
-                                textColorInt = 0,
-                                numBgColors = ANT.group.tag_box_bg_colors.length,
-                                numTextColors = ANT.group.tag_box_text_colors.length;
+                                rowNum = 0,
+                                // bgColorInt = 0,
+                                // textColorInt = 0,
+                                numBgColors = ANT.group.tag_box_bg_colors.length;
+                                // numTextColors = ANT.group.tag_box_text_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                     }else{
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
-                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
-                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
                                 }
                             }
 
-                            while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+                            while ( buckets.big.length || buckets.medium.length ) {
+                                // get the background color and text color
+                                // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                                // var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
+                                // var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
+
                                 if ( buckets.big.length ) {
-                                  var thisTag = buckets.big.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+                                    var thisTag = buckets.big.shift();
+                                    var $tagContainer = $('<div class="ant ant_tag_row"></div>');
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                    
+                                    $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
+
                                     // set next color 
-                                    bgColorInt++;
-                                    textColorInt++;
-                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                    if ( textColorInt == numTextColors ) textColorInt = 0;
+                                    rowNum++;
+                                    if ( rowNum == numBgColors ) rowNum = 0;
+                                    // bgColorInt++;
+                                    // textColorInt++;
+                                    // if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    // if ( textColorInt == numTextColors ) textColorInt = 0;
+
                                 } else if ( buckets.medium.length ) {
                                     var thisTag = buckets.medium.shift();
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+                                    
+                                    var $tagRow = $aWindow.find('.ant_tag_row:last');
+                                    var appendRow = false;
+                                    if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
+                                        var $tagContainer = $('<div class="ant ant_tag_row"></div>');
+                                        appendRow = true;
+                                        rowNum++;
+                                        if ( rowNum == numBgColors ) rowNum = 0;
+                                    } else {
+                                        var $tagContainer = $tagRow;
+                                    }
+
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+
+                                    if (appendRow) { $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer); }
                                     // set next color 
-                                    bgColorInt++;
-                                    textColorInt++;
-                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                    if ( textColorInt == numTextColors ) textColorInt = 0;
+                                    
+                                    // bgColorInt++;
+                                    // textColorInt++;
+                                    // if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    // if ( textColorInt == numTextColors ) textColorInt = 0;
     
-                                } else if ( buckets.small.length ) {
-                                  var thisTag = buckets.small.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
-                                  // set next color 
-                                  bgColorInt++;
-                                  textColorInt++;
-                                  if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                  if ( textColorInt == numTextColors ) textColorInt = 0;
+                                // } else if ( buckets.small.length ) {
+                                //   var thisTag = buckets.small.shift();
+                                //   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+                                //   // set next color 
+                                //   bgColorInt++;
+                                //   textColorInt++;
+                                //   if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                //   if ( textColorInt == numTextColors ) textColorInt = 0;
                                 }
 
                             }
 
                         } // writeTagBoxes
 
-                        function isotopeTags( $tagsListContainer ) {
-                        $tagsListContainer.isotope({
-                          masonry: {
-                            columnWidth: 100
-                          }
-                        }, function() {
 
-                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
-                                currentTagBoxAnimating = 0;
-                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
-
-                            function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('ant_animated');
-                                currentTagBoxAnimating++;
-                                if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                    clearInterval( animationQueue );
-                                }
-                            }
-                        });
-                      } // isotopeTags
-
-                        function isotopeFillGap($tagsListContainer){
-                            var $boxes = $tagsListContainer.find('.ant_box');
-                            var $lastTag = $boxes.eq(-1);
-                            
-                            var $smallBoxes = $tagsListContainer.find('.ant_box_small');
-                            var $lastSmallTag = $smallBoxes.eq(-1);
-
-                            if ( isTouchBrowser && $smallBoxes.length > 1 ) {
-                                if ( $smallBoxes.index($lastTag) % 2 ==0 ) {
-                                    $lastSmallTag.addClass('ant_wide');
-                                }
-                                return;
-                            }
-
-                            if(!$lastTag.length || $boxes.length == 1){
-                                return;
-                            }
-
-                            var lastTagDims = $lastTag.position();
-                            var doBreak = false;
-
-                            //force the position to fill the space.
-                            $($boxes.get().reverse()).each(function(){
-                                if(doBreak){
-                                   return; 
-                                }
-                                
-                                var $thisTag = $(this);
-                                var thisTagDims = $thisTag.position();
-
-                                var isLastTag = (thisTagDims.top == lastTagDims.top);
-                                var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
-                                var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
-
-                                if(!isAdjacentRow && !isAdjacentCol){
-                                    doBreak = true;
-                                    return;
-                                }
-                                
-                                if(isAdjacentRow){
-                                    $thisTag
-                                        .addClass('ant_clear_transform')
-                                        .css({
-                                            height: 'auto',
-                                            top: thisTagDims.top,
-                                            left: thisTagDims.left,
-                                            bottom: 0
-                                        });  
-                                }
-                                //don't do this for now.
-                                // if(isAdjacentCol){
-                                //     $thisTag
-                                //         .addClass('ant_clear_transform')
-                                //         .css({
-                                //             width: 'auto',
-                                //             top: thisTagDims.top,
-                                //             left: thisTagDims.left,
-                                //             right: 0
-                                //         });   
-                                // }
-
-                            });
-                            
-                            $lastTag
-                                .addClass('ant_clear_transform')
-                                .css({
-                                    height: 'auto',
-                                    width: 'auto',
-                                    top: lastTagDims.top,
-                                    left: (lastTagDims.left > 0 && lastTagDims.left < 100) ? 100:lastTagDims.left,
-                                    bottom: 0,
-                                    right: 0
-                                });  
-                        }
-
+        
                     },
                     updateContainerTrackers: function(){
                         $.each( ANT.containers, function(idx, container) {
@@ -8618,208 +8517,7 @@ if ( sendData.kind=="page" ) {
                         }
 
                         // ANT.actions.indicators.utils.borderHilites.update(hash);
-                    },
-                    // borderHilites: {
-                    //     //ANT.actions.indicators.utils.borderHilites:
-                        
-                    //     //hiliteDesignEdit
-                    //     //our old blue version
-                    //     // designVersion: 1,
-
-                    //     //black border and black box shadow fade
-                    //     designVersion: 2,
-                        
-
-                    //     makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                    //     make: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.make:
-
-                    //         var $indicator = $('#ant_indicator_'+hash),
-                    //             $container = $('[ant-hash="'+hash+'"]'),
-                    //             $container_tracker = $('#ant_container_tracker_'+hash),
-                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
-                                                        
-                    //         if( !$container_tracker.hasClass('ant_inline_video') ){
-                                
-                    //             if( !$mediaBorderWrap.length ){
-                    //                 $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
-                    //                 $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
-                    //             }
-                    //             $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                    //             var borders = {
-                    //                 'top': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'right': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'bottom': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'left': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 }
-                    //             };
-
-                    //             $mediaBorderWrap.data('borders',borders);
-                    //             // ANT.actions.indicators.utils.borderHilites.update(hash);
-                    //         }
-
-                    //     },
-                    //     update: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.update:
-                    //         // var Section = ANT.actions.indicators.utils.borderHilites;
-
-                    //         // var $indicator = $('#ant_indicator_'+hash),
-                    //         //     $container = $('[ant-hash="'+hash+'"]'),
-                    //         //     $container_tracker = $('#ant_container_tracker_'+hash),
-                    //         //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-                            
-                    //         // if( !$mediaBorderWrap.length ){
-                    //         //     //failsafe that shouldnt be needed.
-                    //         //     if( this.makeAttempt > 1 ) return;
-                    //         //     this.makeAttempt ++;
-                    //         //     ANT.actions.indicators.utils.borderHilites.make(hash);
-                    //         //     //just return here.  the make function will call this update function again and this will be bypassed.
-                    //         //     return;
-                    //         // }
-                    //         // //else
-                    //         // this.makeAttempt = 0;
-
-                    //         // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                    //         // var borders = {
-                    //         //     'top': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'right': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'bottom': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'left': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     }
-                    //         // };
-                            
-                    //         // //hiliteDesignEdit
-                    //         // // var hiliteThickness = 2,
-                    //         // var hiliteThickness = 
-                    //         //     Section.designVersion === 1 ? 2 : 
-                    //         //     Section.designVersion === 2 ? 3 : 
-                    //         //     2;
-                            
-                    //         // var containerWidth,
-                    //         //     containerHeight;
-
-                    //         // var hasBorder = false;
-                    //         // //for checking if it has a border.
-                    //         // //If so we'll use outerWidth and outerHeight to take it into account.
-                    //         // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
-
-                    //         // $.each( borders, function(side, data){
-                    //         //     //set the value in the object using the key's string as a helper
-                    //         //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
-                      
-                    //         //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                    //         //     if( !data.$side.length ){
-                    //         //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                    //         //     }
-
-                    //         //     //if any side has a border - set hasBorder to true
-                    //         //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                    //         //         hasBorder = true;
-                    //         //     }
-
-                    //         // });
-                            
-                    //         // //figure out dims
-                    //         // if(hasBorder){
-                    //         //     containerWidth = $container.outerWidth();
-                    //         //     containerHeight = $container.outerHeight();
-                    //         // }else{
-                    //         //     containerWidth = $container.width();
-                    //         //     containerHeight = $container.height();
-                    //         // }
-
-                    //         // //use dims to make the css rules for each border side
-                    //         // var widthCap = 2*hiliteThickness;
-
-                    //         // borders.top.css = {
-                    //         //     width: containerWidth+widthCap+'px',
-                    //         //     height: 0+'px',
-                    //         //     top: -hiliteThickness+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-                    //         // borders.right.css = {
-                    //         //     width:0+'px',
-                    //         //     height: containerHeight+'px',
-                    //         //     top: 0+'px',
-                    //         //     left: containerWidth+'px'
-                    //         // };
-                    //         // borders.bottom.css = {
-                    //         //     width: containerWidth+widthCap+'px',
-                    //         //     height: 0+'px',
-                    //         //     top: containerHeight+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-                    //         // borders.left.css = {
-                    //         //     width: 0+'px',
-                    //         //     height: containerHeight+'px',
-                    //         //     top: 0+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-
-                    //         // $.each( borders, function( side, data ){
-                    //         //     ANT.util.cssSuperImportant( data.$side, data.css, true );
-                    //         // });                       
-                    
-                    //     },
-                    //     engage: function(hash, isShareLink){
-                    //         //ANT.actions.indicators.utils.borderHilites.engage:
-                    //         var $container_tracker = $('#ant_container_tracker_'+hash),
-                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-
-                    //         $mediaBorderWrap.addClass('engaged');
-                            
-                    //         if (isShareLink) {
-                    //             $mediaBorderWrap.addClass('engagedForShareLink');
-                    //         }
-                    //     },
-                    //     disengage: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.disengage:
-                    //         // if ( !$('ant_for_'+hash).length ) {
-                    //             var $container_tracker = $('#ant_container_tracker_'+hash),
-                    //                 $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-
-                    //             $mediaBorderWrap.removeClass('engaged');
-                    //             $mediaBorderWrap.removeClass('engagedForShareLink');
-                    //             $('#ant_indicator_' + hash).hide();
-                    //         // }
-                    //     },
-                    //     engageAll: function(){
-                    //         //ANT.actions.indicators.utils.borderHilites.engageAll:
-                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
-                    //         $mediaBorderWrap.addClass('engaged');
-                    //     },
-                    //     disengageAll: function(){
-                    //         //ANT.actions.indicators.utils.borderHilites.disengageAll:
-                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
-                    //         $mediaBorderWrap.removeClass('engaged');
-                    //         $mediaBorderWrap.removeClass('engagedForShareLink');
-                    //         $('div.ant_indicator_for_media').hide();
-                    //     }
-                    // }
+                    }
                 }//end ANT.actions.indicators.utils
             },
             summaries:{
@@ -8979,6 +8677,8 @@ if ( sendData.kind=="page" ) {
                     }
                                 
                     function update_top_interactions_cache(attrs){
+                        //CHANGETHIS?
+                        console.log('update_top_interactions_cache');
                         var hash = attrs.hash;
                         var summary = attrs.summary;
                         var interaction_node_type = attrs.interaction_node_type;
@@ -9043,6 +8743,9 @@ if ( sendData.kind=="page" ) {
                     }
 
                     function update_content_nodes_cache(attrs){
+
+                        //CHANGETHIS?
+                        console.log('update_content_nodes_cache');
                         //todo: this is still not 100% right - but updates better than not having it at all.
                         //need to solve for the fact that we don't have the content_node id when we first make it.
 
@@ -9313,7 +9016,6 @@ if ( sendData.kind=="page" ) {
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                        // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                     }
 
                 } );
@@ -9339,7 +9041,7 @@ if ( sendData.kind=="page" ) {
                 });
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
-                ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                 ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
@@ -9776,77 +9478,6 @@ if ( sendData.kind=="page" ) {
                                 '&text='+encodeURI(mainShareText);
                     break;
 
-                    // case "tumblr":
-                        
-                    //     var mainShareText = "";
-
-                    //     switch ( args.container_kind ) {
-                    //         case "txt":
-                    //         case "text":
-                    //             //tumblr adds quotes for us - don't pass true to quote it.
-                    //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via Antenna]';
-                                
-                    //             content_length = 300;
-                    //             contentStr = _shortenContentIfNeeded(content, content_length);
-                    //             share_url = 'http://www.tumblr.com/share/quote?'+
-                    //             'quote='+encodeURIComponent(contentStr)+
-                    //             '&source='+encodeURIComponent(footerShareText);
-
-                    //         break;
-
-                    //         case "img":
-                    //         case "image":
-                    //                                         //for testing offline
-                    //             if(ANT_offline){
-                    //                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                    //                 content = content.replace("localhost:8081", "www.antenna.is");
-                    //             }
-
-                    //             mainShareText = _wrapTag(args.reaction, true);
-
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via Antenna]';
-
-                    //             share_url = 'http://www.tumblr.com/share/photo?'+
-                    //                 'source='+encodeURIComponent(content)+
-                    //                 '&caption='+encodeURIComponent(mainShareText + footerShareText )+
-                    //                 '&click_thru='+encodeURIComponent(args.short_url);
-                    //         break;
-
-                    //         case "media":
-                    //         case "med":
-                    //         case "video":
-                    //             //todo: - I haven't gone back to try this yet...
-
-                    //             //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
-                    //             var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
-
-                    //             mainShareText = _wrapTag(args.reaction, true);
-
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via Antenna]';
-
-                    //             //todo: get the urlencode right and put the link back in
-                    //             var antennaLink = mainShareText + footerShareText;
-                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( antennaLink );
-                    //         break;
-
-                    //         case "page":
-                    //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via Antenna]';
-                                
-                    //             content_length = 300;
-                    //             contentStr = _shortenContentIfNeeded(content, content_length);
-                    //             share_url = 'http://www.tumblr.com/share/link?'+
-                    //             'url='+encodeURIComponent(args.short_url)+
-                    //             '&description='+encodeURIComponent(footerShareText);
-
-                    //         break;
-
-                    //     }
-                    // break;
-
-                    // case "linkedin":
-                    // break;
                 }
                 if ( share_url !== "" ) {
                     if ( ANT.shareWindow ) {
@@ -10380,7 +10011,6 @@ function $AFunctions($A){
         plugin_jquery_enhancedOffset($A);
         plugin_jquery_drags($A);
         plugin_jquery_mousewheel($A);
-        plugin_jquery_isotope($A);
         plugin_jquery_scrollStopStart($A);
         plugin_jquery_jScrollPane($A);
         plugin_jquery_twitterTip($A);
@@ -11553,24 +11183,6 @@ function $AFunctions($A){
             args.unshift(event,delta,deltaX,deltaY);return($.event.dispatch||$.event.handle).apply(this,args);}
         }
         //end function plugin_jquery_mousewheel
-
-        function plugin_jquery_isotope($){
-            /**
-             * Isotope v1.5.26
-             * An exquisite jQuery plugin for magical layouts
-             * http://isotope.metafizzy.co
-             *
-             * Commercial use requires one-time purchase of a commercial license
-             * http://isotope.metafizzy.co/docs/license.html
-             *
-             * Non-commercial use is licensed under the MIT License
-             *
-             * Copyright 2014 Metafizzy
-             */
-
-             /* PB: added a check for o.addTest since it's undefined when an older version of Modernizr is already on the page.  grumble. */
-            !function(t,i){"use strict";var s,e=t.document,n=e.documentElement,o=t.Modernizr,r=function(t){return t.charAt(0).toUpperCase()+t.slice(1)},a="Moz Webkit O Ms".split(" "),h=function(t){var i,s=n.style;if("string"==typeof s[t])return t;t=r(t);for(var e=0,o=a.length;o>e;e++)if(i=a[e]+t,"string"==typeof s[i])return i},l=h("transform"),u=h("transitionProperty"),c={csstransforms:function(){return!!l},csstransforms3d:function(){var t=!!h("perspective");if(t&&"webkitPerspective"in n.style){var s=i("<style>@media (transform-3d),(-webkit-transform-3d){#modernizr{height:3px}}</style>").appendTo("head"),e=i('<div id="modernizr" />').appendTo("html");t=3===e.height(),e.remove(),s.remove()}return t},csstransitions:function(){return!!u}};if(o)for(s in c)o.hasOwnProperty(s)||(o.addTest && o.addTest(s,c[s]));else{o=t.Modernizr={_version:"1.6ish: miniModernizr for Isotope"};var d,f=" ";for(s in c)d=c[s](),o[s]=d,f+=" "+(d?"":"no-")+s;i("html").addClass(f)}if(o.csstransforms){var m=o.csstransforms3d?{translate:function(t){return"translate3d("+t[0]+"px, "+t[1]+"px, 0) "},scale:function(t){return"scale3d("+t+", "+t+", 1) "}}:{translate:function(t){return"translate("+t[0]+"px, "+t[1]+"px) "},scale:function(t){return"scale("+t+") "}},p=function(t,s,e){var n,o,r=i.data(t,"isoTransform")||{},a={},h={};a[s]=e,i.extend(r,a);for(n in r)o=r[n],h[n]=m[n](o);var u=h.translate||"",c=h.scale||"",d=u+c;i.data(t,"isoTransform",r),t.style[l]=d};i.cssNumber.scale=!0,i.cssHooks.scale={set:function(t,i){p(t,"scale",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.scale?s.scale:1}},i.fx.step.scale=function(t){i.cssHooks.scale.set(t.elem,t.now+t.unit)},i.cssNumber.translate=!0,i.cssHooks.translate={set:function(t,i){p(t,"translate",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.translate?s.translate:[0,0]}}}var y,g;o.csstransitions&&(y={WebkitTransitionProperty:"webkitTransitionEnd",MozTransitionProperty:"transitionend",OTransitionProperty:"oTransitionEnd otransitionend",transitionProperty:"transitionend"}[u],g=h("transitionDuration"));var v,_=i.event,A=i.event.handle?"handle":"dispatch";_.special.smartresize={setup:function(){i(this).bind("resize",_.special.smartresize.handler)},teardown:function(){i(this).unbind("resize",_.special.smartresize.handler)},handler:function(t,i){var s=this,e=arguments;t.type="smartresize",v&&clearTimeout(v),v=setTimeout(function(){_[A].apply(s,e)},"execAsap"===i?0:100)}},i.fn.smartresize=function(t){return t?this.bind("smartresize",t):this.trigger("smartresize",["execAsap"])},i.Isotope=function(t,s,e){this.element=i(s),this._create(t),this._init(e)};var w=["width","height"],C=i(t);i.Isotope.settings={resizable:!0,layoutMode:"masonry",containerClass:"isotope",itemClass:"isotope-item",hiddenClass:"isotope-hidden",hiddenStyle:{opacity:0,scale:.001},visibleStyle:{opacity:1,scale:1},containerStyle:{position:"relative",overflow:"hidden"},animationEngine:"best-available",animationOptions:{queue:!1,duration:800},sortBy:"original-order",sortAscending:!0,resizesContainer:!0,transformsEnabled:!0,itemPositionDataEnabled:!1},i.Isotope.prototype={_create:function(t){this.options=i.extend({},i.Isotope.settings,t),this.styleQueue=[],this.elemCount=0;var s=this.element[0].style;this.originalStyle={};var e=w.slice(0);for(var n in this.options.containerStyle)e.push(n);for(var o=0,r=e.length;r>o;o++)n=e[o],this.originalStyle[n]=s[n]||"";this.element.css(this.options.containerStyle),this._updateAnimationEngine(),this._updateUsingTransforms();var a={"original-order":function(t,i){return i.elemCount++,i.elemCount},random:function(){return Math.random()}};this.options.getSortData=i.extend(this.options.getSortData,a),this.reloadItems(),this.offset={left:parseInt(this.element.css("padding-left")||0,10),top:parseInt(this.element.css("padding-top")||0,10)};var h=this;setTimeout(function(){h.element.addClass(h.options.containerClass)},0),this.options.resizable&&C.bind("smartresize.isotope",function(){h.resize()}),this.element.delegate("."+this.options.hiddenClass,"click",function(){return!1})},_getAtoms:function(t){var i=this.options.itemSelector,s=i?t.filter(i).add(t.find(i)):t,e={position:"absolute"};return s=s.filter(function(t,i){return 1===i.nodeType}),this.usingTransforms&&(e.left=0,e.top=0),s.css(e).addClass(this.options.itemClass),this.updateSortData(s,!0),s},_init:function(t){this.$filteredAtoms=this._filter(this.$allAtoms),this._sort(),this.reLayout(t)},option:function(t){if(i.isPlainObject(t)){this.options=i.extend(!0,this.options,t);var s;for(var e in t)s="_update"+r(e),this[s]&&this[s]()}},_updateAnimationEngine:function(){var t,i=this.options.animationEngine.toLowerCase().replace(/[ _\-]/g,"");switch(i){case"css":case"none":t=!1;break;case"jquery":t=!0;break;default:t=!o.csstransitions}this.isUsingJQueryAnimation=t,this._updateUsingTransforms()},_updateTransformsEnabled:function(){this._updateUsingTransforms()},_updateUsingTransforms:function(){var t=this.usingTransforms=this.options.transformsEnabled&&o.csstransforms&&o.csstransitions&&!this.isUsingJQueryAnimation;t||(delete this.options.hiddenStyle.scale,delete this.options.visibleStyle.scale),this.getPositionStyles=t?this._translate:this._positionAbs},_filter:function(t){var i=""===this.options.filter?"*":this.options.filter;if(!i)return t;var s=this.options.hiddenClass,e="."+s,n=t.filter(e),o=n;if("*"!==i){o=n.filter(i);var r=t.not(e).not(i).addClass(s);this.styleQueue.push({$el:r,style:this.options.hiddenStyle})}return this.styleQueue.push({$el:o,style:this.options.visibleStyle}),o.removeClass(s),t.filter(i)},updateSortData:function(t,s){var e,n,o=this,r=this.options.getSortData;t.each(function(){e=i(this),n={};for(var t in r)n[t]=s||"original-order"!==t?r[t](e,o):i.data(this,"isotope-sort-data")[t];i.data(this,"isotope-sort-data",n)})},_sort:function(){var t=this.options.sortBy,i=this._getSorter,s=this.options.sortAscending?1:-1,e=function(e,n){var o=i(e,t),r=i(n,t);return o===r&&"original-order"!==t&&(o=i(e,"original-order"),r=i(n,"original-order")),(o>r?1:r>o?-1:0)*s};this.$filteredAtoms.sort(e)},_getSorter:function(t,s){return i.data(t,"isotope-sort-data")[s]},_translate:function(t,i){return{translate:[t,i]}},_positionAbs:function(t,i){return{left:t,top:i}},_pushPosition:function(t,i,s){i=Math.round(i+this.offset.left),s=Math.round(s+this.offset.top);var e=this.getPositionStyles(i,s);this.styleQueue.push({$el:t,style:e}),this.options.itemPositionDataEnabled&&t.data("isotope-item-position",{x:i,y:s})},layout:function(t,i){var s=this.options.layoutMode;if(this["_"+s+"Layout"](t),this.options.resizesContainer){var e=this["_"+s+"GetContainerSize"]();this.styleQueue.push({$el:this.element,style:e})}this._processStyleQueue(t,i),this.isLaidOut=!0},_processStyleQueue:function(t,s){var e,n,r,a,h=this.isLaidOut?this.isUsingJQueryAnimation?"animate":"css":"css",l=this.options.animationOptions,u=this.options.onLayout;if(n=function(t,i){i.$el[h](i.style,l)},this._isInserting&&this.isUsingJQueryAnimation)n=function(t,i){e=i.$el.hasClass("no-transition")?"css":h,i.$el[e](i.style,l)};else if(s||u||l.complete){var c=!1,d=[s,u,l.complete],f=this;if(r=!0,a=function(){if(!c){for(var i,s=0,e=d.length;e>s;s++)i=d[s],"function"==typeof i&&i.call(f.element,t,f);c=!0}},this.isUsingJQueryAnimation&&"animate"===h)l.complete=a,r=!1;else if(o.csstransitions){for(var m,p=0,v=this.styleQueue[0],_=v&&v.$el;!_||!_.length;){if(m=this.styleQueue[p++],!m)return;_=m.$el}var A=parseFloat(getComputedStyle(_[0])[g]);A>0&&(n=function(t,i){i.$el[h](i.style,l).one(y,a)},r=!1)}}i.each(this.styleQueue,n),r&&a(),this.styleQueue=[]},resize:function(){this["_"+this.options.layoutMode+"ResizeChanged"]()&&this.reLayout()},reLayout:function(t){this["_"+this.options.layoutMode+"Reset"](),this.layout(this.$filteredAtoms,t)},addItems:function(t,i){var s=this._getAtoms(t);this.$allAtoms=this.$allAtoms.add(s),i&&i(s)},insert:function(t,i){this.element.append(t);var s=this;this.addItems(t,function(t){var e=s._filter(t);s._addHideAppended(e),s._sort(),s.reLayout(),s._revealAppended(e,i)})},appended:function(t,i){var s=this;this.addItems(t,function(t){s._addHideAppended(t),s.layout(t),s._revealAppended(t,i)})},_addHideAppended:function(t){this.$filteredAtoms=this.$filteredAtoms.add(t),t.addClass("no-transition"),this._isInserting=!0,this.styleQueue.push({$el:t,style:this.options.hiddenStyle})},_revealAppended:function(t,i){var s=this;setTimeout(function(){t.removeClass("no-transition"),s.styleQueue.push({$el:t,style:s.options.visibleStyle}),s._isInserting=!1,s._processStyleQueue(t,i)},10)},reloadItems:function(){this.$allAtoms=this._getAtoms(this.element.children())},remove:function(t,i){this.$allAtoms=this.$allAtoms.not(t),this.$filteredAtoms=this.$filteredAtoms.not(t);var s=this,e=function(){t.remove(),i&&i.call(s.element)};t.filter(":not(."+this.options.hiddenClass+")").length?(this.styleQueue.push({$el:t,style:this.options.hiddenStyle}),this._sort(),this.reLayout(e)):e()},shuffle:function(t){this.updateSortData(this.$allAtoms),this.options.sortBy="random",this._sort(),this.reLayout(t)},destroy:function(){var t=this.usingTransforms,i=this.options;this.$allAtoms.removeClass(i.hiddenClass+" "+i.itemClass).each(function(){var i=this.style;i.position="",i.top="",i.left="",i.opacity="",t&&(i[l]="")});var s=this.element[0].style;for(var e in this.originalStyle)s[e]=this.originalStyle[e];this.element.unbind(".isotope").undelegate("."+i.hiddenClass,"click").removeClass(i.containerClass).removeData("isotope"),C.unbind(".isotope")},_getSegments:function(t){var i,s=this.options.layoutMode,e=t?"rowHeight":"columnWidth",n=t?"height":"width",o=t?"rows":"cols",a=this.element[n](),h=this.options[s]&&this.options[s][e]||this.$filteredAtoms["outer"+r(n)](!0)||a;i=Math.floor(a/h),i=Math.max(i,1),this[s][o]=i,this[s][e]=h},_checkIfSegmentsChanged:function(t){var i=this.options.layoutMode,s=t?"rows":"cols",e=this[i][s];return this._getSegments(t),this[i][s]!==e},_masonryReset:function(){this.masonry={},this._getSegments();var t=this.masonry.cols;for(this.masonry.colYs=[];t--;)this.masonry.colYs.push(0)},_masonryLayout:function(t){var s=this,e=s.masonry;t.each(function(){var t=i(this),n=Math.ceil(t.outerWidth(!0)/e.columnWidth);if(n=Math.min(n,e.cols),1===n)s._masonryPlaceBrick(t,e.colYs);else{var o,r,a=e.cols+1-n,h=[];for(r=0;a>r;r++)o=e.colYs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryPlaceBrick(t,h)}})},_masonryPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=this.masonry.columnWidth*e,a=s;this._pushPosition(t,r,a);var h=s+t.outerHeight(!0),l=this.masonry.cols+1-o;for(n=0;l>n;n++)this.masonry.colYs[e+n]=h},_masonryGetContainerSize:function(){var t=Math.max.apply(Math,this.masonry.colYs);return{height:t}},_masonryResizeChanged:function(){return this._checkIfSegmentsChanged()},_fitRowsReset:function(){this.fitRows={x:0,y:0,height:0}},_fitRowsLayout:function(t){var s=this,e=this.element.width(),n=this.fitRows;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.x&&o+n.x>e&&(n.x=0,n.y=n.height),s._pushPosition(t,n.x,n.y),n.height=Math.max(n.y+r,n.height),n.x+=o})},_fitRowsGetContainerSize:function(){return{height:this.fitRows.height}},_fitRowsResizeChanged:function(){return!0},_cellsByRowReset:function(){this.cellsByRow={index:0},this._getSegments(),this._getSegments(!0)},_cellsByRowLayout:function(t){var s=this,e=this.cellsByRow;t.each(function(){var t=i(this),n=e.index%e.cols,o=Math.floor(e.index/e.cols),r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByRowGetContainerSize:function(){return{height:Math.ceil(this.$filteredAtoms.length/this.cellsByRow.cols)*this.cellsByRow.rowHeight+this.offset.top}},_cellsByRowResizeChanged:function(){return this._checkIfSegmentsChanged()},_straightDownReset:function(){this.straightDown={y:0}},_straightDownLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,0,s.straightDown.y),s.straightDown.y+=t.outerHeight(!0)})},_straightDownGetContainerSize:function(){return{height:this.straightDown.y}},_straightDownResizeChanged:function(){return!0},_masonryHorizontalReset:function(){this.masonryHorizontal={},this._getSegments(!0);var t=this.masonryHorizontal.rows;for(this.masonryHorizontal.rowXs=[];t--;)this.masonryHorizontal.rowXs.push(0)},_masonryHorizontalLayout:function(t){var s=this,e=s.masonryHorizontal;t.each(function(){var t=i(this),n=Math.ceil(t.outerHeight(!0)/e.rowHeight);if(n=Math.min(n,e.rows),1===n)s._masonryHorizontalPlaceBrick(t,e.rowXs);else{var o,r,a=e.rows+1-n,h=[];for(r=0;a>r;r++)o=e.rowXs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryHorizontalPlaceBrick(t,h)}})},_masonryHorizontalPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=s,a=this.masonryHorizontal.rowHeight*e;this._pushPosition(t,r,a);var h=s+t.outerWidth(!0),l=this.masonryHorizontal.rows+1-o;for(n=0;l>n;n++)this.masonryHorizontal.rowXs[e+n]=h},_masonryHorizontalGetContainerSize:function(){var t=Math.max.apply(Math,this.masonryHorizontal.rowXs);return{width:t}},_masonryHorizontalResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_fitColumnsReset:function(){this.fitColumns={x:0,y:0,width:0}},_fitColumnsLayout:function(t){var s=this,e=this.element.height(),n=this.fitColumns;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.y&&r+n.y>e&&(n.x=n.width,n.y=0),s._pushPosition(t,n.x,n.y),n.width=Math.max(n.x+o,n.width),n.y+=r})},_fitColumnsGetContainerSize:function(){return{width:this.fitColumns.width}},_fitColumnsResizeChanged:function(){return!0},_cellsByColumnReset:function(){this.cellsByColumn={index:0},this._getSegments(),this._getSegments(!0)},_cellsByColumnLayout:function(t){var s=this,e=this.cellsByColumn;t.each(function(){var t=i(this),n=Math.floor(e.index/e.rows),o=e.index%e.rows,r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByColumnGetContainerSize:function(){return{width:Math.ceil(this.$filteredAtoms.length/this.cellsByColumn.rows)*this.cellsByColumn.columnWidth}},_cellsByColumnResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_straightAcrossReset:function(){this.straightAcross={x:0}},_straightAcrossLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,s.straightAcross.x,0),s.straightAcross.x+=t.outerWidth(!0)})},_straightAcrossGetContainerSize:function(){return{width:this.straightAcross.x}},_straightAcrossResizeChanged:function(){return!0}},i.fn.imagesLoaded=function(t){function s(){t.call(n,o)}function e(t){var n=t.target;n.src!==a&&-1===i.inArray(n,h)&&(h.push(n),--r<=0&&(setTimeout(s),o.unbind(".imagesLoaded",e)))}var n=this,o=n.find("img").add(n.filter("img")),r=o.length,a="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",h=[];return r||s(),o.bind("load.imagesLoaded error.imagesLoaded",e).each(function(){var t=this.src;this.src=a,this.src=t}),n};var z=function(i){t.console&&t.console.error(i)};i.fn.isotope=function(t,s){if("string"==typeof t){var e=Array.prototype.slice.call(arguments,1);this.each(function(){var s=i.data(this,"isotope");return s?i.isFunction(s[t])&&"_"!==t.charAt(0)?void s[t].apply(s,e):void z("no such method '"+t+"' for isotope instance"):void z("cannot call methods on isotope prior to initialization; attempted to call method '"+t+"'")})}else this.each(function(){var e=i.data(this,"isotope");e?(e.option(t),e._init(s)):i.data(this,"isotope",new i.Isotope(t,this,s))});return this}}(window,$);
-        }
 
         function plugin_jquery_scrollStopStart(jQuery){
             /*!

@@ -38,6 +38,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ant-comment:before {
+  content: "a";
+}
 .ant-circle-slash:before {
   content: "b";
 }
@@ -74,6 +77,9 @@
 .ant-plus:before {
   content: "m";
 }
+.ant-search:before {
+  content: "n";
+}
 .ant-social-twitter:before {
   content: "o";
 }
@@ -107,7 +113,7 @@
 .ant-chart-bar:before {
   content: "y";
 }
-.ant-warning:before {
+.ant-attention:before {
   content: "z";
 }
 .ant-device-mobile:before {
@@ -119,7 +125,13 @@
 .ant-gauge:before {
   content: "C";
 }
-.ant-reload-ccw:before {
+.ant-burst-new:before {
+  content: "D";
+}
+.ant-burst:before {
+  content: "E";
+}
+.ant-ccw:before {
   content: "F";
 }
 .ant-heart-empty:before {
@@ -133,16 +145,4 @@
 }
 .ant-magnet:before {
   content: "J";
-}
-.ant-burst-new:before {
-  content: "a";
-}
-.ant-comment-empty:before {
-  content: "D";
-}
-.ant-comment:before {
-  content: "E";
-}
-.ant-search:before {
-  content: "n";
 }
