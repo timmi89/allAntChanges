@@ -1543,6 +1543,10 @@ div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_count {
 div.ant.ant_readmode:not(.ant_for_page) .ant_body.ant_tags_list .ant_box:hover .ant_count {
   display: none;
 }
+body.ant_touch_browser div.ant.ant_readmode .ant_body.ant_tags_list .ant_box:hover .ant_count {
+  display: inline-block;
+  visibility: visible;
+}
 div.ant div.ant_body.ant_tags_list .ant_box .ant_plusOne{
   white-space: nowrap;
   visibility: hidden;
