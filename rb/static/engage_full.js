@@ -4643,7 +4643,7 @@ function antenna($A){
 
                     });
                 } else {
-                    $(document).on('touchend.ant',function(e) {
+                    $(ANT.group.active_sections).on('touchend.ant',function(e) {
                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                         if ( ANT.util.isTouchDragging(e) ) { return; }
                         if (ANT.util.bubblingEvents['touchend'] == false) {
@@ -4663,12 +4663,14 @@ function antenna($A){
                     });
 
                     // iphone drag fix
-                    $(document).on('touchstart.ant',function(event) {
+                    $(ANT.group.active_sections).on('touchstart.ant',function(event) {
+                    // $(document).on('touchstart.ant',function(event) {
                         ANT.util.bubblingEvents['startY'] = event.originalEvent.touches[0].clientY;
                     });
 
                     // NOW NOT NEEDED.  USING math FROM TOUCHSTART plus if ( ANT.util.isTouchDragging(e) ) { return; }
                     // $(document).on('touchmove.ant',function(event) {
+                        // console.log('touchmove');
                     //     if (Math.abs(event.originalEvent.touches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
                     //         ANT.util.bubblingEvents['dragging'] = true;
                     //     }
@@ -9991,7 +9993,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv1"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv2"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

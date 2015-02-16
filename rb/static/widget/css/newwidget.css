@@ -2122,12 +2122,13 @@ div.ant_inline_video div.ant_indicator.ant_indicator_for_media {
 div.ant_indicator_for_text{
     display: inline;
     /*display: inline-block;*/
-    opacity:0;
+    opacity:0.33;
     transition: opacity 300ms ease;
     position: relative;
     vertical-align: top;
     line-height: inherit !important;
 }
+div.ant_indicator_for_text.ant_no_reactions{opacity:0;}
 body.ant_touch_browser div.ant_indicator_for_text {
   /*display:block;*/
   max-width: 120px;
