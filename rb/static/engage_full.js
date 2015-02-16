@@ -557,6 +557,7 @@ function antenna($A){
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
                     $menu.on('touchend.ant', '.ant_menuDropDown', function(){
+                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                         $(this).toggleClass('ant_hover');
                     });
                 }
@@ -1458,6 +1459,7 @@ function antenna($A){
 
                         // } else {
                             $tagBox.on(clickOrTouch, function(e) {
+                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
@@ -1466,10 +1468,15 @@ function antenna($A){
                             });
                         // }
                     } else {
+                        // CHANGETHIS
+                        // may not need the code below and just above... seems identical now.
+                        // move outside the if statement?
+
                         // if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
                             $tagBox.on( clickOrTouch, function() {
+                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
@@ -7915,6 +7922,7 @@ if ( sendData.kind=="page" ) {
                             
                             if(isTouchBrowser){
                                 $indicator.on('touchend.ant', function(){
+                                    if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                                     if ( summary.counts.interactions == 0 ) {
                                         var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                     } else {
@@ -10446,6 +10454,7 @@ function $AFunctions($A){
 
                     if(isTouchBrowser){
                         $summary_widget.on('touchend.ant', function(){
+                            if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                             onActiveEvent.call(this);
                             $(this).toggleClass('ant_hover');
                         });
