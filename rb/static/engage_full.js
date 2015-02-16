@@ -180,9 +180,10 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
-                // tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
-                tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_text_colors: '#fff;#fff;#fff;#fff',
+                // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
+                // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
+                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
                 tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
                 // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
                 tags_bg_css: '',
@@ -637,8 +638,6 @@ function antenna($A){
                 // later, I want to add the ability for this to create an absolutely-positioned panel
                 // that will slide OVER, not next to, current content... like a login panel sliding over the content.
 
-                console.log('panelCreate');
-
                 // create a new panel for the aWindow
                 if ( !$aWindow ) return;
 
@@ -656,13 +655,11 @@ function antenna($A){
             },
             panelUpdate: function( $aWindow, className, $newPanel, shouldAppendNotReplace ) {
                 //ANT.aWindow.panelUpdate:
-                console.log('panelUpdate');
-
                 if ( !$aWindow ) return;
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
                     $panel = $ant_body_wrap.find('div.'+className);
 
-                if (shouldAppendNotReplace){
+                if (shouldAppendNotReplace || !$panel.length){
                     $panel.append( $newPanel );
                 }else{
                     // replacewith bug
@@ -674,8 +671,7 @@ function antenna($A){
             panelShow: function( $aWindow, $showPanel, callback ) {
                 //ANT.aWindow.panelShow: 
                 // panelEvent - panelShow
-                console.log('panelShow');
-                
+
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
                 var $hidePanel = $aWindow.find('.ant_visiblePanel');
                 //do this for now, because there are too many places in the code to add this correctly
@@ -719,7 +715,6 @@ function antenna($A){
             },
             panelHide: function( $aWindow, callback ) {
                 //ANT.aWindow.panelHide:
-                console.log('panelHide');
                 
                 // panelEvent - panelhide
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
@@ -765,8 +760,6 @@ function antenna($A){
             updateTagPanel: function ( $aWindow ) {
                 // ANT.aWindow.updateTagPanel:
                 // panelEvent - backButton
-
-                console.log('updateTagPanel');
 
                 var hash = $aWindow.data('hash');
 
@@ -1068,7 +1061,6 @@ function antenna($A){
             tagBox: {
                 setWidth: function( $aWindow, width ) {
                     // ANT.aWindow.tagBox.setWidth
-                    console.log('tagBox.setWidth: '+width);
                     // should probably just be ANT.aWindow.setWidth ??
                     // width must be 200, 300, or 400
                     var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
@@ -1105,6 +1097,8 @@ function antenna($A){
                     var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
                     var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
 
+                    // CHANGETHIS
+                    // delete??
                         // later, we'll allow rendering percentages on grids/etc, as an option
                     // var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
                     // if (renderPercentages===true) {
@@ -1182,16 +1176,20 @@ function antenna($A){
                     var content_node_str = content_node_id ? 'ant_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
                     var tagCountDisplay = tagCount;
-                    var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
-                        "" : 
-                        '<span class="ant_plusOne">+1</span>';
+                    var searchCountDisplay = (tagCount===1) ? '':tagCountDisplay;
+                    // var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
+                        // "" : 
+                        // '<span class="ant_plusOne_container"><span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1 reaction</span></span>';
 
-                    var notWriteModeHtml = isWriteMode ?
-                        "" : 
-                        '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
-                        '<i class="ant-search ant_tag_read_icon"></i>';
+                    var tagActionsHtml = isWriteMode ?
+                        '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' : 
+                        
+                            '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
+                            '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' +
+                            ((kind=='page') ? '<span class="ant_search ant_tooltip_this" style="color:rgb('+textColorRGB+');" title="View content<br/>with this reaction"><i class="ant-search" style="color:rgb('+textColorRGB+');"></i></span>': '');
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.95);">'+
+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+' row_num_'+rowNum+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
                                 // 'title="'+message+'" '+
@@ -1201,14 +1199,94 @@ function antenna($A){
                                 'data-content_node_id="'+content_node_id+'" '+
                             '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
                                 tagBodyHtml+
-                                notWriteModeHtml+
-                                plusOneCTA+
+                                '<div class="ant_tag_actions">'+
+                                tagActionsHtml+
+                                // plusOneCTA+
+                                '</div>'+
                             '</div>'+
                         '</div></div></div>';
 
                     
                     var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
+
+                    // figure out if we should add a comment indicator + comment hover
+                    var comments = {},
+                        num_comments = 0;
+
+                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+
+                        $.each( content_node.top_interactions.coms, function(idx, comment) {
+                            if ( comment.tag_id == parseInt( tag.tag_id ) ) {
+                                num_comments++;
+                                if ( $.isEmptyObject( comments ) ) {
+                                    comments = content_node.top_interactions.coms;
+                                }
+                            }
+                        });
+                    }
+
+                    // //New Check 
+                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
+                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
+                        !$.isEmptyObject(summary.top_interactions) &&
+                        !$.isEmptyObject(summary.top_interactions.coms)
+
+                    //really?
+                    if(!tag.id){
+                        tag.id = tag.tag_id;
+                    }
+
+                    if (crazyCheckForDataTieOver) {
+                        comments = summary.top_interactions.coms[tag.id];
+                        if ( !$.isEmptyObject( comments ) ){
+                          num_comments = comments.length;
+                        } 
+                    }
+
+                    // add the comment indicator + comment hover... if we should!
+                    if ( !isWriteMode && kind != "page" ) {
+                        var showCommentsBeforeHover = (num_comments>0) ? true:false,
+                            comment_tooltip = 'View comments';
+                        if (num_comments===0) { num_comments=''; comment_tooltip = 'Add comment here'; }
+                    // if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
+                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this '+((showCommentsBeforeHover)? '':'ant_hide')+'" style="color:rgba('+textColorRGB+',0.8);border-color:rgba('+textColorRGB+',0.5);" title="'+comment_tooltip+'"></span>');
+
+                        $commentHover.append( '<i class="ant-comment" style="color:rgba('+textColorRGB+',0.8);"></i> '+num_comments );
+                        
+                        if(isTouchBrowser){
+                            $commentHover.on('touchend.ant', function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                ANT.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    aWindow:$aWindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }else{
+                            $commentHover.click( function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                ANT.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    aWindow:$aWindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }
+
+                        $tagBox.find('.ant_tag_actions').append( $commentHover );
+                        // $commentHover.tooltip();
+                    }
+                    $tagBox.find('.ant_tooltip_this').tooltip();
 
                     function renderReactedContent( $reactionsTable, tag ) {
                         if ( !$aWindow.find('.ant_view_more').length || !$aWindow.find('.ant_view_more').hasClass('ant_visiblePanel') ) {
@@ -1343,10 +1421,18 @@ function antenna($A){
                         return $('<div/>').append( $backButton, $reactionsTable );
                     } // createReactedContentTable
 
+                    var clickOrTouch = (isTouchBrowser) ? 'touchend.ant':'click.ant';
                     // kind-specific click event
                     // porter resume here.  make sure the counts and write element are passed into getReactedContent
                     if ( kind == "page" ) {
-                        if ( isWriteMode == false ) {
+
+                        // make the search icon un-show +1
+                        $tagBox.find('.ant_search').hover( 
+                            function() {
+                                $(this).closest('.ant_box').toggleClass('hidePlusOne');
+                            });
+
+                        // if ( isWriteMode == false ) {
                             
                             var clickFunc = function(){
 
@@ -1389,40 +1475,41 @@ function antenna($A){
                                 $this.addClass('ant_live_hover');
                             };
 
-                            $tagBox.on('click.ant, touchend.ant', function(){
+                            $tagBox.find('.ant_search').on( clickOrTouch, function(e){
                                 clickFunc();
+                                return false;
                             });
 
 
-                        } else {
-                            $tagBox.on('click.ant, touchend.ant', function() {
+                        // } else {
+                            $tagBox.on(clickOrTouch, function(e) {
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
                                 args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
                                 ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
-                        }
+                        // }
                     } else {
-                        if(isTouchBrowser){
+                        // if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
-                            $tagBox.on('touchend.ant', function() {
+                            $tagBox.on( clickOrTouch, function() {
                                 $(this).addClass('ant_tagged');
                                 $aWindow.removeClass('ant_rewritable');
                                 var hash = $aWindow.data('container');
                                 args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
                                 ANT.actions.interactions.ajax( args, 'react', 'create');
                             });
-                        }else{
-                            $tagBox.click( function() {
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
-                            });
-                        }
+                        // }else{
+                            // $tagBox.click( function() {
+                            //     $(this).addClass('ant_tagged');
+                            //     $aWindow.removeClass('ant_rewritable');
+                            //     var hash = $aWindow.data('container');
+                            //     args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                            //     ANT.actions.interactions.ajax( args, 'react', 'create');
+                            // });
+                        // }
                     }
 
                     // global (all kinds) hover event
@@ -1442,80 +1529,6 @@ function antenna($A){
 
                     // $container.append( $tagBox, " " );
                     
-                    // figure out if we should add a comment indicator + comment hover
-                    var comments = {},
-                        num_comments = 0;
-
-                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-
-                        $.each( content_node.top_interactions.coms, function(idx, comment) {
-                            if ( comment.tag_id == parseInt( tag.tag_id ) ) {
-                                num_comments++;
-                                if ( $.isEmptyObject( comments ) ) {
-                                    comments = content_node.top_interactions.coms;
-                                }
-                            }
-                        });
-                    }
-
-                    // //New Check 
-                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
-                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
-                        !$.isEmptyObject(summary.top_interactions) &&
-                        !$.isEmptyObject(summary.top_interactions.coms)
-
-                    //really?
-                    if(!tag.id){
-                        tag.id = tag.tag_id;
-                    }
-
-                    if (crazyCheckForDataTieOver) {
-                        comments = summary.top_interactions.coms[tag.id];
-                        if ( !$.isEmptyObject( comments ) ){
-                          num_comments = comments.length;
-                        } 
-                    }
-
-                    // add the comment indicator + comment hover... if we should!
-
-                    if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
-                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" style="color:#'+commentColor+';" title="view comments"></span>');
-
-                        $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
-                        
-                        if(isTouchBrowser){
-                            $commentHover.on('touchend.ant', function() {
-                                // replacewith bug
-                                $(this).tooltip('hide');
-                                ANT.actions.viewCommentContent({
-                                    tag:tag,
-                                    hash:hash,
-                                    aWindow:$aWindow,
-                                    content_node:content_node,
-                                    selState:content_node.selState
-                                });
-                                return false;
-                            });
-                        }else{
-                            $commentHover.click( function() {
-                                // replacewith bug
-                                $(this).tooltip('hide');
-                                ANT.actions.viewCommentContent({
-                                    tag:tag,
-                                    hash:hash,
-                                    aWindow:$aWindow,
-                                    content_node:content_node,
-                                    selState:content_node.selState
-                                });
-                                return false;
-                            });
-                        }
-
-                        $tagBox.append( $commentHover );
-                        $commentHover.tooltip();
-                    }
-
                     return $tagBox;
                 }
             },
@@ -4479,7 +4492,6 @@ function antenna($A){
 
             },
             initEnvironment: function(){
-                console.clear();
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
                 if ( !ANT.util.activeAB() ) {
                     $('.ant-custom-cta').css('visibility','hidden');
@@ -6288,7 +6300,7 @@ if ( typeof sendData.tag != "undefined" ) {
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
 // also: this is stupid.
 if ( sendData.kind=="page" ) {
- sendData.hash = "page";
+ sendData.hash = args.hash = "page";
  sendData.container_kind = "text";
  sendData.page_id = sendData.page_id || ANT.util.getPageProperty('id', "page");
  delete sendData.content_node_data.hash; //this was happening for delete calls.
@@ -6317,15 +6329,13 @@ if ( sendData.kind=="page" ) {
                                     args.container_id = response.data.container.id;
                                     var hash = args.hash = response.data.container.hash;
                                 }
+
                                 if ( response.data && response.data.num_interactions ) {
                                     ANT.user.num_interactions = response.data.num_interactions;
                                 }
+
                                 if ( response.status == "success" ) {
-                                    if ( args.response.data.interaction ) {
-                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
-                                    } else if ( args.response.data.deleted_interaction ) {
-                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
-                                    }
+
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
@@ -6334,6 +6344,7 @@ if ( sendData.kind=="page" ) {
                                     if ( typeof args.tag.id == "undefined" ) {
                                         args.tag.id = response.data.interaction.interaction_node.id;
                                     }
+
                                     ANT.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
@@ -6868,7 +6879,7 @@ if ( sendData.kind=="page" ) {
                             ANT.events.emit('antenna.reaction', reaction);
 
                             $('#ant_loginPanel').remove();
-                            
+
                             //clear loader
                             if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
@@ -6878,7 +6889,6 @@ if ( sendData.kind=="page" ) {
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
                             $('.ant_twtooltip').remove();
-
 
                             if (args.kind && args.kind == "page") {
                                 // ANT.actions.viewReactionSuccess( args );
@@ -6892,6 +6902,7 @@ if ( sendData.kind=="page" ) {
                                 var existing = args.response.data.existing;
 
                                 if(!existing){
+
                                 //     var $ant_reactionMessage = $('<div class="ant_reactSuccess ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
@@ -6919,6 +6930,7 @@ if ( sendData.kind=="page" ) {
                                     _doPageUpdates(args);
                                     
                                 }else{
+
                                 //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
@@ -8092,7 +8104,9 @@ if ( sendData.kind=="page" ) {
                             // $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $aWindow.find('.ant_tags_list');
+                        
                         $aWindow.find('.ant_body_wrap').append($tagsListContainer);
+
                         $existingTagslist.remove();
 
                         if ( typeof page != "undefined" ) {
@@ -8249,6 +8263,9 @@ if ( sendData.kind=="page" ) {
                         //     }
                         // }
 
+                        $tagsListContainer.jScrollPane({ showArrows:true });
+                        // $aWindow.jScrollPane({ showArrows:true });
+                        // ANT.aWindow.panelShow( $aWindow, $tagsListContainer, function() {});
                         return $tagsListContainer;
 
                         
@@ -8322,15 +8339,17 @@ if ( sendData.kind=="page" ) {
                                 }
                             }
 
+                            // var mediumBuckets = 0; // using this b/c i can't figure out some dumb iteration math with the rows.
                             while ( buckets.big.length || buckets.medium.length ) {
                                 // get the background color and text color
                                 // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                                // var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
-                                // var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
-
+                                var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
+                                var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
+                                
+                                
                                 if ( buckets.big.length ) {
                                     var thisTag = buckets.big.shift();
-                                    var $tagContainer = $('<div class="ant ant_tag_row"></div>');
+                                    var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
                                     ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
                                     
                                     $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
@@ -8338,19 +8357,21 @@ if ( sendData.kind=="page" ) {
                                     // set next color 
                                     rowNum++;
                                     if ( rowNum == numBgColors ) rowNum = 0;
+
                                     // bgColorInt++;
                                     // textColorInt++;
                                     // if ( bgColorInt == numBgColors ) bgColorInt = 0;
                                     // if ( textColorInt == numTextColors ) textColorInt = 0;
 
                                 } else if ( buckets.medium.length ) {
+
                                     var thisTag = buckets.medium.shift();
                                     
                                     var $tagRow = $aWindow.find('.ant_tag_row:last');
-                                    var appendRow = false;
+
                                     if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
-                                        var $tagContainer = $('<div class="ant ant_tag_row"></div>');
-                                        appendRow = true;
+                                        var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
+                                        $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
                                         rowNum++;
                                         if ( rowNum == numBgColors ) rowNum = 0;
                                     } else {
@@ -8358,8 +8379,12 @@ if ( sendData.kind=="page" ) {
                                     }
 
                                     ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
-
-                                    if (appendRow) { $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer); }
+                                    
+                                    // mediumBuckets++;
+                                    // if ((mediumBuckets+1) % 2 === 0) { 
+                                    //     rowNum++;
+                                    //     if ( rowNum == numBgColors ) rowNum = 0;
+                                    // }
                                     // set next color 
                                     
                                     // bgColorInt++;
@@ -8678,7 +8703,8 @@ if ( sendData.kind=="page" ) {
                                 
                     function update_top_interactions_cache(attrs){
                         //CHANGETHIS?
-                        console.log('update_top_interactions_cache');
+                        // delete?
+                        // console.log('update_top_interactions_cache');
                         var hash = attrs.hash;
                         var summary = attrs.summary;
                         var interaction_node_type = attrs.interaction_node_type;
@@ -8745,7 +8771,8 @@ if ( sendData.kind=="page" ) {
                     function update_content_nodes_cache(attrs){
 
                         //CHANGETHIS?
-                        console.log('update_content_nodes_cache');
+                        // delete?
+                        // console.log('update_content_nodes_cache');
                         //todo: this is still not 100% right - but updates better than not having it at all.
                         //need to solve for the fact that we don't have the content_node id when we first make it.
 
@@ -9064,7 +9091,7 @@ if ( sendData.kind=="page" ) {
                 var $backButton2 = _makeBackButton();
                 var $otherComments = _makeOtherComments();
                 var $commentBox = _makeCommentBox();
-                $commentsWrap.append($backButton, $otherComments, $commentBox, $backButton2);
+                $commentsWrap.append($backButton, $otherComments, $commentBox );
 
                 $newPanel.append($commentsWrap);
 
@@ -9943,7 +9970,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv45"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv1"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

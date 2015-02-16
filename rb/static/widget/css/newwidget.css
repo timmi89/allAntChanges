@@ -652,6 +652,7 @@ div.ant div.ant_body div.jspVerticalBar    {
 }
 div.ant div.ant_body div.jspDrag    {
     cursor: default;
+    background:#717171;
 }
 
 div.ant div.ant_header h1 {
@@ -1435,11 +1436,20 @@ div#ant-page-summary.defaultSummaryBar .ant-summary{
 div.ant div.ant_body.ant_tags_list { 
     display:block;
     text-decoration:none;
+    max-height: 300px;
     /*background:#fff;*/
 }
 
 div.ant.ant_inline div.ant_body.ant_tags_list {
   background:none;
+}
+div.ant div.ant_body.ant_tags_list .jspPane {
+  margin:0 !important;
+  min-width: 222px !important;
+}
+
+div.ant.w111 div.ant_body.ant_tags_list .jspPane {
+  min-width:111px !important;
 }
 
 /*div.ant div.ant_body.ant_tags_list { height:auto; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; letter-spacing:0px; }*/
@@ -1458,21 +1468,24 @@ div.ant div.ant_body.ant_tags_list .ant_box {
     float:left;
 }
 
-div.ant div.ant_body.ant_tags_list .ant_tag_read_icon{
+div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box .ant_search{
     /*position: absolute;*/
     display: none;
-    color: white;
 }
 
 
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_count{
     display: none;
 } 
-div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_tag_read_icon{
-    display: block;
-    color: #008be4;
-    margin:0 0 -10% 0;
-    font-size:18px;
+div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box.hidePlusOne .ant_count{
+  display:inline-block;
+  visibility: visible;
+} 
+div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_search{
+    display: inline-block;
+}
+div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box.hidePlusOne .ant_plusOne{
+    display: none;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag {
@@ -1480,9 +1493,20 @@ div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag {
     height:100%;
     word-spacing:0;
     padding: 0px 10px;
-
     /*transition: margin-top 0.6s ease;*/
 }
+
+div.ant div.ant_body.ant_tags_list .ant_box:hover div.ant_tag {
+  background:linear-gradient(rgba(30,30,30,0.15),rgba(255,255,255,0.2)); 
+}
+div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_actions {
+  font-size:10px;
+  margin: 0 0 -4% 0;
+}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big .ant_tag_actions {
+  font-size:14px;
+}
+
 div.ant div.ant_body.ant_tags_list .ant_box .ant_comment_hover {
     /*transition: margin-right 0.8s ease;*/
 }
@@ -1496,36 +1520,47 @@ div.ant div.ant_body.ant_tags_list .ant_box .ant_comment_hover {
 div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag.ant_tag_split {font-size:14px;}
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:24px;}
 
-div.ant div.ant_body.ant_tags_list .ant_tag_read_icon,
+div.ant div.ant_body.ant_tags_list .ant_search,
 div.ant div.ant_body.ant_tags_list .ant_box .ant_count,
 div.ant div.ant_body.ant_tags_list .ant_plusOne {
     font-weight:100;
-    /*position: absolute;*/
-    /*width: 100%;*/
-    /*top: 43%;*/
-    /*margin-top: 0.5em;*/
-    /*using transform so we can match the font-size to the count and use the margin-top in ems*/
-    /*-webkit-transform: scale(0.7, 0.7);
-    -moz-transform: scale(0.7, 0.7);
-    -o-transform: scale(0.7, 0.7);
-    -ms-transform: scale(0.7, 0.7);
-    transform: scale(0.7, 0.7);*/
+    min-width:16px;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box .ant_count {
     opacity: 0.85;
     filter: alpha(opacity=85);
-    display: block;
-    position: static;
-    margin:0 0 -6% 0;
-    /*font-weight:bold;*/
-    font-size: 17px;
+    display: inline-block;
+    margin:0 0 -4% 0;
 }
-div.ant div.ant_body.ant_tags_list .ant_plusOne{
-    display: none;  
-    font-size: 15px;
-    margin:0 0 -10% 0;
+div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_count {
+  visibility: hidden;
 }
+div.ant.ant_readmode:not(.ant_for_page) .ant_body.ant_tags_list .ant_box:hover .ant_count {
+  display: none;
+}
+div.ant div.ant_body.ant_tags_list .ant_box .ant_plusOne{
+  white-space: nowrap;
+  visibility: hidden;
+}
+div.ant.ant_readmode:not(.ant_for_page) .ant_body.ant_tags_list .ant_box .ant_plusOne{
+  display: none;
+}
+div.ant.ant_readmode:not(.ant_for_page) div.ant_body.ant_tags_list div.ant_box:hover .ant_plusOne, /* tihs looks redundant with next rule, but it seems to be needed to override the rule just above */
+div.ant div.ant_body.ant_tags_list div.ant_box:hover .ant_plusOne{
+    display:inline-block;
+    visibility: visible;
+}
+/*div.ant div.ant_body.ant_tags_list .ant_box .ant_plusOne_container{
+    display: inline-block;
+    max-width: 0px;
+    width:auto;
+    overflow: hidden;
+}*/
+/*div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_plusOne_container{*/
+  /*max-width:80px;*/
+  /*transition: max-width 800ms;*/
+/*}*/
 
 div.ant div.ant_body.ant_tags_list .ant_box_big {
   width:222px;
@@ -1537,15 +1572,22 @@ div.ant div.ant_body.ant_tags_list .ant_box_medium {
   height:66px;
   padding: 0;
 }
+/*div.ant.ant_writemode div.ant_body.ant_tags_list .ant_box_medium {
+  height:55px;
+}
+div.ant.ant_writemode div.ant_body.ant_tags_list .ant_box_medium .ant_tag_body {
+  margin-bottom: -6px;
+}*/
 div.ant div.ant_body.ant_tags_list .ant_box_medium:nth-child(even) {
   border-left:1px solid rgba(0,0,0,0.25);
 }
 div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child {
 width: 222px;
-height: auto;
-padding: 10px 0;
+height: 50px;
+/*height: auto;
+padding: 10px 0;*/
 }
-div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_count {
+div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_actions {
   margin-bottom: -2%;
 }
 /*
@@ -1613,9 +1655,16 @@ div.ant div.ant_body.ant_tags_list .ant_tag_row {
 div.ant div.ant_body.ant_tags_list .ant_tag_body{
     text-align: left;
     letter-spacing: 0.5px;
-    text-shadow: 0 0 0 #000;
+    /*text-shadow: 1px 1px 1px rgba(0,0,0,0.004);*/
+    /*text-shadow: 0 0 1px rgba(0,0,0,0.3);*/
     opacity:0.9;
-    margin-bottom: 3px;
+    margin-bottom: 6px;
+    /*font-family: Helvetica,Arial,sans-serif;*/
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /*font-smooth: always;*/
+
 
      -ms-word-break: break-all;
          word-break: break-all;
@@ -1640,14 +1689,13 @@ div.ant div.ant_body.ant_tags_list .ant_box:hover {
     /*box-shadow: 0 0 25px -7px #333 inset;*/
 }
 
-div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_tag_body,
+/*div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_tag_body,
 div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_count,
 div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_plusOne{
     color:#008be4 !important;
     opacity: 1;
     filter: alpha(opacity=100);
 }
-
 div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_count{
     display: none;
 }
@@ -1661,37 +1709,44 @@ div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_plusOne{
 div.ant div.ant_body.ant_tags_list .ant_box:hover .ant_plusOne{
     display: block;
 }
+*/
 
+div.ant div.ant_body.ant_tags_list .ant_box .ant_search,
 div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover { 
-    position: absolute;
-    display:block;
+    /*position: absolute;*/
+    display:inline-block;
     font-size:10px;
     /*color:#fff;*/
-    bottom: 0;
-    right: 0;
-    padding: 2px 5px;
-    opacity: 0.80;
+    /*bottom: 0;*/
+    /*right: 0;*/
+    /*padding: 2px 5px;*/
+    opacity: 0.75;
     filter: alpha(opacity=80);
-    z-index: 2;
-    vertical-align: top;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255,255,255,0.5);
+    margin-left: 10px;
+    white-space: nowrap;
+    /*z-index: 2;*/
+    /*vertical-align: top;*/
 }
+div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover.ant_hide {
+  opacity:0;
+}
+div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover.ant_hide,
 div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover,
 div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover i { 
     opacity: 1;
-    filter: alpha(opacity=100);
-    color: #777;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover i {
-    font-size:12px;
-    color:#fff;
+    font-size:11px;
 }
 
 div.ant div.ant_body.ant_hiddenPanel { display:none; }
 
 /* big */
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big .ant_tag_body {font-size:24px;}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big .ant_count {font-size:14px;}
+
 /*
 CHANGETHIS
 delete?!
@@ -1714,8 +1769,8 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big .ant_charCount16 { font-
 */
 
 /* medium*/
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body  {font-size:14.5px;}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_count  {font-size:11px;}
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body  {font-size:15px;}
+
 /*
 CHANGETHIS
 delete?!
@@ -2059,7 +2114,8 @@ div.ant_inline_video div.ant_indicator.ant_indicator_for_media {
 div.ant_indicator_for_text{
     display: inline;
     /*display: inline-block;*/
-    opacity:0.4;
+    opacity:0;
+    transition: opacity 300ms ease;
     position: relative;
     vertical-align: top;
     line-height: inherit !important;
@@ -2096,9 +2152,9 @@ div.ant_helper_aWindow div.ant_header h1{
 }
 
 .ant_live_hover div.ant_indicator.ant_indicator_for_text {
-  opacity:1.0 !important;
-  -moz-opacity:1.0 !important;
-  -khtml-opacity:1.0 !important;
+  opacity:0.75;
+  -moz-opacity:0.75;
+  -khtml-opacity:0.75;
 }
 div.ant_indicator_for_text.ant_helper {
     opacity:0;
