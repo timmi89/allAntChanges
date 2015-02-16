@@ -1477,10 +1477,14 @@ div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box .ant_se
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_count{
     display: none;
 } 
+body.ant_touch_browser div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_count{
+  display:inline-block;
+}
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box.hidePlusOne .ant_count{
   display:inline-block;
   visibility: visible;
 } 
+body.ant_touch_browser div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box .ant_search,
 div.ant .ant_window.ant_page_summary div.ant_body.ant_tags_list .ant_box:hover .ant_search{
     display: inline-block;
 }
@@ -1543,6 +1547,7 @@ div.ant div.ant_body.ant_tags_list .ant_box .ant_plusOne{
   white-space: nowrap;
   visibility: hidden;
 }
+body.ant_touch_browser div.ant.ant_readmode .ant_body.ant_tags_list .ant_box .ant_plusOne,
 div.ant.ant_readmode:not(.ant_for_page) .ant_body.ant_tags_list .ant_box .ant_plusOne{
   display: none;
 }
@@ -1734,6 +1739,7 @@ div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover.ant_hide {
 }
 div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover.ant_hide,
 div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover,
+/*body.ant_touch_browser div.ant div.ant_body.ant_tags_list .ant_box span.ant_comment_hover,*/
 div.ant div.ant_body.ant_tags_list .ant_box:hover span.ant_comment_hover i { 
     opacity: 1;
 }
@@ -2121,9 +2127,10 @@ div.ant_indicator_for_text{
     line-height: inherit !important;
 }
 body.ant_touch_browser div.ant_indicator_for_text {
-  display:block;
+  /*display:block;*/
   max-width: 120px;
-  padding:4px 0;
+  /*padding:4px 0;*/
+  opacity:0.5;
 }
 div.ant_indicator_for_text * {
     display:inline;
@@ -2303,18 +2310,20 @@ body.ant_touch_browser div.ant_indicator_for_text.ant_no_reactions {
   display:none !important;
 }
 body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body {
-  left:0;
-  position:static;
+  /*left:0;*/
+  /*position:static;*/
 }
 div.ant_indicator_for_text div.ant_indicator_body .ant_count_label {
   display:none;
 }
+/* hide the "reactions" label, but have it still be inline-block for a larger tap area */
 body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_count_label {
   color:#888;
   display: inline-block;
   font-family: normal 12px Arial, sans-serif;
   font-size: 11px;
   font-weight:bold;
+  visibility: hidden;
 }
 
 
@@ -2716,7 +2725,7 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 
 
 /***** brand new styles *****/
-.ant_indicator .ant-antenna-logo { color:#bbb; }
+.ant_indicator .ant-antenna-logo { color:#aaa; }
 /*.ant_indicator .ant-antenna-logo { color:#fff; }
 .ant_indicator_for_media.ant_indicator_not_img .ant-antenna-logo { color:#bbb; }*/
 .ant_live_hover .ant_indicator .ant-antenna-logo,
