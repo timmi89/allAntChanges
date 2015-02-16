@@ -1506,6 +1506,7 @@ div.ant div.ant_body.ant_tags_list .ant_box:hover div.ant_tag {
 div.ant div.ant_body.ant_tags_list .ant_box .ant_tag_actions {
   font-size:10px;
   margin: 0 0 -4% 0;
+  text-align: left;
 }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big .ant_tag_actions {
   font-size:14px;
