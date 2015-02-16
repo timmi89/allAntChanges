@@ -182,8 +182,10 @@ function antenna($A){
                 img_indicator_show_side: 'left',
                 // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
                 // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
-                tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
+                // tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
+                tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
+                // tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
                 tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
                 // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
                 tags_bg_css: '',
@@ -1142,33 +1144,6 @@ function antenna($A){
                     
                     var charCountText = ""
 
-                    //CHANGETHIS ?
-                    // can we avoid this now?  just use css?
-
-                    //split long tag onto two lines.
-                    // if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 ) {
-                    //     charCountText = 'ant_charCount'+tagBodyRaw.length;
-                    //     tagBodyCrazyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
-                    // } else {
-                    //     tagIsSplitClass = "ant_tag_split";
-                    //     // if no space, hyphenate
-                    //     if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                    //         charCountText = 'ant_charCount15';
-                    //         tagBodyCrazyHtml = 
-                    //         '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
-                    //         tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
-                    //     } else {
-                    //         var tagBody1 = "", tagBody2 = "", keepLooping = true;
-                    //         tagBodyRawSplit = tagBodyRaw.split(' ');
-                    //         while ( keepLooping ) {
-                    //             tagBody1 += tagBodyRawSplit.shift() + ' ';
-                    //             if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
-                    //         }
-                    //         tagBody2 = tagBodyRawSplit.join(' ');
-                    //         charCountText = 'ant_charCount'+tagBody1.length;
-                    //         tagBodyCrazyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
-                    //     }
-                    // }
                     tagBodyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
 
                     var tag_id = tag.id;
@@ -8339,7 +8314,7 @@ if ( sendData.kind=="page" ) {
                                 }
                             }
 
-                            // var mediumBuckets = 0; // using this b/c i can't figure out some dumb iteration math with the rows.
+                            var mediumBuckets = 0; // using this b/c i can't figure out some dumb iteration math with the rows.
                             while ( buckets.big.length || buckets.medium.length ) {
                                 // get the background color and text color
                                 // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
@@ -8366,25 +8341,29 @@ if ( sendData.kind=="page" ) {
                                 } else if ( buckets.medium.length ) {
 
                                     var thisTag = buckets.medium.shift();
-                                    
-                                    var $tagRow = $aWindow.find('.ant_tag_row:last');
 
-                                    if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
-                                        var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
-                                        $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
-                                        rowNum++;
-                                        if ( rowNum == numBgColors ) rowNum = 0;
-                                    } else {
-                                        var $tagContainer = $tagRow;
+                                    if (thisTag.body) {
+                                        mediumBuckets++;
+                                    
+                                        var $tagRow = $aWindow.find('.ant_tag_row:last');
+
+                                        if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
+                                            var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
+                                            $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
+                                            // rowNum++;
+                                            // if ( rowNum == numBgColors ) rowNum = 0;
+                                        } else {
+                                            var $tagContainer = $tagRow;
+                                        }
+
+                                        ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                        
+                                        // mediumBuckets++;
+                                        if ( mediumBuckets % 2 === 0) { 
+                                            rowNum++;
+                                            if ( rowNum == numBgColors ) rowNum = 0;
+                                        }
                                     }
-
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
-                                    
-                                    // mediumBuckets++;
-                                    // if ((mediumBuckets+1) % 2 === 0) { 
-                                    //     rowNum++;
-                                    //     if ( rowNum == numBgColors ) rowNum = 0;
-                                    // }
                                     // set next color 
                                     
                                     // bgColorInt++;
