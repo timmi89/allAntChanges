@@ -1460,11 +1460,13 @@ function antenna($A){
                         // } else {
                             $tagBox.on(clickOrTouch, function(e) {
                                 if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
+                                if (ANT.util.bubblingEvents['touchend'] == false) {
+                                    $(this).addClass('ant_tagged');
+                                    $aWindow.removeClass('ant_rewritable');
+                                    var hash = $aWindow.data('container');
+                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                    ANT.actions.interactions.ajax( args, 'react', 'create');
+                                }
                             });
                         // }
                     } else {
@@ -1477,11 +1479,13 @@ function antenna($A){
                             // check for class, and if present, simulate click
                             $tagBox.on( clickOrTouch, function() {
                                 if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
+                                if (ANT.util.bubblingEvents['touchend'] == false) {
+                                    $(this).addClass('ant_tagged');
+                                    $aWindow.removeClass('ant_rewritable');
+                                    var hash = $aWindow.data('container');
+                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                    ANT.actions.interactions.ajax( args, 'react', 'create');
+                                }
                             });
                         // }else{
                             // $tagBox.click( function() {
@@ -7923,12 +7927,14 @@ if ( sendData.kind=="page" ) {
                             if(isTouchBrowser){
                                 $indicator.on('touchend.ant', function(){
                                     if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                                    if ( summary.counts.interactions == 0 ) {
-                                        var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
-                                    } else {
-                                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                    if (ANT.util.bubblingEvents['touchend'] == false) {
+                                        if ( summary.counts.interactions == 0 ) {
+                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                        } else {
+                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                        }
+                                        $(this).addClass('ant_live_hover');
                                     }
-                                    $(this).addClass('ant_live_hover');
                                 });
                             }else{
                                 $indicator
@@ -10455,8 +10461,10 @@ function $AFunctions($A){
                     if(isTouchBrowser){
                         $summary_widget.on('touchend.ant', function(){
                             if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                            onActiveEvent.call(this);
-                            $(this).toggleClass('ant_hover');
+                            if (ANT.util.bubblingEvents['touchend'] == false) {
+                                onActiveEvent.call(this);
+                                $(this).toggleClass('ant_hover');
+                            }
                         });
                     }else{
                         $summary_widget.hover(
