@@ -1584,6 +1584,9 @@ div.ant div.ant_body.ant_tags_list .ant_box_medium {
   height:66px;
   padding: 0;
 }
+div.ant div.ant_body.ant_tags_list .ant_box_medium.ant_writeMode {
+  height:54px;
+}
 /*div.ant.ant_writemode div.ant_body.ant_tags_list .ant_box_medium {
   height:55px;
 }
