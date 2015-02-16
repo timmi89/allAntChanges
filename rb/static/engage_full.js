@@ -556,8 +556,9 @@ function antenna($A){
                 var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('touchend.ant', '.ant_menuDropDown', function(){
-                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                    $menu.on('touchend.ant', '.ant_menuDropDown', function(e){
+                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if ( ANT.util.isTouchDragging(e) ) { return; }
                         $(this).toggleClass('ant_hover');
                     });
                 }
@@ -1459,7 +1460,7 @@ function antenna($A){
 
                         // } else {
                             $tagBox.on(clickOrTouch, function(e) {
-                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
                                 if (ANT.util.bubblingEvents['touchend'] == false) {
                                     $(this).addClass('ant_tagged');
                                     $aWindow.removeClass('ant_rewritable');
@@ -1477,8 +1478,8 @@ function antenna($A){
                         // if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
-                            $tagBox.on( clickOrTouch, function() {
-                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                            $tagBox.on( clickOrTouch, function(e) {
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
                                 if (ANT.util.bubblingEvents['touchend'] == false) {
                                     $(this).addClass('ant_tagged');
                                     $aWindow.removeClass('ant_rewritable');
@@ -2722,7 +2723,16 @@ function antenna($A){
             },
             bubblingEvents: {
                 'touchend': false,
-                'dragging': false
+                'dragging': false,
+                'startX':0,
+                'startY':0
+            },
+            isTouchDragging: function(event) {
+                if (Math.abs(event.originalEvent.changedTouches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    return true;
+                } else {
+                    return false;
+                }
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
@@ -4634,7 +4644,8 @@ function antenna($A){
                     });
                 } else {
                     $(document).on('touchend.ant',function(e) {
-                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if ( ANT.util.isTouchDragging(e) ) { return; }
                         if (ANT.util.bubblingEvents['touchend'] == false) {
                             var $mouse_target = $(e.target);
 
@@ -4652,13 +4663,27 @@ function antenna($A){
                     });
 
                     // iphone drag fix
-                    $(document).on('touchmove.ant',function(e) {
-                        ANT.util.bubblingEvents['dragging'] = true;
+                    $(document).on('touchstart.ant',function(event) {
+                        ANT.util.bubblingEvents['startY'] = event.originalEvent.touches[0].clientY;
                     });
+
+                    // NOW NOT NEEDED.  USING math FROM TOUCHSTART plus if ( ANT.util.isTouchDragging(e) ) { return; }
+                    // $(document).on('touchmove.ant',function(event) {
+                    //     if (Math.abs(event.originalEvent.touches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    //         ANT.util.bubblingEvents['dragging'] = true;
+                    //     }
+                    // });
                     // $(document).on('touchstart.ant',function(e) {
-                    $(document).on('touchend.ant',function(e) {
-                        ANT.util.bubblingEvents['dragging'] = false;
-                    });
+                    // $(document).on('touchend.ant',function(event) {
+                    //     if (Math.abs(event.originalEvent.changedTouches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    //         ANT.util.bubblingEvents['dragging'] = true;
+                    //     }
+
+                    //     // if (ANT.util.bubblingEvents['dragging'] == true) {
+                    //     //     event.stopImmediatePropagation();
+                    //     //     ANT.util.bubblingEvents['dragging'] = false;
+                    //     // }
+                    // });
                 }
 
                 //bind an escape keypress to clear it.
@@ -7390,7 +7415,8 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
-                                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        if ( ANT.util.isTouchDragging(e) ) { return; }
                                         if (ANT.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.ant_window').length ) {
                                                 var $this_container = $('[ant-hash="'+hash+'"]');
@@ -7470,7 +7496,8 @@ if ( sendData.kind=="page" ) {
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
-                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
                                 ANT.util.bubblingEvents['touchend'] = true;
 
                                 _makeAWindow();
@@ -7925,8 +7952,9 @@ if ( sendData.kind=="page" ) {
                             $indicator.appendTo($container_tracker);
                             
                             if(isTouchBrowser){
-                                $indicator.on('touchend.ant', function(){
-                                    if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                $indicator.on('touchend.ant', function(e){
+                                    // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                    if ( ANT.util.isTouchDragging(e) ) { return; }
                                     if (ANT.util.bubblingEvents['touchend'] == false) {
                                         if ( summary.counts.interactions == 0 ) {
                                             var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
@@ -8356,7 +8384,7 @@ if ( sendData.kind=="page" ) {
 
                                     var thisTag = buckets.medium.shift();
 
-                                    if (thisTag.body) {
+                                    if (thisTag.body || thisTag.tag_body) {
                                         mediumBuckets++;
                                     
                                         var $tagRow = $aWindow.find('.ant_tag_row:last');
@@ -10459,8 +10487,9 @@ function $AFunctions($A){
                     };
 
                     if(isTouchBrowser){
-                        $summary_widget.on('touchend.ant', function(){
-                            if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        $summary_widget.on('touchend.ant', function(e){
+                            // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                            if ( ANT.util.isTouchDragging(e) ) { return; }
                             if (ANT.util.bubblingEvents['touchend'] == false) {
                                 onActiveEvent.call(this);
                                 $(this).toggleClass('ant_hover');
