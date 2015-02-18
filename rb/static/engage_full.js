@@ -1125,28 +1125,44 @@ function antenna($A){
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'ant_writeMode' : '',
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
+                      tagBodyRawWords = tagBodyRaw.split(' '),
+                      lineOne = '',
+                      lineTwo = '',
                       tagBodyHtml = "",
+                      tagHtml = "",
                       tagIsSplitClass = "";
 
                     
                     if (typeof tagBodyRaw == 'undefined') { return; }
-                    
-                    // abstract this when we abstract the same thing in the previous function.
-                    if ( kind == "page" ) {
-                        message = (isWriteMode) ? '+1 '+tagBodyRaw :'';
-                    } else if ( tagCount == "" ) {
-                        message = '';
-                    } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
-                        message = '+1 '+tagBodyRaw;
+
+                    if (tagBodyRawWords.length == 1) {
+                        lineOne = tagBodyRawWords[0];
                     } else {
-                        // var reactText = ( tagCount == 1 ) ? "reaction":"reactions",
-                        //     message = tagCount+' '+reactText+'.  Click to agree.';
-                        var message = '+1 '+tagBodyRaw;
+                        $.each(tagBodyRawWords, function(idx, word) {
+                            var spacer = (idx===0) ? '':' ';
+                            if (lineOne.length < 11 && lineOne.length+word.length < 11) {
+                                lineOne += spacer + word;
+                            } else {
+                                lineTwo += spacer + word;
+                            }
+                        });
                     }
-                    
+
+                    lineOne = $.trim(lineOne) + ' '; // trim front space, add end space... won't wrap given css rule
+                    lineOne = '<div class="ant_charCount_' + lineOne.length + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
+
+                    if (lineTwo!='') {
+                        lineTwo = $.trim(lineTwo);
+                        lineTwo = '<div class="ant_charCount_' + lineTwo.length + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineTwo + '</div>';
+                    }
+
+                    tagBodyHtml = lineOne + lineTwo;
+
+                    // need to limit each line to 10 characters OR start making smaller if no whitespace
+
                     var charCountText = ""
 
-                    tagBodyHtml = '<div class="ant_tag_body" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
+                    tagHtml = '<div class="ant_tag_body">'+tagBodyHtml+'</div>';
 
                     var tag_id = tag.id;
                     var parent_id = tag.parent_id;
@@ -1169,13 +1185,12 @@ function antenna($A){
                     var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+' row_num_'+rowNum+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
-                                // 'title="'+message+'" '+
                                 'data-tag_id="'+tag_id+'" '+
                                 'data-tag_count="'+tagCount+'" '+
                                 'data-parent_id="'+parent_id+'" '+
                                 'data-content_node_id="'+content_node_id+'" '+
                             '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
-                                tagBodyHtml+
+                                tagHtml+
                                 '<div class="ant_tag_actions">'+
                                 tagActionsHtml+
                                 // plusOneCTA+
@@ -9993,7 +10008,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv5"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv8"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

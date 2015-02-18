@@ -665,6 +665,7 @@ div.ant div.ant_header h1 {
  text-align:left;
  text-transform:none;
  font-style:normal;
+ display:block;
 }
 div.ant.w111 div.ant_header h1 {
  font-size:13px;
@@ -1522,9 +1523,6 @@ div.ant div.ant_body.ant_tags_list .ant_box .ant_comment_hover {
 /*div.ant div.ant_body.ant_tags_list div.ant_tag { margin-top:-125%;}*/
 /*div.ant div.ant_body.ant_tags_list div.ant_box.ant_animated div.ant_tag { margin-top:0%;}*/
 
-div.ant div.ant_body.ant_tags_list .ant_box div.ant_tag.ant_tag_split {font-size:14px;}
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_big div.ant_tag.ant_tag_split { font-size:24px;}
-
 div.ant div.ant_body.ant_tags_list .ant_search,
 div.ant div.ant_body.ant_tags_list .ant_box .ant_count,
 div.ant div.ant_body.ant_tags_list .ant_plusOne {
@@ -1673,13 +1671,14 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
     /*text-shadow: 1px 1px 1px rgba(0,0,0,0.004);*/
     /*text-shadow: 0 0 1px rgba(0,0,0,0.3);*/
     opacity:0.9;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     /*font-family: Helvetica,Arial,sans-serif;*/
     font-weight: bold;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /*font-smooth: always;*/
+    
 
+    white-space: nowrap;
 
      -ms-word-break: break-all;
          word-break: break-all;
@@ -1691,8 +1690,9 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
        -moz-hyphens: auto;
             hyphens: auto;
 }
-div.ant.ant_readmode div.ant_body.ant_tags_list .ant_tag_split .ant_tag_body{
-    /*margin-top: -1em !important;*/
+
+div.ant div.ant_body.ant_tags_list .ant_box_big .ant_tag_body{
+  margin-bottom: 6px;
 }
 
 div.ant div.ant_body.ant_tags_list .ant_box:hover { 
@@ -1797,41 +1797,19 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount4 { fon
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount5 { font-size:30px; }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount6,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount7 { font-size:24px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount8,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount9 { font-size:19px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount10,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount11,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount12,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount13 { font-size:15px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount14,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount15,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount16 { font-size:12px; }
 */
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_8,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_9 { font-size:19px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_10,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_11,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_12,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_13 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_14,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_15,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_16,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_17 { font-size:11px; }
 
-
-/* small:  max size:  18px */
-/*
-CHANGETHIS
-no longer using...
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small  { font-size:12px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount1,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount2,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount3 { font-size:24px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount4 { font-size:22px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount5 { font-size:20px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount6,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount7 { font-size:18px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount8,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount9 { font-size:16px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount10,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount11 { font-size:16px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount12 { font-size:14px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount13 { font-size:13px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount14,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount15,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_small .ant_charCount16 { font-size:12px; }
-*/
-
+div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_body div { display:inline; }
 
 
 .ant_hilite {
