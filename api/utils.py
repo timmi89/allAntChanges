@@ -270,11 +270,7 @@ def deleteInteraction(interaction, user):
         try:
             interaction.delete();
             try:
-                #cache.delete('page_data' + str(interaction.page.id))
-                
-                #cache.delete('page_containers' + str(interaction.page.id))
-                
-                #cache.delete('page_containers' + str(interaction.page.id) + ":" + str([interaction.container.hash]))
+                logger.info("CACHEUPDATE ON DELETE")
                 update_page_cache.delay(interaction.page.id)
                 update_page_container_hash_cache.delay(interaction.page.id, [interaction.container.hash], [])
             except Exception, e:
@@ -455,12 +451,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         container=container
     )
     try:
-        #cache.delete('page_data' + str(page.id))
-                
-        #cache.delete('page_containers' + str(page.id))
-        
-        #cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
-        
+        logger.info("CACHEUPDATE on CREATE")
         update_page_cache.delay(page.id)
         update_page_container_hash_cache.delay(page.id, [container.hash], [])
         
@@ -479,11 +470,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             for other in other_interactions:
                 other_pages.add(other.page)
             for other_page in other_pages:
-                #cache.delete('page_data' + str(page.id))
-                    
-                #cache.delete('page_containers' + str(page.id))
-                
-                #cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
+                logger.info("CACHEUPDATE on OTHER PAGE " + str(container.hash))
                 update_page_cache.delay(other_page.id)
                 update_page_container_hash_cache.delay(other_page.id, [container.hash], [])
             

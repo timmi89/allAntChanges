@@ -287,7 +287,7 @@ def sowing_seeds_of_love():
                             approved = True
                         )
                         zygote.save()
-                        logger.info('zygote saved')
+                        logger.info('CACHEUPDATE SEEDS')
                         #UPDATE CACHE!
                         update_page_cache.delay(page.id)
                         update_page_container_hash_cache.delay(page.id, [interaction.container.hash], [])
@@ -313,7 +313,7 @@ def sowing_seeds_of_love():
                     approved = True
                 )
                 zygote.save()
-                logger.info("saved zygote")
+                logger.info("CACHEUPDATE SEEDS2")
             except Exception, e:
                 logger.warn(e)
             update_page_cache.delay(page.id)
