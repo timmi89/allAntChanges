@@ -665,6 +665,7 @@ div.ant div.ant_header h1 {
  text-align:left;
  text-transform:none;
  font-style:normal;
+ display:block;
 }
 div.ant.w111 div.ant_header h1 {
  font-size:13px;
@@ -1673,7 +1674,7 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
     /*text-shadow: 1px 1px 1px rgba(0,0,0,0.004);*/
     /*text-shadow: 0 0 1px rgba(0,0,0,0.3);*/
     opacity:0.9;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
     /*font-family: Helvetica,Arial,sans-serif;*/
     font-weight: bold;
     -webkit-font-smoothing: antialiased;
@@ -1797,17 +1798,19 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount4 { fon
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount5 { font-size:30px; }
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount6,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount7 { font-size:24px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount8,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount9 { font-size:19px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount10,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount11,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount12,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount13 { font-size:15px; }
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount14,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount15,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_charCount16 { font-size:12px; }
 */
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_8,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_9 { font-size:19px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_10,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_11,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_12,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_13 { font-size:14px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_14,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_15,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_16,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_17 { font-size:11px; }
 
+div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_body div { display:inline; }
 
 /* small:  max size:  18px */
 /*
