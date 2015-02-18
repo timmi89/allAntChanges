@@ -1683,7 +1683,7 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
      -ms-word-break: break-all;
          word-break: break-all;
 
-         /* Non standard for webkit */
+          Non standard for webkit 
          word-break: break-word;
 
     -webkit-hyphens: auto;

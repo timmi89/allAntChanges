@@ -4616,7 +4616,7 @@ function antenna($A){
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: all; -khtml-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;} </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: text; -khtml-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;} </style>');
 
 
 
@@ -4640,6 +4640,7 @@ function antenna($A){
 
                 if ( !isTouchBrowser ) {
                     $(document).on('mousedown.ant',function(event) {
+
                         var $mouse_target = $(event.target);
 
                         if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
@@ -10320,7 +10321,6 @@ function $AFunctions($A){
 
 
                 $elements.on('mousedown.ant', function(e) {
-
                     if ( (opt.handle !== "" ) && !$(e.target).closest('.ant_header').length ) {
                         // has a handle, but the handle is not clicked
                         return;
