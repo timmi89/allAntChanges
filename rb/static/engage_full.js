@@ -397,7 +397,7 @@ function antenna($A){
             },
             emit: function(eventName, eventValue, eventSupplementary) {
                 // ANT.events.emit
-                if (ANT.group.premium == true) {
+                // if (ANT.group.premium == true) {
                     // non-IE
                     ANT.events.lastEvent = eventName;
                     ANT.events.lastValue = eventValue;
@@ -412,7 +412,7 @@ function antenna($A){
                         // this will trigger onpropertychange
                         document.documentElement[eventName]++;
                     };
-                }
+                // }
             }
         },
         groupSettings: {
