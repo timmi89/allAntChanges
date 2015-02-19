@@ -1791,6 +1791,8 @@ function antenna($A){
                                         page_id: page_id
                                     });
 
+                                    ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':kind });
+
                                 }
 
                                 // $indicatorDetails.hide();
@@ -3409,13 +3411,13 @@ function antenna($A){
             $A('body').toggleClass('no-ant');
         },
         getLastEvent: function() {
-            if (ANT.group.premium == true) {
+            // if (ANT.group.premium == true) {
                 return {
                     'event':(ANT.events.lastEvent) ? ANT.events.lastEvent:'',
                     'value':(ANT.events.lastValue) ? ANT.events.lastValue:'',
                     'supplementary':(ANT.events.lastSupplementary) ? ANT.events.lastSupplementary:{}
                 };
-            }
+            // }
         },
         session: {
             alertBar: {
@@ -6587,7 +6589,7 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            ANT.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
+                            ANT.events.emit('antenna.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
@@ -7583,6 +7585,7 @@ if ( sendData.kind=="page" ) {
                                 container_kind: "text",
                                 page_id: page_id
                             });
+                            ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'text' });
                         // }
 
                     }
@@ -10501,6 +10504,7 @@ function $AFunctions($A){
                             event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                             page_id: page_id
                         });
+                        ANT.events.emit('antenna.reactionview', '', { 'kind':'page' });
                     };
 
                     if(isTouchBrowser){
