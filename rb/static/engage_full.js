@@ -397,7 +397,7 @@ function antenna($A){
             },
             emit: function(eventName, eventValue, eventSupplementary) {
                 // ANT.events.emit
-                if (ANT.group.premium == true) {
+                // if (ANT.group.premium == true) {
                     // non-IE
                     ANT.events.lastEvent = eventName;
                     ANT.events.lastValue = eventValue;
@@ -412,7 +412,7 @@ function antenna($A){
                         // this will trigger onpropertychange
                         document.documentElement[eventName]++;
                     };
-                }
+                // }
             }
         },
         groupSettings: {
@@ -1790,6 +1790,8 @@ function antenna($A){
                                         container_kind: kind,
                                         page_id: page_id
                                     });
+
+                                    ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':kind });
 
                                 }
 
@@ -3409,13 +3411,13 @@ function antenna($A){
             $A('body').toggleClass('no-ant');
         },
         getLastEvent: function() {
-            if (ANT.group.premium == true) {
+            // if (ANT.group.premium == true) {
                 return {
                     'event':(ANT.events.lastEvent) ? ANT.events.lastEvent:'',
                     'value':(ANT.events.lastValue) ? ANT.events.lastValue:'',
                     'supplementary':(ANT.events.lastSupplementary) ? ANT.events.lastSupplementary:{}
                 };
-            }
+            // }
         },
         session: {
             alertBar: {
@@ -4616,7 +4618,7 @@ function antenna($A){
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: all; -khtml-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;} </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: text; -khtml-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;} </style>');
 
 
 
@@ -4640,6 +4642,7 @@ function antenna($A){
 
                 if ( !isTouchBrowser ) {
                     $(document).on('mousedown.ant',function(event) {
+
                         var $mouse_target = $(event.target);
 
                         if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
@@ -6586,7 +6589,7 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            ANT.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
+                            ANT.events.emit('antenna.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
@@ -7582,6 +7585,7 @@ if ( sendData.kind=="page" ) {
                                 container_kind: "text",
                                 page_id: page_id
                             });
+                            ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'text' });
                         // }
 
                     }
@@ -10320,7 +10324,6 @@ function $AFunctions($A){
 
 
                 $elements.on('mousedown.ant', function(e) {
-
                     if ( (opt.handle !== "" ) && !$(e.target).closest('.ant_header').length ) {
                         // has a handle, but the handle is not clicked
                         return;
@@ -10501,6 +10504,7 @@ function $AFunctions($A){
                             event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                             page_id: page_id
                         });
+                        ANT.events.emit('antenna.reactionview', '', { 'kind':'page' });
                     };
 
                     if(isTouchBrowser){
