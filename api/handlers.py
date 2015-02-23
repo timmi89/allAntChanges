@@ -603,8 +603,18 @@ class SettingsHandler(AnonymousBaseHandler):
     Returns the settings for a group
     """
     @status_response
-    def read(self, request, group_id=None):
+    @json_data
+    def read(self, request, data, group_id=None):
         host = getHost(request)
+        print "* * * * data "
+        print data
+        print "* * * * host "
+        print host
+        if data and data['host_name']:
+            host = data['host_name']
+
+        print "* * * * host 2"
+        print host
         
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))

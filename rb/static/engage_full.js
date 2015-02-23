@@ -4019,7 +4019,7 @@ function antenna($A){
                     dataType: "jsonp",
                     data: {
                         // json: $.toJSON( {host_name : window.location.host} ) // has port
-                        json: $.toJSON( {host_name : window.location.hostname} )  // no port
+                        json: $.toJSON( {host_name : window.antenna_host } )  // no port
                     },
                     success: function(response, textStatus, XHR) {
                         var group_settings = response.data;
