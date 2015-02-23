@@ -459,20 +459,22 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
         #t.start()
         
-        if not content.kind == 'pag':
-            other_interactions = list(Interaction.objects.filter(
-                        container=container,
-                        page__site__group = page.site.group,
-                        approved=True
-                        ))
+        #COMMENTING OUT CROSSPAGE TO AVOID RABBITMQ BACKUP WITH OVERLY COMMON CONTAINERS
+        
+        #if not content.kind == 'pag':
+        #    other_interactions = list(Interaction.objects.filter(
+        #                container=container,
+        #                page__site__group = page.site.group,
+        #                approved=True
+        #                ))
     
-            other_pages = set()
-            for other in other_interactions:
-                other_pages.add(other.page)
-            for other_page in other_pages:
-                logger.info("CACHEUPDATE on OTHER PAGE " + str(container.hash))
-                update_page_cache.delay(other_page.id)
-                update_page_container_hash_cache.delay(other_page.id, [container.hash], [])
+        #    other_pages = set()
+        #    for other in other_interactions:
+        #        other_pages.add(other.page)
+        #    for other_page in other_pages:
+        #        logger.info("CACHEUPDATE on OTHER PAGE " + str(container.hash))
+        #        update_page_cache.delay(other_page.id)
+        #        update_page_container_hash_cache.delay(other_page.id, [container.hash], [])
             
             
         #if not new_interaction.parent or new_interaction.kind == 'com':
