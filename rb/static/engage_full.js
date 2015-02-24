@@ -4853,7 +4853,8 @@ function antenna($A){
                             }
 
                             $this.data({
-                                'body':body
+                                'body':body,
+                                'isCustom': ($this.hasAttr('ant-item-content')) ? true:false
                             });
                         }
                     },
@@ -5002,6 +5003,7 @@ function antenna($A){
                     var $this = $(this),
                         body = $this.data('body'),
                         kind = $this.data('kind'),
+                        isCustom = $this.data('isCustom'),
                         HTMLkind = $this.get(0).nodeName.toLowerCase(),
                         hashBody = body,
                         hash,
@@ -5013,6 +5015,7 @@ function antenna($A){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
+
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
@@ -5102,7 +5105,7 @@ function antenna($A){
                     if ( $hashParents.length ) {
                         ANT.actions.stripAntNode($hashParents);
                     }
-                    
+
                     // we will use this in the following conditionals
                     var thisTagName = $this.get(0).nodeName.toLowerCase();
 
@@ -5132,12 +5135,10 @@ function antenna($A){
 
                             // if this node, inside the hashNode, is an image, iframe, or embed...
                             // check to see if ti has any valid siblings (in case, say, the image is floated next to a paragraph)
-                            if ( $.inArray(tagName, embedTagsArray) != -1 ) {
-
-                                var $childNode = $(childNode);
-                                if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
-                                    
-                                }
+                            if ( isCustom || $.inArray(tagName, embedTagsArray) != -1 ) {
+                                // var $childNode = $(childNode);
+                                // if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
+                                // }
 
                             } else {
                                 dontHash = true;
