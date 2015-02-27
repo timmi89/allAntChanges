@@ -2037,12 +2037,12 @@ function antenna($A){
 
                 $new_aWindow.settings = settings;
 
-                $new_aWindow.on( "resizestop.ant", function(event, ui) {
-                    var $this = $(this);
+                // $new_aWindow.on( "resizestop.ant", function(event, ui) {
+                //     var $this = $(this);
                     
-                    //todo: examine resize
-                    // ANT.aWindow.updateSizes( $this );
-                });
+                //     //todo: examine resize
+                //     // ANT.aWindow.updateSizes( $this );
+                // });
 
                 return $new_aWindow;
             },
@@ -2745,7 +2745,7 @@ function antenna($A){
                 'startY':0
             },
             isTouchDragging: function(event) {
-                if (!isTouchBrowser) {return false;}
+                if (!isTouchBrowser) { return false;}
                 if (Math.abs(event.originalEvent.changedTouches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
                     return true;
                 } else {
@@ -2927,8 +2927,13 @@ function antenna($A){
 
                 // what is the stated canonical?
                 if (prop == "canonical_url") {
-                    var canonical_url = $('link[rel="canonical"]').length > 0 ?
+                    var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ?
                                 $('link[rel="canonical"]').attr('href') : page_url;
+
+                    // ant:url overrides
+                    if ( $('[property="antenna:url"]').length > 0 ) {
+                        canonical_url = $('[property="antenna:url"]').attr('content');
+                    }
                     
                     canonical_url = $.trim( canonical_url.toLowerCase() );
 
@@ -4117,17 +4122,20 @@ function antenna($A){
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                ANT.group.useDefaultSummaryBar = (
-                    ANT.engageScriptParams.bookmarklet &&
-                    !$('.ant-page-summary').length &&
-                    // !$(ANT.group.post_selector).length &&
-                    !$(ANT.group.summary_widget_selector).length
-                );
-                
-                if (ANT.group.useDefaultSummaryBar){
-                    //add a class defaultSummaryBar to show that this is our added ant-page-summary
-                    //and not a publisher added one.
-                    $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar"/>').appendTo('body');
+                if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
+                    ANT.group.useDefaultSummaryBar = (
+                        ANT.engageScriptParams.bookmarklet &&
+                        !$('.ant-page-summary').length &&
+                        // !$(ANT.group.post_selector).length &&
+                        !$(ANT.group.summary_widget_selector).length &&
+                        ANT.group.summary_widget_selector != 'none'
+                    ) ? true:false;
+
+                    if (ANT.group.useDefaultSummaryBar===true){
+                        //add a class defaultSummaryBar to show that this is our added ant-page-summary
+                        //and not a publisher added one.
+                        $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
+                    }
                 }
                 
                 // ANT.session.educateUser(); //this function has changed now
@@ -4331,7 +4339,7 @@ function antenna($A){
                             // }
 
                             var load_event_value = '';
-                            if (ANT.group.useDefaultSummaryBar){
+                            if (ANT.group.useDefaultSummaryBar === true){
                                 load_event_value = 'def';
                             } else {
                                 if (response.data.length === 1) {
@@ -4555,16 +4563,34 @@ function antenna($A){
                 };
 
         
-                $(window).on('scroll.ant', function() {
+                // $(window).on('scroll.ant', function() {
                     // i'm sure there is a good reason for this, but i don't recall what it is
                     // blog rolls maybe.  
-                    // YEP, blog rolls.
-                    ANT.actions.initPageData();
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
 
-                });
+                    // neither debounce nor throttle is working
+                    // ANT.util._.debounce( ANT.actions.initPageData, 150 );
+                    // ANT.util._.throttle( ANT.actions.initPageData, 150 );
+
+                // });
                 
                 $(window).on('scrollstart', function() {
+                    // i'm sure there is a good reason for this, but i don't recall what it is
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
+                    ANT.actions.initPageData();
+
                     ANT.actions.indicators.utils.updateContainerTrackers();
+                });
+
+                $(window).on('scrollstop', function() {
+                    // lets do it again to make sure we init the data that the person might view
+                    // suspect scrollstop > scrollstart, but either seems ok.
+
+                    // i'm sure there is a good reason for this, but i don't recall what it is
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
+                    ANT.actions.initPageData();
                 });
 
                 var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
@@ -4662,10 +4688,13 @@ function antenna($A){
 
                     });
                 } else {
-                    $('.ant, ' + ANT.group.active_sections).on('touchend.ant',function(e) {
+                    // $('.ant, ' + ANT.group.active_sections).on('touchend.ant',function(e) {
+                    // $('body').on( 'touchend.ant', '.ant, ' + ANT.group.active_sections, function(e){
+                    $('body').on( 'touchend.ant', function(e){
                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                         if ( ANT.util.isTouchDragging(e) ) { return; }
-                        if (ANT.util.bubblingEvents['touchend'] == false) {
+                        if (ANT.util.bubblingEvents['touchend'] === false) {
+
                             var $mouse_target = $(e.target);
 
                             if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
@@ -4682,9 +4711,11 @@ function antenna($A){
                     });
 
                     // iphone drag fix
-                    $('.ant, ' + ANT.group.active_sections).on('touchstart.ant',function(event) {
+                    // $('body').on( 'touchstart.ant', '.ant, ' + ANT.group.active_sections, function(e){
+                    $('body').on( 'touchstart.ant', function(e){
+                    // $('.ant, ' + ANT.group.active_sections).on('touchstart.ant',function(event) {
                     // $(document).on('touchstart.ant',function(event) {
-                        ANT.util.bubblingEvents['startY'] = event.originalEvent.touches[0].clientY;
+                        ANT.util.bubblingEvents['startY'] = e.originalEvent.touches[0].clientY;
                     });
 
                     // NOW NOT NEEDED.  USING math FROM TOUCHSTART plus if ( ANT.util.isTouchDragging(e) ) { return; }
@@ -7733,24 +7764,6 @@ if ( sendData.kind=="page" ) {
                         }
 
                         $indicator.$aWindow = $aWindow;
-
-                        var event_value = ($cta.attr('ant-mode')=="write") ? 'wr':'rd';
-
-                        // ANT.events.track( 'view_node::'+hash, hash );
-                        // ANT.events.track('start_react_text');
-
-                        // wtf is this here for?
-                        // ANT.events.trackEventToCloud({
-                        //     // category: "engage",
-                        //     // action: "aWindow_shown_"+ $cta.attr('ant-mode') +"mode",
-                        //     // opt_label: "kind: text, hash: " + hash,
-                        //     event_type: 'rs',
-                        //     event_value: event_value,
-                        //     container_hash: hash,
-                        //     container_kind: "text",
-                        //     page_id: page_id
-                        // });
-
                     }
                 },
                 update: function(hash, shouldReInit){
@@ -8180,12 +8193,11 @@ if ( sendData.kind=="page" ) {
                             // whiskey tango...?
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
-
                                 // write inline tags: readmode, for all content types (kind)
                                 ANT.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
-                                    if ( !summary.crossPage ) {
+                                    // if ( !summary.crossPage ) {
                                         ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                         $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                                             $aWindow.remove();
@@ -8194,8 +8206,9 @@ if ( sendData.kind=="page" ) {
                                             $('document').selog('selectEl', el);
                                             $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         });
-                                    }
+                                    // }
                                 } else {
+
                                     ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                     $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                                         var offsets = $aWindow.offset();
@@ -9865,8 +9878,8 @@ if ( sendData.kind=="page" ) {
                     }else{
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
-                        var displayDefaultBar = ( typeof ANT.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
-                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
+                        // var displayDefaultBar = ( ANT.group.useDefaultSummaryBar === true ) ? "top:-1000px !important":"";
+                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-1001px !important"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
@@ -10013,7 +10026,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv8"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv9"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10452,7 +10465,7 @@ function $AFunctions($A){
             //helper function for ajax above
             function _makeSummaryWidget(settings){
 
-                if (ANT.status.page === true) {
+                if (ANT.status.page === true && ANT.group.summary_widget_selector!='none') {
                     var page = settings;
                     
                     var widgetClass = 'ant-summary-key-'+page.key;

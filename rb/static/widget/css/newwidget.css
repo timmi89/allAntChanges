@@ -851,6 +851,7 @@ div.ant div.ant_comment textarea {
     -o-box-sizing : border-box;
     box-sizing : border-box;
     height:50px;
+    min-height:50px;
     font-size:11px;
     line-height: 16px;
     color: #666;
