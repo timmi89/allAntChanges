@@ -3329,13 +3329,17 @@ function antenna($A){
                 var isActive = true;
                 var ant_ab = JSON.parse( localStorage.getItem('ant_ab') );  // ab test candidate.  true = sees Antenna
 
-                if( ANT.group.ab_test_impact === true && (!ant_ab || new Date().getTime() > ant_ab.expires) ) {
+                if( ANT.group.ab_test_impact === true && (typeof ANT.group.ab_value!='undefined' || !ant_ab || new Date().getTime() > ant_ab.expires) ) {
                     // calculate whether or not they are in the active pool
                     var p=(10*ANT.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
 
                     // generate a random number.  if the number is lower than P, they will NOT see the widget
                     if ( Math.floor(Math.random() * 1000 ) <= p ) {
                         isActive = false;
+                    }
+
+                    if (typeof ANT.group.ab_value!='undefined') {
+                        isActive = (ANT.group.ab_value === 'true');
                     }
                     
 
