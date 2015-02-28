@@ -3339,7 +3339,7 @@ function antenna($A){
                     }
 
                     if (typeof ANT.group.ab_value!='undefined') {
-                        isActive = (ANT.group.ab_value === 'true');
+                        isActive = (ANT.group.ab_value === 'a');
                     }
                     
 
