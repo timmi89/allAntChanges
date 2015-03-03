@@ -1092,6 +1092,7 @@ div.ant.ant-summary a.ant_logo {
   display: inline-block;
   margin-right:5px;
   text-decoration: none;
+  vertical-align: bottom;
 }
 
 /*blunt attack for now*/

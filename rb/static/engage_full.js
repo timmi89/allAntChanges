@@ -4181,7 +4181,7 @@ function antenna($A){
                             var $post_href = $post.find(ANT.group.post_href_selector);
 
                             
-                            if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
+                            if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
                                 url = $post_href.attr('href');
@@ -5720,6 +5720,39 @@ function antenna($A){
                             var hash = $(this).data('hash');
                             hashes.push(hash);
                             ANT.actions.containers.media.onDisengage(hash);
+                        });
+
+                        $('.ant_indicator_for_media').each(function() {
+                            var $this = $(this),
+                                thisHash = $this.attr('id').substr(14),
+                                hashedItem = document.querySelectorAll('[ant-hash="'+thisHash+'"]')[0],
+                                visible = true;
+
+                            var nodes = [];
+                            nodes.push(hashedItem);
+                            while(hashedItem && hashedItem.parentNode) {
+                                nodes.unshift(hashedItem.parentNode);
+
+                                hashedItem = hashedItem.parentNode;
+                            // }
+                            // while (hashedItem) {
+                                // check this node's visibility
+                                if (hashedItem.offsetParent && hashedItem.offsetParent === null) { visible = false; }
+
+                                if (typeof hashedItem.style != 'undefined') {
+                                    var opacity = parseFloat(hashedItem.style.opacity);
+                                    if ( !isNaN( opacity ) && opacity < 1 ) { visible = false; }
+                                }
+                                
+                                nodes.unshift(hashedItem);
+                                hashedItem = hashedItem.parentNode;
+                            }
+
+                            // if not a visible media item, remove this indicator.  it'll get restored later.
+                            if (visible != true) {
+                                $this.parent().remove();
+                            }
+
                         });
                     }
                 },
@@ -10034,7 +10067,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv9"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv10"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
