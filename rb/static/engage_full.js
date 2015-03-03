@@ -4261,7 +4261,7 @@ function antenna($A){
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 // var pageUrl = ANT.util.getPageProperty('page_url');
 
-                var pageUrl = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'http://www.wallstcheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall' : ANT.util.getPageProperty('page_url');
+                var pageUrl = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'http://wallstcheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall' : ANT.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     var $body = $('body');
