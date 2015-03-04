@@ -3508,7 +3508,6 @@ function antenna($A){
                     //brute force for now -
                     //if they click the X we need this;
                     $('div.ant_indicator_for_media').hide();
-                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
@@ -4435,6 +4434,8 @@ function antenna($A){
                     $(ANT.group.active_sections) // imagemouseover
                         .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
 
+                            ANT.actions.containers.media.disengageAll();
+
                             var $this = $(this);
                             
                             var hash = $this.data('hash');
@@ -4675,7 +4676,7 @@ function antenna($A){
                 });
 
                 if ( !isTouchBrowser ) {
-                    $(document).on('mousedown.ant',function(event) {
+                    $(document).on('mouseup.ant',function(event) {
 
                         var $mouse_target = $(event.target);
 
@@ -4685,7 +4686,9 @@ function antenna($A){
                             //         ANT.util.userLoginState();
                             //     });
                             // }
+                            
                             ANT.actions.UIClearState();
+                            // setTimeout(ANT.actions.UIClearState, 333);
 
                             // if ( !isTouchBrowser ) {
                             $('div.ant_indicator_details_for_media').each( function() {
@@ -4840,6 +4843,11 @@ function antenna($A){
                     ANT.aWindow.closeAll();
                     ANT.actionbar.closeAll();
                     ANT.actions.containers.media.disengageAll();
+
+                    // feels super janky
+                    // doing this for slideshows, goal being to NOT have the publisher do a callback on slide-load-complete to ensure icons are cleared.
+                    setTimeout(ANT.actions.containers.media.disengageAll, 333); // ensure it happens after a slow moving slideshow...
+                    setTimeout(ANT.actions.containers.media.disengageAll, 1000); // ensure it happens after a slow moving slideshow...
                     // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     // $('div.ant.ant_tag_details.ant_sbRollover').remove();
                     
@@ -5737,11 +5745,15 @@ function antenna($A){
                             // }
                             // while (hashedItem) {
                                 // check this node's visibility
-                                if (hashedItem.offsetParent && hashedItem.offsetParent === null) { visible = false; }
+                                if (hashedItem.offsetParent && hashedItem.offsetParent === null) { 
+                                    visible = false;
+                                }
 
                                 if (typeof hashedItem.style != 'undefined') {
                                     var opacity = parseFloat(hashedItem.style.opacity);
-                                    if ( !isNaN( opacity ) && opacity < 1 ) { visible = false; }
+                                    if ( !isNaN( opacity ) && opacity < 1 ) { 
+                                        visible = false;
+                                    }
                                 }
                                 
                                 nodes.unshift(hashedItem);
@@ -10067,7 +10079,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv10"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv11"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
