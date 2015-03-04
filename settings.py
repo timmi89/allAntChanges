@@ -194,8 +194,8 @@ else:
         }
     }
     
-    #BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
-    BROKER_URL = "amqp://broadcast:51gn4l5@192.168.183.130:5672/antenna_broker"
+    BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
+    #BROKER_URL = "amqp://broadcast:51gn4l5@192.168.183.130:5672/antenna_broker"
       
 
 CELERY_ACCEPT_CONTENT = ['json']
