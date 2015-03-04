@@ -27,7 +27,8 @@ class Command(BaseCommand):
                     logger.info('migrating: ' + p.canonical_url + ' to: ' + 'http://www.' + new_group.short_name + new_url)
                     new_page = Page.objects.get(canonical_url = 'http://www.' + new_group.short_name + new_url, site__group = new_group)
                     interactions = Interaction.objects.filter(page = p, page__site__group = old_group)
-                    #interactions.update(page = new_page)
+                    migrated = interactions.update(page = new_page)
+                    logger.warn('MIGRATED: ' + str(migrated) + ' ' + str(new_page.id))
                     #logger.info(len(interactions))
                 except Page.DoesNotExist, pdne:
                     logger.warn('Unable to migrate: ' + str(p.id) + ' ' + p.canonical_url)
