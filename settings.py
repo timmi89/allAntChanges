@@ -182,7 +182,8 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
+            #'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
+            'LOCATION': ['192.168.182.48:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
@@ -194,6 +195,7 @@ else:
     }
     
     BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
+    #BROKER_URL = "amqp://broadcast:51gn4l5@192.168.183.130:5672/antenna_broker"
       
 
 CELERY_ACCEPT_CONTENT = ['json']
