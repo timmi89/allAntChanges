@@ -4602,6 +4602,8 @@ function antenna($A){
                     // blog rolls maybe.  
                     // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
                     ANT.actions.initPageData();
+
+                    ANT.actions.containers.media.disengageAll();
                 });
 
                 var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
