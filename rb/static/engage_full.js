@@ -44,13 +44,13 @@ ANT_offline = !!(
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 // fails on iPhone?
 // var isTouchBrowser = (
@@ -4020,7 +4020,8 @@ function antenna($A){
             initGroupData: function(groupShortName){
                 // request the ANT Group Data
 
-                var host = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'wallstcheatsheet.com':window.antenna_host;
+                // var host = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'wallstcheatsheet.com':window.antenna_host;
+                var host = window.antenna_host;
 
                 $.ajax({
                     url: ANT_baseUrl+"/api/settings/",
@@ -4260,7 +4261,8 @@ function antenna($A){
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
                 // var pageUrl = ANT.util.getPageProperty('page_url');
 
-                var pageUrl = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'http://wallstcheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall' : ANT.util.getPageProperty('page_url');
+                // var pageUrl = ( ANT.util.getPageProperty('page_url').indexOf('14-tv-shows-likely-to-get-the-axe') > 0 ) ? 'http://wallstcheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall' : ANT.util.getPageProperty('page_url');
+                var pageUrl = ANT.util.getPageProperty('page_url');
                 
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     var $body = $('body');
