@@ -44,13 +44,13 @@ ANT_offline = !!(
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
-// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
-// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
-ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
-ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
 // fails on iPhone?
 // var isTouchBrowser = (
@@ -4701,6 +4701,8 @@ function antenna($A){
                 } else {
                     // $('.ant, ' + ANT.group.active_sections).on('touchend.ant',function(e) {
                     // $('body').on( 'touchend.ant', '.ant, ' + ANT.group.active_sections, function(e){
+                    // $('body').on( 'touchstart.ant', function(e){
+                    // });
                     $('body').on( 'touchend.ant', function(e){
                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                         if ( ANT.util.isTouchDragging(e) ) { return; }
@@ -4712,7 +4714,8 @@ function antenna($A){
                                 // if ( ($mouse_target.hasAttr('ant-node') && $('.ant_window').length>1) || ( !$mouse_target.hasAttr('ant-node') && $('.ant_window').length ) ) {
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
-                                if ( !$mouse_target.hasAttr('ant-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
+                                // dunno why, of course.
+                                if ( !$mouse_target.closest('[ant-node]').length || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
                                     ANT.actions.UIClearState();
                                 }
                             }
@@ -5742,8 +5745,7 @@ function antenna($A){
                                 nodes.unshift(hashedItem.parentNode);
 
                                 hashedItem = hashedItem.parentNode;
-                            // }
-                            // while (hashedItem) {
+
                                 // check this node's visibility
                                 if (hashedItem.offsetParent && hashedItem.offsetParent === null) { 
                                     visible = false;
@@ -7520,6 +7522,7 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        // e.stopPropagation();
                                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
                                         if ( ANT.util.isTouchDragging(e) ) { return; }
                                         if (ANT.util.bubblingEvents['touchend'] == false) {
