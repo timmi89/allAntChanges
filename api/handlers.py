@@ -264,6 +264,14 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
+        
+        tag_is_default = False
+        
+        if 'is_default' in data['tag']:
+            tag_is_default = data['tag']['is_default']
+            
+        print tag_is_default
+
         if len(tag_body) > 35:
             return
         container_hash = data['hash']
@@ -299,7 +307,7 @@ class TagHandler(InteractionHandler):
         else:
             parent = None
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, kind, inode, group, parent)
+        interaction = createInteraction(page, container, content, user, kind, inode, group, parent, tag_is_default)
         
         return interaction
 

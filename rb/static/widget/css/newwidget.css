@@ -205,7 +205,7 @@ span.ant_react_label {
   /*font-weight:bold;*/
   /*padding:0px;*/
   /*display: inline-block;*/
-  color:#888;
+  color:#fff;
   cursor:pointer;
 }
 div.ant_indicator_for_text span.ant_react_label {
@@ -2279,6 +2279,9 @@ div.ant div.ant_indicator_stats img.ant_pin {
 /*div.ant_indicator_details img.ant_pin{ 
 }
 */
+div.ant_indicator.ant_indicator_for_text div.ant_indicator_container {
+  position: relative;
+} 
 div.ant_indicator.ant_indicator_for_text div.ant_indicator_body { 
     position:absolute;
     /*don't make important so that our js can update*/
@@ -2320,27 +2323,38 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body .ant_co
 
 div.ant_indicator_for_media div.ant_indicator_body{
   color: #008de4;
-  padding: 5px 0 0 0;
-  height:22px;
-  background: rgba(255,255,255,0.95);
+  padding: 8px 0 0 0;
+  height:25px;
+  text-shadow:0px 0px 6px rgba(0,0,0,0.5);
+  /*background: rgba(0,0,0,0.1);*/
+  /*background: rgba(255,255,255,0.95);*/
   /*border: 0px solid #c9c9c9;*/
   /*border-radius: 6px;*/
+}
+div.ant_indicator_for_media.ant_visible div.ant_indicator_body{
+  text-shadow:none;
+  background: rgba(0,0,0,0.2);
 }
 /*div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
   background: rgba(255,255,255,0.95);
 }*/
 div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
-  margin-left:4px;
-  /*top: -3px;*/
+  color:#fff;
+  margin-left: 8px;
+  top: -2px;
   position: relative;
+}
+body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
+  margin-left: 4px;
+  color:#777;
 }
 
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body{
-background: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.75);
   text-shadow:none;
 }
 div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
-  -moz-box-shadow:
+  /*-moz-box-shadow:
     0px 1px 3px rgba(000,000,000,0.3),
     inset 0px 0px 3px rgba(255,255,255,1);
   -webkit-box-shadow:
@@ -2348,7 +2362,8 @@ div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
     inset 0px 0px 3px rgba(255,255,255,1);
   box-shadow:
     0px 1px 3px rgba(000,000,000,0.3),
-    inset 0px 0px 3px rgba(255,255,255,1);
+    inset 0px 0px 3px rgba(255,255,255,1);*/
+
 }
 
 /*div.ant_indicator_for_media div.ant_indicator_body:hover {*/
@@ -2446,6 +2461,7 @@ div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
 }
 
 div.ant_indicator_for_media_inline {
+    margin-top:-3px;
     max-width:21px;
     transition: max-width 200ms;
 }
@@ -2571,12 +2587,14 @@ div.ant_indicator.ant_indicator_for_text span.ant_count {
 div.ant_indicator.ant_indicator_for_media span.ant_count {
   display:inline-block;
   visibility: hidden;
-  margin:-3px 0 0 1px;
+  margin:-6px 0 0 1px;
   font-size:11px;
+  font-weight:normal;
   max-width:20px;
   transition: max-width 200ms;
   overflow: hidden;
   vertical-align: text-top;
+  color:#fff;
 }
 div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
   max-width:130px;

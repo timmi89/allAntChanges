@@ -283,7 +283,7 @@ def deleteInteraction(interaction, user):
     else:
         raise JSONException("Missing interaction or user")
 
-def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None, tag_is_default=False):
     approveOnCreate = False if group.requires_approval else True
 
     interaction_node.body = strip_tags(interaction_node.body)
@@ -400,6 +400,8 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         if not tempuser:
             pass
         elif parent:
+            pass
+        elif tag_is_default:
             pass
         else:
             if interaction_node in group.blessed_tags.all():
