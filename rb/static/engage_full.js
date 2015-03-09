@@ -452,7 +452,7 @@ function antenna($A){
                     // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
                     // modified to reference 'default_reactions' instead of 'blessed_tags'
                     return $.map(tagsList, function(val, idx){
-                        return {body: val};
+                        return {body: val, 'is_default':true};
                     });
                 }
             },
@@ -1463,7 +1463,6 @@ function antenna($A){
                                     $reactionsTable = createReactedContentTable($this, counts, page.id);
 
                                 renderReactedContent( $reactionsTable, tag );
-
                                 $this.addClass('ant_live_hover');
                             };
 
@@ -1670,7 +1669,7 @@ function antenna($A){
                                 $container = summary.$container,
                                 kind = summary.kind,
                                 rewritable = (settings.rewritable == false) ? false:true,
-                                coords = {};
+                                coords = (settings.coords) ? settings.coords:{};
 
                             var actionType = (settings.actionType) ? settings.actionType:"react";
 
@@ -1704,11 +1703,18 @@ function antenna($A){
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
+
                                     //temp fix to set the content (the text) of the selection to the new selection
                                     //todo: make selog more integrated with the rest of the code
                                     settings.content = newSel.text;
-                                    coords.left = coords.left + 40;
-                                    coords.top = coords.top + 35;
+                                    if (!coords.force) {
+                                        coords.left = coords.left + 40;
+                                        coords.top = coords.top + 35;
+                                    } else {
+                                        // force is only used from a write-mode paragraph helper, i think
+                                        coords.top = coords.top - 15;
+                                    }
+
                                     //if sel exists, reset the offset coords
                                     if(newSel){
                                         //todo - combine with copy of this
@@ -1719,11 +1725,14 @@ function antenna($A){
                                         if( $hiliteEnd ){
                                             var $helper = $('<span />');
                                             $helper.insertAfter( $hiliteEnd );
-                                            var strRight = $helper.offset().right;
-                                            var strBottom = $helper.offset().bottom;
+                                            if (!coords.force) {
+                                                var strRight = $helper.offset().right;
+                                                var strBottom = $helper.offset().bottom;
+                                                coords.left = strRight - 14; //with a little padding
+                                                coords.top = strBottom + 2;
+                                            }
+
                                             $helper.remove();
-                                            coords.left = strRight - 14; //with a little padding
-                                            coords.top = strBottom + 2;
                                         }
                                     }
 
@@ -2024,7 +2033,6 @@ function antenna($A){
                         // }
                     });
                 }
-
                 var coords = settings.coords;
 
                 $new_aWindow.css('left', coords.left + 'px');
@@ -2413,6 +2421,7 @@ function antenna($A){
                     $new_actionbar.data( 'ant_actionbarShowTimer', setTimeout(function() {
                         // ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
                         ANT.actionbar.close( $new_actionbar );
+                        $('[ant-hash="'+hash+'"]').removeClass('ant_live_hover');
                     }, 1000 ) );
 
                 }).on('click.ant', clickAction );
@@ -4846,6 +4855,7 @@ function antenna($A){
                     //ANT.actions.UIClearState:
                     // clear any errant tooltips
                     $('div.ant_twtooltip').remove();
+                    $('.ant_live_hover').removeClass('ant_live_hover');
 
                     ANT.aWindow.closeAll();
                     ANT.actionbar.closeAll();
@@ -7477,7 +7487,7 @@ if ( sendData.kind=="page" ) {
                             if ($('#ant_indicator_'+hash).length) {
                                 return;
                             }
-                            var $indicator = summary.$indicator = $('<div class="ant_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            var $indicator = summary.$indicator = $('<div class="ant_indicator"><div class="ant ant_indicator_container" /></div>').attr('id',indicatorId).data('hash',hash);
                             if (kind!='text' && ANT.group.img_indicator_show_onload===true) { $indicator.addClass('ant_show_on_load'); }
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
@@ -7576,7 +7586,7 @@ if ( sendData.kind=="page" ) {
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="ant ant_indicator_body " />')
                             .attr('id',indicatorBodyId)
-                            .appendTo($indicator)
+                            .appendTo($indicator.find('.ant_indicator_container'))
                             .append(
                                 '<span class="ant-antenna-logo"></span>',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
@@ -7682,7 +7692,10 @@ if ( sendData.kind=="page" ) {
 
                     }
                     function _updateAWindowForHelperIndicator(){
+                        // for some reason, if we don't do re-set the $indicator, and the indicator is positioned absolutely, we get bad values returned
+                        var $indicator = $('#ant_indicator_'+hash);
                         var actionbarCoords = {
+                            force:true,
                             top: $indicator.offset().top+11,
                             left: $indicator.offset().left-8
                         };
@@ -7692,7 +7705,8 @@ if ( sendData.kind=="page" ) {
                             var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
-                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                            $aWindow = ANT.aWindow.make( "writeMode", {coords:actionbarCoords,hash:hash} );
+                            $container.removeClass('ant_live_hover');
                         };
 
                         var $actionbar = ANT.actionbar.draw({
@@ -7702,7 +7716,6 @@ if ( sendData.kind=="page" ) {
                             hash:hash,
                             clickAction:clickAction
                         });
-
 
                         // var $aWindow = $indicator.$aWindow;
                         // var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
@@ -10086,7 +10099,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv11"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv12"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
