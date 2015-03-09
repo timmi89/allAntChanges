@@ -270,8 +270,7 @@ class TagHandler(InteractionHandler):
         if 'is_default' in data['tag']:
             tag_is_default = data['tag']['is_default']
             
-        print tag_is_default
-
+        
         if len(tag_body) > 35:
             return
         container_hash = data['hash']
@@ -614,16 +613,10 @@ class SettingsHandler(AnonymousBaseHandler):
     @json_data
     def read(self, request, data, group_id=None):
         host = getHost(request)
-        print "* * * * data "
-        print data
-        print "* * * * host "
-        print host
         if data and data['host_name']:
             host = data['host_name']
 
-        print "* * * * host 2"
-        print host
-        
+       
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))
         if cached_result is not None:
