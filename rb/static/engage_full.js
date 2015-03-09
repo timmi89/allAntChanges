@@ -1150,7 +1150,7 @@ function antenna($A){
 
                     lineOne = $.trim(lineOne) + ' '; // trim front space, add end space... won't wrap given css rule
                     var lineOneLength = ( lineOne.length > 17 ) ? "max" : lineOne.length;
-                    lineOne = '<div class="ant_charCount_' +  + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
+                    lineOne = '<div class="ant_charCount_' + lineOneLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
 
                     if (lineTwo!='') {
                         lineTwo = $.trim(lineTwo);
@@ -10099,7 +10099,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv13"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv14"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
