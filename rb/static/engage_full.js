@@ -1154,7 +1154,7 @@ function antenna($A){
 
                     if (lineTwo!='') {
                         lineTwo = $.trim(lineTwo);
-                        var lineTwoLength = ( lineTwo.length > 17 ) ? "max" : lineOne.length;
+                        var lineTwoLength = ( lineTwo.length > 17 ) ? "max" : lineTwo.length;
                         lineTwo = '<div class="ant_charCount_' + lineTwoLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineTwo + '</div>';
                     }
 
