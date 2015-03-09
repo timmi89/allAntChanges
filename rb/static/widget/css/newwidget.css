@@ -1809,7 +1809,8 @@ div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_ch
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_14,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_15,
 div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_16,
-div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_17 { font-size:11px; }
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_17,
+div.ant div.ant_body.ant_tags_list .ant_box.ant_box_medium .ant_tag_body .ant_charCount_max { font-size:11px; }
 
 div.ant.w222 div.ant_body.ant_tags_list .ant_box_medium:only-child .ant_tag_body div { display:inline; }
 
