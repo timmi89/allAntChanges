@@ -4182,14 +4182,15 @@ function antenna($A){
                         ANT.group.post_href_selector !== "" && 
                         ANT.group.summary_widget_selector !== ""
                     ) {
+
                         var $posts = $(ANT.group.post_selector),
                             num_posts = $posts.length;
+
                         //if $(ANT.group.post_selector).length is 0, this will just do nothing
                         $posts.each( function(){
                             // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
-
                             
                             if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
@@ -4207,7 +4208,7 @@ function antenna($A){
                                     g = d.getElementsByTagName('body')[0],
                                     x = w.innerWidth || e.clientWidth || g.clientWidth,
                                     y = w.innerHeight|| e.clientHeight|| g.clientHeight,
-                                    top = (d && d.scrollTop  || g && g.scrollTop  || 0),
+                                    top = $(document).scrollTop(),
                                     almostInView = y+top+300;
 
                                 if ( offsets.top < almostInView ) {
@@ -4272,7 +4273,7 @@ function antenna($A){
                 // var pageUrl = ANT.util.getPageProperty('page_url');
 
                 var pageUrl = ANT.util.getPageProperty('page_url');
-                
+
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     var $body = $('body');
 
@@ -4324,7 +4325,6 @@ function antenna($A){
                 };
 
                 if (pagesArr.length) {
-
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
                     //might not want to send canonical, or, send it separately if/only if it's different than URL
                     $.ajax({

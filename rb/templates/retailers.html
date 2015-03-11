@@ -152,6 +152,21 @@
         .on('click', function() { $(this).css('bottom', '-300px'); }); 
       }
     },false); 
+var reactionViewCount = 0;
+    document.addEventListener("antenna.reactionview", function(){
+        console.log(1);
+      var lastEvent = antenna.getLastEvent();
+        console.log(lastEvent)
+      if (lastEvent.event == 'antenna.reactionview' ) {
+        reactionViewCount++;
+        
+        if (reactionViewCount == 3) {
+            $('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+            .on('click', function() { $(this).css('bottom', '-300px'); }); 
+            reactionViewCount = 0;
+        }
+      }
+    },false); 
 
     $('.contact').on('click', function(e) {
         e.preventDefault();
