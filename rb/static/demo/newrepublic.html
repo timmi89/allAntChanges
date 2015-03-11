@@ -1100,7 +1100,7 @@ window.antenna_extend = {
     "summary_widget_selector": '.author [rel="author"]',
     "summary_widget_method": "after",
     anno_whitelist: "p,img,li,blockquote,div.ant_br_replaced",
-    no_readr:'.right.rail',
+    no_readr:'.right.rail,.module,.story.image,.story.image+img,.modal,.header,.footer',
     // custom_css:"body div.ant.ant-summary {position:relative; top:-20px; margin: 0px 0 10px; } body div.ant-custom-cta-container {margin:15px auto 0; width:110px; padding:0; } body p.wp-caption-text.no-ant {margin: -45px 0 35px; }",
     // "custom_css": "body div.ant.ant-summary {\r\nposition:relative;\r\nmargin: 0px 0 10px;\r\n}\r\n\r\nbody div.ant-custom-cta-container {\r\npadding:0;\r\nposition:absolute;\r\nmargin:15px 320px;\r\n}\r\n\r\n\r\nbody .fluid-width-video-wrapper div.ant-custom-cta-container {\r\nposition: absolute;\r\nbottom: -34px;\r\nright: 0;\r\n}",
     // custom_css: "body div.ant.ant-summary {\r\nposition:relative;\r\nmargin: 0px 0 10px;\r\n}\r\n\r\n/* kellie, i think this absolute positioning is causing mobile to be unseen, and causing a click on antenna to also click the image.  instead, i'll use margin to push the call-to-action down, and a negative bottom margin to pull the caption up */\r\nbody div.ant-custom-cta-container {\r\n/*\r\npadding:0;\r\nposition:absolute;\r\nmargin:15px 320px;\r\n*/\r\n\r\n\r\nmargin-top: 22px;\r\nmargin-bottom: -49px;\r\n}\r\n\r\np.wp-caption-text.no-ant {\r\npadding: 0 0 3em 0;\r\n}\r\n\r\nbody .fluid-width-video-wrapper div.ant-custom-cta-container {\r\nposition: absolute;\r\nbottom: -34px;\r\nright: 0;\r\n}\r\n\r\n",
