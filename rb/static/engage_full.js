@@ -4850,6 +4850,14 @@ function antenna($A){
                 // ANT.actions.reInit:
                 ANT.actions.hashCustomDisplayHashes();
             },
+            reset: function() {
+                // ANT.actions.reset:
+                $('[ant-page-checked]').removeAttr('ant-page-checked');
+                $('[ant-page-container]').removeAttr('ant-page-container');
+                $('.ant-summary').remove();
+                ANT.actions.initPageData();
+                ANT.actions.hashCustomDisplayHashes();
+            },
             UIClearState: function(e){
                 // if (!isTouchBrowser) {
                     //ANT.actions.UIClearState:
