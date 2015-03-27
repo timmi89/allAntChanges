@@ -8658,10 +8658,17 @@ if ( sendData.kind=="page" ) {
                                 modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0,
                                 modMediaSide = (summary.kind=="media") ? 12:0;
 
-                            var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight - 12 ) : (containerHeight + modIEHeight - 22) );
-                            var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left+modMediaSide) : ( $(window).width() - (containerOffsets.left+containerWidth-modMediaSide) );
+                            var cssTopOrBottom = (ANT.group.img_indicator_show_side.indexOf('top') != -1) ? 'top':'bottom';
+                            if (cssTopOrBottom == 'top') {
+                                var cssTop = containerOffsets.top + 3;
+                            } else {
+                                var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight - 12 ) : (containerHeight + modIEHeight - 22) );
+                            }
+
+                            var cssSide = (ANT.group.img_indicator_show_side.indexOf('right') != -1) ? 'right':'left';
+                            var cssSideDistance = (cssSide == 'left') ? (containerOffsets.left+modMediaSide) : ( $(window).width() - (containerOffsets.left+containerWidth-modMediaSide) );
                             var indicatorPosition = {};
-                            indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
+                            indicatorPosition[cssSide] = cssSideDistance + 'px';
                             indicatorPosition['top'] = cssTop+'px';
 
                             ANT.util.cssSuperImportant( $indicator, indicatorPosition, true);
@@ -10107,7 +10114,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv14"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv15"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

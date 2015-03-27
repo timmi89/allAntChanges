@@ -2463,7 +2463,7 @@ div.ant_sandbox.ant_media_details div.ant_indicator_details_for_media {
 
 div.ant_indicator_for_media_inline {
     margin-top:-3px;
-    max-width:21px;
+    max-width:27px;
     transition: max-width 200ms;
 }
 /*div.ant_indicator_for_media_inline div.ant_indicator_body { */
