@@ -189,6 +189,7 @@ function antenna($A){
                 tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
                 // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
                 tags_bg_css: '',
+                ignore_subdomain: false,
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -2932,8 +2933,7 @@ function antenna($A){
                 var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
-                    return page_url;
-                    // return $.trim( page_url.toLowerCase() );
+                    return removeSubdomain(page_url);
                 }
 
                 // what is the stated canonical?
@@ -2961,7 +2961,26 @@ function antenna($A){
                         }
                     }
 
-                    return $.trim(canonical_url);
+                    return removeSubdomain($.trim(canonical_url));
+                }
+
+                // if "ignore_subdomain" is checked in settings, AND they supply a TLD,
+                // then modify the page and canonical URLs here.
+                // have to have them supply one because there are too many variations to reliably strip subdomains  (.com, .is, .com.ar, .co.uk, etc)
+                function removeSubdomain(url) {
+                    if (ANT.group.ignore_subdomain == true && ANT.group.page_tld) {
+                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
+                        var srcArray = url.split('/');
+
+                        var protocol = srcArray[0];
+                        srcArray.splice(0,3);
+
+                        var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
+
+                        return returnUrl;
+                    } else {
+                        return url;
+                    }
                 }
             },
             buildInteractionData: function() {
@@ -4125,6 +4144,10 @@ function antenna($A){
                         if ( ANT.group.custom_css !== "" ) {
                             $('head').append( $('<style type="text/css">' + ANT.group.custom_css + '</style>') );
                         }
+
+                        // if (ANT.group.antenna_host) {
+                        //     window.antenna_host = ANT.group.antenna_host;
+                        // }
 
                         $ANT.dequeue('initAjax');
 

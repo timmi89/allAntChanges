@@ -175,6 +175,8 @@ class Group(models.Model):
     word_blacklist = models.TextField(blank=True)
     paragraph_helper = models.BooleanField(default=True)
     media_url_ignore_query = models.BooleanField(default=True)
+    ignore_subdomain = models.BooleanField(default=False)  
+    page_tld = models.CharField(max_length=255, default='', blank=True)
     
     # is premium?
     premium = models.BooleanField(default=False)

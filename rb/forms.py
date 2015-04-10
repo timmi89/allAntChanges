@@ -400,6 +400,8 @@ class GroupForm(forms.ModelForm):
             'tags_bg_css',
             'image_selector',
             'image_attribute',
+            'ignore_subdomain',
+            'page_tld',
             'show_recirc',
             'recirc_selector',
             'recirc_title',

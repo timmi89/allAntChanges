@@ -80,7 +80,7 @@
                     <span>Defines sections that Antenna should always ignore.</span>
                     <span class="formInputExample">Example: <i>.myHeader, .mySidebar, .myFooter</i></span>
                 </label>
-                {{ form.no_readr }}{{ form.no_rdr.errors }}
+                {{ form.no_readr }}{{ form.no_readr.errors }}
             </div>
             <!--
             <div class="formRow">
@@ -315,7 +315,7 @@
             </div>
         </section>
         <section class="">
-            <h3>Miscellaneous</h3>
+            <h3>Look &amp; Feel</h3>
             <div class="formRow">
                 <label for="id_custom_css"><span class="labelTitle">Custom CSS </span><span>Custom CSS rules to embed on the page.</span></label>
                 {{ form.custom_css }}
@@ -402,6 +402,21 @@
             </div> -->
 
         </section>
+        <section class="">
+            <h3>Miscellaneous</h3>
+            <div class="formRow" style="margin: 10px 0;">
+                {{ form.ignore_subdomain }}{{ form.ignore_subdomain.errors }}
+                <label for="id_ignore_subdomain"><span class="labelTitle">Ignore Site Subdomain? </span><span>Check this if you want Antenna to see all subdomains -- www.yoursite.com, m.yoursite.com, etc -- as the same site with the same content.</span></label>
+            </div>
+            <div class="formRow tld_options {% if group.show_recirc == True %}visible{% endif %}">
+                <label for="id_page_tld">
+                    <span class="labelTitle">Page TLD</span>
+                    <span>What TLD should your page URLs have?</span>
+                    <span class="formInputExample">If you want pages at www.yoursite.com and m.yoursite.com to </span>
+                </label>
+                {{ form.page_tld }}{{ form.page_tld.errors }}
+            </div>
+        </section>
     </div>
 {% comment %}
   {{ form.as_p }}
@@ -425,7 +440,9 @@
 
 {% block pageJS %}
     <style>
+    .tld_options,
     .recirc_options             { height:0; overflow:hidden; }
+    .tld_options.visible,
     .recirc_options.visible     { height:auto; overflow:visible; }
     </style>
     <script>
@@ -469,6 +486,10 @@
 
             $('#id_show_recirc').change( function() {
                 $('.recirc_options').toggleClass('visible')
+            });
+
+            $('#id_ignore_subdomain').change( function() {
+                $('.tld_options').toggleClass('visible')
             });
 
         });
