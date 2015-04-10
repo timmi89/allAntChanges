@@ -4442,72 +4442,14 @@ function antenna($A){
 
                 }else if ( ANT.util.activeAB() )  {
 
-                    $(ANT.group.active_sections) // imagemouseover
+                    $(ANT.group.active_sections) // imagemouseover imghover imagehover imgmouseenter
                         .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
-
                             ANT.actions.containers.media.disengageAll();
 
                             var $this = $(this);
+                            $this.addClass('ant_live_hover');
                             
-                            var hash = $this.data('hash');
-
-                                ANT.actions.indicators.utils.updateContainerTrackers();
-
-                            if ( $this.closest('.no-ant').length ) {
-                                return;
-                            }
-                            var minImgWidth = 100;
-                            if ( $this.width() >= minImgWidth ) {
-
-                                var hasBeenHashed = $this.hasAttr('ant-hashed'),
-                                    isBlacklisted = $this.closest('.ant, .no-ant').length;
-
-                                $this.addClass('ant_live_hover');
-
-                                if(!hasBeenHashed && !isBlacklisted){
-                                    var hashListsByPageId = ANT.actions.hashNodes( $(this) );
-
-                                    //we expect just the one here, so just get that one.
-                                    var hash;
-                                    $.each( hashListsByPageId, function(page_id, hashArray) {
-                                        hash = hashArray[0];
-                                    });
-                                    if(!hash){
-                                        //i think there should always be a hash though
-                                        ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
-                                        return;
-                                    }
-
-                                    ANT.actions.sendHashes( hashListsByPageId, function(){
-                                        if( $this.hasClass('ant_live_hover') ){
-                                            if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                                // $('#ant_indicator_' + hash).show();
-                                                $('#ant_indicator_' + hash).addClass('ant_visible');
-                                            }
-                                        }
-                                        ANT.actions.content_nodes.init(hash, function(){});
-                                    });
-                                    //these calls are redundant to the same calls in the callback above,
-                                    //but this will make them show up right away,
-                                    //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                                    // ANT.actions.indicators.utils.borderHilites.update(hash);
-                                    // ANT.actions.indicators.utils.borderHilites.engage(hash);
-
-                                } else {
-                                    var hash = $this.data('hash');
-
-                                    $this.addClass('ant_live_hover');
-                                    if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                        $('#ant_indicator_' + hash).addClass('ant_visible');
-
-                                        // $('#ant_indicator_' + hash).show();
-                                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
-                                    }
-
-                                    ANT.actions.content_nodes.init(hash, function(){});
-                                }
-
-                            }
+                            ANT.actions.mediaNodeInit($this);
                         })
                         .on( 'mouseleave.ant', 'embed, video, object, iframe, img', function(event){
                             var $this = $(this),
@@ -4532,6 +4474,68 @@ function antenna($A){
                     $('#ant_indicator_' + hash).hide();
                 }
 
+            },
+            mediaNodeInit: function($this) {
+
+                //ANT.actions.mediaNodeInit:
+                var hash = $this.data('hash');
+
+                    ANT.actions.indicators.utils.updateContainerTrackers();
+
+                if ( $this.closest('.no-ant').length ) {
+                    return;
+                }
+                var minImgWidth = 100;
+
+                if ( $this.width() >= minImgWidth ) {
+                    var hasBeenHashed = $this.hasAttr('ant-hashed'),
+                        isBlacklisted = $this.closest('.ant, .no-ant').length;
+
+                    if(!hasBeenHashed && !isBlacklisted){
+
+                        var hashListsByPageId = ANT.actions.hashNodes( $this );
+
+                        //we expect just the one here, so just get that one.
+                        var hash;
+                        $.each( hashListsByPageId, function(page_id, hashArray) {
+                            hash = hashArray[0];
+                        });
+                        if(!hash){
+                            //i think there should always be a hash though
+                            ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                            return;
+                        }
+
+                        ANT.actions.sendHashes( hashListsByPageId, function(){
+                            // if( $this.hasClass('ant_live_hover') ){
+                                if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                                    // $('#ant_indicator_' + hash).show();
+                                    $('#ant_indicator_' + hash).addClass('ant_visible');
+                                }
+                            // }
+                            ANT.actions.content_nodes.init(hash, function(){});
+                        });
+
+                        //these calls are redundant to the same calls in the callback above,
+                        //but this will make them show up right away,
+                        //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
+                        // ANT.actions.indicators.utils.borderHilites.update(hash);
+                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
+
+                    } else {
+                        var hash = $this.data('hash');
+                        // $this.addClass('ant_live_hover');
+                        if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                            $('#ant_indicator_' + hash).addClass('ant_visible');
+
+                            // $('#ant_indicator_' + hash).show();
+                            // ANT.actions.indicators.utils.borderHilites.engage(hash);
+                        }
+
+                        ANT.actions.content_nodes.init(hash, function(){});
+                    }
+
+                }
             },
             initEnvironment: function(){
                 // if B group, ensure separate CTAs are not visible, but try not to reflow
@@ -4848,6 +4852,7 @@ function antenna($A){
             },
             reInit: function() {
                 // ANT.actions.reInit:
+                ANT.actions.resetCustomDisplayHashes();
                 ANT.actions.hashCustomDisplayHashes();
             },
             reset: function() {
@@ -5479,6 +5484,17 @@ function antenna($A){
                 }
                 
             },
+            resetCustomDisplayHashes: function($nodes) {
+                // ANT.actions.resetCustomDisplayHashes:
+                if (!$nodes) {
+                    $nodes = $('[ant-item]');
+                }
+
+                $nodes.each( function( idx, node ) {
+                    var $node = $(node);
+                    $node.removeAttr('ant-hash').removeAttr('ant-hasindicator').removeAttr('ant-node').removeAttr('ant-hashed').removeAttr('ant-summary-loaded');
+                });
+            },
             hashCustomDisplayHashes: function() {
                 // ANT.actions.hashCustomDisplayHashes:
 
@@ -5498,6 +5514,7 @@ function antenna($A){
                         pageCustomDisplays[ pageId ].push( thisHash );
 
                         ANT.actions.indicators.init( thisHash );
+                        ANT.actions.mediaNodeInit($node);
                     });
 
                 }
@@ -7885,8 +7902,8 @@ if ( sendData.kind=="page" ) {
                                     //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
                                     // });
                                     // $counter.html( ANT.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
-                                // } else {
-                                //     $counter.html('0');
+                                } else {
+                                    $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
