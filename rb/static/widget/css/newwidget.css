@@ -2078,6 +2078,7 @@ div.ant_indicator {
     -moz-opacity:1.0 !important;
     -khtml-opacity:1.0 !important;
     visibility: visible;
+    max-width: none;
 }
 /*
 #ant_sandbox.isTouchBrowser div.ant_indicator.ant_indicator_for_media.ant_indicator_not_img {
@@ -2353,6 +2354,10 @@ body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body .ant-a
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body{
   background: rgba(255,255,255,0.75);
   text-shadow:none;
+  margin-top: 4px;
+  padding-left: 3px;
+  padding-top: 7px;
+  height:21px;
 }
 div.ant_indicator_for_media.ant_indicator_not_img div.ant_indicator_body{
   /*-moz-box-shadow:
@@ -2610,6 +2615,9 @@ div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
 body.ant_touch_browser div.ant_indicator.ant_indicator_for_media span.ant_count {
   font-size:11px;
   padding-right:7px;
+  color:#777;
+  visibility: visible;
+  max-width: none;
 }
 
 span.ant_indicator_categoryTitle{ 

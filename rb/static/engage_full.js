@@ -7967,7 +7967,9 @@ if ( sendData.kind=="page" ) {
                                 $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 $count_label.text(reactionLabel);
                             } else {
-                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                // $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' );
+                                // $count_label.html( reactionLabel );
                             }
                             if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
@@ -10154,7 +10156,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv15"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv16"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
