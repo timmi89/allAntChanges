@@ -4887,6 +4887,7 @@ function antenna($A){
                 ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
+                    e.preventDefault();
                 // if (!isTouchBrowser) {
                     //ANT.actions.UIClearState:
                     // clear any errant tooltips
