@@ -2933,7 +2933,7 @@ function antenna($A){
                 var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
-                    return removeSubdomain(page_url);
+                    return ANT.actions.removeSubdomainFromPageUrl(page_url);
                 }
 
                 // what is the stated canonical?
@@ -2961,27 +2961,9 @@ function antenna($A){
                         }
                     }
 
-                    return removeSubdomain($.trim(canonical_url));
+                    return ANT.actions.removeSubdomainFromPageUrl($.trim(canonical_url));
                 }
 
-                // if "ignore_subdomain" is checked in settings, AND they supply a TLD,
-                // then modify the page and canonical URLs here.
-                // have to have them supply one because there are too many variations to reliably strip subdomains  (.com, .is, .com.ar, .co.uk, etc)
-                function removeSubdomain(url) {
-                    if (ANT.group.ignore_subdomain == true && ANT.group.page_tld) {
-                        var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
-                        var srcArray = url.split('/');
-
-                        var protocol = srcArray[0];
-                        srcArray.splice(0,3);
-
-                        var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
-
-                        return returnUrl;
-                    } else {
-                        return url;
-                    }
-                }
             },
             buildInteractionData: function() {
                 //ANT.util.buildInteractionData
@@ -4218,7 +4200,7 @@ function antenna($A){
                             if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
-                                url = $post_href.attr('href');
+                                url = ANT.actions.removeSubdomainFromPageUrl( $post_href.attr('href') );
                             }
 
                             var $summary_widget = $post.find(ANT.group.summary_widget_selector).eq(0);
@@ -5517,6 +5499,24 @@ function antenna($A){
                     var $node = $(node);
                     $node.removeAttr('ant-hash').removeAttr('ant-hasindicator').removeAttr('ant-node').removeAttr('ant-hashed').removeAttr('ant-summary-loaded');
                 });
+            },
+            removeSubdomainFromPageUrl: function(url) {
+                // ANT.actions.removeSubdomainFromPageUrl:
+                // if "ignore_subdomain" is checked in settings, AND they supply a TLD,
+                // then modify the page and canonical URLs here.
+                // have to have them supply one because there are too many variations to reliably strip subdomains  (.com, .is, .com.ar, .co.uk, etc)
+                if (ANT.group.ignore_subdomain == true && ANT.group.page_tld) {
+                    var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
+                    var srcArray = url.split('/');
+
+                    var protocol = srcArray[0];
+                    srcArray.splice(0,3);
+
+                    var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
+                    return returnUrl;
+                } else {
+                    return url;
+                }
             },
             hashCustomDisplayHashes: function() {
                 // ANT.actions.hashCustomDisplayHashes:
@@ -10156,7 +10156,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv17"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv18"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
