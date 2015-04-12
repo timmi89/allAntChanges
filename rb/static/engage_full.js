@@ -4240,6 +4240,7 @@ function antenna($A){
                                 // does this URL have the origin on it?  or does it just begin with a relative path?
                                 if ( url.indexOf(window.location.origin) == -1 ) {
                                     // dont do this if we're supposed to ignore the subdomains
+                                    // "ignore" really means "override"
                                     if (ANT.group.ignore_subdomain != true) {
                                         if ( url.substr(0,1) == "/" ) {
                                             url = window.location.origin + url;
@@ -7932,8 +7933,8 @@ if ( sendData.kind=="page" ) {
                                     //     summary.top_interactions = $.extend(true, {}, content_node.top_interactions );
                                     // });
                                     // $counter.html( ANT.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
-                                } else {
-                                    $counter.html('0');
+                                // } else {
+                                    // $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
