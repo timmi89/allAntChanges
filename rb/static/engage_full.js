@@ -2933,6 +2933,7 @@ function antenna($A){
                 var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
+                    if ( window.console && window.console.log) { console.log('before: '+page_url); }
                     return ANT.actions.removeSubdomainFromPageUrl(page_url);
                 }
 
@@ -2960,7 +2961,7 @@ function antenna($A){
                             canonical_url = page_url;
                         }
                     }
-
+                    if ( window.console && window.console.log) { console.log('before: '+$.trim(canonical_url)); }
                     return ANT.actions.removeSubdomainFromPageUrl($.trim(canonical_url));
                 }
 
@@ -4200,6 +4201,7 @@ function antenna($A){
                             if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
+                                if ( window.console && window.console.log) { console.log('before: '+ $post_href.attr('href') ); }
                                 url = ANT.actions.removeSubdomainFromPageUrl( $post_href.attr('href') );
                             }
 
@@ -5513,8 +5515,10 @@ function antenna($A){
                     srcArray.splice(0,3);
 
                     var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
+                    if ( window.console && window.console.log) { console.log('AFTER: '+ returnUrl ); }
                     return returnUrl;
                 } else {
+                    if ( window.console && window.console.log) { console.log('AFTER: '+ url ); }
                     return url;
                 }
             },
