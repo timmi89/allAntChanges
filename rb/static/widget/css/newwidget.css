@@ -2309,6 +2309,7 @@ body.ant_touch_browser div.ant_indicator_for_text div.ant_indicator_body {
   /*left:0;*/
   /*position:static;*/
 }
+
 div.ant_indicator_for_text div.ant_indicator_body .ant_count_label {
   display:none;
 }
@@ -2759,6 +2760,10 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
     margin-top:0;
     transition: none;
   }
+  div.ant_indicator_for_media div.ant_indicator_body .ant_react_label {
+    display: none;
+  }
+
   /*div.ant.ant_window {
     left:-400%;
     transition:left 0.6s;
