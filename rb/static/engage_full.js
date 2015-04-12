@@ -4239,8 +4239,8 @@ function antenna($A){
 
                                 // does this URL have the origin on it?  or does it just begin with a relative path?
                                 if ( url.indexOf(window.location.origin) == -1 ) {
-                                    // dont do this if we're supposed to ignore the subdomain
-                                    if (ANT.group.ignore_subdomain == true && ANT.group.page_tld) {
+                                    // dont do this if we're supposed to ignore the subdomains
+                                    if (ANT.group.ignore_subdomain != true) {
                                         if ( url.substr(0,1) == "/" ) {
                                             url = window.location.origin + url;
                                         } else {
