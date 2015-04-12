@@ -16,12 +16,13 @@ class Command(BaseCommand):
         old_group = Group.objects.get(id = 2504)
         new_group = Group.objects.get(id = 2471)
         pids = Interaction.objects.filter(page__site__group = old_group).values_list('page_id').distinct()
+        logger.info('COUNT PIDS: ' + str(pids.count()) )
         remaining = []
         rem_paginator = Paginator(pids, 100)
         for y in rem_paginator.page_range:
             for pid in rem_paginator.page(y).object_list:
                 remaining.append(pid[0])
-        logger.info(remaining)
+        logger.info(len(remaining))
         
         old_pages = Page.objects.filter(id__in = remaining, site__group = old_group)
         op_paginator = Paginator(old_pages, 100)
