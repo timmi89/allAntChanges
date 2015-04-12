@@ -13,8 +13,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         logger.info('migrate perez mobi interactinos command start')
         
-        old_group = Group.objects.get(id = 2507)
-        new_group = Group.objects.get(id = 2474)
+        old_group = Group.objects.get(id = 2504)
+        new_group = Group.objects.get(id = 2471)
         old_pages = Page.objects.filter(site__group = old_group)
         op_paginator = Paginator(old_pages, 100)
         logger.info('Page Range: ' + str(op_paginator.page_range))
