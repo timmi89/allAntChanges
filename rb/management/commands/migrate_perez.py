@@ -22,9 +22,11 @@ class Command(BaseCommand):
         for y in rem_paginator.page_range:
             for pid in rem_paginator.page(y).object_list:
                 remaining.append(pid[0])
+        remaining.sort()
+        remaining.reverse()
         logger.info(len(remaining))
         
-        old_pages = Page.objects.filter(id__in = remaining, site__group = old_group)
+        old_pages = Page.objects.filter(id__in = remaining, site__group = old_group).order_by('id')
         op_paginator = Paginator(old_pages, 100)
         logger.info('Page Range: ' + str(op_paginator.page_range))
         for x in op_paginator.page_range:
