@@ -2639,7 +2639,7 @@ div.ant div.ant_footer .ant_click_overlay{
     background: none;
 }
 
-div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto 0 -0.75em; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:13px; border:none; letter-spacing:-1px; padding: 3px; max-width:75%; height:auto; background:transparent; }
+div.ant div.ant_footer .ant_box .ant_custom_tag input { text-align:center; margin:0 auto 0 -0.75em; font-family:'Helvetica',Arial,sans-serif;font-weight:bold; font-size:13px; border:none; letter-spacing:-0.25px; padding: 3px; max-width:75%; height:auto; background:transparent; }
 div.ant div.ant_footer .ant_box:hover .ant_custom_tag input { color:#008be4; }
 
 div.ant div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {

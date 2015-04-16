@@ -2933,7 +2933,6 @@ function antenna($A){
                 var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
-                    if ( window.console && window.console.log) { console.log('before 1: '+page_url); }
                     return ANT.actions.removeSubdomainFromPageUrl(page_url);
                 }
 
@@ -2961,7 +2960,7 @@ function antenna($A){
                             canonical_url = page_url;
                         }
                     }
-                    if ( window.console && window.console.log) { console.log('before 2: '+$.trim(canonical_url)); }
+
                     return ANT.actions.removeSubdomainFromPageUrl($.trim(canonical_url));
                 }
 
@@ -4201,7 +4200,6 @@ function antenna($A){
                             if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
-                                if ( window.console && window.console.log) { console.log('before 3: '+ $post_href.attr('href') ); }
                                 url = ANT.actions.removeSubdomainFromPageUrl( $post_href.attr('href') );
                             }
 
@@ -5519,10 +5517,9 @@ function antenna($A){
                     srcArray.splice(0,3);
 
                     var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
-                    if ( window.console && window.console.log) { console.log('AFTER: '+ returnUrl ); }
+
                     return returnUrl;
                 } else {
-                    if ( window.console && window.console.log) { console.log('AFTER: '+ url ); }
                     return url;
                 }
             },
@@ -10164,7 +10161,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv18"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv19"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
