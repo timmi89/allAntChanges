@@ -522,11 +522,12 @@ function antenna($A){
                 //ANT.aWindow.makeHeader:
                 var headerText = _headerText || "";
 
-                var headerTml = $.mustache(
+                var headerHtml = $.mustache(
                     '<div class="ant ant_header">'+
                         // '<div class="ant_header_arrow">'+
                             // '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
                         // '</div>'+
+                        '<div class="ant_close">X</div>'+
                         '<div class="ant_loader"></div>'+
                         // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
@@ -540,7 +541,13 @@ function antenna($A){
                     headerText: headerText
                 });
 
-                var $header = $(headerTml);
+                var $header = $(headerHtml);
+                $header.find('.ant_close').on('touchend.ant', function(e) {
+                    console.log('touchend');
+                    ANT.actions.UIClearState();
+                    if ( ANT.util.isTouchDragging(e) ) { return; }
+                });
+
                 if(!interactionId){
                     return $header;
                 }
@@ -555,6 +562,7 @@ function antenna($A){
                 $menuDropdownActions.append($menuActions);
 
                 var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
+
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
                     $menu.on('touchend.ant', '.ant_menuDropDown', function(e){
@@ -10161,7 +10169,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv19"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv20"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
