@@ -98,7 +98,7 @@ def do_all_groups_recirc():
                     if display_interaction is not None:       
                         recirc = {}
                         recirc['page'] = mrc['page']
-                        recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
+                        recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
                         recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
                         recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
                                               'id':display_interaction.id, 'count':display_vote}
