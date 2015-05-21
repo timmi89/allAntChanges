@@ -2164,15 +2164,20 @@ div.ant_helper_aWindow div.ant_header h1{
 
 .ant_live_hover div.ant_indicator.ant_indicator_for_text {
   opacity:0.75;
-  -moz-opacity:0.75;
-  -khtml-opacity:0.75;
 }
+
 div.ant_indicator_for_text.ant_helper {
     opacity:0;
-    -moz-opacity:0;
-    -khtml-opacity:0;
     cursor:pointer;
 }
+
+.ant_live_hover div.ant_indicator.ant_indicator_for_text.ant_helper {
+  opacity:0.5;
+  transition: opacity 100ms ease;
+  /*transition: opacity 100ms ease, right 30ms ease-out;*/
+}
+
+
 div.ant_indicator_for_text.ant_helper div.ant_indicator_body {
   width:16px;
 }
@@ -2257,9 +2262,10 @@ div.ant_indicator_details img.ant_pin {
   /*this causes the bumpiness when indicator is after a block element, inside a block element.*/
   display:inline;
 }
-.ant_live_hover div.ant_indicator.ant_helper {
-  opacity:0.5;
-}
+/*.ant_live_hover div.ant_indicator.ant_helper {*/
+  /*opacity:0.5;*/
+  /*transition: opacity 300ms ease;*/
+/*}*/
 
 .no-ant div.ant_indicator,
 body.no-ant div.ant-summary,
@@ -2360,11 +2366,11 @@ div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
 }
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body .ant-antenna-logo {
   margin-left: 4px;
-  color:#777;
+  color:rgba(255,255,255,0.75);
 }
 
 body.ant_touch_browser div.ant_indicator_for_media div.ant_indicator_body{
-  background: rgba(255,255,255,0.75);
+  background: rgba(0,0,0,0.25);
   text-shadow:none;
   margin-top: 4px;
   padding-left: 3px;
@@ -2627,7 +2633,7 @@ div.ant_indicator.ant_indicator_for_media.ant_visible span.ant_count {
 body.ant_touch_browser div.ant_indicator.ant_indicator_for_media span.ant_count {
   font-size:11px;
   padding-right:7px;
-  color:#777;
+  color:rgba(255,255,255,0.75);
   visibility: visible;
   max-width: none;
 }

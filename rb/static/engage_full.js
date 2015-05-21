@@ -543,7 +543,6 @@ function antenna($A){
 
                 var $header = $(headerHtml);
                 $header.find('.ant_close').on('touchend.ant', function(e) {
-                    console.log('touchend');
                     ANT.actions.UIClearState();
                     if ( ANT.util.isTouchDragging(e) ) { return; }
                 });
@@ -2774,16 +2773,19 @@ function antenna($A){
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
-            clearFunctionTimer: function() {
+            clearFunctionTimer: function(timerName) {
                 // ANT.util.clearFunctionTimer
-                clearInterval($.data(this, 'ant_functionTimer'));
+                if (!timerName) { timerName = 'ant_functionTimer'};
+                clearInterval($.data(this, timerName));
             },
-            setFunctionTimer: function(callback, time) {
+            setFunctionTimer: function(callback, time, timerName) {
                 // ANT.util.setFunctionTimer
-                ANT.util.clearFunctionTimer();
+                if (!timerName) { timerName = 'ant_functionTimer'};
+                ANT.util.clearFunctionTimer(timerName);
+
                 if (!time) { time = 300};
                 if (typeof callback != 'undefined') {
-                    $.data(this, 'ant_functionTimer', setTimeout(function() {
+                    $.data(this, timerName, setTimeout(function() {
                         callback();
                     }, time));
                 }
@@ -4464,6 +4466,11 @@ function antenna($A){
                             ANT.actions.containers.media.disengageAll();
 
                             var $this = $(this);
+                            // console.log('3');
+                            // setTimeout(function(){
+                                // console.log('3a');
+                                // $this.addClass('ant_live_hover');
+                            // },300);
                             $this.addClass('ant_live_hover');
                             
                             ANT.actions.mediaNodeInit($this);
@@ -4476,7 +4483,11 @@ function antenna($A){
                             if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
-                            $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            // $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            },300, hash);
                     });
                 }
 
@@ -4487,7 +4498,10 @@ function antenna($A){
                     var $this = $(obj),
                         hash = $this.data('hash');
 
-                    $this.removeClass('ant_live_hover');
+                    // $this.removeClass('ant_live_hover');
+                    setTimeout(function(){
+                        $this.removeClass('ant_live_hover');
+                    },300);
                     $('#ant_indicator_' + hash).hide();
                 }
 
@@ -4527,7 +4541,11 @@ function antenna($A){
                             // if( $this.hasClass('ant_live_hover') ){
                                 if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
                                     // $('#ant_indicator_' + hash).show();
-                                    $('#ant_indicator_' + hash).addClass('ant_visible');
+                                    // $('#ant_indicator_' + hash).addClass('ant_visible');
+                                    ANT.util.setFunctionTimer( function() {
+                                    // setTimeout(function(){
+                                        $('#ant_indicator_' + hash).addClass('ant_visible');
+                                    },300, hash);
                                 }
                             // }
                             ANT.actions.content_nodes.init(hash, function(){});
@@ -4541,9 +4559,11 @@ function antenna($A){
 
                     } else {
                         var hash = $this.data('hash');
-                        // $this.addClass('ant_live_hover');
                         if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                            $('#ant_indicator_' + hash).addClass('ant_visible');
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $('#ant_indicator_' + hash).addClass('ant_visible');
+                            },300, hash);
 
                             // $('#ant_indicator_' + hash).show();
                             // ANT.actions.indicators.utils.borderHilites.engage(hash);
@@ -5268,14 +5288,23 @@ function antenna($A){
                         
                         $this.on('mouseenter.ant', function() {
                             ANT.actions.indicators.init(hash);
-                            $(this).addClass('ant_live_hover');
+                            var $this = $(this);
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $this.addClass('ant_live_hover');
+                            },300, hash);
                         })//chain
                         .on('mouseleave.ant', function() {
                             // var $hash_helper = $('.ant_helper_aWindow.ant_for_'+hash);
                             // if ( $hash_helper.length ) {
                             //     $hash_helper.remove();
                             // }
-                            $(this).removeClass('ant_live_hover');
+                            // $(this).removeClass('ant_live_hover');
+                            var $this = $(this);
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $this.removeClass('ant_live_hover');
+                            },300, hash);
                         });
 
                     }
@@ -10169,7 +10198,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv20"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv21"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
