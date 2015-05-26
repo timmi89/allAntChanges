@@ -436,12 +436,12 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                 AllTag.objects.create(group=page.site.group, 
                                       node = new_interaction.interaction_node, 
                                       order=len(page.site.group.all_tags.all()))
-                #try:
-                #    notification = AsynchNewGroupNodeNotification()
-                #    t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
-                #    t.start()
-                #except Exception, ex:
-                #    pass
+                try:
+                    notification = AsynchNewGroupNodeNotification()
+                    t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
+                    t.start()
+                except Exception, ex:
+                    pass
             
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
