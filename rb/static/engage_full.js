@@ -4414,7 +4414,7 @@ function antenna($A){
                                 event_type: 'wl',
                                 event_value: a_or_b_or_not,
                                 page_id: ANT.util.getPageProperty('id'),
-                                content_attributes: load_event_value
+                                content_attributes: (!!ANT.group.content_attributes) ? ANT.group.content_attributes : load_event_value
                             });
 
                             $ANT.dequeue('initAjax');
