@@ -166,7 +166,7 @@ function antenna($A){
                 comment_length: 500,
                 /*this is basically not used right now*/
                 // initial_pin_limit: 300,
-                no_readr: "",
+                no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
                 // call_to_action: ANT.t('main_cta'),
@@ -429,6 +429,14 @@ function antenna($A){
                     // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
                     group_extensions.default_reactions = group_extensions.blessed_tags.slice();
                     delete group_extensions.blessed_tags;
+                }
+
+                // handle deprecated "no_reader", now called no_ant
+                if ( typeof group_extensions.no_readr != 'undefined' ) {
+                    // use .slice() to copy by value
+                    // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                    group_extensions.no_ant = group_extensions.no_readr;
+                    delete group_extensions.no_readr;
                 }
 
                 // grab anything from the URL
@@ -4095,7 +4103,7 @@ function antenna($A){
 
                         ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANT.group.no_readr).each( function() {
+                        $(ANT.group.no_ant).each( function() {
                             var $this = $(this);
                             $this.addClass('no-ant');
                             $this.find('img').addClass('no-ant');
@@ -4844,7 +4852,7 @@ function antenna($A){
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(ANT.group.no_readr).length ) {return;}
+                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
                         if ( $node.hasAttr('ant-item') ) {
                             var antItem = $node.attr('ant-item');
                         } else {
