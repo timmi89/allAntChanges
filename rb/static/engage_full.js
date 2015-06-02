@@ -4094,7 +4094,8 @@ function antenna($A){
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
                             page_id: ANT.util.getPageProperty('id'),
-                            content_attributes: ( ANT.util.activeAB() && $(ANT.group.recirc_selector).first().length ) ? 'broadcast':null
+                            content_attributes: ( ANT.util.activeAB() && $(ANT.group.recirc_selector).first().length ) ? 'broadcast':
+                                    (!!ANT.group.content_attributes) ? ANT.group.content_attributes : null
                         });
 
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
