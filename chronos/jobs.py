@@ -5,6 +5,7 @@ import traceback
 import logging
 import time
 from django.forms.models import model_to_dict
+from antenna.rb.models import *
 
 logger = logging.getLogger('rb.standard')
 
