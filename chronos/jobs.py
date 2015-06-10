@@ -341,4 +341,67 @@ def getGlobalActivity():
             
     return {'nodes':nodes, 'users':users, 'groups':groups, 'pages':pages}
 
+def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
+    if not data: data = {}
+    counts = {}
+    if container:
+        data['kind'] = container[2]
+    if content:
+        data['id'] = content[0]
+        data['body'] = content[1]
+        data['kind'] = content[2]
+        data['location'] = content[3]
 
+    if container:
+        container = container[0]
+        interactions = filter(lambda x: x.container_id==container, interactions)
+    elif content:
+        content = content[0]
+        interactions = filter(lambda x: x.content_id==content, interactions)
+    elif page:
+        interactions = filter(lambda x: x.page==page, interactions)
+
+    # Filter tag and comment interactions
+    tags = filter(lambda x: x.kind=='tag', interactions)
+    comments = filter(lambda x: x.kind=='com', interactions)
+
+    counts['tags'] = len(tags)
+    counts['coms'] = len(comments)
+    counts['interactions'] = len(interactions)
+    data['counts'] = counts
+    data['id'] = container if container else content
+    
+    tag_counts = dict((
+        (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
+    ))
+    sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+
+    tag_limit = 500 if isCrossPage else 10
+    top_tags = dict((
+        tag for tag in sorted_counts[:tag_limit]
+    ))
+
+    top_interactions = {}
+    top_interactions['tags'] = top_tags
+    top_interactions['coms'] = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, content_id=comment.content.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
+    for comment in top_interactions['coms']:
+        try:
+            comment['social_user'] = comment['user'].social_user
+        except SocialUser.DoesNotExist:
+            comment['social_user'] = {}
+        
+    data['top_interactions'] = top_interactions
+
+    return data
+
+def getContainerSummaries(interactions, containers, isCrossPage=False):
+    data = dict((
+        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
+    ))
+    return data
+
+def getContentSummaries(interactions, content, isCrossPage=False):
+    data = dict((
+        (content_item[0], getSummary(interactions, content=content_item, isCrossPage=isCrossPage)) for content_item in content
+    ))
+    return data
