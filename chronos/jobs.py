@@ -4,6 +4,7 @@ from django.core.cache import cache
 import traceback
 import logging
 import time
+from django.forms.models import model_to_dict
 
 logger = logging.getLogger('rb.standard')
 
