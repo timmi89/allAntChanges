@@ -1,6 +1,6 @@
 from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
-#from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
+from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
 from antenna.antenna_celery import app as celery_app
 from antenna.analytics.tasks import update_page_cache, update_page_container_hash_cache
 from django.db.models import Q
@@ -441,7 +441,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                     t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
                     t.start()
                 except Exception, ex:
-                    pass
+                    logger.warn(ex)
             
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
