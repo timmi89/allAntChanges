@@ -177,7 +177,18 @@ class GlobalActivityCacheUpdater(CacheUpdater):
         self.key = self.view
         if self.method == 'update':  
             self.value = getGlobalActivity()
-         
+
+def getTagSummary(tag, tags):
+    tags = filter(lambda x: x.interaction_node==tag, tags)
+    
+    data = {}
+    data['count'] = len(tags)
+    data['body'] = tag.body
+    for inter in tags:
+        if not inter.parent:
+            data['parent_id'] = inter.id
+            break
+    return data
 
 
 def getSinglePageDataDict(page_id):

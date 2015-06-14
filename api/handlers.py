@@ -526,11 +526,15 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         else:
             logger.info("Missed cache container summaries")
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
+            print 'got a cacheable_result'
             if len(hashes) == 1:
+                print '2a'
                 cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
             else:
+                print '2b'
                 cache.set('page_containers' + str(page), cacheable_result)
         
+            print '3'
             return cacheable_result
 
 class ContentSummaryHandler(AnonymousBaseHandler):

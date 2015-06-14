@@ -431,7 +431,7 @@ function antenna($A){
                     delete group_extensions.blessed_tags;
                 }
 
-                // handle deprecated "no_reader", now called no_ant
+                // handle deprecated "no_readr", now called no_ant
                 if ( typeof group_extensions.no_readr != 'undefined' ) {
                     // use .slice() to copy by value
                     // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
@@ -4063,6 +4063,12 @@ function antenna($A){
                     },
                     success: function(response, textStatus, XHR) {
                         var group_settings = response.data;
+
+                        // handle deprecated "no_reader", now called no_ant
+                        if ( typeof group_settings.no_readr != 'undefined' ) {
+                            group_settings.no_ant = group_settings.no_readr;
+                            delete group_settings.no_readr;
+                        }
 
                         // handle deprecated .blessed_tags, change to .default_reactions
                         if ( typeof group_settings != 'undefined' ) {
