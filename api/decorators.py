@@ -16,7 +16,7 @@ def status_response(func):
         except JSONException as error:
             res['status'] =  'fail'
             res['message'] = error.msg
-            logger.info( error.msg )
+            logger.debug( error.msg )
             logger.debug( traceback.format_exc())
         except KeyError as error:
             res['status'] = 'fail'

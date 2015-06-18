@@ -276,21 +276,6 @@ def sites(request):
 def group(request):
     pass
 
-# @cache_page(60)
-# @vary_on_cookie
-@vary_on_headers('Cookie')
-
-def resetPageData(request, page_id=None, **kwargs):
-    try:
-        cache_updater = PageDataCacheUpdater(method="delete", page_id=page_id)
-        t = Thread(target=cache_updater, kwargs={})
-        t.start()
-
-    except Exception, e:
-        logger.warning(traceback.format_exc(50))
-
-    context = {}
-    return render_to_response("pagereset.html", context, context_instance=RequestContext(request))
 
 def main(request, user_id=None, short_name=None, site_id=None, page_id=None, interaction_id=None, **kwargs):
     page_num = request.GET.get('page_num', 1)
@@ -356,7 +341,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
 
 def board(request, board_id=None, **kwargs):
     cookie_user = checkCookieToken(request)
-    timestamp = datetime.now().date()
+    timestamp = datetime.datetime.now().date()
     page_num = request.GET.get('page_num', 1)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -992,7 +977,7 @@ def click_redirect(request, short):
 
 def follow_interactions(request, user_id):
     cookie_user = checkCookieToken(request)
-    timestamp = datetime.now().date()
+    timestamp = datetime.datetime.now().date()
     page_num = request.GET.get('page_num', 1)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,

@@ -3,9 +3,8 @@
 {% block title %}Antenna{%endblock%}
 {% block extendedHead %}
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/see/?imatest{% else %}http://www.antenna.is/see/{% endif %}">
-<script async src="/static/engage_full.js"></script>
 <script>
-// ANTsite.group.short_name = "{{ group.short_name }}";
+// ANTsite.group.short_name = "localhost";
 // ANTsite.group.full_name = "{{ group.name }}";
 // ANTsite.group.id = "{{ group.id }}";
 // ANTsite.group.id = 1660;
@@ -104,6 +103,7 @@
   </div>
 </div>
 
+
 <div class="grid-whole sample-content separator">
   <div class="content">
     <h1>Images, Video, Audio, Oh my.</h1>
@@ -118,11 +118,6 @@
     <div class="grid-third s-grid-whole center">
       <iframe class="contentBody" xwidth="300" xheight="220" frameborder="0" src="http://www.fastcompany.com/embed/6c586b29396bf"></iframe>
       <div class="credit center">via Antenna partner, <a href="http://www.fastcolabs.com/3031728/why-you-should-let-your-creative-employees-roam" target="_blank">Fast Company Labs</a></div>
-      
-      <!-- <div ant-item-content="http://www.fastcompany.com/embed/6c586b29396bf" ant-item="movie1" ant-reactions="wow fastco;neat;moviez;custom" ant-item-type="media">FAST COMPANY MOVIE</div>
-      <div class="center test-cta" ant-cta-for="movie1" ant-mode="write" ant-offset-x="0" ant-offset-y="50">What do you think of this movie?</div>
-      <div class="center test-cta read" ant-cta-for="movie1" ant-mode="read" ant-offset-x="0" ant-offset-y="50">View <span ant-counter-for="movie1"></span> Responses</div> -->
-
     </div>
     <div class="grid-third s-grid-whole center">
       <a href="http://bop.fm/s/the-guess-who/american-woman" data-bop-link>The Guess Who &#8211; American Woman</a><script src="http://assets.bop.fm/embed.js" async=""></script>
@@ -204,18 +199,25 @@ Public sentiment is everything. With public sentiment, nothing can fail; without
 http://www.bartleby.com/268/9/23.html
 -->
 <script>
-  document.addEventListener("antenna.hashed_nodes",function(){
-    if (typeof console != 'undefined' && typeof console.log != 'undefined')
-    console.log("antenna.hashed_nodes"); console.log( antenna.getLastEvent() );
-  },false);
+  // document.addEventListener("antenna.hashed_nodes",function(){
+  //   if (typeof console != 'undefined' && typeof console.log != 'undefined')
+  //   console.log("antenna.hashed_nodes"); console.log( antenna.getLastEvent() );
+  // },false);
 </script>
 <script>
+// window.antenna_host = 'weddingwire.com';
 window.antenna_extend = {
-  // default_reactions:['what','yes','ok']
-  // summary_widget_selector: '.sample-content'
+  // ignore_subdomain: true,
+  // page_tld: 'local.antenna.is:8081',
+  img_indicator_show_side:'top left',
+  // content_attributes: 'perezA',
+  // no_ant: 'p',
+  // default_reactions:['What Is Washington Doing?', 'Why isn\'t legislation happening','yes','Unbelievable','why not','OMGLOL','Stunningly Beautiful'],
+  active_sections: '.sample-content'
 };
 </script>
 
+<script async src="/static/engage_full.js"></script>
 <!-- 
 <style>
 .ant-summary { z-index:100002; position: relative; background:#fff; }

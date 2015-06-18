@@ -17,7 +17,7 @@ function notUndefined(x) {
 }
 
 function topSummary() {
-
+return;
 antennaUsageData.no_rdr_sessions_count = (antennaUsageData.all_sessions_count-antennaUsageData.rdr_sessions_count);
 
 // var $temp_antennaUsage = $('<div><div class="template"></div></div>');

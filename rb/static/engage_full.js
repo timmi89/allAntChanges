@@ -3,6 +3,7 @@
 
 var ANT = {};
 if(window.ANTENNAIS && window.ANTENNAIS.hasLoaded){
+    // reinit custom display hashes only
     window.ANTENNAIS.actions.reInit();
     return;
 }
@@ -38,20 +39,33 @@ ANT_scriptPaths = {},
 //check if this script is the offline version
 //note that the other ANT_offline vars in our iframes should check window.location for local.antenna.is instead
 ANT_offline = !!(
+    ANT.engageScriptSrc.indexOf('localhost') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna.is') != -1 ||
     ANT.engageScriptSrc.indexOf('local.antenna2.is') != -1 ||
     document.domain == "local.antenna.is" //shouldn't need this line anymore
 ),
+// ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081":window.location.protocol + "//www.antenna.is",
+// ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
+// ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
+
 ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":window.location.protocol + "//www.antenna.is",
 ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
+// fails on iPhone?
 // var isTouchBrowser = (
 //     ('ontouchstart' in window) || 
 //     (window.DocumentTouch && document instanceof DocumentTouch)
 // );
 
-var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
+// works?
+var isTouchBrowser = ("ontouchstart" in window || navigator.msMaxTouchPoints);
+
+// DEBUG
+// var isTouchBrowser = true;
+
+// fails
+// var isTouchBrowser = ((typeof window.Touch === "object") || window.DocumentTouch && document instanceof DocumentTouch);
 
 ANT.safeThrow = function(msg){
     //this will never actually throw in production (if !ANT_offline)
@@ -109,7 +123,7 @@ function findEngageScript(){
         var src = s.src;
         //not looking for antenna.is right now in case we use the amazon version without an id on the script
         var isAntennaScript = (
-            (src.indexOf('antenna') != -1 || src.indexOf('readrboard') != -1) &&
+            (src.indexOf('antenna') != -1 || src.indexOf('localhost') != -1 || src.indexOf('readrboard') != -1) &&
             src.indexOf('engage') != -1
         );
         if(isAntennaScript){
@@ -152,7 +166,7 @@ function antenna($A){
                 comment_length: 500,
                 /*this is basically not used right now*/
                 // initial_pin_limit: 300,
-                no_readr: "",
+                no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
                 // call_to_action: ANT.t('main_cta'),
@@ -166,12 +180,16 @@ function antenna($A){
                 ab_test_sample_percentage: 10,
                 img_indicator_show_onload: true,
                 img_indicator_show_side: 'left',
-                // tag_box_bg_colors: [ '90,168,214', '200,226,38' ,'111,197,242', '229,246,98','28, 173, 223' ],
-                tag_box_bg_colors: '90,168,214; 200,226,38; 111,197,242; 229,246,98; 28,173,223',
-                tag_box_text_colors: '34,94,129; 128,146,17; 37,117,163; 153,174,26; 34,94,129',
-                tag_box_font_family: 'Helvetica,Arial,sans-serif',
-                tag_box_gradient:'',
-                tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
+                // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
+                // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
+                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                // tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
+                // tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
+                tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
+                tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
+                // tags_bg_css: 'url('+ANT_staticUrl+'images/noise.gif)',
+                tags_bg_css: '',
+                ignore_subdomain: false,
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -376,21 +394,11 @@ function antenna($A){
                         }
                     });
 
-
-                    // if ( typeof ANT.group.xdmLoaded != 'undefined' && ANT.group.xdmLoaded === true ) {
-                    //     $.postMessage(
-                    //         "register-event::"+data,
-                    //         ANT_baseUrl + "/static/xdm.html",
-                    //         window.frames['ant-xdm-hidden']
-                    //     );
-                    // } else {
-                    //     ANT.events.queue.push(params);
-                    // }
                 }
             },
             emit: function(eventName, eventValue, eventSupplementary) {
                 // ANT.events.emit
-                if (ANT.group.premium == true) {
+                // if (ANT.group.premium == true) {
                     // non-IE
                     ANT.events.lastEvent = eventName;
                     ANT.events.lastValue = eventValue;
@@ -405,7 +413,7 @@ function antenna($A){
                         // this will trigger onpropertychange
                         document.documentElement[eventName]++;
                     };
-                }
+                // }
             }
         },
         groupSettings: {
@@ -421,6 +429,14 @@ function antenna($A){
                     // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
                     group_extensions.default_reactions = group_extensions.blessed_tags.slice();
                     delete group_extensions.blessed_tags;
+                }
+
+                // handle deprecated "no_readr", now called no_ant
+                if ( typeof group_extensions.no_readr != 'undefined' ) {
+                    // use .slice() to copy by value
+                    // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
+                    group_extensions.no_ant = group_extensions.no_readr;
+                    delete group_extensions.no_readr;
                 }
 
                 // grab anything from the URL
@@ -445,7 +461,7 @@ function antenna($A){
                     // because our API returns this in the form  "blessed_tags": [{ "body": "Love It",  "id": 368}...] 
                     // modified to reference 'default_reactions' instead of 'blessed_tags'
                     return $.map(tagsList, function(val, idx){
-                        return {body: val};
+                        return {body: val, 'is_default':true};
                     });
                 }
             },
@@ -505,7 +521,7 @@ function antenna($A){
                 defaultHeight:260,
                 minHeight: 10,
                 maxHeight: 300,
-                minWidth: 100,
+                minWidth: 125,
                 maxWidth: 600,
                 forceHeight: false,
                 rewritable: true
@@ -514,11 +530,12 @@ function antenna($A){
                 //ANT.aWindow.makeHeader:
                 var headerText = _headerText || "";
 
-                var headerTml = $.mustache(
+                var headerHtml = $.mustache(
                     '<div class="ant ant_header">'+
                         // '<div class="ant_header_arrow">'+
                             // '<img src="{{ANT_staticUrl}}widget/images/header_up_arrow.png" />'+
                         // '</div>'+
+                        '<div class="ant_close">X</div>'+
                         '<div class="ant_loader"></div>'+
                         // '<div class="ant_about"><a href="http://www.antenna.is/" target="_blank">&nbsp;</a></div>'+
                         '<div class="ant_indicator_stats">'+
@@ -532,7 +549,12 @@ function antenna($A){
                     headerText: headerText
                 });
 
-                var $header = $(headerTml);
+                var $header = $(headerHtml);
+                $header.find('.ant_close').on('touchend.ant', function(e) {
+                    ANT.actions.UIClearState();
+                    if ( ANT.util.isTouchDragging(e) ) { return; }
+                });
+
                 if(!interactionId){
                     return $header;
                 }
@@ -547,9 +569,12 @@ function antenna($A){
                 $menuDropdownActions.append($menuActions);
 
                 var $menu = $('<div class="ant_aWindowMenu"></div>').append($menuDropdownActions);
+
                 // $menu.append($menuActions);
                 if(isTouchBrowser){
-                    $menu.on('tap.ant', '.ant_menuDropDown', function(){
+                    $menu.on('touchend.ant', '.ant_menuDropDown', function(e){
+                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if ( ANT.util.isTouchDragging(e) ) { return; }
                         $(this).toggleClass('ant_hover');
                     });
                 }
@@ -650,12 +675,11 @@ function antenna($A){
             },
             panelUpdate: function( $aWindow, className, $newPanel, shouldAppendNotReplace ) {
                 //ANT.aWindow.panelUpdate:
-
                 if ( !$aWindow ) return;
                 var $ant_body_wrap = $aWindow.find('div.ant_body_wrap'),
                     $panel = $ant_body_wrap.find('div.'+className);
 
-                if (shouldAppendNotReplace){
+                if (shouldAppendNotReplace || !$panel.length){
                     $panel.append( $newPanel );
                 }else{
                     // replacewith bug
@@ -667,7 +691,7 @@ function antenna($A){
             panelShow: function( $aWindow, $showPanel, callback ) {
                 //ANT.aWindow.panelShow: 
                 // panelEvent - panelShow
-                
+
                 var $panelWrap = $aWindow.find('.ant_body_wrap');
                 var $hidePanel = $aWindow.find('.ant_visiblePanel');
                 //do this for now, because there are too many places in the code to add this correctly
@@ -751,28 +775,6 @@ function antenna($A){
                     }
 
                 });
-            },
-            panelEnsureFloatWidths: function( $aWindow ) {
-                //ANT.aWindow.panelEnsureFloatWidths:
-
-                //this function keeps messing stuff up and causing the aWindow panel to jump.
-                //we shouldn't need it anyway while the success state just has a close button instead of a back button
-                return;
-
-                //this is needed becuase after the tagList updates, the width of panel1 can change.
-                // var $panelWrap = $aWindow.find('.ant_body_wrap');
-                // var $showPanel = $aWindow.find('.ant_visiblePanel');
-                // var $hidePanel = $aWindow.find('.ant_hiddenPanel');
-
-                // var xOffset = $hidePanel.width();
-
-                // $panelWrap.css({
-                //     left: -xOffset
-                // });
-                // $showPanel.css({
-                //     left: xOffset
-                // });
-
             },
             //somewhat hacky function to reliably update the tags and ensure that the panel hide and show work
             updateTagPanel: function ( $aWindow ) {
@@ -922,7 +924,7 @@ function antenna($A){
                         summary = ANT.summaries[hash],
                         content_node = (args.sendData)?args.sendData.content_node_data:{};
 
-                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                    ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
 
                     if ( args.scenario != "tagDeleted" ) {
                         if ( args.scenario == "reactionSuccess" || args.scenario == "reactionExists" ) {
@@ -982,7 +984,7 @@ function antenna($A){
                                 };
 
                                 if(isTouchBrowser){
-                                    $aWindow.find('a.ant_undo_link').on('tap.ant', {args:args}, onAction);
+                                    $aWindow.find('a.ant_undo_link').on('touchend.ant', {args:args}, onAction);
                                 }else{
                                     $aWindow.find('a.ant_undo_link').on('click.ant', {args:args}, onAction);
                                 }
@@ -1082,7 +1084,7 @@ function antenna($A){
                     // should probably just be ANT.aWindow.setWidth ??
                     // width must be 200, 300, or 400
                     var aWindowWidth = (ANT.group.max_aWindow_width) ? ANT.group.max_aWindow_width:width;
-                    $aWindow.removeClass('w100 w200 w300 w400').addClass('w'+aWindowWidth);
+                    $aWindow.removeClass('w111 w222').addClass('w'+aWindowWidth);
                 },
                 setHeight: function( $aWindow, height ) {
                     // ANT.aWindow.tagBox.setHeight
@@ -1098,10 +1100,9 @@ function antenna($A){
                         $tagContainer = ( params.$tagContainer ) ? params.$tagContainer : ( params.$aWindow ) ? params.$aWindow.find('div.ant_body.ant_tags_list') : null,
                         reactionViewStyle = $aWindow.attr('ant-view-style') || 'grid',
                         tagCount = ( tag.tag_count ) ? tag.tag_count:"",
-                        tagPercent = 0,
-                        tagWidth = '',
                         bgColorInt = ( params.bgColorInt ) ? params.bgColorInt:0,
-                        textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
+                        rowNum = ( params.rowNum ) ? params.rowNum:0,
+                        // textColorInt = ( params.textColorInt ) ? params.textColorInt:0,
                         isWriteMode = ( params.isWriteMode ) ? params.isWriteMode:false,
                         kind = $aWindow.data('kind'),
                         hash = ($aWindow.data('hash')) ? $aWindow.data('hash'):$aWindow.data('container'),
@@ -1111,17 +1112,19 @@ function antenna($A){
                         content_node = (content_node_id) ? summary.content_nodes[ content_node_id ]:"",
                         message = '';
 
-                    // get the background color and text color
-                    // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
-                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[bgColorInt] ) : ANT.group.tag_box_bg_colors[bgColorInt];
-                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[textColorInt] ) : ANT.group.tag_box_text_colors[textColorInt];
+                    // // get the background color and text color
+                    // // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                    var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
+                    var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
 
+                    // CHANGETHIS
+                    // delete??
                         // later, we'll allow rendering percentages on grids/etc, as an option
-                    var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
-                    if (renderPercentages===true) {
-                        tagPercent = parseInt(tagCount/totalReactions*100);
-                        tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
-                    }
+                    // var renderPercentages = (reactionViewStyle=='horizontal_bars') ? true:false;
+                    // if (renderPercentages===true) {
+                    //     tagPercent = parseInt(tagCount/totalReactions*100);
+                    //     tagWidth = 'width:'+(Math.round(tagCount / summary.counts.highest_tag_count*75 )) + '%';
+                    // }
 
                     // if (content_node_id == 'undefined'){
                         // return;
@@ -1134,91 +1137,166 @@ function antenna($A){
                     // for ex,
 
                     // this can go away if we change CSS class names
-                    var boxSize = ( boxSize == "big" ) ? "ant_box_big" : ( boxSize == "medium" ) ? "ant_box_medium" : "ant_box_small",
-                    // var boxSize = "ant_box_"+ boxSize, 
+                    var boxSize = ( boxSize == "big" ) ? "ant_box_big" : "ant_box_medium",
                       wideBox = "",
                       writeMode = ( isWriteMode ) ? 'ant_writeMode' : '',
                       tagBodyRaw = ( tag.body ) ? tag.body:tag.tag_body,
-                      tagBodyCrazyHtml = "",
+                      tagBodyRawWords = tagBodyRaw.split(' '),
+                      lineOne = '',
+                      lineTwo = '',
+                      tagBodyHtml = "",
+                      tagHtml = "",
                       tagIsSplitClass = "";
 
                     
                     if (typeof tagBodyRaw == 'undefined') { return; }
-                    
-                    // abstract this when we abstract the same thing in the previous function.
-                    if ( kind == "page" ) {
-                        message = (isWriteMode) ? '+1 '+tagBodyRaw :'';
-                    } else if ( tagCount == "" ) {
-                        message = '';
-                    } else if ( tagCount == -101 ) { // used elsewhere to kludgily indicate that there are no reactions
-                        message = '+1 '+tagBodyRaw;
+
+                    if (tagBodyRawWords.length == 1) {
+                        lineOne = tagBodyRawWords[0];
                     } else {
-                        // var reactText = ( tagCount == 1 ) ? "reaction":"reactions",
-                        //     message = tagCount+' '+reactText+'.  Click to agree.';
-                        var message = '+1 '+tagBodyRaw;
-                    }
-                    
-                    var charCountText = ""
-                    //split long tag onto two lines.
-                    if ( typeof tagBodyRaw != 'undefined' && tagBodyRaw.length < 16 || renderPercentages === true) {
-                        charCountText = 'ant_charCount'+tagBodyRaw.length;
-                        tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBodyRaw+'</div>';
-                    } else {
-                        tagIsSplitClass = "ant_tag_split";
-                        // if no space, hyphenate
-                        if ( tagBodyRaw.indexOf(' ') == -1 ) {
-                            charCountText = 'ant_charCount15';
-                            tagBodyCrazyHtml = 
-                            '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + 
-                            tagBodyRaw.substr(0,15) + '-<br/>' + tagBodyRaw.substr(15) + '</div>';
-                            // if ( boxSize == "ant_box_small" ) {
-                            //     boxSize = "ant_box_medium";
-                            // }
-                        } else {
-                            var tagBody1 = "", tagBody2 = "", keepLooping = true;
-                            tagBodyRawSplit = tagBodyRaw.split(' ');
-                            while ( keepLooping ) {
-                                tagBody1 += tagBodyRawSplit.shift() + ' ';
-                                if ( ( tagBody1.length + tagBodyRawSplit[0].length ) >= 16  ) keepLooping = false;
+                        $.each(tagBodyRawWords, function(idx, word) {
+                            var spacer = (idx===0) ? '':' ';
+                            if (lineOne.length < 11 && lineOne.length+word.length < 11) {
+                                lineOne += spacer + word;
+                            } else {
+                                lineTwo += spacer + word;
                             }
-                            tagBody2 = tagBodyRawSplit.join(' ');
-                            charCountText = 'ant_charCount'+tagBody1.length;
-                            tagBodyCrazyHtml = '<div class="ant_tag_body ant_tag_lineone" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagBody1+'<br>' + tagBody2 + '</div>';
-                        }
+                        });
                     }
+
+                    lineOne = $.trim(lineOne) + ' '; // trim front space, add end space... won't wrap given css rule
+                    var lineOneLength = ( lineOne.length > 17 ) ? "max" : lineOne.length;
+                    lineOne = '<div class="ant_charCount_' + lineOneLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineOne + '</div>';
+
+                    if (lineTwo!='') {
+                        lineTwo = $.trim(lineTwo);
+                        var lineTwoLength = ( lineTwo.length > 17 ) ? "max" : lineTwo.length;
+                        lineTwo = '<div class="ant_charCount_' + lineTwoLength + '" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">' + lineTwo + '</div>';
+                    }
+
+                    tagBodyHtml = lineOne + lineTwo;
+
+                    // need to limit each line to 10 characters OR start making smaller if no whitespace
+
+                    var charCountText = ""
+
+                    tagHtml = '<div class="ant_tag_body">'+tagBodyHtml+'</div>';
 
                     var tag_id = tag.id;
                     var parent_id = tag.parent_id;
                     var content_node_str = content_node_id ? 'ant_content_node_'+content_node_id : "";
                     var tagCount = tagCount || 0;
-                    var tagCountDisplay = (renderPercentages===true) ? tagPercent+'%':tagCount;
-                    var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
-                        "" : 
-                        '<span class="ant_plusOne">+1</span>';
+                    var tagCountDisplay = tagCount;
+                    var searchCountDisplay = (tagCount===1) ? '':tagCountDisplay;
+                    // var plusOneCTA = !isWriteMode && ( kind == "page" ) ? 
+                        // "" : 
+                        // '<span class="ant_plusOne_container"><span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1 reaction</span></span>';
 
-                    var notWriteModeHtml = isWriteMode ?
-                        "" : 
-                        '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
-                        '<i class="ant-search ant_tag_read_icon"></i>';
+                    var tagActionsHtml = isWriteMode ?
+                        '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' : 
+                        
+                            '<span class="ant_count" style="color:rgb('+textColorRGB+');font-family:'+ANT.group.tag_box_font_family+';">'+tagCountDisplay+'</span>' +
+                            '<span class="ant_plusOne" style="color:rgb('+textColorRGB+');">+1</span>' +
+                            ((kind=='page') ? '<span class="ant_search ant_tooltip_this" style="color:rgb('+textColorRGB+');" title="View content<br/>with this reaction"><i class="ant-search" style="color:rgb('+textColorRGB+');"></i></span>': '');
 
-                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+'" style="background:rgba('+bgColorRGB+',0.85);'+tagWidth+';background-image:'+ANT.group.tag_box_gradient+';">'+
+
+                    var tagBoxHTML = '<div class="'+boxSize+' ant_box '+wideBox+' '+writeMode+' row_num_'+rowNum+'">'+
                             '<div '+
                                 'class="ant_tag '+tagIsSplitClass+' '+content_node_str+' '+charCountText+'" '+
-                                // 'title="'+message+'" '+
                                 'data-tag_id="'+tag_id+'" '+
                                 'data-tag_count="'+tagCount+'" '+
                                 'data-parent_id="'+parent_id+'" '+
                                 'data-content_node_id="'+content_node_id+'" '+
                             '><div class="ant_tag_wrap"><div class="ant_tag_wrap2">'+
-                                tagBodyCrazyHtml+
-                                notWriteModeHtml+
-                                plusOneCTA+
+                                tagHtml+
+                                '<div class="ant_tag_actions">'+
+                                tagActionsHtml+
+                                // plusOneCTA+
+                                '</div>'+
                             '</div>'+
                         '</div></div></div>';
 
                     
                     var $tagBox = $(tagBoxHTML);
                     $tagContainer.append( $tagBox );
+
+                    // figure out if we should add a comment indicator + comment hover
+                    var comments = {},
+                        num_comments = 0;
+
+                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
+
+                        $.each( content_node.top_interactions.coms, function(idx, comment) {
+                            if ( comment.tag_id == parseInt( tag.tag_id ) ) {
+                                num_comments++;
+                                if ( $.isEmptyObject( comments ) ) {
+                                    comments = content_node.top_interactions.coms;
+                                }
+                            }
+                        });
+                    }
+
+                    // //New Check 
+                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
+                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
+                        !$.isEmptyObject(summary.top_interactions) &&
+                        !$.isEmptyObject(summary.top_interactions.coms)
+
+                    //really?
+                    if(!tag.id){
+                        tag.id = tag.tag_id;
+                    }
+
+                    if (crazyCheckForDataTieOver) {
+                        comments = summary.top_interactions.coms[tag.id];
+                        if ( !$.isEmptyObject( comments ) ){
+                          num_comments = comments.length;
+                        } 
+                    }
+
+                    // add the comment indicator + comment hover... if we should!
+                    if ( !isWriteMode && kind != "page" ) {
+                        var showCommentsBeforeHover = (num_comments>0) ? true:false,
+                            comment_tooltip = 'View comments';
+                        if (num_comments===0) { num_comments=''; comment_tooltip = 'Add comment here'; }
+                    // if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
+                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
+                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this '+((showCommentsBeforeHover)? '':'ant_hide')+'" style="color:rgba('+textColorRGB+',0.8);border-color:rgba('+textColorRGB+',0.5);" title="'+comment_tooltip+'"></span>');
+
+                        $commentHover.append( '<i class="ant-comment" style="color:rgba('+textColorRGB+',0.8);"></i> '+num_comments );
+                        
+                        if(isTouchBrowser){
+                            $commentHover.on('touchend.ant', function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                ANT.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    aWindow:$aWindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }else{
+                            $commentHover.click( function() {
+                                // replacewith bug
+                                $(this).tooltip('hide');
+                                ANT.actions.viewCommentContent({
+                                    tag:tag,
+                                    hash:hash,
+                                    aWindow:$aWindow,
+                                    content_node:content_node,
+                                    selState:content_node.selState
+                                });
+                                return false;
+                            });
+                        }
+
+                        $tagBox.find('.ant_tag_actions').append( $commentHover );
+                        // $commentHover.tooltip();
+                    }
+                    $tagBox.find('.ant_tooltip_this').tooltip();
 
                     function renderReactedContent( $reactionsTable, tag ) {
                         if ( !$aWindow.find('.ant_view_more').length || !$aWindow.find('.ant_view_more').hasClass('ant_visiblePanel') ) {
@@ -1228,10 +1306,9 @@ function antenna($A){
 
                             $newPanel.append( $reactionsTable ).addClass('ant_page_reactions_summary');
 
-                            ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                            ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                             ANT.aWindow.panelShow( $aWindow, $newPanel, function() {
                                 ANT.aWindow.hideFooter($aWindow);
-                                // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                             });
                         } else {
                             $aWindow.find('.ant_body').html( $reactionsTable );
@@ -1354,10 +1431,18 @@ function antenna($A){
                         return $('<div/>').append( $backButton, $reactionsTable );
                     } // createReactedContentTable
 
+                    var clickOrTouch = (isTouchBrowser) ? 'touchend.ant':'click.ant';
                     // kind-specific click event
                     // porter resume here.  make sure the counts and write element are passed into getReactedContent
                     if ( kind == "page" ) {
-                        if ( isWriteMode == false ) {
+
+                        // make the search icon un-show +1
+                        $tagBox.find('.ant_search').hover( 
+                            function() {
+                                $(this).closest('.ant_box').toggleClass('hidePlusOne');
+                            });
+
+                        // if ( isWriteMode == false ) {
                             
                             var clickFunc = function(){
 
@@ -1396,44 +1481,54 @@ function antenna($A){
                                     $reactionsTable = createReactedContentTable($this, counts, page.id);
 
                                 renderReactedContent( $reactionsTable, tag );
-
                                 $this.addClass('ant_live_hover');
                             };
 
-                            $tagBox.on('click.ant, touchend.ant', function(){
+                            $tagBox.find('.ant_search').on( clickOrTouch, function(e){
                                 clickFunc();
+                                return false;
                             });
 
 
-                        } else {
-                            $tagBox.on('click.ant, touchend.ant', function() {
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
+                        // } else {
+                            $tagBox.on(clickOrTouch, function(e) {
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
+                                if (ANT.util.bubblingEvents['touchend'] == false) {
+                                    $(this).addClass('ant_tagged');
+                                    $aWindow.removeClass('ant_rewritable');
+                                    var hash = $aWindow.data('container');
+                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                    ANT.actions.interactions.ajax( args, 'react', 'create');
+                                }
                             });
-                        }
+                        // }
                     } else {
-                        if(isTouchBrowser){
+                        // CHANGETHIS
+                        // may not need the code below and just above... seems identical now.
+                        // move outside the if statement?
+
+                        // if(isTouchBrowser){
                             // mobiletodo.  simulate hover and a css class.
                             // check for class, and if present, simulate click
-                            $tagBox.on('tap.ant', function() {
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
+                            $tagBox.on( clickOrTouch, function(e) {
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
+                                if (ANT.util.bubblingEvents['touchend'] == false) {
+                                    $(this).addClass('ant_tagged');
+                                    $aWindow.removeClass('ant_rewritable');
+                                    var hash = $aWindow.data('container');
+                                    args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                                    ANT.actions.interactions.ajax( args, 'react', 'create');
+                                }
                             });
-                        }else{
-                            $tagBox.click( function() {
-                                $(this).addClass('ant_tagged');
-                                $aWindow.removeClass('ant_rewritable');
-                                var hash = $aWindow.data('container');
-                                args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
-                                ANT.actions.interactions.ajax( args, 'react', 'create');
-                            });
-                        }
+                        // }else{
+                            // $tagBox.click( function() {
+                            //     $(this).addClass('ant_tagged');
+                            //     $aWindow.removeClass('ant_rewritable');
+                            //     var hash = $aWindow.data('container');
+                            //     args = { tag:tag, hash:hash, uiMode:'writeMode', kind:$aWindow.data('kind'), aWindow:$aWindow, content_node:content_node};
+                            //     ANT.actions.interactions.ajax( args, 'react', 'create');
+                            // });
+                        // }
                     }
 
                     // global (all kinds) hover event
@@ -1453,80 +1548,6 @@ function antenna($A){
 
                     // $container.append( $tagBox, " " );
                     
-                    // figure out if we should add a comment indicator + comment hover
-                    var comments = {},
-                        num_comments = 0;
-
-                    if ( !$.isEmptyObject( content_node ) && !$.isEmptyObject( content_node.top_interactions ) && !$.isEmptyObject( content_node.top_interactions.coms ) ) {
-
-                        $.each( content_node.top_interactions.coms, function(idx, comment) {
-                            if ( comment.tag_id == parseInt( tag.tag_id ) ) {
-                                num_comments++;
-                                if ( $.isEmptyObject( comments ) ) {
-                                    comments = content_node.top_interactions.coms;
-                                }
-                            }
-                        });
-                    }
-
-                    // //New Check 
-                    var crazyCheckForDataTieOver = $.isEmptyObject(comments) && typeof summary != "undefined" && 
-                        (summary.kind=="img" || summary.kind=="media" || summary.kind=="med") && 
-                        !$.isEmptyObject(summary.top_interactions) &&
-                        !$.isEmptyObject(summary.top_interactions.coms)
-
-                    //really?
-                    if(!tag.id){
-                        tag.id = tag.tag_id;
-                    }
-
-                    if (crazyCheckForDataTieOver) {
-                        comments = summary.top_interactions.coms[tag.id];
-                        if ( !$.isEmptyObject( comments ) ){
-                          num_comments = comments.length;
-                        } 
-                    }
-
-                    // add the comment indicator + comment hover... if we should!
-
-                    if ( !$.isEmptyObject( comments ) && !isWriteMode ) {
-                        var commentColor = (ANT.util.getColorLuma(bgColorRGB)<128) ? 'fff' : '333';
-                        var $commentHover = $('<span class="ant_comment_hover ant_tooltip_this" style="color:#'+commentColor+';" title="view comments"></span>');
-
-                        $commentHover.append( '<i class="ant-comment" style="color:#'+commentColor+';"></i> '+num_comments );
-                        
-                        if(isTouchBrowser){
-                            $commentHover.on('tap.ant', function() {
-                                // replacewith bug
-                                $(this).tooltip('hide');
-                                ANT.actions.viewCommentContent({
-                                    tag:tag,
-                                    hash:hash,
-                                    aWindow:$aWindow,
-                                    content_node:content_node,
-                                    selState:content_node.selState
-                                });
-                                return false;
-                            });
-                        }else{
-                            $commentHover.click( function() {
-                                // replacewith bug
-                                $(this).tooltip('hide');
-                                ANT.actions.viewCommentContent({
-                                    tag:tag,
-                                    hash:hash,
-                                    aWindow:$aWindow,
-                                    content_node:content_node,
-                                    selState:content_node.selState
-                                });
-                                return false;
-                            });
-                        }
-
-                        $tagBox.append( $commentHover );
-                        $commentHover.tooltip();
-                    }
-
                     return $tagBox;
                 }
             },
@@ -1666,7 +1687,7 @@ function antenna($A){
                                 $container = summary.$container,
                                 kind = summary.kind,
                                 rewritable = (settings.rewritable == false) ? false:true,
-                                coords = {};
+                                coords = (settings.coords) ? settings.coords:{};
 
                             var actionType = (settings.actionType) ? settings.actionType:"react";
 
@@ -1700,11 +1721,18 @@ function antenna($A){
                                     //Trigger the smart text selection and highlight
                                     newSel = $container.selog('helpers', 'smartHilite');
                                     if(!newSel) return false;
+
                                     //temp fix to set the content (the text) of the selection to the new selection
                                     //todo: make selog more integrated with the rest of the code
                                     settings.content = newSel.text;
-                                    coords.left = coords.left + 40;
-                                    coords.top = coords.top + 35;
+                                    if (!coords.force) {
+                                        coords.left = coords.left + 40;
+                                        coords.top = coords.top + 35;
+                                    } else {
+                                        // force is only used from a write-mode paragraph helper, i think
+                                        coords.top = coords.top - 15;
+                                    }
+
                                     //if sel exists, reset the offset coords
                                     if(newSel){
                                         //todo - combine with copy of this
@@ -1715,11 +1743,14 @@ function antenna($A){
                                         if( $hiliteEnd ){
                                             var $helper = $('<span />');
                                             $helper.insertAfter( $hiliteEnd );
-                                            var strRight = $helper.offset().right;
-                                            var strBottom = $helper.offset().bottom;
+                                            if (!coords.force) {
+                                                var strRight = $helper.offset().right;
+                                                var strBottom = $helper.offset().bottom;
+                                                coords.left = strRight - 14; //with a little padding
+                                                coords.top = strBottom + 2;
+                                            }
+
                                             $helper.remove();
-                                            coords.left = strRight - 14; //with a little padding
-                                            coords.top = strBottom + 2;
                                         }
                                     }
 
@@ -1732,12 +1763,16 @@ function antenna($A){
                                         };
                                     }
                                 } else {
+                                    if (typeof settings.coords != 'undefined' && settings.coords.force) {
+                                        var coords = settings.coords;
+                                    }else {
                                     // draw the window over the actionbar
                                     // need to do media border hilites
                                     var indicatorOffsets = summary.$indicator.offset();
                                     var coords = {};
                                         coords.top = indicatorOffsets.top;
                                         coords.left =  indicatorOffsets.left;
+                                    }
                                 }
                             } else {
                                 // readMode
@@ -1782,6 +1817,8 @@ function antenna($A){
                                         container_kind: kind,
                                         page_id: page_id
                                     });
+
+                                    ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':kind });
 
                                 }
 
@@ -1909,7 +1946,7 @@ function antenna($A){
                 var $aWindow = ANT.aWindow._aWindowTypes.tagMode.make(settings);
 
                 if (typeof $aWindow != 'undefined') {
-
+//CHANGETHIS?
                     // animate window in... just opacity for now.  changing size screws with isotopeFillGap()
                     setTimeout(function() {
                         $aWindow.addClass('ant_show');
@@ -1964,7 +2001,7 @@ function antenna($A){
                     minWidth = settings.minWidth,
                     maxWidth = settings.maxWidth,
                     ant_for = ( typeof settings.container == "string" ) ? 'ant_for_'+settings.container:'ant_for_page',
-                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w100 '+ant_for+'"></div>');
+                    $new_aWindow = $('<div class="ant ant_window ant_rewritable ant_widget w111 '+ant_for+'"></div>');
 
                 if ( settings.id ) {
                     $('#'+settings.id).remove(); 
@@ -2014,7 +2051,6 @@ function antenna($A){
                         // }
                     });
                 }
-
                 var coords = settings.coords;
 
                 $new_aWindow.css('left', coords.left + 'px');
@@ -2027,12 +2063,12 @@ function antenna($A){
 
                 $new_aWindow.settings = settings;
 
-                $new_aWindow.on( "resizestop.ant", function(event, ui) {
-                    var $this = $(this);
+                // $new_aWindow.on( "resizestop.ant", function(event, ui) {
+                //     var $this = $(this);
                     
-                    //todo: examine resize
-                    // ANT.aWindow.updateSizes( $this );
-                });
+                //     //todo: examine resize
+                //     // ANT.aWindow.updateSizes( $this );
+                // });
 
                 return $new_aWindow;
             },
@@ -2057,14 +2093,6 @@ function antenna($A){
 
                     $currentlyVisiblePanel.removeClass('ant_visiblePanel').addClass('ant_hiddenPanel');
                     $currentlyHiddenPanel.removeClass('ant_hiddenPanel').addClass('ant_visiblePanel');
-
-                    // if ( $aWindow.data('initialWidth') >= 300 ) {
-                    //     ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
-                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 70 } );
-                    // } else {
-                    //     if ( $aWindow.data('initialWidth') == 100 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 100 ); }
-                    //     ANT.aWindow.updateSizes( $aWindow, { setHeight:$aWindow.find('.ant_tags_list').height() + 95 } );
-                    // }
 
                 return true;
               }
@@ -2358,6 +2386,10 @@ function antenna($A){
 
                 coords = (kind == 'text') ? actionbarOffsets.text : actionbarOffsets.img(coords);
 
+                // ensure the "actionbar" stays inside the expected space
+                // this prevents that errant actionbar thing (well, it's a band-aid)
+                if (coords.top < 0 || coords.left < 0) {return false;}
+
                 //todo: for images and video, put the actionbar on the left side if the image is too far right
                 if (kind == 'text') {
                     //rewrite coords if needed
@@ -2407,6 +2439,7 @@ function antenna($A){
                     $new_actionbar.data( 'ant_actionbarShowTimer', setTimeout(function() {
                         // ANT.util.setFunctionTimer( function() { $new_actionbar.addClass('ant_hover'); } , 500);
                         ANT.actionbar.close( $new_actionbar );
+                        $('[ant-hash="'+hash+'"]').removeClass('ant_live_hover');
                     }, 1000 ) );
 
                 }).on('click.ant', clickAction );
@@ -2575,7 +2608,7 @@ function antenna($A){
                 //ANT.broadcast.init();
                 var $broadcastSelector = $(ANT.group.recirc_selector).first();
 
-                if ( ANT.group.show_recirc && $broadcastSelector.length ) {
+                if ( ANT.util.activeAB() && ANT.group.show_recirc && $broadcastSelector.length ) {
                     // local debug, use 2878 or 2350 or 2352
                     var ajaxUrl = (ANT_offline) ? "http://www.antenna.is/analytics/recirc/v1/2352/" : ANT_baseUrl+"/analytics/recirc/v1/"+ANT.group.id+"/";
                     $.ajax({
@@ -2592,7 +2625,7 @@ function antenna($A){
                         success: function(response) {
                             var $broadcast = $('<div class="antenna-broadcast no-ant"></div>'),
                                 $broadcast_tiles = $('<div class="ant-tiles"></div>'),
-                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/" target="_blank">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
+                                $broadcast_explanation = $('<div class="ant-explanation"><span class="ant-antenna-logo"></span><span class="ant-antenna-text"></span><p>These tiles have reactions from other readers, telling you why certain content caught their attention.</p><p>Add your voice!  React to text, images, and video on the site and your opinion might show up here, too. Just look for the <span class="ant-antenna-logo ant-inline"></span> logo.</p><p>For more information about Antenna, <a href="http://www.antenna.is/">visit our website</a>.</p><p><a href="javascript:void(0);" class="ant-close">Close this</a></p></div>');
 
                             if ( $broadcastSelector.width() < 400 ) {
                                 $broadcast.addClass('ant-thin');
@@ -2625,7 +2658,7 @@ function antenna($A){
                                         }
                                     } else {
                                         var content = (item.content.kind == 'img') ? '<img src="'+item.content.body+'" />' :
-                                                        (item.content.kind == 'med') ? '<iframe class="contentBody" width="300" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
+                                                        (item.content.kind == 'med') ? '<iframe class="contentBody" width="250" height="250" frameborder="0" src="'+item.content.body+'"></iframe>' : 
                                                         (item.content.body.split(' ').length < 2 ) ? '':item.content.body;
                                         
                                         // add a bg image to text when the content is too short.  15 characters was picked arbitrailty.
@@ -2637,7 +2670,7 @@ function antenna($A){
                                         var itemHTML = '' +
                                         '<div class="ant-featured ant-featured-'+item.content.kind+'" style="background-image:url('+backgroundImage+')">' +
                                             '<div class="ant-featured-container">' +
-                                                '<a href="//www.antenna.is/r/'+item.reaction.id+'" target="_blank">' +
+                                                '<a href="//www.antenna.is/r/'+item.reaction.id+'/">' +
                                                   '<div class="ant-featured-content">'+content+'</div>' +
                                                   '<div class="ant-featured-overlay"></div>' +
                                                   '<div class="ant-featured-gradient"></div>' +
@@ -2662,6 +2695,9 @@ function antenna($A){
 
                             var broadcastInsertionMethod = ( ANT.group.recirc_jquery_method != "" ) ? ANT.group.recirc_jquery_method : "append";
                             $broadcastSelector[ broadcastInsertionMethod ]( $broadcast );
+
+                            // just to reposition the image/media indicators in case this moves them around
+                            ANT.actions.indicators.utils.updateContainerTrackers();
                         }
                     });
                 }
@@ -2731,20 +2767,33 @@ function antenna($A){
             },
             bubblingEvents: {
                 'touchend': false,
-                'dragging': false
+                'dragging': false,
+                'startX':0,
+                'startY':0
+            },
+            isTouchDragging: function(event) {
+                if (!isTouchBrowser) { return false;}
+                if (Math.abs(event.originalEvent.changedTouches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    return true;
+                } else {
+                    return false;
+                }
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
-            clearFunctionTimer: function() {
+            clearFunctionTimer: function(timerName) {
                 // ANT.util.clearFunctionTimer
-                clearInterval($.data(this, 'ant_functionTimer'));
+                if (!timerName) { timerName = 'ant_functionTimer'};
+                clearInterval($.data(this, timerName));
             },
-            setFunctionTimer: function(callback, time) {
+            setFunctionTimer: function(callback, time, timerName) {
                 // ANT.util.setFunctionTimer
-                ANT.util.clearFunctionTimer();
+                if (!timerName) { timerName = 'ant_functionTimer'};
+                ANT.util.clearFunctionTimer(timerName);
+
                 if (!time) { time = 300};
                 if (typeof callback != 'undefined') {
-                    $.data(this, 'ant_functionTimer', setTimeout(function() {
+                    $.data(this, timerName, setTimeout(function() {
                         callback();
                     }, time));
                 }
@@ -2902,14 +2951,18 @@ function antenna($A){
                 var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase();
             
                 if (prop == "page_url") {
-                    return page_url;
-                    // return $.trim( page_url.toLowerCase() );
+                    return ANT.actions.removeSubdomainFromPageUrl(page_url);
                 }
 
                 // what is the stated canonical?
                 if (prop == "canonical_url") {
-                    var canonical_url = $('link[rel="canonical"]').length > 0 ?
+                    var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ?
                                 $('link[rel="canonical"]').attr('href') : page_url;
+
+                    // ant:url overrides
+                    if ( $('[property="antenna:url"]').length > 0 ) {
+                        canonical_url = $('[property="antenna:url"]').attr('content');
+                    }
                     
                     canonical_url = $.trim( canonical_url.toLowerCase() );
 
@@ -2926,8 +2979,9 @@ function antenna($A){
                         }
                     }
 
-                    return $.trim(canonical_url);
+                    return ANT.actions.removeSubdomainFromPageUrl($.trim(canonical_url));
                 }
+
             },
             buildInteractionData: function() {
                 //ANT.util.buildInteractionData
@@ -3153,6 +3207,7 @@ function antenna($A){
             },
             //_.throttle returns a function
             throttledUpdateContainerTrackers: function(){
+
                 return ANT.util._.throttle(
                     //ANT.util.throttledUpdateContainerTrackers
                     ANT.actions.indicators.utils.updateContainerTrackers,
@@ -3304,13 +3359,17 @@ function antenna($A){
                 var isActive = true;
                 var ant_ab = JSON.parse( localStorage.getItem('ant_ab') );  // ab test candidate.  true = sees Antenna
 
-                if( ANT.group.ab_test_impact === true && (!ant_ab || new Date().getTime() > ant_ab.expires) ) {
+                if( ANT.group.ab_test_impact === true && (typeof ANT.group.ab_value!='undefined' || !ant_ab || new Date().getTime() > ant_ab.expires) ) {
                     // calculate whether or not they are in the active pool
                     var p=(10*ANT.group.ab_test_sample_percentage); // multiply 10, so 2.5 or 0.5 can be tested
 
                     // generate a random number.  if the number is lower than P, they will NOT see the widget
                     if ( Math.floor(Math.random() * 1000 ) <= p ) {
                         isActive = false;
+                    }
+
+                    if (typeof ANT.group.ab_value!='undefined') {
+                        isActive = (ANT.group.ab_value === 'a');
                     }
                     
 
@@ -3391,13 +3450,13 @@ function antenna($A){
             $A('body').toggleClass('no-ant');
         },
         getLastEvent: function() {
-            if (ANT.group.premium == true) {
+            // if (ANT.group.premium == true) {
                 return {
                     'event':(ANT.events.lastEvent) ? ANT.events.lastEvent:'',
                     'value':(ANT.events.lastValue) ? ANT.events.lastValue:'',
                     'supplementary':(ANT.events.lastSupplementary) ? ANT.events.lastSupplementary:{}
                 };
-            }
+            // }
         },
         session: {
             alertBar: {
@@ -3419,12 +3478,8 @@ function antenna($A){
                     if( whichAlert == "fromShareLink" && data.content != "undefined" ){
                         var decodedContent = unescape($.evalJSON('"'+data.content+'"'));
 
-                        ANT.events.trackEventToCloud({
-                            event_type: 'rc',
-                            event_value: ''+ANT.session.referring_int_id,
-                            page_id: ANT.util.getPageProperty('id'),
-                            content_attributes: data.redirect_type
-                        });
+                        // recirc tracker USED to be here
+
                         $msg1 = $('<h1>Shared with <span>Antenna</span></h1>');
 
                         if ( $('img[ant-hash="'+data.container_hash+'"]').length == 1 ) {
@@ -3483,7 +3538,6 @@ function antenna($A){
                     //brute force for now -
                     //if they click the X we need this;
                     $('div.ant_indicator_for_media').hide();
-                    // ANT.actions.indicators.utils.borderHilites.disengageAll();
                     
                     // set a localStorage in the iframe saying not to show this anymore
                     $.postMessage(
@@ -3554,13 +3608,11 @@ function antenna($A){
             },
             getUser: function(args, callback) {
                 //ANT.session.getUser
-
                 if ( callback && args ) {
                     ANT.session.receiveMessage( args, callback );
                 } else if ( callback ) {
                     ANT.session.receiveMessage( false, callback );
                 }
-
                 $.postMessage(
                     "getUser",
                     ANT_baseUrl + "/static/xdm.html",
@@ -3635,11 +3687,11 @@ function antenna($A){
                 $ANT.dequeue('initAjax');
             },
             receiveMessage: function(args, callbackFunction) {
+                //ANT.session.receiveMessage
                 //args is passed through this function into the callback as a parameter.
                 //The only side effect is that it adds a user property to args ( args[user] ).
                 $.receiveMessage(
                     function(e){
-                        
                         var message = $.evalJSON( e.data );
                         
                         if ( message.status ) {
@@ -3702,6 +3754,16 @@ function antenna($A){
                                 $('#ant_loginPanel div.ant_body').html( '<div style="padding: 5px 0; margin:0 8px; border-top:1px solid #ccc;"><strong>Welcome!</strong> You\'re logged in.</div>' );
                             // } else if ( message.status == "educate user" ) {
                                 // ANT.session.alertBar.make('educateUser');
+                            } else if ( message.status.indexOf('recircClick') != -1 ) {
+                                var linkData = message.status.split('|');
+                                if ( linkData[1] ) {
+                                    ANT.session.referring_int_id = parseInt( linkData[1], 10 ); // TODO what is this used for any more?
+                                }
+                                ANT.events.trackEventToCloud({
+                                    event_type: 'rc',
+                                    event_value: ''+ANT.session.referring_int_id,
+                                    page_id: ANT.util.getPageProperty('id')
+                                });
                             } else if ( message.status.indexOf('sharedLink') != -1 ) {
                                 var sharedLink = message.status.split('|');
                                 if ( sharedLink[5] ) {
@@ -3988,16 +4050,25 @@ function antenna($A){
             initGroupData: function(groupShortName){
                 // request the ANT Group Data
 
+                var host = window.antenna_host;
+
                 $.ajax({
                     url: ANT_baseUrl+"/api/settings/",
                     type: "get",
                     contentType: "application/json",
                     dataType: "jsonp",
                     data: {
-                        json: $.toJSON( {host_name : window.location.hostname} )
+                        // json: $.toJSON( {host_name : window.location.host} ) // has port
+                        json: $.toJSON( {host_name : host } )  // no port
                     },
                     success: function(response, textStatus, XHR) {
                         var group_settings = response.data;
+
+                        // handle deprecated "no_reader", now called no_ant
+                        if ( typeof group_settings.no_readr != 'undefined' ) {
+                            group_settings.no_ant = group_settings.no_readr;
+                            delete group_settings.no_readr;
+                        }
 
                         // handle deprecated .blessed_tags, change to .default_reactions
                         if ( typeof group_settings != 'undefined' ) {
@@ -4012,7 +4083,6 @@ function antenna($A){
                             if (typeof group_settings.tag_box_bg_colors !='undefined' && !group_settings.tag_box_bg_colors ) { delete group_settings.tag_box_bg_colors; }
                             if (typeof group_settings.tag_box_text_colors !='undefined' && !group_settings.tag_box_text_colors ) { delete group_settings.tag_box_text_colors; }
                             if (typeof group_settings.tag_box_font_family !='undefined' && !group_settings.tag_box_font_family ) { delete group_settings.tag_box_font_family; }
-                            if (typeof group_settings.tag_box_gradient !='undefined' && !group_settings.tag_box_gradient ) { delete group_settings.tag_box_gradient; }
                             if (typeof group_settings.tags_bg_css !='undefined' && !group_settings.tags_bg_css ) { delete group_settings.tags_bg_css; }
                         }
                         var custom_group_settings = (ANT.groupSettings) ? ANT.groupSettings.getCustomSettings():{};
@@ -4030,7 +4100,8 @@ function antenna($A){
                             event_type: 'sl',
                             event_value: a_or_b_or_not,
                             page_id: ANT.util.getPageProperty('id'),
-                            content_attributes: ( $(ANT.group.recirc_selector).first().length ) ? 'broadcast':null
+                            content_attributes: ( ANT.util.activeAB() && $(ANT.group.recirc_selector).first().length ) ? 'broadcast':
+                                    (!!ANT.group.content_attributes) ? ANT.group.content_attributes : null
                         });
 
                         if (ANT.group.hideOnMobile === true && isTouchBrowser) {
@@ -4039,7 +4110,7 @@ function antenna($A){
 
                         ANT.group.anno_whitelist += ',div.ant_br_replaced';
 
-                        $(ANT.group.no_readr).each( function() {
+                        $(ANT.group.no_ant).each( function() {
                             var $this = $(this);
                             $this.addClass('no-ant');
                             $this.find('img').addClass('no-ant');
@@ -4081,6 +4152,10 @@ function antenna($A){
                             $('head').append( $('<style type="text/css">' + ANT.group.custom_css + '</style>') );
                         }
 
+                        // if (ANT.group.antenna_host) {
+                        //     window.antenna_host = ANT.group.antenna_host;
+                        // }
+
                         $ANT.dequeue('initAjax');
 
                     },
@@ -4093,17 +4168,20 @@ function antenna($A){
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                ANT.group.useDefaultSummaryBar = (
-                    ANT.engageScriptParams.bookmarklet &&
-                    !$('.ant-page-summary').length &&
-                    // !$(ANT.group.post_selector).length &&
-                    !$(ANT.group.summary_widget_selector).length
-                );
-                
-                if (ANT.group.useDefaultSummaryBar){
-                    //add a class defaultSummaryBar to show that this is our added ant-page-summary
-                    //and not a publisher added one.
-                    $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar"/>').appendTo('body');
+                if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
+                    ANT.group.useDefaultSummaryBar = (
+                        ANT.engageScriptParams.bookmarklet &&
+                        !$('.ant-page-summary').length &&
+                        // !$(ANT.group.post_selector).length &&
+                        !$(ANT.group.summary_widget_selector).length &&
+                        ANT.group.summary_widget_selector != 'none'
+                    ) ? true:false;
+
+                    if (ANT.group.useDefaultSummaryBar===true){
+                        //add a class defaultSummaryBar to show that this is our added ant-page-summary
+                        //and not a publisher added one.
+                        $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
+                    }
                 }
                 
                 // ANT.session.educateUser(); //this function has changed now
@@ -4134,19 +4212,20 @@ function antenna($A){
                         ANT.group.post_href_selector !== "" && 
                         ANT.group.summary_widget_selector !== ""
                     ) {
+
                         var $posts = $(ANT.group.post_selector),
                             num_posts = $posts.length;
+
                         //if $(ANT.group.post_selector).length is 0, this will just do nothing
                         $posts.each( function(){
                             // var key = pagesArr.length;
                             var $post = $(this);
                             var $post_href = $post.find(ANT.group.post_href_selector);
-
                             
-                            if (typeof $post_href == 'undefined' || typeof $post_href.attr('href') == 'undefined') {
+                            if (typeof $post_href == 'undefined' || $post_href.length === 0 || typeof $post_href.attr('href') == 'undefined') {
                                 url = (ANT.util.getPageProperty('canonical_url') == 'same') ? ANT.util.getPageProperty('page_url') : ANT.util.getPageProperty('canonical_url');
                             } else {
-                                url = $post_href.attr('href');
+                                url = ANT.actions.removeSubdomainFromPageUrl( $post_href.attr('href') );
                             }
 
                             var $summary_widget = $post.find(ANT.group.summary_widget_selector).eq(0);
@@ -4159,7 +4238,7 @@ function antenna($A){
                                     g = d.getElementsByTagName('body')[0],
                                     x = w.innerWidth || e.clientWidth || g.clientWidth,
                                     y = w.innerHeight|| e.clientHeight|| g.clientHeight,
-                                    top = (d && d.scrollTop  || g && g.scrollTop  || 0),
+                                    top = $(document).scrollTop(),
                                     almostInView = y+top+300;
 
                                 if ( offsets.top < almostInView ) {
@@ -4173,6 +4252,7 @@ function antenna($A){
                             // if ( $post_href.attr('href') && nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
                             if ( nearWindow($post) && !$post.hasAttr('ant-page-checked') ) {
                                 $post.attr('ant-page-checked', true);
+
                                 // url = $post_href.attr('href');
 
                                 // IE fix for window.location.origin
@@ -4182,10 +4262,14 @@ function antenna($A){
 
                                 // does this URL have the origin on it?  or does it just begin with a relative path?
                                 if ( url.indexOf(window.location.origin) == -1 ) {
-                                    if ( url.substr(0,1) == "/" ) {
-                                        url = window.location.origin + url;
-                                    } else {
-                                        url = window.location.origin + window.location.pathname + url;
+                                    // dont do this if we're supposed to ignore the subdomains
+                                    // "ignore" really means "override"
+                                    if (ANT.group.ignore_subdomain != true) {
+                                        if ( url.substr(0,1) == "/" ) {
+                                            url = window.location.origin + url;
+                                        } else {
+                                            url = window.location.origin + window.location.pathname + url;
+                                        }
                                     }
                                 }
 
@@ -4220,8 +4304,10 @@ function antenna($A){
                 }
 
                 // defaults for just one page / main page.  we want this last, so that the larger page call happens last, and nodes are associated with posts first.
+                // var pageUrl = ANT.util.getPageProperty('page_url');
+
                 var pageUrl = ANT.util.getPageProperty('page_url');
-                
+
                 if ( num_posts === 0 && ($.inArray(pageUrl, urlsArr) == -1 || urlsArr.length == 0) ) {
                     var $body = $('body');
 
@@ -4273,7 +4359,6 @@ function antenna($A){
                 };
 
                 if (pagesArr.length) {
-
                     //TODO: if get request is too long, handle the error (it'd be b/c the URL of the current page is too long)
                     //might not want to send canonical, or, send it separately if/only if it's different than URL
                     $.ajax({
@@ -4283,7 +4368,6 @@ function antenna($A){
                         dataType: "jsonp",
                         data: { json: $.toJSON(sendData) },
                         success: function(response) {
-
                             if ( response.status !== "success" ) {
                                 return false;
                             } else {
@@ -4307,7 +4391,7 @@ function antenna($A){
                             // }
 
                             var load_event_value = '';
-                            if (ANT.group.useDefaultSummaryBar){
+                            if (ANT.group.useDefaultSummaryBar === true){
                                 load_event_value = 'def';
                             } else {
                                 if (response.data.length === 1) {
@@ -4327,10 +4411,16 @@ function antenna($A){
                                 ANT.actions.pages.initPageContainer(page.id);
                             });
 
+                            var a_or_b_or_not = '';
+                            if ( ANT.group.ab_test_impact === true ) {
+                                a_or_b_or_not = ( ANT.util.activeAB() ) ? 'A':'B';
+                            }
+
                             ANT.events.trackEventToCloud({
                                 event_type: 'wl',
-                                event_value: load_event_value,
-                                page_id: ANT.util.getPageProperty('id')
+                                event_value: a_or_b_or_not,
+                                page_id: ANT.util.getPageProperty('id'),
+                                content_attributes: (!!ANT.group.content_attributes) ? ANT.group.content_attributes : load_event_value
                             });
 
                             $ANT.dequeue('initAjax');
@@ -4344,9 +4434,10 @@ function antenna($A){
             },
             runPostPageInit: function(){
                 //ANT.actions.runPostPageInit:
+                ANT.actions.indicators.utils.updateContainerTrackers();
 
                 // todo: this is a pretty wide hackey net - rethink later.
-                var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
+                // var imgBlackListFilter = (ANT.group.img_blacklist&&ANT.group.img_blacklist!="") ? ':not('+ANT.group.img_blacklist+')':'';
 
                 // init media object on load.
                 // this is new, but we want the experience for images to be faster.
@@ -4385,71 +4476,21 @@ function antenna($A){
 
                 }else if ( ANT.util.activeAB() )  {
 
-                    $(ANT.group.active_sections)
-                        .on( 'mouseenter.ant', 'embed, video, object, iframe, img'+imgBlackListFilter, function(){
+                    $(ANT.group.active_sections) // imagemouseover imghover imagehover imgmouseenter
+                        .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
+                            ANT.actions.containers.media.disengageAll();
+
                             var $this = $(this);
+                            // console.log('3');
+                            // setTimeout(function(){
+                                // console.log('3a');
+                                // $this.addClass('ant_live_hover');
+                            // },300);
+                            $this.addClass('ant_live_hover');
                             
-                            var hash = $this.data('hash');
-
-                                ANT.actions.indicators.utils.updateContainerTrackers();
-
-                            if ( $this.closest('.no-ant').length ) {
-                                return;
-                            }
-                            var minImgWidth = 100;
-                            if ( $this.width() >= minImgWidth ) {
-
-                                var hasBeenHashed = $this.hasAttr('ant-hashed'),
-                                    isBlacklisted = $this.closest('.ant, .no-ant').length;
-
-                                $this.addClass('ant_live_hover');
-
-                                if(!hasBeenHashed && !isBlacklisted){
-                                    var hashListsByPageId = ANT.actions.hashNodes( $(this) );
-
-                                    //we expect just the one here, so just get that one.
-                                    var hash;
-                                    $.each( hashListsByPageId, function(page_id, hashArray) {
-                                        hash = hashArray[0];
-                                    });
-                                    if(!hash){
-                                        //i think there should always be a hash though
-                                        ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
-                                        return;
-                                    }
-
-                                    ANT.actions.sendHashes( hashListsByPageId, function(){
-                                        if( $this.hasClass('ant_live_hover') ){
-                                            if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                                // $('#ant_indicator_' + hash).show();
-                                                $('#ant_indicator_' + hash).addClass('ant_visible');
-                                            }
-                                        }
-                                        ANT.actions.content_nodes.init(hash, function(){});
-                                    });
-                                    //these calls are redundant to the same calls in the callback above,
-                                    //but this will make them show up right away,
-                                    //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
-                                    // ANT.actions.indicators.utils.borderHilites.update(hash);
-                                    // ANT.actions.indicators.utils.borderHilites.engage(hash);
-
-                                } else {
-                                    var hash = $this.data('hash');
-
-                                    $this.addClass('ant_live_hover');
-                                    if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
-                                        $('#ant_indicator_' + hash).addClass('ant_visible');
-
-                                        // $('#ant_indicator_' + hash).show();
-                                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
-                                    }
-
-                                    ANT.actions.content_nodes.init(hash, function(){});
-                                }
-
-                            }
+                            ANT.actions.mediaNodeInit($this);
                         })
-                        .on( 'mouseleave.ant', 'embed, video, object, iframe, img'+imgBlackListFilter, function(event){
+                        .on( 'mouseleave.ant', 'embed, video, object, iframe, img', function(event){
                             var $this = $(this),
                                 hash = $this.data('hash');
 
@@ -4457,7 +4498,11 @@ function antenna($A){
                             if ( !$this.parents( ANT.group.img_container_selectors ).length ) {
                                 _mediaHoverOff( $this )
                             }
-                            $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            // $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $('#ant_indicator_' + hash).removeClass('ant_visible');
+                            },300, hash);
                     });
                 }
 
@@ -4468,12 +4513,87 @@ function antenna($A){
                     var $this = $(obj),
                         hash = $this.data('hash');
 
-                    $this.removeClass('ant_live_hover');
+                    // $this.removeClass('ant_live_hover');
+                    setTimeout(function(){
+                        $this.removeClass('ant_live_hover');
+                    },300);
                     $('#ant_indicator_' + hash).hide();
                 }
 
             },
+            mediaNodeInit: function($this) {
+
+                //ANT.actions.mediaNodeInit:
+                var hash = $this.data('hash');
+
+                    ANT.actions.indicators.utils.updateContainerTrackers();
+
+                if ( $this.closest('.no-ant').length ) {
+                    return;
+                }
+                var minImgWidth = 100;
+
+                if ( $this.width() >= minImgWidth ) {
+                    var hasBeenHashed = $this.hasAttr('ant-hashed'),
+                        isBlacklisted = $this.closest('.ant, .no-ant').length;
+
+                    if(!hasBeenHashed && !isBlacklisted){
+
+                        var hashListsByPageId = ANT.actions.hashNodes( $this );
+
+                        //we expect just the one here, so just get that one.
+                        var hash;
+                        $.each( hashListsByPageId, function(page_id, hashArray) {
+                            hash = hashArray[0];
+                        });
+                        if(!hash){
+                            //i think there should always be a hash though
+                            ANT.safeThrow('There should always be a hash from hashNodes after hover on an unhashed image.');
+                            return;
+                        }
+
+                        ANT.actions.sendHashes( hashListsByPageId, function(){
+                            // if( $this.hasClass('ant_live_hover') ){
+                                if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                                    // $('#ant_indicator_' + hash).show();
+                                    // $('#ant_indicator_' + hash).addClass('ant_visible');
+                                    ANT.util.setFunctionTimer( function() {
+                                    // setTimeout(function(){
+                                        $('#ant_indicator_' + hash).addClass('ant_visible');
+                                    },300, hash);
+                                }
+                            // }
+                            ANT.actions.content_nodes.init(hash, function(){});
+                        });
+
+                        //these calls are redundant to the same calls in the callback above,
+                        //but this will make them show up right away,
+                        //and then the ones in the callback will make sure they don't get lost when the indicator re-inits.
+                        // ANT.actions.indicators.utils.borderHilites.update(hash);
+                        // ANT.actions.indicators.utils.borderHilites.engage(hash);
+
+                    } else {
+                        var hash = $this.data('hash');
+                        if ( !$('#ant_indicator_details_'+hash).hasClass('ant_engaged') ) {
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $('#ant_indicator_' + hash).addClass('ant_visible');
+                            },300, hash);
+
+                            // $('#ant_indicator_' + hash).show();
+                            // ANT.actions.indicators.utils.borderHilites.engage(hash);
+                        }
+
+                        ANT.actions.content_nodes.init(hash, function(){});
+                    }
+
+                }
+            },
             initEnvironment: function(){
+                // if B group, ensure separate CTAs are not visible, but try not to reflow
+                if ( !ANT.util.activeAB() ) {
+                    $('.ant-custom-cta').css('visibility','hidden');
+                }
 
                 ANT.broadcast.init();
                 //This should be the only thing appended to the host page's body.  Append everything else to this to keep things clean.
@@ -4482,8 +4602,6 @@ function antenna($A){
                 if(isTouchBrowser){
                     $('#ant_sandbox').addClass('isTouchBrowser');
                 }
-
-                // ANT.util.checkSessions();
 
                 // get author, topics, tags from publisher-defined tags
                 var page_attributes = ['topics', 'author', 'section'];
@@ -4521,28 +4639,36 @@ function antenna($A){
                 };
 
         
-                $(window).on('scroll.ant', function() {
-                    // disable scroll event tracking.
-                    // clearTimeout($.data(this, 'ant_scrollTimer'));
-                    // $.data(this, 'ant_scrollTimer', setTimeout(function() {
-
-                    //     var scrolltop = $(window).scrollTop();
-                    //     var windowHeight = $(window).height();
-
-                    //     if ( ANT.group.active_section_milestones['fired'] < 100 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['100'] ) { ANT.events.fireScrollEvent('100'); ANT.group.active_section_milestones['fired'] = 100; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 80 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['80'] ) { ANT.events.fireScrollEvent('80'); ANT.group.active_section_milestones['fired'] = 80; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 40 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['40'] ) { ANT.events.fireScrollEvent('40'); ANT.group.active_section_milestones['fired'] = 40; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 60 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['60'] ) { ANT.events.fireScrollEvent('60'); ANT.group.active_section_milestones['fired'] = 60; }
-                    //     if ( ANT.group.active_section_milestones['fired'] < 20 && (scrolltop+windowHeight) > ANT.group.active_section_milestones['20'] ) { ANT.events.fireScrollEvent('20'); ANT.group.active_section_milestones['fired'] = 20; }
-                    // }, 250));
-                    
+                // $(window).on('scroll.ant', function() {
                     // i'm sure there is a good reason for this, but i don't recall what it is
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
+
+                    // neither debounce nor throttle is working
+                    // ANT.util._.debounce( ANT.actions.initPageData, 150 );
+                    // ANT.util._.throttle( ANT.actions.initPageData, 150 );
+
+                // });
+                
+                $(window).on('scrollstart', function() {
+                    // i'm sure there is a good reason for this, but i don't recall what it is
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
                     ANT.actions.initPageData();
 
-                    // return ANT.util._.throttle(
-                    //     ANT.actions.initPageData,
-                    // 100
-                    // );
+                    ANT.actions.indicators.utils.updateContainerTrackers();
+
+                    ANT.actions.containers.media.disengageAll();
+                });
+
+                $(window).on('scrollstop', function() {
+                    // lets do it again to make sure we init the data that the person might view
+                    // suspect scrollstop > scrollstart, but either seems ok.
+
+                    // i'm sure there is a good reason for this, but i don't recall what it is
+                    // blog rolls maybe.  
+                    // YEP, blog rolls.  gotta init the paged ata and summary widgets for each posts.
+                    ANT.actions.initPageData();
                 });
 
                 var groupPageSelector = (ANT.group.summary_widget_selector) ? ', '+ANT.group.summary_widget_selector : '';
@@ -4596,7 +4722,7 @@ function antenna($A){
                             top: (currTop+bodyTop)+'px'
                         }, true);
 
-                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important; } </style>');
+                    $antSandbox.append('<style>.ant_twtooltip { margin-left:'+bodyLeft+'px !important; margin-top:'+bodyTop+'px !important;} '+ ANT.group.active_sections_with_anno_whitelist +' {-webkit-user-select: text; -khtml-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text;} </style>');
 
 
 
@@ -4619,7 +4745,8 @@ function antenna($A){
                 });
 
                 if ( !isTouchBrowser ) {
-                    $(document).on('mousedown.ant',function(event) {
+                    $(document).on('mouseup.ant',function(event) {
+
                         var $mouse_target = $(event.target);
 
                         if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
@@ -4628,7 +4755,9 @@ function antenna($A){
                             //         ANT.util.userLoginState();
                             //     });
                             // }
+                            
                             ANT.actions.UIClearState();
+                            // setTimeout(ANT.actions.UIClearState, 333);
 
                             // if ( !isTouchBrowser ) {
                             $('div.ant_indicator_details_for_media').each( function() {
@@ -4639,16 +4768,23 @@ function antenna($A){
 
                     });
                 } else {
-                    $(document).on('touchend.ant',function(e) {
-                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                        if (ANT.util.bubblingEvents['touchend'] == false) {
+                    // $('.ant, ' + ANT.group.active_sections).on('touchend.ant',function(e) {
+                    // $('body').on( 'touchend.ant', '.ant, ' + ANT.group.active_sections, function(e){
+                    // $('body').on( 'touchstart.ant', function(e){
+                    // });
+                    $('body').on( 'touchend.ant', function(e){
+                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                        if ( ANT.util.isTouchDragging(e) ) { return; }
+                        if (ANT.util.bubblingEvents['touchend'] === false) {
+
                             var $mouse_target = $(e.target);
 
                             if ( ( $mouse_target.closest('.ant_inline').length ) || (!$mouse_target.hasAttr('ant-cta-for') && !$mouse_target.parents().hasClass('ant') && !$('div.ant-board-create-div').length) ) {
                                 // if ( ($mouse_target.hasAttr('ant-node') && $('.ant_window').length>1) || ( !$mouse_target.hasAttr('ant-node') && $('.ant_window').length ) ) {
 
                                 // the container.singletap will handle container state clearing.  (unless and img.)  sigh.
-                                if ( !$mouse_target.hasAttr('ant-node') || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
+                                // dunno why, of course.
+                                if ( !$mouse_target.closest('[ant-node]').length || $mouse_target.get(0).nodeName.toLowerCase() == 'img' ) {
                                     ANT.actions.UIClearState();
                                 }
                             }
@@ -4658,13 +4794,30 @@ function antenna($A){
                     });
 
                     // iphone drag fix
-                    $(document).on('touchmove.ant',function(e) {
-                        ANT.util.bubblingEvents['dragging'] = true;
+                    // $('body').on( 'touchstart.ant', '.ant, ' + ANT.group.active_sections, function(e){
+                    $('body').on( 'touchstart.ant', function(e){
+                    // $('.ant, ' + ANT.group.active_sections).on('touchstart.ant',function(event) {
+                    // $(document).on('touchstart.ant',function(event) {
+                        ANT.util.bubblingEvents['startY'] = e.originalEvent.touches[0].clientY;
                     });
+
+                    // NOW NOT NEEDED.  USING math FROM TOUCHSTART plus if ( ANT.util.isTouchDragging(e) ) { return; }
+                    // $(document).on('touchmove.ant',function(event) {
+                    //     if (Math.abs(event.originalEvent.touches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    //         ANT.util.bubblingEvents['dragging'] = true;
+                    //     }
+                    // });
                     // $(document).on('touchstart.ant',function(e) {
-                    $(document).on('touchend.ant',function(e) {
-                        ANT.util.bubblingEvents['dragging'] = false;
-                    });
+                    // $(document).on('touchend.ant',function(event) {
+                    //     if (Math.abs(event.originalEvent.changedTouches[0].clientY - ANT.util.bubblingEvents['startY']) > 10 ) {
+                    //         ANT.util.bubblingEvents['dragging'] = true;
+                    //     }
+
+                    //     // if (ANT.util.bubblingEvents['dragging'] == true) {
+                    //     //     event.stopImmediatePropagation();
+                    //     //     ANT.util.bubblingEvents['dragging'] = false;
+                    //     // }
+                    // });
                 }
 
                 //bind an escape keypress to clear it.
@@ -4681,7 +4834,7 @@ function antenna($A){
             handleDeprecated: function() {
                 //ant-content-type ????  could be come ant-content-attributes="question"
                 // rewrite some deprecated Antenna attributes into their newer versions
-                if (!ANT.util.activeAB()) {
+                if (ANT.util.activeAB()) {
                     $('[ant-custom-display]').each( function() {
                         var $this = $(this);
                         $this.attr('ant-item', $this.attr('ant-custom-display') );
@@ -4706,7 +4859,7 @@ function antenna($A){
                             tagName = node.nodeName.toLowerCase(),
                             crossPage = '';
 
-                        if ( $node.closest(ANT.group.no_readr).length ) {return;}
+                        if ( $node.closest(ANT.group.no_ant).length ) {return;}
                         if ( $node.hasAttr('ant-item') ) {
                             var antItem = $node.attr('ant-item');
                         } else {
@@ -4742,7 +4895,6 @@ function antenna($A){
                             $.each(reactions.split(';'), function(idx, tag) {
                                 itemDefinition.default_reactions.push( $.trim(tag) );
                             });
-
                             window.antenna_extend_per_container[itemName] = itemDefinition;
                         }
                     });
@@ -4752,6 +4904,15 @@ function antenna($A){
             },
             reInit: function() {
                 // ANT.actions.reInit:
+                ANT.actions.resetCustomDisplayHashes();
+                ANT.actions.hashCustomDisplayHashes();
+            },
+            reset: function() {
+                // ANT.actions.reset:
+                $('[ant-page-checked]').removeAttr('ant-page-checked');
+                $('[ant-page-container]').removeAttr('ant-page-container');
+                $('.ant-summary').remove();
+                ANT.actions.initPageData();
                 ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
@@ -4759,12 +4920,18 @@ function antenna($A){
                     //ANT.actions.UIClearState:
                     // clear any errant tooltips
                     $('div.ant_twtooltip').remove();
+                    $('.ant_live_hover').removeClass('ant_live_hover');
 
                     ANT.aWindow.closeAll();
                     ANT.actionbar.closeAll();
                     ANT.actions.containers.media.disengageAll();
+
+                    // feels super janky
+                    // doing this for slideshows, goal being to NOT have the publisher do a callback on slide-load-complete to ensure icons are cleared.
+                    setTimeout(ANT.actions.containers.media.disengageAll, 333); // ensure it happens after a slow moving slideshow...
+                    setTimeout(ANT.actions.containers.media.disengageAll, 1000); // ensure it happens after a slow moving slideshow...
                     // ANT.actions.indicators.utils.borderHilites.disengageAll();
-                    $('div.ant.ant_tag_details.ant_sbRollover').remove();
+                    // $('div.ant.ant_tag_details.ant_sbRollover').remove();
                     
                     if (!isTouchBrowser) { 
                         $('div.ant_indicator_for_media').hide();
@@ -4815,7 +4982,8 @@ function antenna($A){
                             }
 
                             $this.data({
-                                'body':body
+                                'body':body,
+                                'isCustom': ($this.hasAttr('ant-item-content')) ? true:false
                             });
                         }
                     },
@@ -4964,6 +5132,7 @@ function antenna($A){
                     var $this = $(this),
                         body = $this.data('body'),
                         kind = $this.data('kind'),
+                        isCustom = $this.data('isCustom'),
                         HTMLkind = $this.get(0).nodeName.toLowerCase(),
                         hashBody = body,
                         hash,
@@ -4975,6 +5144,7 @@ function antenna($A){
                     }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
+
                         // band-aid for old image hashing technique.  bandaid.  remove, hopefully.
                         hashText = "rdr-"+kind+"-"+hashBody; //examples: "ant-img-http://dailycandy.com/images/dailycandy-header-home-garden.png" || "ant-p-ohshit this is some crazy text up in this paragraph"
                         oldHash = ANT.util.md5.hex_md5( hashText );
@@ -5064,7 +5234,7 @@ function antenna($A){
                     if ( $hashParents.length ) {
                         ANT.actions.stripAntNode($hashParents);
                     }
-                    
+
                     // we will use this in the following conditionals
                     var thisTagName = $this.get(0).nodeName.toLowerCase();
 
@@ -5094,12 +5264,10 @@ function antenna($A){
 
                             // if this node, inside the hashNode, is an image, iframe, or embed...
                             // check to see if ti has any valid siblings (in case, say, the image is floated next to a paragraph)
-                            if ( $.inArray(tagName, embedTagsArray) != -1 ) {
-
-                                var $childNode = $(childNode);
-                                if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
-                                    
-                                }
+                            if ( isCustom || $.inArray(tagName, embedTagsArray) != -1 ) {
+                                // var $childNode = $(childNode);
+                                // if ($childNode.siblings(ANT.group.anno_whitelist).length ) {
+                                // }
 
                             } else {
                                 dontHash = true;
@@ -5135,14 +5303,23 @@ function antenna($A){
                         
                         $this.on('mouseenter.ant', function() {
                             ANT.actions.indicators.init(hash);
-                            $(this).addClass('ant_live_hover');
+                            var $this = $(this);
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $this.addClass('ant_live_hover');
+                            },300, hash);
                         })//chain
                         .on('mouseleave.ant', function() {
                             // var $hash_helper = $('.ant_helper_aWindow.ant_for_'+hash);
                             // if ( $hash_helper.length ) {
                             //     $hash_helper.remove();
                             // }
-                            $(this).removeClass('ant_live_hover');
+                            // $(this).removeClass('ant_live_hover');
+                            var $this = $(this);
+                            ANT.util.setFunctionTimer( function() {
+                            // setTimeout(function(){
+                                $this.removeClass('ant_live_hover');
+                            },300, hash);
                         });
 
                     }
@@ -5368,6 +5545,36 @@ function antenna($A){
                 }
                 
             },
+            resetCustomDisplayHashes: function($nodes) {
+                // ANT.actions.resetCustomDisplayHashes:
+                if (!$nodes) {
+                    $nodes = $('[ant-item]');
+                }
+
+                $nodes.each( function( idx, node ) {
+                    var $node = $(node);
+                    $node.removeAttr('ant-hash').removeAttr('ant-hasindicator').removeAttr('ant-node').removeAttr('ant-hashed').removeAttr('ant-summary-loaded');
+                });
+            },
+            removeSubdomainFromPageUrl: function(url) {
+                // ANT.actions.removeSubdomainFromPageUrl:
+                // if "ignore_subdomain" is checked in settings, AND they supply a TLD,
+                // then modify the page and canonical URLs here.
+                // have to have them supply one because there are too many variations to reliably strip subdomains  (.com, .is, .com.ar, .co.uk, etc)
+                if (ANT.group.ignore_subdomain == true && ANT.group.page_tld) {
+                    var HOSTDOMAIN = /[-\w]+\.(?:[-\w]+\.xn--[-\w]+|[-\w]{2,}|[-\w]+\.[-\w]{2})$/i;
+                    var srcArray = url.split('/');
+
+                    var protocol = srcArray[0];
+                    srcArray.splice(0,3);
+
+                    var returnUrl = protocol + '//' + ANT.group.page_tld + '/' + srcArray.join('/');
+
+                    return returnUrl;
+                } else {
+                    return url;
+                }
+            },
             hashCustomDisplayHashes: function() {
                 // ANT.actions.hashCustomDisplayHashes:
 
@@ -5387,6 +5594,7 @@ function antenna($A){
                         pageCustomDisplays[ pageId ].push( thisHash );
 
                         ANT.actions.indicators.init( thisHash );
+                        ANT.actions.mediaNodeInit($node);
                     });
 
                 }
@@ -5548,13 +5756,12 @@ function antenna($A){
                                 // $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 // $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
                                 $reactionView = $('[ant-view-reactions-for="'+customDisplayName+'"]'),
-                                reactionViewStyle = $reactionView.attr('ant-view-style') || 'grid',
                                 reactionViewWidth = $reactionView.width(),
                                 reactionViewHeight = $reactionView.height();
 
                             $reactionView.data('hash', hash).data('container', hash).addClass('no-ant');
 
-                            if ( reactionViewStyle == "grid" ) {
+
 
                                 // if the reactionView grid has no height specified, give it one
                                 // [pb, 9/12/13]:  think the 200px minimum is to make it look ok.  nt sure if it BREAKS if it's smaller than that or not.
@@ -5580,10 +5787,6 @@ function antenna($A){
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
                                 }
-                            } else if ( reactionViewStyle == "horizontal_bars" ) {
-                                $reactionView.html('<div class="ant ant_inline ant_body_wrap ant_horizontal_bars ant_clearfix"></div>'); // gotta insert the ant_body_wrap or there is no container to attach to in makeTagsListForInline 
-                                ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); } );
-                            }
                         }
                     });
                 },
@@ -5647,6 +5850,42 @@ function antenna($A){
                             var hash = $(this).data('hash');
                             hashes.push(hash);
                             ANT.actions.containers.media.onDisengage(hash);
+                        });
+
+                        $('.ant_indicator_for_media').each(function() {
+                            var $this = $(this),
+                                thisHash = $this.attr('id').substr(14),
+                                hashedItem = document.querySelectorAll('[ant-hash="'+thisHash+'"]')[0],
+                                visible = true;
+
+                            var nodes = [];
+                            nodes.push(hashedItem);
+                            while(hashedItem && hashedItem.parentNode) {
+                                nodes.unshift(hashedItem.parentNode);
+
+                                hashedItem = hashedItem.parentNode;
+
+                                // check this node's visibility
+                                if (hashedItem.offsetParent && hashedItem.offsetParent === null) { 
+                                    visible = false;
+                                }
+
+                                if (typeof hashedItem.style != 'undefined') {
+                                    var opacity = parseFloat(hashedItem.style.opacity);
+                                    if ( !isNaN( opacity ) && opacity < 1 ) { 
+                                        visible = false;
+                                    }
+                                }
+                                
+                                nodes.unshift(hashedItem);
+                                hashedItem = hashedItem.parentNode;
+                            }
+
+                            // if not a visible media item, remove this indicator.  it'll get restored later.
+                            if (visible != true) {
+                                $this.parent().remove();
+                            }
+
                         });
                     }
                 },
@@ -6244,16 +6483,14 @@ function antenna($A){
                         //fix hash
                         newArgs.hash = hash;
                         newArgs.sendData.hash = hash;
-                        
+
                         // BAND-AID for re-reacting after a tempuser create
                         if (typeof newArgs.sendData != 'undefined' && typeof newArgs.sendData.sendData != 'undefined') {
                             newArgs.sendData = $.extend( {}, newArgs.sendData, newArgs.sendData.sendData );
-
                             if ( typeof newArgs.sendData.user != 'undefined' && typeof newArgs.sendData.user.ant_token != 'undefined') {
                                 newArgs.sendData.ant_token = newArgs.sendData.user.ant_token;
                             }
                         }
-
                         //run the send function for the appropriate interaction type
                         //ANT.actions.interactions[int_type].send(args);
                         ANT.actions.interactions.send(newArgs, int_type, action_type);
@@ -6300,7 +6537,7 @@ if ( typeof sendData.tag != "undefined" ) {
 // for all page-level reactions.  the PAGE_ID is the unique part of the call, anyway.
 // also: this is stupid.
 if ( sendData.kind=="page" ) {
- sendData.hash = "page";
+ sendData.hash = args.hash = "page";
  sendData.container_kind = "text";
  sendData.page_id = sendData.page_id || ANT.util.getPageProperty('id', "page");
  delete sendData.content_node_data.hash; //this was happening for delete calls.
@@ -6329,15 +6566,13 @@ if ( sendData.kind=="page" ) {
                                     args.container_id = response.data.container.id;
                                     var hash = args.hash = response.data.container.hash;
                                 }
+
                                 if ( response.data && response.data.num_interactions ) {
                                     ANT.user.num_interactions = response.data.num_interactions;
                                 }
+
                                 if ( response.status == "success" ) {
-                                    if ( args.response.data.interaction ) {
-                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.interaction.id);
-                                    } else if ( args.response.data.deleted_interaction ) {
-                                        // ANT.events.track( action_type+'_'+int_type_for_url+'::' + args.response.data.deleted_interaction.interaction_node.id);
-                                    }
+
                                     if(args.response.data.deleted_interaction){
                                         args.deleted_interaction = args.response.data.deleted_interaction;
                                     }
@@ -6346,6 +6581,7 @@ if ( sendData.kind=="page" ) {
                                     if ( typeof args.tag.id == "undefined" ) {
                                         args.tag.id = response.data.interaction.interaction_node.id;
                                     }
+
                                     ANT.actions.interactions[int_type].onSuccess[action_type](args);
                                 }else{
                                     if ( int_type == "react" ) {
@@ -6559,7 +6795,7 @@ if ( sendData.kind=="page" ) {
                                 reaction_body: args.tag.tag_body
                             });
 
-                            ANT.events.emit('antenna.isment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
+                            ANT.events.emit('antenna.comment', interaction.interaction_node.body, { 'reaction':tag.tag_body, 'hash':hash, 'kind':content_node.kind });
 
                         },
                         remove: function(args){
@@ -6597,58 +6833,58 @@ if ( sendData.kind=="page" ) {
                     }
                 },
                 // breaks the interaction convention:
-                boardadd: {
-                    preAjax: function(){
-                        var $aWindow = args.aWindow;
-                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
-                    },
-                    customSendData: function(){
-                        return {};
-                    },
-                    onSuccess: {
-                        //ANT.actions.interactions.react.onSuccess:
-                        create: function(args){
-                            //clear loader
+                // boardadd: {
+                //     preAjax: function(){
+                //         var $aWindow = args.aWindow;
+                //         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
+                //     },
+                //     customSendData: function(){
+                //         return {};
+                //     },
+                //     onSuccess: {
+                //         //ANT.actions.interactions.react.onSuccess:
+                //         create: function(args){
+                //             //clear loader
                             
-                            //carefull with this.. $('div.ant_tag_details.ant_reacted') without the ant_live_hover was returning 2 nodes. shore this up later.
-                            var $aWindow = (args.aWindow) ? args.aWindow : $('div.ant_tag_details.ant_reacted.ant_live_hover');
-                            $aWindow.find('div.ant_loader').css('visibility','hidden');
+                //             //carefull with this.. $('div.ant_tag_details.ant_reacted') without the ant_live_hover was returning 2 nodes. shore this up later.
+                //             var $aWindow = (args.aWindow) ? args.aWindow : $('div.ant_tag_details.ant_reacted.ant_live_hover');
+                //             $aWindow.find('div.ant_loader').css('visibility','hidden');
 
-                            var safe_board_name = args.board_name.replace(/\s/g,"_"),
-                                newArgs = { board_id:args.board_id, int_id:args.int_id },
-                                $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
+                //             var safe_board_name = args.board_name.replace(/\s/g,"_"),
+                //                 newArgs = { board_id:args.board_id, int_id:args.int_id },
+                //                 $success = $('<div class="ant_success">Success!  See <a target="_blank" href="'+ANT_baseUrl+'/board/'+args.board_id+'/'+safe_board_name+'" class="ant_seeit_link">your board.</a> <a href="javascript:void(0);" class="ant_seeit_link ant_undo">Undo?</a></div>');
                             
-                            $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
+                //             $aWindow.find('.ant_select_user_board').append( $success ).find('select').hide();
 
-                            $success.find('a.ant_undo').click( function() {
+                //             $success.find('a.ant_undo').click( function() {
                                 
-                                args.aWindow = $aWindow;
-                                // panelEvent
-                                ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
-                            });
-                        }
-                    }
-                },
-                // breaks the interaction convention:
-                boarddelete: {
-                    preAjax: function(){
-                        var $aWindow = args.aWindow;
-                        if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
-                    },
-                    customSendData: function(){
-                        return {};
-                    },
-                    onSuccess: {
-                        //ANT.actions.interactions.react.onSuccess:
-                        create: function(args){
-                            //clear loader
+                //                 args.aWindow = $aWindow;
+                //                 // panelEvent
+                //                 ANT.actions.interactions.ajax( args, 'boarddelete', 'create' ); // odd i know.  the board calls break convention.
+                //             });
+                //         }
+                //     }
+                // },
+                // // breaks the interaction convention:
+                // boarddelete: {
+                //     preAjax: function(){
+                //         var $aWindow = args.aWindow;
+                //         if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','visible');
+                //     },
+                //     customSendData: function(){
+                //         return {};
+                //     },
+                //     onSuccess: {
+                //         //ANT.actions.interactions.react.onSuccess:
+                //         create: function(args){
+                //             //clear loader
                             
-                            var $aWindow = args.aWindow;
-                            if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
+                //             var $aWindow = args.aWindow;
+                //             if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
-                        }
-                    }
-                },
+                //         }
+                //     }
+                // },
                 react: {
                     preAjax: function(args, action_type){
                         var $aWindow = args.aWindow;
@@ -6880,7 +7116,7 @@ if ( sendData.kind=="page" ) {
                             ANT.events.emit('antenna.reaction', reaction);
 
                             $('#ant_loginPanel').remove();
-                            
+
                             //clear loader
                             if ( $aWindow ) $aWindow.find('div.ant_loader').css('visibility','hidden');
 
@@ -6890,7 +7126,6 @@ if ( sendData.kind=="page" ) {
                             //todo: we should always only have one tooltip - code this up in one place.
                             //quick fix for tooltip that is still hanging out after custom reaction
                             $('.ant_twtooltip').remove();
-
 
                             if (args.kind && args.kind == "page") {
                                 // ANT.actions.viewReactionSuccess( args );
@@ -6904,6 +7139,7 @@ if ( sendData.kind=="page" ) {
                                 var existing = args.response.data.existing;
 
                                 if(!existing){
+
                                 //     var $ant_reactionMessage = $('<div class="ant_reactSuccess ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
@@ -6931,6 +7167,7 @@ if ( sendData.kind=="page" ) {
                                     _doPageUpdates(args);
                                     
                                 }else{
+
                                 //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
                                 //         '<div class="feedbackMsg">'+
@@ -7322,9 +7559,7 @@ if ( sendData.kind=="page" ) {
                         //else
 
                         $container.attr('ant-hasIndicator', 'true');
-
                         if ( $container.hasAttr('ant-item') ) {
-
                             var customDisplayName = $container.attr('ant-item'),
                                 $indicator = summary.$indicator = $container, // might work?  $indicator is storing important data...
                                 $counter = $('[ant-counter-for="'+customDisplayName+'"]'),
@@ -7357,7 +7592,7 @@ if ( sendData.kind=="page" ) {
                             if ($('#ant_indicator_'+hash).length) {
                                 return;
                             }
-                            var $indicator = summary.$indicator = $('<div class="ant_indicator" />').attr('id',indicatorId).data('hash',hash);
+                            var $indicator = summary.$indicator = $('<div class="ant_indicator"><div class="ant ant_indicator_container" /></div>').attr('id',indicatorId).data('hash',hash);
                             if (kind!='text' && ANT.group.img_indicator_show_onload===true) { $indicator.addClass('ant_show_on_load'); }
                             // //init with the visibility hidden so that the hover state doesn't run the ajax for zero'ed out indicators.
                             // $indicator.css('visibility','hidden');
@@ -7406,7 +7641,9 @@ if ( sendData.kind=="page" ) {
                                     });
                                 } else {
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
-                                        if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        // e.stopPropagation();
+                                        // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                        if ( ANT.util.isTouchDragging(e) ) { return; }
                                         if (ANT.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.ant_window').length ) {
                                                 var $this_container = $('[ant-hash="'+hash+'"]');
@@ -7454,7 +7691,7 @@ if ( sendData.kind=="page" ) {
                         //$indicator_body is used to help position the whole visible part of the indicator away from the indicator 'bug' directly at 
                         var $indicator_body = summary.$indicator_body = $('<div class="ant ant_indicator_body " />')
                             .attr('id',indicatorBodyId)
-                            .appendTo($indicator)
+                            .appendTo($indicator.find('.ant_indicator_container'))
                             .append(
                                 '<span class="ant-antenna-logo"></span>',
                                 '<span class="ant_count" />', //the count will get added automatically later, and on every update.
@@ -7486,7 +7723,8 @@ if ( sendData.kind=="page" ) {
                             });
                         } else {
                             $indicator.on('touchend.ant', function(e){
-                                if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                if ( ANT.util.isTouchDragging(e) ) { return; }
                                 ANT.util.bubblingEvents['touchend'] = true;
 
                                 _makeAWindow();
@@ -7554,11 +7792,15 @@ if ( sendData.kind=="page" ) {
                                 container_kind: "text",
                                 page_id: page_id
                             });
+                            ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'text' });
                         // }
 
                     }
                     function _updateAWindowForHelperIndicator(){
+                        // for some reason, if we don't do re-set the $indicator, and the indicator is positioned absolutely, we get bad values returned
+                        var $indicator = $('#ant_indicator_'+hash);
                         var actionbarCoords = {
+                            force:true,
                             top: $indicator.offset().top+11,
                             left: $indicator.offset().left-8
                         };
@@ -7568,7 +7810,8 @@ if ( sendData.kind=="page" ) {
                             var $container = $('[ant-hash="'+hash+'"]');
                             var el = $container[0]
                             $('document').selog('selectEl', el);
-                            $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                            $aWindow = ANT.aWindow.make( "writeMode", {coords:actionbarCoords,hash:hash} );
+                            $container.removeClass('ant_live_hover');
                         };
 
                         var $actionbar = ANT.actionbar.draw({
@@ -7578,7 +7821,6 @@ if ( sendData.kind=="page" ) {
                             hash:hash,
                             clickAction:clickAction
                         });
-
 
                         // var $aWindow = $indicator.$aWindow;
                         // var $header = ANT.aWindow.makeHeader( ANT.t('main_cta') );
@@ -7643,7 +7885,6 @@ if ( sendData.kind=="page" ) {
                         //         // ANT.events.track('paragraph_helper_engage');
                         //     }
                         // });
-                        
                         // SUPPORTS TWO:
                         $cta.each( function() {
                             var $thisCTA = $(this);
@@ -7701,24 +7942,6 @@ if ( sendData.kind=="page" ) {
                         }
 
                         $indicator.$aWindow = $aWindow;
-
-                        var event_value = ($cta.attr('ant-mode')=="write") ? 'wr':'rd';
-
-                        // ANT.events.track( 'view_node::'+hash, hash );
-                        // ANT.events.track('start_react_text');
-
-                        // wtf is this here for?
-                        // ANT.events.trackEventToCloud({
-                        //     // category: "engage",
-                        //     // action: "aWindow_shown_"+ $cta.attr('ant-mode') +"mode",
-                        //     // opt_label: "kind: text, hash: " + hash,
-                        //     event_type: 'rs',
-                        //     event_value: event_value,
-                        //     container_hash: hash,
-                        //     container_kind: "text",
-                        //     page_id: page_id
-                        // });
-
                     }
                 },
                 update: function(hash, shouldReInit){
@@ -7760,7 +7983,7 @@ if ( sendData.kind=="page" ) {
                                     // });
                                     // $counter.html( ANT.commonUtil.prettyNumber( content_node_summary.counts.tags ) );
                                 // } else {
-                                //     $counter.html('0');
+                                    // $counter.html('0');
                                 }
                             }
                             if ( $cta.length ) {
@@ -7801,7 +8024,9 @@ if ( sendData.kind=="page" ) {
                                 $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) );
                                 $count_label.text(reactionLabel);
                             } else {
-                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                // $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' + reactionLabel );
+                                $count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + ' ' );
+                                // $count_label.html( reactionLabel );
                             }
                             if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
@@ -7942,13 +8167,17 @@ if ( sendData.kind=="page" ) {
                             $indicator.appendTo($container_tracker);
                             
                             if(isTouchBrowser){
-                                $indicator.on('tap.ant', function(){
-                                    if ( summary.counts.interactions == 0 ) {
-                                        var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
-                                    } else {
-                                        var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                $indicator.on('touchend.ant', function(e){
+                                    // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                                    if ( ANT.util.isTouchDragging(e) ) { return; }
+                                    if (ANT.util.bubblingEvents['touchend'] == false) {
+                                        if ( summary.counts.interactions == 0 ) {
+                                            var $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                        } else {
+                                            var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
+                                        }
+                                        $(this).addClass('ant_live_hover');
                                     }
-                                    $(this).addClass('ant_live_hover');
                                 });
                             }else{
                                 $indicator
@@ -8007,7 +8236,7 @@ if ( sendData.kind=="page" ) {
 
                                 $indicator.addClass('ant_indicator_for_media ant_indicator_for_media_inline').find('.ant_indicator_body');
                                 if(isTouchBrowser){
-                                    $indicator.on('tap.ant', function(){
+                                    $indicator.on('touchend.ant', function(){
                                         $(this).toggleClass('ant_hover');
                                     });
                                 }
@@ -8107,7 +8336,9 @@ if ( sendData.kind=="page" ) {
                             // $tagsListContainerCopy = $('<div class="ant_body ant_tags_list" />').data('now', Date.now());  // wtf
                         
                         var $existingTagslist = $aWindow.find('.ant_tags_list');
+                        
                         $aWindow.find('.ant_body_wrap').append($tagsListContainer);
+
                         $existingTagslist.remove();
 
                         if ( typeof page != "undefined" ) {
@@ -8142,12 +8373,11 @@ if ( sendData.kind=="page" ) {
                             // whiskey tango...?
                         } else {
                             if ( !$.isEmptyObject(summary.top_interactions.tags) ) {
-
                                 // write inline tags: readmode, for all content types (kind)
                                 ANT.actions.summaries.sortInteractions(hash);
                                 writeTagBoxes( summary.interaction_order );
                                 if ( summary.kind =="text" ) {
-                                    if ( !summary.crossPage ) {
+                                    // if ( !summary.crossPage ) {
                                         ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                         $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
                                             $aWindow.remove();
@@ -8156,12 +8386,15 @@ if ( sendData.kind=="page" ) {
                                             $('document').selog('selectEl', el);
                                             $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
                                         });
-                                    }
+                                    // }
                                 } else {
+
                                     ANT.aWindow.updateFooter( $aWindow, '<span class="ant_cta_msg">'+ANT.t('main_cta')+'</span>' );
                                     $aWindow.find('.ant_footer').addClass('ant_cta').find('.ant_cta_msg').click( function() {
+                                        var offsets = $aWindow.offset();
+                                        var coords = { left:offsets.left, top:offsets.top, force:true }; // ugh, force is a one-time override
                                         $aWindow.remove();
-                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash} );
+                                        $aWindow = ANT.aWindow.make( "writeMode", {hash:hash, coords:coords} );
                                     });
                                 }
                             } else {
@@ -8236,36 +8469,41 @@ if ( sendData.kind=="page" ) {
                             
                         }
 
+                        
+//CHANGETHIS
+// or delete this whole comment block
                         // $tagsListContainer.append($tag_table);
                         // ANT.aWindow.jspUpdate($aWindow);
                         // $aWindow.find('.ant_body_wrap').append($tagsListContainer);
-                        if ( reactionViewStyle == "grid" || isWriteMode ) {
-                            isotopeTags( $tagsListContainer );
-                            isotopeFillGap($tagsListContainer);
-                        } else {
-                            // $tagsListContainer.find('.ant_box').addClass('ant_animated');
-                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
-                                currentTagBoxAnimating = 0;
-                            // var animationQueue = setInterval( animateNextBox, 10 );
-                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
+                        // if ( reactionViewStyle == "grid" || isWriteMode ) {
+                        //     // isotopeTags( $tagsListContainer );
+                        //     // isotopeFillGap($tagsListContainer);
+                        // } else {
+                        //     // $tagsListContainer.find('.ant_box').addClass('ant_animated');
+                        //     var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
+                        //         currentTagBoxAnimating = 0;
+                        //     // var animationQueue = setInterval( animateNextBox, 10 );
+                        //     var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
 
-                            function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('ant_animated');
-                                currentTagBoxAnimating++;
-                                if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                    clearInterval( animationQueue );
-                                }
-                            }
-                        }
+                        //     function animateNextBox() {
+                        //         var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
+                        //         $thisBox.addClass('ant_animated');
+                        //         currentTagBoxAnimating++;
+                        //         if ( currentTagBoxAnimating > tagBoxesCount ) {
+                        //             clearInterval( animationQueue );
+                        //         }
+                        //     }
+                        // }
 
+                        $tagsListContainer.jScrollPane({ showArrows:true });
+                        // $aWindow.jScrollPane({ showArrows:true });
+                        // ANT.aWindow.panelShow( $aWindow, $tagsListContainer, function() {});
                         return $tagsListContainer;
 
                         
                         // sort a list of tags into their buckets
                         // private function, but could be a ANT.util or ANT.tagBox function
                         function createTagBuckets( tagList ) {
-                            // would rather this property was .count, not .tag_count.  #rewrite.
                             function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
                             $.each( tagList, function(idx,tag){
@@ -8286,14 +8524,15 @@ if ( sendData.kind=="page" ) {
 
                             $.each( tagList, function(idx, tag) {
                                 var tagBody = ( typeof tag.tag_body != "undefined" ) ? tag.tag_body:tag.body;
-                                if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                // if ( max > 15 && tag.tag_count >= (Math.floor( max*0.8 )) ) {
+                                    // buckets.big.push( tag );
+                                    // return;
+                                // } else if ( tag.tag_count > midValue ) {
+                                if ( tag.tag_count > midValue ) {
                                     buckets.big.push( tag );
                                     return;
-                                } else if ( tag.tag_count > midValue ) {
-                                    buckets.medium.push( tag );
-                                    return;
                                 } else {
-                                    buckets.small.push( tag );
+                                    buckets.medium.push( tag );
                                     return;
                                 }
                             });
@@ -8302,162 +8541,109 @@ if ( sendData.kind=="page" ) {
                         }
 
 
+                        //CHANGETHIS
+                        // make this do rows, and otherwise not really bucket things
                         function writeTagBoxes( tagList ) {
                             if ( !tagList.length ) { return; }
 
                             var buckets = createTagBuckets( tagList ),
                                 bucketTotal = buckets.big.length+buckets.medium.length+buckets.small.length,
-                                bgColorInt = 0,
-                                textColorInt = 0,
-                                numBgColors = ANT.group.tag_box_bg_colors.length,
-                                numTextColors = ANT.group.tag_box_text_colors.length;
+                                rowNum = 0,
+                                // bgColorInt = 0,
+                                // textColorInt = 0,
+                                numBgColors = ANT.group.tag_box_bg_colors.length;
+                                // numTextColors = ANT.group.tag_box_text_colors.length;
 
                             // if a grid, size the aWindow based on # of reactions
                             if ( reactionViewStyle == 'grid') {
                                 if ( bucketTotal > 6 && !isWriteMode ) {
                                     if(isTouchBrowser){
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                     }else{
-                                        ANT.aWindow.tagBox.setWidth( $aWindow, 300 );
+                                        ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                     }
                                 } else if ( typeof page != "undefined" && isWriteMode ) {
-                                    ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                                    ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                                 } else if ( tagList.length > 1 ) {
-                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
-                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
-                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 200 ); }
+                                    if ( buckets.big.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
+                                    if ( buckets.medium.length ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
+                                    if ( buckets.small.length >= 3 ) { ANT.aWindow.tagBox.setWidth( $aWindow, 222 ); }
                                 }
                             }
 
-                            while ( buckets.big.length || buckets.medium.length || buckets.small.length ) {
+                            var mediumBuckets = 0; // using this b/c i can't figure out some dumb iteration math with the rows.
+                            while ( buckets.big.length || buckets.medium.length ) {
+                                // get the background color and text color
+                                // run a conversion in case its hex to convert to rgb.  since w'ell use rgba to set alpha to 0.85.
+                                var bgColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[rowNum] ) : ANT.group.tag_box_bg_colors[rowNum];
+                                var textColorRGB = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[rowNum] ) : ANT.group.tag_box_text_colors[rowNum];
+                                
+                                
                                 if ( buckets.big.length ) {
-                                  var thisTag = buckets.big.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+                                    var thisTag = buckets.big.shift();
+                                    var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
+                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "big", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                    
+                                    $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
+
                                     // set next color 
-                                    bgColorInt++;
-                                    textColorInt++;
-                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                    if ( textColorInt == numTextColors ) textColorInt = 0;
+                                    rowNum++;
+                                    if ( rowNum == numBgColors ) rowNum = 0;
+
+                                    // bgColorInt++;
+                                    // textColorInt++;
+                                    // if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    // if ( textColorInt == numTextColors ) textColorInt = 0;
+
                                 } else if ( buckets.medium.length ) {
+
                                     var thisTag = buckets.medium.shift();
-                                    ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+
+                                    if (thisTag.body || thisTag.tag_body) {
+                                        mediumBuckets++;
+                                    
+                                        var $tagRow = $aWindow.find('.ant_tag_row:last');
+
+                                        if ( !$tagRow.length || $tagRow.find('.ant_box_big').length || $tagRow.children().length == 2 ) {
+                                            var $tagContainer = $('<div class="ant ant_tag_row row_num_'+rowNum+'" style="background:rgba('+bgColorRGB+',0.95);"></div>');
+                                            $aWindow.find('div.ant_body.ant_tags_list').append($tagContainer);
+                                            // rowNum++;
+                                            // if ( rowNum == numBgColors ) rowNum = 0;
+                                        } else {
+                                            var $tagContainer = $tagRow;
+                                        }
+
+                                        ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "medium", $aWindow:$aWindow, $tagContainer:$tagContainer, isWriteMode:isWriteMode, textColorInt:rowNum, bgColorInt:rowNum, rowNum:rowNum });
+                                        
+                                        // mediumBuckets++;
+                                        if ( mediumBuckets % 2 === 0) { 
+                                            rowNum++;
+                                            if ( rowNum == numBgColors ) rowNum = 0;
+                                        }
+                                    }
                                     // set next color 
-                                    bgColorInt++;
-                                    textColorInt++;
-                                    if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                    if ( textColorInt == numTextColors ) textColorInt = 0;
+                                    
+                                    // bgColorInt++;
+                                    // textColorInt++;
+                                    // if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                    // if ( textColorInt == numTextColors ) textColorInt = 0;
     
-                                } else if ( buckets.small.length ) {
-                                  var thisTag = buckets.small.shift();
-                                  ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
-                                  // set next color 
-                                  bgColorInt++;
-                                  textColorInt++;
-                                  if ( bgColorInt == numBgColors ) bgColorInt = 0;
-                                  if ( textColorInt == numTextColors ) textColorInt = 0;
+                                // } else if ( buckets.small.length ) {
+                                //   var thisTag = buckets.small.shift();
+                                //   ANT.aWindow.tagBox.make( { tag: thisTag, boxSize: "small", $aWindow:$aWindow, isWriteMode:isWriteMode, textColorInt:textColorInt, bgColorInt:bgColorInt });
+                                //   // set next color 
+                                //   bgColorInt++;
+                                //   textColorInt++;
+                                //   if ( bgColorInt == numBgColors ) bgColorInt = 0;
+                                //   if ( textColorInt == numTextColors ) textColorInt = 0;
                                 }
 
                             }
 
                         } // writeTagBoxes
 
-                        function isotopeTags( $tagsListContainer ) {
-                        $tagsListContainer.isotope({
-                          masonry: {
-                            columnWidth: 100
-                          }
-                        }, function() {
 
-                            var tagBoxesCount = $tagsListContainer.find('div.ant_box').length,
-                                currentTagBoxAnimating = 0;
-                            var animationQueue = setInterval( function() { animateNextBox(); }, 20 );
-
-                            function animateNextBox() {
-                                var $thisBox = $tagsListContainer.find('div.ant_box:eq('+currentTagBoxAnimating+')');
-                                $thisBox.addClass('ant_animated');
-                                currentTagBoxAnimating++;
-                                if ( currentTagBoxAnimating > tagBoxesCount ) {
-                                    clearInterval( animationQueue );
-                                }
-                            }
-                        });
-                      } // isotopeTags
-
-                        function isotopeFillGap($tagsListContainer){
-                            var $boxes = $tagsListContainer.find('.ant_box');
-                            var $lastTag = $boxes.eq(-1);
-                            
-                            var $smallBoxes = $tagsListContainer.find('.ant_box_small');
-                            var $lastSmallTag = $smallBoxes.eq(-1);
-
-                            if ( isTouchBrowser && $smallBoxes.length > 1 ) {
-                                if ( $smallBoxes.index($lastTag) % 2 ==0 ) {
-                                    $lastSmallTag.addClass('ant_wide');
-                                }
-                                return;
-                            }
-
-                            if(!$lastTag.length || $boxes.length == 1){
-                                return;
-                            }
-
-                            var lastTagDims = $lastTag.position();
-                            var doBreak = false;
-
-                            //force the position to fill the space.
-                            $($boxes.get().reverse()).each(function(){
-                                if(doBreak){
-                                   return; 
-                                }
-                                
-                                var $thisTag = $(this);
-                                var thisTagDims = $thisTag.position();
-
-                                var isLastTag = (thisTagDims.top == lastTagDims.top);
-                                var isAdjacentRow = (thisTagDims.top == lastTagDims.top);
-                                var isAdjacentCol = (thisTagDims.left == lastTagDims.left);
-
-                                if(!isAdjacentRow && !isAdjacentCol){
-                                    doBreak = true;
-                                    return;
-                                }
-                                
-                                if(isAdjacentRow){
-                                    $thisTag
-                                        .addClass('ant_clear_transform')
-                                        .css({
-                                            height: 'auto',
-                                            top: thisTagDims.top,
-                                            left: thisTagDims.left,
-                                            bottom: 0
-                                        });  
-                                }
-                                //don't do this for now.
-                                // if(isAdjacentCol){
-                                //     $thisTag
-                                //         .addClass('ant_clear_transform')
-                                //         .css({
-                                //             width: 'auto',
-                                //             top: thisTagDims.top,
-                                //             left: thisTagDims.left,
-                                //             right: 0
-                                //         });   
-                                // }
-
-                            });
-                            
-                            $lastTag
-                                .addClass('ant_clear_transform')
-                                .css({
-                                    height: 'auto',
-                                    width: 'auto',
-                                    top: lastTagDims.top,
-                                    left: (lastTagDims.left > 0 && lastTagDims.left < 100) ? 100:lastTagDims.left,
-                                    bottom: 0,
-                                    right: 0
-                                });  
-                        }
-
+        
                     },
                     updateContainerTrackers: function(){
                         $.each( ANT.containers, function(idx, container) {
@@ -8568,12 +8754,20 @@ if ( sendData.kind=="page" ) {
 
                             var cornerPadding = 0,
                                 indicatorBodyWidth = $indicator_body.width(),
-                                modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0;
+                                modIEHeight = ( $.browser.msie && parseInt( $.browser.version, 10 ) < 9 ) ? 10:0,
+                                modMediaSide = (summary.kind=="media") ? 12:0;
 
-                            var cssTop = containerOffsets.top - 12 + ( (summary.kind=="media") ? (containerHeight + modIEHeight ) : (containerHeight + modIEHeight - 24) );
-                            var cssSideDistance = (ANT.group.img_indicator_show_side=='left') ? (containerOffsets.left + 12) : ( $(window).width() - (containerOffsets.left+containerWidth) + 12 );
+                            var cssTopOrBottom = (ANT.group.img_indicator_show_side.indexOf('top') != -1) ? 'top':'bottom';
+                            if (cssTopOrBottom == 'top') {
+                                var cssTop = containerOffsets.top + 3;
+                            } else {
+                                var cssTop = containerOffsets.top + ( (summary.kind=="media") ? (containerHeight + modIEHeight - 12 ) : (containerHeight + modIEHeight - 22) );
+                            }
+
+                            var cssSide = (ANT.group.img_indicator_show_side.indexOf('right') != -1) ? 'right':'left';
+                            var cssSideDistance = (cssSide == 'left') ? (containerOffsets.left+modMediaSide) : ( $(window).width() - (containerOffsets.left+containerWidth-modMediaSide) );
                             var indicatorPosition = {};
-                            indicatorPosition[ANT.group.img_indicator_show_side] = cssSideDistance + 'px';
+                            indicatorPosition[cssSide] = cssSideDistance + 'px';
                             indicatorPosition['top'] = cssTop+'px';
 
                             ANT.util.cssSuperImportant( $indicator, indicatorPosition, true);
@@ -8591,208 +8785,7 @@ if ( sendData.kind=="page" ) {
                         }
 
                         // ANT.actions.indicators.utils.borderHilites.update(hash);
-                    },
-                    // borderHilites: {
-                    //     //ANT.actions.indicators.utils.borderHilites:
-                        
-                    //     //hiliteDesignEdit
-                    //     //our old blue version
-                    //     // designVersion: 1,
-
-                    //     //black border and black box shadow fade
-                    //     designVersion: 2,
-                        
-
-                    //     makeAttempt: 0, //this isn't really needed, just an extra failsave against an infinite loop that shouldn't happen.
-                    //     make: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.make:
-
-                    //         var $indicator = $('#ant_indicator_'+hash),
-                    //             $container = $('[ant-hash="'+hash+'"]'),
-                    //             $container_tracker = $('#ant_container_tracker_'+hash),
-                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap'); //probably null, will make it below.
-                                                        
-                    //         if( !$container_tracker.hasClass('ant_inline_video') ){
-                                
-                    //             if( !$mediaBorderWrap.length ){
-                    //                 $mediaBorderWrap = $('<div class="ant_media_border_wrap" />').appendTo($container_tracker);
-                    //                 $mediaBorderWrap.addClass('designVersion_' + ANT.actions.indicators.utils.borderHilites.designVersion);
-                    //             }
-                    //             $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                    //             var borders = {
-                    //                 'top': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'right': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'bottom': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 },
-                    //                 'left': {
-                    //                     $side: null,
-                    //                     css: {}
-                    //                 }
-                    //             };
-
-                    //             $mediaBorderWrap.data('borders',borders);
-                    //             // ANT.actions.indicators.utils.borderHilites.update(hash);
-                    //         }
-
-                    //     },
-                    //     update: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.update:
-                    //         // var Section = ANT.actions.indicators.utils.borderHilites;
-
-                    //         // var $indicator = $('#ant_indicator_'+hash),
-                    //         //     $container = $('[ant-hash="'+hash+'"]'),
-                    //         //     $container_tracker = $('#ant_container_tracker_'+hash),
-                    //         //     $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-                            
-                    //         // if( !$mediaBorderWrap.length ){
-                    //         //     //failsafe that shouldnt be needed.
-                    //         //     if( this.makeAttempt > 1 ) return;
-                    //         //     this.makeAttempt ++;
-                    //         //     ANT.actions.indicators.utils.borderHilites.make(hash);
-                    //         //     //just return here.  the make function will call this update function again and this will be bypassed.
-                    //         //     return;
-                    //         // }
-                    //         // //else
-                    //         // this.makeAttempt = 0;
-
-                    //         // $mediaBorderWrap.hide(); //start with it hidden.  It will fade in on hover
-
-                    //         // var borders = {
-                    //         //     'top': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'right': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'bottom': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     },
-                    //         //     'left': {
-                    //         //         $side: null,
-                    //         //         css: {}
-                    //         //     }
-                    //         // };
-                            
-                    //         // //hiliteDesignEdit
-                    //         // // var hiliteThickness = 2,
-                    //         // var hiliteThickness = 
-                    //         //     Section.designVersion === 1 ? 2 : 
-                    //         //     Section.designVersion === 2 ? 3 : 
-                    //         //     2;
-                            
-                    //         // var containerWidth,
-                    //         //     containerHeight;
-
-                    //         // var hasBorder = false;
-                    //         // //for checking if it has a border.
-                    //         // //If so we'll use outerWidth and outerHeight to take it into account.
-                    //         // //If not, we use just the regular height and width so we'll ignore padding which would make the borderHilite look crappy.
-
-                    //         // $.each( borders, function(side, data){
-                    //         //     //set the value in the object using the key's string as a helper
-                    //         //     var hiliteClass = 'ant_mediaHilite_'+side; //i.e. ant_mediaHilite_top
-                      
-                    //         //     data.$side = $mediaBorderWrap.find('.'+hiliteClass);
-                    //         //     if( !data.$side.length ){
-                    //         //         data.$side = $('<div />').addClass(hiliteClass).appendTo($mediaBorderWrap);
-                    //         //     }
-
-                    //         //     //if any side has a border - set hasBorder to true
-                    //         //     if( parseInt( $container.css('border-'+side+'-width'), 10 ) ){
-                    //         //         hasBorder = true;
-                    //         //     }
-
-                    //         // });
-                            
-                    //         // //figure out dims
-                    //         // if(hasBorder){
-                    //         //     containerWidth = $container.outerWidth();
-                    //         //     containerHeight = $container.outerHeight();
-                    //         // }else{
-                    //         //     containerWidth = $container.width();
-                    //         //     containerHeight = $container.height();
-                    //         // }
-
-                    //         // //use dims to make the css rules for each border side
-                    //         // var widthCap = 2*hiliteThickness;
-
-                    //         // borders.top.css = {
-                    //         //     width: containerWidth+widthCap+'px',
-                    //         //     height: 0+'px',
-                    //         //     top: -hiliteThickness+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-                    //         // borders.right.css = {
-                    //         //     width:0+'px',
-                    //         //     height: containerHeight+'px',
-                    //         //     top: 0+'px',
-                    //         //     left: containerWidth+'px'
-                    //         // };
-                    //         // borders.bottom.css = {
-                    //         //     width: containerWidth+widthCap+'px',
-                    //         //     height: 0+'px',
-                    //         //     top: containerHeight+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-                    //         // borders.left.css = {
-                    //         //     width: 0+'px',
-                    //         //     height: containerHeight+'px',
-                    //         //     top: 0+'px',
-                    //         //     left: -hiliteThickness+'px'
-                    //         // };
-
-                    //         // $.each( borders, function( side, data ){
-                    //         //     ANT.util.cssSuperImportant( data.$side, data.css, true );
-                    //         // });                       
-                    
-                    //     },
-                    //     engage: function(hash, isShareLink){
-                    //         //ANT.actions.indicators.utils.borderHilites.engage:
-                    //         var $container_tracker = $('#ant_container_tracker_'+hash),
-                    //             $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-
-                    //         $mediaBorderWrap.addClass('engaged');
-                            
-                    //         if (isShareLink) {
-                    //             $mediaBorderWrap.addClass('engagedForShareLink');
-                    //         }
-                    //     },
-                    //     disengage: function(hash){
-                    //         //ANT.actions.indicators.utils.borderHilites.disengage:
-                    //         // if ( !$('ant_for_'+hash).length ) {
-                    //             var $container_tracker = $('#ant_container_tracker_'+hash),
-                    //                 $mediaBorderWrap = $container_tracker.find('.ant_media_border_wrap');
-
-                    //             $mediaBorderWrap.removeClass('engaged');
-                    //             $mediaBorderWrap.removeClass('engagedForShareLink');
-                    //             $('#ant_indicator_' + hash).hide();
-                    //         // }
-                    //     },
-                    //     engageAll: function(){
-                    //         //ANT.actions.indicators.utils.borderHilites.engageAll:
-                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
-                    //         $mediaBorderWrap.addClass('engaged');
-                    //     },
-                    //     disengageAll: function(){
-                    //         //ANT.actions.indicators.utils.borderHilites.disengageAll:
-                    //         $mediaBorderWrap = $('.ant_media_border_wrap');
-                    //         $mediaBorderWrap.removeClass('engaged');
-                    //         $mediaBorderWrap.removeClass('engagedForShareLink');
-                    //         $('div.ant_indicator_for_media').hide();
-                    //     }
-                    // }
+                    }
                 }//end ANT.actions.indicators.utils
             },
             summaries:{
@@ -8952,6 +8945,9 @@ if ( sendData.kind=="page" ) {
                     }
                                 
                     function update_top_interactions_cache(attrs){
+                        //CHANGETHIS?
+                        // delete?
+                        // console.log('update_top_interactions_cache');
                         var hash = attrs.hash;
                         var summary = attrs.summary;
                         var interaction_node_type = attrs.interaction_node_type;
@@ -9016,6 +9012,10 @@ if ( sendData.kind=="page" ) {
                     }
 
                     function update_content_nodes_cache(attrs){
+
+                        //CHANGETHIS?
+                        // delete?
+                        // console.log('update_content_nodes_cache');
                         //todo: this is still not 100% right - but updates better than not having it at all.
                         //need to solve for the fact that we don't have the content_node id when we first make it.
 
@@ -9286,7 +9286,6 @@ if ( sendData.kind=="page" ) {
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
                     if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                        // ANT.aWindow.panelEnsureFloatWidths($aWindow);
                     }
 
                 } );
@@ -9312,7 +9311,7 @@ if ( sendData.kind=="page" ) {
                 });
 
                 $aWindow.removeClass('ant_rewritable').addClass('ant_viewing_more');
-                ANT.aWindow.tagBox.setWidth( $aWindow, 200 );
+                ANT.aWindow.tagBox.setWidth( $aWindow, 222 );
                 ANT.aWindow.hideFooter( $aWindow );
 
                 //temp tie-over
@@ -9335,7 +9334,7 @@ if ( sendData.kind=="page" ) {
                 var $backButton2 = _makeBackButton();
                 var $otherComments = _makeOtherComments();
                 var $commentBox = _makeCommentBox();
-                $commentsWrap.append($backButton, $otherComments, $commentBox, $backButton2);
+                $commentsWrap.append($backButton, $otherComments, $commentBox );
 
                 $newPanel.append($commentsWrap);
 
@@ -9749,77 +9748,6 @@ if ( sendData.kind=="page" ) {
                                 '&text='+encodeURI(mainShareText);
                     break;
 
-                    // case "tumblr":
-                        
-                    //     var mainShareText = "";
-
-                    //     switch ( args.container_kind ) {
-                    //         case "txt":
-                    //         case "text":
-                    //             //tumblr adds quotes for us - don't pass true to quote it.
-                    //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[a <a href="'+args.short_url+'">quote</a> on '+groupName+' via Antenna]';
-                                
-                    //             content_length = 300;
-                    //             contentStr = _shortenContentIfNeeded(content, content_length);
-                    //             share_url = 'http://www.tumblr.com/share/quote?'+
-                    //             'quote='+encodeURIComponent(contentStr)+
-                    //             '&source='+encodeURIComponent(footerShareText);
-
-                    //         break;
-
-                    //         case "img":
-                    //         case "image":
-                    //                                         //for testing offline
-                    //             if(ANT_offline){
-                    //                 content = content.replace("local.antenna.is:8081", "www.antenna.is");
-                    //                 content = content.replace("localhost:8081", "www.antenna.is");
-                    //             }
-
-                    //             mainShareText = _wrapTag(args.reaction, true);
-
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">picture</a> on '+groupName+' via Antenna]';
-
-                    //             share_url = 'http://www.tumblr.com/share/photo?'+
-                    //                 'source='+encodeURIComponent(content)+
-                    //                 '&caption='+encodeURIComponent(mainShareText + footerShareText )+
-                    //                 '&click_thru='+encodeURIComponent(args.short_url);
-                    //         break;
-
-                    //         case "media":
-                    //         case "med":
-                    //         case "video":
-                    //             //todo: - I haven't gone back to try this yet...
-
-                    //             //note that the &u= doesnt work here - gives a tumblr page saying "update bookmarklet"
-                    //             var iframeString = '<iframe src=" '+args.content_node_info.body+' "></iframe>';
-
-                    //             mainShareText = _wrapTag(args.reaction, true);
-
-                    //             var footerShareText = '&nbsp;[a <a href="'+args.short_url+'">video</a> on '+groupName+' via Antenna]';
-
-                    //             //todo: get the urlencode right and put the link back in
-                    //             var antennaLink = mainShareText + footerShareText;
-                    //             share_url = 'http://www.tumblr.com/share/video?&embed='+encodeURIComponent( iframeString )+'&caption='+encodeURIComponent( antennaLink );
-                    //         break;
-
-                    //         case "page":
-                    //             var footerShareText = _wrapTag(args.reaction, true) +
-                    //                 '&nbsp;[an <a href="'+args.short_url+'">article</a> on '+groupName+' via Antenna]';
-                                
-                    //             content_length = 300;
-                    //             contentStr = _shortenContentIfNeeded(content, content_length);
-                    //             share_url = 'http://www.tumblr.com/share/link?'+
-                    //             'url='+encodeURIComponent(args.short_url)+
-                    //             '&description='+encodeURIComponent(footerShareText);
-
-                    //         break;
-
-                    //     }
-                    // break;
-
-                    // case "linkedin":
-                    // break;
                 }
                 if ( share_url !== "" ) {
                     if ( ANT.shareWindow ) {
@@ -10137,8 +10065,8 @@ if ( sendData.kind=="page" ) {
                     }else{
                         //use the default summaryBar instead
                         // do NOT set the bottom to -1000px -- that's because the widget CSS sets a TOP value... so a TOP of 0 still displays the summary bar, and makes it cover the whole page (since it is stretched to -1000px below bottom to boot)
-                        var displayDefaultBar = ( typeof ANT.engageScriptParams.bookmarklet == "undefined" ) ? "top:-1000px !important":"";
-                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="'+displayDefaultBar+'"/>');
+                        // var displayDefaultBar = ( ANT.group.useDefaultSummaryBar === true ) ? "top:-1000px !important":"";
+                        widgetSummarySettings.$anchor = $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-1001px !important"/>');
                         widgetSummarySettings.$anchor.appendTo('body');
                     }
                     
@@ -10285,7 +10213,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/widget.css" : ANT_widgetCssStaticUrl+"widget/css/widget.min.css?rv39"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv21"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10353,7 +10281,7 @@ function $AFunctions($A){
         plugin_jquery_enhancedOffset($A);
         plugin_jquery_drags($A);
         plugin_jquery_mousewheel($A);
-        plugin_jquery_isotope($A);
+        plugin_jquery_scrollStopStart($A);
         plugin_jquery_jScrollPane($A);
         plugin_jquery_twitterTip($A);
         plugin_jquery_antWidgetSummary($A);
@@ -10564,7 +10492,10 @@ function $AFunctions($A){
              * Dual licensed under the MIT and GPL licenses.
              * http://benalman.com/about/license/
              */
-            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+            // var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h]&&!$.browser.opera;$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
+            
+            // removing the browser.opera check, it breaks latest opera (which does have postMessage)
+            var g,d,j=1,a,b=this,f=!1,h="postMessage",e="addEventListener",c,i=b[h];$[h]=function(k,l,m){if(!l){return}k=typeof k==="string"?k:$.param(k);m=m||parent;if(i){m[h](k,l.replace(/([^:]+:\/\/[^\/]+).*/,"$1"))}else{if(l){m.location=l.replace(/#.*$/,"")+"#"+(+new Date)+(j++)+"&"+k}}};$.receiveMessage=c=function(l,m,k){if(i){if(l){a&&c();a=function(n){if((typeof m==="string"&&n.origin!==m)||($.isFunction(m)&&m(n.origin)===f)){return f}l(n)}}if(b[e]){b[l?e:"removeEventListener"]("message",a,f)}else{b[l?"attachEvent":"detachEvent"]("onmessage",a)}}else{g&&clearInterval(g);g=null;if(l){k=typeof m==="number"?m:typeof k==="number"?k:100;g=setInterval(function(){var o=document.location.hash,n=/^#?\d+&/;if(o!==d&&n.test(o)){d=o;l({data:o.replace(n,"")})}},k)}}}
         }
         //end function plugin_jquery_postMessage
 
@@ -10594,7 +10525,6 @@ function $AFunctions($A){
 
 
                 $elements.on('mousedown.ant', function(e) {
-
                     if ( (opt.handle !== "" ) && !$(e.target).closest('.ant_header').length ) {
                         // has a handle, but the handle is not clicked
                         return;
@@ -10722,7 +10652,7 @@ function $AFunctions($A){
             //helper function for ajax above
             function _makeSummaryWidget(settings){
 
-                if (ANT.status.page === true) {
+                if (ANT.status.page === true && ANT.group.summary_widget_selector!='none') {
                     var page = settings;
                     
                     var widgetClass = 'ant-summary-key-'+page.key;
@@ -10775,12 +10705,17 @@ function $AFunctions($A){
                             event_value: (page.toptags.length>0) ? 'vw':'ad',  // view or react
                             page_id: page_id
                         });
+                        ANT.events.emit('antenna.reactionview', '', { 'kind':'page' });
                     };
 
                     if(isTouchBrowser){
-                        $summary_widget.on('tap.ant', function(){
-                            onActiveEvent.call(this);
-                            $(this).toggleClass('ant_hover');
+                        $summary_widget.on('touchend.ant', function(e){
+                            // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
+                            if ( ANT.util.isTouchDragging(e) ) { return; }
+                            if (ANT.util.bubblingEvents['touchend'] == false) {
+                                onActiveEvent.call(this);
+                                $(this).toggleClass('ant_hover');
+                            }
                         });
                     }else{
                         $summary_widget.hover(
@@ -11345,7 +11280,7 @@ function $AFunctions($A){
                     hiliter.applyToRange(range);
                     //log('trying to apply range:  ' +range )
                     //apply the visual styles with the generic classes
-                    $('.'+hiliter['class']).addClass(styleClass);
+                    $('.'+hiliter['class']).addClass('ant_hilite '+styleClass);
                     //apply css classes to start and end so we can style those specially
                     hiliter['get$start']().addClass(styleClass+'_start');
                     hiliter['get$end']().addClass(styleClass+'_end');
@@ -11523,22 +11458,12 @@ function $AFunctions($A){
         }
         //end function plugin_jquery_mousewheel
 
-        function plugin_jquery_isotope($){
-            /**
-             * Isotope v1.5.26
-             * An exquisite jQuery plugin for magical layouts
-             * http://isotope.metafizzy.co
-             *
-             * Commercial use requires one-time purchase of a commercial license
-             * http://isotope.metafizzy.co/docs/license.html
-             *
-             * Non-commercial use is licensed under the MIT License
-             *
-             * Copyright 2014 Metafizzy
+        function plugin_jquery_scrollStopStart(jQuery){
+            /*!
+             * jQuery Scrollstop Plugin v1.1.0
+             * https://github.com/ssorallen/jquery-scrollstop
              */
-
-             /* PB: added a check for o.addTest since it's undefined when an older version of Modernizr is already on the page.  grumble. */
-            !function(t,i){"use strict";var s,e=t.document,n=e.documentElement,o=t.Modernizr,r=function(t){return t.charAt(0).toUpperCase()+t.slice(1)},a="Moz Webkit O Ms".split(" "),h=function(t){var i,s=n.style;if("string"==typeof s[t])return t;t=r(t);for(var e=0,o=a.length;o>e;e++)if(i=a[e]+t,"string"==typeof s[i])return i},l=h("transform"),u=h("transitionProperty"),c={csstransforms:function(){return!!l},csstransforms3d:function(){var t=!!h("perspective");if(t&&"webkitPerspective"in n.style){var s=i("<style>@media (transform-3d),(-webkit-transform-3d){#modernizr{height:3px}}</style>").appendTo("head"),e=i('<div id="modernizr" />').appendTo("html");t=3===e.height(),e.remove(),s.remove()}return t},csstransitions:function(){return!!u}};if(o)for(s in c)o.hasOwnProperty(s)||(o.addTest && o.addTest(s,c[s]));else{o=t.Modernizr={_version:"1.6ish: miniModernizr for Isotope"};var d,f=" ";for(s in c)d=c[s](),o[s]=d,f+=" "+(d?"":"no-")+s;i("html").addClass(f)}if(o.csstransforms){var m=o.csstransforms3d?{translate:function(t){return"translate3d("+t[0]+"px, "+t[1]+"px, 0) "},scale:function(t){return"scale3d("+t+", "+t+", 1) "}}:{translate:function(t){return"translate("+t[0]+"px, "+t[1]+"px) "},scale:function(t){return"scale("+t+") "}},p=function(t,s,e){var n,o,r=i.data(t,"isoTransform")||{},a={},h={};a[s]=e,i.extend(r,a);for(n in r)o=r[n],h[n]=m[n](o);var u=h.translate||"",c=h.scale||"",d=u+c;i.data(t,"isoTransform",r),t.style[l]=d};i.cssNumber.scale=!0,i.cssHooks.scale={set:function(t,i){p(t,"scale",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.scale?s.scale:1}},i.fx.step.scale=function(t){i.cssHooks.scale.set(t.elem,t.now+t.unit)},i.cssNumber.translate=!0,i.cssHooks.translate={set:function(t,i){p(t,"translate",i)},get:function(t){var s=i.data(t,"isoTransform");return s&&s.translate?s.translate:[0,0]}}}var y,g;o.csstransitions&&(y={WebkitTransitionProperty:"webkitTransitionEnd",MozTransitionProperty:"transitionend",OTransitionProperty:"oTransitionEnd otransitionend",transitionProperty:"transitionend"}[u],g=h("transitionDuration"));var v,_=i.event,A=i.event.handle?"handle":"dispatch";_.special.smartresize={setup:function(){i(this).bind("resize",_.special.smartresize.handler)},teardown:function(){i(this).unbind("resize",_.special.smartresize.handler)},handler:function(t,i){var s=this,e=arguments;t.type="smartresize",v&&clearTimeout(v),v=setTimeout(function(){_[A].apply(s,e)},"execAsap"===i?0:100)}},i.fn.smartresize=function(t){return t?this.bind("smartresize",t):this.trigger("smartresize",["execAsap"])},i.Isotope=function(t,s,e){this.element=i(s),this._create(t),this._init(e)};var w=["width","height"],C=i(t);i.Isotope.settings={resizable:!0,layoutMode:"masonry",containerClass:"isotope",itemClass:"isotope-item",hiddenClass:"isotope-hidden",hiddenStyle:{opacity:0,scale:.001},visibleStyle:{opacity:1,scale:1},containerStyle:{position:"relative",overflow:"hidden"},animationEngine:"best-available",animationOptions:{queue:!1,duration:800},sortBy:"original-order",sortAscending:!0,resizesContainer:!0,transformsEnabled:!0,itemPositionDataEnabled:!1},i.Isotope.prototype={_create:function(t){this.options=i.extend({},i.Isotope.settings,t),this.styleQueue=[],this.elemCount=0;var s=this.element[0].style;this.originalStyle={};var e=w.slice(0);for(var n in this.options.containerStyle)e.push(n);for(var o=0,r=e.length;r>o;o++)n=e[o],this.originalStyle[n]=s[n]||"";this.element.css(this.options.containerStyle),this._updateAnimationEngine(),this._updateUsingTransforms();var a={"original-order":function(t,i){return i.elemCount++,i.elemCount},random:function(){return Math.random()}};this.options.getSortData=i.extend(this.options.getSortData,a),this.reloadItems(),this.offset={left:parseInt(this.element.css("padding-left")||0,10),top:parseInt(this.element.css("padding-top")||0,10)};var h=this;setTimeout(function(){h.element.addClass(h.options.containerClass)},0),this.options.resizable&&C.bind("smartresize.isotope",function(){h.resize()}),this.element.delegate("."+this.options.hiddenClass,"click",function(){return!1})},_getAtoms:function(t){var i=this.options.itemSelector,s=i?t.filter(i).add(t.find(i)):t,e={position:"absolute"};return s=s.filter(function(t,i){return 1===i.nodeType}),this.usingTransforms&&(e.left=0,e.top=0),s.css(e).addClass(this.options.itemClass),this.updateSortData(s,!0),s},_init:function(t){this.$filteredAtoms=this._filter(this.$allAtoms),this._sort(),this.reLayout(t)},option:function(t){if(i.isPlainObject(t)){this.options=i.extend(!0,this.options,t);var s;for(var e in t)s="_update"+r(e),this[s]&&this[s]()}},_updateAnimationEngine:function(){var t,i=this.options.animationEngine.toLowerCase().replace(/[ _\-]/g,"");switch(i){case"css":case"none":t=!1;break;case"jquery":t=!0;break;default:t=!o.csstransitions}this.isUsingJQueryAnimation=t,this._updateUsingTransforms()},_updateTransformsEnabled:function(){this._updateUsingTransforms()},_updateUsingTransforms:function(){var t=this.usingTransforms=this.options.transformsEnabled&&o.csstransforms&&o.csstransitions&&!this.isUsingJQueryAnimation;t||(delete this.options.hiddenStyle.scale,delete this.options.visibleStyle.scale),this.getPositionStyles=t?this._translate:this._positionAbs},_filter:function(t){var i=""===this.options.filter?"*":this.options.filter;if(!i)return t;var s=this.options.hiddenClass,e="."+s,n=t.filter(e),o=n;if("*"!==i){o=n.filter(i);var r=t.not(e).not(i).addClass(s);this.styleQueue.push({$el:r,style:this.options.hiddenStyle})}return this.styleQueue.push({$el:o,style:this.options.visibleStyle}),o.removeClass(s),t.filter(i)},updateSortData:function(t,s){var e,n,o=this,r=this.options.getSortData;t.each(function(){e=i(this),n={};for(var t in r)n[t]=s||"original-order"!==t?r[t](e,o):i.data(this,"isotope-sort-data")[t];i.data(this,"isotope-sort-data",n)})},_sort:function(){var t=this.options.sortBy,i=this._getSorter,s=this.options.sortAscending?1:-1,e=function(e,n){var o=i(e,t),r=i(n,t);return o===r&&"original-order"!==t&&(o=i(e,"original-order"),r=i(n,"original-order")),(o>r?1:r>o?-1:0)*s};this.$filteredAtoms.sort(e)},_getSorter:function(t,s){return i.data(t,"isotope-sort-data")[s]},_translate:function(t,i){return{translate:[t,i]}},_positionAbs:function(t,i){return{left:t,top:i}},_pushPosition:function(t,i,s){i=Math.round(i+this.offset.left),s=Math.round(s+this.offset.top);var e=this.getPositionStyles(i,s);this.styleQueue.push({$el:t,style:e}),this.options.itemPositionDataEnabled&&t.data("isotope-item-position",{x:i,y:s})},layout:function(t,i){var s=this.options.layoutMode;if(this["_"+s+"Layout"](t),this.options.resizesContainer){var e=this["_"+s+"GetContainerSize"]();this.styleQueue.push({$el:this.element,style:e})}this._processStyleQueue(t,i),this.isLaidOut=!0},_processStyleQueue:function(t,s){var e,n,r,a,h=this.isLaidOut?this.isUsingJQueryAnimation?"animate":"css":"css",l=this.options.animationOptions,u=this.options.onLayout;if(n=function(t,i){i.$el[h](i.style,l)},this._isInserting&&this.isUsingJQueryAnimation)n=function(t,i){e=i.$el.hasClass("no-transition")?"css":h,i.$el[e](i.style,l)};else if(s||u||l.complete){var c=!1,d=[s,u,l.complete],f=this;if(r=!0,a=function(){if(!c){for(var i,s=0,e=d.length;e>s;s++)i=d[s],"function"==typeof i&&i.call(f.element,t,f);c=!0}},this.isUsingJQueryAnimation&&"animate"===h)l.complete=a,r=!1;else if(o.csstransitions){for(var m,p=0,v=this.styleQueue[0],_=v&&v.$el;!_||!_.length;){if(m=this.styleQueue[p++],!m)return;_=m.$el}var A=parseFloat(getComputedStyle(_[0])[g]);A>0&&(n=function(t,i){i.$el[h](i.style,l).one(y,a)},r=!1)}}i.each(this.styleQueue,n),r&&a(),this.styleQueue=[]},resize:function(){this["_"+this.options.layoutMode+"ResizeChanged"]()&&this.reLayout()},reLayout:function(t){this["_"+this.options.layoutMode+"Reset"](),this.layout(this.$filteredAtoms,t)},addItems:function(t,i){var s=this._getAtoms(t);this.$allAtoms=this.$allAtoms.add(s),i&&i(s)},insert:function(t,i){this.element.append(t);var s=this;this.addItems(t,function(t){var e=s._filter(t);s._addHideAppended(e),s._sort(),s.reLayout(),s._revealAppended(e,i)})},appended:function(t,i){var s=this;this.addItems(t,function(t){s._addHideAppended(t),s.layout(t),s._revealAppended(t,i)})},_addHideAppended:function(t){this.$filteredAtoms=this.$filteredAtoms.add(t),t.addClass("no-transition"),this._isInserting=!0,this.styleQueue.push({$el:t,style:this.options.hiddenStyle})},_revealAppended:function(t,i){var s=this;setTimeout(function(){t.removeClass("no-transition"),s.styleQueue.push({$el:t,style:s.options.visibleStyle}),s._isInserting=!1,s._processStyleQueue(t,i)},10)},reloadItems:function(){this.$allAtoms=this._getAtoms(this.element.children())},remove:function(t,i){this.$allAtoms=this.$allAtoms.not(t),this.$filteredAtoms=this.$filteredAtoms.not(t);var s=this,e=function(){t.remove(),i&&i.call(s.element)};t.filter(":not(."+this.options.hiddenClass+")").length?(this.styleQueue.push({$el:t,style:this.options.hiddenStyle}),this._sort(),this.reLayout(e)):e()},shuffle:function(t){this.updateSortData(this.$allAtoms),this.options.sortBy="random",this._sort(),this.reLayout(t)},destroy:function(){var t=this.usingTransforms,i=this.options;this.$allAtoms.removeClass(i.hiddenClass+" "+i.itemClass).each(function(){var i=this.style;i.position="",i.top="",i.left="",i.opacity="",t&&(i[l]="")});var s=this.element[0].style;for(var e in this.originalStyle)s[e]=this.originalStyle[e];this.element.unbind(".isotope").undelegate("."+i.hiddenClass,"click").removeClass(i.containerClass).removeData("isotope"),C.unbind(".isotope")},_getSegments:function(t){var i,s=this.options.layoutMode,e=t?"rowHeight":"columnWidth",n=t?"height":"width",o=t?"rows":"cols",a=this.element[n](),h=this.options[s]&&this.options[s][e]||this.$filteredAtoms["outer"+r(n)](!0)||a;i=Math.floor(a/h),i=Math.max(i,1),this[s][o]=i,this[s][e]=h},_checkIfSegmentsChanged:function(t){var i=this.options.layoutMode,s=t?"rows":"cols",e=this[i][s];return this._getSegments(t),this[i][s]!==e},_masonryReset:function(){this.masonry={},this._getSegments();var t=this.masonry.cols;for(this.masonry.colYs=[];t--;)this.masonry.colYs.push(0)},_masonryLayout:function(t){var s=this,e=s.masonry;t.each(function(){var t=i(this),n=Math.ceil(t.outerWidth(!0)/e.columnWidth);if(n=Math.min(n,e.cols),1===n)s._masonryPlaceBrick(t,e.colYs);else{var o,r,a=e.cols+1-n,h=[];for(r=0;a>r;r++)o=e.colYs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryPlaceBrick(t,h)}})},_masonryPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=this.masonry.columnWidth*e,a=s;this._pushPosition(t,r,a);var h=s+t.outerHeight(!0),l=this.masonry.cols+1-o;for(n=0;l>n;n++)this.masonry.colYs[e+n]=h},_masonryGetContainerSize:function(){var t=Math.max.apply(Math,this.masonry.colYs);return{height:t}},_masonryResizeChanged:function(){return this._checkIfSegmentsChanged()},_fitRowsReset:function(){this.fitRows={x:0,y:0,height:0}},_fitRowsLayout:function(t){var s=this,e=this.element.width(),n=this.fitRows;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.x&&o+n.x>e&&(n.x=0,n.y=n.height),s._pushPosition(t,n.x,n.y),n.height=Math.max(n.y+r,n.height),n.x+=o})},_fitRowsGetContainerSize:function(){return{height:this.fitRows.height}},_fitRowsResizeChanged:function(){return!0},_cellsByRowReset:function(){this.cellsByRow={index:0},this._getSegments(),this._getSegments(!0)},_cellsByRowLayout:function(t){var s=this,e=this.cellsByRow;t.each(function(){var t=i(this),n=e.index%e.cols,o=Math.floor(e.index/e.cols),r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByRowGetContainerSize:function(){return{height:Math.ceil(this.$filteredAtoms.length/this.cellsByRow.cols)*this.cellsByRow.rowHeight+this.offset.top}},_cellsByRowResizeChanged:function(){return this._checkIfSegmentsChanged()},_straightDownReset:function(){this.straightDown={y:0}},_straightDownLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,0,s.straightDown.y),s.straightDown.y+=t.outerHeight(!0)})},_straightDownGetContainerSize:function(){return{height:this.straightDown.y}},_straightDownResizeChanged:function(){return!0},_masonryHorizontalReset:function(){this.masonryHorizontal={},this._getSegments(!0);var t=this.masonryHorizontal.rows;for(this.masonryHorizontal.rowXs=[];t--;)this.masonryHorizontal.rowXs.push(0)},_masonryHorizontalLayout:function(t){var s=this,e=s.masonryHorizontal;t.each(function(){var t=i(this),n=Math.ceil(t.outerHeight(!0)/e.rowHeight);if(n=Math.min(n,e.rows),1===n)s._masonryHorizontalPlaceBrick(t,e.rowXs);else{var o,r,a=e.rows+1-n,h=[];for(r=0;a>r;r++)o=e.rowXs.slice(r,r+n),h[r]=Math.max.apply(Math,o);s._masonryHorizontalPlaceBrick(t,h)}})},_masonryHorizontalPlaceBrick:function(t,i){for(var s=Math.min.apply(Math,i),e=0,n=0,o=i.length;o>n;n++)if(i[n]===s){e=n;break}var r=s,a=this.masonryHorizontal.rowHeight*e;this._pushPosition(t,r,a);var h=s+t.outerWidth(!0),l=this.masonryHorizontal.rows+1-o;for(n=0;l>n;n++)this.masonryHorizontal.rowXs[e+n]=h},_masonryHorizontalGetContainerSize:function(){var t=Math.max.apply(Math,this.masonryHorizontal.rowXs);return{width:t}},_masonryHorizontalResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_fitColumnsReset:function(){this.fitColumns={x:0,y:0,width:0}},_fitColumnsLayout:function(t){var s=this,e=this.element.height(),n=this.fitColumns;t.each(function(){var t=i(this),o=t.outerWidth(!0),r=t.outerHeight(!0);0!==n.y&&r+n.y>e&&(n.x=n.width,n.y=0),s._pushPosition(t,n.x,n.y),n.width=Math.max(n.x+o,n.width),n.y+=r})},_fitColumnsGetContainerSize:function(){return{width:this.fitColumns.width}},_fitColumnsResizeChanged:function(){return!0},_cellsByColumnReset:function(){this.cellsByColumn={index:0},this._getSegments(),this._getSegments(!0)},_cellsByColumnLayout:function(t){var s=this,e=this.cellsByColumn;t.each(function(){var t=i(this),n=Math.floor(e.index/e.rows),o=e.index%e.rows,r=(n+.5)*e.columnWidth-t.outerWidth(!0)/2,a=(o+.5)*e.rowHeight-t.outerHeight(!0)/2;s._pushPosition(t,r,a),e.index++})},_cellsByColumnGetContainerSize:function(){return{width:Math.ceil(this.$filteredAtoms.length/this.cellsByColumn.rows)*this.cellsByColumn.columnWidth}},_cellsByColumnResizeChanged:function(){return this._checkIfSegmentsChanged(!0)},_straightAcrossReset:function(){this.straightAcross={x:0}},_straightAcrossLayout:function(t){var s=this;t.each(function(){var t=i(this);s._pushPosition(t,s.straightAcross.x,0),s.straightAcross.x+=t.outerWidth(!0)})},_straightAcrossGetContainerSize:function(){return{width:this.straightAcross.x}},_straightAcrossResizeChanged:function(){return!0}},i.fn.imagesLoaded=function(t){function s(){t.call(n,o)}function e(t){var n=t.target;n.src!==a&&-1===i.inArray(n,h)&&(h.push(n),--r<=0&&(setTimeout(s),o.unbind(".imagesLoaded",e)))}var n=this,o=n.find("img").add(n.filter("img")),r=o.length,a="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",h=[];return r||s(),o.bind("load.imagesLoaded error.imagesLoaded",e).each(function(){var t=this.src;this.src=a,this.src=t}),n};var z=function(i){t.console&&t.console.error(i)};i.fn.isotope=function(t,s){if("string"==typeof t){var e=Array.prototype.slice.call(arguments,1);this.each(function(){var s=i.data(this,"isotope");return s?i.isFunction(s[t])&&"_"!==t.charAt(0)?void s[t].apply(s,e):void z("no such method '"+t+"' for isotope instance"):void z("cannot call methods on isotope prior to initialization; attempted to call method '"+t+"'")})}else this.each(function(){var e=i.data(this,"isotope");e?(e.option(t),e._init(s)):i.data(this,"isotope",new i.Isotope(t,this,s))});return this}}(window,$);
+            !function(a){var b=a.event.dispatch||a.event.handle,c=a.event.special,d="D"+ +new Date,e="D"+(+new Date+1);c.scrollstart={setup:function(e){var g,f=a.extend({latency:c.scrollstop.latency},e),h=function(a){var c=this,d=arguments;g?clearTimeout(g):(a.type="scrollstart",b.apply(c,d)),g=setTimeout(function(){g=null},f.latency)};a(this).bind("scroll",h).data(d,h)},teardown:function(){a(this).unbind("scroll",a(this).data(d))}},c.scrollstop={latency:250,setup:function(d){var g,f=a.extend({latency:c.scrollstop.latency},d),h=function(a){var c=this,d=arguments;g&&clearTimeout(g),g=setTimeout(function(){g=null,a.type="scrollstop",b.apply(c,d)},f.latency)};a(this).bind("scroll",h).data(e,h)},teardown:function(){a(this).unbind("scroll",a(this).data(e))}}}(jQuery);
         }
 
         function plugin_jquery_jScrollPane($){

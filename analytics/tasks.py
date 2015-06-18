@@ -1,17 +1,45 @@
 import settings
 from celery.task.schedules import crontab
-from celery.decorators import periodic_task
+from celery.decorators import periodic_task, task
 from analytics.utils import OAuth2EventsUtility
 import datetime, json, random
 from antenna.rb.models import * 
-from antenna.utils import cache as antenna_cache
 from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
 from models import *
 from django.db.models import Count
 from django.core.cache import cache
+import traceback
+import hashlib
 
 logger = get_task_logger(__name__)
+
+
+@task(name='page.cache.update')
+def update_page_cache(page_id):
+    if cache.get('LOCKED_page_data' + str(page_id)) is None:
+        cache.set('LOCKED_page_data' + str(page_id),'locked',15)
+        cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
+        cache.delete('LOCKED_page_data' + str(page_id))
+#    logger.info('updating page_data: ' + str(page_id))
+#   cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
+
+
+@task(name='page.containers.cache.update')
+def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
+    if len(hashes) == 1:
+        key = 'page_containers' + str(page_id) + ":" + str(hashes)
+        #cache.delete('page_containers' + str(page_id))
+        update_page_cache(page_id)
+    else:
+        key = 'page_containers' + str(page_id)
+    if cache.get('LOCKED_'+key) is None:
+        logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+        cache.set('LOCKED_'+key,'locked',15)
+        cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
+        cache.delete('LOCKED_'+key)
+#    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+#    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
 
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
@@ -70,7 +98,7 @@ def do_all_groups_recirc():
                     if display_interaction is not None:       
                         recirc = {}
                         recirc['page'] = mrc['page']
-                        recirc['content'] = {'kind':content_dict['kind'], 'body':content_dict['body']}
+                        recirc['content'] = model_to_dict(display_interaction.content, fields = ['kind', 'body'])
                         recirc['group'] = model_to_dict(group, fields = ['id', 'short_name', 'name'])
                         recirc['reaction'] = {'body':display_interaction.interaction_node.body, 
                                               'id':display_interaction.id, 'count':display_vote}
@@ -205,16 +233,20 @@ def most_reacted_content(now, group):
     content_counts = {}
     most_reacted = []
     for interaction in interactions:
-        content = interaction.content
-        if not content_data.has_key(content.id):
-            content_counts[content.id] = {}
-            content_counts[content.id] = 0
-            content_data[content.id] = {}
-            content_data[content.id]['content'] = model_to_dict(content)
-            content_data[content.id]['page']= model_to_dict(interaction.page)
-            content_data[content.id]['container_hash'] = interaction.container.hash
-        else:
-            content_counts[content.id] = content_counts[content.id] + 1
+        try:
+            content = interaction.content
+            if not content_data.has_key(content.id):
+                content_counts[content.id] = {}
+                content_counts[content.id] = 0
+                content_data[content.id] = {}
+                content_data[content.id]['content'] = model_to_dict(content)
+                content_data[content.id]['page']= model_to_dict(interaction.page)
+                content_data[content.id]['container_hash'] = interaction.container.hash
+            else:
+                content_counts[content.id] = content_counts[content.id] + 1
+        except Exception, ex:
+            logger.warn(ex)
+            
     sorted_counts_keys = sorted(content_counts, key=content_counts.get, reverse=True)
     for key in sorted_counts_keys:
         c_d = content_data[key]
@@ -223,8 +255,8 @@ def most_reacted_content(now, group):
     
     JSONGroupReport.objects.create(body=json.dumps(most_reacted), group=group, kind='mrcon')  
 
-@periodic_task(name='generate_seeds', ignore_result=True, 
-               run_every=(crontab(hour="*", minute="*/12", day_of_week="*")))
+#@periodic_task(name='generate_seeds', ignore_result=True, 
+#               run_every=(crontab(hour="*", minute="*/12", day_of_week="*")))
 def sowing_seeds_of_love():
     try:
         groups = get_approved_active_groups()
@@ -256,8 +288,10 @@ def sowing_seeds_of_love():
                             approved = True
                         )
                         zygote.save()
-                        logger.info('zygote saved')
-                        antenna_cache.clear_interaction_caches(page, interaction.container)
+                        logger.info('CACHEUPDATE SEEDS')
+                        #UPDATE CACHE!
+                        update_page_cache.delay(page.id)
+                        update_page_container_hash_cache.delay(page.id, [interaction.container.hash], [])
                         break
                     except Exception, e:
                         logger.warn(e)
@@ -280,11 +314,11 @@ def sowing_seeds_of_love():
                     approved = True
                 )
                 zygote.save()
-                logger.info("saved zygote")
+                logger.info("CACHEUPDATE SEEDS2")
             except Exception, e:
                 logger.warn(e)
-            antenna_cache.clear_interaction_caches(page, page_container)
-
+            update_page_cache.delay(page.id)
+            update_page_container_hash_cache.delay(page.id, [page_container.hash], [])
     
 @periodic_task(name='generate_approved_active_groups', ignore_result=True, 
                run_every=(crontab(hour="7", minute="30", day_of_week="*")))
@@ -311,4 +345,149 @@ def get_approved_active_groups():
     logger.info("APPROVED and ACTIVE: " + str(approved_active))     
     return Group.objects.filter(id__in=approved_active)
 
+
+
+
+def getSinglePageDataDict(page_id):
+    logger.info('getting singlePageDataDict: ' + str(page_id))
+    current_page = Page.objects.get(id=page_id)
+    urlhash = hashlib.md5( current_page.url ).hexdigest()
+    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
+            
+    # Retrieve containers
+    containers = Container.objects.filter(id__in=iop.values('container'))
+    values = iop.order_by('kind').values('kind')
+    # Annotate values with count of interactions
+    summary = values.annotate(count=Count('id'))
+
+    tags = InteractionNode.objects.filter(
+        interaction__kind='tag',
+        interaction__page=current_page,
+        interaction__approved=True
+    ).exclude(
+        interaction__container__item_type='question'
+    )
+
+    ordered_tags = tags.order_by('body')
+    tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
+    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
+
+    result_dict = dict(
+            id=current_page.id,
+            summary=summary,
+            toptags=toptags,
+            urlhash = urlhash,
+            containers=containers
+        )
+    return result_dict
+    
+    
+    
+def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
+    page = Page.objects.get(id=page_id)
+    #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
+    containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
+    #logger.info("CONTAINERS: " + str(containers))
+    ids = [container[0] for container in containers]
+    interactions = list(Interaction.objects.filter(
+        container__in=ids,
+        page=page,
+        approved=True
+    ).select_related('interaction_node','content','user',('social_user')))
+    #logger.info("K/U I: " + str(interactions))
+    known = getContainerSummaries(interactions, containers)
+
+    # crossPageHashes
+    if len(crossPageHashes) > 0:
+        crossPageContainers = list(Container.objects.filter(hash__in=crossPageHashes).values_list('id','hash','kind'))
+        crossPageIds = [container[0] for container in crossPageContainers]
+        crossPageInteractions = list(Interaction.objects.filter(
+            container__in=crossPageIds,
+            page__site__group = page.site.group,
+            # page__in=group_page_ids,
+            approved=True
+        ).select_related('interaction_node','content','user',('social_user')))
+
+        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
+
         
+    unknown = list(set(hashes) - set(known.keys()))
+    if 'crossPageKnown' in locals():
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
+    else:
+        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
+    return cacheable_result
+
+
+def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
+    if not data: data = {}
+    counts = {}
+    if container:
+        data['kind'] = container[2]
+    if content:
+        data['id'] = content[0]
+        data['body'] = content[1]
+        data['kind'] = content[2]
+        data['location'] = content[3]
+
+    if container:
+        container = container[0]
+        interactions = filter(lambda x: x.container_id==container, interactions)
+    elif content:
+        content = content[0]
+        interactions = filter(lambda x: x.content_id==content, interactions)
+    elif page:
+        interactions = filter(lambda x: x.page==page, interactions)
+
+    # Filter tag and comment interactions
+    tags = filter(lambda x: x.kind=='tag', interactions)
+    comments = filter(lambda x: x.kind=='com', interactions)
+
+    counts['tags'] = len(tags)
+    counts['coms'] = len(comments)
+    counts['interactions'] = len(interactions)
+    data['counts'] = counts
+    data['id'] = container if container else content
+    
+    tag_counts = dict((
+        (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
+    ))
+    sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
+
+    tag_limit = 500 if isCrossPage else 10
+    top_tags = dict((
+        tag for tag in sorted_counts[:tag_limit]
+    ))
+
+    top_interactions = {}
+    top_interactions['tags'] = top_tags
+    top_interactions['coms'] = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, content_id=comment.content.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
+    for comment in top_interactions['coms']:
+        try:
+            comment['social_user'] = comment['user'].social_user
+        except SocialUser.DoesNotExist:
+            comment['social_user'] = {}
+        
+    data['top_interactions'] = top_interactions
+
+    return data
+
+def getContainerSummaries(interactions, containers, isCrossPage=False):
+    data = dict((
+        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
+    ))
+    return data
+
+def getTagSummary(tag, tags):
+    tags = filter(lambda x: x.interaction_node==tag, tags)
+    
+    data = {}
+    data['count'] = len(tags)
+    data['body'] = tag.body
+    for inter in tags:
+        if not inter.parent:
+            data['parent_id'] = inter.id
+            break
+    return data
+
+      

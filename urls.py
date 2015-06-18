@@ -71,7 +71,6 @@ urlpatterns = patterns('',
   url(r'^page/(?P<page_id>\d+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^page/(?P<page_id>\d+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^page/(?P<page_id>\d+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}),
-  url(r'^page/(?P<page_id>\d+)/reset/$', 'rb.views.resetPageData' ),
 
   # Specific site
   url(r'^site/(?P<site_id>\d+)/$', 'rb.views.main'),

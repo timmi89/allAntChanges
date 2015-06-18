@@ -1,7 +1,10 @@
 from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
-from antenna.chronos.jobs import *
+from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
+from antenna.antenna_celery import app as celery_app
+from antenna.analytics.tasks import update_page_cache, update_page_container_hash_cache
 from django.db.models import Q
+from django.core.cache import cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.cache import cache
 from django.forms.models import model_to_dict
@@ -18,6 +21,24 @@ import traceback
 import logging
 import hashlib
 logger = logging.getLogger('rb.standard')
+
+
+# BEGIN for the html tag stripping
+from HTMLParser import HTMLParser  
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()
+# END for the html tag stripping
 
 blacklist = ['fuck','shit','poop','cock','cunt']
     
@@ -207,6 +228,7 @@ def createInteractionNode(node_id=None, body=None, group=None):
     
     # Body was passed rather than id
     elif body:
+        body = strip_tags(body)
         # No id provided, using body to get_or_create
         check_nodes = InteractionNode.objects.filter(body__exact = body)
         
@@ -249,12 +271,9 @@ def deleteInteraction(interaction, user):
         try:
             interaction.delete();
             try:
-                cache.delete('page_data' + str(interaction.page.id))
-                
-                cache.delete('page_containers' + str(interaction.page.id))
-                
-                cache.delete('page_containers' + str(interaction.page.id) + ":" + str([interaction.container.hash]))
-                
+                logger.info("CACHEUPDATE ON DELETE")
+                update_page_cache.delay(interaction.page.id)
+                update_page_container_hash_cache.delay(interaction.page.id, [interaction.container.hash], [])
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
     
@@ -265,8 +284,12 @@ def deleteInteraction(interaction, user):
     else:
         raise JSONException("Missing interaction or user")
 
-def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None):
+def createInteraction(page, container, content, user, kind, interaction_node, group=None, parent=None, tag_is_default=False):
     approveOnCreate = False if group.requires_approval else True
+
+    interaction_node.body = strip_tags(interaction_node.body)
+    if interaction_node.body == '':
+        raise JSONException("Group has blocked this tag.")
 
     if kind and kind == 'tag':
         if group and group.blocked_tags:
@@ -379,6 +402,8 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
             pass
         elif parent:
             pass
+        elif tag_is_default:
+            pass
         else:
             if interaction_node in group.blessed_tags.all():
                 pass
@@ -417,7 +442,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
                     t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id, "group_id":group.id})
                     t.start()
                 except Exception, ex:
-                    pass
+                    logger.warn(ex)
             
     except Exception, ex:
         logger.info("NO ALL TAG: " + traceback.format_exc(1500))
@@ -429,32 +454,32 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         container=container
     )
     try:
-        cache.delete('page_data' + str(page.id))
-                
-        cache.delete('page_containers' + str(page.id))
+        logger.info("CACHEUPDATE on CREATE")
+        update_page_cache.delay(page.id)
+        update_page_container_hash_cache.delay(page.id, [container.hash], [])
         
-        cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
+        #notification = AsynchPageNotification()
+        #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
+        #t.start()
         
-        notification = AsynchPageNotification()
-        t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
-        t.start()
-
-        other_interactions = list(Interaction.objects.filter(
-                    container=container,
-                    page__site__group = page.site.group,
-                    approved=True
-                    ))
-
-        other_pages = set()
-        for other in other_interactions:
-            other_pages.add(other.page)
-        for other_page in other_pages:
-            cache.delete('page_data' + str(page.id))
-                
-            cache.delete('page_containers' + str(page.id))
+        #COMMENTING OUT CROSSPAGE TO AVOID RABBITMQ BACKUP WITH OVERLY COMMON CONTAINERS
+        
+        #if not content.kind == 'pag':
+        #    other_interactions = list(Interaction.objects.filter(
+        #                container=container,
+        #                page__site__group = page.site.group,
+        #                approved=True
+        #                ))
+    
+        #    other_pages = set()
+        #    for other in other_interactions:
+        #        other_pages.add(other.page)
+        #    for other_page in other_pages:
+        #        logger.info("CACHEUPDATE on OTHER PAGE " + str(container.hash))
+        #        update_page_cache.delay(other_page.id)
+        #        update_page_container_hash_cache.delay(other_page.id, [container.hash], [])
             
-            cache.delete('page_containers' + str(page.id) + ":" + str([container.hash]))
-
+            
         #if not new_interaction.parent or new_interaction.kind == 'com':
         #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
         #    t = Thread(target=global_cache_updater, kwargs={})
@@ -665,5 +690,22 @@ def retry_cache_get(key):
 
     
     
-    
-     
+   
+def check_and_get_locked_cache(key):
+    cached_result = cache.get(str(key))
+    if cached_result is None and cache.get('LOCKED_'+str(key)) is None:
+        cache.set('LOCKED_'+ str(key),'locked',15)
+        logger.info("locking to continue for DB: " + str(key))
+        return None
+    elif cached_result is None:    
+        for x in range(1,10):
+            time.sleep(x * 0.25)
+            cached_result = cache.get(str(key))
+            if cached_result is not None:
+                cache.delete('LOCKED_'+ str(key))
+                logger.info('return cached result and cleared LOCKED'+str(key))
+                return cached_result
+    return cached_result    
+
+
+                

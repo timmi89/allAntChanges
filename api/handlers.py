@@ -264,6 +264,13 @@ class CommentHandler(InteractionHandler):
 class TagHandler(InteractionHandler):
     def create(self, request, data, user, page, group, kind='tag'):
         tag_body = data['tag']['body']
+        
+        tag_is_default = False
+        
+        if 'is_default' in data['tag']:
+            tag_is_default = data['tag']['is_default']
+            
+        
         if len(tag_body) > 35:
             return
         container_hash = data['hash']
@@ -299,7 +306,7 @@ class TagHandler(InteractionHandler):
         else:
             parent = None
         # Create an interaction
-        interaction = createInteraction(page, container, content, user, kind, inode, group, parent)
+        interaction = createInteraction(page, container, content, user, kind, inode, group, parent, tag_is_default)
         
         return interaction
 
@@ -509,19 +516,25 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
             raise JSONException("Bad Page ID ***" + str(page)+ "***")
 
         if len(hashes) == 1:
-            cached_result = cache.get('page_containers' + str(page) + ":" + str(hashes))
+            #check_and_get_locked_cache(key)
+            cached_result = check_and_get_locked_cache('page_containers' + str(page) + ":" + str(hashes))
         else:
-            cached_result = cache.get('page_containers' + str(page))
+            cached_result = check_and_get_locked_cache('page_containers' + str(page))
         
         if cached_result is not None:
             return cached_result
         else:
+            logger.info("Missed cache container summaries")
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
+            print 'got a cacheable_result'
             if len(hashes) == 1:
+                print '2a'
                 cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
             else:
+                print '2b'
                 cache.set('page_containers' + str(page), cacheable_result)
         
+            print '3'
             return cacheable_result
 
 class ContentSummaryHandler(AnonymousBaseHandler):
@@ -579,11 +592,12 @@ class PageDataHandler(AnonymousBaseHandler):
         pages_data = []
         
         for current_page in pages:
-            cached_result = cache.get('page_data' + str(current_page.id))
+            cached_result = check_and_get_locked_cache('page_data' + str(current_page.id))
             if cached_result is not None:
                 #logger.info('returning page data cached result')
                 pages_data.append(cached_result)
             else:
+                logger.info('missed page settings cache')
                 result_dict = getSinglePageDataDict(current_page.id)
                 pages_data.append(result_dict)
                 try:
@@ -600,9 +614,13 @@ class SettingsHandler(AnonymousBaseHandler):
     Returns the settings for a group
     """
     @status_response
-    def read(self, request, group_id=None):
+    @json_data
+    def read(self, request, data, group_id=None):
         host = getHost(request)
-        
+        if data and data['host_name']:
+            host = data['host_name']
+
+       
         #check cache by new key:
         cached_result = cache.get('group_settings_'+ str(host))
         if cached_result is not None:
@@ -633,9 +651,7 @@ class SettingsHandler(AnonymousBaseHandler):
         
             settings_dict = getSettingsDict(group)
             try:
-                cache_updater = GroupSettingsDataCacheUpdater(method="update", group=group, host=host)
-                t = Thread(target=cache_updater, kwargs={})
-                t.start()
+                cache.set('group_settings_'+ str(host), settings_dict)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
                   
@@ -764,7 +780,6 @@ class FollowedEntityHandler(InteractionHandler):
         follows = {}
         follows['paginated_follows'] = []
         user_is_follower = False
-        logger.info("entity: " + str(follow_id) + " type: " + entity_type)
         if entity_type == 'pag':
             followed_by = Follow.objects.filter(page = Page.objects.get(id = follow_id))
             if cookie_user is not None:
