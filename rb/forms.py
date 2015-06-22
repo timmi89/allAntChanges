@@ -3,7 +3,7 @@ from rb.models import *
 import re
 from api import userutils
 from auto_approval import autoCreateGroup
-from api.utils import getSettingsDict
+from api.util_functions import getSettingsDict
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import EmailMessage
