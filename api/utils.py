@@ -224,7 +224,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         container=container
     )
     try:
-        logger.info("CACHEUPDATE on CREATE")
+        logger.info("CACHEUPDATE on CREATE " + str(page.id) + " " + str(container.hash))
         update_page_cache.delay(page.id)
         update_page_container_hash_cache.delay(page.id, [container.hash], [])
         

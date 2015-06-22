@@ -60,6 +60,7 @@ def getTagSummary(tag, tags):
     return data
 
 def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
+    logger.info('SUMMARY: ' + str(interactions) + ' ' + str(container) + ' ' + str(content) + ' ' + str(page)  + ' ' + str(data))
     if not data: data = {}
     counts = {}
     if container:
@@ -302,7 +303,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
         page=page,
         approved=True
     ).select_related('interaction_node','content','user',('social_user')))
-    #logger.info("K/U I: " + str(interactions))
+    logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
 
     # crossPageHashes
@@ -324,6 +325,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
     else:
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
+    logger.info('CACHEABLE RESULT gkucs: ' + str(cacheable_result))
     return cacheable_result
 
 def getSettingsDict(group):
