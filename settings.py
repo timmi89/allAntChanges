@@ -434,6 +434,10 @@ LOGGING = {
         'django.db': {
             'handlers': ['console','rb_standard'],
             'level': 'INFO',
+        },
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
         }
     }
 }

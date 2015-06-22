@@ -4,6 +4,7 @@ from celery.decorators import periodic_task, task
 from analytics.utils import OAuth2EventsUtility
 import datetime, json, random
 from antenna.rb.models import * 
+from antenna.api.util_functions import *
 from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
 from models import *
@@ -133,6 +134,7 @@ def do_all_group_reports():
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
     now = datetime.datetime.now()
     td = datetime.timedelta(days=30)
+    
     try:
         groups = get_approved_active_groups()
     except:
@@ -143,8 +145,15 @@ def do_all_group_reports():
     for group in groups:
         try:
             logger.info("STARTING GROUP: " + str(group.id))
-            
-            group_general = event_util.get_group_general_user_data(group, now - td, now)
+            start_date = now - td
+            try:
+                event_util.check_last_month_table(group, start_date, now)
+            except Exception, ex:
+                logger.info('fixing this bug with missing tables over 30 days?')
+                logger.info(ex)
+                start_date = datetime.datetime.now().replace(day = 1, hour =0, minute = 1)
+                
+            group_general = event_util.get_group_general_user_data(group, start_date, now)
             JSONGroupReport.objects.create(body=json.dumps(group_general), group=group, kind='guser')
             
             group_data = group_top_reaction_view_hash_count(event_util, now, group)
@@ -174,7 +183,15 @@ def do_all_group_reports():
 def group_top_reaction_view_hash_count(event_util, now, group):
     group_data = []
     td = datetime.timedelta(days=30)
-    hash_tuples = event_util.get_top_reaction_view_hash_counts(group, now - td, now, 10)
+    start_date = now - td
+    try:
+        event_util.check_last_month_table(group, start_date, now)
+    except Exception, ex:
+        logger.info('fixing this bug with missing tables over 30 days?')
+        logger.info(ex)
+        start_date = datetime.datetime.now().replace(day = 1, hour =0, minute = 1)
+    hash_tuples = event_util.get_top_reaction_view_hash_counts(group, start_date, now, 10)
+    
     if hash_tuples is None:
         return None
  
@@ -208,8 +225,15 @@ def group_top_reaction_view_hash_count(event_util, now, group):
 def A_B_script_loads(event_util, now, group):
     try:
         td = datetime.timedelta(days=30)
-        A_script_loads = event_util.get_event_type_count_by_event_value(group, now - td, now, 1, 'sl', 'A')
-        B_script_loads = event_util.get_event_type_count_by_event_value(group, now - td, now, 1, 'sl', 'B')
+        start_date = now - td
+        try:
+            event_util.check_last_month_table(group, start_date, now)
+        except Exception, ex:
+            logger.info('fixing this bug with missing tables over 30 days?')
+            logger.info(ex)
+            start_date = datetime.datetime.now().replace(day = 1, hour =0, minute = 1)
+        A_script_loads = event_util.get_event_type_count_by_event_value(group, start_date, now, 1, 'sl', 'A')
+        B_script_loads = event_util.get_event_type_count_by_event_value(group, start_date, now, 1, 'sl', 'B')
         hash_data = {}
         hash_data['group_id'] = group.id
         hash_data['A_script_loads'] = A_script_loads
@@ -347,147 +371,3 @@ def get_approved_active_groups():
 
 
 
-
-def getSinglePageDataDict(page_id):
-    logger.info('getting singlePageDataDict: ' + str(page_id))
-    current_page = Page.objects.get(id=page_id)
-    urlhash = hashlib.md5( current_page.url ).hexdigest()
-    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
-            
-    # Retrieve containers
-    containers = Container.objects.filter(id__in=iop.values('container'))
-    values = iop.order_by('kind').values('kind')
-    # Annotate values with count of interactions
-    summary = values.annotate(count=Count('id'))
-
-    tags = InteractionNode.objects.filter(
-        interaction__kind='tag',
-        interaction__page=current_page,
-        interaction__approved=True
-    ).exclude(
-        interaction__container__item_type='question'
-    )
-
-    ordered_tags = tags.order_by('body')
-    tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
-    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
-
-    result_dict = dict(
-            id=current_page.id,
-            summary=summary,
-            toptags=toptags,
-            urlhash = urlhash,
-            containers=containers
-        )
-    return result_dict
-    
-    
-    
-def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
-    page = Page.objects.get(id=page_id)
-    #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
-    containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-    #logger.info("CONTAINERS: " + str(containers))
-    ids = [container[0] for container in containers]
-    interactions = list(Interaction.objects.filter(
-        container__in=ids,
-        page=page,
-        approved=True
-    ).select_related('interaction_node','content','user',('social_user')))
-    #logger.info("K/U I: " + str(interactions))
-    known = getContainerSummaries(interactions, containers)
-
-    # crossPageHashes
-    if len(crossPageHashes) > 0:
-        crossPageContainers = list(Container.objects.filter(hash__in=crossPageHashes).values_list('id','hash','kind'))
-        crossPageIds = [container[0] for container in crossPageContainers]
-        crossPageInteractions = list(Interaction.objects.filter(
-            container__in=crossPageIds,
-            page__site__group = page.site.group,
-            # page__in=group_page_ids,
-            approved=True
-        ).select_related('interaction_node','content','user',('social_user')))
-
-        crossPageKnown = getContainerSummaries(crossPageInteractions, crossPageContainers, isCrossPage=True)
-
-        
-    unknown = list(set(hashes) - set(known.keys()))
-    if 'crossPageKnown' in locals():
-        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
-    else:
-        cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
-    return cacheable_result
-
-
-def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
-    if not data: data = {}
-    counts = {}
-    if container:
-        data['kind'] = container[2]
-    if content:
-        data['id'] = content[0]
-        data['body'] = content[1]
-        data['kind'] = content[2]
-        data['location'] = content[3]
-
-    if container:
-        container = container[0]
-        interactions = filter(lambda x: x.container_id==container, interactions)
-    elif content:
-        content = content[0]
-        interactions = filter(lambda x: x.content_id==content, interactions)
-    elif page:
-        interactions = filter(lambda x: x.page==page, interactions)
-
-    # Filter tag and comment interactions
-    tags = filter(lambda x: x.kind=='tag', interactions)
-    comments = filter(lambda x: x.kind=='com', interactions)
-
-    counts['tags'] = len(tags)
-    counts['coms'] = len(comments)
-    counts['interactions'] = len(interactions)
-    data['counts'] = counts
-    data['id'] = container if container else content
-    
-    tag_counts = dict((
-        (tag.interaction_node.id, getTagSummary(tag.interaction_node, tags)) for tag in tags
-    ))
-    sorted_counts = sorted(tag_counts.items(), key=lambda x: x[1]['count'], reverse=True)
-
-    tag_limit = 500 if isCrossPage else 10
-    top_tags = dict((
-        tag for tag in sorted_counts[:tag_limit]
-    ))
-
-    top_interactions = {}
-    top_interactions['tags'] = top_tags
-    top_interactions['coms'] = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, content_id=comment.content.id, user=comment.user, body=comment.interaction_node.body) for comment in comments]
-    for comment in top_interactions['coms']:
-        try:
-            comment['social_user'] = comment['user'].social_user
-        except SocialUser.DoesNotExist:
-            comment['social_user'] = {}
-        
-    data['top_interactions'] = top_interactions
-
-    return data
-
-def getContainerSummaries(interactions, containers, isCrossPage=False):
-    data = dict((
-        (container[1], getSummary(interactions, container=container, isCrossPage=isCrossPage)) for container in containers    
-    ))
-    return data
-
-def getTagSummary(tag, tags):
-    tags = filter(lambda x: x.interaction_node==tag, tags)
-    
-    data = {}
-    data['count'] = len(tags)
-    data['body'] = tag.body
-    for inter in tags:
-        if not inter.parent:
-            data['parent_id'] = inter.id
-            break
-    return data
-
-      
