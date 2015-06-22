@@ -1,3 +1,4 @@
+from antenna.api.util_functions import *
 from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
