@@ -60,7 +60,7 @@ def getTagSummary(tag, tags):
     return data
 
 def getSummary(interactions, container=None, content=None, page=None, data=None, isCrossPage=False):
-    logger.info('SUMMARY: ' + str(interactions) + ' ' + str(container) + ' ' + str(content) + ' ' + str(page)  + ' ' + str(data))
+    #logger.info('SUMMARY: ' + ' ' + str(container) + ' ' + str(content) + ' ' + str(page)  + ' ' + str(data))
     if not data: data = {}
     counts = {}
     if container:
@@ -296,14 +296,13 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-    #logger.info("CONTAINERS: " + str(containers))
+    logger.info("gkucs HASHES AND CONTAINERS: " + str(hashes) + " " + str(containers))
     ids = [container[0] for container in containers]
     interactions = list(Interaction.objects.filter(
         container__in=ids,
         page=page,
         approved=True
     ).select_related('interaction_node','content','user',('social_user')))
-    logger.info("K/U I: " + str(interactions))
     known = getContainerSummaries(interactions, containers)
 
     # crossPageHashes

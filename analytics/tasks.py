@@ -36,6 +36,7 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         key = 'page_containers' + str(page_id)
     if cache.get('LOCKED_'+key) is None:
         logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+        logger.info(key)
         cache.set('LOCKED_'+key,'locked',15)
         cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
         cache.delete('LOCKED_'+key)
