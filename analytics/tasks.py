@@ -40,6 +40,8 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         cache.set('LOCKED_'+key,'locked',15)
         cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
         cache.delete('LOCKED_'+key)
+    else:
+        logger.warn('LOCKED CACHE KEY: ' + key)
 #    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
 #    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
 
