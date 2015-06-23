@@ -341,7 +341,7 @@ def main(request, user_id=None, short_name=None, site_id=None, page_id=None, int
 
 def board(request, board_id=None, **kwargs):
     cookie_user = checkCookieToken(request)
-    timestamp = datetime.datetime.now().date()
+    timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -977,7 +977,7 @@ def click_redirect(request, short):
 
 def follow_interactions(request, user_id):
     cookie_user = checkCookieToken(request)
-    timestamp = datetime.datetime.now().date()
+    timestamp = datetime.now().date()
     page_num = request.GET.get('page_num', 1)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
