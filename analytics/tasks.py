@@ -32,6 +32,12 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         key = 'page_containers' + str(page_id) + ":" + str(hashes)
         #cache.delete('page_containers' + str(page_id))
         update_page_cache(page_id)
+        spdd = cache.get('page_data'+str(page_id))
+        new_hashes = []
+        for container in spdd['containers']:
+            if container.hash != 'page':
+                new_hashes.append(container.hash)
+        update_page_container_hash_cache(page_id, new_hashes, crossPageHashes)
     else:
         key = 'page_containers' + str(page_id)
     if cache.get('LOCKED_'+key) is None:
@@ -41,7 +47,7 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
         cache.delete('LOCKED_'+key)
     else:
-        logger.warn('LOCKED CACHE KEY: ' + key)
+        logger.warning('LOCKED CACHE KEY: ' + key)
 #    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
 #    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
 
