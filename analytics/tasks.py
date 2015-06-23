@@ -37,7 +37,8 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         for container in spdd['containers']:
             if container.hash != 'page':
                 new_hashes.append(container.hash)
-        update_page_container_hash_cache(page_id, new_hashes, crossPageHashes)
+        if len(new_hashes) != 1: #no infinite recursion, please
+            update_page_container_hash_cache(page_id, new_hashes, crossPageHashes)
     else:
         key = 'page_containers' + str(page_id)
     if cache.get('LOCKED_'+key) is None:
