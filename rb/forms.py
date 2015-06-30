@@ -341,8 +341,13 @@ class GroupForm(forms.ModelForm):
             GroupBlessedTag.objects.create(group=self.instance, node=tag[1], order=tag[0])
         if commit:
             m.save()
+        cache_data = getSettingsDict(self.instance)
         try:
-            cache.set('group_settings_'+ str(self.instance.short_name), getSettingsDict(self.instance))
+            cache.set('group_settings_'+ str(self.instance.short_name), cache_data)
+        except Exception, e:
+            logger.warning(e)
+        try:
+            get_cache('redundant').set('group_settings_'+ str(self.instance.short_name), cache_data)
         except Exception, e:
             logger.warning(e)
         

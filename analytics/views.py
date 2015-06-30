@@ -8,7 +8,7 @@ from datetime import datetime
 from django.db.models import Count, Sum
 from django.forms.models import model_to_dict
 from django.core import serializers
-from django.core.cache import cache
+from django.core.cache import cache, get_cache
 from piston.handler import AnonymousBaseHandler
 from settings import DEBUG, FACEBOOK_APP_ID
 from authentication.decorators import requires_admin, requires_admin_super
@@ -363,7 +363,14 @@ class RecircHandler(AnonymousBaseHandler):
         if cached_report is None:
             group = Group.objects.get(id=int(group_id))
             cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
-            cache.set('group_recirc_' + str(group_id), cached_report)
+            try:
+                cache.set('group_recirc_' + str(group_id), cached_report)
+            except Exception, ex:
+                logger.info(ex)
+            try:
+                get_cache('redundant').set('group_recirc_' + str(group_id), cached_report)
+            except Exception, ex:
+                logger.warn(ex)
     
         return json.loads(cached_report)
     
@@ -374,6 +381,14 @@ def recirculate(request, group_id):
     if cached_report is None:
         group = Group.objects.get(id=int(group_id))
         cached_report = JSONGroupReport.objects.filter(kind='recrc', group=group).order_by('-created')[0].body
-        cache.set('group_recirc_' + str(group_id), cached_report)
+        #cache.set('group_recirc_' + str(group_id), cached_report)
+        try:
+            cache.set('group_recirc_' + str(group_id), cached_report)
+        except Exception, ex:
+            logger.info(ex)
+        try:
+            get_cache('redundant').set('group_recirc_' + str(group_id), cached_report)
+        except Exception, ex:
+            logger.warn(ex)
     
     return cached_report

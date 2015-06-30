@@ -1,6 +1,6 @@
 import settings
 import httplib
-from django.core.cache import cache
+from django.core.cache import cache, get_cache
 import traceback
 import logging
 import time
@@ -91,11 +91,20 @@ class CacheUpdater(object):
                 cache.set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
+            try:
+                get_cache('redundant').set(self.key, self.value)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
         
         elif self.method == 'delete':
             try:
                 cache.delete(self.key)
                 cache.set(self.key, self.value)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+            try:
+                get_cache('redundant').delete(self.key)
+                get_cache('redundant').set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
     
@@ -130,10 +139,18 @@ class ContainerSummaryCacheUpdater(CacheUpdater):
                 cache.set(self.key, self.value)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
+            try:
+                get_cache('redundant').set(self.key, self.value)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
         
         elif self.method == 'delete':
             try:
                 cache.delete(self.key)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
+            try:
+                get_cache('redundant').delete(self.key)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))
                 

@@ -2,7 +2,7 @@ from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.antenna_celery import app as celery_app
 from django.db.models import Q
-from django.core.cache import cache
+from django.core.cache import cache, get_cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.cache import cache
 from django.forms.models import model_to_dict
@@ -432,6 +432,10 @@ def retry_cache_get(key):
 def check_and_get_locked_cache(key):
     cached_result = cache.get(str(key))
     if cached_result is None and cache.get('LOCKED_'+str(key)) is None:
+        logger.info('checking redundant cache')  #REMOVE THIS IN FUTURE IF COSTLY OR INCONSISTENT...
+        redundant_cache_result = get_cache('redundant').get(str(key))
+        if redundant_cache_result is not None:
+            return redundant_cache_result
         cache.set('LOCKED_'+ str(key),'locked',15)
         logger.info("locking to continue for DB: " + str(key))
         return None

@@ -9,7 +9,7 @@ from django.forms.models import model_to_dict
 from celery.utils.log import get_task_logger
 from models import *
 from django.db.models import Count
-from django.core.cache import cache
+from django.core.cache import cache, get_cache
 import traceback
 import hashlib
 
@@ -19,9 +19,20 @@ logger = get_task_logger(__name__)
 @task(name='page.cache.update')
 def update_page_cache(page_id):
     if cache.get('LOCKED_page_data' + str(page_id)) is None:
-        cache.set('LOCKED_page_data' + str(page_id),'locked',15)
-        cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
-        cache.delete('LOCKED_page_data' + str(page_id))
+        cache_data = getSinglePageDataDict(page_id)
+        try:
+            cache.set('LOCKED_page_data' + str(page_id),'locked',15)
+            cache.set('page_data' + str(page_id), cache_data )
+            cache.delete('LOCKED_page_data' + str(page_id))
+        except Exception, ex:
+            logger.info(ex)
+        try:
+            get_cache('redundant').set('LOCKED_page_data' + str(page_id),'locked',15)
+            get_cache('redundant').set('page_data' + str(page_id), cache_data )
+            get_cache('redundant').delete('LOCKED_page_data' + str(page_id))
+        except Exception, ex:
+            logger.info('REDUNDANT CACHE EXCEPTION')
+            logger.warn(ex)
 #    logger.info('updating page_data: ' + str(page_id))
 #   cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
 
@@ -44,9 +55,20 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
     if cache.get('LOCKED_'+key) is None:
         logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
         logger.info(key)
-        cache.set('LOCKED_'+key,'locked',15)
-        cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
-        cache.delete('LOCKED_'+key)
+        cache_data = getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes)
+        try:
+            cache.set('LOCKED_'+key,'locked',15)
+            cache.set(key, cache_data )
+            cache.delete('LOCKED_'+key)
+        except Exception, ex:
+            logger.info(ex)
+        try:
+            get_cache('redundant').set('LOCKED_'+key,'locked',15)
+            get_cache('redundant').set(key, cache_data)
+            get_cache('redundant').delete('LOCKED_'+key)
+        except Exception, ex:
+            logger.info(ex)
+        
     else:
         logger.warning('LOCKED CACHE KEY: ' + key)
 #    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
@@ -116,7 +138,15 @@ def do_all_groups_recirc():
                         
                         final_recs.append(recirc)
             JSONGroupReport.objects.create(body=json.dumps(final_recs), group=group, kind='recrc')
-            cache.set('group_recirc_' + str(group.id), json.dumps(final_recs))
+            try:
+                cache.set('group_recirc_' + str(group.id), json.dumps(final_recs))
+            except Exception, ex:
+                logger.info(ex)
+            try:
+                get_cache('redundant').set('group_recirc_' + str(group.id), json.dumps(final_recs))
+            except Exception, ex:
+                logger.warn('REDUNDANT CACHE EXCEPTION')
+                logger.warn(ex)
         except Exception, ex:
             logger.warn(ex)
             
