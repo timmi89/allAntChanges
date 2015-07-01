@@ -296,7 +296,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
     page = Page.objects.get(id=page_id)
     #logger.info("KNOWN UNKNOWN PAGE ID: " + str(page_id))
     containers = list(Container.objects.filter(hash__in=hashes).values_list('id','hash','kind'))
-    logger.info("gkucs HASHES AND CONTAINERS: " + str(hashes) + " " + str(containers))
+    #logger.info("gkucs HASHES AND CONTAINERS: " + str(hashes) + " " + str(containers))
     ids = [container[0] for container in containers]
     interactions = list(Interaction.objects.filter(
         container__in=ids,
@@ -324,7 +324,7 @@ def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown=crossPageKnown)
     else:
         cacheable_result = dict(known=known, unknown=unknown, crossPageKnown="")
-    logger.info('CACHEABLE RESULT gkucs: ' + str(cacheable_result))
+    #logger.info('CACHEABLE RESULT gkucs: ' + str(cacheable_result))
     return cacheable_result
 
 def getSettingsDict(group):
