@@ -98,6 +98,41 @@ if DEBUG:
             }
         }
     }
+    # To use sqlite instead of mysql, uncomment this block and comment the one above.
+    # DATABASES = {
+    #   'default': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #   'readonly1': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #   'readonly2': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #     'slave1': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     }
+    # }
     # CACHES = {
     #      'default': {
     #          'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',

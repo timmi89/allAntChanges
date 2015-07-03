@@ -9,5 +9,6 @@ readrdb.db
 *.sublime-project.*
 *.orig
 .settings/
-logs/
+.idea/
 nohup.out
+virtualenvs/production-venv/

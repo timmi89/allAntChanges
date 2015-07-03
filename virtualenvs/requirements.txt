@@ -1,5 +1,7 @@
+--allow-all-external
 Django==1.5.1
 MySQL-python==1.2.5
+--allow-unverified PIL
 PIL==1.1.7
 SOAPpy==0.12.1
 South==1.0
