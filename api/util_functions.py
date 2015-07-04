@@ -435,6 +435,7 @@ def check_and_get_locked_cache(key):
         logger.info('checking redundant cache')  #REMOVE THIS IN FUTURE IF COSTLY OR INCONSISTENT...
         redundant_cache_result = get_cache('redundant').get(str(key))
         if redundant_cache_result is not None:
+            cache.set(key, redundant_cache_result)
             return redundant_cache_result
         cache.set('LOCKED_'+ str(key),'locked',15)
         logger.info("locking to continue for DB: " + str(key))
