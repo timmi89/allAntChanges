@@ -3,10 +3,10 @@ module.exports = function(grunt) {
 
     var paths = {
         // TODO: fill in these values
-        css_src: [ 'test-app/src/css/*.css' ],
-        css_dest: 'test-app/dist/styles.min.css',
-        js_src: 'test-app/src/js/*.js',
-        js_dest: 'test-app/dist/antenna-web.min.js'
+        web_css_src: [ '../site/css/*.css' ],
+        web_css_dest: '../site/styles.min.css',
+        web_js_src: '../site/js/*.js',
+        web_js_dest: '../site/antenna-web.min.js'
     };
 
   // Project configuration.
@@ -22,8 +22,8 @@ module.exports = function(grunt) {
                 roundingPrecision: -1
             },
             web_css: {
-                src: '<%= paths.css_src %>',
-                dest: '<%= paths.css_dest %>'
+                src: '<%= paths.web_css_src %>',
+                dest: '<%= paths.web_css_dest %>'
             }
         },
         uglify: {
@@ -32,8 +32,8 @@ module.exports = function(grunt) {
                     banner: '<%= banner %>',
                     stripBanners: true
                 },
-                src: ['<%= paths.js_src %>'],
-                dest: '<%= paths.js_dest %>'
+                src: ['<%= paths.web_js_src %>'],
+                dest: '<%= paths.web_js_dest %>'
             }
         },
         watch: {
@@ -41,11 +41,11 @@ module.exports = function(grunt) {
                 files: [ 'Gruntfile.js' ]
             },
             web_js: {
-                files: [ '<%= paths.js_src %>' ],
+                files: [ '<%= paths.web_js_src %>' ],
                 tasks: [ 'uglify:web_js' ]
             },
             web_css: {
-                files: [ '<%= paths.css_src %>' ],
+                files: [ '<%= paths.web_css_src %>' ],
                 tasks: [ 'cssmin:web_css' ]
             }
         }
