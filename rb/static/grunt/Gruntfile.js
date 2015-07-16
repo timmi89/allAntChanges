@@ -60,6 +60,22 @@ module.exports = function(grunt) {
                 dest: '<%= paths.web_css_dest %>'
             }
         },
+        browserify: {
+            widget_js: {
+                options: {
+                },
+                src: ['<%= paths.widget_js_src %>'],
+                dest: '<%= paths.widget_js_debug %>'
+            },
+            watch_widget_js: {
+                options: {
+                    watch: true,
+                    keepAlive: true
+                },
+                src: ['<%= paths.widget_js_src %>'],
+                dest: '<%= paths.widget_js_debug %>'
+            }
+        },
         uglify: {
             web_js: {
                 options: {
@@ -98,6 +114,7 @@ module.exports = function(grunt) {
                 files: [ '<%= paths.web_css_src %>' ],
                 tasks: [ 'cssmin:web_css' ]
             }
+            // the widget_js is handled by 'watchify', included in browserify. (see the 'watch' option in the browserify config.)
         }
         });
 
@@ -108,7 +125,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     // Default task.
-    grunt.registerTask('default', [ 'uglify:web_js', 'sass', 'cssmin:web_css' ]);
-    grunt.registerTask('engage', [ 'uglify:engage_js' ]);
+    grunt.registerTask('default', [ 'uglify:web_js', 'cssmin:web_css', 'browserify:widget_js' ]);
+    grunt.registerTask('monitor', [ 'watch', 'browserify:watch_widget_js' ]);
 
 };
