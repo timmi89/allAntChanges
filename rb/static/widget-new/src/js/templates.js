@@ -2,8 +2,9 @@
 
 // TODO use actual templates. :)
 
-function indicator() {
-    return $('<div style="width:20px; height: 20px; border-radius:20px; background-color: red; float:right;"></div>');
+function indicator(hash) {
+    return $('<div style="width:20px; height: 20px; border-radius:20px; background-color: red; float:right;" ' +
+            'data-ant-hash="' + hash + '"></div>');
 }
 
 function summary() {

@@ -1,6 +1,7 @@
 
 //var $ = require('./jquery');
 var Templates = require('./templates');
+var Hash = require('./hash');
 var $;
 require('./script-loader').on$(function(jQuery) {
     $=jQuery;
@@ -33,12 +34,8 @@ function scanPage(groupSettings) {
 
 function scanForSummary($section, groupSettings) {
     var $summaries = $section.find(groupSettings.summarySelector());
-    // TODO: How do summaries and "posts" relate?
     $summaries.each(function() {
-        var $element = $(this);
-        // TODO this feels convoluted. should we just have an if/else here to call before() or after()?
-        //groupSettings.summaryMethod.call($element, Templates.summary());
-        $element.append(Templates.summary());
+        insertContent($(this), Templates.summary(), groupSettings.summaryMethod());
     });
 }
 
@@ -57,7 +54,9 @@ function scanForText($section, groupSettings) {
     $textElements.each(function() {
         var $element = $(this);
         // TODO position correctly
-        $element.append(Templates.indicator());
+        // TODO hash and add hash data to indicator
+        var hash = Hash.hashText($element);
+        $element.append(Templates.indicator(hash));
     });
 }
 
@@ -67,6 +66,23 @@ function scanForImages($section, groupSettings) {
 
 function scanForMedia($section, groupSettings) {
     // TODO
+}
+
+function insertContent($parent, content, method) {
+    switch (method) {
+        case 'append':
+            $parent.append(content);
+            break;
+        case 'prepend':
+            $parent.prepend(content);
+            break;
+        case 'before':
+            $parent.before(content);
+            break;
+        case 'after':
+            $parent.after(content);
+            break;
+    }
 }
 
 //noinspection JSUnresolvedVariable

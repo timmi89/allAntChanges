@@ -1,7 +1,7 @@
 
 // TODO: This code is just copied from engage_full.js. Review whether we want to keep it as-is.
 
-var Ant = {
+var ANT = {
     util: {
         md5: {
             hexcase:0,
@@ -25,5 +25,5 @@ var Ant = {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    hex_md5: Ant.util.md5.hex_md5
+    hex_md5: ANT.util.md5.hex_md5
 };

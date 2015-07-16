@@ -4,6 +4,8 @@ require('./script-loader').on$(function(jQuery) {
     $=jQuery;
 });
 
+// TODO: trim trailing commas from any selector values
+
 // TODO: Review. These are just copied from engage_full.
 var defaults = {
         premium: false,
@@ -47,24 +49,14 @@ function createFromJSON(json) {
 
     function data(key) {
         return function() {
-            var value = json[key];
-            if (value === undefined || value === '') { // TODO: Should the server be sending back '' here or nothing at all? (It precludes the server from really saying 'nothing')
-                value = defaults[key];
+            var value = window.antenna_extend[key];
+            if (value == undefined) {
+                value = json[key];
+                if (value === undefined || value === '') { // TODO: Should the server be sending back '' here or nothing at all? (It precludes the server from really saying 'nothing')
+                    value = defaults[key];
+                }
             }
             return value;
-        };
-    }
-
-    function func(key) {
-        return function() {
-            // Since the names we have in the DB match the jQuery function names, we *could* just access the methods
-            // using $[name]. But this way, we decouple the data in our DB from the jQuery API.
-            var name = data(key);
-            if (name === 'before') {
-                return $.before;
-            }
-            // TODO: Do we have any other names persisted other than "before" and "after"?
-            return $.after;
         };
     }
 
@@ -72,7 +64,7 @@ function createFromJSON(json) {
         groupId: data('id'),
         activeSections: data('active_sections'),
         summarySelector: data('summary_widget_selector'),
-        summaryMethod: func('summary_widget_method'),
+        summaryMethod: data('summary_widget_method'),
         postSelector: data('post_selector'),
         postHrefSelector: data('post_href_selector'),
         textSelector: data('anno_whitelist')
