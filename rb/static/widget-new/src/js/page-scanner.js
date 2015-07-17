@@ -2,6 +2,7 @@
 //var $ = require('./jquery');
 var Templates = require('./templates');
 var Hash = require('./hash');
+//var SummaryWidget = require('./summary-widget');
 var $;
 require('./script-loader').on$(function(jQuery) {
     $=jQuery;
@@ -16,31 +17,35 @@ var hashes = {};
 //    TODO: Also need to compute hashes for any reacted content (i.e. text selections), but we only have that info after
 //          We get back the page data. Don't want to wait for that network request before we start doing this work, though.
 //          So we should probably just make another pass for those other content pieces later when we get back the page data.
-function scanPage(groupSettings) {
+function scanPage(groupSettings, callback) {
     var $activeSections = $(groupSettings.activeSections());
     $activeSections.each(function() {
         var $section = $(this);
         // First, scan for elements that would cause us to insert something into the DOM that takes up space.
         // We want to get any page resizing out of the way as early as possible.
         scanForSummary($section, groupSettings);
-        scanForPosts($section, groupSettings);
+        scanForPages($section, groupSettings);
         scanForCallsToAction($section, groupSettings);
         // Then scan for everything else
         scanForText($section, groupSettings);
         scanForImages($section, groupSettings);
         scanForMedia($section, groupSettings);
     });
+    callback();
 }
 
 function scanForSummary($section, groupSettings) {
     var $summaries = $section.find(groupSettings.summarySelector());
     $summaries.each(function() {
+        var container = $('<div></div>');
         insertContent($(this), Templates.summary(), groupSettings.summaryMethod());
+        //insertContent($(this), container, groupSettings.summaryMethod());
+        //var summaryWidget = SummaryWidget.create(container, {});
     });
 }
 
-function scanForPosts($section, groupSettings) {
-    var posts = $section.find(groupSettings.postSelector());
+function scanForPages($section, groupSettings) {
+    var pages = $section.find(groupSettings.pageSelector());
     // TODO
 }
 

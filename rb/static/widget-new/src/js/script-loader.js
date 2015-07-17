@@ -1,6 +1,4 @@
 
-var JqueryProvider = require('./jquery-provider');
-
 var baseUrl = 'http://localhost:8081'; // TODO compute this
 
 var $;

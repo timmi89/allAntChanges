@@ -63,10 +63,14 @@ function createFromJSON(json) {
     return {
         groupId: data('id'),
         activeSections: data('active_sections'),
+        url: {
+            ignoreSubdomain: data('ignore_subdomain'),
+            canonicalDomain: data('page_tld') // TODO: what to call this exactly. groupDomain? siteDomain? canonicalDomain?
+        },
         summarySelector: data('summary_widget_selector'),
         summaryMethod: data('summary_widget_method'),
-        postSelector: data('post_selector'),
-        postHrefSelector: data('post_href_selector'),
+        pageSelector: data('post_selector'),
+        pageHrefSelector: data('post_href_selector'),
         textSelector: data('anno_whitelist')
     }
 }
