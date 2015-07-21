@@ -46,15 +46,17 @@ function jQueryLoaded() {
 
 function loadScripts(loadedCallback) {
     var scripts = [
-        { src: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded },
-        { src: '//cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.min.js'}
+        {src: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded},
+        {src: '//cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.runtime.min.js'}
     ];
     // TODO: key this off some kind of flag.
-    // Uncomment the following to work offline:
-    scripts = [
-        { src: baseUrl + '/static/js/cdn/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded },
-        { src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.min.js'}
-    ];
+    if (document.currentScript.src === 'http://localhost:8081/static/widget-new/debug/antenna.js') {
+        // Use the offline versions of the libraries for development.
+        scripts = [
+            {src: baseUrl + '/static/js/cdn/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded},
+            {src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.runtime.min.js'}
+        ];
+    }
     var loadingCount = scripts.length;
     for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];

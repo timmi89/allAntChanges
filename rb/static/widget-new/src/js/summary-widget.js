@@ -1,15 +1,12 @@
 
-//var Ractive = require('ractive');
-
-var PageData = require('./page-data');
 
 function createSummaryWidget(container, pageData) {
     //// TODO replace element
-    return new Ractive({
+    return Ractive({
         el: container,
         data: pageData,
         magic: true,
-        template: '<div style="min-width:50px; height: 20px; border-radius:3px; background-color: blue; float:left;" ant-hash="{{pageHash}}">{{summary.totalReactions}}</div>',
+        template: require('../templates/summary-widget.html'),
         complete: function() {
             var that = this;
             $(that.find('div')).on('click', function(event) {
