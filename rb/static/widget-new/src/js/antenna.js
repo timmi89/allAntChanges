@@ -3,6 +3,7 @@ var ScriptLoader = require('./script-loader');
 var GroupSettingsLoader = require('./group-settings-loader');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
+var SummaryWidget = require('./summary-widget');
 
 function loadGroupSettings() {
     // Once we have the settings, we can kick off a couple things in parallel:
@@ -54,6 +55,7 @@ function pageReady() {
         var $summaries = $('[ant-hash=\'' + hash + '\']');
         $summaries.each(function() {
             var $summary = $(this);
+            var summaryRactive = SummaryWidget.create($summary, page); // TODO: multiple instances
         })
     }
 }

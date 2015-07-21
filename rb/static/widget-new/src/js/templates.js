@@ -8,7 +8,7 @@ function indicator(hash) {
 }
 
 function summary(hash) {
-    return $('<div style="width:50px; height: 20px; border-radius:3px; background-color: blue; float:left;"' + ' ant-hash="' + hash + '"></div>');
+    return $('<div style="min-width:50px; height: 20px; border-radius:3px; background-color: blue; float:left;"' + ' ant-hash="' + hash + '"></div>');
 }
 
 //noinspection JSUnresolvedVariable
