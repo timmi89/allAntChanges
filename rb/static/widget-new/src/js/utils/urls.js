@@ -8,7 +8,7 @@ function computePageUrl(groupSettings) {
 }
 
 // TODO copied from engage_full. Review.
-function computeCanonicalUrl(groupSettings) {
+function computeTopLevelCanonicalUrl(groupSettings) {
     var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // TODO should pass this in instead of recomputing
     var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ?
                 $('link[rel="canonical"]').attr('href') : page_url;
@@ -36,6 +36,25 @@ function computeCanonicalUrl(groupSettings) {
     return removeSubdomainFromPageUrl($.trim(canonical_url), groupSettings);
 }
 
+function computePageElementCanonicalUrl($pageElement, groupSettings) {
+    // TODO Review against engage_full. There, the nested pages and top-level page have a totally different flow. Does this
+    // unification work? The idea is that the nested pages would have an href selector that specifies the URL to use, so we
+    // just use it. But compute the url for the top-level case explicitly.
+    if ($pageElement.find(groupSettings.pageHrefSelector()).length > 0) {
+        return 'same';
+    } else {
+        return computeTopLevelCanonicalUrl(groupSettings);
+    }
+}
+
+function computePageElementUrl($pageElement, groupSettings) {
+    var url = $pageElement.find(groupSettings.pageHrefSelector()).attr('href');
+    if (!url) {
+        url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // top-level page url
+    }
+    return removeSubdomainFromPageUrl(url, groupSettings);
+}
+
 // TODO copied from engage_full. Review.
 function removeSubdomainFromPageUrl(url, groupSettings) {
     // ANT.actions.removeSubdomainFromPageUrl:
@@ -58,6 +77,6 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 }
 
 module.exports = {
-    computePageUrl: computePageUrl,
-    computeCanonicalUrl: computeCanonicalUrl
+    computePageUrl: computePageElementUrl,
+    computeCanonicalUrl: computePageElementCanonicalUrl
 };

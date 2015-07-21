@@ -5,6 +5,7 @@ var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
 
 function computePageTitle() {
+    // TODO: How are page titles computed with multiple pages? The code below computes the title for a top-level page.
     var title = $('meta[property="og:title"]').attr('content');
     if (!title) {
         title = $('title').text() || '';
@@ -21,27 +22,21 @@ function computePagesParam(groupSettings) {
 
     var groupId = groupSettings.groupId();
     var $pageElements = $(groupSettings.pageSelector());
-    if ($pageElements.length > 0) {
-        $pageElements.each(function() {
-            var $pageElement = $(this);
-            var url = $pageElement.find(groupSettings.pageHrefSelector()).attr('href');
-            pages.push({
-                group_id: groupId,
-                url: url,
-                canonical_url: '', // TODO
-                image: '', // TODO
-                title: '' // TODO
-            });
-        });
-    } else {
+    // TODO: Compare this execution flow to what happens in engage_full.js. Here we treat the body element as a page so
+    // the flow is the same for both cases. Is there a reason engage_full.js branches here instead and treats these so differently?
+    if ($pageElements.length == 0) {
+        $pageElements = $('body');
+    }
+    $pageElements.each(function() {
+        var $pageElement = $(this);
         pages.push({
             group_id: groupId,
-            url: URLs.computePageUrl(groupSettings),
-            canonical_url: URLs.computeCanonicalUrl(groupSettings),
+            url: URLs.computePageUrl($pageElement, groupSettings),
+            canonical_url: URLs.computeCanonicalUrl($pageElement, groupSettings),
             image: '', // TODO
-            title: computePageTitle()
+            title: computePageTitle() // TODO: This code only works for the top-level page. See computePageTitle()
         });
-    }
+    });
 
     return pages;
 }

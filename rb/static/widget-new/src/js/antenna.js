@@ -27,19 +27,19 @@ function scanPage(groupSettings) {
     PageScanner.scan(groupSettings, pageScanned);
 }
 
-var isDataLoaded = false;
+var pageData;
 var isPageScanned = false;
 
-function dataLoaded(pageData) {
-    isDataLoaded = true;
-    if (isDataLoaded && isPageScanned) {
+function dataLoaded(data) {
+    pageData = data;
+    if (pageData && isPageScanned) {
         pageReady();
     }
 }
 
 function pageScanned() {
     isPageScanned = true;
-    if (isDataLoaded && isPageScanned) {
+    if (pageData && isPageScanned) {
         pageReady();
     }
 }
@@ -47,6 +47,15 @@ function pageScanned() {
 function pageReady() {
     // At this point, the container hashes have been computed, the affordances inserted, and the page data fetched.
     // Now update the summary widgets and affordances.
+    for (var i = 0; i < pageData.length; i++) {
+        var page = pageData[i];
+        var hash = page.pageHash;
+        // TODO extract attribute constants
+        var $summaries = $('[ant-hash=\'' + hash + '\']');
+        $summaries.each(function() {
+            var $summary = $(this);
+        })
+    }
 }
 
 // TODO the cascade is pretty clear, but can we orchestrate this better?

@@ -41,6 +41,10 @@ function hashText(element) {
     return MD5.hex_md5(hashText);
 }
 
+function hashUrl(url) {
+    return MD5.hex_md5(url);
+}
+
 function hashImage(element) {
 
 }
@@ -56,5 +60,6 @@ function hashElement(element) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    hashText: hashText
+    hashText: hashText,
+    hashUrl: hashUrl
 };

@@ -2,51 +2,65 @@
 //var $ = require('./jquery');
 var Templates = require('./templates');
 var Hash = require('./hash');
-//var SummaryWidget = require('./summary-widget');
+var URLs = require('./utils/urls');
 var $;
 require('./script-loader').on$(function(jQuery) {
     $=jQuery;
 });
 
-var hashes = {};
+var indicatorMap = {};
+
+// Scan for all pages at the current browser location. This could just be the current page or it could be a collection
+// of pages (aka 'posts').
+function scanAllPages(groupSettings, callback) {
+    var $pages = $(groupSettings.pageSelector());
+    if ($pages.length == 0) {
+        // If we don't detect any page markers, treat the whole document as the single page
+        $pages = $('body'); // TODO Is this the right behavior?
+    }
+    $pages.each(function() {
+        var $page = $(this);
+        scanPage($page, groupSettings);
+    });
+    callback();
+}
 
 // Scan the page using the given settings:
 // 1. Find all the containers that we care about.
 // 2. Insert widget affordances for each.
 // 3. Compute hashes for each container.
-//    TODO: Also need to compute hashes for any reacted content (i.e. text selections), but we only have that info after
-//          We get back the page data. Don't want to wait for that network request before we start doing this work, though.
-//          So we should probably just make another pass for those other content pieces later when we get back the page data.
-function scanPage(groupSettings, callback) {
-    var $activeSections = $(groupSettings.activeSections());
+function scanPage($page, groupSettings) {
+
+    // First, scan for elements that would cause us to insert something into the DOM that takes up space.
+    // We want to get any page resizing out of the way as early as possible.
+    // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
+    // save a *ton* of time from this, though, so it's definitely a later optimization.
+    scanForSummaries($page, groupSettings);
+    scanForCallsToAction($page, groupSettings);
+
+    var $activeSections = $page.find(groupSettings.activeSections());
     $activeSections.each(function() {
         var $section = $(this);
-        // First, scan for elements that would cause us to insert something into the DOM that takes up space.
-        // We want to get any page resizing out of the way as early as possible.
-        scanForSummary($section, groupSettings);
-        scanForPages($section, groupSettings);
-        scanForCallsToAction($section, groupSettings);
         // Then scan for everything else
         scanForText($section, groupSettings);
         scanForImages($section, groupSettings);
         scanForMedia($section, groupSettings);
     });
-    callback();
 }
 
-function scanForSummary($section, groupSettings) {
-    var $summaries = $section.find(groupSettings.summarySelector());
+function scanForSummaries($element, groupSettings) {
+    var url = URLs.computePageUrl($element, groupSettings);
+    var urlHash = Hash.hashUrl(url);
+
+    var $summaries = $element.find(groupSettings.summarySelector());
     $summaries.each(function() {
-        var container = $('<div></div>');
-        insertContent($(this), Templates.summary(), groupSettings.summaryMethod());
-        //insertContent($(this), container, groupSettings.summaryMethod());
-        //var summaryWidget = SummaryWidget.create(container, {});
+        // TODO: compute the url hash for the page, either using the page selector or the window location. See engage_full:4226
+        //       attach the url to the indicator as an attribute
+        //       add the element to the indicator map
+        //       ...then we can instantiate the SummaryWidget ractive based on the hash once the data is loaded
+        var $summary = $(this);
+        insertContent($summary, Templates.summary(urlHash), groupSettings.summaryMethod());
     });
-}
-
-function scanForPages($section, groupSettings) {
-    var pages = $section.find(groupSettings.pageSelector());
-    // TODO
 }
 
 function scanForCallsToAction($section, groupSettings) {
@@ -92,5 +106,5 @@ function insertContent($parent, content, method) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-   scan: scanPage
+   scan: scanAllPages
 };
