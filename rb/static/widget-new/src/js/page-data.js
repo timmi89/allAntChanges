@@ -1,42 +1,34 @@
 
-var $;
-require('./script-loader').on$(function(jQuery) {
-    $=jQuery;
-});
+var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
-// TODO this is totally speculative!
+var pages = {};
 
-var elements = {}; // hash --> element
-var interactions = {}; // hash --> interactions
-
-function computeHash($element) {
-    // TODO
-    return 'abc';
+function getPageData(hash) {
+    var pageData = pages[hash];
+    if (!pageData) {
+        // TODO: Give this serious thought. In order for magic mode to work, the object needs to have values in place for
+        // the observed properties at the moment the ractive is created. But this is pretty unusual for Javascript, to have
+        // to define the whole skeleton for the object instead of just adding properties whenever you want.
+        // The alternative would be for us to keep our own "data binding" between the pageData and ractive instances (1 to many)
+        // and tell the ractives to update whenever the data changes.
+        pageData = {
+            pageHash: hash,
+            summary: {}
+        };
+        pages[hash] = pageData;
+    }
+    return pageData;
 }
 
-function getHash(element) { // TODO pass in DOM node or can we assume jQuery?
-    var $element = $(element);
-    var id = $element.data('ant-id');
-    var hash = hashes[id];
-    if (!hash) {
-        hash = computeHash($element);
+function updateAllPageData(jsonPages) {
+    for (var i = 0; i < jsonPages.length; i++) {
+        updatePageData(jsonPages[i]);
     }
 }
 
-function setHash(hash, element) {
-    elements[hash] = element;
-    // TODO
-}
+function updatePageData(json) {
+    var pageData = getPageData(json.urlhash);
 
-function getElement(hash) {
-    // TODO return the element with the given hash
-}
-
-function getInteractions(content) {
-
-}
-
-function createPage(json) {
     var numReactions = 0;
     var numComments = 0;
     var numShares = 0;
@@ -68,33 +60,20 @@ function createPage(json) {
         }
     }
 
-    return {
-        pageId: json.id,
-        pageHash: json.urlhash,
-        summary: {
-            totalReactions: numReactions,
-            totalComments: numComments,
-            totalShares: numShares
-        },
-        topReactions: topReactions,
-        containers: json.containers // array of objects with 'id' and 'hash' properties, including the magic 'page' hash value
+    // TODO Consider supporting incremental update of data that we already have from the server. That would mean only
+    // updating fields in the local object if they exist in the json data.
+    pageData.pageId = json.id;
+    pageData.summary = {
+        totalReactions: numReactions,
+        totalComments: numComments,
+        totalShares: numShares
     };
-}
-
-function createFromJSON(jsonPages) {
-    // TODO Put more structure around this? e.g. Lookup functions?
-    pages = [];
-    for (var i = 0; i < jsonPages.length; i++) {
-        pages[i] = createPage(jsonPages[i]);
-    }
-    return pages;
-
+    pageData.topReactions = topReactions;
+    pageData.containers = json.containers; // array of objects with 'id' and 'hash' properties, including the magic 'page' hash value
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    create: createFromJSON,
-    setHash: setHash,
-    getHash: getHash,
-    getInteractions: getInteractions
+    get: getPageData,
+    updateAll: updateAllPageData
 };

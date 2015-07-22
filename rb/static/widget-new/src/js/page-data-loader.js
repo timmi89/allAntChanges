@@ -1,5 +1,4 @@
 
-var PageData = require('./page-data');
 var URLs = require('./utils/urls');
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
@@ -46,8 +45,7 @@ function loadPageData(groupSettings, callback) {
     $.getJSONP('/api/page', { pages: pagesParam }, success, error);
 
     function success(json) {
-        var pageData = PageData.create(json);
-        callback(pageData);
+        callback(json);
     }
 
     function error(message) {

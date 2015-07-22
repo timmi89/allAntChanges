@@ -1,12 +1,10 @@
 
-//var $ = require('./jquery');
+var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var Templates = require('./templates');
 var Hash = require('./hash');
 var URLs = require('./utils/urls');
-var $;
-require('./script-loader').on$(function(jQuery) {
-    $=jQuery;
-});
+var SummaryWidget = require('./summary-widget');
+var PageData = require('./page-data');
 
 var indicatorMap = {};
 
@@ -59,7 +57,10 @@ function scanForSummaries($element, groupSettings) {
         //       add the element to the indicator map
         //       ...then we can instantiate the SummaryWidget ractive based on the hash once the data is loaded
         var $summary = $(this);
-        insertContent($summary, Templates.summary(urlHash), groupSettings.summaryMethod());
+        //insertContent($summary, Templates.summary(urlHash), groupSettings.summaryMethod());
+        var container = $('<div></div>');
+        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash)); // TODO stash this away somewhere
+        insertContent($summary, container, groupSettings.summaryMethod());
     });
 }
 
