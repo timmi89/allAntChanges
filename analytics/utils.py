@@ -98,7 +98,12 @@ class OAuth2EventsUtility(object):
         
         return {'A_user_count' : A_user_count, 'B_user_count' : B_user_count, 'engaged_user_count' : engaged_user_count}
           
-       
+    
+    def check_last_month_table(self, group, start, end, maxResults = 1):
+        query = 'select count(distinct lts) from %s'
+        rows = self.get_rows(query, maxResults)
+        return rows[0]['f'][0]['v']
+    
     def get_table_name(self, group, month, year):
         return '[events.events_' + str(year) + '_' + str(month) + '_' + str(group.id) + ']'
     

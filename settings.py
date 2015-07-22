@@ -98,6 +98,41 @@ if DEBUG:
             }
         }
     }
+    # To use sqlite instead of mysql, uncomment this block and comment the one above.
+    # DATABASES = {
+    #   'default': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #   'readonly1': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #   'readonly2': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     },
+    #     'slave1': {
+    #       'ENGINE':   'django.db.backends.sqlite3',
+    #       'NAME':     'readrdb.db',
+    #       'USER':     '',
+    #       'PASSWORD': '',
+    #       'HOST':     '',
+    #       'PORT':     '',
+    #     }
+    # }
     # CACHES = {
     #      'default': {
     #          'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -117,6 +152,9 @@ if DEBUG:
                 #     'SOCKET_TIMEOUT': 5,
                 #     'MAX_ITEM_SIZE': 1000*100,
                 # }
+            },
+            'redundant': {
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
             },
             'query_cache': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -184,6 +222,19 @@ else:
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
             #'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
             'LOCATION': ['192.168.182.48:11211'],
+            #'LOCATION': ['192.168.182.177:11211'],
+            'TIMEOUT':86400,
+            'OPTIONS': {
+                'MAX_POOL_SIZE': 100,
+                'BLACKLIST_TIME': 20,
+                'SOCKET_TIMEOUT': 5,
+                'MAX_ITEM_SIZE': 1000*100,
+            }
+        },
+        'redundant': {
+            'BACKEND': 'memcachepool.cache.UMemcacheCache',
+            #'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
+            'LOCATION': ['192.168.182.177:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,

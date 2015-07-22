@@ -11,7 +11,7 @@ from authentication.decorators import requires_admin, requires_admin_rest
 from settings import BASE_URL, STATIC_URL, RB_SOCIAL_ADMINS
 from django.forms.models import model_to_dict
 from django.core.mail import EmailMessage
-from django.core.cache import cache
+from django.core.cache import cache, get_cache
 from django.db.models import Q
 from chronos.jobs import *
 from threading import Thread
@@ -526,15 +526,25 @@ class ContainerSummaryHandler(AnonymousBaseHandler):
         else:
             logger.info("Missed cache container summaries")
             cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
-            print 'got a cacheable_result'
             if len(hashes) == 1:
-                print '2a'
-                cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+                try:
+                    cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+                except Exception, ex:
+                    logger.info(ex)
+                try:
+                    get_cache('redundant').set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+                except Exception, ex:
+                    logger.warn(ex)
             else:
-                print '2b'
-                cache.set('page_containers' + str(page), cacheable_result)
+                try:
+                    cache.set('page_containers' + str(page), cacheable_result)
+                except Exception, ex:
+                    logger.info(ex)
+                try:
+                    get_cache('redundant').set('page_containers' + str(page), cacheable_result)
+                except Exception, ex:
+                    logger.warn(ex)
         
-            print '3'
             return cacheable_result
 
 class ContentSummaryHandler(AnonymousBaseHandler):
@@ -603,6 +613,10 @@ class PageDataHandler(AnonymousBaseHandler):
                 try:
                     cache.set('page_data' + str(current_page.id), result_dict)
                 except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+                try:
+                    get_cache('redundant').set('page_data' + str(current_page.id), result_dict)
+                except Exception, e:
                     logger.warning(traceback.format_exc(50))   
               
         
@@ -654,6 +668,10 @@ class SettingsHandler(AnonymousBaseHandler):
                 cache.set('group_settings_'+ str(host), settings_dict)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
+            try:
+                get_cache('redundant').set('group_settings_'+ str(host), settings_dict)
+            except Exception, e:
+                logger.warning(traceback.format_exc(50))
                   
             return settings_dict
 
@@ -1110,22 +1128,22 @@ class BlockedPromoTagHandler(AnonymousBaseHandler):
             container = interaction.container
             
             try:
-                cache_updater = PageDataCacheUpdater(method="delete", page_id=page.id)
+                cache_updater = PageDataCacheUpdater(method="update", page_id=page.id)
                 t = Thread(target=cache_updater, kwargs={})
                 t.start()
                 
-                container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=page.id)
+                container_cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=page.id)
                 t = Thread(target=container_cache_updater, kwargs={})
                 t.start()
                 
-                page_container_cache_updater = ContainerSummaryCacheUpdater(method="delete", page_id=str(page.id),hashes=[container.hash])
+                page_container_cache_updater = ContainerSummaryCacheUpdater(method="update", page_id=str(page.id),hashes=[container.hash])
                 t = Thread(target=page_container_cache_updater, kwargs={})
                 t.start()
  
-                if not interaction.parent or interaction.kind == 'com':
-                    global_cache_updater = GlobalActivityCacheUpdater(method="update")
-                    t = Thread(target=global_cache_updater, kwargs={})
-                    t.start()
+                #if not interaction.parent or interaction.kind == 'com':
+                #    global_cache_updater = GlobalActivityCacheUpdater(method="update")
+                #    t = Thread(target=global_cache_updater, kwargs={})
+                #    t.start()
         
             except Exception, e:
                 logger.warning(traceback.format_exc(50))

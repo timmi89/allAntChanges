@@ -717,7 +717,7 @@ body .analyticsReport .page_card .reactions { font-size:11px; font-weight:bold; 
 .antenna_is_better { padding:20px; background:#9DD55E; clear:both; color:#446024; xwidth:1084px; }
 .antenna_is_better p a { color:#446024; text-decoration: underline; }
 .antenna_is_better.stuck { position:fixed; top:75px; z-index:11; padding:10px 10px 0px 10px; width:100%; left:0; }
-.antenna_is_better .better_wrapper { width:1140px; margin:0 auto; }}
+.antenna_is_better .better_wrapper { width:1140px; margin:0 auto; }
 .antenna_is_better.stuck i { font-size:30px; }
 .antenna_is_better.stuck p { font-size:16px; }
 .antenna_is_better.stuck p strong { font-size:20px; }
