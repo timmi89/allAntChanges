@@ -2577,6 +2577,7 @@ function antenna($A){
                 comments: 'Comments',
                 thanks_for_comment : 'Thanks for your comment!',
                 share_reaction : 'Share your reaction',
+                doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!',
                 bad_language_warning : 'This site has blocked that from being a valid reaction.\n\nPlease try something that will be more appropriate for this community.'
             },
             es : {
@@ -2600,6 +2601,7 @@ function antenna($A){
                 comments: ' Comentas',
                 thanks_for_comment : 'Gracias por tu comentario',
                 share_reaction : 'Comparte tu reacción',
+                doubleTapMessage : '<strong>Toca</strong> un párrafo para opinar',
                 bad_language_warning : 'Este sitio ha bloqueado una palabra inadecuada de ser una reacción válida.\n\nPor favor intente algo más apropiado para esta comunidad'
             }
         },
@@ -4064,14 +4066,16 @@ function antenna($A){
                     success: function(response, textStatus, XHR) {
                         var group_settings = response.data;
 
-                        // handle deprecated "no_reader", now called no_ant
-                        if ( typeof group_settings.no_readr != 'undefined' ) {
-                            group_settings.no_ant = group_settings.no_readr;
-                            delete group_settings.no_readr;
-                        }
 
                         // handle deprecated .blessed_tags, change to .default_reactions
                         if ( typeof group_settings != 'undefined' ) {
+                            
+                            // handle deprecated "no_readr", now called no_ant
+                            if ( typeof group_settings.no_readr != 'undefined' ) {
+                                group_settings.no_ant = group_settings.no_readr;
+                                delete group_settings.no_readr;
+                            }
+
                             if ( typeof group_settings.blessed_tags != 'undefined' ) {
                                 // use .slice() to copy by value
                                 // http://stackoverflow.com/questions/7486085/copying-array-by-value-in-javascript
@@ -4450,6 +4454,7 @@ function antenna($A){
                 });
 
                 if(isTouchBrowser){
+
                     // init the "indicators" for text objects, on mobile only.
                     // so that the image call-to-action is present and populated
                     // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
@@ -4461,13 +4466,13 @@ function antenna($A){
 
 
                     if ( !localStorage.getItem('hideDoubleTapMessage') && !ANT.group.hideDoubleTapMessage ) {
-                        // no t()
-                        var double_tap_message = (ANT.group.doubleTapMessage) ? ANT.group.doubleTapMessage : '<strong>Single-tap</strong> any paragraph to respond!<a>'+ANT.t('close')+'</a>',
+                        var double_tap_message = (ANT.group.doubleTapMessage) ? ANT.group.doubleTapMessage : ANT.t('doubleTapMessage') +' <a>'+ANT.t('close')+'</a>',
                             double_tap_message_position = (ANT.group.doubleTapMessagePosition) ? 'ant_'+ANT.group.doubleTapMessagePosition : 'ant_bottom',
                             $doubleTapMessage = $('<div class="ant ant_mobile_message">'+double_tap_message+'</div>'),
                             $sandbox = $('#ant_sandbox');
 
-                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.ant', function() {
+                        $doubleTapMessage.addClass( double_tap_message_position ).on('touchend.ant', function(e) {
+                            e.preventDefault();
                             // we should handle settings through localStorage.  will do later.
                             localStorage.setItem('hideDoubleTapMessage', true);
                             $(this).remove();
@@ -4481,9 +4486,7 @@ function antenna($A){
                             ANT.actions.containers.media.disengageAll();
 
                             var $this = $(this);
-                            // console.log('3');
                             // setTimeout(function(){
-                                // console.log('3a');
                                 // $this.addClass('ant_live_hover');
                             // },300);
                             $this.addClass('ant_live_hover');
@@ -10213,7 +10216,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv21"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv22"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
