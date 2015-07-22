@@ -1,5 +1,6 @@
 
 var ScriptLoader = require('./script-loader');
+var CssLoader = require('./css-loader');
 var GroupSettingsLoader = require('./group-settings-loader');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
@@ -65,3 +66,4 @@ function pageReady() {
 
 // TODO the cascade is pretty clear, but can we orchestrate this better?
 ScriptLoader.load(loadGroupSettings);
+CssLoader.load();
