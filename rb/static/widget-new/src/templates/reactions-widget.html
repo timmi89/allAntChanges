@@ -1,0 +1,22 @@
+
+
+<div class="antenna antenna-reactions-widget">
+    <div class="antenna-header">
+
+    </div>
+    <div class="antenna-body">
+        {{ #each reactions:index }}
+            <div class="antenna-reaction {{ layoutClass(index) }}">
+                <div class="antenna-reaction-text">
+                    {{ this.text }}
+                </div>
+                <div class="antenna-reaction-count">
+                    {{ this.count }}
+                </div>
+            </div>
+        {{ /each }}
+    </div>
+    <div class="antenna-footer">
+
+    </div>
+</div>

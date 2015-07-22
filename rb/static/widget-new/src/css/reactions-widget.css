@@ -1,0 +1,26 @@
+
+.antenna-reactions-widget {
+    display: none;
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    overflow-y: auto;
+    background-color: orange;
+    z-index: 9999;
+}
+
+.antenna-reactions-widget.open {
+    display: block;
+}
+
+.antenna-reaction {
+    display: inline-block;
+}
+
+.antenna-reaction.full {
+    width: 100%;
+}
+
+.antenna-reaction.half {
+    width: 50%;
+}

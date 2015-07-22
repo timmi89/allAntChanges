@@ -3,3 +3,10 @@
 .antenna {
     display: block;
 }
+
+#antenna-widget-bucket {
+    /* This gives us base 0,0 coords that the rest of our elements can position from. */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
