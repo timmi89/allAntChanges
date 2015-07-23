@@ -167,7 +167,7 @@ if DEBUG:
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
-    ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
+    ALLOWED_HOSTS = ["gce.antenna.is","www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
     URL_NO_PROTO = 'www.antenna.is'
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
