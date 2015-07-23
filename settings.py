@@ -183,7 +183,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '10.240.99.122',
+        'HOST':     '69.164.209.143',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
