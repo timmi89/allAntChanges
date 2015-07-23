@@ -2845,9 +2845,8 @@ function antenna($A){
             initTouchBrowserSettings: function(){
                 // ANT.util.initTouchBrowserSettings
                 
+                // mobiletodo: DO WE NEED
                 if(isTouchBrowser && ANT.util.activeAB() ){
-                    $('body').addClass('ant_touch_browser');
-                    // mobiletodo: DO WE NEED
                     $(window).on('scrollend.ant', function() {
                         ANT.util.mobileHelperToggle();
                     });
@@ -4603,7 +4602,8 @@ function antenna($A){
                 var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
                 
                 if(isTouchBrowser){
-                    $('#ant_sandbox').addClass('isTouchBrowser');
+                    $('#ant_sandbox').addClass('isTouchBrowser');  // using this?
+                    $('body').addClass('ant_touch_browser'); // definitely using this.
                 }
 
                 // get author, topics, tags from publisher-defined tags
