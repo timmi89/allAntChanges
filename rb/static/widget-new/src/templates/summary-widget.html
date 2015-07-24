@@ -1,11 +1,17 @@
 
 
-
+<!-- TODO change this to start the widget with visibility:hidden and then make it visible. showing partial content isn't helpful. -->
 <div class="antenna ant-summary-widget" ant-hash="{{pageHash}}">
-    Reactions
-    {{ #if summary.totalReactions }}
-        {{summary.totalReactions}}
-    {{ else }}
-        <span class="three-quarters-loader"></span>
+    <a href="http://www.antenna.is" target="_blank">
+        <span class="ant-antenna-logo"></span>
+    </a>
+    {{ #if summary.totalReactions !== undefined }}
+        <span class="antenna-summary-text">
+            {{ #if summary.totalReactions }}
+                {{summary.totalReactions}}
+            {{ /if }}
+            Reactions
+        </span>
     {{ /if }}
+
 </div>

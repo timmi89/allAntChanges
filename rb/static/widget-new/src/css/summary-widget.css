@@ -1,13 +1,20 @@
+.ant-summary-container {
+    display: inline-block;
+}
+
+.ant-summary-widget, .ant-summary-widget a {
+    color: #8fb3f2;
+}
 
 .ant-summary-widget {
     min-width: 50px;
-    height: 25px;
-    border-radius: 3px;
-    background-color: cornflowerblue;
-    color: white;
-    float: left;
-    padding: 0 5px;
-    margin-left: 5px;
+    height: 30px;
+    margin: 10px 0;
+    box-shadow: 0 0 3px rgba(000,000,000,.3);
+}
+
+.antenna-summary-text {
+    padding: 10px 0;
 }
 
 

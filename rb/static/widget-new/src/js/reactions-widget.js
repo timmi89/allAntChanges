@@ -21,9 +21,7 @@ function createReactionsWidget(container, reactionsData) {
         }
     });
     return {
-        open: openWindow,
-        close: closeWindow,
-        delayedClose: delayedCloseWindow
+        open: openWindow
     };
 }
 
@@ -60,9 +58,10 @@ function rootElement() {
 
 function openWindow(relativeElement) {
     if (ractive) {
-        var offset = $(relativeElement).offset();
+        var $relativeElement = $(relativeElement);
+        var offset = $relativeElement.offset();
         var coords = {
-            top: offset.top,
+            top: offset.top + $relativeElement.height(),
             left: offset.left
         };
         var $element = $(rootElement());
@@ -74,7 +73,7 @@ function openWindow(relativeElement) {
 var closeTimer;
 
 function keepWindowOpen() {
-    if (closeTimer) { closeTimer.clearTimeout(); }
+    if (closeTimer) { clearTimeout(closeTimer); }
 }
 
 function delayedCloseWindow() {

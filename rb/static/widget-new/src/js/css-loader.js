@@ -12,6 +12,10 @@ function loadCss() {
         head.appendChild(styleTag);
 
         var cssHrefs = [
+            // TODO bringing in multiple css files breaks the way we wait until our CSS is loaded before showing our content.
+            //      we need to find a way to bring that back. one simple way - also compile the antenna-font.css into the antenna.css file.
+            //      open question - how does it all play with font icons that are downloaded as yet another file?
+            baseUrl + '/static/css/fonts/antenna-font.css',
             baseUrl + '/static/widget-new/debug/antenna.css' // TODO this needs a final path. CDN for production and local file for development?
         ];
         for (var i = 0; i < cssHrefs.length; i++) {

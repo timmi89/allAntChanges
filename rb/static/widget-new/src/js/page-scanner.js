@@ -58,7 +58,7 @@ function scanForSummaries($element, groupSettings) {
         //       ...then we can instantiate the SummaryWidget ractive based on the hash once the data is loaded
         var $summary = $(this);
         //insertContent($summary, Templates.summary(urlHash), groupSettings.summaryMethod());
-        var container = $('<div></div>');
+        var container = $('<div class="ant-summary-container"></div>');
         var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash)); // TODO stash this away somewhere
         insertContent($summary, container, groupSettings.summaryMethod());
     });

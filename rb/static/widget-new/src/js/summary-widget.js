@@ -11,9 +11,9 @@ function createSummaryWidget(container, pageData) {
         data: pageData,
         magic: true,
         template: require('../templates/summary-widget.html'),
-        complete: function() {
+        oncomplete: function() {
             var that = this;
-            $(rootElement()).on('click', function(event) {
+            $(rootElement()).on('click', function(event) { // TODO: delete. this is just toy
                that.add('summary.totalReactions');
             });
             $(rootElement()).on('mouseenter', function(event) {
@@ -26,6 +26,7 @@ function createSummaryWidget(container, pageData) {
 
 function rootElement() {
     // TODO: gotta be a better way to get this
+    // TODO: our click handler is getting called twice, so it looks like this somehow gets the wrong element if there are two summary widgets together?
     return ractive.find('div');
 }
 
