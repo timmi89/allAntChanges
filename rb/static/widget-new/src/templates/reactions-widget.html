@@ -6,7 +6,7 @@
     </div>
     <div class="antenna-body">
         {{ #each reactions:index }}
-            <div class="antenna-reaction {{ layoutClass(index) }}">
+            <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
                 <div class="antenna-reaction-text">
                     {{ this.text }}
                 </div>

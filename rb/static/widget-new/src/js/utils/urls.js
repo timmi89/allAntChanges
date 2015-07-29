@@ -1,6 +1,15 @@
 
 var $; require('../script-loader').on$(function(jQuery) { $=jQuery; });
 
+var offline = require('./offline.js');
+
+function antennaHome() {
+    if (offline) {
+        return window.location.protocol + "//local.antenna.is:8081";
+    }
+    return window.location.protocol + "//www.antenna.is";
+}
+
 // TODO copied from engage_full. Review.
 function computePageUrl(groupSettings) {
     var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // TODO should pass this in instead of recomputing
@@ -34,6 +43,10 @@ function computeTopLevelCanonicalUrl(groupSettings) {
     }
 
     return removeSubdomainFromPageUrl($.trim(canonical_url), groupSettings);
+}
+
+function getCreateReactionUrl() {
+    return '/api/tag/create';
 }
 
 function computePageElementCanonicalUrl($pageElement, groupSettings) {
@@ -78,5 +91,7 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 
 module.exports = {
     computePageUrl: computePageElementUrl,
-    computeCanonicalUrl: computePageElementCanonicalUrl
+    computeCanonicalUrl: computePageElementCanonicalUrl,
+    antennaHome: antennaHome,
+    createReactionUrl: getCreateReactionUrl
 };

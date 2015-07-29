@@ -1,4 +1,6 @@
 
+var isOffline = require('./utils/offline');
+
 var baseUrl = 'http://localhost:8081'; // TODO compute this
 
 var $;
@@ -49,12 +51,11 @@ function loadScripts(loadedCallback) {
         {src: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded},
         {src: '//cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.runtime.min.js'}
     ];
-    // TODO: key this off some kind of flag.
-    if (document.currentScript.src === 'http://localhost:8081/static/widget-new/debug/antenna.js') {
+    if (isOffline) {
         // Use the offline versions of the libraries for development.
         scripts = [
-            {src: baseUrl + '/static/js/cdn/jquery/2.1.4/jquery.min.js', callback: jQueryLoaded},
-            {src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.runtime.min.js'}
+            {src: baseUrl + '/static/js/cdn/jquery/2.1.4/jquery.js', callback: jQueryLoaded},
+            {src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.runtime.js'}
         ];
     }
     var loadingCount = scripts.length;

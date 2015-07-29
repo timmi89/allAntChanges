@@ -36,7 +36,7 @@ function openReactionsWindow(pageData) {
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        reactionsWidget = ReactionsWidget.create(container, pageData.topReactions);
+        reactionsWidget = ReactionsWidget.create(container, pageData);
     }
     reactionsWidget.open(rootElement());
 }

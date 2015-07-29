@@ -5,6 +5,7 @@ var GroupSettingsLoader = require('./group-settings-loader');
 var PageDataLoader = require('./page-data-loader');
 var PageScanner = require('./page-scanner');
 var PageData = require('./page-data');
+var XDMLoader = require('./utils/xdm-loader');
 
 function loadGroupSettings() {
     // Once we have the settings, we can kick off a couple things in parallel:
@@ -15,9 +16,14 @@ function loadGroupSettings() {
     //    Once these tasks complete, then we can update the affordances with the data and we're ready
     //    for action.
     GroupSettingsLoader.load(function(groupSettings) {
+        initXdmFrame(groupSettings);
         fetchPageData(groupSettings);
         scanPage(groupSettings);
     });
+}
+
+function initXdmFrame(groupSettings) {
+    XDMLoader.createXDMframe(groupSettings.groupId);
 }
 
 function fetchPageData(groupSettings) {

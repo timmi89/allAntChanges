@@ -1,7 +1,7 @@
 
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var Templates = require('./templates');
-var Hash = require('./hash');
+var Hash = require('./utils/hash');
 var URLs = require('./utils/urls');
 var SummaryWidget = require('./summary-widget');
 var PageData = require('./page-data');

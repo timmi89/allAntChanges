@@ -17,10 +17,17 @@
     display: inline-block;
 }
 
+.antenna-reaction.half {
+    width: 50%;
+}
+.antenna-reaction.half:only-child {
+    width: 100%;
+}
+
 .antenna-reaction.full {
     width: 100%;
 }
 
-.antenna-reaction.half {
-    width: 50%;
+.antenna-reaction-text {
+    text-align: center;
 }
