@@ -37,7 +37,7 @@
     display: block;
 }
 
-.antenna-header, .antenna-header a {
+.antenna-header {
     color: #8fb3f2;
 }
 
@@ -45,6 +45,7 @@
     background-color: white;
     text-align: center;
     padding: 3px 0;
+    cursor: move;
 }
 
 .antenna-body {
@@ -53,6 +54,7 @@
 
 .antenna-reaction {
     display: inline-block;
+    cursor: pointer;
 }
 
 .antenna-reaction.half {

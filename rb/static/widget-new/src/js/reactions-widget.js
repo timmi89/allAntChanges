@@ -2,6 +2,7 @@
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
+var Moveable = require('./utils/moveable');
 
 function createReactionsWidget(container, pageData) {
     var reactionsData = pageData.topReactions;
@@ -19,9 +20,11 @@ function createReactionsWidget(container, pageData) {
         template: require('../templates/reactions-widget.html')
     });
     ractive.on('complete', function() {
-        $(rootElement(ractive))
+        var $rootElement = $(rootElement(ractive));
+        $rootElement
                 .on('mouseover', keepWindowOpen(ractive))
                 .on('mouseout', delayedCloseWindow(ractive));
+        Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     });
     ractive.on('change', function() {
         layoutClasses = computeLayoutClasses(reactionsData);
@@ -159,8 +162,8 @@ function openWindow(ractive) {
         var $relativeElement = $(relativeElement);
         var offset = $relativeElement.offset();
         var coords = {
-            top: offset.top + $relativeElement.height(),
-            left: offset.left
+            top: offset.top + 5,//$relativeElement.height(),
+            left: offset.left + 5
         };
         var $element = $(rootElement(ractive));
         $element.stop(true, true).addClass('open').css(coords);
@@ -180,7 +183,7 @@ function delayedCloseWindow(ractive) {
         closeTimer = setTimeout(function() {
             closeTimer = null;
             closeWindow(ractive);
-        }, 1500);
+        }, 500);
     };
 }
 
