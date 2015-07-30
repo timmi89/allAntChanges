@@ -21,9 +21,6 @@ function createReactionsWidget(container, pageData) {
     });
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
-        $rootElement
-                .on('mouseover', keepWindowOpen(ractive))
-                .on('mouseout', delayedCloseWindow(ractive));
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     });
     ractive.on('change', function() {
@@ -167,32 +164,52 @@ function openWindow(ractive) {
         };
         var $element = $(rootElement(ractive));
         $element.stop(true, true).addClass('open').css(coords);
+
+        setupWindowClose(ractive);
     };
 }
 
-var closeTimer;
+function setupWindowClose(ractive) {
+    var $rootElement = $(rootElement(ractive));
 
-function keepWindowOpen(ractive) {
-    return function() {
-        if (closeTimer) { clearTimeout(closeTimer); }
-    };
-}
+    $rootElement
+        .on('mouseout.antenna', delayedCloseWindow())
+        .on('mouseover.antenna', keepWindowOpen)
+        .on('focusin.antenna', function() {
+            // Once the window has focus, don't close it on mouseout.
+            keepWindowOpen();
+            $rootElement.off('mouseout.antenna');
+            $rootElement.off('mouseover.antenna');
+        })
+        .on('focusout.antenna', function() {
+            closeWindow();
+        });
 
-function delayedCloseWindow(ractive) {
-    return function() {
-        closeTimer = setTimeout(function() {
-            closeTimer = null;
-            closeWindow(ractive);
-        }, 500);
-    };
-}
+    var closeTimer;
 
-function closeWindow(ractive) {
-    var $element = $(rootElement(ractive));
-    $element.stop(true, true).fadeOut('fast', function() {
-        $element.css('display', ''); // Clear the display:none that fadeOut puts on the element
-        $element.removeClass('open');
-    });
+    function delayedCloseWindow() {
+        return function() {
+            closeTimer = setTimeout(function() {
+                closeTimer = null;
+                closeWindow();
+            }, 500);
+        };
+    }
+
+    function keepWindowOpen() {
+        clearTimeout(closeTimer);
+    }
+
+    function closeWindow() {
+        clearTimeout(closeTimer);
+
+        $rootElement.stop(true, true).fadeOut('fast', function() {
+            $rootElement.css('display', ''); // Clear the display:none that fadeOut puts on the element
+            $rootElement.removeClass('open');
+
+            $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
+        });
+    }
 }
 
 module.exports = {
