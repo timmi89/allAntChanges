@@ -4,9 +4,10 @@ var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
 
-function createReactionsWidget(container, pageData) {
+function createReactionsWidget(container, pageData, groupSettings) {
     var reactionsData = pageData.topReactions;
-    var layoutClasses = computeLayoutClasses(reactionsData);
+    var colors = groupSettings.reactionBackgroundColors();
+    var layoutData = computeLayoutData(reactionsData, colors);
     var ractive = Ractive({
         el: container,
         magic: true,
@@ -14,21 +15,52 @@ function createReactionsWidget(container, pageData) {
             reactions: reactionsData,
             response: {},
             layoutClass: function(index) {
-                return layoutClasses[index];
+                return layoutData.layoutClasses[index];
+            },
+            backgroundColor: function(index) {
+                return layoutData.backgroundColors[index];
             }
         },
-        template: require('../templates/reactions-widget.html')
+        template: require('../templates/reactions-widget.html'),
+        decorators: {
+            sizetofit: sizeToFit
+        }
     });
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     });
     ractive.on('change', function() {
-        layoutClasses = computeLayoutClasses(reactionsData);
+        layoutData = computeLayoutData(reactionsData, colors);
+    });
+    ractive.on('update', function() {
+        console.log('update!');
     });
     ractive.on('plusone', plusOne(pageData, ractive));
     return {
         open: openWindow(ractive)
+    };
+}
+
+function sizeToFit(node) {
+    var $element = $(node);
+    var $rootElement = $element.closest('.antenna-reactions-widget');
+    if ($rootElement.length > 0) {
+        $rootElement.css({display: 'block', left: '100%'});
+
+        var $parent = $element.parent();
+        var ratio = $parent.outerWidth() / node.scrollWidth;
+        if (ratio < 1.0) {
+            // TODO: Try wrapping the text first.
+            var minSize = 6;
+            var newSize = Math.max(minSize, Math.floor(parseInt($element.css('font-size')) * ratio) - 1);
+            $element.css('font-size', newSize);
+        }
+
+        $rootElement.css({display: '', left: ''});
+    }
+    return {
+        teardown: function() {}
     };
 }
 
@@ -97,7 +129,7 @@ function postPlusOne(reactionData, userInfo, pageData, ractive) {
     $.getJSONP(URLs.createReactionUrl(), data, success, error);
 }
 
-function computeLayoutClasses(reactionsData) {
+function computeLayoutData(reactionsData, colors) {
     // TODO Verify that the reactionsData is coming back from the server sorted. If not, sort it after its fetched.
 
     var numReactions = reactionsData.length;
@@ -120,7 +152,32 @@ function computeLayoutClasses(reactionsData) {
             layoutClasses[i] = 'half';
         }
     }
-    return layoutClasses;
+
+    var numColors = colors.length;
+    var backgroundColors = [];
+    var colorIndex = 0;
+    var pairWithNext = 0;
+    for (var i = 0; i < numReactions; i++) {
+        backgroundColors[i] = colors[colorIndex%numColors];
+        if (layoutClasses[i] === 'full') {
+            colorIndex++;
+        } else {
+            // TODO gotta be able to make this simpler
+            if (pairWithNext > 0) {
+                pairWithNext--;
+                if (pairWithNext == 0) {
+                    colorIndex++;
+                }
+            } else {
+                pairWithNext = 1; // If we want to allow N boxes per row, this number would become conditional.
+            }
+        }
+    }
+
+    return {
+        layoutClasses: layoutClasses,
+        backgroundColors: backgroundColors
+    };
 }
 
 function rootElement(ractive) {
@@ -162,8 +219,8 @@ function openWindow(ractive) {
             top: offset.top + 5,//$relativeElement.height(),
             left: offset.left + 5
         };
-        var $element = $(rootElement(ractive));
-        $element.stop(true, true).addClass('open').css(coords);
+        var $rootElement = $(rootElement(ractive));
+        $rootElement.stop(true, true).addClass('open').css(coords);
 
         setupWindowClose(ractive);
     };

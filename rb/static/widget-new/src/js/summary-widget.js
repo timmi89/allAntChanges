@@ -4,7 +4,7 @@ var ReactionsWidget = require('./reactions-widget');
 var ractive;
 var reactionsWidget;
 
-function createSummaryWidget(container, pageData) {
+function createSummaryWidget(container, pageData, groupSettings) {
     //// TODO replace element
     ractive = Ractive({
         el: container,
@@ -17,7 +17,7 @@ function createSummaryWidget(container, pageData) {
                that.add('summary.totalReactions');
             });
             $(rootElement()).on('mouseenter', function(event) {
-               openReactionsWindow(pageData);
+               openReactionsWindow(pageData, groupSettings);
             });
         }
     });
@@ -30,13 +30,13 @@ function rootElement() {
     return ractive.find('div');
 }
 
-function openReactionsWindow(pageData) {
+function openReactionsWindow(pageData, groupSettings) {
     if (!reactionsWidget) {
         // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        reactionsWidget = ReactionsWidget.create(container, pageData);
+        reactionsWidget = ReactionsWidget.create(container, pageData, groupSettings);
     }
     reactionsWidget.open(rootElement());
 }

@@ -54,7 +54,7 @@ function scanForSummaries($element, groupSettings) {
     $summaries.each(function() {
         var $summary = $(this);
         var container = $('<div class="ant-summary-container"></div>');
-        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash));
+        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash), groupSettings);
         insertContent($summary, container, groupSettings.summaryMethod());
     });
 }
