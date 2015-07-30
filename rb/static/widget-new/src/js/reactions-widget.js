@@ -3,76 +3,98 @@ var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 
-var ractive;
-
 function createReactionsWidget(container, pageData) {
     var reactionsData = pageData.topReactions;
     var layoutClasses = computeLayoutClasses(reactionsData);
-    ractive = Ractive({
+    var ractive = Ractive({
         el: container,
         magic: true,
         data: {
             reactions: reactionsData,
+            response: {},
             layoutClass: function(index) {
-                console.log(reactionsData);
                 return layoutClasses[index];
             }
         },
         template: require('../templates/reactions-widget.html')
     });
     ractive.on('complete', function() {
-        $(rootElement())
-                .on('mouseover', keepWindowOpen)
-                .on('mouseout', delayedCloseWindow);
+        $(rootElement(ractive))
+                .on('mouseover', keepWindowOpen(ractive))
+                .on('mouseout', delayedCloseWindow(ractive));
     });
     ractive.on('change', function() {
         layoutClasses = computeLayoutClasses(reactionsData);
     });
-    ractive.on('plusone', function(event) {
+    ractive.on('plusone', plusOne(pageData, ractive));
+    return {
+        open: openWindow(ractive)
+    };
+}
+
+function plusOne(pageData, ractive) {
+    return function(event) {
+        // Optimistically update our local data store and the UI. Then send the request to the server.
         var reactionData = event.context;
         reactionData.count = reactionData.count + 1;
         // TODO: check back on this as the way to propogate data changes back to the summary
         pageData.summary.totalReactions = pageData.summary.totalReactions + 1;
 
-
-        // TODO send the click to the server
-
         XDMClient.getUser(function(response) {
             var userInfo = response.data;
-            // TODO extract the shape of this data and possibly the whole API call
-            // TODO this is only handling the summary case. need to generalize the widget to handle containers/content
-            var data = {
-                tag: {
-                    body: reactionData.text,
-                    id: reactionData.id,
-                    tag_count: reactionData.count // TODO why??
-                },
-                hash: 'page',
-                kind: 'page',
-                content_node: '',
-                user: {
-                    img_url: '', // TODO why?
-                    ant_token: userInfo.ant_token,
-                    user_id: userInfo.user_id,
-                    sts: '', // TODO ??
-                    lts: '', // TODO ??
-                    user_type: userInfo.user_type // TODO what is this?
-                },
-                user_id: userInfo.user_id
-
-            };
-            var success = function(json) {
-                console.log('success!');
-            };
-            var error = function(message) {
-                console.log("error!");
-            };
-            $.getJSONP(URLs.createReactionUrl(), data, success, error);
+            postPlusOne(reactionData, userInfo, pageData, ractive);
         });
-    });
-    return {
-        open: openWindow
     };
+}
+
+function postPlusOne(reactionData, userInfo, pageData, ractive) {
+    // TODO extract the shape of this data and possibly the whole API call
+    // TODO this is only handling the summary case. need to generalize the widget to handle containers/content
+    var data = {
+        tag: {
+            body: reactionData.text,
+            id: reactionData.id,
+            tag_count: reactionData.count // TODO why??
+        },
+        hash: 'page',
+        kind: 'page',
+        user_id: userInfo.user_id,
+        ant_token: userInfo.ant_token,
+        page_id: pageData.pageId,
+        group_id: pageData.groupId,
+        container_kind: 'text', // TODO: why is this 'text' for a page reaction?
+        content_node: '',
+        content_node_data: {
+            body: '',
+            kind: 'page',
+            item_type: 'page'
+        }
+    };
+    var success = function(json) {
+        var response = { // TODO: just capturing the api format...
+            existing: json.existing,
+            interaction: {
+                id: json.interaction.id,
+                interaction_node: {
+                    body: json.interaction.interaction_node.body,
+                    id: json.interaction.interaction_node.id
+                }
+            }
+        };
+        //if (json.existing) {
+        //    handleDuplicateReaction(reactionData);
+        //} else {
+        //    handleNewReaction(reactionData);
+        //}
+        // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+        ractive.set('response.existing', response.existing);
+        showReactionResult(ractive);
+        console.log('success!');
+    };
+    var error = function(message) {
+        console.error("Error posting reaction: " + message);
+    };
+    $.getJSONP(URLs.createReactionUrl(), data, success, error);
 }
 
 function computeLayoutClasses(reactionsData) {
@@ -101,40 +123,69 @@ function computeLayoutClasses(reactionsData) {
     return layoutClasses;
 }
 
-function rootElement() {
+function rootElement(ractive) {
     // TODO: gotta be a better way to get this
     return ractive.find('div');
 }
 
-function openWindow(relativeElement) {
-    if (ractive) {
+function showReactionResult(ractive) {
+    var $root = $(rootElement(ractive));
+    // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
+    //$root.find('.antenna-reactions-page').css({ left: '-100%', right: 0 });
+    //$root.find('.antenna-received-page').css({ left: 0, right: '' });
+    $root.find('.antenna-received-page').animate({ left: 0 });
+    $root.animate({ width: 300 }, { delay: 100 });
+    setTimeout(function() {
+        showReactions(ractive, true);
+    }, 1000);
+}
+
+function showReactions(ractive, animate) {
+    var $root = $(rootElement(ractive));
+    // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
+    //$root.find('.antenna-reactions-page').css({ left: '-100%', right: 0 });
+    //$root.find('.antenna-received-page').css({ left: 0, right: '' });
+    if (animate) {
+        $root.find('.antenna-received-page').animate({ left: '100%' });
+        $root.animate({ width: 200 });
+    } else {
+        $root.find('.antenna-received-page').css({ left: '100%' });
+        $root.css({ width: 200 });
+    }
+}
+
+function openWindow(ractive) {
+    return function(relativeElement) {
         var $relativeElement = $(relativeElement);
         var offset = $relativeElement.offset();
         var coords = {
             top: offset.top + $relativeElement.height(),
             left: offset.left
         };
-        var $element = $(rootElement());
+        var $element = $(rootElement(ractive));
         $element.stop(true, true).addClass('open').css(coords);
-    }
-
+    };
 }
 
 var closeTimer;
 
-function keepWindowOpen() {
-    if (closeTimer) { clearTimeout(closeTimer); }
+function keepWindowOpen(ractive) {
+    return function() {
+        if (closeTimer) { clearTimeout(closeTimer); }
+    };
 }
 
-function delayedCloseWindow() {
-    closeTimer = setTimeout(function() {
-        closeTimer = null;
-        closeWindow();
-    }, 1500);
+function delayedCloseWindow(ractive) {
+    return function() {
+        closeTimer = setTimeout(function() {
+            closeTimer = null;
+            closeWindow(ractive);
+        }, 1500);
+    };
 }
 
-function closeWindow() {
-    var $element = $(ractive.find('div'));
+function closeWindow(ractive) {
+    var $element = $(rootElement(ractive));
     $element.stop(true, true).fadeOut('fast', function() {
         $element.css('display', ''); // Clear the display:none that fadeOut puts on the element
         $element.removeClass('open');

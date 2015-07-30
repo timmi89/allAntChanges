@@ -1,22 +1,36 @@
 
 
 <div class="antenna antenna-reactions-widget">
-    <div class="antenna-header">
-
-    </div>
-    <div class="antenna-body">
-        {{ #each reactions:index }}
-            <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
-                <div class="antenna-reaction-text">
-                    {{ this.text }}
-                </div>
-                <div class="antenna-reaction-count">
-                    {{ this.count }}
-                </div>
+    <div class="antenna-reactions-container">
+        <div class="antenna-reactions-page">
+            <div class="antenna-header">
+                <a href="http://www.antenna.is" target="_blank">
+                    <span class="ant-antenna-logo"></span>
+                </a>
+                What do you think?
             </div>
-        {{ /each }}
-    </div>
-    <div class="antenna-footer">
+            <div class="antenna-body">
+                {{ #reactions:index }}
+                    <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                        <div class="antenna-reaction-text">
+                            {{ this.text }}
+                        </div>
+                        <div class="antenna-reaction-count">
+                            {{ this.count }}
+                        </div>
+                    </div>
+                {{ /reactions }}
+            </div>
+            <div class="antenna-footer">
 
+            </div>
+        </div>
+        <div class="antenna-received-page">
+            {{ #if response.existing }}
+                Looks like you still feel the same way.
+            {{ else }}
+                New reaction received.
+            {{ /if }}
+        </div>
     </div>
 </div>

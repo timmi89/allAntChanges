@@ -2,15 +2,53 @@
 .antenna-reactions-widget {
     display: none;
     position: absolute;
-    width: 200px;
+    width: 222px;
     height: 300px;
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: orange;
-    z-index: 9999;
+    z-index: 999; /* TODO */
+    box-shadow: 0 0 3px rgba(000,000,000,.3);
+    font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
+}
+
+.antenna-reactions-container {
+    position: relative;
+    height: 100%;
+}
+
+.antenna-reactions-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.antenna-received-page {
+    position: absolute;
+    background-color: white;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
 }
 
 .antenna-reactions-widget.open {
     display: block;
+}
+
+.antenna-header, .antenna-header a {
+    color: #8fb3f2;
+}
+
+.antenna-header {
+    background-color: white;
+    text-align: center;
+    padding: 3px 0;
+}
+
+.antenna-body {
+    color: white;
 }
 
 .antenna-reaction {
@@ -29,5 +67,15 @@
 }
 
 .antenna-reaction-text {
-    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-left: 5px;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.antenna-reaction-count {
+    padding-left: 5px;
+    opacity: 0.85;
+    font-weight: 100;
 }

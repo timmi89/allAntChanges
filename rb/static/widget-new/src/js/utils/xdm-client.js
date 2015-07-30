@@ -15,7 +15,12 @@ function xdmLoaded(data) {
 
 function getUser(callback) {
     var message = 'getUser';
-    postMessage(message, 'returning_user', true, callback);
+    postMessage(message, 'returning_user', callback, validCacheEntry);
+
+    function validCacheEntry(response) {
+        var userInfo = response.data;
+        return userInfo && userInfo.ant_token && userInfo.user_id; // TODO && userInfo.user_type?
+    }
 }
 
 function receiveMessage(event) {
@@ -37,13 +42,14 @@ function receiveMessage(event) {
     }
 }
 
-function postMessage(message, callbackKey, accept_cached, callback) {
+function postMessage(message, callbackKey, callback, validCacheEntry) {
 
     var targetOrigin = URLs.antennaHome();
     callbacks[callbackKey] = callback;
 
     if (isXDMLoaded) {
-        if (accept_cached && cache[callbackKey] !== undefined) {
+        var cachedResponse = cache[callbackKey];
+        if (cachedResponse !== undefined && validCacheEntry && validCacheEntry(cache[callbackKey])) {
             callback(cache[callbackKey]);
         } else {
             var xdmFrame = getXDMFrame();

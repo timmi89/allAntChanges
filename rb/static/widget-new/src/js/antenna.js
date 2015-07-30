@@ -7,6 +7,8 @@ var PageScanner = require('./page-scanner');
 var PageData = require('./page-data');
 var XDMLoader = require('./utils/xdm-loader');
 
+var groupSettings;
+
 function loadGroupSettings() {
     // Once we have the settings, we can kick off a couple things in parallel:
     //
@@ -15,22 +17,23 @@ function loadGroupSettings() {
     //
     //    Once these tasks complete, then we can update the affordances with the data and we're ready
     //    for action.
-    GroupSettingsLoader.load(function(groupSettings) {
-        initXdmFrame(groupSettings);
-        fetchPageData(groupSettings);
-        scanPage(groupSettings);
+    GroupSettingsLoader.load(function(settings) {
+        groupSettings = settings;
+        initXdmFrame();
+        fetchPageData();
+        scanPage();
     });
 }
 
-function initXdmFrame(groupSettings) {
+function initXdmFrame() {
     XDMLoader.createXDMframe(groupSettings.groupId);
 }
 
-function fetchPageData(groupSettings) {
+function fetchPageData() {
     PageDataLoader.load(groupSettings, dataLoaded);
 }
 
-function scanPage(groupSettings) {
+function scanPage() {
     PageScanner.scan(groupSettings, pageScanned);
 }
 
@@ -55,7 +58,7 @@ function pageReady() {
     // At this point, the container hashes have been computed, the affordances inserted, and the page data fetched.
     // Now update the summary widgets and affordances.
 
-    PageData.updateAll(jsonData);
+    PageData.updateAll(jsonData, groupSettings);
 
     // BOOM. The magic of Ractive. Now we just call PageData.update instead of all this.
     //for (var i = 0; i < pageData.length; i++) {

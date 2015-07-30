@@ -20,13 +20,13 @@ function getPageData(hash) {
     return pageData;
 }
 
-function updateAllPageData(jsonPages) {
+function updateAllPageData(jsonPages, groupSettings) {
     for (var i = 0; i < jsonPages.length; i++) {
-        updatePageData(jsonPages[i]);
+        updatePageData(jsonPages[i], groupSettings);
     }
 }
 
-function updatePageData(json) {
+function updatePageData(json, groupSettings) {
     var pageData = getPageData(json.urlhash);
 
     var numReactions = 0;
@@ -62,6 +62,7 @@ function updatePageData(json) {
 
     // TODO Consider supporting incremental update of data that we already have from the server. That would mean only
     // updating fields in the local object if they exist in the json data.
+    pageData.groupId = groupSettings.groupId();
     pageData.pageId = json.id;
     pageData.summary = {
         totalReactions: numReactions,
