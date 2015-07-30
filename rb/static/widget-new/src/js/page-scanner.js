@@ -1,9 +1,9 @@
 
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
-var Templates = require('./templates');
 var Hash = require('./utils/hash');
 var URLs = require('./utils/urls');
 var SummaryWidget = require('./summary-widget');
+var IndicatorWidget = require('./indicator-widget');
 var PageData = require('./page-data');
 
 var indicatorMap = {};
@@ -52,14 +52,9 @@ function scanForSummaries($element, groupSettings) {
 
     var $summaries = $element.find(groupSettings.summarySelector());
     $summaries.each(function() {
-        // TODO: compute the url hash for the page, either using the page selector or the window location. See engage_full:4226
-        //       attach the url to the indicator as an attribute
-        //       add the element to the indicator map
-        //       ...then we can instantiate the SummaryWidget ractive based on the hash once the data is loaded
         var $summary = $(this);
-        //insertContent($summary, Templates.summary(urlHash), groupSettings.summaryMethod());
         var container = $('<div class="ant-summary-container"></div>');
-        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash)); // TODO stash this away somewhere
+        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash));
         insertContent($summary, container, groupSettings.summaryMethod());
     });
 }
@@ -76,7 +71,10 @@ function scanForText($section, groupSettings) {
         // TODO position correctly
         // TODO hash and add hash data to indicator
         var hash = Hash.hashText($element);
-        $element.append(Templates.indicator(hash));
+        var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
+        var containerData = {}; // TODO get this from a central data store (probably PageData)
+        var indicator = IndicatorWidget.create(container, containerData);
+        $element.append(container); // TODO is this configurable ala insertContent(...)?
     });
 }
 

@@ -1,0 +1,15 @@
+
+.antenna-indicator-widget {
+    padding-left: 5px;
+}
+
+
+.antenna-indicator-widget .ant-antenna-logo {
+    color: #666666 !important;
+    opacity: 0.33;
+}
+
+.antenna-indicator-widget:hover .ant-antenna-logo {
+    color: #8fb3f2 !important;
+    opacity: 1.0;
+}
