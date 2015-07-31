@@ -51,10 +51,22 @@ function sizeToFit(node) {
         var $parent = $element.parent();
         var ratio = $parent.outerWidth() / node.scrollWidth;
         if (ratio < 1.0) {
-            // TODO: Try wrapping the text first.
-            var minSize = 6;
-            var newSize = Math.max(minSize, Math.floor(parseInt($element.css('font-size')) * ratio) - 1);
-            $element.css('font-size', newSize);
+            // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
+            // TODO: Clean up this code.
+            var text = node.innerHTML;
+            var splitIndex = text.indexOf(' ', text.length / 2);
+            if (splitIndex === -1) {
+                splitIndex = text.lastIndexOf(' ', text.length / 2);
+            }
+            if (splitIndex > 1) {
+                node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
+                ratio = $parent.outerWidth() / node.scrollWidth;
+            }
+            if (ratio < 1.0) {
+                var minSize = 10;
+                var newSize = Math.max(minSize, Math.floor(parseInt($element.css('font-size')) * ratio) - 1);
+                $element.css('font-size', newSize);
+            }
         }
 
         $rootElement.css({display: '', left: ''});
@@ -145,12 +157,17 @@ function computeLayoutData(reactionsData, colors) {
     var midValue = ( median > average ) ? median : average;
 
     var layoutClasses = [];
+    var numHalfsies = 0;
     for (var i = 0; i < numReactions; i++) {
         if (reactionsData[i].count > midValue) {
             layoutClasses[i] = 'full';
         } else {
             layoutClasses[i] = 'half';
+            numHalfsies++;
         }
+    }
+    if (numHalfsies % 2 !==0) {
+        layoutClasses[numReactions - 1] = 'full'; // If there are an odd number, the last one goes full.
     }
 
     var numColors = colors.length;

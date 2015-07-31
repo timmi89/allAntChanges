@@ -38,13 +38,10 @@
 }
 
 .antenna-header {
-    color: #8fb3f2;
-}
-
-.antenna-header {
     background-color: white;
-    text-align: center;
-    padding: 3px 0;
+    color: #8fb3f2;
+    text-align: left;
+    padding: 3px 5px;
     cursor: move;
 }
 
