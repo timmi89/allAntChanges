@@ -13,7 +13,43 @@
         <li><svg height="27" width="9"><line x1="0" y1="27" x2="9" y2="0" style="stroke:rgb(255,255,255);stroke-width:2" /></svg></li>
         <li><a href="#">for retailers</a></li>
         <li><svg height="27" width="9"><line x1="0" y1="27" x2="9" y2="0" style="stroke:rgb(255,255,255);stroke-width:2" /></svg></li>
-        <li><a href="#">search</a></li>
+        <li>
+          <svg class="icon-antenna-icon icon-search"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-search"></use></svg>
+          <!-- <a href="#">search</a> -->
+          {% block siteSearch %}
+
+          <div id="site_search" style="display:inline-block;">
+            <form method="get" id="searchform" action="">
+              <!-- <fieldset> -->
+                <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search" />
+              <!-- </fieldset> -->
+            </form>
+          </div>
+          <script>
+          $('#site_search')
+              .on('mouseenter', function() { $(this).find('input').focus() })//chain
+              .on('mouseleave', function() {
+                if ( !$(this).find('input').val().length ) {
+                  $(this).find('input').blur();
+                }
+              })
+              .find('form').on('submit', function(e) {
+                  var validPaths = /^\/(stream|group|user|site|page).*$/;
+                  var defaultPath = "/stream/";
+                  var curPath = window.location.pathname;
+                  var isValidPath = validPaths.test(curPath);
+                  var action = isValidPath ? curPath : defaultPath;
+                
+                  $(e.target).attr('action', action);
+              });
+            $('.fa-search').on('click', function(e){
+              e.preventDefault();
+              $('#searchform').trigger('submit');
+            });
+          </script>
+
+          {% endblock siteSearch %}
+        </li>
       </ul>
 
       <ul id="nav-mobile" class="right hide-on-small-and-down">
@@ -106,43 +142,3 @@
 
   </div>
 </nav>
-
-  <header>
-  
-
-  {% block siteSearch %}
-  <!--
-  <div id="site_search">
-    <i class="ant-search"></i>
-    <form method="get" id="searchform" action="">
-      <fieldset>
-        <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-      </fieldset>
-    </form>
-  </div>
-  <script>
-  $('#site_search')
-      .on('mouseenter', function() { $(this).addClass('ant_hover').find('input').focus() })//chain
-      .on('mouseleave', function() {
-        if ( !$(this).find('input').val().length ) {
-          $(this).removeClass('ant_hover').find('input').blur();
-        }
-      })
-      .find('form').on('submit', function(e) {
-          var validPaths = /^\/(stream|group|user|site|page).*$/;
-          var defaultPath = "/stream/";
-          var curPath = window.location.pathname;
-          var isValidPath = validPaths.test(curPath);
-          var action = isValidPath ? curPath : defaultPath;
-        
-          $(e.target).attr('action', action);
-      });
-    $('.fa-search').on('click', function(e){
-      e.preventDefault();
-      $('#searchform').trigger('submit');
-    });
-  </script>
-  -->
-  {% endblock siteSearch %}        
-
-  </header>

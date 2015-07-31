@@ -20,38 +20,54 @@ nav {
     }
   }
 
-  .primary-nav {
-    display:inline-block; 
-    margin-bottom: -0.25em;
-    margin-left:3em;
-
+  ul {
     li {
-      a { color:#fff; font-size:0.8em;}
-      svg { margin-bottom:-7px; }
-    }
-  }
-
-  #nav-mobile {
-    position:relative;
-    height: 100%;
-
-    li { padding-right:10px; position:relative; }
-    .user {
-      img { width:50px; top: 10px; position: relative;}
-      h4 { font-size: 16px; display: inline-block; color: #9a9a9a; top: -4px; position: relative; }
+      &:hover, &.active {
+        background-color: none;
+      }
     }
 
-    .color-bar {
-      position:absolute;
-      bottom:0;
-      width:20%;
-      height: 5px;
+    &.primary-nav {
+      display:inline-block; 
+      margin-bottom: -0.25em;
+      margin-left:3em;
 
-      &.first { background: $antenna-dk-blue; left:0;}
-      &.second { background: $antenna-lt-blue; left:20%; }
-      &.third { background: $antenna-yellow; left:40%; }
-      &.fourth { background: $antenna-orange; left:60%; }
-      &.fifth { background: $antenna-red; left:80%; }
+      li {
+        overflow:hidden;
+
+        a { color:#fff; font-size:0.8em;}
+
+        svg { 
+          margin-bottom:-7px; 
+          &.icon-search  { width: 16px; margin-bottom: -12px; margin-left: 14px; margin-right: 2px;} 
+        }
+
+        input[name="s"] { border-color:#000; height:1.5rem; font-size:0.8em; bottom: -1px; position: relative;}
+      }
+    }
+
+    &#nav-mobile {
+      position:relative;
+      height: 100%;
+
+      li { padding-right:10px; position:relative; }
+      .user {
+        img { width:42px; top: 14px; position: relative;}
+        h4 { font-size: 16px; display: inline-block; color: #9a9a9a; position: relative; }
+      }
+
+      .color-bar {
+        position:absolute;
+        bottom:0;
+        width:20%;
+        height: 5px;
+
+        &.first { background: $antenna-dk-blue; left:0;}
+        &.second { background: $antenna-lt-blue; left:20%; }
+        &.third { background: $antenna-yellow; left:40%; }
+        &.fourth { background: $antenna-orange; left:60%; }
+        &.fifth { background: $antenna-red; left:80%; }
+      }
     }
   }
 }
