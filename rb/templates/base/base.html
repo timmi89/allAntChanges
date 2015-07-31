@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
+
+  <title>{% block page_title %}Antenna!!{% endblock %}</title>
+  <meta name="description" content="{% block page_description %}How the web reacts{% endblock %}">
+
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/styles.min.css">
+  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="{{ STATIC_URL }}site/js/antenna-web.min.js"></script>
+
+  <script>
+  var ANTsite = ANTsite ? ANTsite : {};
+
+  {% if group %}
+  if ( !ANTsite.group) {
+    ANTsite.group = {
+      id:{{ group.id }},
+      name: '{{ group.name }}',
+      short_name: '{{ group.short_name }}'
+    };
+  } else {
+    ANTsite.group.id = {{ group.id }};
+    ANTsite.group.name = '{{ group.name }}';
+    ANTsite.group.short_name = '{{ group.short_name }}';
+  }
+  {% endif %}
+  {% if profile_user %}
+  ANTsite.profile_user = {
+    id:{{ profile_user.id }}
+  };
+  {% endif %}
+
+  </script>
+
+  <link rel="shortcut icon" href="{{ STATIC_URL }}site/images/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{{ STATIC_URL }}site/images/favicon.ico" type="image/x-icon">
+
+  {% block layoutHeadAdditions %}{% endblock %}
+  {% block pageHeadAdditions %}{% endblock %}
+
+</head>
+
+<body class="{% block bodyClass %}{% endblock %}">
+  <div id="fb-root"></div>
+  <script>
+  window.fb_loader = $.Deferred();
+  window.fbAsyncInit = function() {
+
+      FB.init({
+        appId      : '163759626987948', // App ID
+        channelUrl : window.ANT_staticUrl+'fb_channel.html', // Channel File
+        status     : true, // check login status
+        cookie     : true, // enable cookies to allow the server to access the session
+        xfbml      : true  // parse XFBML
+      });
+
+      // Code here runs on FB init
+      window.fb_loader.resolve();
+      
+  };
+
+  // Load the SDK Asynchronously
+  (function(d){
+      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = "//connect.facebook.net/en_US/all.js";
+      ref.parentNode.insertBefore(js, ref);
+  }(document));
+  </script>
+
+
+{% block navbar %}{% endblock %}
+{% block layout %}{% endblock %}
+{% block footer %}{% endblock %}
+  
+
+{% block page_js %}{% endblock %}
+
+
+  <script type="text/javascript">
+  $('#private_profile').click( function() {
+    $('label[for="private_profile"] span').remove();
+    var sendData = {
+      user_id:ANTAuth.ant_user.user_id, 
+      ant_token:ANTAuth.ant_user.ant_token,
+      group_id:1
+    };
+    $.ajax({
+        url: "/api/privacy/toggle/",
+        type: "get",
+        data: {
+              json: JSON.stringify(sendData)
+            },
+        success: function(response) {
+            $('label[for="private_profile"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
+        }
+    });
+  });
+  $('#follow_email').click( function() {
+    $('label[for="follow_email"] span').remove();
+    var sendData = {
+        user_id:ANTAuth.ant_user.user_id, 
+        ant_token:ANTAuth.ant_user.ant_token,
+        group_id:1
+    };
+    $.ajax({
+        url: "/api/followemail/toggle/",
+        type: "get",
+        data: {
+            json: JSON.stringify(sendData)
+          },
+        success: function(response) {
+            $('label[for="follow_email"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
+        }
+    });
+  });
+
+  $('#activity_notifications').click( function() {
+    $('label[for="activity_notifications"] span').remove();
+    var sendData = {
+        user_id:ANTAuth.ant_user.user_id, 
+        ant_token:ANTAuth.ant_user.ant_token,
+        group_id:1
+    };
+    $.ajax({
+        url: "/api/notificationemail/toggle/",
+        type: "get",
+        data: {
+            json: JSON.stringify(sendData)
+          },
+        success: function(response) {
+            $('label[for="activity_notifications"]').append('<strong style="display:inline-block;float:none;margin:0;color:#FF6600;">Saved</strong>');
+        }
+    });
+  });
+  </script>
+
+  <script type="text/javascript">
+  if(!ANT_offline){
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-24372992-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  }else{
+      //just a dummy array for testing
+      _gaq = _gaq || [];
+  }
+  </script>
+
+{% include "antenna_icons_svg.html" %}
+
+</body>
+</html>

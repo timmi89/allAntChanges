@@ -1,0 +1,57 @@
+nav {
+  background-color: $black;
+  @extend .z-depth-0;
+
+  .logo {
+    display: inline-block;
+    overflow: hidden;
+    height: 100%;
+
+    .icon-antenna-icon {
+      position: relative;
+      top: -35px;
+      left: 10px;
+    }
+    .icon-antenna-text {
+      height: 100px;
+      width: 100px;
+      margin-top: -16px;
+      margin-left: 6px;
+    }
+  }
+
+  .primary-nav {
+    display:inline-block; 
+    margin-bottom: -0.25em;
+    margin-left:3em;
+
+    li {
+      a { color:#fff; font-size:0.8em;}
+      svg { margin-bottom:-7px; }
+    }
+  }
+
+  #nav-mobile {
+    position:relative;
+    height: 100%;
+
+    li { padding-right:10px; position:relative; }
+    .user {
+      img { width:50px; top: 10px; position: relative;}
+      h4 { font-size: 16px; display: inline-block; color: #9a9a9a; top: -4px; position: relative; }
+    }
+
+    .color-bar {
+      position:absolute;
+      bottom:0;
+      width:20%;
+      height: 5px;
+
+      &.first { background: $antenna-dk-blue; left:0;}
+      &.second { background: $antenna-lt-blue; left:20%; }
+      &.third { background: $antenna-yellow; left:40%; }
+      &.fourth { background: $antenna-orange; left:60%; }
+      &.fifth { background: $antenna-red; left:80%; }
+    }
+  }
+}

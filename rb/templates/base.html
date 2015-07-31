@@ -1,58 +1,48 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width">
+{% comment %}
 
-  <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-      <script>window.html5 || document.write('<script src="js/vendor/html5shiv.js"><\/script>')</script>
-      <script src="js/vendor/respond.min.js"></script>
-  <![endif]-->
+
+
+
+
+
+
+DEPRECATED IN JUILY 2015 REWRITE
+
+
+
+
+
+
+
+
+{% endcomment %}
+<!DOCTYPE html>
+<html>
+<head>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <title>{% block title %}Antenna{% endblock %}</title>
   <meta name="description" content="How the web reacts">
 
   {% block css %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/esrg_grid.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/site.css?v=20150120b">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/antenna-font/antenna-font.css?v=1">
-  <!-- <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"> -->
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/jscrollpane.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}site/css/styles.min.css">
   {% endblock %}
 
   {% block topjavascript %}
-  <script>httpProtocol = window.location.protocol;</script>
-  <!-- Pulled from http://code.google.com/p/html5shiv/ -->
-  <!--[if lt IE 9]>
-  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-  <script src="{{ STATIC_URL }}site/js/jquery.masonry.new.min.js"></script>
+  
+  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+  <script src="{{ STATIC_URL }}site/js/antenna-web.min.js"></script>
   <!--
-  <script src="{{ STATIC_URL }}js/waypoints.min.js"></script>
-  <script src="{{ STATIC_URL }}js/waypoints-sticky.min.js"></script>
-  -->
-  <script src="{{ STATIC_URL }}js/jquery.jscrollpane.min.js"></script>
-  <script src="{{ STATIC_URL }}js/jquery.browser_detect.js"></script>
-  <script src="{{ STATIC_URL }}js/jquery.mousewheel.js"></script>
   <script src="{{ STATIC_URL }}js/ant_site_scripts.js?v=2"></script>
-  <script src="{{ STATIC_URL }}js/bootstrap-tooltip.js"></script>
-  <script src="{{ STATIC_URL }}js/moment.js"></script>
+  -->
+
+
   <script src="{{ STATIC_URL }}widget/js/jquery.json-2.2.min.js" type="text/javascript"></script>
   <script src="{{ STATIC_URL }}widget/js/jquery.cookie.js" type="text/javascript"></script>
 
-  <!--[if (lt IE 9) & (!IEMobile)]>
-  <script src="{{ STATIC_URL }}js/selectivizr-min.js.js"></script>
-  <![endif]-->
-
-  <!-- FancyBox -->
-  <link rel="stylesheet" href="{{ STATIC_URL }}js/fancybox/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
-  <script type="text/javascript" src="{{ STATIC_URL }}js/fancybox/jquery.fancybox.pack.js?v=2.1.4"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}widget/js/ant_user.js"></script>
 
   <script>
   var ANTsite = ANTsite ? ANTsite : {};
@@ -89,7 +79,7 @@
 
 </head>
 
-<body class="{% block bodyClass %}{% endblock %} {% if hasSubheader %}has_subheader{%endif%} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">    
+<body class="{% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %}">
     <div id="fb-root"></div>
     <script>
 
@@ -118,13 +108,9 @@
             ref.parentNode.insertBefore(js, ref);
         }(document));
     </script>
-    <!--<script type="text/javascript" src="{{ STATIC_URL }}widget/js/ant_user_min.js"></script>-->
-    <script type="text/javascript" src="{{ STATIC_URL }}widget/js/ant_user.js"></script>
 
-  {% block header %}
-    <header role="global" class="no-ant clearfix">
-      <section class="content centered">
-        <div id="user_and_search">
+
+      {% block header %}
           <div id="user">
             {% block userStatus %}
             <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
@@ -135,12 +121,14 @@
               <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/></a>
               {% endif %}
               <div id="log-out-link">
-                Welcome, <strong>{{ cookie_user.social_user.full_name }}</strong>
+                <strong>{{ cookie_user.social_user.full_name }}</strong>
+                <!-- 
                 <a href="/user/{{ cookie_user.id }}">My Activity</a>
                 <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
                 <a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a>
-                
-                    {% if cookie_user %}
+                 -->
+                {% if cookie_user %}
+                <!--
                 <div class="userSettingsMenu">
                         <h5 id="user_settings">Settings</h5>
                         <label for="private_profile">
@@ -162,6 +150,7 @@
                             <a href="javascript:void(0);" onclick="ANTAuth.openChangePasswordWindow();">Change your password</a>
                         {% endif %}
                 </div>
+                -->
                     {% endif %}
 
                 <div class="group_settings_menu">
@@ -170,6 +159,7 @@
 
               </div>
             </div>
+
             <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
               <a href="javascript:void(0);" style="margin-left:5px;" onclick="ANTAuth.openAntLoginWindow();">Log In / Sign Up</a>
               <i class="fa fa-sign-in"></i>
@@ -193,12 +183,12 @@
           </div>
 
           {% block siteSearch %}
+          <!--
           <div id="site_search">
             <i class="ant-search"></i>
             <form method="get" id="searchform" action="">
               <fieldset>
                 <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" />
-                <!-- <button class="btn"><i class="fa fa-arrow-circle-o-right"></i></button> -->
               </fieldset>
             </form>
           </div>
@@ -224,12 +214,8 @@
               $('#searchform').trigger('submit');
             });
           </script>
+          -->
           {% endblock siteSearch %}        
-        </div>
-
-        <a href="/" class="logo"><h1>Antenna</h1></a>
-        <!-- <div class="see" style="display: inline-block; font-weight: 100; font-family: 'Helvetica'; top: -0.33rem; position: relative; color: #aaa; margin-left: 3rem;">See It <span style="font-size:11px;padding:0 10px;">&bull;</span> Use It</div> -->
-      </section>
 
       {% block headerDisplay %}
       {% endblock headerDisplay %}
@@ -238,41 +224,11 @@
 
     {% endblock header %}
     
-    <!-- <section role="masthead"> -->
-    <!-- <section role="subheader"> -->
     {% block subheaderContent %}
     {% endblock %}
-    <!-- </section> -->
-    <!-- </section> -->
-    <section role="wideContent">
-      {% block wideContent %}
-      {% endblock %}
-    </section>
-  <div id="page_container">
-    <section role="page content" class="clearfix content">
-      
-      {% block afterWideContent %}
-          <section role="after wide section">
-            {% if not board %}
-            
-            {% block complementarySection %}
-                {% block sidebarContent %}
-                {% endblock %}
-            {% endblock %}
 
-            {% endif %}
 
-            <section role="main">
-            {% block mainContent %}
-            {% endblock mainContent %}
-            </section>
-          </section>
-      {% endblock %}
-    </section>
-
-    
-
-  </div> <!-- // page_container -->
+  
   {% block footer %}
   <footer role="global" class="{% block hasFixedBar %}withFixedBar{% endblock %} clearfix no-ant">
       <div class="footerLinks">
@@ -317,7 +273,7 @@
 // }
 </script>
 
-{% block pageJS %}
+{% block page_js %}
 {% endblock %}
 
 {% block sidebarJS %}
