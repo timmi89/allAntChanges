@@ -10,11 +10,13 @@
             <div class="antenna-body">
                 {{ #reactions:index }}
                     <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}" style="background-color:{{ backgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
-                        <div class="antenna-reaction-text" decorator="sizetofit">
-                            {{ this.text }}
-                        </div>
-                        <div class="antenna-reaction-count">
-                            {{ this.count }}
+                        <div class="antenna-reaction-box">
+                            <div class="antenna-reaction-text" decorator="sizetofit">
+                                {{ this.text }}
+                            </div>
+                            <div class="antenna-reaction-count">
+                                {{ this.count }}
+                            </div>
                         </div>
                     </div>
                 {{ /reactions }}

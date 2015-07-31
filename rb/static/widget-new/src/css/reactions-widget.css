@@ -3,7 +3,7 @@
     display: none;
     position: absolute;
     width: 222px;
-    height: 300px;
+    min-height: 360px; /* TODO: Compute this in Javascript from child div heights */
     overflow-y: auto;
     overflow-x: hidden;
     background-color: white;
@@ -56,6 +56,7 @@
     display: inline-block;
     cursor: pointer;
     height: 75px;
+    vertical-align: top; /* See http://stackoverflow.com/questions/19366401/css-inline-block-elements-not-lining-up-properly */
 }
 
 .antenna-reaction.half {
@@ -69,16 +70,33 @@
     width: 100%;
 }
 
+.antenna-reaction-box {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.antenna-reaction:hover > .antenna-reaction-box {
+    background: linear-gradient(rgba(30,30,30,.15),rgba(255,255,255,.2));
+}
+
 .antenna-reaction-text {
+    margin: 0;
+    padding: 0;
+    padding-left: 5px;
     white-space: nowrap;
     overflow: hidden;
-    padding-left: 5px;
+    margin-bottom: 6px;
     font-weight: 700;
     font-size: 24px;
 }
 
 .antenna-reaction-count {
+    margin: 0;
+    padding: 0;
     padding-left: 5px;
     opacity: 0.85;
     font-weight: 100;
+    font-size: 14px;
 }
