@@ -3,4 +3,12 @@ $navbar-height: 57px !default;
 $navbar-height-mobile: 48px !default;
 
 // Antenna originals
-
+// Defining values, modified from Bootstrap to include smaller screen sizes (<481)
+$screen-sm-min: 481px;
+$screen-xs-max: ($screen-sm-min - 1);
+$screen-md-min: 768px;
+$screen-sm-max: ($screen-md-min - 1);
+$screen-lg-min: 992px;
+$screen-md-max: ($screen-lg-min - 1);
+$screen-xlg-min: 1200px;
+$screen-lg-max: ($screen-xlg-min - 1);

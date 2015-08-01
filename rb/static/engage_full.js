@@ -10128,7 +10128,7 @@ ANT.ant_loadScript = ant_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $A clone, and revert the client's jquery back
 ANT_scriptPaths.jquery = ANT_offline ?
-    ANT_staticUrl+"js/jquery-1.11.1.min.js" :
+    ANT_staticUrl+"widget/js/jquery-1.11.1.min.js" :
     // ANT_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";

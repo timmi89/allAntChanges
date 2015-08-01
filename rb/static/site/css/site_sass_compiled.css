@@ -6786,6 +6786,21 @@ select {
 /*** Fonts ***/
 /* Helvetica font stack */
 /* via http://www.grputland.com/2013/11/multiplatform-helvetica-like-font-stack.html#disqus_thread */
+body {
+  font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif; }
+
+input::-webkit-input-placeholder {
+  color: white; }
+input:-moz-placeholder {
+  color: white; }
+input::-moz-placeholder {
+  color: white; }
+input:-ms-input-placeholder {
+  color: white; }
+
+@media only screen and (min-width: 993px) {
+  .container {
+    width: 85%; } }
 [class^="icon-"], [class*=" icon-"] {
   height: 32px;
   width: 32px;
@@ -6867,19 +6882,65 @@ nav {
         background: #e8776d;
         left: 80%; }
 
-@media only screen and (min-width: 993px) {
-  .container {
-    width: auto; } }
-body {
-  font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif; }
+.masthead {
+  background-size: 100%;
+  position: absolute;
+  width: 100%;
+  height: 100%; }
+  .masthead h1 {
+    color: #fff; }
+    .masthead h1 .line-one {
+      font-weight: 100; }
+    .masthead h1 .line-two {
+      font-weight: 400; }
+      .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
+        position: relative;
+        top: -30px; }
+        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
+          color: #fff;
+          font-size: 30px; }
+        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
+          font-size: 18px;
+          font-weight: 100;
+          color: #fff; }
+    .masthead h1 .line-three {
+      font-weight: 900; }
+  .masthead h3 {
+    color: #fff;
+    font-weight: 100; }
+    .masthead h3 .adjective {
+      color: #dec164; }
 
-input::-webkit-input-placeholder {
-  color: white; }
-input:-moz-placeholder {
-  color: white; }
-input::-moz-placeholder {
-  color: white; }
-input:-ms-input-placeholder {
-  color: white; }
+@media (max-width: 480px) {
+  .masthead {
+    background-image: url("/static/site/images/many_voices_mobile.jpg"); }
+    .masthead h1 {
+      font-size: 3rem;
+      margin: 10% 0; }
+      .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
+        position: relative;
+        top: -10px; }
+        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
+          font-size: 20px; }
+        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
+          font-size: 14px; }
+    .masthead h3 {
+      font-size: 1.75rem; } }
+@media (min-width: 481px) {
+  .masthead {
+    background-image: url("/static/site/images/many_voices_medium.jpg"); }
+    .masthead h1 {
+      font-size: 4.5rem;
+      margin: 10% 0; }
+    .masthead h3 {
+      font-size: 2.25rem; } }
+@media (min-width: 992px) {
+  .masthead {
+    background-image: url("/static/site/images/many_voices.jpg"); }
+    .masthead h1 {
+      font-size: 7rem;
+      margin: 10% 0; }
+    .masthead h3 {
+      font-size: 2.75rem; } }
 
 /*# sourceMappingURL=site_sass_compiled.css.map */

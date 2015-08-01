@@ -33,6 +33,7 @@ from django.utils import simplejson
 from django.core.cache import cache
 from chronos.jobs import *
 from threading import Thread
+import random
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -57,6 +58,9 @@ def home(request):
         'fb_client_id': FACEBOOK_APP_ID,
         'BASE_URL': BASE_URL
     }
+
+    multi_options = ['platform','community','voice','national','genre']
+    context['multi_adjective'] = random.choice(multi_options)
 
     if cookie_user:
         context['cookie_user'] = cookie_user

@@ -41,10 +41,11 @@
 @import "antenna_components/mixins";
 @import "antenna_components/colors";
 @import "antenna_components/fonts";
-// @import "antenna_components/variables";
+@import "antenna_components/variables";
+@import "antenna_components/global";
+@import "antenna_components/grid";
 @import "antenna_components/icons";
 @import "antenna_components/navbar";
-@import "antenna_components/grid";
-@import "antenna_components/global";
+@import "antenna_components/homepage";
 
 

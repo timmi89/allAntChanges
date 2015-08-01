@@ -7,14 +7,61 @@
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/{% else %}http://www.antenna.is/{% endif %}">
 {%endblock%}
 
-{% block bodyClass %} {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
+{% block bodyClass %}xno-ant {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
 
 {% block navbar %}
   {% include "partials/site_navbar.html" %}
 {% endblock navbar %}
 
 {% block page_content %}
+<style>
+
+</style>
+<section class="masthead">
+  <div class="container">
+    <h1>
+      <div class="line-one">Say what you think</div>
+      <div class="line-two">about anything</div>
+      <div class="line-three">with a click.</div>
+      <!-- <div class="center test-cta-2" ant-cta-for="about-anything" ant-mode="write" ant-offset-x="0" ant-offset-y="50">Your Response</div> -->
+    </h1>
+    <h3>
+      <div class="line-one">Meaningful, mobile-first feedback</div>
+      <div class="line-two">for a <span class="adjective">multi-<strong>{{ multi_adjective }}</strong></span> world.</div>
+    </h3>
+  </div>
+</section>
 {% endblock %}
 
 {% block page_js %}
+<script>
+window.antenna_extend = {
+  active_sections: '.container',
+  anno_whitelist: 'h1 .line-two'
+};
+
+function SelectText(element) {
+    var doc = document
+        // , text = doc.getElementById(element)
+        , range, selection
+    ;    
+    if (doc.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) {
+        selection = window.getSelection();        
+        range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+
+el = $('h1 .line-two')[0];
+SelectText(el);
+
+</script>
+
+<script async src="/static/engage_full.js"></script>
 {% endblock %}
