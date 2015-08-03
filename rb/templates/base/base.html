@@ -80,9 +80,17 @@
   
 
 {% block page_js %}{% endblock %}
-
+  
 
   <script type="text/javascript">
+  $(".user-dropdown-button-desktop").dropdown({
+    constrain_width: false, // Does not change width of dropdown to that of the activator
+    hover: true, // Activate on hover
+    belowOrigin:true
+  });
+  $(".button-collapse").sideNav();
+
+
   $('#private_profile').click( function() {
     $('label[for="private_profile"] span').remove();
     var sendData = {

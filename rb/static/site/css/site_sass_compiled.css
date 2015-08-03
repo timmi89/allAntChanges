@@ -6822,65 +6822,100 @@ nav {
       width: 100px;
       margin-top: -16px;
       margin-left: 6px; }
+    @media (max-width: 480px) {
+      nav .logo .icon-antenna-icon {
+        position: relative;
+        top: -35px;
+        left: auto; }
+      nav .logo .icon-antenna-text {
+        height: 100px;
+        width: 100px;
+        margin-top: -21px;
+        margin-left: -5px; } }
   nav ul li:hover, nav ul li.active {
     background-color: none; }
-  nav ul.primary-nav {
+  nav ul.desktop-nav {
     display: inline-block;
     margin-bottom: -0.25em;
     margin-left: 3em; }
-    nav ul.primary-nav li {
+    nav ul.desktop-nav li {
       overflow: hidden; }
-      nav ul.primary-nav li a {
+      nav ul.desktop-nav li a {
         color: #fff;
         font-size: 0.8em; }
-      nav ul.primary-nav li svg {
+      nav ul.desktop-nav li svg {
         margin-bottom: -7px; }
-        nav ul.primary-nav li svg.icon-search {
+        nav ul.desktop-nav li svg.icon-search {
           width: 16px;
           margin-bottom: -12px;
           margin-left: 14px;
           margin-right: 2px; }
-      nav ul.primary-nav li input[name="s"] {
+      nav ul.desktop-nav li input[name="s"] {
         border-color: #000;
         height: 1.5rem;
         font-size: 0.8em;
         bottom: -1px;
         position: relative; }
-  nav ul#nav-mobile {
+  nav ul#user-desktop {
     position: relative;
     height: 100%; }
-    nav ul#nav-mobile li {
+    nav ul#user-desktop li {
       padding-right: 10px;
       position: relative; }
-    nav ul#nav-mobile .user img {
-      width: 42px;
-      top: 14px;
+    nav ul#user-desktop .user img {
+      width: 34px;
+      top: 11px;
       position: relative; }
-    nav ul#nav-mobile .user h4 {
+    nav ul#user-desktop .user h4 {
       font-size: 16px;
       display: inline-block;
       color: #9a9a9a;
       position: relative; }
-    nav ul#nav-mobile .color-bar {
+    nav ul#user-desktop .color-bar {
       position: absolute;
       bottom: 0;
       width: 20%;
       height: 5px; }
-      nav ul#nav-mobile .color-bar.first {
+      nav ul#user-desktop .color-bar.first {
         background: #2f5863;
         left: 0; }
-      nav ul#nav-mobile .color-bar.second {
+      nav ul#user-desktop .color-bar.second {
         background: #4b7185;
         left: 20%; }
-      nav ul#nav-mobile .color-bar.third {
+      nav ul#user-desktop .color-bar.third {
         background: #dec164;
         left: 40%; }
-      nav ul#nav-mobile .color-bar.fourth {
+      nav ul#user-desktop .color-bar.fourth {
         background: #ea9971;
         left: 60%; }
-      nav ul#nav-mobile .color-bar.fifth {
+      nav ul#user-desktop .color-bar.fifth {
         background: #e8776d;
         left: 80%; }
+  nav ul#desktop-user-dropdown {
+    background: #000;
+    width: 175px; }
+    nav ul#desktop-user-dropdown li a {
+      font-size: 1rem; }
+
+.side-nav {
+  background: #000;
+  border-right: 1px solid #fff; }
+  .side-nav li.user {
+    margin: 1rem 0 2rem 0; }
+  .side-nav li a {
+    font-size: 1rem;
+    height: 2rem;
+    line-height: 2rem;
+    color: #fff; }
+  .side-nav li input[type="text"] {
+    border-top: 1px solid #9e9e9e;
+    margin-top: 4rem; }
+  .side-nav .mobile-menu-cta .icon-antenna-icon {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 30%;
+    right: 0%; }
 
 .masthead {
   background-size: 100%;
