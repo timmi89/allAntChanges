@@ -3,8 +3,6 @@
     display: none;
     position: absolute;
     width: 222px;
-    min-height: 360px; /* TODO: Compute this in Javascript from child div heights */
-    overflow-y: auto;
     overflow-x: hidden;
     background-color: white;
     z-index: 999; /* TODO */
@@ -12,32 +10,12 @@
     font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
 }
 
-.antenna-reactions-container {
-    position: relative;
-    height: 100%;
-}
-
-.antenna-reactions-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-.antenna-confirm-page {
-    position: absolute;
-    background-color: white;
-    top: 0;
-    left: 100%;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-}
-
 .antenna-reactions-widget.open {
     display: block;
 }
 
 .antenna-header {
+    height: 28px;
     background-color: white;
     color: #8fb3f2;
     text-align: left;
@@ -46,7 +24,40 @@
 }
 
 .antenna-body {
-    color: white;
+    height: 300px;
+    color: white;/* TODO: move to the page */
+    position: relative;
+    overflow: hidden;
+}
+
+.antenna-footer {
+    height: 50px;
+    padding: 6px;
+    text-align: center;
+    color: #777777;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+}
+
+.antenna-reactions-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.antenna-confirm-page {
+    position: absolute;
+    background-color: white;
+    color: black;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
 }
 
 .antenna-reaction {

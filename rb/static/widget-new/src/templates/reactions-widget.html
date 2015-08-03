@@ -1,29 +1,24 @@
 
 
 <div class="antenna antenna-reactions-widget" tabindex="0">
-    <div class="antenna-reactions-container">
+    <div class="antenna-header">
+        <span class="ant-antenna-logo"></span>
+        Reactions
+    </div>
+    <div class="antenna-body">
         <div class="antenna-reactions-page">
-            <div class="antenna-header">
-                <span class="ant-antenna-logo"></span>
-                Reactions
-            </div>
-            <div class="antenna-body">
-                {{ #reactions:index }}
-                    <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}" style="background-color:{{ backgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
-                        <div class="antenna-reaction-box">
-                            <div class="antenna-reaction-text" decorator="sizetofit">
-                                {{ this.text }}
-                            </div>
-                            <div class="antenna-reaction-count">
-                                {{ this.count }}
-                            </div>
+            {{ #reactions:index }}
+                <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}" style="background-color:{{ backgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                    <div class="antenna-reaction-box">
+                        <div class="antenna-reaction-text" decorator="sizetofit">
+                            {{ this.text }}
+                        </div>
+                        <div class="antenna-reaction-count">
+                            {{ this.count }}
                         </div>
                     </div>
-                {{ /reactions }}
-            </div>
-            <div class="antenna-footer">
-
-            </div>
+                </div>
+            {{ /reactions }}
         </div>
         <div class="antenna-confirm-page">
             {{ #if response.existing }}
@@ -32,5 +27,8 @@
                 New reaction received.
             {{ /if }}
         </div>
+    </div>
+    <div class="antenna-footer">
+        What do you think?
     </div>
 </div>
