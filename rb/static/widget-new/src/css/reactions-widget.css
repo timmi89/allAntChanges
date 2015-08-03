@@ -25,7 +25,6 @@
 
 .antenna-body {
     height: 300px;
-    color: white;/* TODO: move to the page */
     position: relative;
     overflow: hidden;
 }
@@ -41,6 +40,7 @@
 }
 
 .antenna-reactions-page {
+    color: white;
     position: absolute;
     top: 0;
     left: 0;
