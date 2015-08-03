@@ -48,16 +48,16 @@ function sizeToFit(node) {
     if ($rootElement.length > 0) {
         $rootElement.css({display: 'block', left: '100%'});
 
-        var $parent = $element.parent();
+        var $parent = $element.closest('.antenna-reaction-box');
         var ratio = $parent.outerWidth() / node.scrollWidth;
         if (ratio < 1.0) {
             // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
-            // TODO: Clean up this code.
             var text = node.innerHTML;
-            var splitIndex = text.indexOf(' ', text.length / 2);
-            if (splitIndex === -1) {
-                splitIndex = text.lastIndexOf(' ', text.length / 2);
-            }
+            // Look for the closest space to the middle, weighted slightly (Math.ceil) toward a space in the second half.
+            var mid = Math.ceil(text.length / 2);
+            var secondHalfIndex = text.indexOf(' ', mid);
+            var firstHalfIndex = text.lastIndexOf(' ', mid);
+            var splitIndex = Math.abs(secondHalfIndex - mid) < Math.abs(mid - firstHalfIndex) ? secondHalfIndex : firstHalfIndex;
             if (splitIndex > 1) {
                 node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
                 ratio = $parent.outerWidth() / node.scrollWidth;
@@ -205,9 +205,7 @@ function rootElement(ractive) {
 function showReactionResult(ractive) {
     var $root = $(rootElement(ractive));
     // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
-    //$root.find('.antenna-reactions-page').css({ left: '-100%', right: 0 });
-    //$root.find('.antenna-received-page').css({ left: 0, right: '' });
-    $root.find('.antenna-received-page').animate({ left: 0 });
+    $root.find('.antenna-confirm-page').animate({ left: 0 });
     $root.animate({ width: 300 }, { delay: 100 });
     setTimeout(function() {
         showReactions(ractive, true);
@@ -216,14 +214,11 @@ function showReactionResult(ractive) {
 
 function showReactions(ractive, animate) {
     var $root = $(rootElement(ractive));
-    // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
-    //$root.find('.antenna-reactions-page').css({ left: '-100%', right: 0 });
-    //$root.find('.antenna-received-page').css({ left: 0, right: '' });
     if (animate) {
-        $root.find('.antenna-received-page').animate({ left: '100%' });
+        $root.find('.antenna-confirm-page').animate({ left: '100%' });
         $root.animate({ width: 200 });
     } else {
-        $root.find('.antenna-received-page').css({ left: '100%' });
+        $root.find('.antenna-confirm-page').css({ left: '100%' });
         $root.css({ width: 200 });
     }
 }
