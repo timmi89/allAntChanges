@@ -59,7 +59,7 @@ def home(request):
         'BASE_URL': BASE_URL
     }
 
-    multi_options = ['platform','community','voice','national','genre']
+    multi_options = ['platform','perspective','community','voice','national','genre']
     context['multi_adjective'] = random.choice(multi_options)
 
     if cookie_user:
@@ -153,22 +153,20 @@ def privacy(request):
     )
 
 def learn(request):
-    return HttpResponseRedirect('/')
-    # cookie_user = checkCookieToken(request)
-    # context = {
-    #     'fb_client_id': FACEBOOK_APP_ID,
-    #     'BASE_URL': BASE_URL
-    # }
-    # context['hasSubheader'] = True
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
 
-    # if cookie_user:
-    #     context['cookie_user'] = cookie_user
+    if cookie_user:
+        context['cookie_user'] = cookie_user
 
-    # return render_to_response(
-    #   "learn.html",
-    #   context,
-    #   context_instance=RequestContext(request)
-    # )
+    return render_to_response(
+      "learn.html",
+      context,
+      context_instance=RequestContext(request)
+    )
     
     # return HttpResponseRedirect('/')
 

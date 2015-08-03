@@ -1,8 +1,8 @@
 <div class="navbar-fixed">
-<nav>
+<nav class="global">
   <div class="nav-wrapper container">
 
-      <!-- end navbar content -->
+      <!-- navbar content -->
       <a href="/" class="logo">
         <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
         <svg class="icon-antenna-text"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-text"></use></svg>
@@ -60,22 +60,85 @@
 
         <li class="user">
           <a class="user-dropdown-button-desktop" href="#!" data-activates="desktop-user-dropdown">
-            <img src="{{ STATIC_URL }}site/images/anonymous_user.png" class="circle" />
-            <h4>Mark</h4>
+            {% if cookie_user.social_user %}
+              {% if cookie_user.social_user.img_url %}
+              <img src="{{ cookie_user.social_user.img_url }}?type=square" class="circle" />
+              {% endif %}
+              <h4>{{ cookie_user.social_user.full_name }}</h4>
+            {% else %}
+              Sign Up / Log In
+            {% endif %}
           </a>
         </li>
       </ul>
 
       <ul id="desktop-user-dropdown" class="dropdown-content">
-        <li><a href="#!">one is the loneliest number</a></li>
-        <li><a href="#!">two</a></li>
+        <!-- user info : desktop -->
+        {% if not cookie_user.social_user %}
+        <li id="fb-login-button">
+          <!-- <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a> -->
+          <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();">
+            <svg class="icon-antenna-text"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-social-facebook"></use></svg>
+            Connect with Facebook
+          </a>
+        </li>
+        <li id="ant-login-button">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+            Login with <br/>Antenna
+          </a>
+        </li>
+        <li id="ant-create-account">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+        </li>
+        {% comment %}
+          <!--
+          <div class="userSettingsMenu">
+            <h5 id="user_settings">Settings</h5>
+            <label for="private_profile">
+              <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
+              Profile is private
+            </label>
+            <label for="follow_email">
+              <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
+              Send me email when someone follows my activity.
+            </label>
+            <label for="activity_notifications">
+              <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
+              Send me activity notifications.
+            </label>
+            
+            {% if cookie_user.social_user.provider == "Readrboard" %}
+                <hr/>
+                <a href="javascript:void(0);" onclick="ANTAuth.openAntAvatarUploadWindow();">Upload Profile Picture</a>
+                <a href="javascript:void(0);" onclick="ANTAuth.openChangePasswordWindow();">Change your password</a>
+            {% endif %}
+          </div>
+          -->
+        {% endcomment %}
+
+
+        {% endif %}
+
+        {% if cookie_user.social_user %}
+        <li><a href="/user/{{ cookie_user.id }}">Profile</a></li>
+        <li><a href="/user/{{ cookie_user.id }}">My Activity</a></li>
+        <li><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></li>
+        <li>
+          {% include "group_nav.html" %}
+        </li>
         <li class="divider"></li>
-        <li><a href="#!">three</a></li>
+        <li><a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a></li>
+        {% endif %}
+        <!-- user info : desktop -->
       </ul>
 
-      <a href="#" data-activates="mobile-menu" class="button-collapse right mobile-menu-cta"><svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-menu"></use></svg></a>
+      <a href="javascript:void(0);" data-activates="mobile-menu" class="button-collapse right mobile-menu-cta"><svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-menu"></use></svg></a>
       <ul class="side-nav" id="mobile-menu">
-        <li class="user"><a href="">user info here...</a></li>
+        <li>
+          <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+          <svg class="icon-antenna-text"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-text"></use></svg>
+        </li>
         <li><a href="/publishers/">For Publishers</a></li>
         <li><a href="/retailers/">For Retailers</a></li>
         <li>
@@ -83,83 +146,42 @@
               <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search" />
           </form>
         </li>
+
+        <!-- user info : mobile -->
+        {% if cookie_user.social_user %}
+        <li><a href="/user/{{ cookie_user.id }}">Profile</a></li>
+        <li><a href="/user/{{ cookie_user.id }}">My Activity</a></li>
+        <li><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></li>
+        <li>
+          {% include "group_nav.html" %}
+        </li>
+        <li class="divider"></li>
+        <li><a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a></li>
+        {% endif %}
+        {% if not cookie_user.social_user %}
+        <li id="fb-login-button">
+          <!-- <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a> -->
+          <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();">
+            <svg class="icon-antenna-text"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-social-facebook"></use></svg>
+            Connect with Facebook
+          </a>
+        </li>
+        <li id="ant-login-button">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+            Login with Antenna
+          </a>
+        </li>
+        <li id="ant-create-account">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+        </li>
+        {% endif %}
+        <!-- end user info : mobile -->
       </ul>
 
 
 
-        <!-- just use parts from this -->
-        <div id="user" style="display:none;">
-          {% block userStatus %}
-          <div id="logged-in" {% if not cookie_user.social_user %}style="display:none;"{% endif %}>
-            <i class="fa fa-bars"></i>
-            {% if not cookie_user.social_user.img_url %}
-            <a href="/user/{{ cookie_user.id }}" class="settings-link">Settings</a>
-            {% else %}
-            <a href="/user/{{ cookie_user.id }}"><img src="{{ cookie_user.social_user.img_url }}?type=square"/></a>
-            {% endif %}
-            <div id="log-out-link">
-              <strong>{{ cookie_user.social_user.full_name }}</strong>
-              <!-- 
-              <a href="/user/{{ cookie_user.id }}">My Activity</a>
-              <a href="/follows/{{ cookie_user.id }}">Activity I Follow</a>
-              <a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a>
-               -->
-              {% if cookie_user %}
-              <!--
-              <div class="userSettingsMenu">
-                      <h5 id="user_settings">Settings</h5>
-                      <label for="private_profile">
-                        <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
-                        Profile is private
-                      </label>
-                      <label for="follow_email">
-                        <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
-                        Send me email when someone follows my activity.
-                      </label>
-                      <label for="activity_notifications">
-                        <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
-                        Send me activity notifications.
-                      </label>
-                      
-                      {% if cookie_user.social_user.provider == "Readrboard" %}
-                          <hr/>
-                          <a href="javascript:void(0);" onclick="ANTAuth.openAntAvatarUploadWindow();">Upload Profile Picture</a>
-                          <a href="javascript:void(0);" onclick="ANTAuth.openChangePasswordWindow();">Change your password</a>
-                      {% endif %}
-              </div>
-              -->
-                  {% endif %}
-
-              <div class="group_settings_menu">
-              {% include "group_nav.html" %}
-              </div>
-
-            </div>
-          </div>
-
-          <div id="logged-out" {% if cookie_user.social_user %}style="display:none;"{% endif %}>
-            <a href="javascript:void(0);" style="margin-left:5px;" onclick="ANTAuth.openAntLoginWindow();">Log In / Sign Up</a>
-            <i class="fa fa-sign-in"></i>
-            <div id="login-options" style="overflow:auto;">
-              <div style="margin-bottom:10px;">
-                <div id="fb-login-button">
-                  <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a>
-                </div>
-              </div>
-              <div style="border-top:1px solid #ccc;text-align:center;padding-top: 10px;">
-                <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
-                  <span class="ant-antenna-logo"></span> Login to <span class="ant-antenna-text"></span>
-                </a>
-              </div>
-              <div style="clear:both;margin-top:10px;padding-top:5px;border-top:1px solid #ccc;">
-                <a style="font-weight:100;font-size:11px;font-family:Arial;display:block;text-align:center;color:rgb(0,0,238);font-style:italic;" href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
-              </div>
-            </div>    
-          </div>
-          {% endblock %}
-        </div>
-      <!-- end navbar content -->
-
+  <!-- end navbar content -->
   </div>
 </nav>
 </div>
