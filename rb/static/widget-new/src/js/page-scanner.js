@@ -9,7 +9,7 @@ var PageData = require('./page-data');
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
-function scanAllPages(groupSettings, callback) {
+function scanAllPages(groupSettings) {
     var $pages = $(groupSettings.pageSelector());
     if ($pages.length == 0) {
         // If we don't detect any page markers, treat the whole document as the single page
@@ -19,13 +19,12 @@ function scanAllPages(groupSettings, callback) {
         var $page = $(this);
         scanPage($page, groupSettings);
     });
-    callback();
 }
 
 // Scan the page using the given settings:
 // 1. Find all the containers that we care about.
-// 2. Insert widget affordances for each.
-// 3. Compute hashes for each container.
+// 2. Compute hashes for each container.
+// 3. Insert widget affordances for each which are bound to the data model by the hashes.
 function scanPage($page, groupSettings) {
     var url = URLs.computePageUrl($page, groupSettings);
     var urlHash = Hash.hashUrl(url);

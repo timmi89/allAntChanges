@@ -1,6 +1,7 @@
 
-var URLs = require('./utils/urls');
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var URLs = require('./utils/urls');
+var PageData = require('./page-data');
 
 
 function computePageTitle() {
@@ -40,12 +41,12 @@ function computePagesParam(groupSettings) {
     return pages;
 }
 
-function loadPageData(groupSettings, callback) {
+function loadPageData(groupSettings) {
     var pagesParam = computePagesParam(groupSettings);
     $.getJSONP('/api/page', { pages: pagesParam }, success, error);
 
     function success(json) {
-        callback(json);
+        PageData.updateAll(json, groupSettings);
     }
 
     function error(message) {
