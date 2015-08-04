@@ -7,3 +7,10 @@ input {
     color: rgba(255,255,255,1);
   }
 }
+
+.error {
+    background: $antenna-red;
+    color:#fff;
+    padding:0.5rem;
+    margin:1rem 0;
+}

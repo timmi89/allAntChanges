@@ -4,6 +4,7 @@
 @import "materialize_components/prefixer";
 @import "materialize_components/mixins";
 @import "materialize_components/color";
+@import "antenna_components/colors";
 
 // Variables;
 @import "materialize_components/variables";
@@ -39,7 +40,6 @@
 
 
 @import "antenna_components/mixins";
-@import "antenna_components/colors";
 @import "antenna_components/fonts";
 @import "antenna_components/variables";
 @import "antenna_components/global";
