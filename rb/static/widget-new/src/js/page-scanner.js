@@ -6,7 +6,6 @@ var SummaryWidget = require('./summary-widget');
 var IndicatorWidget = require('./indicator-widget');
 var PageData = require('./page-data');
 
-var indicatorMap = {};
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
@@ -28,33 +27,33 @@ function scanAllPages(groupSettings, callback) {
 // 2. Insert widget affordances for each.
 // 3. Compute hashes for each container.
 function scanPage($page, groupSettings) {
+    var url = URLs.computePageUrl($page, groupSettings);
+    var urlHash = Hash.hashUrl(url);
+    var pageData = PageData.getPageData(urlHash);
 
     // First, scan for elements that would cause us to insert something into the DOM that takes up space.
     // We want to get any page resizing out of the way as early as possible.
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
-    scanForSummaries($page, groupSettings);
+    scanForSummaries($page, pageData, groupSettings);
     scanForCallsToAction($page, groupSettings);
 
     var $activeSections = $page.find(groupSettings.activeSections());
     $activeSections.each(function() {
         var $section = $(this);
         // Then scan for everything else
-        scanForText($section, groupSettings);
+        scanForText($section, pageData, groupSettings);
         scanForImages($section, groupSettings);
         scanForMedia($section, groupSettings);
     });
 }
 
-function scanForSummaries($element, groupSettings) {
-    var url = URLs.computePageUrl($element, groupSettings);
-    var urlHash = Hash.hashUrl(url);
-
+function scanForSummaries($element, pageData, groupSettings) {
     var $summaries = $element.find(groupSettings.summarySelector());
     $summaries.each(function() {
         var $summary = $(this);
         var container = $('<div class="ant-summary-container"></div>');
-        var summaryWidget = SummaryWidget.create(container, PageData.get(urlHash), groupSettings);
+        SummaryWidget.create(container, pageData, groupSettings);
         insertContent($summary, container, groupSettings.summaryMethod());
     });
 }
@@ -63,7 +62,7 @@ function scanForCallsToAction($section, groupSettings) {
     // TODO
 }
 
-function scanForText($section, groupSettings) {
+function scanForText($section, pageData, groupSettings) {
     var $textElements = $section.find(groupSettings.textSelector());
     // TODO: only select "leaf" elements
     $textElements.each(function() {
@@ -72,6 +71,7 @@ function scanForText($section, groupSettings) {
         // TODO hash and add hash data to indicator
         var hash = Hash.hashText($element);
         var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
+        PageData.getContainerData(pageData, hash);
         var containerData = {}; // TODO get this from a central data store (probably PageData)
         var indicator = IndicatorWidget.create(container, containerData);
         $element.append(container); // TODO is this configurable ala insertContent(...)?

@@ -1,44 +1,37 @@
 
+var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
-
-var ractive;
-var reactionsWidget;
 
 function createSummaryWidget(container, pageData, groupSettings) {
     //// TODO replace element
-    ractive = Ractive({
+    var ractive = Ractive({
         el: container,
         data: pageData,
         magic: true,
-        template: require('../templates/summary-widget.html'),
-        oncomplete: function() {
-            var that = this;
-            $(rootElement()).on('click', function(event) { // TODO: delete. this is just toy
-               that.add('summary.totalReactions');
-            });
-            $(rootElement()).on('mouseenter', function(event) {
-               openReactionsWindow(pageData, groupSettings);
-            });
-        }
+        template: require('../templates/summary-widget.html')
     });
-    return ractive;
+    ractive.on('complete', function() {
+        $(rootElement(ractive)).on('mouseenter', function(event) {
+           openReactionsWindow(pageData, groupSettings, ractive);
+        });
+    });
 }
 
-function rootElement() {
+function rootElement(ractive) {
     // TODO: gotta be a better way to get this
     // TODO: our click handler is getting called twice, so it looks like this somehow gets the wrong element if there are two summary widgets together?
     return ractive.find('div');
 }
 
-function openReactionsWindow(pageData, groupSettings) {
-    if (!reactionsWidget) {
+function openReactionsWindow(pageData, groupSettings, ractive) {
+    if (!ractive.reactionsWidget) {
         // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        reactionsWidget = ReactionsWidget.create(container, pageData, groupSettings);
+        ractive.reactionsWidget = ReactionsWidget.create(container, pageData, groupSettings);
     }
-    reactionsWidget.open(rootElement());
+    ractive.reactionsWidget.open(rootElement(ractive));
 }
 
 function getWidgetBucket() {

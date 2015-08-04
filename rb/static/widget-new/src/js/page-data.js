@@ -13,11 +13,23 @@ function getPageData(hash) {
         // and tell the ractives to update whenever the data changes.
         pageData = {
             pageHash: hash,
-            summary: {}
+            summary: {},
+            containers: {}
         };
         pages[hash] = pageData;
     }
     return pageData;
+}
+
+function getContainerData(pageData, containerHash) {
+    var containerData = pageData.containers[containerHash];
+    if (!containerData) {
+        containerData = {
+            hash: containerHash
+        };
+        pageData.containers[containerHash] = containerData;
+    }
+    return containerData;
 }
 
 function updateAllPageData(jsonPages, groupSettings) {
@@ -27,7 +39,8 @@ function updateAllPageData(jsonPages, groupSettings) {
 }
 
 function updatePageData(json, groupSettings) {
-    var pageData = getPageData(json.urlhash);
+    var pageHash = json.urlhash;
+    var pageData = getPageData(pageHash);
 
     var numReactions = 0;
     var numComments = 0;
@@ -60,21 +73,34 @@ function updatePageData(json, groupSettings) {
         }
     }
 
+    var containerEntries = json.containers;
+    if (containerEntries) {
+        // Note that the set of hashes that comes back includes a pair with a key of "page".
+        // TODO: Should we keep the entry in the data model with "page" as the key or use the value of urlhash instead?
+        for (var i = 0; i < containerEntries.length; i++) {
+            var containerEntry = containerEntries.length;
+            var containerData = getContainerData(pageData, containerEntry.hash);
+            containerData.id = containerEntry.id;
+        }
+    }
+
     // TODO Consider supporting incremental update of data that we already have from the server. That would mean only
     // updating fields in the local object if they exist in the json data.
     pageData.groupId = groupSettings.groupId();
     pageData.pageId = json.id;
+    pageData.urlHash = json.urlhash;
     pageData.summary = {
         totalReactions: numReactions,
         totalComments: numComments,
         totalShares: numShares
     };
     pageData.topReactions = topReactions;
-    pageData.containers = json.containers; // array of objects with 'id' and 'hash' properties, including the magic 'page' hash value
+    // pageData.containers is initialized by above loop
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    get: getPageData,
+    getPageData: getPageData,
+    getContainerData: getContainerData,
     updateAll: updateAllPageData
 };
