@@ -46,11 +46,42 @@ function loadPageData(groupSettings) {
     $.getJSONP('/api/page', { pages: pagesParam }, success, error);
 
     function success(json) {
-        PageData.updateAll(json, groupSettings);
+        PageData.updateAllPageData(json, groupSettings, function(updatedPages) {
+            // TODO revisit this. we probably don't want to go out and aggressively load all data for all pages
+            for (var i = 0; i < updatedPages.length; i++) {
+                loadContainerData(updatedPages[i]);
+            }
+        });
     }
 
     function error(message) {
         // TODO handle errors that happen when loading page data
+    }
+}
+
+function loadContainerData(pageData) {
+    var containers = pageData.containers;
+    // TODO consider optimizing the data storage so we don't have to iterate like this
+    var hashes = [];
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            hashes.push(hash);
+        }
+    }
+    var data = {
+        short_name: '', // TODO
+        pageID: pageData.pageId,
+        hashes: hashes,
+        crossPageHashes: [] // TODO
+    };
+    $.getJSONP('/api/summary/containers', data, success, error);
+
+    function success(json) {
+        PageData.updateAllContainerData(json, pageData);
+    }
+
+    function error(message) {
+        // TODO handle errors that happen when loading container data
     }
 }
 

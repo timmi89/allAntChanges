@@ -21,21 +21,12 @@ function getPageData(hash) {
     return pageData;
 }
 
-function getContainerData(pageData, containerHash) {
-    var containerData = pageData.containers[containerHash];
-    if (!containerData) {
-        containerData = {
-            hash: containerHash
-        };
-        pageData.containers[containerHash] = containerData;
-    }
-    return containerData;
-}
-
-function updateAllPageData(jsonPages, groupSettings) {
+function updateAllPageData(jsonPages, groupSettings, callback) {
+    var allPages = [];
     for (var i = 0; i < jsonPages.length; i++) {
-        updatePageData(jsonPages[i], groupSettings);
+        allPages.push(updatePageData(jsonPages[i], groupSettings));
     }
+    callback(allPages);
 }
 
 function updatePageData(json, groupSettings) {
@@ -96,11 +87,59 @@ function updatePageData(json, groupSettings) {
     };
     pageData.topReactions = topReactions;
     // pageData.containers is initialized by above loop
+
+    return pageData;
+}
+
+function getContainerData(pageData, containerHash) {
+    var containerData = pageData.containers[containerHash];
+    if (!containerData) {
+        containerData = {
+            hash: containerHash
+        };
+        pageData.containers[containerHash] = containerData;
+    }
+    return containerData;
+}
+
+function updateAllContainerData(json, pageData, groupSettings) {
+    var containerData = json.known;
+    for (var hash in containerData) {
+        if (containerData.hasOwnProperty(hash)) {
+            updateContainerData(hash, containerData[hash], pageData, groupSettings);
+        }
+    }
+    //json.unknown; TODO: anything to do with this data?
+}
+
+function updateContainerData(containerHash, jsonData, pageData, groupSettings) {
+    var containerData = getContainerData(pageData, containerHash);
+
+    var topReactions = [];
+    var reactionsData = jsonData.top_interactions.tags; // TODO top_interactions.coms?
+    for (var id in reactionsData) {
+        if (reactionsData.hasOwnProperty(id)) {
+            var reaction = reactionsData[id];
+            topReactions.push({
+                id: id,
+                count: reaction.count,
+                text: reaction.body,
+                parentId: reaction.parent_id
+            });
+        }
+    }
+
+    containerData.commentCount =  jsonData.counts.coms;
+    containerData.reactionCount = jsonData.counts.interactions; // TODO: what is containerData.counts.tags?
+    containerData.id = jsonData.id;
+    containerData.kind = jsonData.kind;
+    containerData.topReactions = topReactions;
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     getPageData: getPageData,
+    updateAllPageData: updateAllPageData,
     getContainerData: getContainerData,
-    updateAll: updateAllPageData
+    updateAllContainerData: updateAllContainerData
 };
