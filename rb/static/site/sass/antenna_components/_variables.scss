@@ -14,13 +14,13 @@ $ant-h6-fontsize: 1rem !default;
 // Antenna originals
 // Defining values, modified from Bootstrap to include smaller screen sizes (<481)
 $screen-sm-min: 481px;
-$screen-xs-max: ($screen-sm-min - 1);
+$screen-xs-max: ($screen-sm-min - 1); // 480
 $screen-md-min: 768px;
-$screen-sm-max: ($screen-md-min - 1);
+$screen-sm-max: ($screen-md-min - 1);  // 767
 $screen-lg-min: 992px;
-$screen-md-max: ($screen-lg-min - 1);
+$screen-md-max: ($screen-lg-min - 1); // 991
 $screen-xlg-min: 1200px;
-$screen-lg-max: ($screen-xlg-min - 1);
+$screen-lg-max: ($screen-xlg-min - 1);  // 1199
 
 // Needed to reset the h1, etc sizes
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }

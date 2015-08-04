@@ -1,4 +1,8 @@
 nav.global {
+  @media #{$medium-and-up} {
+    a.button-collapse { display: none; }
+  }
+
   background-color: $black;
   @extend .z-depth-0;
 
@@ -32,6 +36,11 @@ nav.global {
         margin-left: -5px;
       }
     }
+    @media (max-width: $screen-sm-max) {
+      .icon-antenna-text {
+        margin-top: -17px;
+      }
+    }
   }
 
   ul {
@@ -46,6 +55,10 @@ nav.global {
       margin-bottom: -0.25em;
       margin-left:3em;
 
+      @media (max-width: $screen-sm-max) {
+          margin-left:1rem;
+      }
+
       li {
         overflow:hidden;
 
@@ -56,7 +69,13 @@ nav.global {
           &.icon-search  { width: 16px; margin-bottom: -12px; margin-left: 14px; margin-right: 2px;} 
         }
 
-        input[name="s"] { border-color:#000; height:1.5rem; font-size:0.8em; bottom: -1px; position: relative;}
+        input[name="s"] { 
+          border-color:#000; height:1.5rem; font-size:0.8em; bottom: -1px; position: relative;
+
+          @media (max-width: $screen-sm-max) {
+              max-width:80px;
+          }
+        }
       }
     }
 
@@ -64,10 +83,19 @@ nav.global {
       position:relative;
       height: 100%;
 
-      li { padding-right:10px; position:relative; }
-      .user {
-        img { width:25px; top:9px; position: relative;}
-        h4 { font-size: 0.75rem; display: inline-block; color: #9a9a9a; position: relative; }
+      li { 
+        padding-right:10px; position:relative;
+        &.user {
+          padding:0;
+
+          img { width:25px; top:9px; position: relative;}
+          h4 { font-size: 0.75rem; display: inline-block; color: #9a9a9a; position: relative; }
+
+          .user-dropdown-button-desktop {
+            padding:0;
+            font-size:0.8rem;
+          }
+        }
       }
 
       .color-bar {
@@ -109,7 +137,7 @@ nav.global {
           float:left;
           margin-right: 0.33rem;
 
-          @media (max-width: $screen-xs-max) {
+          @media (max-width: $screen-sm-max) {
             float:none;
           }
         }
@@ -156,7 +184,7 @@ nav.global {
         border-top: 1px solid #9e9e9e;
         margin-top:4rem;
 
-        @media (max-width: $screen-xs-max) {
+        @media (max-width: $screen-sm-max) {
           margin-top:1rem;
         }
       }
@@ -175,7 +203,7 @@ nav.global {
       float:left;
       margin-right: 0.33rem;
 
-      @media (max-width: $screen-xs-max) {
+      @media (max-width: $screen-sm-max) {
         float:none;
       }
     }
@@ -211,7 +239,7 @@ nav.global {
         float:left;
         margin-right: 0.33rem;
 
-        @media (max-width: $screen-xs-max) {
+        @media (max-width: $screen-sm-max) {
           float:none;
         }
       }

@@ -6832,6 +6832,9 @@ input::-moz-placeholder {
 input:-ms-input-placeholder {
   color: white; }
 
+@media only screen and (min-width: 601px) {
+  .container {
+    width: 95%; } }
 @media only screen and (min-width: 993px) {
   .container {
     width: 85%; } }
@@ -6843,6 +6846,9 @@ input:-ms-input-placeholder {
 
 nav.global {
   background-color: #000; }
+  @media only screen and (min-width: 601px) {
+    nav.global a.button-collapse {
+      display: none; } }
   nav.global .logo {
     display: inline-block;
     overflow: hidden;
@@ -6866,12 +6872,18 @@ nav.global {
         width: 100px;
         margin-top: -21px;
         margin-left: -5px; } }
+    @media (max-width: 767px) {
+      nav.global .logo .icon-antenna-text {
+        margin-top: -17px; } }
   nav.global ul li:hover, nav.global ul li.active {
     background-color: none; }
   nav.global ul.desktop-nav {
     display: inline-block;
     margin-bottom: -0.25em;
     margin-left: 3em; }
+    @media (max-width: 767px) {
+      nav.global ul.desktop-nav {
+        margin-left: 1rem; } }
     nav.global ul.desktop-nav li {
       overflow: hidden; }
       nav.global ul.desktop-nav li a {
@@ -6890,21 +6902,29 @@ nav.global {
         font-size: 0.8em;
         bottom: -1px;
         position: relative; }
+        @media (max-width: 767px) {
+          nav.global ul.desktop-nav li input[name="s"] {
+            max-width: 80px; } }
   nav.global ul#user-desktop {
     position: relative;
     height: 100%; }
     nav.global ul#user-desktop li {
       padding-right: 10px;
       position: relative; }
-    nav.global ul#user-desktop .user img {
-      width: 25px;
-      top: 9px;
-      position: relative; }
-    nav.global ul#user-desktop .user h4 {
-      font-size: 0.75rem;
-      display: inline-block;
-      color: #9a9a9a;
-      position: relative; }
+      nav.global ul#user-desktop li.user {
+        padding: 0; }
+        nav.global ul#user-desktop li.user img {
+          width: 25px;
+          top: 9px;
+          position: relative; }
+        nav.global ul#user-desktop li.user h4 {
+          font-size: 0.75rem;
+          display: inline-block;
+          color: #9a9a9a;
+          position: relative; }
+        nav.global ul#user-desktop li.user .user-dropdown-button-desktop {
+          padding: 0;
+          font-size: 0.8rem; }
     nav.global ul#user-desktop .color-bar {
       position: absolute;
       bottom: 0;
@@ -6941,7 +6961,7 @@ nav.global {
       display: inline-block;
       float: left;
       margin-right: 0.33rem; }
-      @media (max-width: 480px) {
+      @media (max-width: 767px) {
         nav.global ul#desktop-user-dropdown li svg {
           float: none; } }
     nav.global ul#desktop-user-dropdown li#ant-create-account {
@@ -6971,7 +6991,7 @@ nav.global {
     nav.global .side-nav li input[type="text"] {
       border-top: 1px solid #9e9e9e;
       margin-top: 4rem; }
-      @media (max-width: 480px) {
+      @media (max-width: 767px) {
         nav.global .side-nav li input[type="text"] {
           margin-top: 1rem; } }
     nav.global .side-nav .link-list li {
@@ -6982,7 +7002,7 @@ nav.global {
       display: inline-block;
       float: left;
       margin-right: 0.33rem; }
-      @media (max-width: 480px) {
+      @media (max-width: 767px) {
         nav.global .side-nav svg {
           float: none; } }
     nav.global .side-nav h3 svg {
@@ -7000,7 +7020,7 @@ nav.global {
     display: inline-block;
     float: left;
     margin-right: 0.33rem; }
-    @media (max-width: 480px) {
+    @media (max-width: 767px) {
       nav.global#mobile-menu li svg {
         float: none; } }
   nav.global#mobile-menu li#ant-create-account {

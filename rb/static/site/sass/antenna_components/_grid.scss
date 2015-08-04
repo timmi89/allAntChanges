@@ -1,6 +1,13 @@
 // Materialize override:
+@media #{$medium-and-up} {
+  .container {
+    width:95%;
+  }
+}
+
 @media #{$large-and-up} {
   .container {
     width:85%;
   }
 }
+
