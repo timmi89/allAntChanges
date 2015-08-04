@@ -29,6 +29,7 @@ function createReactionsWidget(container, pageData, groupSettings) {
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
+        showReactions(ractive, false); // Make sure the window is sized properly.
     });
     ractive.on('change', function() {
         layoutData = computeLayoutData(reactionsData, colors);
@@ -47,14 +48,11 @@ function sizeToFit(node) {
     var $rootElement = $element.closest('.antenna-reactions-widget');
     if ($rootElement.length > 0) {
         $rootElement.css({display: 'block', left: '100%'});
-
         var $parent = $element.closest('.antenna-reaction-box');
         var ratio = $parent.outerWidth() / node.scrollWidth;
-        if (ratio < 1.0) {
-            // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
+        if (ratio < 1.0) { // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
             var text = node.innerHTML;
-            // Look for the closest space to the middle, weighted slightly (Math.ceil) toward a space in the second half.
-            var mid = Math.ceil(text.length / 2);
+            var mid = Math.ceil(text.length / 2); // Look for the closest space to the middle, weighted slightly (Math.ceil) toward a space in the second half.
             var secondHalfIndex = text.indexOf(' ', mid);
             var firstHalfIndex = text.lastIndexOf(' ', mid);
             var splitIndex = Math.abs(secondHalfIndex - mid) < Math.abs(mid - firstHalfIndex) ? secondHalfIndex : firstHalfIndex;
@@ -63,17 +61,12 @@ function sizeToFit(node) {
                 ratio = $parent.outerWidth() / node.scrollWidth;
             }
             if (ratio < 1.0) {
-                var minSize = 10;
-                var newSize = Math.max(minSize, Math.floor(parseInt($element.css('font-size')) * ratio) - 1);
-                $element.css('font-size', newSize);
+                $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * ratio) - 1));
             }
         }
-
         $rootElement.css({display: '', left: ''});
     }
-    return {
-        teardown: function() {}
-    };
+    return { teardown: function() {} };
 }
 
 function plusOne(pageData, ractive) {
@@ -93,6 +86,7 @@ function plusOne(pageData, ractive) {
 
 function postPlusOne(reactionData, userInfo, pageData, ractive) {
     // TODO extract the shape of this data and possibly the whole API call
+    // TODO pass along the parentId if it's really a "+1"
     // TODO this is only handling the summary case. need to generalize the widget to handle containers/content
     var data = {
         tag: {
@@ -133,10 +127,9 @@ function postPlusOne(reactionData, userInfo, pageData, ractive) {
         // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
         ractive.set('response.existing', response.existing);
         showReactionResult(ractive);
-        console.log('success!');
     };
     var error = function(message) {
-        console.error("Error posting reaction: " + message);
+        // TODO handle any errors that occur posting a reaction
     };
     $.getJSONP(URLs.createReactionUrl(), data, success, error);
 }
@@ -206,7 +199,8 @@ function showReactionResult(ractive) {
     var $root = $(rootElement(ractive));
     // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
     $root.find('.antenna-confirm-page').animate({ left: 0 });
-    $root.animate({ width: 300 }, { delay: 100 });
+    sizeBodyToFit(ractive, $root.find('.antenna-confirm-page'), true);
+    $root.animate({ width: 300 }, { delay: 100 }); // TODO this is just a dummy to show resizing
     setTimeout(function() {
         showReactions(ractive, true);
     }, 1000);
@@ -221,9 +215,20 @@ function showReactions(ractive, animate) {
         $root.find('.antenna-confirm-page').css({ left: '100%' });
         $root.css({ width: 200 });
     }
+    sizeBodyToFit(ractive, $root.find('.antenna-reactions-page'), animate);
+}
+
+function sizeBodyToFit(ractive, $element, animate) {
+    var $body = $(ractive.find('.antenna-body'));
+    if (animate) {
+        $body.animate({ height: Math.min(300, $element.get(0).scrollHeight) });
+    } else {
+        $body.css({ height: Math.min(300, $element.get(0).scrollHeight) });
+    }
 }
 
 function openWindow(ractive) {
+    // TODO Before opening a new window, always forcibly close any that are already open.
     return function(relativeElement) {
         var $relativeElement = $(relativeElement);
         var offset = $relativeElement.offset();
