@@ -1,5 +1,5 @@
 .ant-summary-container {
-    display: inline-block;
+    display: table;
 }
 
 .ant-summary-widget, .ant-summary-widget a {
@@ -7,13 +7,11 @@
 }
 
 .ant-summary-widget {
+    display: table-cell;
+    vertical-align: middle;
     min-width: 50px;
     height: 30px;
     margin: 10px 0;
     padding: 0 5px;
     box-shadow: 0 0 3px rgba(000,000,000,.3);
-}
-
-.antenna-summary-text {
-    padding: 10px 0;
 }

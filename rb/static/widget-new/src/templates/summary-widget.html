@@ -6,12 +6,10 @@
         <span class="ant-antenna-logo"></span>
     </a>
     {{ #if summary.totalReactions !== undefined }}
-        <span class="antenna-summary-text">
-            {{ #if summary.totalReactions }}
-                {{summary.totalReactions}}
-            {{ /if }}
-            Reactions
-        </span>
+        {{ #if summary.totalReactions }}
+            {{summary.totalReactions}}
+        {{ /if }}
+        Reactions
     {{ /if }}
 
 </div>

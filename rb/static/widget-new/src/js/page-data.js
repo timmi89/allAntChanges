@@ -107,8 +107,9 @@ function updateAllContainerData(json, pageData, groupSettings) {
             updateContainerData(hash, containerData[hash], pageData, groupSettings);
         }
     }
+    // TODO: merge the container data for the page (actual reactions on the page itself) with the summary reaction data somehow.
     console.log('done updating data');
-    //json.unknown; TODO: anything to do with this data?
+    //json.unknown; TODO: anything to do with the set of "unknown" hashes?
 }
 
 function updateContainerData(containerHash, jsonData, pageData, groupSettings) {

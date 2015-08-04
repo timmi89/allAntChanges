@@ -1,4 +1,5 @@
 
+var $; require('../script-loader').on$(function(jQuery) { $=jQuery; });
 var URLs = require('./urls');
 
 function createXDMframe(groupId) {

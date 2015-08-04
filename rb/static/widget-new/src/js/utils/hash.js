@@ -1,4 +1,5 @@
 
+var $; require('../script-loader').on$(function(jQuery) { $=jQuery; });
 var MD5 = require('./md5');
 
 // TODO: This is just copy/pasted from engage_full
