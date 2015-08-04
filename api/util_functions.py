@@ -364,7 +364,8 @@ def getSettingsDict(group):
          groupblessedtag__group=group.id
      ).order_by('groupblessedtag__order')
     
-    settings_dict['blessed_tags'] = blessed_tags
+    settings_dict['blessed_tags'] = blessed_tags # deprecated. delete once all client usage is removed.
+    settings_dict['default_reactions'] = blessed_tags
     return settings_dict
 
 def getGlobalActivity():
