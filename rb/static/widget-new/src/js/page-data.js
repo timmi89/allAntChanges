@@ -1,4 +1,3 @@
-
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
 var pages = {};
@@ -69,7 +68,7 @@ function updatePageData(json, groupSettings) {
         // Note that the set of hashes that comes back includes a pair with a key of "page".
         // TODO: Should we keep the entry in the data model with "page" as the key or use the value of urlhash instead?
         for (var i = 0; i < containerEntries.length; i++) {
-            var containerEntry = containerEntries.length;
+            var containerEntry = containerEntries[i];
             var containerData = getContainerData(pageData, containerEntry.hash);
             containerData.id = containerEntry.id;
         }
@@ -86,7 +85,6 @@ function updatePageData(json, groupSettings) {
         totalShares: numShares
     };
     pageData.topReactions = topReactions;
-    // pageData.containers is initialized by above loop
 
     return pageData;
 }
@@ -109,6 +107,7 @@ function updateAllContainerData(json, pageData, groupSettings) {
             updateContainerData(hash, containerData[hash], pageData, groupSettings);
         }
     }
+    console.log('done updating data');
     //json.unknown; TODO: anything to do with this data?
 }
 

@@ -1,4 +1,3 @@
-
 .antenna-reactions-widget {
     display: none;
     position: absolute;
@@ -24,9 +23,8 @@
 }
 
 .antenna-body {
-    height: 300px;
+    height: 300px; /* TODO: this needs to be dynamic */
     position: relative;
-    overflow: hidden;
 }
 
 .antenna-footer {

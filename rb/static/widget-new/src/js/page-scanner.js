@@ -1,4 +1,3 @@
-
 var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var Hash = require('./utils/hash');
 var URLs = require('./utils/urls');
@@ -70,9 +69,10 @@ function scanForText($section, pageData, groupSettings) {
         // TODO hash and add hash data to indicator
         var hash = Hash.hashText($element);
         var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
-        PageData.getContainerData(pageData, hash);
-        var containerData = {}; // TODO get this from a central data store (probably PageData)
-        var indicator = IndicatorWidget.create(container, containerData);
+        // TODO include the set of default reactions
+        var containerData = PageData.getContainerData(pageData, hash);
+        var defaultReactions = groupSettings.defaultReactions($element);
+        var indicator = IndicatorWidget.create(container, containerData, defaultReactions, groupSettings);
         $element.append(container); // TODO is this configurable ala insertContent(...)?
     });
 }

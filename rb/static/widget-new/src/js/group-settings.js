@@ -1,8 +1,4 @@
-
-var $;
-require('./script-loader').on$(function(jQuery) {
-    $=jQuery;
-});
+var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
 // TODO: trim trailing commas from any selector values
 
@@ -85,6 +81,40 @@ function createFromJSON(json) {
         }
     }
 
+    function defaultReactions($element) {
+        // Default reactions are available in three locations in three data formats:
+        // 1. As a comma-separated attribute value on a particular element
+        // 2. As an array of strings on the window.antenna_extend property
+        // 3. As a json object with a body and id on the group settings
+        var reactions = [];
+        var reactionStrings;
+        var elementReactions = $element ? $element.attr('ant-reactions') : undefined;
+        if (elementReactions) {
+            reactionStrings = elementReactions.split(';');
+        } else {
+            reactionStrings = window.antenna_extend['default_reactions'];
+        }
+        if (reactionStrings) {
+            for (var i = 0; i < reactionStrings.length; i++) {
+                reactions.push({
+                    text: reactionStrings[i]
+                })
+            }
+        } else {
+            var values = json['default_reactions'];
+            if (values !== undefined) {
+                for (var j = 0; j < values.length; j++) {
+                    var value = values[j];
+                    reactions.push({
+                        text: value.body,
+                        id: value.id
+                    });
+                }
+            }
+        }
+        return reactions;
+    }
+
     return {
         groupId: data('id'),
         activeSections: data('active_sections'),
@@ -97,6 +127,7 @@ function createFromJSON(json) {
         pageSelector: data('post_selector'),
         pageHrefSelector: data('post_href_selector'),
         textSelector: data('anno_whitelist'),
+        defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors'))
     }
 }
