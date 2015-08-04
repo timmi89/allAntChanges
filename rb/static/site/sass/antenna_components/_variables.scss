@@ -2,6 +2,15 @@
 $navbar-height: 57px !default;
 $navbar-height-mobile: 48px !default;
 
+/*** Typography ***/
+// Header Styles
+$ant-h1-fontsize: 3rem !default;
+$ant-h2-fontsize: 2.5rem !default;
+$ant-h3-fontsize: 2rem !default;
+$ant-h4-fontsize: 1.5rem !default;
+$ant-h5-fontsize: 1rem !default;
+$ant-h6-fontsize: 1rem !default;
+
 // Antenna originals
 // Defining values, modified from Bootstrap to include smaller screen sizes (<481)
 $screen-sm-min: 481px;
@@ -12,3 +21,12 @@ $screen-lg-min: 992px;
 $screen-md-max: ($screen-lg-min - 1);
 $screen-xlg-min: 1200px;
 $screen-lg-max: ($screen-xlg-min - 1);
+
+// Needed to reset the h1, etc sizes
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }
+h1 { font-size: $ant-h1-fontsize; line-height: 110%; margin: ($h1-fontsize / 2) 0 ($h1-fontsize / 2.5) 0;}
+h2 { font-size: $ant-h2-fontsize; line-height: 110%; margin: ($h2-fontsize / 2) 0 ($h2-fontsize / 2.5) 0;}
+h3 { font-size: $ant-h3-fontsize; line-height: 110%; margin: ($h3-fontsize / 2) 0 ($h3-fontsize / 2.5) 0;}
+h4 { font-size: $ant-h4-fontsize; line-height: 110%; margin: ($h4-fontsize / 2) 0 ($h4-fontsize / 2.5) 0;}
+h5 { font-size: $ant-h5-fontsize; line-height: 110%; margin: ($h5-fontsize / 2) 0 ($h5-fontsize / 2.5) 0;}
+h6 { font-size: $ant-h6-fontsize; line-height: 110%; margin: ($h6-fontsize / 2) 0 ($h6-fontsize / 2.5) 0;}

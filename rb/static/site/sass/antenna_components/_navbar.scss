@@ -102,6 +102,17 @@ nav.global {
           font-size: 0.75rem;
           line-height: 1rem;
         }
+
+        svg {
+          width: 20px;
+          display: inline-block;
+          float:left;
+          margin-right: 0.33rem;
+
+          @media (max-width: $screen-xs-max) {
+            float:none;
+          }
+        }
         
         &#ant-create-account {
           border-top:1px solid #ccc;
@@ -122,12 +133,16 @@ nav.global {
       width: auto;
       height: 90px;
       max-width: 50%;
-      margin: -11% 0 -14% -7%;
+      margin: -11% 0 -17% -7%;
     }
 
     li {
       &.user {
         margin: 1rem 0 2rem 0;
+      }
+      &.ant-create-account {
+        margin:1rem;
+        padding-top:1rem;
       }
       a {
         font-size: 1rem;
@@ -153,8 +168,63 @@ nav.global {
       }
     }
 
+    svg {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      float:left;
+      margin-right: 0.33rem;
+
+      @media (max-width: $screen-xs-max) {
+        float:none;
+      }
+    }
+
+    h3 {
+      svg {
+        float:left;
+      }
+    }
+
 
   }
+
+  &#mobile-menu {
+    li {
+      &:hover {
+        h3, a {
+          color: rgba(0,0,0,0.85);
+        }
+      }
+
+      a {
+        color: rgba(255,255,255,0.85);
+        font-size:1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+
+      svg {
+        width: 20px;
+        display: inline-block;
+        float:left;
+        margin-right: 0.33rem;
+
+        @media (max-width: $screen-xs-max) {
+          float:none;
+        }
+      }
+      
+      &#ant-create-account {
+        border-top:1px solid #ccc;
+        text-align: center;
+        font-style: italic;
+        padding: 0.5rem;
+      }
+    }
+  }
+
   .mobile-menu-cta .icon-antenna-icon {
     width: 25px;
     height: 25px;
@@ -171,17 +241,7 @@ nav.global {
 
     svg {
       margin-top:-0.7rem;
-    }
-  }
-
-  svg {
-    width: 20px;
-    display: inline-block;
-    float:left;
-    margin-right: 0.33rem;
-
-    @media (max-width: $screen-xs-max) {
-      float:none;
+      float:left;
     }
   }
 }
