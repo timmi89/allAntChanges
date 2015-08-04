@@ -2033,7 +2033,7 @@ ul {
 .z-depth-0, nav.global {
   box-shadow: none !important; }
 
-.z-depth-1, nav, .btn, .btn-large, .btn-floating, .dropdown-content, .side-nav {
+.z-depth-1, nav, .card-panel, .card, .btn, .btn-large, .btn-floating, .dropdown-content, .side-nav {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12); }
 
 .z-depth-1-half, .btn:hover, .btn-large:hover, .btn-floating:hover {
@@ -5514,6 +5514,106 @@ small {
     .flow-text {
       font-size: 1.2rem; } }
 
+.card-panel {
+  transition: box-shadow .25s;
+  padding: 20px;
+  margin: 0.5rem 0 1rem 0;
+  border-radius: 2px;
+  background-color: #fff; }
+
+.card {
+  position: relative;
+  overflow: hidden;
+  margin: 0.5rem 0 1rem 0;
+  background-color: #fff;
+  transition: box-shadow .25s;
+  border-radius: 2px; }
+  .card .card-title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300; }
+    .card .card-title.activator {
+      cursor: pointer; }
+  .card.small, .card.medium, .card.large {
+    position: relative; }
+    .card.small .card-image, .card.medium .card-image, .card.large .card-image {
+      overflow: hidden; }
+    .card.small .card-content, .card.medium .card-content, .card.large .card-content {
+      overflow: hidden; }
+    .card.small .card-action, .card.medium .card-action, .card.large .card-action {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0; }
+  .card.small {
+    height: 300px; }
+    .card.small .card-image {
+      height: 150px; }
+    .card.small .card-content {
+      height: 150px; }
+  .card.medium {
+    height: 400px; }
+    .card.medium .card-image {
+      height: 250px; }
+    .card.medium .card-content {
+      height: 150px; }
+  .card.large {
+    height: 500px; }
+    .card.large .card-image {
+      height: 330px; }
+    .card.large .card-content {
+      height: 170px; }
+  .card .card-image {
+    position: relative; }
+    .card .card-image img {
+      border-radius: 2px 2px 0 0;
+      position: relative;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%; }
+    .card .card-image .card-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: 20px; }
+  .card .card-content {
+    padding: 20px;
+    border-radius: 0 0 2px 2px; }
+    .card .card-content p {
+      margin: 0;
+      color: inherit; }
+    .card .card-content .card-title {
+      line-height: 48px; }
+  .card .card-action {
+    border-top: 1px solid rgba(160, 160, 160, 0.2);
+    padding: 20px; }
+    .card .card-action a {
+      color: #ffab40;
+      margin-right: 20px;
+      -webkit-transition: color 0.3s ease;
+      -moz-transition: color 0.3s ease;
+      -o-transition: color 0.3s ease;
+      -ms-transition: color 0.3s ease;
+      transition: color 0.3s ease;
+      text-transform: uppercase; }
+      .card .card-action a:hover {
+        color: #ffd8a6; }
+  .card .card-reveal {
+    padding: 20px;
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+    overflow-y: auto;
+    top: 100%;
+    height: 100%;
+    z-index: 1;
+    display: none; }
+    .card .card-reveal .card-title {
+      cursor: pointer;
+      display: block; }
+
 .material-tooltip {
   padding: 10px 8px;
   font-size: 1rem;
@@ -6783,30 +6883,27 @@ select {
   z-index: 997;
   will-change: opacity; }
 
-/*** Fonts ***/
-/* Helvetica font stack */
-/* via http://www.grputland.com/2013/11/multiplatform-helvetica-like-font-stack.html#disqus_thread */
 /*** Typography ***/
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
   font-weight: inherit; }
 
 h1 {
-  font-size: 3rem;
+  font-size: 2.75rem;
   line-height: 110%;
   margin: 2.1rem 0 1.68rem 0; }
 
 h2 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   line-height: 110%;
   margin: 1.78rem 0 1.424rem 0; }
 
 h3 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 110%;
   margin: 1.46rem 0 1.168rem 0; }
 
 h4 {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   line-height: 110%;
   margin: 1.14rem 0 0.912rem 0; }
 
@@ -6819,6 +6916,56 @@ h6 {
   font-size: 1rem;
   line-height: 110%;
   margin: 0.5rem 0 0.4rem 0; }
+
+.popup-form h1 {
+  font-size: 2rem; }
+
+/*** Fonts ***/
+/* Helvetica font stack */
+/* via http://www.grputland.com/2013/11/multiplatform-helvetica-like-font-stack.html#disqus_thread */
+h1 {
+  font-weight: 900;
+  margin-bottom: 0; }
+
+.popup-form h1 {
+  margin-bottom: 1.68rem; }
+
+h1.line-behind,
+h2.line-behind,
+h3.line-behind,
+h4.line-behind {
+  position: relative;
+  z-index: 1; }
+  h1.line-behind:before,
+  h2.line-behind:before,
+  h3.line-behind:before,
+  h4.line-behind:before {
+    border-top: 1px solid #ccc;
+    content: "";
+    margin: 0 auto;
+    /* this centers the line to the full width specified */
+    position: absolute;
+    /* positioning must be absolute here, and relative positioning must be applied to the parent */
+    top: 50%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 95%;
+    z-index: -1; }
+  h1.line-behind span,
+  h2.line-behind span,
+  h3.line-behind span,
+  h4.line-behind span {
+    /* to hide the lines from behind the text, you have to set the background color the same as the container */
+    background: #fff;
+    padding: 0 15px; }
+
+h1.serif,
+h2.serif,
+h3.serif,
+h4.serif {
+  font-family: Georgia, serif;
+  font-style: italic; }
 
 body {
   font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif; }
@@ -6837,6 +6984,37 @@ input:-ms-input-placeholder {
   color: #fff;
   padding: 0.5rem;
   margin: 1rem 0; }
+
+.tip {
+  background: #2f5863;
+  color: #fff;
+  font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 1.25px; }
+
+form.popupForm {
+  padding-bottom: 2rem; }
+form input[type=text],
+form input[type=password],
+form input[type=email],
+form input[type=url],
+form input[type=time],
+form input[type=date],
+form input[type=datetime-local],
+form input[type=tel],
+form input[type=number],
+form input[type=search],
+form textarea.materialize-textarea {
+  height: 2rem; }
+
+.btn, .btn-large, .btn-flat {
+  border-radius: 0; }
+
+.btn-small {
+  padding: 0.5rem;
+  height: auto;
+  line-height: 1rem; }
 
 @media only screen and (min-width: 601px) {
   .container {
@@ -7041,73 +7219,91 @@ nav.global {
     top: 30%;
     right: 0%; }
   nav.global h3 {
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: bold;
-    margin: 1rem 1rem;
-    color: #fff; }
-    nav.global h3 svg {
-      margin-top: -0.7rem;
-      float: left; }
+    margin: 1rem 0rem;
+    color: #dec164; }
 
-.masthead {
+section.masthead {
   background-size: 100%;
-  position: absolute;
   width: 100%;
   height: 100%; }
-  .masthead h1 {
-    color: #fff; }
-    .masthead h1 .line-one {
-      font-weight: 100; }
-    .masthead h1 .line-two {
-      font-weight: 400; }
-      .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
-        position: relative;
-        top: -30px; }
-        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
-          color: #fff;
-          font-size: 30px; }
-        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
-          font-size: 18px;
-          font-weight: 100;
-          color: #fff; }
-    .masthead h1 .line-three {
-      font-weight: 900; }
-  .masthead h3 {
-    color: #fff;
-    font-weight: 100; }
-    .masthead h3 .adjective {
-      color: #dec164; }
-
+  section.masthead .container {
+    overflow: hidden; }
+    section.masthead .container h1 {
+      color: #fff; }
+      section.masthead .container h1 .line-one {
+        font-weight: 100; }
+      section.masthead .container h1 .line-two {
+        font-weight: 400; }
+        section.masthead .container h1 .line-two div.ant_indicator.ant_indicator_for_text {
+          position: relative;
+          top: -30px; }
+          section.masthead .container h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
+            color: #fff;
+            font-size: 30px; }
+          section.masthead .container h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
+            font-size: 18px;
+            font-weight: 100;
+            color: #fff; }
+      section.masthead .container h1 .line-three {
+        font-weight: 900; }
+    section.masthead .container h3 {
+      color: #fff;
+      font-weight: 100;
+      position: absolute;
+      bottom: 15%; }
+      section.masthead .container h3 .adjective {
+        color: #dec164; }
 @media (max-width: 480px) {
-  .masthead {
+  section.masthead {
     background-image: url("/static/site/images/many_voices_mobile.jpg"); }
-    .masthead h1 {
+    section.masthead h1 {
       font-size: 3rem;
       margin: 10% 0; }
-      .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
+      section.masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
         position: relative;
         top: -10px; }
-        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
+        section.masthead h1 .line-two div.ant_indicator.ant_indicator_for_text .ant-antenna-logo {
           font-size: 20px; }
-        .masthead h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
+        section.masthead h1 .line-two div.ant_indicator.ant_indicator_for_text span.ant_count {
           font-size: 14px; }
-    .masthead h3 {
+    section.masthead h3 {
       font-size: 1.75rem; } }
 @media (min-width: 481px) {
-  .masthead {
+  section.masthead {
     background-image: url("/static/site/images/many_voices_medium.jpg"); }
-    .masthead h1 {
+    section.masthead h1 {
       font-size: 4.5rem;
       margin: 10% 0; }
-    .masthead h3 {
+    section.masthead h3 {
       font-size: 2.25rem; } }
 @media (min-width: 992px) {
-  .masthead {
+  section.masthead {
     background-image: url("/static/site/images/many_voices.jpg"); }
-    .masthead h1 {
+    section.masthead h1 {
       font-size: 7rem;
       margin: 10% 0; }
-    .masthead h3 {
+    section.masthead h3 {
       font-size: 2.75rem; } }
+section.see-it-now .icon-antenna-icon {
+  width: 20px;
+  margin-bottom: -11px; }
+section.see-it-now .center-align p {
+  text-align: left;
+  font-family: Georia, serif;
+  font-style: italic;
+  margin-bottom: 1rem; }
+section.see-it-now .center-align h4.line-behind {
+  margin-bottom: 0; }
+section.see-it-now .center-align .card-action {
+  font-size: 0.8rem; }
+section.see-it-now .center-align img, section.see-it-now .center-align iframe {
+  width: 100%; }
+section.see-it-now .center-align.l5 iframe {
+  height: 235px; }
+
+.ant.ant-summary {
+  display: none !important; }
 
 /*# sourceMappingURL=site_sass_compiled.css.map */

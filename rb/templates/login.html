@@ -1,6 +1,6 @@
 {% extends "popup_form.html" %}
 
-{% block wideContent %}
+{% block page_content %}
 <div id="sidebar">
 </div>
 {% endblock wideContent %}
@@ -43,7 +43,7 @@
   
   {% block msgHeader %}
   <h1>Antenna Login</h1>
-  <h3 style="font-size: 14px;">Please log in.</h3>
+  <h3>Please log in.</h3>
   {% endblock msgHeader %}
  
   <div id="login-options" style="overflow:auto;">
@@ -65,16 +65,11 @@
 
   </div>
 
-{% endblock mainContent %}
+{% endblock  %}
 
 {% block page_js %}
 {% endblock %}
 
-{% block uservoice %}
-{% endblock uservoice %}
-
-{% block fixedBar %}
-{% endblock fixedBar %}
 
 {% block footer %}
 {% endblock footer %}

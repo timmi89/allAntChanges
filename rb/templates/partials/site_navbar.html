@@ -21,7 +21,7 @@
 
           <div id="site_search" style="display:inline-block;">
             <form method="get" id="searchform" action="">
-                <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search" />
+                <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search reactions" />
             </form>
           </div>
           <script>
@@ -139,11 +139,12 @@
           <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
           <svg class="icon-antenna-text"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-text"></use></svg>
         </li>
+        <li><h3>Find Out More</h3></li>
         <li><a href="/publishers/">For Publishers</a></li>
         <li><a href="/retailers/">For Retailers</a></li>
         <li>
           <form method="get" id="searchform" action="">
-              <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search" />
+              <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search reactions" />
           </form>
         </li>
 
@@ -160,6 +161,7 @@
         {% endif %}
 
         {% if not cookie_user.social_user %}
+        <li><h3>Sign Up / Log In</h3></li>
         <li class="fb-login-button">
           <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();">
             <svg class="icon-social"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-social-facebook"></use></svg>

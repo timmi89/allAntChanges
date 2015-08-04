@@ -7,7 +7,7 @@
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/{% else %}http://www.antenna.is/{% endif %}">
 {%endblock%}
 
-{% block bodyClass %}xno-ant {% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
+{% block bodyClass %}{% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
 
 {% block navbar %}
   {% include "partials/site_navbar.html" %}
@@ -31,8 +31,55 @@
     </h3>
   </div>
 </section>
-<section class="">
-  oh hai world
+<section class="see-it-now">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>See Antenna in Action</h1>
+        <em>Look for the Antenna icon to react to specific content: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col l3 m12 center-align">
+        <h4 class="line-behind serif"><span>Articles</span></h4>
+        <div class="card">
+          <div class="card-content">
+            <p>It was a dark and stormy night; the rain fell in torrents, except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets (for it is in London that our scene lies), rattling along the house-tops, and fiercely agitating the scanty flame of the lamps that struggled against the darkness.</p>
+            <p>Through one of the obscurest quarters of London, and among haunts little loved by the gentlemen of the police, a man, evidently of the lowest orders, was wending his solitary way.</p>
+            <!-- <p>He stopped twice or thrice at different shops and houses of a description correspondent with the appearance of the quartier in which they were situated, and tended inquiry for some article or another which did not seem easily to be met with.</p> -->
+          </div>
+        </div>
+        <div class="card-action">
+          <p class="hide-on-small-only"><strong class="btn tip btn-small">Tip:</strong> <em>Select some text, or rest your mouse over the text for a moment.</em></p>
+          <p class="hide-on-med-and-up"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
+          <p><em>Excerpt from <strong>Paul Clifford</strong> by Edward Bulwer-Lytton, via <a href="http://www.gutenberg.org/files/7735/7735-h/7735-h.htm#link2HCH0001" target="_blank">Project Gutenberg</a>Select some text, or rest your mouse over the text for a moment.</em></p>
+        </div>
+      </div>
+      <div class="col l5 m6 s12 center-align">
+        <h4 class="line-behind serif"><span>Videos</span></h4>
+        <div class="card">
+          <div class="card-content">
+            <iframe src="https://player.vimeo.com/video/134530201?color=ffffff&title=0&byline=0&portrait=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
+          </div>
+        </div>
+        <div class="card-action">
+          <em><a href="https://vimeo.com/134530201" target="_blank">PATAGONIA 8K</a> from <a target="_blank" href="https://vimeo.com/timestormfilms">Martin Heck | Timestorm Films</a> on <a target="_blank" href="https://vimeo.com">Vimeo</a>.</em>
+        </div>
+      </div>
+      <div class="col l4 m6 s12 center-align">
+        <h4 class="line-behind serif"><span>Images</span></h4>
+        <div class="card">
+          <div class="card-content">
+            <img src="{{ STATIC_URL }}/site/images/see-it-image.jpg"/>
+          </div>
+          <div class="card-action">
+            <em>via <a href="https://download.unsplash.com/photo-1431578500526-4d9613015464" target="_blank">Unsplash</a></em>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
 {% endblock %}
 
@@ -40,7 +87,7 @@
 <script>
 window.antenna_extend = {
   active_sections: '.container',
-  anno_whitelist: 'h1 .line-two'
+  anno_whitelist: 'h1 .line-two, .card-content p'
 };
 
 function SelectText(element) {
@@ -63,6 +110,8 @@ function SelectText(element) {
 
 el = $('h1 .line-two')[0];
 SelectText(el);
+
+$('.masthead').height( $(window).height() );
 
 </script>
 

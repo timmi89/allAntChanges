@@ -19,7 +19,7 @@
 @import "materialize_components/navbar";
 // @import "materialize_components/roboto";
 @import "materialize_components/typography";
-// @import "materialize_components/cards";
+@import "materialize_components/cards";
 // @import "materialize_components/toast";
 // @import "materialize_components/tabs";
 @import "materialize_components/tooltip";
@@ -40,9 +40,11 @@
 
 
 @import "antenna_components/mixins";
-@import "antenna_components/fonts";
 @import "antenna_components/variables";
+@import "antenna_components/typography";
 @import "antenna_components/global";
+@import "antenna_components/form";
+@import "antenna_components/buttons";
 @import "antenna_components/grid";
 @import "antenna_components/icons";
 @import "antenna_components/navbar";
