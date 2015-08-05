@@ -228,8 +228,8 @@ function sizeBodyToFit(ractive, $element, animate) {
 }
 
 function openWindow(ractive) {
-    // TODO Before opening a new window, always forcibly close any that are already open.
     return function(relativeElement) {
+        $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
         var $relativeElement = $(relativeElement);
         var offset = $relativeElement.offset();
         var coords = {
@@ -246,8 +246,12 @@ function openWindow(ractive) {
 function setupWindowClose(ractive) {
     var $rootElement = $(rootElement(ractive));
 
+    // TODO: If you mouse over the trigger slowly from the top left, the window opens without being under the cursor,
+    //       so no mouseout event is received. When we open the window, we should probably just scoot it up slightly
+    //       if needed to assure that it's under the cursor. Alternatively, we could adjust the mouseover area to match
+    //       the region that the window opens.
     $rootElement
-        .on('mouseout.antenna', delayedCloseWindow())
+        .on('mouseout.antenna', delayedCloseWindow)
         .on('mouseover.antenna', keepWindowOpen)
         .on('focusin.antenna', function() {
             // Once the window has focus, don't close it on mouseout.
@@ -258,16 +262,19 @@ function setupWindowClose(ractive) {
         .on('focusout.antenna', function() {
             closeWindow();
         });
+    $(document).on('click.antenna', function(event) {
+        if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
+            closeWindow();
+        }
+    });
 
     var closeTimer;
 
     function delayedCloseWindow() {
-        return function() {
-            closeTimer = setTimeout(function() {
-                closeTimer = null;
-                closeWindow();
-            }, 500);
-        };
+        closeTimer = setTimeout(function() {
+            closeTimer = null;
+            closeWindow();
+        }, 500);
     }
 
     function keepWindowOpen() {
@@ -280,9 +287,9 @@ function setupWindowClose(ractive) {
         $rootElement.stop(true, true).fadeOut('fast', function() {
             $rootElement.css('display', ''); // Clear the display:none that fadeOut puts on the element
             $rootElement.removeClass('open');
-
-            $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         });
+        $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
+        $(document).off('click.antenna');
     }
 }
 
