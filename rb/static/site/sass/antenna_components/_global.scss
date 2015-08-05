@@ -1,23 +1,31 @@
 body {
     font-family: $sans-serif;
+
+    footer {
+        &.page-footer {
+
+        }
+    }
 }
 
-input {
+input { 
   @include placeholder {
     color: rgba(255,255,255,1);
   }
 }
 
+strong { font-weight:700; }
+
 .error {
     background: $antenna-red;
-    color:#fff;
+    color:$white;
     padding:0.5rem;
     margin:1rem 0;
 }
 
 .tip {
     background:$antenna-dk-blue;
-    color:#fff;
+    color:$white;
     font-family: $sans-serif;
     font-style: normal;
     font-weight:400;

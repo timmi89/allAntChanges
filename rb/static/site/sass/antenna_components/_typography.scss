@@ -6,7 +6,7 @@ $serif: Georgia, serif;
 
 
 // Materialize overrides
-h1 { font-weight:900; margin-bottom: 0; }
+h1 { font-weight:900; margin-bottom: 0.5rem; }
 .popup-form {
     h1 {
         margin-bottom:1.68rem; // Materialize default
@@ -32,11 +32,10 @@ h4.line-behind {
 
     span { 
         /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
-        background: #fff;
+        background: $white;
         padding: 0 15px; 
     }
 }
-
 
 h1.serif,
 h2.serif,

@@ -1,0 +1,17 @@
+section {
+    margin-bottom:-20px;
+
+    .dark-section {
+        background:$black;
+        color:$white;
+
+        h1.line-behind,
+        h2.line-behind,
+        h3.line-behind,
+        h4.line-behind {
+            span { 
+                background: $black;
+            }
+        }
+    }
+}

@@ -22,7 +22,7 @@
     <h1>
       <div class="line-one">Say what you think</div>
       <div class="line-two">about anything</div>
-      <div class="line-three">with a click.</div>
+      <div class="line-three">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
       <!-- <div class="center test-cta-2" ant-cta-for="about-anything" ant-mode="write" ant-offset-x="0" ant-offset-y="50">Your Response</div> -->
     </h1>
     <h3>
@@ -36,12 +36,13 @@
     <div class="row">
       <div class="col s12">
         <h1>See Antenna in Action</h1>
-        <em>Look for the Antenna icon to react to specific content: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+        <em>Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
       </div>
     </div>
     <div class="row">
       <div class="col l3 m12 center-align">
         <h4 class="line-behind serif"><span>Articles</span></h4>
+        <p class="hide-on-med-and-up"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
         <div class="card">
           <div class="card-content">
             <p>It was a dark and stormy night; the rain fell in torrents, except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets (for it is in London that our scene lies), rattling along the house-tops, and fiercely agitating the scanty flame of the lamps that struggled against the darkness.</p>
@@ -51,7 +52,6 @@
         </div>
         <div class="card-action">
           <p class="hide-on-small-only"><strong class="btn tip btn-small">Tip:</strong> <em>Select some text, or rest your mouse over the text for a moment.</em></p>
-          <p class="hide-on-med-and-up"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
           <p><em>Excerpt from <strong>Paul Clifford</strong> by Edward Bulwer-Lytton, via <a href="http://www.gutenberg.org/files/7735/7735-h/7735-h.htm#link2HCH0001" target="_blank">Project Gutenberg</a>Select some text, or rest your mouse over the text for a moment.</em></p>
         </div>
       </div>
@@ -78,6 +78,79 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+<section class="customize-the-ui dark-section no-ant">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>Customize for your community</h1>
+        <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 center-align examples">
+        <img src="{{ STATIC_URL }}site/images/example_default.png" />
+        <img src="{{ STATIC_URL }}site/images/example_perez.png" />
+        <img src="{{ STATIC_URL }}site/images/example_esplota.png" />
+        <img src="{{ STATIC_URL }}site/images/example_dlisted.png" />
+        <img src="{{ STATIC_URL }}site/images/example_cheatsheet.png" />
+        <img src="{{ STATIC_URL }}site/images/example_bigroundtable.png" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="success no-ant">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m8">
+        <h1>Perfect for sports, fashion, tech, news, and more.</h1>
+        <h3>View out our gallery of examples, including:</h3>
+        <div class="row gallery-links">
+          <div class="col s12 m6">
+            <div><a href="/examples/news">News article</a></div>
+            <div><a href="/examples/sports">Sports article</a></div>
+          </div>
+          <div class="col s12 m6">
+            <div><a href="/examples/fashion">Fashion magazine</a></div>
+            <div>and <a href="/examples/">more</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="col m4 center-align hide-on-small-only">
+        <img src="{{ STATIC_URL }}site/images/success.png" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quote no-ant dark-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s4 center-align">
+        <img src="{{ STATIC_URL }}site/images/alexis.jpg" class="circle" />
+      </div>
+      <div class="col s8">
+        <blockquote>
+          "Antenna shows exactly what readers are thinking without the hurdles or noise of traditional commenting sections. That's huge."
+        </blockquote>
+        <div class="attribution">- Alexis Ohanian, reddit cofounder & Antenna Adviser</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="big-cta no-ant">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m6 center-align">
+        Publishers
+      </div>
+      <div class="col s12 m6 center-align">
+        Retailers
+      </div>
     </div>
   </div>
 </section>
@@ -108,8 +181,12 @@ function SelectText(element) {
     }
 }
 
-el = $('h1 .line-two')[0];
-SelectText(el);
+// auto-initiate Antenna on the masthead if we're near the top of the page at page load
+var $window = $(window);
+if ( $window.scrollTop() / $window.height() < 0.25 ) {
+  el = $('h1 .line-two')[0];
+  SelectText(el);
+}
 
 $('.masthead').height( $(window).height() );
 

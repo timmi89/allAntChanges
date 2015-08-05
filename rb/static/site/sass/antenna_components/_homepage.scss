@@ -10,7 +10,7 @@ section {
       overflow: hidden;
 
       h1 {
-        color:#fff;
+        color:$white;
 
         .line-one { font-weight:100; }
         .line-two { 
@@ -19,16 +19,19 @@ section {
           div.ant_indicator.ant_indicator_for_text {
             position: relative;
             top: -30px;
+            @media (max-width: $screen-xs-max) {
+              top: -15px;
+            }
 
             .ant-antenna-logo {
-              color:#fff;
+              color:$white;
               font-size:30px;
             }
 
             span.ant_count {
               font-size: 18px;
               font-weight: 100;
-              color: #fff;
+              color: $white;
             }
           }
         }
@@ -36,7 +39,7 @@ section {
       }
 
       h3 { 
-        color:#fff;
+        color:$white;
         font-weight:100;
         position: absolute;
         bottom: 15%;
@@ -130,6 +133,53 @@ section {
         iframe { height:235px; } 
       }
     }
+  }
+
+  &.customize-the-ui {
+    .examples {
+      img { margin:1rem 2rem; }
+    }
+
+    h2 {margin-bottom:4rem;}
+  }
+
+  .gallery-links {
+    font-size:2rem; 
+    a {
+      background:$antenna-lt-blue;
+      color:$white;
+
+      &:hover {
+        background:$antenna-yellow;
+        color:$black;
+      }
+    }
+  }
+
+  &.quote {
+
+    .col {padding:3rem;}
+    blockquote {
+      border-color:$black;
+      color:$black;
+      font-family: $serif;
+      font-style:italic;
+      font-size:2.25rem;
+    }
+
+    &.dark-section {
+      blockquote {
+        border-color:$white;
+        color:$white;
+      }
+    }
+
+    .attribution {
+      font-size:1.5rem;
+    }
+
+    img { width:100%; max-width:250px; }
+
   }
 }
 
