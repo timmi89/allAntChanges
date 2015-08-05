@@ -7221,17 +7221,19 @@ form textarea.materialize-textarea {
       top: 30%;
       right: 0%; }
 
-section .row {
-  margin-bottom: 0;
-  padding-bottom: 20px; }
-section .dark-section {
-  background: #000;
-  color: #fff; }
-  section .dark-section h1.line-behind span,
-  section .dark-section h2.line-behind span,
-  section .dark-section h3.line-behind span,
-  section .dark-section h4.line-behind span {
-    background: #000; }
+section {
+  padding: 2rem 0; }
+  section .row {
+    margin-bottom: 0;
+    padding-bottom: 20px; }
+  section.dark-section {
+    background: #000;
+    color: #fff; }
+    section.dark-section h1.line-behind span,
+    section.dark-section h2.line-behind span,
+    section.dark-section h3.line-behind span,
+    section.dark-section h4.line-behind span {
+      background: #000; }
 
 .global-footer {
   background: #000;

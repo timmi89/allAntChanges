@@ -1,10 +1,12 @@
 section {
+    padding:2rem 0;
+
     .row {
         margin-bottom:0;
         padding-bottom:20px;
     }
 
-    .dark-section {
+    &.dark-section {
         background:$black;
         color:$white;
 
