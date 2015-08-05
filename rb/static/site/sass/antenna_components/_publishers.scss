@@ -12,14 +12,16 @@
       h3 {margin-top:0.5rem;}
     }
 
-
-    @media (max-width: $screen-xs-max) {
+    &.mobile-sign-up {
+      display:none;
     }
 
-    @media (min-width: $screen-sm-min) {
-    }
-
-    @media (min-width: $screen-lg-min) {
+    // @media (max-width: $screen-xs-max) {
+    // $screen-md-min
+    @media (max-width: $screen-sm-max) {
+      &.mobile-sign-up {
+        display:block;
+      }
     }
   }
 }
