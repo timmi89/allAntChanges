@@ -1,0 +1,23 @@
+section {
+  &.masthead {
+    }
+
+
+  @media (max-width: $screen-xs-max) {
+      &.masthead {
+          background-image: url('/static/site/images/many_voices_mobile.jpg');
+      }
+  }
+
+  @media (min-width: $screen-sm-min) {
+      &.masthead {
+          background-image: url('/static/site/images/many_voices_medium.jpg');
+      }
+  }
+
+  @media (min-width: $screen-lg-min) {
+      &.masthead {
+          background-image: url('/static/site/images/many_voices.jpg');
+      }
+  }
+}

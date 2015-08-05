@@ -24,7 +24,7 @@ module.exports = function(grunt) {
                         // '../site/js/materialize/leanModal.js', 
                         // '../site/js/materialize/materialbox.js', 
                         // '../site/js/materialize/parallax.js', 
-                        // '../site/js/materialize/pushpin.js', 
+                        '../site/js/materialize/pushpin.js', 
                         // '../site/js/materialize/scrollFire.js', 
                         // '../site/js/materialize/scrollspy.js', 
                         '../site/js/materialize/sideNav.js', 

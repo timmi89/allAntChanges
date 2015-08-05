@@ -1,0 +1,25 @@
+{% extends "base/base.html" %}
+
+{% block layoutHeadAdditions %}{% endblock %}
+{% block pageHeadAdditions %}{% endblock %}
+
+{% block bodyClass %}{% endblock %}
+
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
+
+{% block layout %}
+  <div class="fixed-right-buffer">&nbsp;</div>
+  <div class="page-content">
+  {% block page_content %}{% endblock %}
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {% include "partials/site_footer.html" %}
+{% endblock footer %}
+
+
+{% block page_js %}
+{% endblock %}

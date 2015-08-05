@@ -1,0 +1,124 @@
+{% extends "base/wide-fixed-right.html" %}
+
+{% block page_title %}Antenna for Publishers{% endblock %}lock%}
+{% block page_description %}Structured feedback from online audiences.{%endblock%}
+
+{% block pageHeadAdditions %}
+<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/publishers/{% else %}http://www.antenna.is/publishers/{% endif %}">
+{%endblock%}
+
+{% block bodyClass %}publishers{% endblock %}
+
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
+
+{% block page_content %}
+<section class="masthead dark-section">
+  <div class="container row">
+    <div class="col s12 m9">
+      Antenna for Publishers
+      <h1>
+        <div class="line-three">Structured Feedback</div>
+        <div class="line-one">on your content.</div>
+        <div class="line-two"><br/>Not open mic night.</div>
+      </h1>
+    </div>
+    <div class="col m3 fixed-right-sidebar">
+      <div class="fixed-right-sidebar-content">
+        <div class="content-wrapper">
+          <h2>
+            <div class="line-two">Get Antenna</div>
+            <div class="line-one">for your website</div>
+          </h2>
+          <p>Antenna is a free engagement tool that lifts your metrics and builds your community.</p>
+          <p>It is free to install!  Contact us now for instructions:</p>
+          <label>Enter Your Email Address</label>
+          <input type="text" name="email"/>
+          <label>Enter Your Website URL</label>
+          <input type="text" name="website"/>
+          <button class="btn btn-large dk-blue">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>Comments are great... sometimes.</h1>  
+      <p>But most people don’t have to read and write good ones.  <strong>You sure don't.</strong></p>
+      <p>Antenna's in-line reaction tool gets more readers leaving feedback, yet it’s far easier to understand and get value from structured feedback than from comments.</p>
+    </div>
+  </div>
+  <div class="container row publisher-benefits">
+    <div class="col s12 m3 center-align">
+      <h1>15%</h1>  
+      <h3>of users engage<br/>Antenna</h3>
+      <p>Increase your "most active" user segment simply by empowering them.</p>
+    </div>
+    <div class="col s12 m3 center-align">
+      <h1>50x</h1>  
+      <h3>More engagement than comments on mobile</h3>
+      <p>Mobile readers have something to say.  Capture it.</p>
+    </div>
+    <div class="col s12 m3 center-align">
+      <h1>$$</h1>  
+      <h3>Increase Revenue<br/>(beta)</h3>
+      <p>Increase engagement on native ad content. Syndicate your content.</p>
+    </div>
+  </div>
+</section>
+
+<section class="">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>Antenna is Mobile First</h1>
+      <p>In just two taps on a phone, touchpad, or a mouse, readers can tell you that a video is funny, or a sentence is insightful, and much more.</p>
+      <img src="{{STATIC_URL}}site/images/mobile_first.jpg"/>
+    </div>
+  </div>
+</section>
+
+<section class="dark-section">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>Beautiful and On-Brand</h1>
+      <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
+    </div>
+  </div>
+  <div class="container row">
+    <div class="col s12 m8 center-align examples">
+      <img src="{{ STATIC_URL }}site/images/example_default.png" />
+      <img src="{{ STATIC_URL }}site/images/example_perez.png" />
+      <img src="{{ STATIC_URL }}site/images/example_esplota.png" />
+      <img src="{{ STATIC_URL }}site/images/example_dlisted.png" />
+      <img src="{{ STATIC_URL }}site/images/example_cheatsheet.png" />
+      <img src="{{ STATIC_URL }}site/images/example_bigroundtable.png" />
+    </div>
+  </div>
+</section>
+
+<section class="">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>All Voices, Your Voice</h1>
+      <p>Antenna's grid summarizes both majority &amp; minority views in seconds</p>
+      <p>And since you set the default reactions, most feedback uses language you and your community are guaranteed to enjoy and understand.</p>
+      <!-- <img src="{{STATIC_URL}}site/images/mobile_first.jpg"/> -->
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}
+
+{% block page_js %}
+<script>
+$(document).ready(function(){
+  $('.fixed-right-sidebar-content').pushpin({ top: 0 });
+});
+
+</script>
+{% endblock %}

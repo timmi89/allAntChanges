@@ -1,0 +1,25 @@
+.publishers {
+  section {
+    &.masthead {
+        background-image: url('/static/site/images/open_mic.jpg');
+        background-size: 75%;
+        background-position: 0% 50%;
+      }
+
+
+    .publisher-benefits {
+      h1 {font-size:4rem;margin-bottom:0.5rem;}
+      h3 {margin-top:0.5rem;}
+    }
+
+
+    @media (max-width: $screen-xs-max) {
+    }
+
+    @media (min-width: $screen-sm-min) {
+    }
+
+    @media (min-width: $screen-lg-min) {
+    }
+  }
+}

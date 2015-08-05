@@ -14,16 +14,12 @@
 {% endblock navbar %}
 
 {% block page_content %}
-<style>
-
-</style>
 <section class="masthead">
   <div class="container">
     <h1>
       <div class="line-one no-ant">Say what you think</div>
       <div class="line-two">about anything</div>
       <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
-      <!-- <div class="center test-cta-2" ant-cta-for="about-anything" ant-mode="write" ant-offset-x="0" ant-offset-y="50">Your Response</div> -->
     </h1>
     <h3>
       <div class="line-one no-ant">Meaningful, mobile-first feedback</div>
@@ -35,7 +31,7 @@
   <div class="container">
     <div class="row">
       <div class="col s12">
-        <h1 class="no-ant">See Antenna in Action</h1>
+        <h1 class="no-ant">Try It Out!</h1>
         <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
       </div>
     </div>
@@ -47,7 +43,6 @@
           <div class="card-content">
             <p>It was a dark and stormy night; the rain fell in torrents, except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets (for it is in London that our scene lies), rattling along the house-tops, and fiercely agitating the scanty flame of the lamps that struggled against the darkness.</p>
             <p>Through one of the obscurest quarters of London, and among haunts little loved by the gentlemen of the police, a man, evidently of the lowest orders, was wending his solitary way.</p>
-            <!-- <p>He stopped twice or thrice at different shops and houses of a description correspondent with the appearance of the quartier in which they were situated, and tended inquiry for some article or another which did not seem easily to be met with.</p> -->
           </div>
         </div>
         <div class="card-action no-ant">
@@ -172,6 +167,26 @@
         <button class="btn btn-large">Sign Up</button>
       </div>
     </div>
+    <div class="row learn-more-boxes">
+      <div class="col s12 m6 center-align">
+        <div class="card">
+          <div class="card-content">
+            <h3>Publishers</h3>
+            <h4>Antenna will help you engage visitors, enhance editorial feedback, and provide valuable analytics and insight.</h4>
+            <a href="/publishers/" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m6 center-align">
+        <div class="card">
+          <div class="card-content">
+            <h3>Retailers</h3>
+            <h4>Antenna will provide you with valuable product feedback and help customers make quick and informed decisions.</h4>
+            <a href="/publishers/" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}
@@ -212,5 +227,5 @@ $('.masthead').height( $(window).height() );
 
 </script>
 
-<script async src="/static/engage_full.js"></script>
+<script async src="/static/engage.js"></script>
 {% endblock %}

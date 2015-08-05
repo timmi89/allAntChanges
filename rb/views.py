@@ -71,7 +71,7 @@ def home(request):
       context_instance=RequestContext(request)
     )
 
-def see(request):
+def old_demo(request):
     cookie_user = checkCookieToken(request)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -82,7 +82,7 @@ def see(request):
         context['cookie_user'] = cookie_user
 
     return render_to_response(
-      "see.html",
+      "old_demo.html",
       context,
       context_instance=RequestContext(request)
     )
@@ -152,7 +152,7 @@ def privacy(request):
       context_instance=RequestContext(request)
     )
 
-def learn(request):
+def publishers(request):
     cookie_user = checkCookieToken(request)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -163,7 +163,7 @@ def learn(request):
         context['cookie_user'] = cookie_user
 
     return render_to_response(
-      "learn.html",
+      "publishers.html",
       context,
       context_instance=RequestContext(request)
     )
