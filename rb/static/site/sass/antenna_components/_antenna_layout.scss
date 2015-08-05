@@ -1,5 +1,8 @@
 section {
-    margin-bottom:-20px;
+    .row {
+        margin-bottom:0;
+        padding-bottom:20px;
+    }
 
     .dark-section {
         background:$black;
@@ -13,5 +16,20 @@ section {
                 background: $black;
             }
         }
+    }
+}
+
+.global-footer {
+    background:$black;
+    color:$white;
+    padding:1rem 0;
+
+    .ant-heart {
+        width: 20px;
+        margin-bottom: -10px;
+    }
+
+    a {
+        color: $white;
     }
 }

@@ -20,14 +20,14 @@
 <section class="masthead">
   <div class="container">
     <h1>
-      <div class="line-one">Say what you think</div>
+      <div class="line-one no-ant">Say what you think</div>
       <div class="line-two">about anything</div>
-      <div class="line-three">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
+      <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
       <!-- <div class="center test-cta-2" ant-cta-for="about-anything" ant-mode="write" ant-offset-x="0" ant-offset-y="50">Your Response</div> -->
     </h1>
     <h3>
-      <div class="line-one">Meaningful, mobile-first feedback</div>
-      <div class="line-two">for a <span class="adjective">multi-<strong>{{ multi_adjective }}</strong></span> world.</div>
+      <div class="line-one no-ant">Meaningful, mobile-first feedback</div>
+      <div class="line-two no-ant">for a <span class="adjective">multi-<strong>{{ multi_adjective }}</strong></span> world.</div>
     </h3>
   </div>
 </section>
@@ -35,14 +35,14 @@
   <div class="container">
     <div class="row">
       <div class="col s12">
-        <h1>See Antenna in Action</h1>
-        <em>Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+        <h1 class="no-ant">See Antenna in Action</h1>
+        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
       </div>
     </div>
     <div class="row">
       <div class="col l3 m12 center-align">
-        <h4 class="line-behind serif"><span>Articles</span></h4>
-        <p class="hide-on-med-and-up"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
+        <h4 class="line-behind serif no-ant"><span>Articles</span></h4>
+        <p class="hide-on-med-and-up no-ant"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
         <div class="card">
           <div class="card-content">
             <p>It was a dark and stormy night; the rain fell in torrents, except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets (for it is in London that our scene lies), rattling along the house-tops, and fiercely agitating the scanty flame of the lamps that struggled against the darkness.</p>
@@ -50,29 +50,29 @@
             <!-- <p>He stopped twice or thrice at different shops and houses of a description correspondent with the appearance of the quartier in which they were situated, and tended inquiry for some article or another which did not seem easily to be met with.</p> -->
           </div>
         </div>
-        <div class="card-action">
+        <div class="card-action no-ant">
           <p class="hide-on-small-only"><strong class="btn tip btn-small">Tip:</strong> <em>Select some text, or rest your mouse over the text for a moment.</em></p>
-          <p><em>Excerpt from <strong>Paul Clifford</strong> by Edward Bulwer-Lytton, via <a href="http://www.gutenberg.org/files/7735/7735-h/7735-h.htm#link2HCH0001" target="_blank">Project Gutenberg</a>Select some text, or rest your mouse over the text for a moment.</em></p>
+          <p><em>Excerpt from <strong>Paul Clifford</strong> by Edward Bulwer-Lytton, via <a href="http://www.gutenberg.org/files/7735/7735-h/7735-h.htm#link2HCH0001" target="_blank">Project Gutenberg</a></em></p>
         </div>
       </div>
       <div class="col l5 m6 s12 center-align">
-        <h4 class="line-behind serif"><span>Videos</span></h4>
+        <h4 class="line-behind serif no-ant"><span>Videos</span></h4>
         <div class="card">
           <div class="card-content">
             <iframe src="https://player.vimeo.com/video/134530201?color=ffffff&title=0&byline=0&portrait=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
           </div>
         </div>
-        <div class="card-action">
+        <div class="card-action no-ant">
           <em><a href="https://vimeo.com/134530201" target="_blank">PATAGONIA 8K</a> from <a target="_blank" href="https://vimeo.com/timestormfilms">Martin Heck | Timestorm Films</a> on <a target="_blank" href="https://vimeo.com">Vimeo</a>.</em>
         </div>
       </div>
       <div class="col l4 m6 s12 center-align">
-        <h4 class="line-behind serif"><span>Images</span></h4>
+        <h4 class="line-behind serif no-ant"><span>Images</span></h4>
         <div class="card">
           <div class="card-content">
             <img src="{{ STATIC_URL }}/site/images/see-it-image.jpg"/>
           </div>
-          <div class="card-action">
+          <div class="card-action no-ant">
             <em>via <a href="https://download.unsplash.com/photo-1431578500526-4d9613015464" target="_blank">Unsplash</a></em>
           </div>
         </div>
@@ -107,7 +107,7 @@
     <div class="row">
       <div class="col s12 m8">
         <h1>Perfect for sports, fashion, tech, news, and more.</h1>
-        <h3>View out our gallery of examples, including:</h3>
+        <h3>View out our gallery of examples, with other exciting &amp; simple ways to customize Antenna:</h3>
         <div class="row gallery-links">
           <div class="col s12 m6">
             <div><a href="/examples/news">News article</a></div>
@@ -129,10 +129,10 @@
 <section class="quote no-ant dark-section">
   <div class="container">
     <div class="row">
-      <div class="col s4 center-align">
+      <div class="col s12 m4 center-align">
         <img src="{{ STATIC_URL }}site/images/alexis.jpg" class="circle" />
       </div>
-      <div class="col s8">
+      <div class="col s12 m8">
         <blockquote>
           "Antenna shows exactly what readers are thinking without the hurdles or noise of traditional commenting sections. That's huge."
         </blockquote>
@@ -142,14 +142,34 @@
   </div>
 </section>
 
-<section class="big-cta no-ant">
+<section class="big-beta-form no-ant">
   <div class="container">
     <div class="row">
+      <div class="col s12 center-align">
+        <h1 class="line-behind">
+          <span>
+          Publishers 
+          <br/>
+          &amp; Retailers
+          <br/>
+          Join Our Free Beta
+          </span>
+        </h1>
+      </div>
+    </div>
+    <div class="row">
       <div class="col s12 m6 center-align">
-        Publishers
+        <label>Website URL</label>
+        <input type="text" name="website_url" ?>
       </div>
       <div class="col s12 m6 center-align">
-        Retailers
+        <label>Email Address</label>
+        <input type="text" name="email_address" ?>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 center-align">
+        <button class="btn btn-large">Sign Up</button>
       </div>
     </div>
   </div>

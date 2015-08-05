@@ -100,12 +100,12 @@ section {
         background-image: url('/static/site/images/many_voices.jpg');
 
         h1 { 
-          font-size:7rem; 
+          font-size:6rem; 
           margin:10% 0;
         }
 
         h3 { 
-          font-size:2.75rem; 
+          font-size:2.5rem; 
         }
     }
 }
@@ -159,6 +159,7 @@ section {
   &.quote {
 
     .col {padding:3rem;}
+
     blockquote {
       border-color:$black;
       color:$black;
@@ -174,12 +175,41 @@ section {
       }
     }
 
+
     .attribution {
       font-size:1.5rem;
     }
 
     img { width:100%; max-width:250px; }
 
+
+    @media (max-width: $screen-xs-max) {
+      blockquote { border:0; font-size:1.5rem; }
+      .row .col.s12 { 
+        padding-bottom:0;
+
+        &:last-of-type {
+          padding-top:0;
+        }
+      }
+      .attribution { font-size:1.25rem; }
+      
+      img { max-width:180px; }
+    }
+
+  }
+
+  &.big-beta-form {
+    input[type="text"] {
+      background-color: rgba(0, 150, 136, 0.1);
+      font-size: 2rem;
+      text-align: center;
+    }
+    .btn.btn-large {
+      display: block;
+      width: 100%;
+      background-color: color("teal", "base");
+    }
   }
 }
 

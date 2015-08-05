@@ -34,6 +34,7 @@ h4.line-behind {
         /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
         background: $white;
         padding: 0 15px; 
+        display:inline-block;
     }
 }
 
