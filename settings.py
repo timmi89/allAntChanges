@@ -183,8 +183,8 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '69.164.209.143',
-        'PORT':     '3306',
+        'HOST':     '10.240.97.167',
+        'PORT':     '4040',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
