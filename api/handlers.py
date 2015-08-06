@@ -687,6 +687,7 @@ class PageDataHandler(AnonymousBaseHandler):
         
         return pages_data
 
+
 class PageDataHandlerNew(AnonymousBaseHandler):
     @status_response
     @json_data
@@ -703,131 +704,116 @@ class PageDataHandlerNew(AnonymousBaseHandler):
             # /MODIFICATION
             pages.append(getPage(host, requested_page))
 
-        pages_data = []
+        new_pages_data = []
 
         for current_page in pages:
-            cached_result = check_and_get_locked_cache('page_data' + str(current_page.id))
-            if cached_result is not None:
-                #logger.info('returning page data cached result')
-                pages_data.append(cached_result)
+            page_id = current_page.id
+            cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
+            if cached_page_data is not None:
+                logger.info('returning page_data_new cached result')
+                new_pages_data.append(cached_page_data)
             else:
-                logger.info('missed page settings cache')
-                result_dict = getSinglePageDataDict(current_page.id)
-                pages_data.append(result_dict)
+                logger.info('missed page_data_new cache')
+                page_data = getSinglePageDataDict(page_id)
+
+                # MODIFICATION go fetch the detailed content reaction info and merge it with the page_data
+                new_containers = []
+                container_set = page_data['containers']
+                for container in container_set:
+                    data = { 'cross_page': False } # TODO remove all handling of cross_page and move that to a separate API call?
+
+                    # Copied from ContentSummaryHandler.read:
+                    known = {}
+                    try:
+                        container_id = int(container.id) #TODO review type conversion # MODIFICATION. Was: container_id = data['container_id']
+
+                    except KeyError:
+                        errorStr = "container_id was expected but was not sent with data: " + str(data)
+                        logger.info(errorStr)
+
+                        raise JSONException(u"container_id was expected but was not sent")
+
+                    page_id = int(page_id) #TODO review type conversion # MODIFICATION. Was: page_id = data['page_id']
+
+                    if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
+                        raise JSONException(u"Bad page id or container_id in content summary call")
+
+                    if data['cross_page'] == True:
+                        page = Page.objects.get(id=page_id)
+                        interactions = list(Interaction.objects.filter(
+                                container=container_id,
+                                page__site__group = page.site.group,
+                                approved=True
+                                ))
+                    else:
+                        interactions = list(Interaction.objects.filter(
+                                container=container_id,
+                                page=page_id,
+                                approved=True
+                                ))
+                    content_ids = (interaction.content_id for interaction in interactions)
+                    content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
+
+                    isCrossPage = (data['cross_page'] == True)
+                    content_summaries = getContentSummaries(interactions, content, isCrossPage=isCrossPage)
+
+                    # MODIFICATION:
+                    reactions = []
+                    for content_id in content_summaries:
+                        content_data = content_summaries[content_id]
+                        top_interactions = content_data['top_interactions']
+                        comment_dict = {}
+                        comments = top_interactions['coms']
+                        for comment in comments:
+                            tag_id = comment['tag_id']
+                            count = comment_dict.get(tag_id, 0)
+                            comment_dict[tag_id] = count + 1
+                        top_tags = top_interactions['tags']
+                        for tag_id in top_tags:
+                            tag = top_tags[tag_id]
+                            reactions.append({
+                                'id': tag_id,
+                                'text': tag['body'],
+                                'count': tag['count'],
+                                'parentID': tag['parent_id'],
+                                'location': content_data['location'], # TODO data format?
+                                'comments': {
+                                    'count': comment_dict.get(tag_id, 0),
+                                    'url': '/api/comments/%d/%d/%d' % (page_id, container_id, content_id) #TODO real url
+                                }
+                            })
+
+                    new_container = {
+                        'id': container_id,
+                        'hash': container.hash,
+                        'reactions': reactions
+                    }
+                    new_containers.append(new_container)
+
+                new_page = {}
+                new_page['pageHash'] = page_data['urlhash']
+                new_page['id'] = page_id
+                summaryReactions = []
+                for toptag in page_data['toptags']:
+                    reaction = {}
+                    reaction['count'] = toptag['tag_count']
+                    reaction['text'] = toptag['body']
+                    reaction['id'] = toptag['id']
+                    summaryReactions.append(reaction)
+                new_page['summaryReactions'] = summaryReactions
+                new_page['containers'] = new_containers
+                new_pages_data.append(new_page)
+
                 try:
-                    cache.set('page_data' + str(current_page.id), result_dict)
+                    cache.set('page_data_new' + str(page_id), new_page)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))
                 try:
-                    get_cache('redundant').set('page_data' + str(current_page.id), result_dict)
+                    get_cache('redundant').set('page_data_new' + str(page_id), new_page)
                 except Exception, e:
                     logger.warning(traceback.format_exc(50))
 
-        # pages_data now has the response object
-
-        # MODIFICATION iterate over the page_data and do two things:
-        # 1. Fluff up a new data object and simulate the request params to /api/summary/containers
-        # 2. Initialize our new representation of the page and populate it with the data we have
-        new_pages = []
-
-        for page_data in pages_data:
-            data = {}
-            container_set = page_data['containers']
-            hashes = []
-            for container in container_set:
-                hashes.append(container.hash)
-            data['hashes'] = hashes
-            data['pageID'] = int(page_data['id']) # TODO: This conversion is necessary because of the type check below. Revisit it.
-            # /MODIFICATION
-
-            # Copied from ContainerSummaryHandler.read:
-            known = {}
-            hashes = data.get('hashes', [])
-            crossPageHashes = data.get('crossPageHashes', [])
-            try:
-                page = data['pageID']
-            except KeyError:
-                raise JSONException("Couldn't get pageID")
-
-
-            # Guard against undefined page string being passed in
-            if not isinstance(page, int):
-                errorStr = "Bad Page ID ***" + str(page)+ "***"
-                raise JSONException("Bad Page ID ***" + str(page)+ "***")
-
-            if len(hashes) == 1:
-                #check_and_get_locked_cache(key)
-                cached_result = check_and_get_locked_cache('page_containers' + str(page) + ":" + str(hashes))
-            else:
-                cached_result = check_and_get_locked_cache('page_containers' + str(page))
-
-            if cached_result is not None:
-                container_data = cached_result # MODIFICATION, was: return cached_result
-            else:
-                logger.info("Missed cache container summaries")
-                cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
-                if len(hashes) == 1:
-                    try:
-                        cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
-                    except Exception, ex:
-                        logger.info(ex)
-                    try:
-                        get_cache('redundant').set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
-                    except Exception, ex:
-                        logger.warn(ex)
-                else:
-                    try:
-                        cache.set('page_containers' + str(page), cacheable_result)
-                    except Exception, ex:
-                        logger.info(ex)
-                    try:
-                        get_cache('redundant').set('page_containers' + str(page), cacheable_result)
-                    except Exception, ex:
-                        logger.warn(ex)
-
-                container_data = cacheable_result # MODIFICATION, was: return cacheable_result
-
-            # At this point, we have the container_data from /api/summary/containers
-            # MODIFICATION:
-            new_page = {}
-            new_page['pageHash'] = page_data['urlhash']
-            new_page['id'] = page_data['id']
-            summaryReactions = []
-            for toptag in page_data['toptags']:
-                reaction = {}
-                reaction['count'] = toptag['tag_count']
-                reaction['text'] = toptag['body']
-                reaction['id'] = toptag['id']
-                summaryReactions.append(reaction)
-            new_page['summaryReactions'] = summaryReactions
-            new_containers = []
-            containers = container_data['known']
-            for hash in containers:
-                container = containers[hash]
-                new_container = {}
-                new_containers.append(new_container)
-                new_container['hash'] = hash
-                new_container['id'] = container['id']
-                reactions = []
-                top_interactions = container['top_interactions']
-                new_container['comments'] = {
-                    'count': len(top_interactions['coms']),
-                    'url': '/api/comments/%d/%d' % (new_page['id'], new_container['id']) #TODO
-                }
-                top_tags = top_interactions['tags']
-                for tag_id in top_tags:
-                    tag = top_tags[tag_id]
-                    reactions.append({
-                        'id': tag_id,
-                        'text': tag['body'],
-                        'count': tag['count'],
-                        'parentID': tag['parent_id']
-                    })
-                new_container['reactions'] = reactions
-            new_page['containers'] = new_containers
-            new_pages.append(new_page)
-
-        return new_pages
+        return new_pages_data
 
 
 
