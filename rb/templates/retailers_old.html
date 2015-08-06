@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Antenna for Ecommerce{%endblock%}
+
+{% block extendedHead %}
+{%endblock%}
+
+{% block subheaderContent %}
+{% endblock %}
+
+{% block wideContent %}
+    <div class="retailers_page">
+        <div class="grid-whole banner blue">
+          <div class="content left">
+            <h1>More engagement means more dollars.</h1>
+            <div class="caption">We help retailers engage their customers in on-brand, conversion-driving ways.</div>
+          </div>
+        </div>
+        <div class=" grid-whole masthead no-rdr">
+            <div class="content">
+                <div class="ant ant-page-summary"></div>
+                <div class="">
+                    <h1>Increase ecommerce engagement instantly</h1>
+                </div>
+                <div class="grid-7 s-grid-whole padded">
+                    <p><strong>Did you know?</strong>  63% of customers are more likely to make a purchase from a site which has user reviews (bad ones <em>help</em>, too).  And people who interact with reviews are 105% more likely to purchase.</p>
+                    <p>Retailers know that engaging with visitors turns them into customers.</p>
+                    <p>Antenna is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
+                    <p>Capture insights, contact information, and customers.  Use Antenna to power 1-click reviews, feedback, community polls, and more.</p>
+                </div>
+                <div class="grid-5 s-grid-whole padded">
+                    <div class="average_increase no-ant">
+                        <i class="rdr_icon-circle-arrow-up"></i>
+                        <h2>18%</h2>
+                        <label>lift in sales from reviews & other feedback</label>
+                    </div>
+                    <em class="citation">Data compiled by <a href="https://econsultancy.com/blog/9366-ecommerce-consumer-reviews-why-you-need-them-and-how-to-use-them#i.nw2g75sjjcyc10" target="_blank">eConsultancy.com</a></em>
+                </div>
+            </div>
+        </div>
+        <style type="text/css">
+        .quick-demo button {
+            /*display: block;*/
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            background: #e5422b;
+            /*width: 200px;*/
+            margin: 0 auto;
+            border:none;
+        }
+        .quick-demo button.responses { margin-right:20px; }
+        .quick-demo button.response { background:#ccc; color:#333; }
+        .quick-demo .padded { margin-bottom:2rem; }
+        </style>
+        <div class="grid-whole s-grid-whole padded new-section quick-demo">
+            <div class="content" style="text-align:center;">
+                <div class="grid-whole s-grid-whole padded">
+                    <h1 style="margin-bottom:10px;">Here is what a 1-Click Review can look like</h1>
+                    <em>Roll your mouse over the button to react.</em>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <h3 ant-item="satisfied" ant-reactions="Very;Mostly;Afraid Not;Not at all">Are you satisfied with your Acme widget?</h3>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <button ant-cta-for="satisfied" ant-mode="write" class="response">Your response?</button>
+                    <button ant-cta-for="satisfied" ant-mode="read" class="responses"><span ant-counter-for="satisfied"></span> Community Responses</button>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <h3 ant-item="match" ant-reactions="Yes, perfectly;Not quite;">Did your Acme widget match the photos on our website?</h3>
+                </div>
+                <div class="grid-half s-grid-whole padded">
+                    <button ant-cta-for="match" ant-mode="write" class="response">Your response?</button>
+                    <button ant-cta-for="match" ant-mode="read" class="responses"><span ant-counter-for="match"></span> Community Responses</button>
+                </div>
+                <div class="grid-whole s-grid-whole padded">
+                    <em>You customize the reactions, the colors, and more!</em>
+                </div>
+            </div>
+        </div>
+        <div class="grid-whole s-grid-whole padded new-section demo">
+            <div class="content" style="text-align:center;">
+                <h1>Watch Antenna power 1-Click reviews on a demo ecommerce site.</h1>
+                <br/>
+                <style>
+                #antenna_retail_video { width:960px; height:540px;  margin:0 auto;}
+                </style>
+                <iframe src="//player.vimeo.com/video/108516416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen id="antenna_retail_video"></iframe> 
+                <br/><br/><br/><br/>
+                <!-- <h1>Try a live demo.</h1>
+                <button><a href="/static/demo/loot.html" target="_blank">Live Demo</a></button> -->
+                <!-- <em>Or, check out this video:</em>
+                <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div> -->
+            </div>
+        </div>
+        <div class="grid-whole s-grid-whole padded new-section q-and-a">
+            <div class="content">
+                <div class="grid-half s-grid-whole padded">
+                    <h2>Ask questions of your shoppers <br/>to gain insight &amp; build community.</h2>
+                    <p class="left"><em>And say no to disruptive, off-brand "Your opinion counts!" pop-overs.</em></p>
+                    <div class="case_study">
+                        <h3>Case Study</h3>
+                        <hr/>
+                        <p>Online publisher ProPublica launched <a href="http://www.propublica.org/getinvolved/item/who-was-most-to-blame-for-deaths-caused-by-mixing-up-tylenol-products" target="_blank">Antenna Q&amp;A</a>.</p>
+                        <p><strong>Their response rate: 18.9% of visits.</strong></p>
+                        <p><strong>Why?</strong>  Antenna has no barrier to entry, is visually appealing, and is extremely easy to use -- encouraging people to respond.</p>
+                    </div>
+                </div>
+                <div class="grid-half s-grid-whole padded screenshot">
+                    <img src="{{ STATIC_URL }}site/images/q-and-a.jpg" />
+                </div>
+            </div>
+        </div>
+        <div class="grid-whole s-grid-whole padded new-section other-features">
+            <div class="content">
+                <h2>But wait.<br/>There <em>is</em> more.</h2>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-envelope-o"></i><h5>Acquire</h5><p>Capture visitor feedback, capture contact info.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-compass"></i><h5>On-Brand</h5><p>You set the tone, by setting the default responses, colors, and more.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-tachometer"></i><h5>Measure Curiosity</h5><p>Antenna tracks when people view responses, so you know what your visitors are curious about.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-magnet"></i><h5>Magnetic</h5><p>See how visitor engagement with Antenna impacts conversions and draws people back.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-wrench"></i><h5>Simple Installation</h5><p>Installation, configuration, and management on any site need just simple HTML &amp; CSS.  We'll walk you through it, free.</p></div>
+                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-flag"></i><h5>Magnificent Management</h5><p>Managing user feedback on Antenna is far easier &amp; cheaper than any other form of on-site, social feedback.</p></div>
+            </div>
+        </div>
+        <div class="grid-whole s-grid-whole padded new-section cta">
+            <div class="content">
+                <h1>Setup a Demo!</h1>
+                <h2>Free During Beta</h2>
+                <p>Antenna for Retailers is brand new, and we're offering our service free to ecommerce sites during our beta period, and will be working closely with beta partners to determine a great price with fantastic ROI for retailers of all sizes.</p>
+                <p><a class="contact" href="mailto:team@antenna.is?subject=Antenna+Ecommerce+Beta+Inquiry">Contact Us Now</a> for information about our ecommerce beta program.</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    #antenna_test_notice { box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; right:20px; position:fixed; background:#fff; transition:bottom 0.5s;}
+    </style>
+    <div id="antenna_test_notice"></div>
+
+
+    <script>
+    $('.get_antenna').click( function() {
+        $('.get_antenna_form').toggle(200);
+    });
+
+    // $('.antenna_is_better').waypoint('sticky', { offset: 75 });
+
+    document.addEventListener("antenna.reaction", function(){
+      var lastEvent = antenna.getLastEvent();
+      if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
+        $('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+        .on('click', function() { $(this).css('bottom', '-300px'); }); 
+      }
+    },false); 
+var reactionViewCount = 0;
+    document.addEventListener("antenna.reactionview", function(){
+        console.log(1);
+      var lastEvent = antenna.getLastEvent();
+        console.log(lastEvent)
+      if (lastEvent.event == 'antenna.reactionview' ) {
+        reactionViewCount++;
+        
+        if (reactionViewCount == 3) {
+            $('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+            .on('click', function() { $(this).css('bottom', '-300px'); }); 
+            reactionViewCount = 0;
+        }
+      }
+    },false); 
+
+    $('.contact').on('click', function(e) {
+        e.preventDefault();
+        $('#ant_try_overlay, .try-antenna-form').show(0).css('opacity', 1);
+    });
+    </script>
+
+
+{% endblock %}
+
+{% block complementarySection %}
+{% endblock %}
+
+
+
+{% block page_js %}
+<script>
+if (window.location.href.indexOf('publishers') != -1 ) {
+    $('#readers').hide();
+}
+window.antenna_extend = {
+    active_sections: '.content',
+    anno_whitelist: 'p,img',
+    premium:true
+};
+</script>
+<script src="/static/engage_full.js" defer></script>
+{% include "footer_join_beta.html" %}
+{% endblock %}
+<!-- widget for slideshow -->

@@ -43,12 +43,14 @@ section {
     border-left:1px dashed $black;
 
     .content-wrapper {
-        @media (min-width: $screen-md-min) {
-            padding:49px 2.5rem 1rem;
-        }
+        padding:49px 1rem 1rem;
+        // @media (min-width: $screen-md-min) {
+        //     padding:49px 2rem 1rem;
+        // }
 
-        @media (min-width: $screen-lg-min) {
-            padding:49px 4rem 2rem;
+        // @media (min-width: $screen-lg-min) {
+        @media (min-width: $screen-xlg-min) {
+            padding:49px 2rem 2rem;
         }
     }
 }

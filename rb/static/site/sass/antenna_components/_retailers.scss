@@ -1,23 +1,61 @@
-section {
-  &.masthead {
+.retailers {
+  section {
+    &.masthead {
+      // background-image: url('/static/site/images/mall.jpg');
+      background-image: url('/static/site/images/store-owner.jpg');
+      background-size: 73%;
+      background-position: 0% 23%;
+
+      h1 {
+        font-size:5rem;
+
+        .line-one {
+          font-size:3.5rem;
+        }
+      }
+    }
+
+    .call-out {
+      text-align: center;
+
+      h2 {
+        margin-top:0;
+        font-size:5rem;
+        font-weight: 900;
+        color:$antenna-orange;
+      }
+
+      label {
+        font-size: 1.5rem;
+        font-style: italic;
+        font-family: Georgia;
+      }
+    }
+
+    &.review-example {
+      position:relative;
+
+      img {
+        width:100%;
+      }
     }
 
 
-  @media (max-width: $screen-xs-max) {
-      &.masthead {
-          background-image: url('/static/site/images/many_voices_mobile.jpg');
-      }
-  }
+    // .publisher-benefits {
+    //   h1 {font-size:4rem;margin-bottom:0.5rem; color:$antenna-lt-blue;}
+    //   h3 {margin-top:0.5rem; color:$antenna-dk-blue;}
+    // }
 
-  @media (min-width: $screen-sm-min) {
-      &.masthead {
-          background-image: url('/static/site/images/many_voices_medium.jpg');
-      }
-  }
+    &.mobile-sign-up {
+      display:none;
+    }
 
-  @media (min-width: $screen-lg-min) {
-      &.masthead {
-          background-image: url('/static/site/images/many_voices.jpg');
+    // @media (max-width: $screen-xs-max) {
+    // $screen-md-min
+    @media (max-width: $screen-sm-max) {
+      &.mobile-sign-up {
+        display:block;
       }
+    }
   }
 }

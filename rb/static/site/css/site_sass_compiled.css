@@ -7278,12 +7278,11 @@ section {
   @media (max-width: 767px) {
     .fixed-right-sidebar-content {
       display: none; } }
-  @media (min-width: 768px) {
-    .fixed-right-sidebar-content .content-wrapper {
-      padding: 49px 2.5rem 1rem; } }
-  @media (min-width: 992px) {
-    .fixed-right-sidebar-content .content-wrapper {
-      padding: 49px 4rem 2rem; } }
+  .fixed-right-sidebar-content .content-wrapper {
+    padding: 49px 1rem 1rem; }
+    @media (min-width: 1200px) {
+      .fixed-right-sidebar-content .content-wrapper {
+        padding: 49px 2rem 2rem; } }
 
 .fixed-right-buffer {
   position: absolute;
@@ -7433,25 +7432,50 @@ section.big-beta-form .learn-more-boxes {
   background-image: url("/static/site/images/open_mic.jpg");
   background-size: 75%;
   background-position: 0% 50%; }
+  .publishers section.masthead h1 {
+    font-size: 5rem; }
+    .publishers section.masthead h1 .line-one {
+      font-size: 3.5rem; }
 .publishers section .publisher-benefits h1 {
   font-size: 4rem;
-  margin-bottom: 0.5rem; }
+  margin-bottom: 0.5rem;
+  color: #4b7185; }
 .publishers section .publisher-benefits h3 {
-  margin-top: 0.5rem; }
+  margin-top: 0.5rem;
+  color: #2f5863; }
 .publishers section.mobile-sign-up {
   display: none; }
 @media (max-width: 767px) {
   .publishers section.mobile-sign-up {
     display: block; } }
 
-@media (max-width: 480px) {
-  section.masthead {
-    background-image: url("/static/site/images/many_voices_mobile.jpg"); } }
-@media (min-width: 481px) {
-  section.masthead {
-    background-image: url("/static/site/images/many_voices_medium.jpg"); } }
-@media (min-width: 992px) {
-  section.masthead {
-    background-image: url("/static/site/images/many_voices.jpg"); } }
+.retailers section.masthead {
+  background-image: url("/static/site/images/store-owner.jpg");
+  background-size: 73%;
+  background-position: 0% 23%; }
+  .retailers section.masthead h1 {
+    font-size: 5rem; }
+    .retailers section.masthead h1 .line-one {
+      font-size: 3.5rem; }
+.retailers section .call-out {
+  text-align: center; }
+  .retailers section .call-out h2 {
+    margin-top: 0;
+    font-size: 5rem;
+    font-weight: 900;
+    color: #ea9971; }
+  .retailers section .call-out label {
+    font-size: 1.5rem;
+    font-style: italic;
+    font-family: Georgia; }
+.retailers section.review-example {
+  position: relative; }
+  .retailers section.review-example img {
+    width: 100%; }
+.retailers section.mobile-sign-up {
+  display: none; }
+@media (max-width: 767px) {
+  .retailers section.mobile-sign-up {
+    display: block; } }
 
 /*# sourceMappingURL=site_sass_compiled.css.map */

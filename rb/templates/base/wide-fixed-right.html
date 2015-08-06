@@ -21,5 +21,14 @@
 {% endblock footer %}
 
 
+
 {% block page_js %}
+{% endblock %}
+
+{% block layout_js %}
+<script>
+$(document).ready(function(){
+  $('.fixed-right-sidebar-content').pushpin({ top: 0 });
+});
+</script>
 {% endblock %}
