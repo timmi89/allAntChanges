@@ -1,3 +1,8 @@
+//TEMP:
+.gallery-content-link { display:none; }
+
+
+
 section {
     padding:2rem 0;
     
@@ -20,12 +25,34 @@ section {
         background:$black;
         color:$white;
 
+        a {
+            color:$antenna-yellow;
+        }
+
         h1.line-behind,
         h2.line-behind,
         h3.line-behind,
         h4.line-behind {
             span { 
                 background: $black;
+            }
+        }
+    }
+
+    &.lt-blue-section {
+        background:$antenna-lt-blue;
+        color:$white;
+
+        label, a {
+            color:$antenna-orange;
+        }
+
+        h1.line-behind,
+        h2.line-behind,
+        h3.line-behind,
+        h4.line-behind {
+            span { 
+                background: $antenna-lt-blue;
             }
         }
     }

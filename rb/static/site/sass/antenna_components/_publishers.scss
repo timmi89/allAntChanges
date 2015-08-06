@@ -11,6 +11,15 @@
           .line-one {
             font-size:3.5rem;
           }
+
+          @media (max-width: $screen-sm-max) {
+            font-size:3.5rem;
+
+            .line-one {
+              font-size:2.75rem;
+              margin-bottom: 1.5rem;
+            }          
+          }
         }
       }
 
@@ -20,6 +29,10 @@
       h3 {margin-top:0.5rem; color:$antenna-dk-blue;}
     }
 
+    &.mobile-first {
+      overflow:hidden;
+    }
+    
     &.mobile-sign-up {
       display:none;
     }

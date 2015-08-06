@@ -7116,7 +7116,7 @@ if ( sendData.kind=="page" ) {
                                 page_id: args.page_id
                             });
 
-                            ANT.events.emit('antenna.reaction', reaction);
+                            ANT.events.emit('antenna.reaction', reaction, { 'hash':args.hash, 'kind':args.kind, 'ant-item-name':$('[ant-hash="'+args.hash+'"]').attr('ant-item') });
 
                             $('#ant_loginPanel').remove();
 
@@ -7933,6 +7933,8 @@ if ( sendData.kind=="page" ) {
                             }
                             $('document').selog('selectEl', el);
                         }
+
+                        ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'custom', 'mode':mode, 'ant-item-name':$cta.attr('ant-cta-for')  });
 
                         var $aWindow = ANT.aWindow.make( mode, {hash:hash, '$custom_cta':$cta } );
                         $aWindow.addClass('ant_rewritable');

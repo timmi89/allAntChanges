@@ -7248,6 +7248,9 @@ form textarea.materialize-textarea {
       top: 30%;
       right: 0%; }
 
+.gallery-content-link {
+  display: none; }
+
 section {
   padding: 2rem 0; }
   section.masthead {
@@ -7262,11 +7265,23 @@ section {
   section.dark-section {
     background: #000;
     color: #fff; }
+    section.dark-section a {
+      color: #dec164; }
     section.dark-section h1.line-behind span,
     section.dark-section h2.line-behind span,
     section.dark-section h3.line-behind span,
     section.dark-section h4.line-behind span {
       background: #000; }
+  section.lt-blue-section {
+    background: #4b7185;
+    color: #fff; }
+    section.lt-blue-section label, section.lt-blue-section a {
+      color: #ea9971; }
+    section.lt-blue-section h1.line-behind span,
+    section.lt-blue-section h2.line-behind span,
+    section.lt-blue-section h3.line-behind span,
+    section.lt-blue-section h4.line-behind span {
+      background: #4b7185; }
 
 .fixed-right-sidebar-content {
   background: #fff;
@@ -7436,6 +7451,12 @@ section.big-beta-form .learn-more-boxes {
     font-size: 5rem; }
     .publishers section.masthead h1 .line-one {
       font-size: 3.5rem; }
+    @media (max-width: 767px) {
+      .publishers section.masthead h1 {
+        font-size: 3.5rem; }
+        .publishers section.masthead h1 .line-one {
+          font-size: 2.75rem;
+          margin-bottom: 1.5rem; } }
 .publishers section .publisher-benefits h1 {
   font-size: 4rem;
   margin-bottom: 0.5rem;
@@ -7443,6 +7464,8 @@ section.big-beta-form .learn-more-boxes {
 .publishers section .publisher-benefits h3 {
   margin-top: 0.5rem;
   color: #2f5863; }
+.publishers section.mobile-first {
+  overflow: hidden; }
 .publishers section.mobile-sign-up {
   display: none; }
 @media (max-width: 767px) {
@@ -7457,6 +7480,12 @@ section.big-beta-form .learn-more-boxes {
     font-size: 5rem; }
     .retailers section.masthead h1 .line-one {
       font-size: 3.5rem; }
+    @media (max-width: 767px) {
+      .retailers section.masthead h1 {
+        font-size: 3.5rem; }
+        .retailers section.masthead h1 .line-one {
+          font-size: 2.75rem;
+          margin-bottom: 1.5rem; } }
 .retailers section .call-out {
   text-align: center; }
   .retailers section .call-out h2 {
@@ -7464,6 +7493,9 @@ section.big-beta-form .learn-more-boxes {
     font-size: 5rem;
     font-weight: 900;
     color: #ea9971; }
+    @media (max-width: 767px) {
+      .retailers section .call-out h2 {
+        font-size: 3.5rem; } }
   .retailers section .call-out label {
     font-size: 1.5rem;
     font-style: italic;
@@ -7472,6 +7504,45 @@ section.big-beta-form .learn-more-boxes {
   position: relative; }
   .retailers section.review-example img {
     width: 100%; }
+  .retailers section.review-example .reviews {
+    position: relative; }
+    .retailers section.review-example .reviews .review-content {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      color: #000;
+      text-align: center; }
+      @media (max-width: 767px) {
+        .retailers section.review-example .reviews .review-content {
+          top: 1rem;
+          right: 1rem; } }
+      .retailers section.review-example .reviews .review-content .question {
+        font-size: 1.5rem; }
+        @media (max-width: 767px) {
+          .retailers section.review-example .reviews .review-content .question {
+            font-size: 1.25rem; } }
+      .retailers section.review-example .reviews .review-content .answer {
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.35);
+        margin-bottom: 3rem;
+        padding: 0.5rem;
+        box-shadow: 0px 2px 4px #815B2C; }
+        @media (max-width: 767px) {
+          .retailers section.review-example .reviews .review-content .answer {
+            font-size: 1rem;
+            padding: 0.33rem; } }
+  .retailers section.review-example .q-and-a {
+    margin: 2rem;
+    text-align: center; }
+    .retailers section.review-example .q-and-a .question {
+      font-size: 1.5rem;
+      font-style: italic; }
+    .retailers section.review-example .q-and-a .answer {
+      margin: 1rem auto;
+      padding: 0.5rem;
+      background: #ea9971;
+      color: #fff;
+      display: inline-block; }
 .retailers section.mobile-sign-up {
   display: none; }
 @media (max-width: 767px) {
