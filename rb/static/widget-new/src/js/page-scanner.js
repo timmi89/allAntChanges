@@ -72,7 +72,7 @@ function scanForText($section, pageData, groupSettings) {
         // TODO include the set of default reactions
         var containerData = PageData.getContainerData(pageData, hash);
         var defaultReactions = groupSettings.defaultReactions($element);
-        var indicator = IndicatorWidget.create(container, containerData, defaultReactions, groupSettings);
+        var indicator = IndicatorWidget.create(container, containerData, pageData, defaultReactions, groupSettings);
         $element.append(container); // TODO is this configurable ala insertContent(...)?
     });
 }

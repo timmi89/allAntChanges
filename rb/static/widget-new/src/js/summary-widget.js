@@ -29,7 +29,7 @@ function openReactionsWindow(pageData, groupSettings, ractive) {
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        ractive.reactionsWidget = ReactionsWidget.create(container, pageData, groupSettings);
+        ractive.reactionsWidget = ReactionsWidget.create(container, pageData.topReactions, pageData, groupSettings);
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }

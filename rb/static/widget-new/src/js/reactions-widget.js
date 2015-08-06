@@ -4,8 +4,7 @@ var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
 
-function createReactionsWidget(container, pageData, groupSettings) {
-    var reactionsData = pageData.topReactions;
+function createReactionsWidget(container, reactionsData, pageData, groupSettings) {
     var colors = groupSettings.reactionBackgroundColors();
     var layoutData = computeLayoutData(reactionsData, colors);
     var ractive = Ractive({

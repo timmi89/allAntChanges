@@ -2,7 +2,7 @@ var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
 
 
-function createIndicatorWidget(container, containerData, defaultReactions, groupSettings) {
+function createIndicatorWidget(container, containerData, pageData, defaultReactions, groupSettings) {
     // TODO: Basically everything.
     // Actually get container data.
     // Adjust visibility based on whether there are reactions on the content (honoring the flag about how many to show at once).
@@ -18,7 +18,7 @@ function createIndicatorWidget(container, containerData, defaultReactions, group
     });
     ractive.on('complete', function() {
         $(rootElement(ractive)).on('mouseenter', function(event) {
-           openReactionsWindow(containerData, groupSettings, ractive);
+           openReactionsWindow(containerData.reactions, pageData, groupSettings, ractive);
         });
     });
 }
@@ -29,13 +29,13 @@ function rootElement(ractive) {
 }
 
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(containerData, groupSettings, ractive) {
+function openReactionsWindow(reactionsData, pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
         // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        ractive.reactionsWidget = ReactionsWidget.create(container, containerData, groupSettings);
+        ractive.reactionsWidget = ReactionsWidget.create(container, reactionsData, pageData, groupSettings);
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }

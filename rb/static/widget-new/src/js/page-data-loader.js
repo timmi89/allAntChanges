@@ -44,6 +44,9 @@ function computePagesParam(groupSettings) {
 function loadPageData(groupSettings) {
     var pagesParam = computePagesParam(groupSettings);
     $.getJSONP('/api/page', { pages: pagesParam }, success, error);
+    $.getJSONP('/api/pagenew', { pages: pagesParam }, function(json) {
+        console.log(json);
+    }, error);
 
     function success(json) {
         PageData.updateAllPageData(json, groupSettings, function(updatedPages) {

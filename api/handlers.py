@@ -687,6 +687,150 @@ class PageDataHandler(AnonymousBaseHandler):
         
         return pages_data
 
+class PageDataHandlerNew(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data, pageid=None):
+
+        # Copied from PageDataHandler.read:
+        requested_pages = data['pages']
+        host = getHost(request)
+
+        pages = []
+        for requested_page in requested_pages:
+            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
+            requested_page['canonical_url'] = 'same'
+            # /MODIFICATION
+            pages.append(getPage(host, requested_page))
+
+        pages_data = []
+
+        for current_page in pages:
+            cached_result = check_and_get_locked_cache('page_data' + str(current_page.id))
+            if cached_result is not None:
+                #logger.info('returning page data cached result')
+                pages_data.append(cached_result)
+            else:
+                logger.info('missed page settings cache')
+                result_dict = getSinglePageDataDict(current_page.id)
+                pages_data.append(result_dict)
+                try:
+                    cache.set('page_data' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+                try:
+                    get_cache('redundant').set('page_data' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+
+        # pages_data now has the response object
+
+        # MODIFICATION iterate over the page_data and do two things:
+        # 1. Fluff up a new data object and simulate the request params to /api/summary/containers
+        # 2. Initialize our new representation of the page and populate it with the data we have
+        new_pages = []
+
+        for page_data in pages_data:
+            data = {}
+            container_set = page_data['containers']
+            hashes = []
+            for container in container_set:
+                hashes.append(container.hash)
+            data['hashes'] = hashes
+            data['pageID'] = int(page_data['id']) # TODO: This conversion is necessary because of the type check below. Revisit it.
+            # /MODIFICATION
+
+            # Copied from ContainerSummaryHandler.read:
+            known = {}
+            hashes = data.get('hashes', [])
+            crossPageHashes = data.get('crossPageHashes', [])
+            try:
+                page = data['pageID']
+            except KeyError:
+                raise JSONException("Couldn't get pageID")
+
+
+            # Guard against undefined page string being passed in
+            if not isinstance(page, int):
+                errorStr = "Bad Page ID ***" + str(page)+ "***"
+                raise JSONException("Bad Page ID ***" + str(page)+ "***")
+
+            if len(hashes) == 1:
+                #check_and_get_locked_cache(key)
+                cached_result = check_and_get_locked_cache('page_containers' + str(page) + ":" + str(hashes))
+            else:
+                cached_result = check_and_get_locked_cache('page_containers' + str(page))
+
+            if cached_result is not None:
+                container_data = cached_result # MODIFICATION, was: return cached_result
+            else:
+                logger.info("Missed cache container summaries")
+                cacheable_result = getKnownUnknownContainerSummaries(page, hashes, crossPageHashes)
+                if len(hashes) == 1:
+                    try:
+                        cache.set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+                    except Exception, ex:
+                        logger.info(ex)
+                    try:
+                        get_cache('redundant').set('page_containers' + str(page) + ":" + str(hashes), cacheable_result)
+                    except Exception, ex:
+                        logger.warn(ex)
+                else:
+                    try:
+                        cache.set('page_containers' + str(page), cacheable_result)
+                    except Exception, ex:
+                        logger.info(ex)
+                    try:
+                        get_cache('redundant').set('page_containers' + str(page), cacheable_result)
+                    except Exception, ex:
+                        logger.warn(ex)
+
+                container_data = cacheable_result # MODIFICATION, was: return cacheable_result
+
+            # At this point, we have the container_data from /api/summary/containers
+            # MODIFICATION:
+            new_page = {}
+            new_page['pageHash'] = page_data['urlhash']
+            new_page['id'] = page_data['id']
+            summaryReactions = []
+            for toptag in page_data['toptags']:
+                reaction = {}
+                reaction['count'] = toptag['tag_count']
+                reaction['text'] = toptag['body']
+                reaction['id'] = toptag['id']
+                summaryReactions.append(reaction)
+            new_page['summaryReactions'] = summaryReactions
+            new_containers = []
+            containers = container_data['known']
+            for hash in containers:
+                container = containers[hash]
+                new_container = {}
+                new_containers.append(new_container)
+                new_container['hash'] = hash
+                new_container['id'] = container['id']
+                reactions = []
+                top_interactions = container['top_interactions']
+                new_container['comments'] = {
+                    'count': len(top_interactions['coms']),
+                    'url': '/api/comments/%d/%d' % (new_page['id'], new_container['id']) #TODO
+                }
+                top_tags = top_interactions['tags']
+                for tag_id in top_tags:
+                    tag = top_tags[tag_id]
+                    reactions.append({
+                        'id': tag_id,
+                        'text': tag['body'],
+                        'count': tag['count'],
+                        'parentID': tag['parent_id']
+                    })
+                new_container['reactions'] = reactions
+            new_page['containers'] = new_containers
+            new_pages.append(new_page)
+
+        return new_pages
+
+
+
 class SettingsHandler(AnonymousBaseHandler):
     model = Group
     """

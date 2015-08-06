@@ -115,12 +115,12 @@ function updateAllContainerData(json, pageData, groupSettings) {
 function updateContainerData(containerHash, jsonData, pageData, groupSettings) {
     var containerData = getContainerData(pageData, containerHash);
 
-    var topReactions = [];
+    var reactions = [];
     var reactionsData = jsonData.top_interactions.tags; // TODO top_interactions.coms?
     for (var id in reactionsData) {
         if (reactionsData.hasOwnProperty(id)) {
             var reaction = reactionsData[id];
-            topReactions.push({
+            reactions.push({
                 id: id,
                 count: reaction.count,
                 text: reaction.body,
@@ -133,7 +133,7 @@ function updateContainerData(containerHash, jsonData, pageData, groupSettings) {
     containerData.reactionCount = jsonData.counts.interactions; // TODO: what is containerData.counts.tags?
     containerData.id = jsonData.id;
     containerData.kind = jsonData.kind;
-    containerData.topReactions = topReactions;
+    containerData.reactions = reactions;
 }
 
 //noinspection JSUnresolvedVariable

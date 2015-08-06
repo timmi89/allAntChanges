@@ -6,6 +6,7 @@ from api.auth_handlers import *
 
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
+PageDataNew = Resource(handler=PageDataHandlerNew)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
@@ -73,6 +74,7 @@ urlpatterns = patterns('',
     url(r'^cache/settings/refresh/(?P<group_id>\d+)', CacheSettingsRefresh),
 
     # Widget
+    url(r'^pagenew/', PageDataNew),
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
     url(r'^summary/containers/', Containers),
