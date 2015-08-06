@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         web_js_src: [   '../widget/js/jquery.cookie.js', 
                         '../widget/js/jquery.json-2.2.min.js', 
                         '../site/js/ant_site_scripts.js', 
+                        '../site/js/ant_drip.js', 
                         '../site/js/materialize/global.js', 
                         '../site/js/materialize/jquery.easing.1.3.js', 
                         '../site/js/materialize/hammer.min.js', 
