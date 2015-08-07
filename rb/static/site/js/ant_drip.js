@@ -22,7 +22,7 @@ ANTdrip.initCustomEventTracking = function() {
         _dcq.push(["identify", userFields ]);
     }
 
-    // setup some custom events
+    // if someone clicks to chat with us on Tawk, log that in Drip
     $('#tawkchat-minified-iframe-element').ready(function(){
         // wait a moment then apply this event.  wasn't working without some sort of a pause.
         setTimeout( function() {
@@ -33,6 +33,7 @@ ANTdrip.initCustomEventTracking = function() {
         }, 750);
     });
 
+    // if someone Reacts on the site, let's log that in Drip.
     document.addEventListener("antenna.reaction", function(){
       var lastEvent = antenna.getLastEvent();
       if (lastEvent.event == 'antenna.reaction') {
@@ -40,6 +41,7 @@ ANTdrip.initCustomEventTracking = function() {
       }
     },false);
 
+    // if someone views reactions on the site, let's log that in Drip.
     document.addEventListener("antenna.reactionview", function(){
       var lastEvent = antenna.getLastEvent();
       if (lastEvent.event == 'antenna.reactionview') {
@@ -84,12 +86,14 @@ ANTdrip.initForms = function() {
                 form_id: form_id
             };
 
+        // quick/dirty form "validation"
         $form.find('[data-required]').each(function() {
             if ( !$(this).val() ) {
                 valid = false;
             }
         });
 
+        // if form is valid, identify this user in our Drip acct for tracking prospects and their on-site behavior
         if (valid === true) {
             _dcq.push(["identify", {
               email: email,
