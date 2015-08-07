@@ -6997,6 +6997,24 @@ strong {
   color: #fff;
   padding: 0.5rem;
   margin: 1rem 0; }
+  .error > a {
+    color: #9A2D24 !important; }
+
+.success {
+  background: #4b7185;
+  color: #fff;
+  padding: 0.5rem;
+  margin: 1rem 0; }
+  .success > a {
+    color: #0A313C !important; }
+
+.info {
+  background: #ccc;
+  color: #000;
+  padding: 0.5rem;
+  margin: 1rem 0; }
+  .info > a {
+    color: #0A313C !important; }
 
 .tip {
   background: #2f5863;
@@ -7429,6 +7447,7 @@ section.quote img {
     font-size: 1.25rem; }
   section.quote img {
     max-width: 180px; } }
+section.big-beta-form input[type="email"],
 section.big-beta-form input[type="text"] {
   background-color: rgba(0, 150, 136, 0.1);
   font-size: 2rem;

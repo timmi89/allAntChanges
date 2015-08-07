@@ -187,6 +187,7 @@ section {
   }
 
   &.big-beta-form {
+    input[type="email"],
     input[type="text"] {
       background-color: rgba(0, 150, 136, 0.1);
       font-size: 2rem;

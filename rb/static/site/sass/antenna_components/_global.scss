@@ -21,6 +21,26 @@ strong { font-weight:700; }
     color:$white;
     padding:0.5rem;
     margin:1rem 0;
+
+    > a { color:$antenna-dk-red !important; }
+}
+
+.success {
+    background: $antenna-lt-blue;
+    color:$white;
+    padding:0.5rem;
+    margin:1rem 0;
+
+    > a {color:$antenna-dker-blue !important;}
+}
+
+.info {
+    background: $gray;
+    color:$black;
+    padding:0.5rem;
+    margin:1rem 0;
+
+    > a {color:$antenna-dker-blue !important;}   
 }
 
 .tip {

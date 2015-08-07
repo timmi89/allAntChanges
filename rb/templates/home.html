@@ -139,6 +139,7 @@
 
 <section class="big-beta-form no-ant">
   <div class="container">
+    <form class="drip-form">
     <div class="row">
       <div class="col s12 center-align">
         <h1 class="line-behind">
@@ -150,16 +151,21 @@
           Join Our Free Beta
           </span>
         </h1>
+        <div class="form-message success hide">Thank you! We'll be in touch shortly.</div>
+        <div class="form-message info not-valid hide">Please fill out all of the required fields.  Thanks!</div>
+        <div class="form-message error hide">Oops, there was a problem.  Try again, or contact us at <a href="mailto:team@antenna.is">team@antenna.is</a>.</div>
       </div>
     </div>
     <div class="row">
       <div class="col s12 m6 center-align">
-        <label>Website URL</label>
-        <input type="text" name="website_url" ?>
+        <label>Email Address</label>
+        <input type="email" name="fields[email]" data-required="true" value="" />
       </div>
       <div class="col s12 m6 center-align">
-        <label>Email Address</label>
-        <input type="text" name="email_address" ?>
+        <label>Website URL</label>
+        <input type="text" name="fields[website_url]" data-required="true" value="" />
+        <input type="hidden" name="fields[form_id]" value="homepage_inline_1" />
+        <input type="hidden" name="fields[goal_name]" value="Publisher Beta Sign Up" />
       </div>
     </div>
     <div class="row">
@@ -167,6 +173,7 @@
         <button class="btn btn-large">Sign Up</button>
       </div>
     </div>
+    </form>
     <div class="row learn-more-boxes">
       <div class="col s12 m6 center-align">
         <div class="card">
