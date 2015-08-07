@@ -91,9 +91,6 @@
   });
   $(".button-collapse").sideNav();
 
-  ANTdrip.init();
-
-
   $('#private_profile').click( function() {
     $('label[for="private_profile"] span').remove();
     var sendData = {
@@ -165,6 +162,8 @@
       var s = document.getElementsByTagName('script')[0];
       s.parentNode.insertBefore(dc, s);
     })();
+
+    ANTdrip.init();
   </script>
 
   <!-- Google Analytics -->
@@ -185,6 +184,20 @@
   }
   </script>
 
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+  var $_Tawk_API={},$_Tawk_LoadStart=new Date();
+  (function(){
+  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+  s1.async=true;
+  s1.src='https://embed.tawk.to/55c51497ea90c3c62eb92033/default';
+  s1.charset='UTF-8';
+  s1.setAttribute('crossorigin','*');
+  s0.parentNode.insertBefore(s1,s0);
+  })();
+  </script>
+  <!--End of Tawk.to Script-->
+
   <!-- Hotjar Tracking Code for antenna.is -->
   <script>
       (function(h,o,t,j,a,r){
@@ -196,8 +209,6 @@
           a.appendChild(r);
       })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
   </script>
-
-{% include "antenna_icons_svg.html" %}
 
 </body>
 </html>

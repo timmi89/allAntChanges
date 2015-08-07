@@ -138,7 +138,7 @@
       <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
     </div>
   </div>
-  <div class="container row">
+  <div class="container row no-ant">
     <div class="col s12 m8 center-align examples">
       <img src="{{ STATIC_URL }}site/images/example_default.png" />
       <img src="{{ STATIC_URL }}site/images/example_perez.png" />
@@ -211,4 +211,14 @@
 {% endblock %}
 
 {% block page_js %}
+<script>
+  window.antenna_extend = {
+    summary_widget_selector: '.masthead+section .row:first .col:first',
+    summary_widget_method: 'prepend',
+    active_sections: 'section',
+    anno_whitelist: 'p',
+    no_ant: '.masthead, h1'
+  };
+</script>
+<script async src="/static/engage.js"></script>
 {% endblock %}

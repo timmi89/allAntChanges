@@ -207,6 +207,7 @@ section {
 
 
 // widget stuff
-.ant.ant-summary {
+.page-content .ant.ant-summary,
+.homepage .ant.ant-summary {
   display:none !important;
 }

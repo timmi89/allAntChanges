@@ -7024,6 +7024,9 @@ strong {
   font-weight: 400;
   letter-spacing: 1.25px; }
 
+.drip-lightbox {
+  z-index: 13001; }
+
 form.popupForm {
   padding-bottom: 2rem; }
 form input[type=text],
@@ -7459,7 +7462,8 @@ section.big-beta-form .btn.btn-large, section.big-beta-form .btn-large {
 section.big-beta-form .learn-more-boxes {
   margin-top: 2rem; }
 
-.ant.ant-summary {
+.page-content .ant.ant-summary,
+.homepage .ant.ant-summary {
   display: none !important; }
 
 .publishers section.masthead {

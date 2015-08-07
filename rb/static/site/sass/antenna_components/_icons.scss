@@ -7,4 +7,4 @@
 }
 
 // usage example
-// <svg class="icon-twitter"><use xlink:href="/static/site/svg/antenna_icons.svg#icon-twitter"></use></svg>
+// <svg class="icon-twitter"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#icon-twitter"></use></svg>

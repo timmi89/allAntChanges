@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col s12">
         <h1 class="no-ant">Try It Out!</h1>
-        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="/static/site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
       </div>
     </div>
     <div class="row">
@@ -76,7 +76,7 @@
     </div>
   </div>
 </section>
-<section class="customize-the-ui dark-section no-ant">
+<section class="customize-the-ui dark-section">
   <div class="container">
     <div class="row">
       <div class="col s12">
@@ -84,7 +84,7 @@
         <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
       </div>
     </div>
-    <div class="row">
+    <div class="row no-ant">
       <div class="col s12 center-align examples">
         <img src="{{ STATIC_URL }}site/images/example_default.png" />
         <img src="{{ STATIC_URL }}site/images/example_perez.png" />
@@ -97,7 +97,7 @@
   </div>
 </section>
 
-<section class="success no-ant gallery-content-link">
+<section class="success gallery-content-link">
   <div class="container">
     <div class="row">
       <div class="col s12 m8">
@@ -121,11 +121,11 @@
   </div>
 </section>
 
-<section class="quote no-ant dark-section">
+<section class="quote dark-section">
   <div class="container">
     <div class="row">
       <div class="col s12 m4 center-align">
-        <img src="{{ STATIC_URL }}site/images/alexis.jpg" class="circle" />
+        <img src="{{ STATIC_URL }}site/images/alexis.jpg" class="circle no-ant" />
       </div>
       <div class="col s12 m8">
         <blockquote>
@@ -232,6 +232,16 @@ if ( $window.scrollTop() / $window.height() < 0.25 ) {
 
 $('.masthead').height( $(window).height() );
 
+</script>
+
+<script>
+  window.antenna_extend = {
+    summary_widget_selector: '.masthead+section .row:first .col:first',
+    summary_widget_method: 'prepend',
+    active_sections: 'section',
+    anno_whitelist: 'p, blockquote',
+    no_ant: 'section:not(.masthead) h1'
+  };
 </script>
 
 <script async src="/static/engage.js"></script>
