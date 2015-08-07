@@ -69,7 +69,6 @@ function scanForText($section, pageData, groupSettings) {
         // TODO hash and add hash data to indicator
         var hash = Hash.hashText($element);
         var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
-        // TODO include the set of default reactions
         var containerData = PageData.getContainerData(pageData, hash);
         var defaultReactions = groupSettings.defaultReactions($element);
         var indicator = IndicatorWidget.create(container, containerData, pageData, defaultReactions, groupSettings);

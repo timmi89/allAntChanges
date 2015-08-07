@@ -717,7 +717,7 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                 page_data = getSinglePageDataDict(page_id)
 
                 # MODIFICATION go fetch the detailed content reaction info and merge it with the page_data
-                new_containers = []
+                new_containers = {}
                 container_set = page_data['containers']
                 for container in container_set:
                     data = { 'cross_page': False } # TODO remove all handling of cross_page and move that to a separate API call?
@@ -788,7 +788,7 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                         'hash': container.hash,
                         'reactions': reactions
                     }
-                    new_containers.append(new_container)
+                    new_containers[container.hash] = new_container
 
                 new_page = {}
                 new_page['pageHash'] = page_data['urlhash']

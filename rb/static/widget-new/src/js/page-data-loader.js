@@ -31,10 +31,7 @@ function computePagesParam(groupSettings) {
         var $pageElement = $(this);
         pages.push({
             group_id: groupId,
-            url: URLs.computePageUrl($pageElement, groupSettings),
-            canonical_url: URLs.computeCanonicalUrl($pageElement, groupSettings),
-            image: '', // TODO
-            title: computePageTitle() // TODO: This code only works for the top-level page. See computePageTitle()
+            url: URLs.computeCanonicalUrl($pageElement, groupSettings)
         });
     });
 
@@ -43,48 +40,16 @@ function computePagesParam(groupSettings) {
 
 function loadPageData(groupSettings) {
     var pagesParam = computePagesParam(groupSettings);
-    $.getJSONP('/api/page', { pages: pagesParam }, success, error);
-    $.getJSONP('/api/pagenew', { pages: pagesParam }, function(json) {
-        console.log(json);
-    }, error);
+    $.getJSONP('/api/pagenew', { pages: pagesParam }, success, error);
 
     function success(json) {
-        PageData.updateAllPageData(json, groupSettings, function(updatedPages) {
-            // TODO revisit this. we probably don't want to go out and aggressively load all data for all pages
-            for (var i = 0; i < updatedPages.length; i++) {
-                loadContainerData(updatedPages[i]);
-            }
-        });
+        // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
+        //       and send them to the server. (use computePageTitle())
+        PageData.updateAllPageData(json, groupSettings);
     }
 
     function error(message) {
         // TODO handle errors that happen when loading page data
-    }
-}
-
-function loadContainerData(pageData) {
-    var containers = pageData.containers;
-    // TODO consider optimizing the data storage so we don't have to iterate like this
-    var hashes = [];
-    for (var hash in containers) {
-        if (containers.hasOwnProperty(hash)) {
-            hashes.push(hash);
-        }
-    }
-    var data = {
-        short_name: '', // TODO
-        pageID: pageData.pageId,
-        hashes: hashes,
-        crossPageHashes: [] // TODO
-    };
-    $.getJSONP('/api/summary/containers', data, success, error);
-
-    function success(json) {
-        PageData.updateAllContainerData(json, pageData);
-    }
-
-    function error(message) {
-        // TODO handle errors that happen when loading container data
     }
 }
 

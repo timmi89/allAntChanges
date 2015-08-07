@@ -12,7 +12,8 @@ function getPageData(hash) {
         // and tell the ractives to update whenever the data changes.
         pageData = {
             pageHash: hash,
-            summary: {},
+            summaryReactions: {},
+            summaryTotal: 0, // TODO consider folding this into summaryReactions
             containers: {}
         };
         pages[hash] = pageData;
@@ -20,57 +21,43 @@ function getPageData(hash) {
     return pageData;
 }
 
-function updateAllPageData(jsonPages, groupSettings, callback) {
+function updateAllPageData(jsonPages, groupSettings) {
     var allPages = [];
     for (var i = 0; i < jsonPages.length; i++) {
         allPages.push(updatePageData(jsonPages[i], groupSettings));
     }
-    callback(allPages);
 }
 
 function updatePageData(json, groupSettings) {
-    var pageHash = json.urlhash;
+    var pageHash = json.pageHash;
     var pageData = getPageData(pageHash);
 
-    var numReactions = 0;
-    var numComments = 0;
-    var numShares = 0;
+    // TODO: Can we get away with just setting pageData = json without breaking Ractive's data binding?
+    var summaryReactions = json.summaryReactions;
+    pageData.summaryReactions = summaryReactions;
+    setContainers(pageData, json.containers);
 
-    var summaryEntries = json.summary;
-    if (summaryEntries) {
-        for (var i = 0; i < summaryEntries.length; i++) {
-            var summaryEntry = summaryEntries[i];
-            if (summaryEntry.kind === 'tag') {
-                numReactions = summaryEntry.count;
-            } else if (summaryEntry.kind === 'com') {
-                numComments = summaryEntry.count;
-            } else if (summaryEntry.kind === 'shr') {
-                numShares = summaryEntry.count;
-            }
-        }
+    // We add up the summary reaction total client-side
+    var total = 0;
+    for (var i = 0; i < summaryReactions.length; i++) {
+        total = total + summaryReactions[i].count;
     }
+    pageData.summaryTotal = total;
 
-    var topReactions = [];
-    var reactionsData = json.toptags;
-    if (reactionsData) {
-        for (var j = 0; j < reactionsData.length; j++) {
-            var reaction = reactionsData[j];
-            topReactions[j] = {
-                id: reaction.id,
-                count: reaction.tag_count,
-                text: reaction.body
+    // We add up the container reaction totals client-side
+    var total = 0;
+    var containers = pageData.containers;
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var container = containers[hash];
+            var total = 0;
+            var containerReactions = container.reactions;
+            if (containerReactions) {
+                for (var i = 0; i < containerReactions.length; i++) {
+                    total = total + containerReactions[i].count;
+                }
             }
-        }
-    }
-
-    var containerEntries = json.containers;
-    if (containerEntries) {
-        // Note that the set of hashes that comes back includes a pair with a key of "page".
-        // TODO: Should we keep the entry in the data model with "page" as the key or use the value of urlhash instead?
-        for (var i = 0; i < containerEntries.length; i++) {
-            var containerEntry = containerEntries[i];
-            var containerData = getContainerData(pageData, containerEntry.hash);
-            containerData.id = containerEntry.id;
+            container.reactionTotal = total;
         }
     }
 
@@ -78,13 +65,7 @@ function updatePageData(json, groupSettings) {
     // updating fields in the local object if they exist in the json data.
     pageData.groupId = groupSettings.groupId();
     pageData.pageId = json.id;
-    pageData.urlHash = json.urlhash;
-    pageData.summary = {
-        totalReactions: numReactions,
-        totalComments: numComments,
-        totalShares: numShares
-    };
-    pageData.topReactions = topReactions;
+    pageData.pageHash = pageHash;
 
     return pageData;
 }
@@ -100,46 +81,26 @@ function getContainerData(pageData, containerHash) {
     return containerData;
 }
 
-function updateAllContainerData(json, pageData, groupSettings) {
-    var containerData = json.known;
-    for (var hash in containerData) {
-        if (containerData.hasOwnProperty(hash)) {
-            updateContainerData(hash, containerData[hash], pageData, groupSettings);
+function setContainers(pageData, containers) {
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var containerData = getContainerData(pageData, hash);
+            merge(containers[hash], containerData);
         }
     }
-    // TODO: merge the container data for the page (actual reactions on the page itself) with the summary reaction data somehow.
-    console.log('done updating data');
-    //json.unknown; TODO: anything to do with the set of "unknown" hashes?
 }
 
-function updateContainerData(containerHash, jsonData, pageData, groupSettings) {
-    var containerData = getContainerData(pageData, containerHash);
-
-    var reactions = [];
-    var reactionsData = jsonData.top_interactions.tags; // TODO top_interactions.coms?
-    for (var id in reactionsData) {
-        if (reactionsData.hasOwnProperty(id)) {
-            var reaction = reactionsData[id];
-            reactions.push({
-                id: id,
-                count: reaction.count,
-                text: reaction.body,
-                parentId: reaction.parent_id
-            });
+function merge(source, target) {
+    for (var prop in source) {
+        if (source.hasOwnProperty(prop)) {
+            target[prop] = source[prop];
         }
     }
-
-    containerData.commentCount =  jsonData.counts.coms;
-    containerData.reactionCount = jsonData.counts.interactions; // TODO: what is containerData.counts.tags?
-    containerData.id = jsonData.id;
-    containerData.kind = jsonData.kind;
-    containerData.reactions = reactions;
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
     getPageData: getPageData,
     updateAllPageData: updateAllPageData,
-    getContainerData: getContainerData,
-    updateAllContainerData: updateAllContainerData
+    getContainerData: getContainerData
 };

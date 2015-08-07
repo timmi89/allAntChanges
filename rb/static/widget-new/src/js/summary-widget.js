@@ -25,11 +25,10 @@ function rootElement(ractive) {
 
 function openReactionsWindow(pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
-        // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
         var container = document.createElement('div');
         bucket.appendChild(container);
-        ractive.reactionsWidget = ReactionsWidget.create(container, pageData.topReactions, pageData, groupSettings);
+        ractive.reactionsWidget = ReactionsWidget.create(container, pageData.summaryReactions, pageData, groupSettings);
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }

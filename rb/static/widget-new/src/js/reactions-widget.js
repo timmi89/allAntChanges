@@ -5,6 +5,10 @@ var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
 
 function createReactionsWidget(container, reactionsData, pageData, groupSettings) {
+    if (!reactionsData) {
+        // TODO handle the case of no reactions (show default reactions)
+        return { open: function(){} };
+    }
     var colors = groupSettings.reactionBackgroundColors();
     var layoutData = computeLayoutData(reactionsData, colors);
     var ractive = Ractive({
@@ -74,7 +78,7 @@ function plusOne(pageData, ractive) {
         var reactionData = event.context;
         reactionData.count = reactionData.count + 1;
         // TODO: check back on this as the way to propogate data changes back to the summary
-        pageData.summary.totalReactions = pageData.summary.totalReactions + 1;
+        pageData.summaryTotal = pageData.summaryTotal + 1;
 
         XDMClient.getUser(function(response) {
             var userInfo = response.data;
