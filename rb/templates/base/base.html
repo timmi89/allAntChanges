@@ -92,6 +92,11 @@
   });
   $(".button-collapse").sideNav();
 
+
+  {% comment %}
+
+  // We have to keep this handy until we re-enable a "users can edit their settings" page so we remember what endpoints we had for adjusting settings...
+
   $('#private_profile').click( function() {
     $('label[for="private_profile"] span').remove();
     var sendData = {
@@ -147,7 +152,9 @@
         }
     });
   });
+  {% endcomment %}
   </script>
+
 
 
   <!-- Drip -->

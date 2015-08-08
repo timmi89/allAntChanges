@@ -71,7 +71,7 @@ $('#cards').addClass('user_profile');
         {% for interaction in page.list %}
             {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
             
-            <div class="col s6 cardWrap">
+            <div class="col s12 m6 cardWrap">
             <section class="card interaction_{{ interaction.id }}" 
                 data-interaction-id="{{ interaction.id }}" 
                 data-interaction-body="{{ interaction.interaction_node.body }}" 
