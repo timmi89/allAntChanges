@@ -1,23 +1,22 @@
-{% extends "base.html" %}
-{% block title %}{{ group.name }} Approve Administrators{%endblock%}
-{% block bodyClass %}wide{% endblock %}
+{% extends "base/wide.html" %}
+{% load custom_filters %}
+
+{% block page_title %}{{ form.instance.name }} -- Approve Administrators{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
 
 {% block subheaderContent %}
 <section role="subheader">
-    {% with group=form.instance %}
-    {% with "" as activeAdminTab %} 
+    {% with "admin_requests" as activeAdminTab %} 
     {% include "admin/nav_tabs.html" %}
-    {% endwith %}
     {% endwith %}
 </section>
 {% endblock %}
 
-{% block wideContent %}
+{% block page_content %}
 
-<div class="grid-whole settings">
+<div class="container row settings">
   <section role="panels" class="content">
-  <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
-
 <h1>{{ group.name }} Approve Administrators</h1>
 <div class="notice info">
 To have someone request Admin access to {{group.name}}, have them create a Antenna account and then send them to <a href="/group/{{group.short_name}}/admin_request/" target="_blank">www.antenna.is/group/{{group.short_name}}/admin_request/</a>.
@@ -42,4 +41,4 @@ To have someone request Admin access to {{group.name}}, have them create a Anten
 
 </section>
 </div>
-{% endblock wideContent %}
+{% endblock %}

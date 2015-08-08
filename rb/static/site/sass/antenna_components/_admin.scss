@@ -1,6 +1,8 @@
 .admin {
     label {
         display: block;
+        height: auto;
+        line-height: 1.5rem;
         
         .labelTitle {
             display: block;
@@ -35,4 +37,25 @@
             }
         }
     }
+
+    [role="subheader"] {
+        padding:0;
+
+        .subheader {
+            background:$gray;
+            padding-top:1rem;
+            margin-bottom: 1rem;
+
+            a {
+                padding-left:2rem;
+                font-size:0.8rem;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+
 }

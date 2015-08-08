@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
 {% block title %}In-house Analytics{%endblock%}
 
 
@@ -18,7 +18,7 @@
 </style>
 {% endblock %}
 
-{% block wideContent %}
+{% block page_content %}
 <div class="mostlyWide">
     <h1>Global Snapshot of {{ num_active_groups }} Groups </h1>
     {% for group_dict in active_approved %}
@@ -89,4 +89,4 @@
     
     
 </div>
-{% endblock wideContent %}
+{% endblock %}

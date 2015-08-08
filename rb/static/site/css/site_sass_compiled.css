@@ -7616,7 +7616,9 @@ section.big-beta-form .learn-more-boxes {
     display: block; } }
 
 .admin label {
-  display: block; }
+  display: block;
+  height: auto;
+  line-height: 1.5rem; }
   .admin label .labelTitle {
     display: block;
     color: #389;
@@ -7636,5 +7638,16 @@ section.big-beta-form .learn-more-boxes {
     background: #4b7185; }
     .admin .tabs .tab.active a {
       color: #fff; }
+.admin [role="subheader"] {
+  padding: 0; }
+  .admin [role="subheader"] .subheader {
+    background: #ccc;
+    padding-top: 1rem;
+    margin-bottom: 1rem; }
+    .admin [role="subheader"] .subheader a {
+      padding-left: 2rem;
+      font-size: 0.8rem; }
+      .admin [role="subheader"] .subheader a:hover {
+        text-decoration: underline; }
 
 /*# sourceMappingURL=site_sass_compiled.css.map */
