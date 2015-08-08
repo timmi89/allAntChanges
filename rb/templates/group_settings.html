@@ -1,7 +1,9 @@
 {% extends "base/wide.html" %}
 {% load custom_filters %}
 
-{% block title %}{{ form.instance.name }} Settings{%endblock%}
+{% block page_title %}{{ form.instance.name }} Settings{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
 
 {% block subheaderContent %}
 <section role="subheader">

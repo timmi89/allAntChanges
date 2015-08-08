@@ -1,10 +1,11 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
+{% load custom_filters %}
 
-{% block title %}{{ cookie_user }} Management{%endblock%}
+{% block page_title %}{{ cookie_user }} Management{%endblock%}
 
-{% block wideContent %}
-<div class="grid-whole">
-  <section role="panels" class="content">
+{% block page_content %}
+<div class="container row">
+  <section role="panels" class="content s12">
 
     {% for group in admin_groups %}
         {% block settingsHeader %}    
@@ -67,7 +68,7 @@
     {% endfor %}  
   </section>
 </div>
-{% endblock wideContent %}
+{% endblock %}
  
     {% block afterWideContent %}
     {% endblock %}

@@ -5614,6 +5614,49 @@ small {
       cursor: pointer;
       display: block; }
 
+.tabs {
+  position: relative;
+  height: 48px;
+  background-color: #fff;
+  margin: 0 auto;
+  width: 100%;
+  white-space: nowrap; }
+  .tabs .tab {
+    display: block;
+    float: left;
+    text-align: center;
+    line-height: 48px;
+    height: 48px;
+    padding: 0 20px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    width: 15%; }
+    .tabs .tab a {
+      color: #4b7185;
+      display: block;
+      width: 100%;
+      height: 100%;
+      -webkit-transition: color 0.28s ease;
+      -moz-transition: color 0.28s ease;
+      -o-transition: color 0.28s ease;
+      -ms-transition: color 0.28s ease;
+      transition: color 0.28s ease; }
+      .tabs .tab a:hover {
+        color: #7fa4b7; }
+    .tabs .tab.disabled a {
+      color: #7fa4b7;
+      cursor: default; }
+  .tabs .indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: #6f98ae;
+    will-change: left, right; }
+
+.tabs .tab {
+  padding: 0; }
+
 .material-tooltip {
   padding: 10px 8px;
   font-size: 1rem;
@@ -7572,18 +7615,26 @@ section.big-beta-form .learn-more-boxes {
   .retailers section.mobile-sign-up {
     display: block; } }
 
-label {
+.admin label {
   display: block; }
-  label .labelTitle {
+  .admin label .labelTitle {
     display: block;
     color: #389;
     font-weight: bold;
     font-size: 1rem; }
-
-.formRow {
+.admin .formRow {
   margin-top: 1rem; }
-
-input.attribute, input.selector {
+.admin input.attribute, .admin input.selector {
   width: auto; }
+.admin .tabs .tab {
+  padding: 0;
+  padding: 0 2%;
+  display: inline-block;
+  float: none;
+  width: auto; }
+  .admin .tabs .tab.active {
+    background: #4b7185; }
+    .admin .tabs .tab.active a {
+      color: #fff; }
 
 /*# sourceMappingURL=site_sass_compiled.css.map */
