@@ -7572,4 +7572,18 @@ section.big-beta-form .learn-more-boxes {
   .retailers section.mobile-sign-up {
     display: block; } }
 
+label {
+  display: block; }
+  label .labelTitle {
+    display: block;
+    color: #389;
+    font-weight: bold;
+    font-size: 1rem; }
+
+.formRow {
+  margin-top: 1rem; }
+
+input.attribute, input.selector {
+  width: auto; }
+
 /*# sourceMappingURL=site_sass_compiled.css.map */

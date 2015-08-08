@@ -1,0 +1,21 @@
+label {
+    display: block;
+    
+    .labelTitle {
+        display: block;
+        color: #389;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+}
+
+.formRow {
+    margin-top: 1rem;
+}
+
+input {
+    &.attribute, 
+    &.selector {
+        width:auto;
+    }
+}

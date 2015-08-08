@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
 {% load custom_filters %}
 
 {% block title %}{{ form.instance.name }} Settings{%endblock%}
@@ -13,8 +13,8 @@
 </section>
 {% endblock %}
 
-{% block wideContent %}
-<div class="grid-whole settings">
+{% block page_content %}
+<div class="container row settings">
   <section role="panels" class="content">
   <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
 {% with group=form.instance %}
@@ -26,7 +26,12 @@
   <form id="groupSettings" action="{% block settingsUrl %}/group/{{ short_name }}/settings/{% endblock settingsUrl %}" enctype="multipart/form-data" method="post" class="big-form">{% csrf_token %}
   {{ form.non_field_errors }}
 
-	<div class="leftColumn column">
+  <div class="formFeedback" data-saved="{{saved}}" >
+      <p style="display: none;" class="error">Oops, there were some errors with the form, please see the sections highlighted red above.<p>
+      <p style="display: none;" class="success" >Changes saved<p>
+  </div> 
+
+	<div class="leftColumn col s12 m5">
         <section class="">
     		<h3>Group Information</h3>
     		<div class="formRow">
@@ -62,7 +67,7 @@
                 <label for="id_active_sections">
                     <span class="labelTitle">Active Sections (jQuery selector)</span>
                     <span>Tell Antenna where the content its allowed to interact with can be found.  For example, if you're using WordPress, you may just want people to interact with your article content -- typically all found inside the <code>.post</code> element.  Multiple elements allowed.</span>
-                    <span class="formInputExample">Example: <i>article.post, #slideshow</i></span>
+                    <span class="formInputExample">Example: <em>article.post, #slideshow</em></span>
                 </label>
                 {{ form.active_sections }}{{ form.active_sections.errors }}
             </div>
@@ -70,7 +75,7 @@
                 <label for="id_anno_whitelist">
                     <span class="labelTitle">Active Tags (jQuery selector)</span>
                     <span>Defines tags within the Active Sections that Antenna can interact with.</span>
-                    <span class="formInputExample">Example: <i>p,img</i></span>
+                    <span class="formInputExample">Example: <em>p,img</em></span>
                 </label>
                 {{ form.anno_whitelist }}{{ form.anno_whitelist.errors }}
             </div>
@@ -78,7 +83,7 @@
                 <label for="id_no_readr">
                     <span class="labelTitle">Inactive Sections (jQuery selector)</span>
                     <span>Defines sections that Antenna should always ignore.</span>
-                    <span class="formInputExample">Example: <i>.myHeader, .mySidebar, .myFooter</i></span>
+                    <span class="formInputExample">Example: <em>.myHeader, .mySidebar, .myFooter</em></span>
                 </label>
                 {{ form.no_readr }}{{ form.no_readr.errors }}
             </div>
@@ -135,7 +140,7 @@
                 <label for="id_separate_cta">
                     <span class="labelTitle">Which tags will have a separate call-to-action? (jQuery selector)</span>
                     <span>Antenna can insert a distinct call-to-action for content on your page.  See <a href="/see/#anotherway" target="_blank">Another way to react" on our demo page</a> to see what we mean.</span>
-                    <span class="formInputExample">Example: <i>iframe,video</i></span>
+                    <span class="formInputExample">Example: <em>iframe,video</em></span>
                 </label>
                 {{ form.separate_cta }}{{ form.separate_cta.errors }}
             </div>
@@ -144,7 +149,7 @@
                 <label for="id_br_replace_scope_selector">
                     <span class="labelTitle">BR Tag Replacement (jQuery selector)</span>
                     <span>Some platforms, like Blogspot, separate paragraphs with a BR HTML tag, rather than P tags.  This is a problem, since there is a limit to how long a single piece of content can be for Antenna.  If your CMS does this, Antenna can replace the BR tags and wrap your content inside a tag. <strong>Most websites do not have this problem, so if you are unsure, just leave this empty!</strong></span>
-                    <span class="formInputExample">Example: <i>.article</i></span>
+                    <span class="formInputExample">Example: <em>.article</em></span>
                 </label>
                 {{ form.br_replace_scope_selector }}{{ form.br_replace_scope_selector.errors }}
             </div>
@@ -174,7 +179,7 @@
                 <label for="">
                     <span class="labelTitle">Author(s)</span>
                     <span>Tell Antenna which HTML tags on your page contain the author(s) name(s).  If there is more than one tag, we'll iterate through and generated a comma-separated list of authors. We assume a jQuery selector for the tag, and that the author name is in an attribute.</span>
-                    <span class="formInputExample"><i>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</i></span>
+                    <span class="formInputExample"><em>$('<b>meta[rel="author"]</b>').attr('<b>content</b>');</em></span>
                 </label>
                 $('{{ form.author_selector|cssClass:'selector' }}').attr('{{ form.author_attribute|cssClass:'attribute' }}');
                 {{ form.author_selector.errors }}
@@ -184,7 +189,7 @@
                 <label for="">
                     <span class="labelTitle">Topics</span>
                     <span>Tell Antenna which HTML tags on your page contain topic tags.  If there is more than one tag, we'll iterate through and generated a comma-separated list of topic tags. We assume a jQuery selector for the tag, and that the tag is in an attribute.</span>
-                    <span class="formInputExample"><i>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</i></span>
+                    <span class="formInputExample"><em>$('<b>meta[rel="topic"]</b>').attr('<b>content</b>');</em></span>
                 </label>
                 $('{{ form.topics_selector|cssClass:'selector' }}').attr('{{ form.topics_attribute|cssClass:'attribute' }}');
                 {{ form.topics_selector.errors }}
@@ -194,7 +199,7 @@
                 <label for="">
                     <span class="labelTitle">Site Section(s)</span>
                     <span>Tell Antenna which HTML tags on your page contain the site section(s) this article is in, such as Politics or News.  If there is more than one tag, we'll iterate through and generated a comma-separated list of sections. We assume a jQuery selector for the tag, and that the section name is in an attribute.</span>
-                    <span class="formInputExample"><i>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</i></span>
+                    <span class="formInputExample"><em>$('<b>meta[rel="section"]</b>').attr('<b>content</b>');</em></span>
                 </label>
                 $('{{ form.section_selector|cssClass:'selector' }}').attr('{{ form.section_attribute|cssClass:'attribute' }}');
                 {{ form.section_selector.errors }}
@@ -204,8 +209,8 @@
         <section class="configurationSection">        
             <h3>Broadcast Widget</h3>
             <div class="formRow">
+                {{ form.show_recirc}}{{ form.show_recirc.errors }}
                 <label for="id_show_recirc">
-                    {{ form.show_recirc}}{{ form.show_recirc.errors }}
                     <span class="labelTitle">Show Broadcast widget?</span>
                     <!-- <span>Simply ch</span> -->
                 </label>
@@ -248,7 +253,7 @@
             </div>
         </section>
     </div>
-    <div class="rightColumn column">
+    <div class="rightColumn col s12 m5 offset-m1">
         <section class="">
             <h3>Moderation</h3>
             <div class="formRow" style="margin: 10px 0;">
@@ -256,8 +261,8 @@
                 <label for="id_requires_approval"><span class="labelTitle">Auto-block all reactions </span><span>If you want comments and reactions to be approved before they are visible for others to see, check this box.</span></label>
             </div>
             <div class="formRow">
+                {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
                 <label for="id_signin_organic_required">
-                    {{ form.signin_organic_required}}{{ form.signin_organic_required.errors }}
                     <span class="labelTitle">Require login for custom reactions</span>
                     <span>This will require that a user logs before adding their own reaction instead of clicking your chosen defaults.</span>
                 </label>
@@ -272,13 +277,13 @@
                     <label>
                         <a href="#" id="toggle_word_blacklist">
                             <span class="labelTitle word_blacklist_toggle_node" style="font-size: 12px;">Show and edit the list</span>
-                            <span class="labelTitle word_blacklist_toggle_node hidden" style="font-size: 12px;">Good heavens, my eyes!</span>
+                            <span class="labelTitle word_blacklist_toggle_node hide" style="font-size: 12px;">Good heavens, my eyes!</span>
                         </a>
                         <span class="floatLeft word_blacklist_toggle_node">Warning: Rated R for Raunchy</span>
-                        <span class="floatLeft word_blacklist_toggle_node hidden">Hide this list, it will continue to be censored</span>
+                        <span class="floatLeft word_blacklist_toggle_node hide">Hide this list, it will continue to be censored</span>
                     </label>
                 </div>
-                <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hidden">
+                <div id="word_blacklist_wrap" class="word_blacklist_toggle_node hide">
                     {{ form.word_blacklist }}{{ form.word_blacklist.errors }}
                 </div>
                 <input type="text" name="fake_hidden_word_blacklist" id="fake_hidden_word_blacklist" readonly="readonly" value="Dagnabbit, Poppycock ..." style="width:265px; color: #bbb;" class="word_blacklist_toggle_node">
@@ -340,24 +345,24 @@
             </div>
             {% if group.premium == True %}
             <div class="formRow">
+                {{ form.send_notifications}}{{ form.send_notifications.errors }}
                 <label for="id_send_notifications">
-                    {{ form.send_notifications}}{{ form.send_notifications.errors }}
                     <span class="labelTitle">Send Email Notifications?</span>
                     <span>For users with a Antenna account, send them occasional notices when others react on the same pages they do.  (We don't send them every time, just periodically.)</span>
                 </label>
             </div>
             {% endif %}
             <div class="formRow">
+                {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
                 <label for="id_paragraph_helper">
-                    {{ form.paragraph_helper}}{{ form.paragraph_helper.errors }}
                     <span class="labelTitle">Paragraph Tooltips</span>
                     <span>Paragraphs with no reactions will display an icon when you hover over them.  When you hover over the icon it explains how to select text and react with Antenna.</span>
                 </label>
             </div>
             <hr/>
             <div class="formRow">
+                {{ form.img_indicator_show_onload}}{{ form.img_indicator_show_onload.errors }}
                 <label for="id_img_indicator_show_onload">
-                    {{ form.img_indicator_show_onload}}{{ form.img_indicator_show_onload.errors }}
                     <span class="labelTitle">Show call-to-action for images at page load? </span>
                     <span>If so, a small Antenna logo will appear on images to encourage interaction.</span>
                 </label>
@@ -425,15 +430,11 @@
     <div style="clear:both;">
         <button class="btn submit flat" type="submit">Submit</button>
     </div>
-    <div class="formFeedback" data-saved="{{saved}}" >
-        <p style="display: none;" class="errorMsg">Oops, there were some errors with the form, please see the sections highlighted red above.<p>
-        <p style="display: none;" class="successMsg" >Changes saved<p>
-    </div> 
   </form>
 {% endwith %}
     </section>
 </div>
-{% endblock wideContent %}
+{% endblock page_content %}
  
     {% block afterWideContent %}
     {% endblock %}
@@ -451,23 +452,23 @@
             var hasErrors = $('.errorlist').length;
             
             if(hasErrors){
-                $('.errorMsg').show();
+                $('.error').show();
             }else{
                 var wasSaved = $('.formFeedback').data('saved');
                 if(wasSaved){
-                    $('.successMsg').show();
+                    $('.success').show();
                 }
             }
 
             $('#groupSettings input').bind('keypress', function(){
                 $(this).closest('.formRow').removeClass('error');
-                $(this).closest('form').find('.errorMsg').hide();
-                $(this).closest('form').find('.successMsg').hide();
+                $(this).closest('form').find('.error').hide();
+                $(this).closest('form').find('.success').hide();
             });
 
             $('#toggle_word_blacklist, #fake_hidden_word_blacklist').click(function(){
                 $('.word_blacklist_toggle_node').each(function(){
-                    $(this).toggleClass('hidden');
+                    $(this).toggleClass('hide');
                 });
                 return false;
             });
