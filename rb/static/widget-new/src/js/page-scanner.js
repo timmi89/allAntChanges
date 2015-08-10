@@ -51,7 +51,10 @@ function scanForSummaries($element, pageData, groupSettings) {
     $summaries.each(function() {
         var $summary = $(this);
         var container = $('<div class="ant-summary-container"></div>');
-        SummaryWidget.create(container, pageData, groupSettings);
+        var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
+        containerData.type = 'page'; // TODO: revisit whether it makes sense to set the type here
+        var defaultReactions = groupSettings.defaultReactions($summary); // TODO: do we support customizing the default reactions at this level?
+        SummaryWidget.create(container, containerData, pageData, defaultReactions, groupSettings);
         insertContent($summary, container, groupSettings.summaryMethod());
     });
 }
@@ -70,6 +73,7 @@ function scanForText($section, pageData, groupSettings) {
         var hash = Hash.hashText($element);
         var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
         var containerData = PageData.getContainerData(pageData, hash);
+        containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($element);
         var indicator = IndicatorWidget.create(container, containerData, pageData, defaultReactions, groupSettings);
         $element.append(container); // TODO is this configurable ala insertContent(...)?

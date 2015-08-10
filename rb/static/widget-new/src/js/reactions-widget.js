@@ -4,7 +4,8 @@ var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
 
-function createReactionsWidget(container, reactionsData, pageData, groupSettings) {
+// containerType is 'page', 'text', 'media', or 'img'
+function createReactionsWidget(element, reactionsData, pageData, containerData, groupSettings) {
     if (!reactionsData) {
         // TODO handle the case of no reactions (show default reactions)
         return { open: function(){} };
@@ -12,7 +13,7 @@ function createReactionsWidget(container, reactionsData, pageData, groupSettings
     var colors = groupSettings.reactionBackgroundColors();
     var layoutData = computeLayoutData(reactionsData, colors);
     var ractive = Ractive({
-        el: container,
+        el: element,
         magic: true,
         data: {
             reactions: reactionsData,
@@ -40,7 +41,7 @@ function createReactionsWidget(container, reactionsData, pageData, groupSettings
     ractive.on('update', function() {
         console.log('update!');
     });
-    ractive.on('plusone', plusOne(pageData, ractive));
+    ractive.on('plusone', plusOne(containerData, pageData, ractive));
     return {
         open: openWindow(ractive)
     };
@@ -72,7 +73,7 @@ function sizeToFit(node) {
     return { teardown: function() {} };
 }
 
-function plusOne(pageData, ractive) {
+function plusOne(containerData, pageData, ractive) {
     return function(event) {
         // Optimistically update our local data store and the UI. Then send the request to the server.
         var reactionData = event.context;
@@ -82,33 +83,45 @@ function plusOne(pageData, ractive) {
 
         XDMClient.getUser(function(response) {
             var userInfo = response.data;
-            postPlusOne(reactionData, userInfo, pageData, ractive);
+            postPlusOne(reactionData, userInfo, containerData, pageData, ractive);
         });
     };
 }
 
-function postPlusOne(reactionData, userInfo, pageData, ractive) {
+function postPlusOne(reactionData, userInfo, containerData, pageData, ractive) {
     // TODO extract the shape of this data and possibly the whole API call
-    // TODO pass along the parentId if it's really a "+1"
-    // TODO this is only handling the summary case. need to generalize the widget to handle containers/content
+    // TODO figure out which parts don't get passed for a new reaction
+    // TODO compute field values (e.g. container_kind and content info) for new reactions
+    if (!reactionData.content) {
+        // This is a summary reaction. See if we have any container data that we can link to it.
+        var containerReactions = containerData.reactions;
+        for (var i = 0; i < containerData.reactions.length; i++) {
+            var containerReaction = containerData.reactions[i];
+            if (containerReaction.id == reactionData.id) {
+                reactionData.parentID = containerReaction.parentID;
+                reactionData.content = containerReaction.content;
+                break;
+            }
+        }
+    }
     var data = {
         tag: {
             body: reactionData.text,
-            id: reactionData.id,
-            tag_count: reactionData.count // TODO why??
+            id: reactionData.id
         },
-        hash: 'page',
-        kind: 'page',
+        is_default: 'true', // TODO
+        hash: containerData.hash,
         user_id: userInfo.user_id,
         ant_token: userInfo.ant_token,
         page_id: pageData.pageId,
         group_id: pageData.groupId,
-        container_kind: 'text', // TODO: why is this 'text' for a page reaction?
-        content_node: '',
+        container_kind: containerData.type, // 'page', 'text', 'media', 'img'
         content_node_data: {
-            body: '',
-            kind: 'page',
-            item_type: 'page'
+            id: reactionData.content.id,
+            location: reactionData.content.location,
+            body: '', // TODO: this is needed to create new content reactions
+            kind: reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
+            item_type: '' // TODO: looks unused but TagHandler blows up without it
         }
     };
     var success = function(json) {
@@ -127,8 +140,14 @@ function postPlusOne(reactionData, userInfo, pageData, ractive) {
         //} else {
         //    handleNewReaction(reactionData);
         //}
-        // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-        ractive.set('response.existing', response.existing);
+        if (response.existing) {
+            // TODO: Decrement the reaction counts if the response was a dup.
+            //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
+            //reactionData.count = reactionData.count - 1;
+            //pageData.summaryTotal = pageData.summaryTotal - 1;
+            // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+            ractive.set('response.existing', response.existing);
+        }
         showReactionResult(ractive);
     };
     var error = function(message) {

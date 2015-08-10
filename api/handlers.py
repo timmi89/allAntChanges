@@ -761,6 +761,15 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                     reactions = []
                     for content_id in content_summaries:
                         content_data = content_summaries[content_id]
+                        kind = content_data['kind']
+                        if (kind == 'txt'):
+                            content_kind = 'text'
+                        elif (kind == 'pag'):
+                            content_kind = 'page'
+                        elif (kind == 'img'):
+                            content_kind = 'img'
+                        elif (kind == 'med'):
+                            content_kind = 'media'
                         top_interactions = content_data['top_interactions']
                         comment_dict = {}
                         comments = top_interactions['coms']
@@ -776,7 +785,11 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                                 'text': tag['body'],
                                 'count': tag['count'],
                                 'parentID': tag['parent_id'],
-                                'location': content_data['location'], # TODO data format?
+                                'content': {
+                                    'id': content_id,
+                                    'location': content_data['location'], # TODO data format?
+                                    'kind': content_kind
+                                },
                                 'comments': {
                                     'count': comment_dict.get(tag_id, 0),
                                     'url': '/api/comments/%d/%d/%d' % (page_id, container_id, content_id) #TODO real url

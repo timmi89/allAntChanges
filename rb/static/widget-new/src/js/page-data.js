@@ -81,11 +81,20 @@ function getContainerData(pageData, containerHash) {
     return containerData;
 }
 
+// Merge the given container data into the pageData.containers data. This is necessary for two reasons:
+// 1. The skeleton of the pageData.containers map is set up and bound to the UI before all the data is fetched from the
+//    server and we don't want to break the data binding.
+// 2. It gives us a chance to update the page data's summary info with details from the special "page" container
 function setContainers(pageData, containers) {
     for (var hash in containers) {
         if (containers.hasOwnProperty(hash)) {
             var containerData = getContainerData(pageData, hash);
             merge(containers[hash], containerData);
+            if (hash === "page") {
+                var pageLevelReactions = containerData.reactions;
+                var summaryReactions = pageData.summaryReactions;
+                console.log('foo');
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ function createIndicatorWidget(container, containerData, pageData, defaultReacti
     });
     ractive.on('complete', function() {
         $(rootElement(ractive)).on('mouseenter', function(event) {
-           openReactionsWindow(containerData.reactions, pageData, groupSettings, ractive);
+           openReactionsWindow(containerData, pageData, groupSettings, ractive);
         });
     });
 }
@@ -29,13 +29,13 @@ function rootElement(ractive) {
 }
 
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(reactionsData, pageData, groupSettings, ractive) {
+function openReactionsWindow(containerData, pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
         // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
-        var container = document.createElement('div');
-        bucket.appendChild(container);
-        ractive.reactionsWidget = ReactionsWidget.create(container, reactionsData, pageData, groupSettings);
+        var element = document.createElement('div');
+        bucket.appendChild(element);
+        ractive.reactionsWidget = ReactionsWidget.create(element, containerData.reactions, pageData, containerData, groupSettings);
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }
