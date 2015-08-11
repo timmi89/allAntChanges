@@ -1,3 +1,27 @@
+/*
+
+
+
+
+
+
+PORTER
+
+MAKE OWN MODAL FOR SIGNUP
+
+THAT WAY YOU CAN OVERRIDE THE ANONYMOUS USER EMAIL AND RE-IDENTIFY AS A KNOWN PERSON
+
+CANT DO THAT WITH BUILT-IN MODAL
+
+
+MAKE SURE THESE USERS GET OPTED-IN CORRECTLY......
+
+
+
+
+
+*/
+
 ;var ANTdrip = ANTdrip ? ANTdrip : {};
 
 ANTdrip.init = function() {
@@ -33,6 +57,15 @@ ANTdrip.getOrCreateAnonymousEmail = function() {
         });
     }
 };
+ANTdrip.identifyTempProspect = function() {
+    var userFields = {};
+    userFields['email'] = ANTdrip.getOrCreateAnonymousEmail(); // create a unique, random email address, so we can identify anonymous prospects in Drip
+
+    _dcq.push(["identify", userFields ]);
+
+    $('[name="fields[email]"]').val(''); // empty out the popup form from this random, ugly email address.
+};
+
 ANTdrip.initCustomEventTracking = function() {
     var urlParams = ANTdrip.getUrlParams();
 
@@ -42,7 +75,7 @@ ANTdrip.initCustomEventTracking = function() {
         var userFields = {};
 
         userFields['ant_source'] = urlParams.ant_source;
-        userFields['ant_source'] = urlParams.ant_source;
+        userFields['ant_value'] = urlParams.ant_value;
         userFields['email'] = ANTdrip.getOrCreateAnonymousEmail(); // create a unique, random email address, so we can identify anonymous prospects in Drip
         // userFields['new_email'] = 'randomperson2a@antenna.is'; // SOMETHING IF WE NEED TO ID ANONYMOUS USERS
         userFields[ urlParams.ant_source + '_id' ] = urlParams.ant_value;
@@ -64,6 +97,7 @@ ANTdrip.initCustomEventTracking = function() {
         // wait a moment then apply this event.  wasn't working without some sort of a pause.
         setTimeout( function() {
             $('#tawkchat-minified-iframe-element').contents().find('body').click(function(){
+                ANTdrip.identifyTempProspect();
                 _dcq.push(["track", 'Opened Tawk Chat' ]);
             });
 
@@ -74,6 +108,7 @@ ANTdrip.initCustomEventTracking = function() {
     document.addEventListener("antenna.reaction", function(){
       var lastEvent = antenna.getLastEvent();
       if (lastEvent.event == 'antenna.reaction') {
+        ANTdrip.identifyTempProspect();
         _dcq.push(["track", 'Reacted', { 'page_title':document.title } ]);
       }
     },false);
@@ -82,6 +117,7 @@ ANTdrip.initCustomEventTracking = function() {
     document.addEventListener("antenna.reactionview", function(){
       var lastEvent = antenna.getLastEvent();
       if (lastEvent.event == 'antenna.reactionview') {
+        ANTdrip.identifyTempProspect();
         _dcq.push(["track", 'Viewed Reactions', { 'page_title':document.title } ]);
       }
     },false);
