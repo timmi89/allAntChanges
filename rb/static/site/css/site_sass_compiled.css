@@ -7065,7 +7065,8 @@ strong {
   font-family: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
-  letter-spacing: 1.25px; }
+  letter-spacing: 1.25px;
+  cursor: default; }
 
 .drip-lightbox {
   z-index: 13001; }
@@ -7417,13 +7418,17 @@ section.masthead h3 {
   font-weight: 100;
   position: absolute;
   bottom: 15%; }
+  @media (max-width: 480px) {
+    section.masthead h3 {
+      position: static;
+      margin-top: 3rem; } }
   section.masthead h3 .adjective {
     color: #dec164; }
 @media (max-width: 480px) {
   section.masthead {
     background-image: url("../images/many_voices_mobile.jpg"); }
     section.masthead h1 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin: 10% 0; }
       section.masthead h1 .line-two div.ant_indicator.ant_indicator_for_text {
         position: relative;
@@ -7510,7 +7515,8 @@ section.big-beta-form input[type="email"],
 section.big-beta-form input[type="text"] {
   background-color: rgba(0, 150, 136, 0.1);
   font-size: 2rem;
-  text-align: center; }
+  text-align: center;
+  height: 3rem; }
 section.big-beta-form .btn.btn-large, section.big-beta-form .btn-large {
   display: block;
   width: 100%;
