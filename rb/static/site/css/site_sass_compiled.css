@@ -7127,7 +7127,8 @@ form textarea.materialize-textarea {
   z-index: 12000; }
   .navbar-fixed.subnav {
     height: 48px;
-    line-height: 48px; }
+    line-height: 48px;
+    z-index: 998; }
     @media (max-width: 480px) {
       .navbar-fixed.subnav {
         height: 32px;

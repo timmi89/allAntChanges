@@ -4,6 +4,7 @@
   &.subnav {
     height:48px;
     line-height:48px;
+    z-index:998;
 
     @media (max-width: $screen-xs-max) {
       height:32px;
