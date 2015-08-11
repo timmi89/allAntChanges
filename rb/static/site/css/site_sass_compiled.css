@@ -7421,7 +7421,7 @@ section.masthead h3 {
     color: #dec164; }
 @media (max-width: 480px) {
   section.masthead {
-    background-image: url("/static/site/images/many_voices_mobile.jpg"); }
+    background-image: url("../images/many_voices_mobile.jpg"); }
     section.masthead h1 {
       font-size: 3rem;
       margin: 10% 0; }
@@ -7436,7 +7436,7 @@ section.masthead h3 {
       font-size: 1.75rem; } }
 @media (min-width: 481px) {
   section.masthead {
-    background-image: url("/static/site/images/many_voices_medium.jpg"); }
+    background-image: url("../images/many_voices_medium.jpg"); }
     section.masthead h1 {
       font-size: 4.5rem;
       margin: 10% 0; }
@@ -7444,7 +7444,7 @@ section.masthead h3 {
       font-size: 2.25rem; } }
 @media (min-width: 992px) {
   section.masthead {
-    background-image: url("/static/site/images/many_voices.jpg"); }
+    background-image: url("../images/many_voices.jpg"); }
     section.masthead h1 {
       font-size: 6rem;
       margin: 10% 0; }
