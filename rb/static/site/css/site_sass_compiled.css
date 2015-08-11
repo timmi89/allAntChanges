@@ -7523,7 +7523,7 @@ section.big-beta-form .learn-more-boxes {
   display: none !important; }
 
 .publishers section.masthead {
-  background-image: url("/static/site/images/open_mic.jpg");
+  background-image: url("../images/open_mic.jpg");
   background-size: 75%;
   background-position: 0% 50%; }
   .publishers section.masthead h1 {
@@ -7552,7 +7552,7 @@ section.big-beta-form .learn-more-boxes {
     display: block; } }
 
 .retailers section.masthead {
-  background-image: url("/static/site/images/store-owner.jpg");
+  background-image: url("../images/store-owner.jpg");
   background-size: 73%;
   background-position: 0% 23%; }
   .retailers section.masthead h1 {

@@ -38,7 +38,7 @@ section {
 
   @media (max-width: $screen-xs-max) {
     &.masthead {
-        background-image: url('/static/site/images/many_voices_mobile.jpg');
+        background-image: url('../images/many_voices_mobile.jpg');
 
         h1 { 
           font-size:3rem; 
@@ -69,7 +69,7 @@ section {
 
   @media (min-width: $screen-sm-min) {
     &.masthead {
-        background-image: url('/static/site/images/many_voices_medium.jpg');
+        background-image: url('../images/many_voices_medium.jpg');
 
         h1 { 
           font-size:4.5rem; 
@@ -84,7 +84,7 @@ section {
 
   @media (min-width: $screen-lg-min) {
     &.masthead {
-        background-image: url('/static/site/images/many_voices.jpg');
+        background-image: url('../images/many_voices.jpg');
 
         h1 { 
           font-size:6rem; 
