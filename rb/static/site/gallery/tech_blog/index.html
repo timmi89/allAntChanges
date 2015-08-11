@@ -91,7 +91,8 @@
 							<div class="body-post">
 								<div class="share-post">
 									<ul>
-										<li class="count-share"><span class="numb">23</span><span>reactions</span></li>
+										<!-- <li class="count-share"><span class="numb">23</span><span>reactions</span></li> -->
+										<li class="count-share"></li>
 										<li class="email"><a href="">Email</a></li>
 										<li class="facebook"><a href="">Facebook</a></li>
 										<li class="twitter"><a href="">Twitter</a></li>
@@ -132,8 +133,9 @@
 											<img src="images/q_mark.png" alt="image">
 										</div>
 										<div class="info-author">
-											<h4 style="color:#f5564c;">What do you think?</h4>
+											<h4 style="color:#f5564c;" ant-item="html_poll" ant-reactions="Of course!;Sounds great;Meh;Huh?">What do you think?</h4>
 											<p>Is an HTML-powered poll question a convenient, engaging way to end an article?</p>
+											<div style="background:#000;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="html_poll" ant-mode="write read"><span ant-counter-for="html_poll"></span> Responses</div>
 										</div>
 									</div><!-- /.author-post -->
 					               	<div class="comment-post">
@@ -343,6 +345,92 @@
 	<script type="text/javascript" src="javascript/jquery.doubletaptogo.js"></script>
 	<!--<script type="text/javascript" src="javascript/smoothscroll.js"></script>-->
 	<script type="text/javascript" src="javascript/main.js"></script>
+
+	<style>
+
+	body div.ant.ant-summary a.ant_reactions_label,
+	body div.ant.ant-summary a.ant_reactions_label span,
+	body div.ant.ant-summary .ant-antenna-logo {
+		color: #000;
+	}
+	body div.ant.ant-summary {
+		box-shadow: none;
+	}
+	@media only screen and (min-width: 768px) {
+		body div.ant.ant-summary {
+			margin: -1rem 0 2rem 0;
+			padding:0;
+		}
+		body div.ant.ant-summary a.ant_logo {
+			display: block;
+		    font-size: 3rem;
+		    margin: 0.5rem 0;
+		    text-align: center;
+		    padding: 0;
+		}
+		body div.ant.ant-summary a.ant_reactions_label {
+			padding: 0;
+			margin: 0.8rem 0 0;
+			/*font-weight: bold;*/
+		}
+	}
+
+	body .entry-post p {
+		position:relative;
+		width:97%;
+		padding-right:1rem;
+	}
+
+	body div.ant_indicator_for_text {
+		position: absolute;
+		top: 0.25rem;
+		right: 0.8rem;
+	}
+	body div.ant_indicator_for_text .ant-antenna-logo {
+		font-size:1.1rem;
+	}
+	body .ant_live_hover div.ant_indicator span.ant_count {
+		top:-2px;
+	}
+	body div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
+		width:auto;
+	}
+	@media only screen and (max-width: 767px) {
+		body .post-single .share-post {
+			display:block;
+			float:none;
+		}
+		body .post-single .share-post ul li { display:none; }
+		body .post-single .share-post ul li.count-share { display:block; margin:0; padding:0; text-align: left; }
+		body .post-single .share-post ul  { border:0; }
+
+		body div.ant.ant-summary {
+			margin:0rem 0 1rem 0;
+			/*padding:0;*/
+		    background-color: #000
+		}
+		body div.ant.ant-summary a.ant_reactions_label,
+		body div.ant.ant-summary a.ant_reactions_label span,
+		body div.ant.ant-summary .ant-antenna-logo {
+			color: #fff;
+		}
+		body .posts .body-post {
+			margin-top:1rem;
+		}
+	}
+	</style>
+	<script>
+	  window.antenna_extend = {
+	  	default_reactions:[ 'Smart', "I'm Skeptical", "Interesting", "Meh", "Unicorn!", "Dead Pool" ],
+	    summary_widget_selector: '.count-share',
+	    summary_widget_method: 'append',
+	    active_sections: '.entry-post',
+	    anno_whitelist: 'p',
+	    tag_box_bg_colors: '#000;#333;#555'
+	    // no_ant: '.masthead, h1'
+	  };
+	</script>
+	<script async src="/static/engage.js"></script>
 </body>
 
 </html>
