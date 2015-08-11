@@ -1089,3 +1089,35 @@ def manage_groups(request, **kwargs):
         context_instance=RequestContext(request)
     )
 
+
+def gallery(request, example_name):
+    if not example_name:
+        example_name="weekly_news"
+
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+    
+    examples = {
+        'tech_blog':'Tech Blog',
+        'news_magazine':'News Magazine',
+        'local_news':'Local News'
+    }
+
+    context['examples'] = examples
+    context['current_example_name'] = example_name
+
+
+    return render_to_response(
+      "gallery/gallery_base.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+
+
+

@@ -1,5 +1,26 @@
 .navbar-fixed {
   z-index: 12000;
+  
+  &.subnav {
+    height:48px;
+    line-height:48px;
+
+    @media (max-width: $screen-xs-max) {
+      height:32px;
+      line-height:32px;
+      font-size: 0.8rem;
+    }
+
+    nav {
+      height:48px;
+      line-height:48px;
+
+      @media (max-width: $screen-xs-max) {
+        height:32px;
+        line-height:32px;
+      }
+    }
+  }
 
   nav.global {
     @media #{$medium-and-up} {
@@ -8,6 +29,7 @@
 
     background-color: $black;
     @extend .z-depth-0;
+
 
     .logo {
       display: inline-block;

@@ -64,3 +64,9 @@ def split_reaction(tagBodyRaw):
 def cssClass(field, css):
    return field.as_widget(attrs={"class":css})
 
+@register.filter
+def keyvalue(dict, key):    
+    try:
+        return dict[key]
+    except KeyError:
+        return ''

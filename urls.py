@@ -87,6 +87,10 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
+
+  # galleries
+  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'), 
+  url(r'^gallery/$', 'rb.views.gallery'), 
   
   #single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),

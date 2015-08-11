@@ -7125,6 +7125,21 @@ form textarea.materialize-textarea {
 
 .navbar-fixed {
   z-index: 12000; }
+  .navbar-fixed.subnav {
+    height: 48px;
+    line-height: 48px; }
+    @media (max-width: 480px) {
+      .navbar-fixed.subnav {
+        height: 32px;
+        line-height: 32px;
+        font-size: 0.8rem; } }
+    .navbar-fixed.subnav nav {
+      height: 48px;
+      line-height: 48px; }
+      @media (max-width: 480px) {
+        .navbar-fixed.subnav nav {
+          height: 32px;
+          line-height: 32px; } }
   .navbar-fixed nav.global {
     background-color: #000; }
     @media only screen and (min-width: 601px) {
@@ -7311,9 +7326,6 @@ form textarea.materialize-textarea {
       position: absolute;
       top: 30%;
       right: 0%; }
-
-.gallery-content-link {
-  display: none; }
 
 section {
   padding: 2rem 0; }
@@ -7614,6 +7626,12 @@ section.big-beta-form .learn-more-boxes {
 @media (max-width: 767px) {
   .retailers section.mobile-sign-up {
     display: block; } }
+
+.gallery-select.btn, .gallery-select.btn-large {
+  height: 32px;
+  line-height: 32px;
+  padding: 0 1rem;
+  margin-left: 0.5rem; }
 
 .admin label {
   display: block;
