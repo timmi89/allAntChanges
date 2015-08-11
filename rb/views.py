@@ -1106,7 +1106,7 @@ def gallery(request, example_name):
     examples = {
         'tech_blog':'Tech Blog',
         'news_magazine':'News Magazine',
-        # 'local_news':'Local News'
+        'food_blog':'Food Blog'
     }
 
     context['examples'] = examples
