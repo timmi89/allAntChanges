@@ -1,4 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
 
 
@@ -19,9 +20,21 @@ function createIndicatorWidget(options) {
         },
         template: require('../templates/indicator-widget.html')
     });
+    var hoverTimeout;
     ractive.on('complete', function() {
-        $(rootElement(ractive)).on('mouseenter', function(event) {
-           openReactionsWindow(containerData, pageData, groupSettings, ractive, containerElement);
+        var $rootElement = $(rootElement(ractive));
+        $rootElement.on('mouseenter.antenna', function(event) {
+            if (containerData.reactions) {
+                openReactionsWindow(containerData, containerElement, pageData, groupSettings, ractive);
+            } else {
+                clearTimeout(hoverTimeout); // only one timeout at a time
+                hoverTimeout = setTimeout(function() {
+                    showPopup(containerData, containerElement, pageData, groupSettings, ractive);
+                }, 200);
+            }
+        });
+        $rootElement.on('mouseleave.antenna', function() {
+            clearTimeout(hoverTimeout);
         });
     });
 }
@@ -30,16 +43,23 @@ function rootElement(ractive) {
     return ractive.find('.antenna-indicator-widget');
 }
 
+function showPopup(containerData, containerElement, pageData, groupSettings, ractive) {
+    var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
+    var offset = $icon.offset();
+    var coordinates = {
+        top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
+        left: offset.left + Math.floor($icon.width() / 2)
+    };
+    PopupWidget.show(coordinates, function() {
+        // TODO: open the reactions window
+        console.log('popup clicked!');
+    })
+}
+
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(containerData, pageData, groupSettings, ractive, containerElement) {
+function openReactionsWindow(containerData, containerElement, pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
-        // TODO: consider prepopulating this
-        var bucket = getWidgetBucket();
-        var element = document.createElement('div');
-        bucket.appendChild(element);
-        //ractive.reactionsWidget = ReactionsWidget.create(element, containerData.reactions, pageData, containerData, groupSettings, containerElement);
         ractive.reactionsWidget = ReactionsWidget.create({
-            element: element,
             reactionsData: containerData.reactions,
             containerData: containerData,
             containerElement: containerElement,
@@ -48,16 +68,6 @@ function openReactionsWindow(containerData, pageData, groupSettings, ractive, co
         });
     }
     ractive.reactionsWidget.open(rootElement(ractive));
-}
-
-function getWidgetBucket() {
-    var bucket = document.getElementById('antenna-widget-bucket');
-    if (!bucket) {
-        bucket = document.createElement('div');
-        bucket.setAttribute('id', 'antenna-widget-bucket');
-        document.body.appendChild(bucket);
-    }
-    return bucket;
 }
 
 //noinspection JSUnresolvedVariable

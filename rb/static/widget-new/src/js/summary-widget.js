@@ -24,12 +24,7 @@ function rootElement(ractive) {
 
 function openReactionsWindow(containerData, pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
-        var bucket = getWidgetBucket();
-        var element = document.createElement('div');
-        bucket.appendChild(element);
-        //ractive.reactionsWidget = ReactionsWidget.create(element, pageData.summaryReactions, pageData, containerData, groupSettings);
         ractive.reactionsWidget = ReactionsWidget.create({
-            element: element,
             reactionsData: pageData.summaryReactions,
             containerData: containerData,
             pageData: pageData,
@@ -39,16 +34,7 @@ function openReactionsWindow(containerData, pageData, groupSettings, ractive) {
     ractive.reactionsWidget.open(rootElement(ractive));
 }
 
-function getWidgetBucket() {
-    var bucket = document.getElementById('antenna-widget-bucket');
-    if (!bucket) {
-        bucket = document.createElement('div');
-        bucket.setAttribute('id', 'antenna-widget-bucket');
-        document.body.appendChild(bucket);
-    }
-    return bucket;
-}
-
+//noinspection JSUnresolvedVariable
 module.exports = {
     create: createSummaryWidget
 };

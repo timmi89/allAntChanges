@@ -3,9 +3,9 @@ var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
 var Range = require('./utils/range');
+var WidgetBucket = require('./utils/widget-bucket');
 
 function createReactionsWidget(options) {
-    var element = options.element;
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
@@ -18,7 +18,8 @@ function createReactionsWidget(options) {
     var colors = groupSettings.reactionBackgroundColors();
     var layoutData = computeLayoutData(reactionsData, colors);
     var ractive = Ractive({
-        el: element,
+        el: WidgetBucket(),
+        append: true,
         magic: true,
         data: {
             reactions: reactionsData,
@@ -335,6 +336,7 @@ function setupWindowClose(ractive) {
     }
 }
 
+//noinspection JSUnresolvedVariable
 module.exports = {
     create: createReactionsWidget
 };
