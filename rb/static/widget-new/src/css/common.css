@@ -15,3 +15,13 @@
     font-size: 12px;
     font-face: Arial,sans-serif;
 }
+
+.antenna-highlight {
+    background-color: #FCF5A7;
+    color: #666;
+    text-decoration: none;
+    -webkit-user-select:none;
+    -k-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+}

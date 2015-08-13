@@ -1,6 +1,5 @@
-
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
-var URLs = require('./utils/urls');
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var PageUtils = require('./utils/page-utils');
 var PageData = require('./page-data');
 
 
@@ -31,7 +30,7 @@ function computePagesParam(groupSettings) {
         var $pageElement = $(this);
         pages.push({
             group_id: groupId,
-            url: URLs.computeCanonicalUrl($pageElement, groupSettings)
+            url: PageUtils.computeCanonicalUrl($pageElement, groupSettings)
         });
     });
 

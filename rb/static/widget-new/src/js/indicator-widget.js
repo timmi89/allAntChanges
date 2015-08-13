@@ -1,15 +1,18 @@
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
 
 
-function createIndicatorWidget(container, containerData, pageData, defaultReactions, groupSettings) {
-    // TODO: Basically everything.
-    // Actually get container data.
-    // Adjust visibility based on whether there are reactions on the content (honoring the flag about how many to show at once).
-    // Show the reaction widget on hover.
-    // etc.
+function createIndicatorWidget(options) {
+    // TODO: Adjust visibility based on whether there are reactions on the content (honoring the flag about how many to show at once).
+    // TODO: Show intermediate popup thingy when there are no reactions
+    var element = options.element;
+    var containerData = options.containerData;
+    var containerElement = options.containerElement;
+    var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
+    var defaultReactions = groupSettings.defaultReactions(containerElement);
     var ractive = Ractive({
-        el: container,
+        el: element,
         magic: true,
         data: {
             containerData: containerData
@@ -18,24 +21,31 @@ function createIndicatorWidget(container, containerData, pageData, defaultReacti
     });
     ractive.on('complete', function() {
         $(rootElement(ractive)).on('mouseenter', function(event) {
-           openReactionsWindow(containerData, pageData, groupSettings, ractive);
+           openReactionsWindow(containerData, pageData, groupSettings, ractive, containerElement);
         });
     });
 }
 
 function rootElement(ractive) {
-    // TODO: gotta be a better way to get this
-    return ractive.find('span');
+    return ractive.find('.antenna-indicator-widget');
 }
 
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(containerData, pageData, groupSettings, ractive) {
+function openReactionsWindow(containerData, pageData, groupSettings, ractive, containerElement) {
     if (!ractive.reactionsWidget) {
         // TODO: consider prepopulating this
         var bucket = getWidgetBucket();
         var element = document.createElement('div');
         bucket.appendChild(element);
-        ractive.reactionsWidget = ReactionsWidget.create(element, containerData.reactions, pageData, containerData, groupSettings);
+        //ractive.reactionsWidget = ReactionsWidget.create(element, containerData.reactions, pageData, containerData, groupSettings, containerElement);
+        ractive.reactionsWidget = ReactionsWidget.create({
+            element: element,
+            reactionsData: containerData.reactions,
+            containerData: containerData,
+            containerElement: containerElement,
+            pageData: pageData,
+            groupSettings: groupSettings
+        });
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }
@@ -50,7 +60,7 @@ function getWidgetBucket() {
     return bucket;
 }
 
-
+//noinspection JSUnresolvedVariable
 module.exports = {
     create: createIndicatorWidget
 };

@@ -8,7 +8,7 @@
     <div class="antenna-body">
         <div class="antenna-reactions-page">
             {{ #reactions:index }}
-                <div on-click="plusone" class="antenna-reaction {{ layoutClass(index, this.count) }}" style="background-color:{{ backgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{ layoutClass(index, this.count) }}" style="background-color:{{ backgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
                     <div class="antenna-reaction-box">
                         <div class="antenna-reaction-text" decorator="sizetofit">
                             {{ this.text }}

@@ -1,11 +1,16 @@
-
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./utils/xdm-client');
 var URLs = require('./utils/urls');
 var Moveable = require('./utils/moveable');
+var Range = require('./utils/range');
 
-// containerType is 'page', 'text', 'media', or 'img'
-function createReactionsWidget(element, reactionsData, pageData, containerData, groupSettings) {
+function createReactionsWidget(options) {
+    var element = options.element;
+    var reactionsData = options.reactionsData;
+    var containerData = options.containerData;
+    var containerElement = options.containerElement;
+    var pageData = options.pageData;
+    var groupSettings = options.groupSettings;
     if (!reactionsData) {
         // TODO handle the case of no reactions (show default reactions)
         return { open: function(){} };
@@ -41,6 +46,10 @@ function createReactionsWidget(element, reactionsData, pageData, containerData, 
     ractive.on('update', function() {
         console.log('update!');
     });
+    if (containerElement) {
+        ractive.on('highlight', highlightContent(containerData, pageData, ractive, containerElement));
+        ractive.on('clearhighlights', Range.clear);
+    }
     ractive.on('plusone', plusOne(containerData, pageData, ractive));
     return {
         open: openWindow(ractive)
@@ -71,6 +80,18 @@ function sizeToFit(node) {
         $rootElement.css({display: '', left: ''});
     }
     return { teardown: function() {} };
+}
+
+function highlightContent(containerData, pageData, ractive, $containerElement) {
+    return function(event) {
+        var reactionData = event.context;
+        if (reactionData.content) {
+            var location = reactionData.content.location;
+            if (location) {
+                Range.highlight($containerElement.get(0), location);
+            }
+        }
+    }
 }
 
 function plusOne(containerData, pageData, ractive) {
@@ -213,8 +234,7 @@ function computeLayoutData(reactionsData, colors) {
 }
 
 function rootElement(ractive) {
-    // TODO: gotta be a better way to get this
-    return ractive.find('div');
+    return ractive.find('.antenna-reactions-widget');
 }
 
 function showReactionResult(ractive) {

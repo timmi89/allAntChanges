@@ -1,4 +1,4 @@
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
 var pages = {};
 

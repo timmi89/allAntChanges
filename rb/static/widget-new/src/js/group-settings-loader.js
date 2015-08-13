@@ -1,6 +1,5 @@
-
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var GroupSettings = require('./group-settings');
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
 
 // TODO fold this module into group-settings?
 

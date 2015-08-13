@@ -1,5 +1,4 @@
-
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
 
 function createSummaryWidget(container, containerData, pageData, defaultReactions, groupSettings) {
@@ -28,7 +27,14 @@ function openReactionsWindow(containerData, pageData, groupSettings, ractive) {
         var bucket = getWidgetBucket();
         var element = document.createElement('div');
         bucket.appendChild(element);
-        ractive.reactionsWidget = ReactionsWidget.create(element, pageData.summaryReactions, pageData, containerData, groupSettings);
+        //ractive.reactionsWidget = ReactionsWidget.create(element, pageData.summaryReactions, pageData, containerData, groupSettings);
+        ractive.reactionsWidget = ReactionsWidget.create({
+            element: element,
+            reactionsData: pageData.summaryReactions,
+            containerData: containerData,
+            pageData: pageData,
+            groupSettings: groupSettings
+        });
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }

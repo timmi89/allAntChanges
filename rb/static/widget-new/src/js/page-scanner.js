@@ -1,6 +1,6 @@
-var $; require('./script-loader').on$(function(jQuery) { $=jQuery; });
+var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Hash = require('./utils/hash');
-var URLs = require('./utils/urls');
+var PageUtils = require('./utils/page-utils');
 var SummaryWidget = require('./summary-widget');
 var IndicatorWidget = require('./indicator-widget');
 var PageData = require('./page-data');
@@ -25,7 +25,7 @@ function scanAllPages(groupSettings) {
 // 2. Compute hashes for each container.
 // 3. Insert widget affordances for each which are bound to the data model by the hashes.
 function scanPage($page, groupSettings) {
-    var url = URLs.computePageUrl($page, groupSettings);
+    var url = PageUtils.computePageUrl($page, groupSettings);
     var urlHash = Hash.hashUrl(url);
     var pageData = PageData.getPageData(urlHash);
 
@@ -71,12 +71,25 @@ function scanForText($section, pageData, groupSettings) {
         // TODO position correctly
         // TODO hash and add hash data to indicator
         var hash = Hash.hashText($element);
-        var container = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
+        var element = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($element);
-        var indicator = IndicatorWidget.create(container, containerData, pageData, defaultReactions, groupSettings);
-        $element.append(container); // TODO is this configurable ala insertContent(...)?
+        //var indicator = IndicatorWidget.create(element, containerData, pageData, defaultReactions, groupSettings, $element);
+        var indicator = IndicatorWidget.create({
+            element: element,
+            containerData: containerData,
+            containerElement: $element,
+            pageData: pageData,
+            groupSettings: groupSettings}
+        );
+        $element.append(element); // TODO is this configurable ala insertContent(...)?
+        // TODO: The following selection code is just proof of concept. Make it real:
+        //$element.on('mouseup', function() {
+        //    require('./utils/range').grab($element.get(0), function(text, location) {
+        //        console.log('text: "' + text + '" location: ' + location);
+        //    });
+        //});
     });
 }
 
