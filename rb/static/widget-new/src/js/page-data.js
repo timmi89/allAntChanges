@@ -74,7 +74,8 @@ function getContainerData(pageData, containerHash) {
     var containerData = pageData.containers[containerHash];
     if (!containerData) {
         containerData = {
-            hash: containerHash
+            hash: containerHash,
+            reactionTotal: 0
         };
         pageData.containers[containerHash] = containerData;
     }

@@ -36,6 +36,13 @@ function createIndicatorWidget(options) {
         $rootElement.on('mouseleave.antenna', function() {
             clearTimeout(hoverTimeout);
         });
+        var $containerElement = $(containerElement);
+        $containerElement.on('mouseenter.antenna', function() {
+            $rootElement.addClass('active');
+        });
+        $containerElement.on('mouseleave.antenna', function() {
+            $rootElement.removeClass('active');
+        })
     });
 }
 
