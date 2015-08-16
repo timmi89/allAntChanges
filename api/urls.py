@@ -39,6 +39,8 @@ FollowsBoards = Resource(handler=FollowedBoardsHandler)
 GlobalActivity = Resource(handler=GlobalActivityHandler)
 BlockedTag = Resource(handler=BlockedTagHandler)
 BlockedPromoTag = Resource(handler=BlockedPromoTagHandler)
+CachePageRefresh = Resource(handler=CachePageRefreshHandler)
+CacheSettingsRefresh = Resource(handler=CacheSettingsRefreshHandler)
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -64,7 +66,12 @@ urlpatterns = patterns('',
     url(r'^deauthorize/$', Deauthorize),
     url(r'^tempuser/$', TempUser),
     url(r'^confirmuser/$', Confirmation),
-    
+
+    #Utility
+    url(r'^cache/page/refresh/(?P<page_id>\d+)', CachePageRefresh),
+    url(r'^cache/page/refresh/(?P<page_id>\d+)/(?P<hash>\d+)', CachePageRefresh),
+    url(r'^cache/settings/refresh/(?P<group_id>\d+)', CacheSettingsRefresh),
+
     # Widget
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),

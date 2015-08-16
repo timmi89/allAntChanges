@@ -12,6 +12,7 @@ from django.db.models import Count
 from django.core.cache import cache, get_cache
 import traceback
 import hashlib
+import httplib
 
 logger = get_task_logger(__name__)
 
@@ -33,6 +34,17 @@ def update_page_cache(page_id):
         except Exception, ex:
             logger.info('REDUNDANT CACHE EXCEPTION')
             logger.warn(ex)
+
+        refresh_url = '/api/cache/page/refresh/'+ str(page_id)
+
+        try:
+            hcon = httplib.HTTPConnection(settings.OTHER_DATACENTER, timeout=5)
+            hcon.request('GET', refresh_url)
+            resp = hcon.getresponse()
+            lines = resp.read()
+            hcon.close()
+        except Exception, e:
+            logger.info("Other datacenter refresh: " + str(e))
 #    logger.info('updating page_data: ' + str(page_id))
 #   cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
 
@@ -68,12 +80,24 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
             get_cache('redundant').delete('LOCKED_'+key)
         except Exception, ex:
             logger.info(ex)
-        
+
     else:
         logger.warning('LOCKED CACHE KEY: ' + key)
 #    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
 #    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
+    if len(hashes) == 1:
+        refresh_url = '/api/cache/page/refresh/'+ str(page_id) + '/' +str(hashes[0])
+    else:
+        refresh_url = '/api/cache/page/refresh/'+ str(page_id)
 
+    try:
+        hcon = httplib.HTTPConnection( settings.OTHER_DATACENTER, timeout=5)
+        hcon.request('GET', refresh_url)
+        resp = hcon.getresponse()
+        lines = resp.read()
+        hcon.close()
+    except Exception, e:
+        logger.info("Other datacenter refresh: " + str(e))
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
                run_every=(crontab(hour="5,17", minute="14", day_of_week="*")))

@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from os import uname
 
-if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' : DEBUG = True
+if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
@@ -54,6 +54,9 @@ RB_SOCIAL_ADMINS = [
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 
 STATIC_ROOT = 'rb/static/'
+
+#OTHER_DATACENTER = 'gce.antenna.is'
+OTHER_DATACENTER = 'local.antenna.is:8081'
 
 if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
@@ -142,16 +145,16 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
-                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-                # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
-                # 'LOCATION': '127.0.0.1:11211',
-                # 'TIMEOUT':86400,
-                # 'OPTIONS': {
-                #     'MAX_POOL_SIZE': 100,
-                #     'BLACKLIST_TIME': 20,
-                #     'SOCKET_TIMEOUT': 5,
-                #     'MAX_ITEM_SIZE': 1000*100,
-                # }
+                #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+                 'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                 'LOCATION': '127.0.0.1:11211',
+                 'TIMEOUT':86400,
+                 'OPTIONS': {
+                     'MAX_POOL_SIZE': 100,
+                     'BLACKLIST_TIME': 20,
+                     'SOCKET_TIMEOUT': 5,
+                     'MAX_ITEM_SIZE': 1000*100,
+                 }
             },
             'redundant': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
