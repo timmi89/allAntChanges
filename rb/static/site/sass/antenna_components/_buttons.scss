@@ -1,0 +1,33 @@
+.btn, .btn-flat {
+    border-radius: 0;
+}
+
+.btn-small {
+    padding: 0.5rem;
+    height: auto;
+    line-height: 1rem;
+}
+
+.btn.dk-blue {
+    background:$antenna-dk-blue;
+}
+
+.btn.lt-blue {
+    background:$antenna-lt-blue;
+}
+
+.btn.yellow {
+    background:$antenna-yellow;
+}
+
+.btn.orange {
+    background:$antenna-orange;
+}
+
+.btn.red {
+    background:$antenna-red;
+}
+
+.btn.gray {
+    background:$gray;
+}

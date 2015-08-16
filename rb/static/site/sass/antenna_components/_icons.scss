@@ -1,0 +1,10 @@
+// from fontastic.me svg info
+[class^="icon-"], [class*=" icon-"] {
+    height: 32px;
+    width: 32px;
+    display: inline-block;
+    fill: currentColor;
+}
+
+// usage example
+// <svg class="icon-twitter"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#icon-twitter"></use></svg>

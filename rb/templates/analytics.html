@@ -1,17 +1,9 @@
-{% extends "base.html" %}
-{% block title %}{{ group.name }} Analytics{%endblock%}
+{% extends "base/wide.html" %}
+{% load custom_filters %}
 
+{% block page_title %}{{ form.instance.name }} Analytics{%endblock%}
 
-{% block extendedHead %}
-<link rel="stylesheet" href="/static/components/morris/morris.css">
-<link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<!-- <script src="/static/components/equalize/equalize.min.js"></script> -->
-<script src="/static/components/morris/morris.js"></script>
-<script src="/static/js/analytics.js"></script>
-<script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
-
-{% endblock %}
+{% block bodyClass %}admin{% endblock %}
 
 {% block subheaderContent %}
 <section role="subheader">
@@ -21,11 +13,14 @@
 </section>
 {% endblock %}
 
-{% block wideContent %}
-<div class="grid-whole settings">
-  <section role="panels" class="content">
-  <div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
+{% block page_content %}
+<div class="container row settings">
+    <div class="info">
+        <h1>Analytics are being redone!  We'll update you shortly.</h1>
+    </div>
 
+    {% comment %}
+  <section role="panels" class="content">
 
     <section role="datepicker" class="datepicker" style="visibility:hidden;">
     	<form>
@@ -93,5 +88,5 @@
 
 </section>
 </div>
-
-{% endblock wideContent %}
+{% endcomment %}
+{% endblock %}

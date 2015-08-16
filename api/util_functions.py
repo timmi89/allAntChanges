@@ -250,10 +250,14 @@ def checkLimit(user, group):
     interactions = Interaction.objects.filter(user=user)
     num_interactions = interactions.count()
     max_interact = group.temp_interact
+
     if num_interactions >= max_interact:
+        """
         raise JSONException(
             u"Temporary user interaction limit reached for user " + unicode(user.id)
         )
+        """
+        logger.info('Temp interaction limit MET, but ignored. ' + str(user.id))
     return num_interactions
 
 
@@ -360,7 +364,8 @@ def getSettingsDict(group):
          groupblessedtag__group=group.id
      ).order_by('groupblessedtag__order')
     
-    settings_dict['blessed_tags'] = blessed_tags
+    settings_dict['blessed_tags'] = blessed_tags # deprecated. delete once all client usage is removed.
+    settings_dict['default_reactions'] = blessed_tags
     return settings_dict
 
 def getGlobalActivity():

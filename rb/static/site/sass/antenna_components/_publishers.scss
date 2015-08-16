@@ -1,0 +1,48 @@
+.publishers {
+  section {
+    &.masthead {
+        background-image: url('../images/open_mic.jpg');
+        background-size: 75%;
+        background-position: 0% 50%;
+
+        h1 {
+          font-size:5rem;
+
+          .line-one {
+            font-size:3.5rem;
+          }
+
+          @media (max-width: $screen-sm-max) {
+            font-size:3.5rem;
+
+            .line-one {
+              font-size:2.75rem;
+              margin-bottom: 1.5rem;
+            }          
+          }
+        }
+      }
+
+
+    .publisher-benefits {
+      h1 {font-size:4rem;margin-bottom:0.5rem; color:$antenna-lt-blue;}
+      h3 {margin-top:0.5rem; color:$antenna-dk-blue;}
+    }
+
+    &.mobile-first {
+      overflow:hidden;
+    }
+    
+    &.mobile-sign-up {
+      display:none;
+    }
+
+    // @media (max-width: $screen-xs-max) {
+    // $screen-md-min
+    @media (max-width: $screen-sm-max) {
+      &.mobile-sign-up {
+        display:block;
+      }
+    }
+  }
+}

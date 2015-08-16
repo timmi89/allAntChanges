@@ -1,0 +1,202 @@
+<div class="navbar-fixed no-ant">
+<nav class="global">
+  <div class="nav-wrapper container">
+
+      <!-- navbar content -->
+      <a href="/" class="logo">
+        <svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+        <svg class="icon-antenna-text"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-text"></use></svg>
+      </a>
+
+      <ul class="desktop-nav hide-on-small-and-down">
+        <li><a href="/publishers/">for publishers</a>
+        </li>
+        <li><svg height="27" width="9"><line x1="0" y1="27" x2="9" y2="0" style="stroke:rgb(255,255,255);stroke-width:2" /></svg></li>
+        <li><a href="/retailers/">for retailers</a></li>
+        <li><svg height="27" width="9"><line x1="0" y1="27" x2="9" y2="0" style="stroke:rgb(255,255,255);stroke-width:2" /></svg></li>
+        <li>
+          <svg class="icon-search"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-search"></use></svg>
+          <!-- <a href="#">search</a> -->
+          {% block siteSearch %}
+
+          <div id="site_search" style="display:inline-block;">
+            <form method="get" id="searchform" action="">
+                <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search reactions" />
+            </form>
+          </div>
+          <script>
+          $('#site_search')
+              .on('mouseenter', function() { $(this).find('input').focus() })//chain
+              .on('mouseleave', function() {
+                if ( !$(this).find('input').val().length ) {
+                  $(this).find('input').blur();
+                }
+              })
+              .find('form').on('submit', function(e) {
+                  var validPaths = /^\/(stream|group|user|site|page).*$/;
+                  var defaultPath = "/stream/";
+                  var curPath = window.location.pathname;
+                  var isValidPath = validPaths.test(curPath);
+                  var action = isValidPath ? curPath : defaultPath;
+                
+                  $(e.target).attr('action', action);
+              });
+            $('.fa-search').on('click', function(e){
+              e.preventDefault();
+              $('#searchform').trigger('submit');
+            });
+          </script>
+
+          {% endblock siteSearch %}
+        </li>
+      </ul>
+
+      <ul id="user-desktop" class="right hide-on-small-and-down">
+        <li class="color-bar first"></li>
+        <li class="color-bar second"></li>
+        <li class="color-bar third"></li>
+        <li class="color-bar fourth"></li>
+        <li class="color-bar fifth"></li>
+
+        <li class="user">
+          <a class="user-dropdown-button-desktop" href="#!" data-activates="desktop-user-dropdown">
+            {% if cookie_user.social_user %}
+              {% if cookie_user.social_user.img_url %}
+              <img src="{{ cookie_user.social_user.img_url }}?type=square" class="circle" />
+              {% endif %}
+              <h4>{{ cookie_user.social_user.full_name }}</h4>
+            {% else %}
+              Sign Up / Log In
+            {% endif %}
+          </a>
+        </li>
+      </ul>
+
+      <ul id="desktop-user-dropdown" class="dropdown-content">
+        <!-- user info : desktop -->
+        <li class="no-hover"><h3>Join the Beta:</h3></li>
+        <li class="ant-join-beta">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            Try Antenna on your site!
+          </a>
+        </li>
+        {% if not cookie_user.social_user %}
+        <li class="no-hover"><h3>Create a User Account:</h3></li>
+        <li class="fb-login-button">
+          <!-- <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;" /></a> -->
+          <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();">
+            <svg class="icon-social"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-social-facebook"></use></svg>
+            Connect with <br/>Facebook
+          </a>
+        </li>
+        <li class="ant-login-button">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            <svg class="icon-social"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+            Login with <br/>Antenna
+          </a>
+        </li>
+        <li class="ant-create-account">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+        </li>
+        {% comment %}
+          <!--
+          <div class="userSettingsMenu">
+            <h5 id="user_settings">Settings</h5>
+            <label for="private_profile">
+              <input type="checkbox" id="private_profile" {% if cookie_user.social_user.private_profile %}checked="checked"{% endif %} /> 
+              Profile is private
+            </label>
+            <label for="follow_email">
+              <input type="checkbox" id="follow_email" {% if cookie_user.social_user.follow_email_option %}checked="checked"{% endif %} /> 
+              Send me email when someone follows my activity.
+            </label>
+            <label for="activity_notifications">
+              <input type="checkbox" id="activity_notifications" {% if cookie_user.social_user.notification_email_option %}checked="checked"{% endif %} /> 
+              Send me activity notifications.
+            </label>
+            
+            {% if cookie_user.social_user.provider == "Readrboard" %}
+                <hr/>
+                <a href="javascript:void(0);" onclick="ANTAuth.openAntAvatarUploadWindow();">Upload Profile Picture</a>
+                <a href="javascript:void(0);" onclick="ANTAuth.openChangePasswordWindow();">Change your password</a>
+            {% endif %}
+          </div>
+          -->
+        {% endcomment %}
+
+
+        {% endif %}
+
+        {% if cookie_user.social_user %}
+        <li><a href="/user/{{ cookie_user.id }}">Profile</a></li>
+        <li><a href="/user/{{ cookie_user.id }}">My Activity</a></li>
+        <li><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></li>
+        <li>
+          {% include "group_nav.html" %}
+        </li>
+        <li class="divider"></li>
+        <li><a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a></li>
+        {% endif %}
+        <!-- user info : desktop -->
+      </ul>
+
+      <a href="javascript:void(0);" data-activates="mobile-menu" class="button-collapse right mobile-menu-cta"><svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-menu"></use></svg></a>
+      <ul class="side-nav" id="mobile-menu">
+        <li>
+          <svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+          <svg class="icon-antenna-text"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-text"></use></svg>
+        </li>
+        <li><h3>Find Out More</h3></li>
+        <li><a href="/publishers/">For Publishers</a></li>
+        <li><a href="/retailers/">For Retailers</a></li>
+        <li>
+          <form method="get" id="searchform" action="">
+              <input type="text" value="{% if query_string %}{{ query_string }}{% endif %}" name="s" id="s" placeholder="search reactions" />
+          </form>
+        </li>
+
+        <!-- user info : mobile -->
+        {% if cookie_user.social_user %}
+        <li><a href="/user/{{ cookie_user.id }}">Profile</a></li>
+        <li><a href="/user/{{ cookie_user.id }}">My Activity</a></li>
+        <li><a href="/follows/{{ cookie_user.id }}">Activity I Follow</a></li>
+        <li>
+          {% include "group_nav.html" %}
+        </li>
+        <li class="divider"></li>
+        <li><a href="javascript:void(0);" onclick="ANTAuth.logout();">Log Out</a></li>
+        {% endif %}
+
+        {% if not cookie_user.social_user %}
+        <li><h3>Sign Up / Log In</h3></li>
+        <li class="fb-login-button">
+          <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.doFBLogin();">
+            <svg class="icon-social"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-social-facebook"></use></svg>
+            Connect with Facebook
+          </a>
+        </li>
+        <li class="ant-login-button">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            <svg class="icon-social"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg>
+            Login with Antenna
+          </a>
+        </li>
+        <li class="ant-create-account">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow({width:535,height:350});">Create Antenna Account</a>
+        </li>
+        {% endif %}
+        <li class="no-hover"><h3>Join the Beta</h3></li>
+        <li class="ant-join-beta">
+          <a href="javascript:void(0);" onclick="ANTAuth.openAntLoginWindow();">
+            Try Antenna on your site!
+          </a>
+        </li>
+        <!-- end user info : mobile -->
+      </ul>
+
+
+
+  <!-- end navbar content -->
+  </div>
+</nav>
+</div>

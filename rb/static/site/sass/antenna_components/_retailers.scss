@@ -1,0 +1,104 @@
+.retailers {
+  section {
+    &.masthead {
+      // background-image: url('../images/mall.jpg');
+      background-image: url('../images/store-owner.jpg');
+      background-size: 73%;
+      background-position: 0% 23%;
+
+      h1 {
+        font-size:5rem;
+
+        .line-one {
+          font-size:3.5rem;
+        }
+
+        @media (max-width: $screen-sm-max) {
+          font-size:3.5rem;
+
+          .line-one {
+            font-size:2.75rem;
+            margin-bottom: 1.5rem;
+          }          
+        }
+      }
+    }
+
+    .call-out {
+      text-align: center;
+
+      h2 {
+        margin-top:0;
+        font-size:5rem;
+        font-weight: 900;
+        color:$antenna-orange;
+
+        @media (max-width: $screen-sm-max) {
+          font-size:3.5rem;
+        }
+      }
+
+      label {
+        font-size: 1.5rem;
+        font-style: italic;
+        font-family: Georgia;
+      }
+    }
+
+    &.review-example {
+      position:relative;
+
+      img {
+        width:100%;
+      }
+
+      .reviews {
+        position: relative;
+        .review-content { 
+          position: absolute; top:1.5rem; right:1.5rem; color: $black; text-align: center;
+
+          @media (max-width: $screen-sm-max) { top:1rem; right:1rem; }
+
+          .question { 
+            font-size:1.5rem; 
+            @media (max-width: $screen-sm-max) { font-size:1.25rem; }
+          }
+          .answer { 
+            font-size:1.5rem; background:rgba(255,255,255,0.35); margin-bottom:3rem; padding:0.5rem; 
+            box-shadow: 0px 2px 4px #815B2C;
+            @media (max-width: $screen-sm-max) { font-size:1rem; padding:0.33rem; }
+          }
+        }
+      }
+
+      .q-and-a {
+        margin:2rem;
+        text-align: center;
+
+        .question {
+          font-size:1.5rem;
+          font-style:italic;
+        }
+        .answer {
+          margin:1rem auto;
+          padding:0.5rem;
+          background:$antenna-orange;
+          color:$white;
+          display: inline-block;
+        }
+      }
+    }
+
+    &.mobile-sign-up {
+      display:none;
+    }
+
+    // @media (max-width: $screen-xs-max) {
+    // $screen-md-min
+    @media (max-width: $screen-sm-max) {
+      &.mobile-sign-up {
+        display:block;
+      }
+    }
+  }
+}

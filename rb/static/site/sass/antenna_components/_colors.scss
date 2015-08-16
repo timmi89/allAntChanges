@@ -1,0 +1,23 @@
+// antenna
+$antenna-dker-blue:#0A313C;
+$antenna-dk-blue:#2f5863;
+$antenna-lt-blue:#4b7185;
+$antenna-yellow:#dec164;
+$antenna-orange:#ea9971;
+$antenna-red:#e8776d;
+$antenna-dk-red:#9A2D24;
+$black:#000;
+$white:#fff;
+$gray:#ccc;
+
+$primary-color: $antenna-lt-blue;
+$primary-color-light: lighten($primary-color, 15%) !default;
+$primary-color-dark: darken($primary-color, 15%) !default;
+
+$secondary-color: $antenna-orange !default;
+$success-color: color("green", "base") !default;
+$error-color: $antenna-red !default;
+$link-color: $antenna-lt-blue !default;
+
+// materialize overrides
+$input-focus-color: #dec164;

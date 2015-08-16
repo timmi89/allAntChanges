@@ -37,12 +37,32 @@ $('#cards').addClass('user_profile');
 {% if query_string %}
 <div id="searchFor">
   <h2>
-    <em>Search for <br/></em>
+    <em>You searched for: <br/></em>
     <div><strong>{{ query_string }}</strong></div>
   </h2>
 </div>
 {% endif %}
 
+
+<style>
+/* TEMPORARY UGLY STYLIN' */
+.meta .avatar { float:right; font-size:0.8rem; }
+.meta .avatar img { width:30px; margin-bottom: -11px; }
+.meta h1 { font-size:1.5rem; padding:0.5rem; background:#4b7185; margin:0; display:inline-block; font-weight:500;}
+.meta h1 a { color:#fff; }
+
+#cards .card { margin:0 0 2rem 0; padding:0; }
+#cards .card blockquote { margin:2rem; font-style:italic; font-size:1rem; font-family:Georgia, serif; }
+
+.reactionBox { padding:1rem; }
+.reactionBox > div { display:inline-block; font-size:0.8rem; }
+
+.contentBox { height:250px; overflow-y:scroll; overflow-x:hidden; }
+.contentBox iframe { width:100%; }
+.contentBox img { width:100%; }
+
+.buttons { display:none; }
+</style>
 
 <div class="cardsWrap grid-whole">
     <div id="cards">
@@ -51,7 +71,7 @@ $('#cards').addClass('user_profile');
         {% for interaction in page.list %}
             {% if interaction.kind != 'com' and interaction.human_kind != 'Share' and interaction.content.kind != 'pag' %}
             
-            <div class="cardWrap">
+            <div class="col s12 m6 cardWrap">
             <section class="card interaction_{{ interaction.id }}" 
                 data-interaction-id="{{ interaction.id }}" 
                 data-interaction-body="{{ interaction.interaction_node.body }}" 
@@ -75,7 +95,7 @@ $('#cards').addClass('user_profile');
                         {% if interaction.user.social_user.full_name == "" %}
                         <a href="/user/{{interaction.user.id}}/">
                             Unregistered User
-                            <img src="{{ STATIC_URL }}site/images/anonymous-user.png"/>
+                            <img src="{{ STATIC_URL }}site/images/anonymous_user.png"/>
                         </a>
                         {% endif %}
                     </div>
@@ -131,7 +151,7 @@ $('#cards').addClass('user_profile');
                         {% endif %}
 
                         {% if interaction.comments %}
-                        <div class="comments comments_for_{{ interaction.id }}">
+                        <div class="comments comments_for_{{ interaction.id }}" style="display:none;">
                           <h2>Comments</h2>
                           {% for comment in interaction.comments %}
                           {% if comment.approved %}

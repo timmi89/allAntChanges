@@ -1,163 +1,257 @@
-{% extends "base.html" %}
+{% extends "base/wide-fixed-right.html" %}
 
-{% block title %}Antenna for Ecommerce{%endblock%}
+{% block page_title %}Antenna for Retailers{% endblock %}lock%}
+{% block page_description %}Structured feedback from online audiences.{%endblock%}
 
-{% block extendedHead %}
+{% block pageHeadAdditions %}
+<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/retailers/{% else %}http://www.antenna.is/retailers/{% endif %}">
 {%endblock%}
 
-{% block subheaderContent %}
-{% endblock %}
+{% block bodyClass %}retailers{% endblock %}
 
-{% block wideContent %}
-    <div class="retailers_page">
-        <div class="grid-whole banner blue">
-          <div class="content left">
-            <h1>More engagement means more dollars.</h1>
-            <div class="caption">We help retailers engage their customers in on-brand, conversion-driving ways.</div>
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
+
+{% block page_content %}
+<section class="masthead dark-section">
+  <div class="container row">
+    <div class="col s12 m10">
+      Antenna for Retailers
+      <h1>
+        <div class="line-one">Introducing Single-Tap Reviews.</div>
+        <div class="line-two">Increase trust &amp; sales</div>
+        <div class="line-three">in seconds.</div>
+      </h1>
+    </div>
+    <div class="col m2 fixed-right-sidebar">
+      <div class="fixed-right-sidebar-content">
+        <div class="content-wrapper">
+          <h2>
+            <div class="line-two">Get Antenna</div>
+            <div class="line-one">for your online store</div>
+          </h2>
+          <p>Antenna is a free engagement tool that gets more reviews, builds trust, and increases conversion.</p>
+          <p>We're a new product in beta, and would love to work with your online store.</p>
+          <p>It is free to use!  Contact us now for instructions, or just to find out more:</p>
+          <form target="_blank" class="drip-form">
+            <h3 data-drip-attribute="headline">Get Antenna</h3>
+            <div class="form-message success hide">Thank you! We'll be in touch shortly.</div>
+            <div class="form-message info not-valid hide">Please fill out all of the required fields.  Thanks!</div>
+            <div class="form-message error hide">Oops, there was a problem.  Try again, or contact us at <a href="mailto:team@antenna.is">team@antenna.is</a>.</div>
+            <p data-drip-attribute="description"></p>
+              <div>
+                  <label for="fields[email]">Email Address</label><br />
+                  <input type="email" name="fields[email]" data-required="true" value="" />
+              </div>
+              <div>
+                  <label for="fields[website_url]">Website URL</label><br />
+                  <input type="text" name="fields[website_url]" data-required="true" value="" />
+              </div>
+              <div>
+                  <input type="hidden" name="fields[form_id]" value="retailer_sidebar_1" />
+                  <input type="hidden" name="fields[goal_name]" value="Retailer Beta Sign Up" />
+              </div>
+            <div>
+              <button class="btn btn-large">Get Antenna</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="review-example">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>This is a Single-Tap Review:</h1>
+      <em class="hide-on-small-only">(For this example, look at the top-right of this headphones photo.)</em>
+      <div class="reviews">
+        <img src="{{STATIC_URL}}site/images/headphones.jpg" class="no-ant headphones"/>
+        <div class="review-content">
+          <div class="question" ant-item="sound-review" ant-reactions="Booming!;Clear;Like being there;Nothing special;Muddy">How's the sound?</div>
+          <div class="answer" ant-cta-for="sound-review" ant-mode="write read"><span ant-counter-for="sound-review"></span> Responses</div>
+          <div class="question" ant-item="fit-review" ant-reactions="Just right;Snug;Loosey Goosey;Who cares?">How's the fit?</div>
+          <div class="answer" ant-cta-for="fit-review" ant-mode="write read"><span ant-counter-for="fit-review"></span> Responses</div>
+        </div>
+      </div>
+      <div class="s12">
+          <em>Fully customizable:  reactions, colors, placement, calls-to-action. Antenna is on-brand.</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="overview dark-section">
+  <div class="container row">
+    <div class="col s12 m6">
+      <h1>The Mobile-First Review Platform.</h1>
+      <p><a href="https://econsultancy.com/blog/8919-why-retailers-need-to-embrace-mobile-internet-in-stores" target="_blank">60% of customers use their smartphone in stores</a>.</p>
+      <p>And, 63% of customers are more likely to make a purchase from a site which has user reviews (negative reviews help, too).  And people who interact with reviews are 105% more likely to purchase.</p>
+      <p>Retailers know that engaging with visitors turns them into customers.</p>
+      <p>Antenna is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
+      <!-- <p>Capture insights, contact information, and customers.  Use Antenna to power Single-Tap reviews, feedback, community polls, and more.</p> -->
+    </div>
+    <div class="col s12 m3 call-out">
+      <div class="card">
+          <div class="card-content">
+            <h2>18%</h2>
+            <label>lift in sales from reviews &amp; other feedback</label>
           </div>
         </div>
-        <div class=" grid-whole masthead no-rdr">
-            <div class="content">
-                <div class="ant ant-page-summary"></div>
-                <div class="">
-                    <h1>Increase ecommerce engagement instantly</h1>
-                </div>
-                <div class="grid-7 s-grid-whole padded">
-                    <p><strong>Did you know?</strong>  63% of customers are more likely to make a purchase from a site which has user reviews (bad ones <em>help</em>, too).  And people who interact with reviews are 105% more likely to purchase.</p>
-                    <p>Retailers know that engaging with visitors turns them into customers.</p>
-                    <p>Antenna is the <strong>easiest</strong>, <strong>friendliest</strong> way to engage people visiting your online store.</p>
-                    <p>Capture insights, contact information, and customers.  Use Antenna to power 1-click reviews, feedback, community polls, and more.</p>
-                </div>
-                <div class="grid-5 s-grid-whole padded">
-                    <div class="average_increase no-ant">
-                        <i class="rdr_icon-circle-arrow-up"></i>
-                        <h2>18%</h2>
-                        <label>lift in sales from reviews & other feedback</label>
-                    </div>
-                    <em class="citation">Data compiled by <a href="https://econsultancy.com/blog/9366-ecommerce-consumer-reviews-why-you-need-them-and-how-to-use-them#i.nw2g75sjjcyc10" target="_blank">eConsultancy.com</a></em>
-                </div>
-            </div>
-        </div>
-        <style type="text/css">
-        .quick-demo button {
-            /*display: block;*/
-            padding: 10px 20px;
-            font-size: 14px;
-            color: #fff;
-            background: #e5422b;
-            /*width: 200px;*/
-            margin: 0 auto;
-            border:none;
-        }
-        .quick-demo button.responses { margin-right:20px; }
-        .quick-demo button.response { background:#ccc; color:#333; }
-        .quick-demo .padded { margin-bottom:2rem; }
-        </style>
-        <div class="grid-whole s-grid-whole padded new-section quick-demo">
-            <div class="content" style="text-align:center;">
-                <div class="grid-whole s-grid-whole padded">
-                    <h1 style="margin-bottom:10px;">Here is what a 1-Click Review can look like</h1>
-                    <em>Roll your mouse over the button to react.</em>
-                </div>
-                <div class="grid-half s-grid-whole padded">
-                    <h3 ant-item="satisfied" ant-reactions="Very;Mostly;Afraid Not;Not at all">Are you satisfied with your Acme widget?</h3>
-                </div>
-                <div class="grid-half s-grid-whole padded">
-                    <button ant-cta-for="satisfied" ant-mode="write" class="response">Your response?</button>
-                    <button ant-cta-for="satisfied" ant-mode="read" class="responses"><span ant-counter-for="satisfied"></span> Community Responses</button>
-                </div>
-                <div class="grid-half s-grid-whole padded">
-                    <h3 ant-item="match" ant-reactions="Yes, perfectly;Not quite;">Did your Acme widget match the photos on our website?</h3>
-                </div>
-                <div class="grid-half s-grid-whole padded">
-                    <button ant-cta-for="match" ant-mode="write" class="response">Your response?</button>
-                    <button ant-cta-for="match" ant-mode="read" class="responses"><span ant-counter-for="match"></span> Community Responses</button>
-                </div>
-                <div class="grid-whole s-grid-whole padded">
-                    <em>You customize the reactions, the colors, and more!</em>
-                </div>
-            </div>
-        </div>
-        <div class="grid-whole s-grid-whole padded new-section demo">
-            <div class="content" style="text-align:center;">
-                <h1>Watch Antenna power 1-Click reviews on a demo ecommerce site.</h1>
-                <br/>
-                <style>
-                #antenna_retail_video { width:960px; height:540px;  margin:0 auto;}
-                </style>
-                <iframe src="//player.vimeo.com/video/108516416" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen id="antenna_retail_video"></iframe> 
-                <br/><br/><br/><br/>
-                <!-- <h1>Try a live demo.</h1>
-                <button><a href="/static/demo/loot.html" target="_blank">Live Demo</a></button> -->
-                <!-- <em>Or, check out this video:</em>
-                <div class="videoWrapper"><iframe src="//player.vimeo.com/video/83894920" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div> -->
-            </div>
-        </div>
-        <div class="grid-whole s-grid-whole padded new-section q-and-a">
-            <div class="content">
-                <div class="grid-half s-grid-whole padded">
-                    <h2>Ask questions of your shoppers <br/>to gain insight &amp; build community.</h2>
-                    <p class="left"><em>And say no to disruptive, off-brand "Your opinion counts!" pop-overs.</em></p>
-                    <div class="case_study">
-                        <h3>Case Study</h3>
-                        <hr/>
-                        <p>Online publisher ProPublica launched <a href="http://www.propublica.org/getinvolved/item/who-was-most-to-blame-for-deaths-caused-by-mixing-up-tylenol-products" target="_blank">Antenna Q&amp;A</a>.</p>
-                        <p><strong>Their response rate: 18.9% of visits.</strong></p>
-                        <p><strong>Why?</strong>  Antenna has no barrier to entry, is visually appealing, and is extremely easy to use -- encouraging people to respond.</p>
-                    </div>
-                </div>
-                <div class="grid-half s-grid-whole padded screenshot">
-                    <img src="{{ STATIC_URL }}site/images/q-and-a.jpg" />
-                </div>
-            </div>
-        </div>
-        <div class="grid-whole s-grid-whole padded new-section other-features">
-            <div class="content">
-                <h2>But wait.<br/>There <em>is</em> more.</h2>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-envelope-o"></i><h5>Acquire</h5><p>Capture visitor feedback, capture contact info.</p></div>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-compass"></i><h5>On-Brand</h5><p>You set the tone, by setting the default responses, colors, and more.</p></div>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-tachometer"></i><h5>Measure Curiosity</h5><p>Antenna tracks when people view responses, so you know what your visitors are curious about.</p></div>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-magnet"></i><h5>Magnetic</h5><p>See how visitor engagement with Antenna impacts conversions and draws people back.</p></div>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-wrench"></i><h5>Simple Installation</h5><p>Installation, configuration, and management on any site need just simple HTML &amp; CSS.  We'll walk you through it, free.</p></div>
-                <div class="grid-third s-grid-whole padded feature"><i class="fa fa-flag"></i><h5>Magnificent Management</h5><p>Managing user feedback on Antenna is far easier &amp; cheaper than any other form of on-site, social feedback.</p></div>
-            </div>
-        </div>
-        <div class="grid-whole s-grid-whole padded new-section cta">
-            <div class="content">
-                <h1>Setup a Demo!</h1>
-                <h2>Free During Beta</h2>
-                <p>Antenna for Retailers is brand new, and we're offering our service free to ecommerce sites during our beta period, and will be working closely with beta partners to determine a great price with fantastic ROI for retailers of all sizes.</p>
-                <p><a class="contact" href="mailto:team@antenna.is?subject=Antenna+Ecommerce+Beta+Inquiry">Contact Us Now</a> for information about our ecommerce beta program.</p>
-            </div>
+        <div class="card-action">
+          <em class="citation">Data compiled by <a href="https://econsultancy.com/blog/9366-ecommerce-consumer-reviews-why-you-need-them-and-how-to-use-them#i.nw2g75sjjcyc10" target="_blank">eConsultancy.com</a></em>
         </div>
     </div>
+  </div>
+</section>
 
+<section class="review-example">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>Focused Feedback is more meaningful.</h1>
+      <p>When people buy a certain product, there are usually a few key reasons.  Or a few key questions people have before buying.</p>
+      <p>It shouldn't take 200 lengthy reviews to answer those questions.
+      <p>Save your customers time, and increase sales, by creating honest opportunities for feedback on the <strong>product traits that matter</strong>.</p>
+      <p>It's fully customizable and up to you:</p>
+      <li>For clothes, maybe ask about fit, look, and durability.</li>
+      <li>For electronics, ask about performance (and not just specs).  You get the idea, because you know your market.</li>
+    </div>
+  </div>
+</section>
+
+<section class="lt-blue-section mobile-sign-up">
+  <div class="container row">
+    <div class="col s12 m10">
+      <h1>Get Antenna for your site!</h1>
+      <p>Antenna is a free engagement tool that gets more reviews, builds trust, and increases conversion.</p>
+      <p>We're a new product in beta, and would love to work with your online store.</p>
+      <p>It is free to use!  Contact us now for instructions, or just to find out more:</p>
+      <form target="_blank" class="drip-form">
+        <h3 data-drip-attribute="headline">Get Antenna</h3>
+        <div class="form-message success hide">Thank you! We'll be in touch shortly.</div>
+        <div class="form-message info not-valid hide">Please fill out all of the required fields.  Thanks!</div>
+        <div class="form-message error hide">Oops, there was a problem.  Try again, or contact us at <a href="mailto:team@antenna.is">team@antenna.is</a>.</div>
+        <p data-drip-attribute="description"></p>
+          <div>
+              <label for="fields[email]">Email Address</label><br />
+              <input type="email" name="fields[email]" data-required="true" value="" />
+          </div>
+          <div>
+              <label for="fields[website_url]">Website URL</label><br />
+              <input type="text" name="fields[website_url]" data-required="true" value="" />
+          </div>
+          <div>
+              <input type="hidden" name="fields[form_id]" value="retailer_mobile_signup_1" />
+              <input type="hidden" name="fields[goal_name]" value="Retailer Beta Sign Up" />
+          </div>
+        <div>
+          <button class="btn btn-large">Get Antenna</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+
+<section class="review-example dark-section">
+  <div class="container row">
+    <div class="col s12 m8">
+      <!-- <h1>Ask questions of your shoppers to gain insight &amp; build community.</h1> -->
+      <h1>Say no to disruptive, off-brand "Your opinion counts!" pop-overs.</h1>
+      <p>Ask your visitors simple questions with Antenna.  It's integrated into your site experience and gets more responses.</p>
+      <div class="q-and-a">
+        <div class="question" ant-item="question1" ant-reactions="Absolutely;Might be, need to test;Doubtful;Don't care">Is this a better way to poll your audience?</div>
+        <div class="answer" ant-cta-for="question1" ant-mode="write read"><span ant-counter-for="question1"></span> Responses</div>
+      </div>
+      <br/>
+      <div class="q-and-a">
+        <div class="question" ant-item="question2" ant-reactions="Ok, show me;Alright...;Close your eyes!">Answer this question to see something cool.</div>
+        <div class="answer" ant-cta-for="question2" ant-mode="write read"><span ant-counter-for="question2"></span> Responses</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="">
+  <div class="container row">
+    <div class="col s12 m8">
+      <h1>Simple to Install.</h1>
+      <h1>Free during beta.</h1>
+      <h1>Free after beta.</h1>
+      <p>Antenna has a fast-growing network of publishers, where we will allow you to (optionally) advertise your products &amp; services -- along with your customers' reactions!</p>
+      <p>While it's possible we'll have volume-based pricing, we plan to keep the basic feature set free.</p>
+    </div>
+  </div>
+</section>
+
+<section class="dark-section">
+  <div class="container row">
+    <div class="col s12 m10">
+      <h1>Get Antenna for your site!</h1>
+      <p>Antenna is a free engagement tool that gets more reviews, builds trust, and increases conversion.</p>
+      <p>We're a new product in beta, and would love to work with your online store.</p>
+      <p>It is free to use!  Contact us now for instructions, or just to find out more:</p>
+      <form target="_blank" class="drip-form">
+        <h3 data-drip-attribute="headline">Get Antenna</h3>
+        <div class="form-message success hide">Thank you! We'll be in touch shortly.</div>
+        <div class="form-message info not-valid hide">Please fill out all of the required fields.  Thanks!</div>
+        <div class="form-message error hide">Oops, there was a problem.  Try again, or contact us at <a href="mailto:team@antenna.is">team@antenna.is</a>.</div>
+        <p data-drip-attribute="description"></p>
+          <div>
+              <label for="fields[email]">Email Address</label><br />
+              <input type="email" name="fields[email]" data-required="true" value="" />
+          </div>
+          <div>
+              <label for="fields[website_url]">Website URL</label><br />
+              <input type="text" name="fields[website_url]" data-required="true" value="" />
+          </div>
+          <div>
+              <input type="hidden" name="fields[form_id]" value="retailer_inline_1" />
+              <input type="hidden" name="fields[goal_name]" value="Retailer Beta Sign Up" />
+          </div>
+        <div>
+          <button class="btn btn-large">Get Antenna</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block page_js %}
+    <script>
+      window.antenna_extend = {
+        summary_widget_selector: '.masthead+section .row:first .col:first',
+        summary_widget_method: 'prepend',
+        active_sections: 'section',
+        anno_whitelist: 'p',
+        no_ant: '.masthead, h1'
+      };
+    </script>
+    <script async src="/static/engage.js"></script>
     <style>
-    #antenna_test_notice { box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; right:20px; position:fixed; background:#fff; transition:bottom 0.5s;}
+    #antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; left:0; right:0px; position:fixed; background:#fff; transition:bottom 0.5s; margin:0 auto;}
     </style>
     <div id="antenna_test_notice"></div>
 
 
     <script>
-    $('.get_antenna').click( function() {
-        $('.get_antenna_form').toggle(200);
-    });
-
-    // $('.antenna_is_better').waypoint('sticky', { offset: 75 });
-
     document.addEventListener("antenna.reaction", function(){
       var lastEvent = antenna.getLastEvent();
-      if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
+      if (lastEvent.event == 'antenna.reaction' && lastEvent.value && lastEvent.supplementary['ant-item-name'] == 'question2') {
         $('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
         .on('click', function() { $(this).css('bottom', '-300px'); }); 
       }
     },false); 
-var reactionViewCount = 0;
+
+    var reactionViewCount = 0;
     document.addEventListener("antenna.reactionview", function(){
-        console.log(1);
       var lastEvent = antenna.getLastEvent();
-        console.log(lastEvent)
       if (lastEvent.event == 'antenna.reactionview' ) {
+        if (lastEvent.supplementary['ant-item-name'] == 'question2')
         reactionViewCount++;
         
         if (reactionViewCount == 3) {
@@ -167,33 +261,7 @@ var reactionViewCount = 0;
         }
       }
     },false); 
-
-    $('.contact').on('click', function(e) {
-        e.preventDefault();
-        $('#ant_try_overlay, .try-antenna-form').show(0).css('opacity', 1);
-    });
     </script>
 
 
 {% endblock %}
-
-{% block complementarySection %}
-{% endblock %}
-
-
-
-{% block pageJS %}
-<script>
-if (window.location.href.indexOf('publishers') != -1 ) {
-    $('#readers').hide();
-}
-window.antenna_extend = {
-    active_sections: '.content',
-    anno_whitelist: 'p,img',
-    premium:true
-};
-</script>
-<script src="/static/engage_full.js" defer></script>
-{% include "footer_join_beta.html" %}
-{% endblock %}
-<!-- widget for slideshow -->

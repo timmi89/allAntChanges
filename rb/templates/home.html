@@ -1,197 +1,239 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
 
-{% block title %}Antenna{%endblock%}
-{% block extendedHead %}
+{% block page_title %}Antenna{% endblock %}lock%}
+{% block page_description %}How the web reacts{%endblock%}
+
+{% block pageHeadAdditions %}
 <link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/{% else %}http://www.antenna.is/{% endif %}">
-<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
-
-<link rel="stylesheet" href="/static/components/morris/morris.css">
-<link rel="stylesheet" href="/static/components/pikaday/css/pikaday.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script src="/static/components/morris/morris.js"></script>
-<script src="/static/js/analytics.js"></script>
-<script src="/static/components/pikaday/pikaday-with-jquery.min.js"></script>
-
 {%endblock%}
 
-{% block subheaderContent %}
+{% block bodyClass %}{% if not profile_user and not group and not board and not page %}{% if not query_string and not singleton %}homepage{% endif %}{% endif %} {% endblock %}
+
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
+
+{% block page_content %}
+<section class="masthead">
+  <div class="container">
+    <h1>
+      <div class="line-one no-ant">Say what you think</div>
+      <div class="line-two">about anything</div>
+      <div class="line-three no-ant">with a <span class="hide-on-small-only">click</span><span class="hide-on-med-and-up">tap</span>.</div>
+    </h1>
+    <h3>
+      <div class="line-one no-ant">Meaningful, mobile-first feedback</div>
+      <div class="line-two no-ant">for a <span class="adjective">multi-<strong>{{ multi_adjective }}</strong></span> world.</div>
+    </h3>
+  </div>
+</section>
+<section class="see-it-now">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1 class="no-ant">Try It Out!</h1>
+        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col l3 m12 center-align">
+        <h4 class="line-behind serif no-ant"><span>Articles</span></h4>
+        <p class="hide-on-med-and-up no-ant"><strong class="btn tip btn-small">Tip:</strong> <em>Tap a paragraph to react to it.</em></p>
+        <div class="card">
+          <div class="card-content">
+            <p>It was a dark and stormy night; the rain fell in torrents, except at occasional intervals, when it was checked by a violent gust of wind which swept up the streets (for it is in London that our scene lies), rattling along the house-tops, and fiercely agitating the scanty flame of the lamps that struggled against the darkness.</p>
+            <p>Through one of the obscurest quarters of London, and among haunts little loved by the gentlemen of the police, a man, evidently of the lowest orders, was wending his solitary way.</p>
+          </div>
+        </div>
+        <div class="card-action no-ant">
+          <p class="hide-on-small-only"><strong class="btn tip btn-small">Tip:</strong> <em>Select some text, or rest your mouse over the text for a moment.</em></p>
+          <p><em>Excerpt from <strong>Paul Clifford</strong> by Edward Bulwer-Lytton, via <a href="http://www.gutenberg.org/files/7735/7735-h/7735-h.htm#link2HCH0001" target="_blank">Project Gutenberg</a></em></p>
+        </div>
+      </div>
+      <div class="col l5 m6 s12 center-align">
+        <h4 class="line-behind serif no-ant"><span>Videos</span></h4>
+        <div class="card">
+          <div class="card-content">
+            <iframe src="https://player.vimeo.com/video/134530201?color=ffffff&title=0&byline=0&portrait=0&badge=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe> 
+          </div>
+        </div>
+        <div class="card-action no-ant">
+          <em><a href="https://vimeo.com/134530201" target="_blank">PATAGONIA 8K</a> from <a target="_blank" href="https://vimeo.com/timestormfilms">Martin Heck | Timestorm Films</a> on <a target="_blank" href="https://vimeo.com">Vimeo</a>.</em>
+        </div>
+      </div>
+      <div class="col l4 m6 s12 center-align">
+        <h4 class="line-behind serif no-ant"><span>Images</span></h4>
+        <div class="card">
+          <div class="card-content">
+            <img src="{{ STATIC_URL }}site/images/see-it-image.jpg"/>
+          </div>
+        </div>
+        <div class="card-action no-ant">
+          <em>via <a href="https://download.unsplash.com/photo-1431578500526-4d9613015464" target="_blank">Unsplash</a></em>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<section class="customize-the-ui dark-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s12">
+        <h1>Customize for your community</h1>
+        <em>Antenna is relevant because it fits <strong>you</strong>. Reactions, colors, placement on the page, and much more are simple to customize.  Here are some real examples from partner publishers.</em>
+      </div>
+    </div>
+    <div class="row no-ant">
+      <div class="col s12 center-align examples">
+        <img src="{{ STATIC_URL }}site/images/example_default.png" />
+        <img src="{{ STATIC_URL }}site/images/example_perez.png" />
+        <img src="{{ STATIC_URL }}site/images/example_esplota.png" />
+        <img src="{{ STATIC_URL }}site/images/example_dlisted.png" />
+        <img src="{{ STATIC_URL }}site/images/example_cheatsheet.png" />
+        <img src="{{ STATIC_URL }}site/images/example_bigroundtable.png" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-content-link">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m8">
+        <h1>Perfect for sports, fashion, tech, news, and more.</h1>
+        <h3>View our gallery of examples, with other exciting &amp; simple ways to customize Antenna:</h3>
+        <div class="row gallery-links">
+          <div class="col s12 m6">
+            <div><a href="/gallery/news_magazine/">News Magazine</a></div>
+            <div><a href="/gallery/tech_blog/">Tech Blog</a></div>
+          </div>
+          <div class="col s12 m6">
+            <div><a href="/gallery/food_blog/">Food magazine</a></div>
+            <div>and more</div>
+          </div>
+        </div>
+      </div>
+      <div class="col m4 center-align hide-on-small-only">
+        <img src="{{ STATIC_URL }}site/images/success.png" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="quote dark-section">
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m4 center-align">
+        <img src="{{ STATIC_URL }}site/images/alexis.jpg" class="circle no-ant" />
+      </div>
+      <div class="col s12 m8">
+        <blockquote>
+          "Antenna shows exactly what readers are thinking without the hurdles or noise of traditional commenting sections. That's huge."
+        </blockquote>
+        <div class="attribution">- Alexis Ohanian, reddit cofounder & Antenna Adviser</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="big-beta-form no-ant">
+  <div class="container">
+    <form class="drip-form">
+    <div class="row">
+      <div class="col s12 center-align">
+        <h1 class="line-behind">
+          <span>
+          Publishers 
+          <br/>
+          &amp; Retailers
+          <br/>
+          Join Our Free Beta
+          </span>
+        </h1>
+        <div class="form-message success hide">Thank you! We'll be in touch shortly.</div>
+        <div class="form-message info not-valid hide">Please fill out all of the required fields.  Thanks!</div>
+        <div class="form-message error hide">Oops, there was a problem.  Try again, or contact us at <a href="mailto:team@antenna.is">team@antenna.is</a>.</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m6 center-align">
+        <label>Email Address</label>
+        <input type="email" name="fields[email]" data-required="true" value="" />
+      </div>
+      <div class="col s12 m6 center-align">
+        <label>Website URL</label>
+        <input type="text" name="fields[website_url]" data-required="true" value="" />
+        <input type="hidden" name="fields[form_id]" value="homepage_inline_1" />
+        <input type="hidden" name="fields[goal_name]" value="Publisher Beta Sign Up" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 center-align">
+        <button class="btn btn-large">Sign Up</button>
+      </div>
+    </div>
+    </form>
+    <div class="row learn-more-boxes">
+      <div class="col s12 m6 center-align">
+        <div class="card">
+          <div class="card-content">
+            <h3>Publishers</h3>
+            <h4>Antenna will help you engage visitors, enhance editorial feedback, and provide valuable analytics and insight.</h4>
+            <a href="/publishers/" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <div class="col s12 m6 center-align">
+        <div class="card">
+          <div class="card-content">
+            <h3>Retailers</h3>
+            <h4>Antenna will provide you with valuable product feedback and help customers make quick and informed decisions.</h4>
+            <a href="/publishers/" class="btn">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
 
-{% block wideContent %}
-<div class="know grid-whole">
-  <!-- <video autoplay loop poster="" id="" style="width:500px;height:500px;">
-  <source src="//player.vimeo.com/video/117234048?title=0&amp;byline=0&amp;portrait=0&amp;autoplay=1&amp;loop=1" type="video/mp4">
-  </video> -->
-  <div class="vid-container"><iframe class="no-ant" src="//player.vimeo.com/video/117234048?title=0&amp;byline=0&amp;portrait=0&amp;autoplay=1&amp;loop=1" frameborder="0"></iframe></div>
-  <div class="vid-overlay"></div>
-  <div class="content">
-    <div class="grid-whole m-grid-whole s-grid-whole centered">
-      <div class="message no-ant"><span>Respond to anything on the web. <br/>With just a click.</span></div>
-      <!-- <div class="caption first"><strong><a href="/see/">Publishers:</a></strong> Get up to <strong>25% more pageviews</strong>, more time-on-site, and more return visits.</div> -->
-      <!-- <div class="caption first"><strong><a href="/retailers/">Retailers:</a></strong> Increase conversions and loyalty with on-brand engagement and 1-click reviews.</div> -->
-      
-      <!-- <div class="message">For free.</div> -->
-      <!-- <div class="caption">Your visitors will love it.<br/>You will, too. <strong><a href="/see">See it now &raquo;</a></strong></div> -->
-      <!-- <div class="caption">Our free, simple tool increases on&#8209;site engagement and reveals reader sentiment. <strong><a href="/see">See it now &raquo;</a></strong></div> -->
-    </div>
-    <!-- <div class="grid-half m-grid-whole s-grid-whole centered"><img class="no-ant" src="/static/images/aWindow.png" style="margin:auto;" /><em style="display:block;color:#fff;">Customize the Antenna widget for your site and brand, too.</em></div> -->
-  </div>
-</div>
-<style>
-.know .ant_count,
-.know .ant-antenna-logo { color:#fff !important; } 
-.caption div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
-    top: 5px;
-}
-.benefits .caption div.ant_indicator.ant_indicator_for_text div.ant_indicator_body {
-    left: 0px;
-}
-</style>
-<div class="grid-whole benefits">
-    <div class="content">
-        <div class="first benefit grid-third m-grid-whole s-grid-whole center">
-            <span class="ant-icon ant-organization"></span>
-            <div class="message no-ant">See what people care about</div>
-            <div class="caption">
-                Antenna shows you what content even your "lurkers" are most curious about.
-            </div>
-        </div>
-        <div class="second benefit grid-third m-grid-whole s-grid-whole center">
-            <span class="ant-icon ant-magnet"></span>
-            <div class="message no-ant">More return<br/>visitors</div>
-            <div class="caption">
-                Visitors who use Antenna come back more often, and we'll be driving even more returns soon.
-            </div>
-        </div>
-        <div class="third benefit grid-third m-grid-whole s-grid-whole center">
-            <span class="ant-icon ant-gauge"></span>
-            <div class="message no-ant">Up to 25% more pageviews</div>
-            <div class="caption">
-                We ran a network-wide A/B test to find out.  The more active your visitors are, the greater the lift.
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="grid-whole banner blue no-rdr">
-  <h1>Join our beta</h1>
-  <div class="caption"><a class="get_antenna" href="javascript:void(0);">Contact us now.  Antenna will always be free. &raquo;</a></div>
-  <div class="get_antenna_form">
-      <iframe src="/static/wufoo/index.html?d=10032013" width="1000" height="125" scrolling="no" wmode="transparent" allowTransparency="true" style="background:transparent;" frameborder="0"></iframe>
-  </div>
-</div>
-<script>
-    $('.get_antenna').click( function() {
-        $(this).parents('.grid-whole').find('.get_antenna_form').toggle(200);
-    });
-</script>
-
-<div class="grid-whole endorsements">
-    <div class="content">
-        <!-- 
-        <div class="grid-half m-grid-whole s-grid-whole center fastco quote">
-            <a href="/group/fastcolabs.com/"><img src="/static/images/fastcolabs.png"/></a>
-            <p>"With Antenna, we're able to see which parts of our articles readers really value.</p>
-            <p>That helps us promote our content and gives us a sharper angle on future stories."</p>
-            <em>- Chris Dannen, Sr. Editor, Fast Company</em>
-        </div>
-         -->
-        <div class="grid-whole m-grid-whole s-grid-whole alexis quote">
-            <div class="image">&nbsp;</div>
-            <p>"Antenna shows exactly what readers are thinking without the hurdles or noise of traditional commenting sections. That's huge."</p> 
-            <em>- Alexis Ohanian, reddit cofounder & Antenna Adviser</em>
-        </div>
-    </div>
-</div>
-<div class="grid-whole center logos" style="display:none;">
-    <!-- <div class="grid-half s-grid-whole center"> -->
-        <div class="caption">Selected Antenna partners</div>
-        <a href="/stream/"><img src="/static/images/partners.png"/></a>
-    <!-- </div> -->
-</div>
-
-<a id="analyticsReport"></a>
-<div class="grid-whole banner what-you-learn">
-  <h1>Here's what you will learn</h1>
-  <div class="caption">This is an example of what your website's dashboard will look like.</div>
-</div>
-
-<div class="grid-whole banner">
-<section role="panels" class="analyticsReport content">
-    <!-- <div class="grid-12 section summary hasLoader"> -->
-        <!-- <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Querying Engagement Totals...</div></div> -->
-    <!-- </div> -->
-
-    <div class="dashboard-name" style="margin-bottom:40px;">yoursite.com</div>
-
-    <div class="section reactions-and-topics">
-        <div class="grid-12 padded">
-            <div class="grid-6 s-grid-whole hasLoader">
-                <h1 class="header">Most Popular Reactions</h1> 
-                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Counting Reactions...</div></div>
-                <div class="reactions-holder">&nbsp;</div>
-            </div>
-            <div class="grid-6 s-grid-whole hasLoader">
-                <h1 class="header">Most Engaged Topics</h1>
-                <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Topics...</div></div>
-                <div class="topics-holder">&nbsp;</div>
-            </div>
-        </div>
-    </div>
-</section>
-    <div class="grid-whole banner blue">
-      <h1>How does Antenna work?</h1>
-      <div class="caption"><a href="/see">See it now &raquo;</a></div>
-    </div>
-<section role="panels" class="analyticsReport content">
-    <div class="section engaged-pages">
-        <div class="grid-12 row padded">
-            <h1 class="header">Most Engaged Pages</h1>
-        </div>
-        <div class="grid-12 row padded hasLoader">
-            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Page Engagement...</div></div>
-        </div>
-    </div>
-
-    <div class="section engaged-content">
-        <div class="grid-12 row padded">
-            <h1 class="header">Most Engaged Content</h1>
-        </div>
-        <div class="grid-12 row padded hasLoader">
-            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Content Engagement...</div></div>
-        </div>
-    </div>
-
-
-    
-    <div class="section engaged-referrers">
-        <div class="grid-12 row padded">
-            <h1 class="header">Most Engaged Referrers</h1>
-        </div>
-        <div class="grid-12 row padded hasLoader">
-            <div class="loading"><div><img src="/static/site/images/reaction_preloader.gif"/> Analyzing Referrer Engagement...</div></div>
-        </div>
-    </div>
-
-</section>
-<div class="grid-whole banner blue last-one">
-  <h1>You should try it out.</h1>
-  <div class="caption"><a href="/see">Right now.  Just takes a minute. &raquo;</a></div>
-</div>
-</div>
-
+{% block page_js %}
 <script>
 window.antenna_extend = {
-    separate_cta:'',
-    active_sections:'[role="wideContent"]',
-    anno_whitelist: '.know .caption, .know em, .benefits .caption,.quote p'
+  active_sections: '.container',
+  anno_whitelist: 'h1 .line-two, .card-content p'
 };
+
+function SelectText(element) {
+    var doc = document
+        // , text = doc.getElementById(element)
+        , range, selection
+    ;    
+    if (doc.body.createTextRange) {
+        range = document.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) {
+        selection = window.getSelection();        
+        range = document.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+
+// auto-initiate Antenna on the masthead if we're near the top of the page at page load
+var $window = $(window);
+if ( $window.scrollTop() / $window.height() < 0.25 ) {
+  el = $('h1 .line-two')[0];
+  SelectText(el);
+}
+
+$('.masthead').height( $(window).height() );
+
 </script>
 
-<script defer src="/static/engage_full.js"></script>
 
-{% include "footer_join_beta.html" %}
-{% endblock wideContent %}
-
-{% block mainContent %}
+<script async src="/static/engage.js"></script>
 {% endblock %}

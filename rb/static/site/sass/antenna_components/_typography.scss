@@ -1,0 +1,53 @@
+/*** Fonts ***/
+/* Helvetica font stack */
+/* via http://www.grputland.com/2013/11/multiplatform-helvetica-like-font-stack.html#disqus_thread */
+$sans-serif: "Helvetica Neue", HelveticaNeue, "TeX Gyre Heros", TeXGyreHeros, FreeSans, "Nimbus Sans L", "Liberation Sans", Arimo, Helvetica, Arial, sans-serif;
+$serif: Georgia, serif;
+
+
+// Materialize overrides
+h1 { font-weight:900; margin-bottom: 0.5rem; }
+.popup-form {
+    h1 {
+        margin-bottom:1.68rem; // Materialize default
+    }
+}
+
+h1.line-behind,
+h2.line-behind,
+h3.line-behind,
+h4.line-behind {
+    position: relative;
+    z-index: 1;
+    
+    &:before {
+        border-top: 1px solid $gray;
+        content:"";
+        margin: 0 auto; /* this centers the line to the full width specified */
+        position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+        top: 50%; left: 0; right: 0; bottom: 0;
+        width: 95%;
+        z-index: -1;
+    }
+
+    span { 
+        /* to hide the lines from behind the text, you have to set the background color the same as the container */ 
+        background: $white;
+        padding: 0 15px; 
+        display:inline-block;
+    }
+}
+
+h1.serif,
+h2.serif,
+h3.serif,
+h4.serif {
+    font-family:$serif;
+    font-style:italic;
+}
+
+
+.line-one { font-weight:100; }
+.line-two {  font-weight:400; }
+.line-three { font-weight:900; }
+

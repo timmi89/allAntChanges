@@ -1,0 +1,288 @@
+.navbar-fixed {
+  z-index: 12000;
+  
+  &.subnav {
+    height:48px;
+    line-height:48px;
+    z-index:998;
+
+    @media (max-width: $screen-xs-max) {
+      height:32px;
+      line-height:32px;
+      font-size: 0.8rem;
+    }
+
+    nav {
+      height:48px;
+      line-height:48px;
+
+      @media (max-width: $screen-xs-max) {
+        height:32px;
+        line-height:32px;
+      }
+    }
+  }
+
+  nav.global {
+    @media #{$medium-and-up} {
+      a.button-collapse { display: none; }
+    }
+
+    background-color: $black;
+    @extend .z-depth-0;
+
+
+    .logo {
+      display: inline-block;
+      overflow: hidden;
+      height: 100%;
+
+      .icon-antenna-icon {
+        position: relative;
+        top: -35px;
+        left: 10px;
+      }
+      .icon-antenna-text {
+        height: 100px;
+        width: 100px;
+        margin-top: -16px;
+        margin-left: 6px;
+      }
+
+      @media (max-width: $screen-xs-max) {
+        .icon-antenna-icon {
+          position: relative;
+          top: -35px;
+          left: auto;
+        }
+        .icon-antenna-text {
+          height: 100px;
+          width: 100px;
+          margin-top: -21px;
+          margin-left: -5px;
+        }
+      }
+      @media (max-width: $screen-sm-max) {
+        .icon-antenna-text {
+          margin-top: -17px;
+        }
+      }
+    }
+
+    ul {
+      li {
+        &:hover, &.active {
+          background-color: none;
+        }
+      }
+
+      &.desktop-nav {
+        display:inline-block; 
+        margin-bottom: -0.25em;
+        margin-left:3em;
+
+        @media (max-width: $screen-sm-max) {
+            margin-left:1rem;
+        }
+
+        li {
+          overflow:hidden;
+
+          a { color:$white; font-size:0.8em;}
+
+          svg { 
+            margin-bottom:-7px; 
+            &.icon-search  { width: 16px; margin-bottom: -12px; margin-left: 14px; margin-right: 2px;} 
+          }
+
+          input[name="s"] { 
+            border-color:#000; height:1.5rem; font-size:0.8em; bottom: -1px; position: relative;
+
+            @media (max-width: $screen-sm-max) {
+                max-width:80px;
+            }
+          }
+        }
+      }
+
+      &#user-desktop {
+        position:relative;
+        height: 100%;
+
+        li { 
+          padding-right:10px; position:relative;
+          &.user {
+            padding:0;
+
+            img { width:25px; top:9px; position: relative;}
+            h4 { font-size: 0.75rem; display: inline-block; color: #9a9a9a; position: relative; }
+
+            .user-dropdown-button-desktop {
+              padding:0;
+              font-size:0.8rem;
+            }
+          }
+        }
+
+        .color-bar {
+          position:absolute;
+          bottom:0;
+          width:20%;
+          height: 5px;
+
+          &.first { background: $antenna-dk-blue; left:0;}
+          &.second { background: $antenna-lt-blue; left:20%; }
+          &.third { background: $antenna-yellow; left:40%; }
+          &.fourth { background: $antenna-orange; left:60%; }
+          &.fifth { background: $antenna-red; left:80%; }
+        }
+      }
+
+      &#desktop-user-dropdown {
+        background:#000;
+        width: 175px;
+
+        li {
+          &:not(.no-hover):hover {
+            h3, a {
+              color: rgba(0,0,0,0.85);
+            }
+
+          }
+          &.no-hover {
+            background:transparent;
+          }
+
+          a {
+            color: rgba(255,255,255,0.85);
+            font-size:1rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            line-height: 1rem;
+          }
+
+          svg {
+            width: 20px;
+            display: inline-block;
+            float:left;
+            margin-right: 0.33rem;
+
+            @media (max-width: $screen-sm-max) {
+              float:none;
+            }
+          }
+
+          h3 {
+            font-size:1rem;
+            font-weight: bold;
+            margin: 1rem;
+            color:$antenna-yellow;
+          }
+          
+          &#ant-create-account {
+            border-top:1px solid $gray;
+            text-align: center;
+            font-style: italic;
+            padding: 0.5rem;
+          }
+        }
+      }
+
+
+      &.side-nav {
+        li {
+          &:hover {
+            h3, a {
+              color: rgba(0,0,0,0.85);
+            }
+          }
+
+          a {
+            font-size: 1rem;
+            height: 2rem;
+            line-height: 2rem;
+            color:$white;
+            padding:0;
+          }
+
+          h3 {
+            font-size:1.25rem;
+            font-weight: bold;
+            margin: 1rem 0rem;
+            color:$antenna-yellow;
+          }
+          
+          &#ant-create-account {
+            border-top:1px solid $gray;
+            text-align: center;
+            font-style: italic;
+            padding: 0.5rem;
+          }
+
+          &.user {
+            margin: 1rem 0 2rem 0;
+          }
+          &.ant-create-account {
+            margin:1rem;
+            padding-top:1rem;
+          }
+
+          input[type="text"] {
+            border-top: 1px solid #9e9e9e;
+            margin-top:4rem;
+
+            @media (max-width: $screen-sm-max) {
+              margin-top:1rem;
+            }
+          }
+        }
+
+        
+        background: #000;
+        border-right: 1px solid $white;
+
+        .icon-antenna-text {
+          width: auto;
+          height: 90px;
+          max-width: 50%;
+          margin: -11% 0 -17% -7%;
+        }
+
+        .link-list {
+          li {
+            padding:0;
+          }
+        }
+
+        svg {
+          width: 20px;
+          height: 20px;
+          display: inline-block;
+          float:left;
+          margin-right: 0.33rem;
+
+          @media (max-width: $screen-sm-max) {
+            float:none;
+          }
+        }
+
+        // h3 {
+        //   svg {
+        //     float:left;
+        //   }
+        // }
+      }
+
+
+    }
+
+    .mobile-menu-cta .icon-antenna-icon {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      top: 30%;
+      right: 0%;
+    }
+
+  }
+}

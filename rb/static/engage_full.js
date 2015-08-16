@@ -2845,9 +2845,8 @@ function antenna($A){
             initTouchBrowserSettings: function(){
                 // ANT.util.initTouchBrowserSettings
                 
+                // mobiletodo: DO WE NEED
                 if(isTouchBrowser && ANT.util.activeAB() ){
-                    $('body').addClass('ant_touch_browser');
-                    // mobiletodo: DO WE NEED
                     $(window).on('scrollend.ant', function() {
                         ANT.util.mobileHelperToggle();
                     });
@@ -4603,7 +4602,8 @@ function antenna($A){
                 var $antSandbox = $('<div id="ant_sandbox" class="ant ant_sandbox"/>').appendTo('body');
                 
                 if(isTouchBrowser){
-                    $('#ant_sandbox').addClass('isTouchBrowser');
+                    $('#ant_sandbox').addClass('isTouchBrowser');  // using this?
+                    $('body').addClass('ant_touch_browser'); // definitely using this.
                 }
 
                 // get author, topics, tags from publisher-defined tags
@@ -7116,7 +7116,7 @@ if ( sendData.kind=="page" ) {
                                 page_id: args.page_id
                             });
 
-                            ANT.events.emit('antenna.reaction', reaction);
+                            ANT.events.emit('antenna.reaction', reaction, { 'hash':args.hash, 'kind':args.kind, 'ant-item-name':$('[ant-hash="'+args.hash+'"]').attr('ant-item') });
 
                             $('#ant_loginPanel').remove();
 
@@ -7933,6 +7933,8 @@ if ( sendData.kind=="page" ) {
                             }
                             $('document').selog('selectEl', el);
                         }
+
+                        ANT.events.emit('antenna.reactionview', '', { 'hash':hash, 'kind':'custom', 'mode':mode, 'ant-item-name':$cta.attr('ant-cta-for')  });
 
                         var $aWindow = ANT.aWindow.make( mode, {hash:hash, '$custom_cta':$cta } );
                         $aWindow.addClass('ant_rewritable');
@@ -10128,7 +10130,7 @@ ANT.ant_loadScript = ant_loadScript;
 
 //load jQuery overwriting the client's jquery, create our $A clone, and revert the client's jquery back
 ANT_scriptPaths.jquery = ANT_offline ?
-    ANT_staticUrl+"js/jquery-1.11.1.min.js" :
+    ANT_staticUrl+"widget/js/jquery-1.11.1.min.js" :
     // ANT_staticUrl+"global/js/jquery-1.7.1.min.js" :
     // "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js";
     "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js";

@@ -33,6 +33,7 @@ from django.utils import simplejson
 from django.core.cache import cache
 from chronos.jobs import *
 from threading import Thread
+import random
 
 import logging
 logger = logging.getLogger('rb.standard')
@@ -58,6 +59,9 @@ def home(request):
         'BASE_URL': BASE_URL
     }
 
+    multi_options = ['platform','perspective','community','voice','national','genre']
+    context['multi_adjective'] = random.choice(multi_options)
+
     if cookie_user:
         context['cookie_user'] = cookie_user
 
@@ -67,7 +71,7 @@ def home(request):
       context_instance=RequestContext(request)
     )
 
-def see(request):
+def old_demo(request):
     cookie_user = checkCookieToken(request)
     context = {
         'fb_client_id': FACEBOOK_APP_ID,
@@ -78,7 +82,7 @@ def see(request):
         context['cookie_user'] = cookie_user
 
     return render_to_response(
-      "see.html",
+      "old_demo.html",
       context,
       context_instance=RequestContext(request)
     )
@@ -148,23 +152,21 @@ def privacy(request):
       context_instance=RequestContext(request)
     )
 
-def learn(request):
-    return HttpResponseRedirect('/')
-    # cookie_user = checkCookieToken(request)
-    # context = {
-    #     'fb_client_id': FACEBOOK_APP_ID,
-    #     'BASE_URL': BASE_URL
-    # }
-    # context['hasSubheader'] = True
+def publishers(request):
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
 
-    # if cookie_user:
-    #     context['cookie_user'] = cookie_user
+    if cookie_user:
+        context['cookie_user'] = cookie_user
 
-    # return render_to_response(
-    #   "learn.html",
-    #   context,
-    #   context_instance=RequestContext(request)
-    # )
+    return render_to_response(
+      "publishers.html",
+      context,
+      context_instance=RequestContext(request)
+    )
     
     # return HttpResponseRedirect('/')
 
@@ -1086,4 +1088,36 @@ def manage_groups(request, **kwargs):
         context,
         context_instance=RequestContext(request)
     )
+
+
+def gallery(request, example_name):
+    if not example_name:
+        example_name="weekly_news"
+
+    cookie_user = checkCookieToken(request)
+    context = {
+        'fb_client_id': FACEBOOK_APP_ID,
+        'BASE_URL': BASE_URL
+    }
+
+    if cookie_user:
+        context['cookie_user'] = cookie_user
+    
+    examples = {
+        'tech_blog':'Tech Blog',
+        'news_magazine':'News Magazine',
+        'food_blog':'Food Blog'
+    }
+
+    context['examples'] = examples
+    context['current_example_name'] = example_name
+
+
+    return render_to_response(
+      "gallery/gallery_base.html",
+      context,
+      context_instance=RequestContext(request)
+    )
+
+
 

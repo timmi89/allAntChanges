@@ -1,19 +1,38 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
 
-{% block title %}Antenna{%endblock%}
-{% block extendedHead %}
-<link rel="canonical" href="{% if debug %}http://local.antenna.is:8081/{% else %}http://www.antenna.is/{% endif %}">
-<meta name="google-site-verification" content="pWVfDSLL5X9Fs9agM5UiL2BHDDcxJtN46MgM2YkJXyg" />
-{%endblock%}
+{% block page_title %}Antenna{%endblock%}
 
-{% block subheaderContent %}
-{% include "sidebar.html" %}
-{% endblock %}
+{% block bodyClass %}{% if profile_user %}user_profile{% endif %}{% if group %}group_profile{% endif %}{% endblock %}
 
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
 
-{% block wideContent %}
-<div class="grid-whole">
+{% block page_content %}
+
+<style>
+.temporary-profile-masthead { background:#4b7185; padding:4rem 0; }
+.temporary-profile-masthead .row { margin-bottom:0; }
+.temporary-profile-masthead h1 { margin:0;  color:#fff; padding:0; font-weight:500; font-size:3.5rem;}
+</style>
+{% if profile_user or group %}
+<div id="profile_user" class="temporary-profile-masthead">
+    <div class="container row">
+        <div class="s12">
+        {% if profile_user %}
+          <h1>{{ profile_user.first_name }} {{ profile_user.last_name }}</h1>
+        {% endif %}
+        {% if group %}
+          <h1>{{ group.name }}</h1>
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container row">
   <section role="panels" class="content">
+
 
 {% if board %}
 <div id="board_header">
@@ -39,11 +58,6 @@
 
     {% block cards %}
         {% include "interactions.html" %}
-        <script>
-        $('a[rel="tooltip"]').tooltip({
-            placement:"bottom"
-        });
-        </script>
     {% endblock cards %}    
 
 {% if not profile_user and not group and not board and not query_string %}
@@ -54,35 +68,7 @@
 </section>
 </div>
 
-{% endblock wideContent %}
+{% endblock %}
 
-{% block pageJS %}
-<script>
-(function($){
-    $(function(){
-
-        // $('#cards').isotope({
-        //   itemSelector:'.cardWrap',
-        //   masonry: {
-        //     columnWidth: 530
-        //   }
-        // });
-
-        var container = document.querySelector('#cards');
-        var msnry = new Masonry( container, {
-          // options
-          // columnWidth: 300,
-          itemSelector: '.card'
-        });
-
-        {% if board %}
-        $('#board_follow_button').click( function() {
-            ANTsite.follow.add({{ board.id }},'brd');
-        });
-        ANTsite.follow.followers({{ board.id }},'brd')
-        {% endif %}
-
-    });
-})(jQuery);
-</script>
+{% block page_js %}
 {% endblock %}

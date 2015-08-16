@@ -1,9 +1,9 @@
 {% extends "popup_form.html" %}
 
-{% block wideContent %}
+{% block page_content %}
 <div id="sidebar">
 </div>
-{% endblock wideContent %}
+{% endblock %}
 
 {% block header %}
 {% endblock header %}
@@ -43,12 +43,12 @@
   
   {% block msgHeader %}
   <h1>Antenna Login</h1>
-  <h3 style="font-size: 14px;">Please log in.</h3>
+  <h3>Please log in.</h3>
   {% endblock msgHeader %}
  
   <div id="login-options" style="overflow:auto;">
     <div style="float:left;padding-right:9px;border-right:1px solid #ccc;">
-      <div id="fb-login-button">
+      <div class="fb-login-button">
         <a href="javascript:void(0);" onclick="$(this).addClass('logging-in'); ANTAuth.openFBLoginWindowFromPopup();"><img src="/static/widget/images/fb-login_to_readrboard.png" style="margin-top:3px;"></a>
       </div>
     </div>
@@ -65,16 +65,11 @@
 
   </div>
 
-{% endblock mainContent %}
+{% endblock  %}
 
-{% block pageJS %}
+{% block page_js %}
 {% endblock %}
 
-{% block uservoice %}
-{% endblock uservoice %}
-
-{% block fixedBar %}
-{% endblock fixedBar %}
 
 {% block footer %}
 {% endblock footer %}

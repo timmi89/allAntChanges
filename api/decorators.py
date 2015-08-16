@@ -1,4 +1,4 @@
-from exceptions import JSONException
+from antenna.api.exceptions import JSONException
 # from _mysql_exceptions import OperationalError
 import json
 from django.core.exceptions import *

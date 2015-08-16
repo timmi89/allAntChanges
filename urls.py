@@ -32,7 +32,7 @@ urlpatterns = patterns('',
   
   # For main website
   url(r'^$', 'rb.views.home'),
-  url(r'^see/$', 'rb.views.see'),
+  url(r'^old_demo/$', 'rb.views.old_demo'),
   #url(r'^$', 'rb.views.main', kwargs={"view":"index", "filtered":"charcoal"}),
 
   url(r'^unfiltered/$', 'rb.views.main', kwargs={"view":"index"}),
@@ -87,6 +87,10 @@ urlpatterns = patterns('',
   url(r'^group/(?P<short_name>[\w\-\.]+)/comments/$', 'rb.views.main', kwargs={"view":"comments"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/shares/$', 'rb.views.main', kwargs={"view":"shares"}),
   url(r'^group/(?P<short_name>[\w\-\.]+)/bookmarks/$', 'rb.views.main', kwargs={"view":"bookmarks"}), 
+
+  # galleries
+  url(r'^gallery/(?P<example_name>[\w\-\.]+)/$', 'rb.views.gallery'), 
+  url(r'^gallery/$', 'rb.views.gallery'), 
   
   #single interaction
   url(r'^interaction/(?P<interaction_id>\d+)/$', 'rb.views.main'),
@@ -97,10 +101,9 @@ urlpatterns = patterns('',
   url(r'^terms/$', 'rb.views.terms'),
   url(r'^privacy/$', 'rb.views.privacy'),
   url(r'^react/$', 'rb.views.react'),
-  url(r'^publishers/$','rb.views.learn'),
+  url(r'^publishers/$','rb.views.publishers'),
   url(r'^retailers/$','rb.views.retailers'),
   url(r'^about/$','rb.views.about'),
-  url(r'^learn/$','rb.views.learn'),
   
   # changed to rb.views.friendlylogin instead of rb.views.login, because login sometimes throws an error.
   # the error is 'str' object has no attribute 'status_code' 

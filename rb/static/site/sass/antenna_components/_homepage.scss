@@ -1,0 +1,213 @@
+section {
+  &.masthead {
+      h1 {
+        color:$white;
+
+        .line-two { 
+          div.ant_indicator.ant_indicator_for_text {
+            position: relative;
+            top: -30px;
+            @media (max-width: $screen-xs-max) {
+              top: -15px;
+            }
+
+            .ant-antenna-logo {
+              color:$white;
+              font-size:30px;
+            }
+
+            span.ant_count {
+              font-size: 18px;
+              font-weight: 100;
+              color: $white;
+            }
+          }
+        }
+      }
+
+      h3 { 
+        color:$white;
+        font-weight:100;
+        position: absolute;
+        bottom: 15%;
+
+        .adjective { color:$antenna-yellow; }
+      }
+    }
+
+
+  @media (max-width: $screen-xs-max) {
+    &.masthead {
+        background-image: url('../images/many_voices_mobile.jpg');
+
+        h1 { 
+          font-size:3rem; 
+          margin:10% 0;
+
+          .line-two { 
+            div.ant_indicator.ant_indicator_for_text {
+              position: relative;
+              top: -10px;
+
+              .ant-antenna-logo {
+                font-size:20px;
+              }
+
+              span.ant_count {
+                font-size:14px;
+              }
+            }
+          }
+
+        }
+
+        h3 { 
+          font-size:1.75rem; 
+        }
+    }
+  }
+
+  @media (min-width: $screen-sm-min) {
+    &.masthead {
+        background-image: url('../images/many_voices_medium.jpg');
+
+        h1 { 
+          font-size:4.5rem; 
+          margin:10% 0;
+        }
+
+        h3 { 
+          font-size:2.25rem; 
+        }
+    }
+  }
+
+  @media (min-width: $screen-lg-min) {
+    &.masthead {
+        background-image: url('../images/many_voices.jpg');
+
+        h1 { 
+          font-size:6rem; 
+          margin:10% 0;
+        }
+
+        h3 { 
+          font-size:2.5rem; 
+        }
+    }
+  }
+
+
+  // see it in action
+  &.see-it-now {
+    .icon-antenna-icon {
+      width: 20px;
+      margin-bottom: -11px;
+    }
+
+    .center-align {
+      p { text-align:left; font-family:Georgia, serif; font-style:italic; margin-bottom: 1rem; }
+
+      h4.line-behind { margin-bottom:0; }
+
+      .card-action { font-size:0.8rem; }
+
+      img, iframe { 
+        width:100%;
+      }
+
+      &.l5 {
+        iframe { height:235px; } 
+      }
+    }
+  }
+
+  &.customize-the-ui {
+    .examples {
+      img { margin:1rem 2rem; }
+    }
+
+    h2 {margin-bottom:4rem;}
+  }
+
+  .gallery-links {
+    font-size:2rem; 
+    a {
+      background:$antenna-lt-blue;
+      color:$white;
+
+      &:hover {
+        background:$antenna-yellow;
+        color:$black;
+      }
+    }
+  }
+
+  &.quote {
+
+    .col {padding:3rem;}
+
+    blockquote {
+      border-color:$black;
+      color:$black;
+      font-family: $serif;
+      font-style:italic;
+      font-size:2.25rem;
+    }
+
+    &.dark-section {
+      blockquote {
+        border-color:$white;
+        color:$white;
+      }
+    }
+
+
+    .attribution {
+      font-size:1.5rem;
+    }
+
+    img { width:100%; max-width:250px; }
+
+
+    @media (max-width: $screen-xs-max) {
+      blockquote { border:0; font-size:1.5rem; }
+      .row .col.s12 { 
+        padding-bottom:0;
+
+        &:last-of-type {
+          padding-top:0;
+        }
+      }
+      .attribution { font-size:1.25rem; }
+
+      img { max-width:180px; }
+    }
+
+  }
+
+  &.big-beta-form {
+    input[type="email"],
+    input[type="text"] {
+      background-color: rgba(0, 150, 136, 0.1);
+      font-size: 2rem;
+      text-align: center;
+    }
+    .btn.btn-large {
+      display: block;
+      width: 100%;
+      background-color: color("teal", "base");
+    }
+
+    .learn-more-boxes {
+      margin-top:2rem;
+    }
+  }
+}
+
+
+// widget stuff
+.page-content .ant.ant-summary,
+.homepage .ant.ant-summary {
+  display:none !important;
+}

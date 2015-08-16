@@ -1,9 +1,9 @@
-{% extends "base.html" %}
-{% block extendedHead %}
-<!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/320andup_base.css?v=2"> -->
-{% endblock %}
+{% extends "base/wide.html" %}
+{% load custom_filters %}
 
-{% block title %}{{ cookie_user }} Management{%endblock%}
+{% block page_title %}{{ form.instance.name }} Reaction Management{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
 
 {% block subheaderContent %}
 <section role="subheader">
@@ -13,16 +13,15 @@
 </section>
 {% endblock %}
 
-{% block wideContent %}
-<div class="grid-whole settings">
+{% block page_content %}
+<div class="container row settings">
   <section role="panels" class="content">
-
-	<div class="breadcrumb"><a href="/manage/">&lt;&lt; Back to Group Management</a></div>
 	<h1>Allowed Reactions</h1>
-	<div class="notice info">
-		<p>These are reactions that have been used on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>
-		<p>Blocking a reaction will remove all current instances of it on your site, and prevent any more from being made.</p>
-	</div>
+    <div class="notice info">
+        <p>These are reactions that have been used on your site.  If you want to prevent them from ever being used on your site, click the "Block" button.</p>
+        <p>Blocking a reaction will remove all current instances of it on your site, and prevent any more from being made.</p>
+    </div>
+    <a class="btn" href="../blocked_reactions">View Blocked Reactions</a>
     <table role="block_tags">
 		<thead>
 			<tr>
@@ -110,11 +109,11 @@ $('table[role="block_promo_tags"] button').click( function() {
 });
 </script>
 
-{% endblock wideContent %}
+{% endblock %}
  
     {% block afterWideContent %}
     {% endblock %}
 
-{% block pageJS %}
+{% block page_js %}
     
 {% endblock %}

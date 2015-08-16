@@ -424,7 +424,7 @@ window.ANTAuth = {
                         FB.api('/me', function(response) {
                             
                             // reload the window only if they had just taken the action of clicking the login button.  janky-ish.
-                            if ( $('#fb-login-button a').hasClass('logging-in') ) {
+                            if ( $('.fb-login-button a').hasClass('logging-in') ) {
                                 window.location.reload();
                                 return;
                             }

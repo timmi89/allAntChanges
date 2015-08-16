@@ -1,0 +1,61 @@
+.admin {
+    label {
+        display: block;
+        height: auto;
+        line-height: 1.5rem;
+        
+        .labelTitle {
+            display: block;
+            color: #389;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+    }
+
+    .formRow {
+        margin-top: 1rem;
+    }
+
+    input {
+        &.attribute, 
+        &.selector {
+            width:auto;
+        }
+    }
+
+    .tabs {
+        .tab {
+            padding: 0;
+            padding:0 2%;
+            display: inline-block;
+            float:none;
+            width: auto;
+
+            &.active {
+                background:$antenna-lt-blue;
+                a { color:$white; }
+            }
+        }
+    }
+
+    [role="subheader"] {
+        padding:0;
+
+        .subheader {
+            background:$gray;
+            padding-top:1rem;
+            margin-bottom: 1rem;
+
+            a {
+                padding-left:2rem;
+                font-size:0.8rem;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+
+}

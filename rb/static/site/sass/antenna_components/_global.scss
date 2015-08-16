@@ -1,0 +1,57 @@
+body {
+    font-family: $sans-serif;
+
+    footer {
+        &.page-footer {
+
+        }
+    }
+}
+
+input { 
+  @include placeholder {
+    color: rgba(255,255,255,1);
+  }
+}
+
+strong { font-weight:700; }
+
+.error {
+    background: $antenna-red;
+    color:$white;
+    padding:0.5rem;
+    margin:1rem 0;
+
+    > a { color:$antenna-dk-red !important; }
+}
+
+.success {
+    background: $antenna-lt-blue;
+    color:$white;
+    padding:0.5rem;
+    margin:1rem 0;
+
+    > a {color:$antenna-dker-blue !important;}
+}
+
+.info {
+    background: $gray;
+    color:$black;
+    padding:0.5rem;
+    margin:1rem 0;
+
+    > a {color:$antenna-dker-blue !important;}   
+}
+
+.tip {
+    background:$antenna-dk-blue;
+    color:$white;
+    font-family: $sans-serif;
+    font-style: normal;
+    font-weight:400;
+    letter-spacing: 1.25px;
+}
+
+.drip-lightbox {
+    z-index:13001;
+}

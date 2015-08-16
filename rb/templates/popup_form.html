@@ -1,32 +1,24 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 
-{% block bodyClass %}wide noFooter popupForm{% endblock %}
+{% block layoutHeadAdditions %}{% endblock %}
+{% block pageHeadAdditions %}{% endblock %}
 
-{% block userStatus %}
-<!-- don't show log in link-->
-{% endblock userStatus %}
+{% block bodyClass %}popup-form{% endblock %}
 
-    
-{% block extendedHead %}
-    <style>
-        /*quick fix*/
-        #fixedBar{
-            display: none;
-        }
-        #searchform {
-            display: none;
-        }
+{% block navbar %}
+  {% include "partials/site_navbar.html" %}
+{% endblock navbar %}
 
-    </style>
-    <script>
-        document.write( unescape( '%3Cscript src="'+ANT_staticUrl+'widget/js/jquery.ba-postmessage.min.js" type="text/javascript"%3E%3C/script%3E' ) );
-    </script>
+{% block layout %}
+  <section class="page-content container">
+  {% block page_content %}{% endblock %}
+  </section>
 {% endblock %}
 
-
-{% block mainContent %}
-{% endblock mainContent %}
-
 {% block footer %}
-    <div class="emptyFooter"></div>
+  {% include "partials/site_footer.html" %}
 {% endblock footer %}
+
+
+{% block page_js %}
+{% endblock %}

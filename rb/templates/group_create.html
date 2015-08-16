@@ -1,13 +1,9 @@
-{% extends "base.html" %}
+{% extends "base/wide.html" %}
 
-{% block bodyClass %}wide{% endblock %}
-
-{% block wideContent %}
+{% block page_content %}
 <div id="sidebar">
 </div>
-{% endblock wideContent %}
-
-{% block mainContent %}
+{% endblock %}
 
     <style>
     .formBodySection {
@@ -50,9 +46,7 @@
 
   {% endif %}
 
-{% endblock mainContent %}
-
-{% block pageJS %}
+{% block page_js %}
 {% endblock %}
 
 {% block footer %}
