@@ -56,8 +56,8 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 #OTHER_DATACENTER = 'gce.antenna.is'
-#OTHER_DATACENTER = 'linode.antenna.is'
-OTHER_DATACENTER = 'local.antenna.is:8081'
+OTHER_DATACENTER = 'linode.antenna.is'
+#OTHER_DATACENTER = 'local.antenna.is:8081'
 
 if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
