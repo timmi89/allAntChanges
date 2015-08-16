@@ -56,6 +56,7 @@ TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 STATIC_ROOT = 'rb/static/'
 
 #OTHER_DATACENTER = 'gce.antenna.is'
+#OTHER_DATACENTER = 'linode.antenna.is'
 OTHER_DATACENTER = 'local.antenna.is:8081'
 
 if DEBUG:
@@ -170,7 +171,7 @@ if DEBUG:
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
-    ALLOWED_HOSTS = ["gce.antenna.is","www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
+    ALLOWED_HOSTS = ["linode.antenna.is", "gce.antenna.is","www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
     URL_NO_PROTO = 'www.antenna.is'
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
@@ -210,7 +211,7 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        'HOST':     '10.240.99.122',
+        'HOST':     '10.240.245.89',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
