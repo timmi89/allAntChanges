@@ -34,4 +34,4 @@ class Command(BaseCommand):
                     hcon.close()
                 except Exception, e:
                     logger.info("Other datacenter refresh: " + str(e))
-
+            print 'finished page:', pr
