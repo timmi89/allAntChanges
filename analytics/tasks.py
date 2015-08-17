@@ -34,17 +34,17 @@ def update_page_cache(page_id):
         except Exception, ex:
             logger.info('REDUNDANT CACHE EXCEPTION')
             logger.warn(ex)
+        if settings.CACHE_SYNCBACK:
+            refresh_url = '/api/cache/page/refresh/'+ str(page_id)
 
-        refresh_url = '/api/cache/page/refresh/'+ str(page_id)
-
-        try:
-            hcon = httplib.HTTPConnection(settings.OTHER_DATACENTER, timeout=5)
-            hcon.request('GET', refresh_url)
-            resp = hcon.getresponse()
-            lines = resp.read()
-            hcon.close()
-        except Exception, e:
-            logger.info("Other datacenter refresh: " + str(e))
+            try:
+                hcon = httplib.HTTPConnection(settings.OTHER_DATACENTER, timeout=5)
+                hcon.request('GET', refresh_url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
 #    logger.info('updating page_data: ' + str(page_id))
 #   cache.set('page_data' + str(page_id), getSinglePageDataDict(page_id))
 
@@ -85,19 +85,20 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         logger.warning('LOCKED CACHE KEY: ' + key)
 #    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
 #    cache.set(key, getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes))
-    if len(hashes) == 1:
-        refresh_url = '/api/cache/page/refresh/'+ str(page_id) + '/' +str(hashes[0])
-    else:
-        refresh_url = '/api/cache/page/refresh/'+ str(page_id)
+    if settings.CACHE_SYNCBACK:
+        if len(hashes) == 1:
+            refresh_url = '/api/cache/page/refresh/'+ str(page_id) + '/' +str(hashes[0])
+        else:
+            refresh_url = '/api/cache/page/refresh/'+ str(page_id)
 
-    try:
-        hcon = httplib.HTTPConnection( settings.OTHER_DATACENTER, timeout=5)
-        hcon.request('GET', refresh_url)
-        resp = hcon.getresponse()
-        lines = resp.read()
-        hcon.close()
-    except Exception, e:
-        logger.info("Other datacenter refresh: " + str(e))
+        try:
+            hcon = httplib.HTTPConnection( settings.OTHER_DATACENTER, timeout=5)
+            hcon.request('GET', refresh_url)
+            resp = hcon.getresponse()
+            lines = resp.read()
+            hcon.close()
+        except Exception, e:
+            logger.info("Other datacenter refresh: " + str(e))
 
 @periodic_task(name='do_all_groups_recirc', ignore_result=True, 
                run_every=(crontab(hour="5,17", minute="14", day_of_week="*")))

@@ -351,15 +351,16 @@ class GroupForm(forms.ModelForm):
         except Exception, e:
             logger.warning(e)
 
-        try:
-            refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
-            hcon = httplib.HTTPConnection(refresh_url, timeout=5)
-            hcon.request('GET', url)
-            resp = hcon.getresponse()
-            lines = resp.read()
-            hcon.close()
-        except Exception, e:
-            logger.info("Other datacenter refresh: " + str(e))
+        if settings.CACHE_SYNCBACK:
+            try:
+                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
+                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
+                hcon.request('GET', url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
         return m
             
     

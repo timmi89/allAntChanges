@@ -58,6 +58,7 @@ STATIC_ROOT = 'rb/static/'
 #OTHER_DATACENTER = 'gce.antenna.is'
 OTHER_DATACENTER = 'linode.antenna.is'
 #OTHER_DATACENTER = 'local.antenna.is:8081'
+CACHE_SYNCBACK = False
 
 if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
