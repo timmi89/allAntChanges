@@ -20,19 +20,19 @@ class Command(BaseCommand):
 
         for page in pages:
             print page.id
-            update_page_cache.delay(page.id)
+            #update_page_cache.delay(page.id)
 
-            """
+            
             refresh_url = '/api/cache/page/refresh/'+ str(page.id)
             print refresh_url
 
             try:
-
-                hcon = httplib.HTTPConnection(host=settings.OTHER_DATACENTER)
+                #hcon = httplib.HTTPConnection(host=settings.OTHER_DATACENTER)
+                hcon = httplib.HTTPConnection(host="gce.antenna.is")
                 hcon.request('GET', refresh_url)
                 resp = hcon.getresponse()
                 lines = resp.read()
                 hcon.close()
             except Exception, e:
                 logger.info("Other datacenter refresh: " + str(e))
-            """
+            
