@@ -7416,8 +7416,7 @@ section.masthead h1 {
 section.masthead h3 {
   color: #fff;
   font-weight: 100;
-  position: absolute;
-  bottom: 15%; }
+  margin-top: 2rem; }
   @media (max-width: 480px) {
     section.masthead h3 {
       position: static;

@@ -28,8 +28,9 @@ section {
       h3 { 
         color:$white;
         font-weight:100;
-        position: absolute;
-        bottom: 15%;
+        margin-top:2rem;
+        // position: absolute;
+        // bottom: 15%;
 
         @media (max-width: $screen-xs-max) {
           position:static;
