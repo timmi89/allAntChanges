@@ -116,7 +116,7 @@
                     <span>How should Antenna insert the Summary Button?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
                 </label>
                 {{ form.summary_widget_method.as_hidden }}{{ form.summary_widget_method.errors }}
-                <select id="summary_widget_method_selector">
+                <select id="summary_widget_method_selector" class="browser-default">
                     <option {% if group.summary_widget_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
                     <option {% if group.summary_widget_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
                     <option {% if group.summary_widget_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
@@ -237,7 +237,7 @@
                         <span>How should Antenna insert the Broadcast Widget?  This maps to the jQuery function of the same name (e.g., ".before()");</span>
                     </label>
                     {{ form.recirc_jquery_method.as_hidden }}{{ form.recirc_jquery_method.errors }}
-                    <select id="recirc_jquery_method_selector">
+                    <select id="recirc_jquery_method_selector" class="browser-default">
                         <option {% if group.recirc_jquery_method == "append" %}selected="selected"{% endif %} value="append">:append</option>
                         <option {% if group.recirc_jquery_method == "prepend" %}selected="selected"{% endif %} value="prepend">:prepend</option>
                         <option {% if group.recirc_jquery_method == "before" %}selected="selected"{% endif %} value="before">:before</option>
@@ -314,7 +314,7 @@
                     <span>The message telling readers that they can double-tap on mobile is fixed in-place.  Should it be at the top or bottom of the screen?  (Remember, they can close it!)</span>
                 </label>
                 {{ form.doubleTapMessagePosition.as_hidden }}{{ form.doubleTapMessagePosition.errors }}
-                <select id="doubleTapMessagePosition_selector">
+                <select id="doubleTapMessagePosition_selector" class="browser-default">
                     <option {% if group.doubleTapMessagePosition == "bottom" %}selected="selected"{% endif %} value="bottom">Bottom</option>
                     <option {% if group.doubleTapMessagePosition == "top" %}selected="selected"{% endif %} value="top">Top</option>
                 </select>

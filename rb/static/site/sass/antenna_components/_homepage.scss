@@ -28,8 +28,14 @@ section {
       h3 { 
         color:$white;
         font-weight:100;
-        position: absolute;
-        bottom: 15%;
+        margin-top:2rem;
+        // position: absolute;
+        // bottom: 15%;
+
+        @media (max-width: $screen-xs-max) {
+          position:static;
+          margin-top:3rem;
+        }
 
         .adjective { color:$antenna-yellow; }
       }
@@ -41,7 +47,7 @@ section {
         background-image: url('../images/many_voices_mobile.jpg');
 
         h1 { 
-          font-size:3rem; 
+          font-size:2.5rem; 
           margin:10% 0;
 
           .line-two { 
@@ -192,6 +198,7 @@ section {
       background-color: rgba(0, 150, 136, 0.1);
       font-size: 2rem;
       text-align: center;
+      height:3rem;
     }
     .btn.btn-large {
       display: block;

@@ -32,7 +32,7 @@
     <div class="row">
       <div class="col s12">
         <h1 class="no-ant">Try It Out!</h1>
-        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="{{ STATIC_URL }}site/svg/antenna_icons.svg#ant-antenna-logo"></use></svg></em>
+        <em class="no-ant">Look for the Antenna icon to react <br class="hide-on-med-and-up"/>to whatever grabs your eye: <svg class="icon-antenna-icon"><use xlink:href="#ant-antenna-logo"></use></svg></em>
       </div>
     </div>
     <div class="row">
@@ -189,7 +189,7 @@
           <div class="card-content">
             <h3>Retailers</h3>
             <h4>Antenna will provide you with valuable product feedback and help customers make quick and informed decisions.</h4>
-            <a href="/publishers/" class="btn">Learn More</a>
+            <a href="/retailers/" class="btn">Learn More</a>
           </div>
         </div>
       </div>
@@ -225,7 +225,7 @@ function SelectText(element) {
 
 // auto-initiate Antenna on the masthead if we're near the top of the page at page load
 var $window = $(window);
-if ( $window.scrollTop() / $window.height() < 0.25 ) {
+if ( $window.scrollTop() < ($('h1 .line-two').offset().top + 50) ) {
   el = $('h1 .line-two')[0];
   SelectText(el);
 }

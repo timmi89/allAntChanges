@@ -2804,61 +2804,6 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
 /* Antenna Broadcast widget */
 
 .antenna-broadcast { width:100%; clear:both; overflow:auto; box-sizing: border-box; text-align: left; position:relative; }
-.antenna-broadcast .ant-broadcast-header { min-height:22px; }
-.antenna-broadcast .ant-headline { font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:500; display:inline-block; font-size:16px; }
-.antenna-broadcast .ant-logo { display:inline-block; float:right; padding:4px 2px 0 4px; font-size: 14px; cursor: pointer;}
-
-.antenna-broadcast .ant-tiles { margin-left:-4px; margin-bottom:4px; }
-
-.antenna-broadcast .ant-featured { width:100%; height:91px; overflow:hidden; display:block; float:left; padding:0; margin:0; box-sizing: border-box; word-wrap: break-word; background-size:100% auto; background-repeat: none; }
-.antenna-broadcast .ant-featured a { text-decoration: none !important; }
-.antenna-broadcast .ant-featured .ant-featured-container { position:relative; margin:0; width:100%; height:100%;  }
-.antenna-broadcast .ant-featured:nth-of-type(even) { width:25%;  }
-.antenna-broadcast .ant-featured:nth-of-type(odd) { width:25%; float:right; }
-
-.antenna-broadcast .ant-featured:first-of-type { height:182px; width:50%; float:left; }
-
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(even) { width:50%;  }
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(odd) { width:50%;  float:right; }
-.antenna-broadcast.ant-thin .ant-featured:first-of-type { width:100%; float:left; }
-
-/* for "thin" renderings, make the last two square-ish thumbnails */
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(2) { width:100%; }
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(3) { width:100%; }
-
-.antenna-broadcast .ant-featured .ant-featured-reaction { position:absolute; top:12px; left:12px; color:#fff; font-size:15px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:400; letter-spacing:1px; text-shadow:0px 0px 7px #666;}
-.antenna-broadcast .ant-featured:first-of-type .ant-featured-reaction { font-size:24px; }
-.antenna-broadcast .ant-featured .ant-featured-headline { position:absolute; bottom:-11px; left:12px; color:#67c0eb; font-size:10px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:300; letter-spacing:0.5px; text-shadow: 0px 0px 3px #000; max-width:90%; line-height: 11px; }
-
-.antenna-broadcast .ant-featured:hover:nth-of-type(even) .ant-featured-headline { bottom:6px; transition:0.2s;}
-.antenna-broadcast .ant-featured:hover:nth-of-type(odd) .ant-featured-headline { bottom:6px; transition:0.2s;}
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(2) .ant-featured-headline,
-.antenna-broadcast.ant-thin .ant-featured:hover:nth-of-type(2) .ant-featured-headline,
-.antenna-broadcast.ant-thin .ant-featured:nth-of-type(3) .ant-featured-headline,
-.antenna-broadcast.ant-thin .ant-featured:hover:nth-of-type(3) .ant-featured-headline,
-.antenna-broadcast .ant-featured:hover:first-of-type .ant-featured-headline,
-.antenna-broadcast .ant-featured:first-of-type .ant-featured-headline { bottom:10px; }
-
-.antenna-broadcast .ant-featured .ant-featured-content iframe,
-.antenna-broadcast .ant-featured .ant-featured-content img { min-width:120%; min-height: 110%; max-width: 175%; margin: auto; position: absolute; top: -24%; left: -10%; }
-.antenna-broadcast .ant-featured .ant-featured-overlay { position:absolute; top:0; left:0; width:100%; height:100%; border: 4px solid white; background:rgba(0,0,0,0.25); box-shadow:0px 0px 40px rgba(0,0,0,0.35) inset; transition:all 0.3s;}
-/*.antenna-broadcast .ant-featured .ant-featured-overlay { position:absolute; top:0; left:0; width:100%; height:100%; border: 4px solid white; background:rgba(0,0,0,0.5); box-shadow:none; transition:all 0.3s;}*/
-.antenna-broadcast .ant-featured:first-of-type .ant-featured-overlay { border-top: 0;}
-.antenna-broadcast .ant-featured:hover .ant-featured-overlay { background:rgba(0,0,0,0.1); box-shadow:0px 0px 40px rgba(0,0,0,0.5) inset; }
-.antenna-broadcast .ant-featured .ant-featured-gradient { position:absolute; bottom:0; left:0; width:100%; height:40%; background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.5)); border: 4px solid white; border-top:0;border-bottom:0;}
-
-/*.antenna-broadcast .ant-featured.ant-featured-txt .ant-featured-container { background:rgba(255,255,255,0.5); }*/
-.antenna-broadcast .ant-featured.ant-featured-txt .ant-featured-content { max-width: 90%; padding:32px 14px 12px; font-size:11.5px; line-height:17px; font-family: 'Helvetica Neue',Arial,sans-serif; font-weight:400; letter-spacing:0.25px; color:#787878; font-style:italic; }
-.antenna-broadcast .ant-featured:first-of-type.ant-featured-txt .ant-featured-content { padding-top:46px; font-size: 18px; line-height: 22px; }
-
-.antenna-broadcast .ant-explanation { width:100%; max-width:90%; position: absolute; top:45px; right:0; left:0; margin:auto; background:#fff; text-align: center; padding:20px 10px; box-shadow: 0px 0px 4px #aaa; display:none;}
-.antenna-broadcast .ant-explanation.ant-visible { display:block;}
-.antenna-broadcast .ant-explanation .ant-antenna-text { font-size: 50px !important; position:relative; top:4px; left:4px; line-height: 0px !important; display: inline-block; }
-.antenna-broadcast .ant-explanation .ant-antenna-text:before { line-height: 0px !important; }
-.antenna-broadcast .ant-explanation .ant-antenna-logo { display: inline-block; top: -12px; position: relative; }
-.antenna-broadcast .ant-explanation .ant-antenna-logo.ant-inline { top:auto; }
-.antenna-broadcast .ant-explanation p { padding:0; margin-bottom:15px; font-size:13px; }
-.antenna-broadcast .ant-explanation p:last-of-type { margin-bottom:0; }
 
 
 /****** DEBUG WHILE REBRANDING *****/
