@@ -21,7 +21,8 @@ class Command(BaseCommand):
         for pr in page_paginator.page_range:
             paginated_pages = page_paginator.page(pr)
             for page in paginated_pages:
-                #update_page_cache.delay(page.id)
+                update_page_cache.delay(page.id)
+                """
                 refresh_url = '/api/cache/page/refresh/'+ str(page.id)
                 print refresh_url
 
@@ -34,4 +35,5 @@ class Command(BaseCommand):
                     hcon.close()
                 except Exception, e:
                     logger.info("Other datacenter refresh: " + str(e))
+                """
             print 'finished page:', pr
