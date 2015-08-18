@@ -1,51 +1,47 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-var XDMClient = require('./utils/xdm-client');
-var URLs = require('./utils/urls');
+var AjaxClient = require('./utils/ajax-client');
 var Moveable = require('./utils/moveable');
 var Range = require('./utils/range');
+var TransitionUtil = require('./utils/transition-util');
+var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
+var XDMClient = require('./utils/xdm-client');
 
 function createReactionsWidget(options) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
+    var defaultReactions = options.defaultReactions;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
-    if (!reactionsData) {
-        // TODO handle the case of no reactions (show default reactions)
-        return { open: function(){} };
-    }
     var colors = groupSettings.reactionBackgroundColors();
-    var layoutData = computeLayoutData(reactionsData, colors);
+    var reactionsLayoutData = computeLayoutData(reactionsData, colors);
+    var defaultLayoutData = computeLayoutData(defaultReactions, colors);
     var ractive = Ractive({
         el: WidgetBucket(),
         append: true,
         magic: true,
         data: {
             reactions: reactionsData,
-            response: {},
-            layoutClass: function(index) {
-                return layoutData.layoutClasses[index];
-            },
-            backgroundColor: function(index) {
-                return layoutData.backgroundColors[index];
-            }
+            reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
+            reactionsBackgroundColor: arrayAccessor(reactionsLayoutData.backgroundColors),
+            defaultReactions: defaultReactions,
+            defaultLayoutClass: arrayAccessor(defaultLayoutData.layoutClasses),
+            defaultBackgroundColor: arrayAccessor(defaultLayoutData.backgroundColors),
+            response: {}
         },
         template: require('../templates/reactions-widget.html'),
         decorators: {
             sizetofit: sizeToFit
-        }
+        },
+        antenna: {} // create our own property bucket on the instance
     });
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
-        showReactions(ractive, false); // Make sure the window is sized properly.
     });
     ractive.on('change', function() {
         layoutData = computeLayoutData(reactionsData, colors);
-    });
-    ractive.on('update', function() {
-        console.log('update!');
     });
     if (containerElement) {
         ractive.on('highlight', highlightContent(containerData, pageData, ractive, containerElement));
@@ -53,8 +49,14 @@ function createReactionsWidget(options) {
     }
     ractive.on('plusone', plusOne(containerData, pageData, ractive));
     return {
-        open: openWindow(ractive)
+        open: openWindow(reactionsData, ractive)
     };
+}
+
+function arrayAccessor(array) {
+    return function(index) {
+        return array[index];
+    }
 }
 
 function sizeToFit(node) {
@@ -95,6 +97,23 @@ function highlightContent(containerData, pageData, ractive, $containerElement) {
     }
 }
 
+function newDefaultReaction(containerData, pageData, ractive) {
+    return function(event) {
+        var defaultReactionData = event.context;
+        // TODO: consider whether this should be abstracted away from the widget
+        // TODO: update the ractive instance to populate with the new reactions data (i.e. just this one reaction)
+        // TODO: propagate the data change to the container indicator widget so it can update its count/visibility
+        containerData.reactions.push(defaultReactionData);
+        // TODO: check back on this as the way to propogate data changes back to the summary
+        pageData.summaryTotal = pageData.summaryTotal + 1;
+
+        XDMClient.getUser(function(response) {
+            var userInfo = response.data;
+            postPlusOne(reactionData, userInfo, containerData, pageData, ractive);
+        });
+    }
+}
+
 function plusOne(containerData, pageData, ractive) {
     return function(event) {
         // Optimistically update our local data store and the UI. Then send the request to the server.
@@ -103,83 +122,30 @@ function plusOne(containerData, pageData, ractive) {
         // TODO: check back on this as the way to propogate data changes back to the summary
         pageData.summaryTotal = pageData.summaryTotal + 1;
 
-        XDMClient.getUser(function(response) {
-            var userInfo = response.data;
-            postPlusOne(reactionData, userInfo, containerData, pageData, ractive);
-        });
-    };
-}
-
-function postPlusOne(reactionData, userInfo, containerData, pageData, ractive) {
-    // TODO extract the shape of this data and possibly the whole API call
-    // TODO figure out which parts don't get passed for a new reaction
-    // TODO compute field values (e.g. container_kind and content info) for new reactions
-    if (!reactionData.content) {
-        // This is a summary reaction. See if we have any container data that we can link to it.
-        var containerReactions = containerData.reactions;
-        for (var i = 0; i < containerData.reactions.length; i++) {
-            var containerReaction = containerData.reactions[i];
-            if (containerReaction.id == reactionData.id) {
-                reactionData.parentID = containerReaction.parentID;
-                reactionData.content = containerReaction.content;
-                break;
+        var success = function(response) {
+            if (response.existing) {
+                // TODO: Decrement the reaction counts if the response was a dup.
+                //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
+                //reactionData.count = reactionData.count - 1;
+                //pageData.summaryTotal = pageData.summaryTotal - 1;
+                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+                ractive.set('response.existing', response.existing);
             }
-        }
-    }
-    var data = {
-        tag: {
-            body: reactionData.text,
-            id: reactionData.id
-        },
-        is_default: 'true', // TODO
-        hash: containerData.hash,
-        user_id: userInfo.user_id,
-        ant_token: userInfo.ant_token,
-        page_id: pageData.pageId,
-        group_id: pageData.groupId,
-        container_kind: containerData.type, // 'page', 'text', 'media', 'img'
-        content_node_data: {
-            id: reactionData.content.id,
-            location: reactionData.content.location,
-            body: '', // TODO: this is needed to create new content reactions
-            kind: reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
-            item_type: '' // TODO: looks unused but TagHandler blows up without it
-        }
-    };
-    var success = function(json) {
-        var response = { // TODO: just capturing the api format...
-            existing: json.existing,
-            interaction: {
-                id: json.interaction.id,
-                interaction_node: {
-                    body: json.interaction.interaction_node.body,
-                    id: json.interaction.interaction_node.id
-                }
-            }
+            showPage('.antenna-confirm-page', ractive, true);
         };
-        //if (json.existing) {
-        //    handleDuplicateReaction(reactionData);
-        //} else {
-        //    handleNewReaction(reactionData);
-        //}
-        if (response.existing) {
-            // TODO: Decrement the reaction counts if the response was a dup.
-            //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
-            //reactionData.count = reactionData.count - 1;
-            //pageData.summaryTotal = pageData.summaryTotal - 1;
-            // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-            ractive.set('response.existing', response.existing);
-        }
-        showReactionResult(ractive);
+        var error = function(message) {
+            // TODO handle any errors that occur posting a reaction
+        };
+        AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
     };
-    var error = function(message) {
-        // TODO handle any errors that occur posting a reaction
-    };
-    $.getJSONP(URLs.createReactionUrl(), data, success, error);
 }
 
 function computeLayoutData(reactionsData, colors) {
     // TODO Verify that the reactionsData is coming back from the server sorted. If not, sort it after its fetched.
+
+    if (!reactionsData) {
+        return {}; // TODO clean this up
+    }
 
     var numReactions = reactionsData.length;
     // TODO: Copied code from engage_full.createTagBuckets
@@ -207,12 +173,11 @@ function computeLayoutData(reactionsData, colors) {
         layoutClasses[numReactions - 1] = 'full'; // If there are an odd number, the last one goes full.
     }
 
-    var numColors = colors.length;
     var backgroundColors = [];
     var colorIndex = 0;
     var pairWithNext = 0;
     for (var i = 0; i < numReactions; i++) {
-        backgroundColors[i] = colors[colorIndex%numColors];
+        backgroundColors[i] = colors[colorIndex % colors.length];
         if (layoutClasses[i] === 'full') {
             colorIndex++;
         } else {
@@ -238,49 +203,72 @@ function rootElement(ractive) {
     return ractive.find('.antenna-reactions-widget');
 }
 
-function showReactionResult(ractive) {
-    var $root = $(rootElement(ractive));
-    // TODO: This is probably where a Ractive partial comes in. Need a nested template here for showing the result.
-    $root.find('.antenna-confirm-page').animate({ left: 0 });
-    sizeBodyToFit(ractive, $root.find('.antenna-confirm-page'), true);
-    $root.animate({ width: 300 }, { delay: 100 }); // TODO this is just a dummy to show resizing
-    setTimeout(function() {
-        showReactions(ractive, true);
-    }, 1000);
-}
+var pageZ = 1000; // It's safe for this value to go across instances. We just need it to continuously increase (max value is over 2 billion).
 
-function showReactions(ractive, animate) {
+function showPage(pageSelector, ractive, animate) {
     var $root = $(rootElement(ractive));
+    var $page = $root.find(pageSelector);
+    $page.css('z-index', pageZ);
+    pageZ += 1;
+
+    $page.toggleClass('antenna-page-animate', animate);
     if (animate) {
-        $root.find('.antenna-confirm-page').animate({ left: '100%' });
-        $root.animate({ width: 200 });
+        TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
+            // After the new page slides into position, move the other pages back out of the viewable area
+            $root.find('.antenna-page:not(.antenna-page-active)').removeClass('antenna-page-active');
+        });
     } else {
-        $root.find('.antenna-confirm-page').css({ left: '100%' });
-        $root.css({ width: 200 });
+        $root.find('.antenna-page').removeClass('antenna-page-active');
+        $page.addClass('antenna-page-active');
     }
-    sizeBodyToFit(ractive, $root.find('.antenna-reactions-page'), animate);
+    sizeBodyToFit(ractive, $page, animate);
 }
 
 function sizeBodyToFit(ractive, $element, animate) {
-    var $body = $(ractive.find('.antenna-body'));
+    var $root = $(rootElement(ractive));
+    var $body = $root.find('.antenna-body');
+    var currentHeight = $body.css('height');
+    $body.css({ height: '' }); // Clear any previously computed height so we get a fresh computation of the child heights
+    var newHeight = Math.min(300, $element.get(0).scrollHeight);
     if (animate) {
-        $body.animate({ height: Math.min(300, $element.get(0).scrollHeight) });
+        $body.css({ height: currentHeight });
+        $body.animate({ height: newHeight });
     } else {
-        $body.css({ height: Math.min(300, $element.get(0).scrollHeight) });
+        $body.css({ height: newHeight });
+    }
+    // TODO: we might not need width resizing at all.
+    var minWidth = $element.css('min-width');
+    var width = (parseInt(minWidth) > 0) ? minWidth: '';
+    if (animate) {
+        $root.animate({ width: width });
+    } else {
+        $root.css({ width: width });
     }
 }
 
-function openWindow(ractive) {
-    return function(relativeElement) {
+function openWindow(reactionsData, ractive) {
+    return function(elementOrCoords) {
         $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
-        var $relativeElement = $(relativeElement);
-        var offset = $relativeElement.offset();
-        var coords = {
-            top: offset.top + 5,//$relativeElement.height(),
-            left: offset.left + 5
-        };
+        var coords;
+        if (elementOrCoords.top && elementOrCoords.left) {
+            coords = elementOrCoords;
+        } else {
+            var $relativeElement = $(elementOrCoords);
+            var offset = $relativeElement.offset();
+            coords = {
+                top: offset.top + 5,
+                left: offset.left + 5
+            };
+        }
         var $rootElement = $(rootElement(ractive));
         $rootElement.stop(true, true).addClass('open').css(coords);
+
+        if (reactionsData) {
+            showPage('.antenna-reactions-page', ractive, false);
+        } else {
+            // TODO allow to override and force showing of default
+            showPage('.antenna-default-page', ractive, false);
+        }
 
         setupWindowClose(ractive);
     };

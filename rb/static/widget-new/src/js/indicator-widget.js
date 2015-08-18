@@ -11,7 +11,7 @@ function createIndicatorWidget(options) {
     var containerElement = options.containerElement;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
-    var defaultReactions = groupSettings.defaultReactions(containerElement);
+    var defaultReactions = options.defaultReactions;
     var ractive = Ractive({
         el: element,
         magic: true,
@@ -25,11 +25,21 @@ function createIndicatorWidget(options) {
         var $rootElement = $(rootElement(ractive));
         $rootElement.on('mouseenter.antenna', function(event) {
             if (containerData.reactions) {
-                openReactionsWindow(containerData, containerElement, pageData, groupSettings, ractive);
+                openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
             } else {
                 clearTimeout(hoverTimeout); // only one timeout at a time
                 hoverTimeout = setTimeout(function() {
-                    showPopup(containerData, containerElement, pageData, groupSettings, ractive);
+                    var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
+                    var offset = $icon.offset();
+                    var coordinates = {
+                        top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
+                        left: offset.left + Math.floor($icon.width() / 2)
+                    };
+                    PopupWidget.show(coordinates, function() {
+                        console.log('popup clicked!!');
+                        openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
+                    });
+                    //showPopup(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
                 }, 200);
             }
         });
@@ -50,7 +60,7 @@ function rootElement(ractive) {
     return ractive.find('.antenna-indicator-widget');
 }
 
-function showPopup(containerData, containerElement, pageData, groupSettings, ractive) {
+function showPopup(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive) {
     var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
     var offset = $icon.offset();
     var coordinates = {
@@ -64,12 +74,13 @@ function showPopup(containerData, containerElement, pageData, groupSettings, rac
 }
 
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(containerData, containerElement, pageData, groupSettings, ractive) {
+function openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive) {
     if (!ractive.reactionsWidget) {
         ractive.reactionsWidget = ReactionsWidget.create({
             reactionsData: containerData.reactions,
             containerData: containerData,
             containerElement: containerElement,
+            defaultReactions: defaultReactions,
             pageData: pageData,
             groupSettings: groupSettings
         });

@@ -1,9 +1,11 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Hash = require('./utils/hash');
 var PageUtils = require('./utils/page-utils');
-var SummaryWidget = require('./summary-widget');
+
 var IndicatorWidget = require('./indicator-widget');
 var PageData = require('./page-data');
+var SummaryWidget = require('./summary-widget');
+var TextReactions = require('./text-reactions');
 
 
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
@@ -75,21 +77,23 @@ function scanForText($section, pageData, groupSettings) {
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($element);
-        //var indicator = IndicatorWidget.create(element, containerData, pageData, defaultReactions, groupSettings, $element);
         var indicator = IndicatorWidget.create({
             element: element,
             containerData: containerData,
             containerElement: $element,
+            defaultReactions: defaultReactions,
             pageData: pageData,
             groupSettings: groupSettings}
         );
         $element.append(element); // TODO is this configurable ala insertContent(...)?
-        // TODO: The following selection code is just proof of concept. Make it real:
-        //$element.on('mouseup', function() {
-        //    require('./utils/range').grab($element.get(0), function(text, location) {
-        //        console.log('text: "' + text + '" location: ' + location);
-        //    });
-        //});
+
+        TextReactions.createReactableText({
+            containerData: containerData,
+            containerElement: $element,
+            defaultReactions: defaultReactions,
+            pageData: pageData,
+            groupSettings: groupSettings
+        });
     });
 }
 

@@ -708,6 +708,7 @@ class PageDataHandlerNew(AnonymousBaseHandler):
 
         for current_page in pages:
             page_id = current_page.id
+            # TODO: update the cache!
             cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
             if cached_page_data is not None:
                 logger.info('returning page_data_new cached result')

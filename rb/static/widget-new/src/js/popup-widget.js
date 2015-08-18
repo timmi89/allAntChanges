@@ -1,8 +1,10 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var WidgetBucket = require('./utils/widget-bucket');
+var TransitionUtil = require('./utils/transition-util');
 
 var ractive;
 var clickHandler;
+
 
 function getRootElement(callback) {
     // TODO revisit this, it's kind of goofy and it might have a timing problem
@@ -15,16 +17,18 @@ function getRootElement(callback) {
         });
         ractive.on('complete', function() {
             var $element = $(ractive.find('.antenna-popup'));
+            $element.on('mousedown', false); // Prevent mousedown from propogating, so the browser doesn't clear the text selection.
+            $element.on('click.antenna-popup', function(event) {
+                event.stopPropagation();
+                hidePopup($element);
+                if (clickHandler) {
+                    clickHandler();
+                }
+            });
             callback($element);
         })
     } else {
         callback($(ractive.find('.antenna-popup')));
-    }
-}
-
-function notifyClick(event) {
-    if (clickHandler) {
-        clickHandler();
     }
 }
 
@@ -38,39 +42,24 @@ function showPopup(coordinates, callback) {
                     top: coordinates.top - $element.outerHeight() - 6, // TODO find a cleaner way to account for the popup 'tail'
                     left: coordinates.left - Math.floor($element.outerWidth() / 2)
                 });
-            internalSetVisible($element, true, function() {
+            TransitionUtil.toggleClass($element, 'show', true, function() {
                 // TODO: after the appearance transition is complete, add a handler for mouseenter which then registers
                 //       a handler for mouseleave that hides the popup
-            });
-            // TODO: also take down the popup if the user mouses over another widget (summary or indicator)
-            $(document).on('click.antenna-popup', function () {
-                hidePopup($element);
+
+                // TODO: also take down the popup if the user mouses over another widget (summary or indicator)
+                $(document).on('click.antenna-popup', function () {
+                    hidePopup($element);
+                });
             });
         }
     });
 }
 
 function hidePopup($element) {
-    internalSetVisible($element, false, function() {
+    TransitionUtil.toggleClass($element, 'show', false, function() {
         $element.hide(); // after we're at opacity 0, hide the element so it doesn't receive accidental clicks
     });
     $(document).off('click.antenna-popup');
-}
-
-function internalSetVisible($element, visible, nextStep) {
-    $element.on("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd",
-        function(event) {
-            // once the CSS transition to opacity:0 is complete, call our next step
-            // See: http://stackoverflow.com/questions/9255279/callback-when-css3-transition-finishes
-            if (event.target == event.currentTarget) {
-                $element.off(event);
-                if (nextStep) {
-                    nextStep();
-                }
-            }
-        }
-    );
-    visible ? $element.addClass('show') : $element.removeClass('show');
 }
 
 //noinspection JSUnresolvedVariable

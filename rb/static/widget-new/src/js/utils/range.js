@@ -11,6 +11,31 @@ function getClassApplier() {
     return classApplier;
 }
 
+function hasSelection(node) {
+    if (rangy) {
+        var selection = rangy.getSelection();
+        return !selection.isCollapsed && selection.rangeCount === 1;
+    }
+    return false;
+}
+
+// Returns an adjusted end point for the selection within the given node, as triggered by the given mouse up event.
+// The returned point (x, y) takes into account the location of the mouse up event as well as the direction of the
+// selection (forward/back).
+function getSelectionEndPoint(node, event) {
+    if (rangy) {
+        // TODO: Consider using the element created with the 'classifier' rather than the mouse location
+        var selection = rangy.getSelection();
+        if (!selection.isCollapsed && selection.rangeCount === 1) {
+            return {
+                x: event.pageX - ( selection.isBackwards() ? -5 : 5),
+                y: event.pageY - 8 // TODO: exact coords
+            }
+        }
+    }
+    return null;
+}
+
 // Attempts to get a range from the current selection. This expands the
 // selected region to include word boundaries.
 function grabRange(node, callback) {
@@ -56,6 +81,7 @@ function clearHighlights() {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
+    getSelectionEndPoint: getSelectionEndPoint,
     grab: grabRange,
     clear: clearHighlights,
     highlight: highlightLocation

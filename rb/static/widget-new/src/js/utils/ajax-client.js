@@ -1,0 +1,75 @@
+// TODO: needs a better name once the scope is clear
+
+var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var XDMClient = require('./xdm-client');
+var URLs = require('./urls');
+
+function postNewReaction() {
+
+}
+
+function postPlusOne(reactionData, containerData, pageData, success, error) {
+    XDMClient.getUser(function(response) {
+        var userInfo = response.data;
+        // TODO extract the shape of this data and possibly the whole API call
+        // TODO figure out which parts don't get passed for a new reaction
+        // TODO compute field values (e.g. container_kind and content info) for new reactions
+        if (!reactionData.content) {
+            // This is a summary reaction. See if we have any container data that we can link to it.
+            var containerReactions = containerData.reactions;
+            for (var i = 0; i < containerData.reactions.length; i++) {
+                var containerReaction = containerData.reactions[i];
+                if (containerReaction.id == reactionData.id) {
+                    reactionData.parentID = containerReaction.parentID;
+                    reactionData.content = containerReaction.content;
+                    break;
+                }
+            }
+        }
+        var data = {
+            tag: {
+                body: reactionData.text,
+                id: reactionData.id
+            },
+            is_default: 'true', // TODO check if the reaction id/body matches a default
+            hash: containerData.hash,
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token,
+            page_id: pageData.pageId,
+            group_id: pageData.groupId,
+            container_kind: containerData.type, // 'page', 'text', 'media', 'img'
+            content_node_data: {
+                id: reactionData.content.id,
+                location: reactionData.content.location,
+                body: '', // TODO: this is needed to create new content reactions
+                kind: reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
+                item_type: '' // TODO: looks unused but TagHandler blows up without it
+            }
+        };
+        $.getJSONP(URLs.createReactionUrl(), data, success, error);
+        //var response = { // TODO: just capturing the api format...
+        //        existing: json.existing,
+        //        interaction: {
+        //            id: json.interaction.id,
+        //            interaction_node: {
+        //                body: json.interaction.interaction_node.body,
+        //                id: json.interaction.interaction_node.id
+        //            }
+        //        }
+        //    };
+    });
+}
+
+function isDefaultReaction(reaction, defaultReactions) {
+    // TODO consider tagging the reaction data on read/load rather than on write
+    for (var i = 0; i < defaultReactions.length; i++) {
+        if (reaction.id && defaultReactions[i].id && reaction.id === defaultReactions[i].id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+module.exports = {
+    postPlusOne: postPlusOne
+};
