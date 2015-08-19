@@ -647,11 +647,11 @@ https://github.com/imakewebthings/waypoints/blog/master/licenses.txt
 function animateSlides(direction) {
   if (!direction) direction = "left";
 
-  var $card_container = $A('.ant-cards'),
+  var $card_container = jQuery('.ant-cards'),
       $cards = $card_container.find('.ant-card')
       lastVisible = parseInt($card_container.data('lastVisible')),
       totalCards = $cards.length,
-      divideByAmount = ( $A(window).width() < 481 ) ? 1 : 2,
+      divideByAmount = ( jQuery(window).width() < 481 ) ? 1 : 2,
       offsetAmount = $card_container.width() / divideByAmount;
 
   if (direction=="left") {
@@ -661,7 +661,7 @@ function animateSlides(direction) {
   }
   $cards.each( function() {
 
-    var $this = $A(this),
+    var $this = jQuery(this),
         cardIndex = $cards.index($this),
         leftPosition = parseInt( $this.css('left') );
     if ( lastVisible > totalCards ) {
@@ -684,12 +684,12 @@ function animateSlides(direction) {
   <div class="antenna-broadcast ant-thin" id="antenna-broadcast">
       <div class="ant-broadcast-header">
           <div class="ant-explanation">
-            <a href="javascript:void(0);" onclick="$A('.ant-explanation-container').show();">What's this?</a>
+            <a href="javascript:void(0);" onclick="jQuery('.ant-explanation-container').show();">What's this?</a>
             <div class="ant-explanation-container">
               <div class="ant-explanation-content">
                 <p><span class="ant-antenna-logo"></span> Antenna empowers readers to react to their favorite content on the web.</p>
                 <p>Here, you see the most popular content within this community, and the reaction the community has to it.</p>
-                <p><a href="javascript:void(0);" style="color:blue;" onclick="$A('.ant-explanation-container').hide();">Close</a></p>
+                <p><a href="javascript:void(0);" style="color:blue;" onclick="jQuery('.ant-explanation-container').hide();">Close</a></p>
               </div>
             </div>
           </div>
@@ -1507,6 +1507,37 @@ window.antenna_extend = {
 
 <script src="/static/engage_full.js" defer type="text/javascript"></script>
 
+<style>
+#antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; left:0; right:0px; position:fixed; background:#fff; transition:bottom 0.5s; margin:0 auto;}
+</style>
+<div id="antenna_test_notice"></div>
+
+
+<script>
+document.addEventListener("antenna.reaction", function(){
+  var lastEvent = antenna.getLastEvent();
+  if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
+    jQuery('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+    .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
+  }
+},false); 
+
+var reactionViewCount = 0;
+document.addEventListener("antenna.reactionview", function(){
+  console.log('reactionview');
+  var lastEvent = antenna.getLastEvent();
+  console.log(lastEvent);
+  if (lastEvent.event == 'antenna.reactionview' ) {
+    reactionViewCount++;
+    
+    if (reactionViewCount == 3) {
+        jQuery('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+        .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
+        reactionViewCount = 0;
+    }
+  }
+},false); 
+</script>
 
 </body>
 </html>
