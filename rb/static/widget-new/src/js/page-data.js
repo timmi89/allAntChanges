@@ -75,7 +75,8 @@ function getContainerData(pageData, containerHash) {
     if (!containerData) {
         containerData = {
             hash: containerHash,
-            reactionTotal: 0
+            reactionTotal: 0,
+            reactions: []
         };
         pageData.containers[containerHash] = containerData;
     }
@@ -88,15 +89,11 @@ function setContainers(pageData, containers) {
     for (var hash in containers) {
         if (containers.hasOwnProperty(hash)) {
             var containerData = getContainerData(pageData, hash);
-            merge(containers[hash], containerData);
-        }
-    }
-}
-
-function merge(source, target) {
-    for (var prop in source) {
-        if (source.hasOwnProperty(prop)) {
-            target[prop] = source[prop];
+            var fetchedContainerData = containers[hash];
+            containerData.id = fetchedContainerData.id;
+            for (var i = 0; i < fetchedContainerData.reactions.length; i++) {
+                containerData.reactions.push(fetchedContainerData.reactions[i]);
+            }
         }
     }
 }

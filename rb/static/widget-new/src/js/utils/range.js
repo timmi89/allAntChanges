@@ -11,14 +11,6 @@ function getClassApplier() {
     return classApplier;
 }
 
-function hasSelection(node) {
-    if (rangy) {
-        var selection = rangy.getSelection();
-        return !selection.isCollapsed && selection.rangeCount === 1;
-    }
-    return false;
-}
-
 // Returns an adjusted end point for the selection within the given node, as triggered by the given mouse up event.
 // The returned point (x, y) takes into account the location of the mouse up event as well as the direction of the
 // selection (forward/back).
@@ -38,20 +30,30 @@ function getSelectionEndPoint(node, event) {
 
 // Attempts to get a range from the current selection. This expands the
 // selected region to include word boundaries.
-function grabRange(node, callback) {
+function grabSelection(node, callback) {
     if (rangy) {
         // TODO: make sure the selection is within the given node
         var selection = rangy.getSelection();
         if (!selection.isCollapsed && selection.rangeCount === 1) {
-            var range = selection.getRangeAt(0);
-            range.expand('word');
-            getClassApplier().applyToRange(range);
-            highlightedRanges.push(range);
-
-            var location = rangy.serializeRange(range, true, node);
-            var text = range.toString();
+            selection.expand('word');
+            var location = rangy.serializeSelection(selection, true, node);
+            var text = selection.toString();
+            highlightSelection(selection); // Highlighting deselects the text, so do this last.
             callback(text, location);
         }
+    }
+}
+
+function grabNode(node, callback) {
+    if (rangy) {
+        var range = rangy.createRange(document);
+        range.selectNodeContents(node);
+        var selection = rangy.getSelection();
+        selection.setSingleRange(range);
+        var location = rangy.serializeSelection(selection, true, node);
+        var text = selection.toString();
+        highlightSelection(selection); // Highlighting deselects the text, so do this last.
+        callback(text, location);
     }
 }
 
@@ -60,9 +62,17 @@ function highlightLocation(node, location) {
     // TODO error handling in case the range is not valid?
     if (rangy && rangy.canDeserializeRange(location, node, document)) {
         var range = rangy.deserializeRange(location, node, document);
-        getClassApplier().applyToRange(range);
-        highlightedRanges.push(range);
+        highlightRange(range);
     }
+}
+
+function highlightSelection(selection) {
+    highlightRange(selection.getRangeAt(0));
+}
+
+function highlightRange(range) {
+    getClassApplier().applyToRange(range);
+    highlightedRanges.push(range);
 }
 
 // Clears all highlights that have been created on the page.
@@ -82,7 +92,8 @@ function clearHighlights() {
 //noinspection JSUnresolvedVariable
 module.exports = {
     getSelectionEndPoint: getSelectionEndPoint,
-    grab: grabRange,
-    clear: clearHighlights,
+    grabSelection: grabSelection,
+    grabNode: grabNode,
+    clearHighlights: clearHighlights,
     highlight: highlightLocation
 };

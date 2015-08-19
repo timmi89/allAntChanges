@@ -5,45 +5,38 @@ var ReactionsWidget = require('./reactions-widget');
 
 
 function createReactableText(options) {
-    // TODO: impose an upper limit on the length of text that can be reacted to?
-    var containerData = options.containerData; // TODO delete?
+    // TODO: impose an upper limit on the length of text that can be reacted to? (applies to the indicator-widget too)
     var $containerElement = options.containerElement;
-    var pageData = options.pageData;
-    var groupSettings = options.groupSettings;
-    var defaultReactions = options.defaultReactions;
+    var reactionsWidgetOptions = {
+        reactionsData: [], // Always open with the default reactions
+        containerData: options.containerData,
+        containerElement: $containerElement,
+        defaultReactions: options.defaultReactions,
+        pageData: options.pageData,
+        groupSettings: options.groupSettings
+    };
 
     $containerElement.on('mouseup', function(event) {
         var node = $containerElement.get(0);
         var point = Range.getSelectionEndPoint(node, event);
         if (point) {
-            var coordinates = {
-                top: point.y,
-                left: point.x
-            };
-            PopupWidget.show(coordinates, function() {
-                Range.grab($containerElement.get(0), function(text, location) {
-                    // TODO: open the reaction widget showing the default reactions
-                    // TODO: clear the highlighted range when the reaction window closes
-                    console.log('text: "' + text + '" location: ' + location);
-                    var reactionsWidget = ReactionsWidget.create({
-                        //reactionsData: containerData.reactions,
-                        containerData: containerData,
-                        containerElement: $containerElement,
-                        defaultReactions: defaultReactions,
-                        pageData: pageData,
-                        groupSettings: groupSettings
-                    });
-                    // TODO: don't leak. need to either clean up the reactions widget that we create or reuse.
-                    reactionsWidget.open(coordinates);
-                    // TODO: the below click handling is temporary
-                    $(document).on('click.antenna-text', function(event) {
-                        Range.clear();
-                        $(document).off('click.antenna-text');
-                    });
-                });
-            });
+            var coordinates = { top: point.y, left: point.x };
+            PopupWidget.show(coordinates, grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions));
         }
     });
+}
+
+function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions) {
+    return function() {
+        Range.grabSelection(node, function(text, location) {
+            // TODO: open the reaction widget showing the default reactions
+            reactionsWidgetOptions.location = location;
+            reactionsWidgetOptions.body = text;
+            var reactionsWidget = ReactionsWidget.create(reactionsWidgetOptions);
+            // TODO: don't leak. need to either clean up the reactions widgets that we create or reuse.
+            reactionsWidget.open(coordinates);
+        });
+    }
 }
 
 //noinspection JSUnresolvedVariable

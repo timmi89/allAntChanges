@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
+var Range = require('./utils/range');
 
 
 function createIndicatorWidget(options) {
@@ -8,7 +9,7 @@ function createIndicatorWidget(options) {
     // TODO: Show intermediate popup thingy when there are no reactions
     var element = options.element;
     var containerData = options.containerData;
-    var containerElement = options.containerElement;
+    var $containerElement = options.containerElement;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
@@ -20,12 +21,22 @@ function createIndicatorWidget(options) {
         },
         template: require('../templates/indicator-widget.html')
     });
+
+    var reactionWidgetOptions = {
+        reactionsData: containerData.reactions,
+        containerData: containerData,
+        containerElement: $containerElement,
+        defaultReactions: defaultReactions,
+        pageData: pageData,
+        groupSettings: groupSettings
+    };
+
     var hoverTimeout;
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
         $rootElement.on('mouseenter.antenna', function(event) {
-            if (containerData.reactions) {
-                openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
+            if (containerData.reactions.length > 0) {
+                openReactionsWindow(reactionWidgetOptions, ractive);
             } else {
                 clearTimeout(hoverTimeout); // only one timeout at a time
                 hoverTimeout = setTimeout(function() {
@@ -35,18 +46,13 @@ function createIndicatorWidget(options) {
                         top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
                         left: offset.left + Math.floor($icon.width() / 2)
                     };
-                    PopupWidget.show(coordinates, function() {
-                        console.log('popup clicked!!');
-                        openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
-                    });
-                    //showPopup(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive);
+                    PopupWidget.show(coordinates, grabNodeAndOpenOnSelection($containerElement.get(0), reactionWidgetOptions, ractive));
                 }, 200);
             }
         });
         $rootElement.on('mouseleave.antenna', function() {
             clearTimeout(hoverTimeout);
         });
-        var $containerElement = $(containerElement);
         $containerElement.on('mouseenter.antenna', function() {
             $rootElement.addClass('active');
         });
@@ -56,34 +62,24 @@ function createIndicatorWidget(options) {
     });
 }
 
+function grabNodeAndOpenOnSelection(node, reactionWidgetOptions, ractive) {
+    return function() {
+        Range.grabNode(node, function(text, location) {
+            reactionWidgetOptions.location = location;
+            reactionWidgetOptions.body = text;
+            openReactionsWindow(reactionWidgetOptions, ractive);
+        });
+    }
+}
+
 function rootElement(ractive) {
     return ractive.find('.antenna-indicator-widget');
 }
 
-function showPopup(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive) {
-    var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
-    var offset = $icon.offset();
-    var coordinates = {
-        top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
-        left: offset.left + Math.floor($icon.width() / 2)
-    };
-    PopupWidget.show(coordinates, function() {
-        // TODO: open the reactions window
-        console.log('popup clicked!');
-    })
-}
-
 // TODO refactor this duplicated code from summary-widget.js
-function openReactionsWindow(containerData, containerElement, defaultReactions, pageData, groupSettings, ractive) {
+function openReactionsWindow(reactionOptions, ractive) {
     if (!ractive.reactionsWidget) {
-        ractive.reactionsWidget = ReactionsWidget.create({
-            reactionsData: containerData.reactions,
-            containerData: containerData,
-            containerElement: containerElement,
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings
-        });
+        ractive.reactionsWidget = ReactionsWidget.create(reactionOptions);
     }
     ractive.reactionsWidget.open(rootElement(ractive));
 }

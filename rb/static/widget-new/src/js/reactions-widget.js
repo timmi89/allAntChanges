@@ -11,6 +11,9 @@ function createReactionsWidget(options) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
+    var contentLocation = options.location;
+    var contentType = options.contentType || "text"; // TODO
+    var contentBody = options.body;
     var defaultReactions = options.defaultReactions;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
@@ -41,13 +44,14 @@ function createReactionsWidget(options) {
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     });
     ractive.on('change', function() {
-        layoutData = computeLayoutData(reactionsData, colors);
+        reactionsLayoutData = computeLayoutData(reactionsData, colors);
     });
     if (containerElement) {
         ractive.on('highlight', highlightContent(containerData, pageData, ractive, containerElement));
-        ractive.on('clearhighlights', Range.clear);
+        ractive.on('clearhighlights', Range.clearHighlights);
     }
     ractive.on('plusone', plusOne(containerData, pageData, ractive));
+    ractive.on('newreaction', newDefaultReaction(containerData, pageData, contentBody, contentLocation, contentType, ractive));
     return {
         open: openWindow(reactionsData, ractive)
     };
@@ -97,7 +101,7 @@ function highlightContent(containerData, pageData, ractive, $containerElement) {
     }
 }
 
-function newDefaultReaction(containerData, pageData, ractive) {
+function newDefaultReaction(containerData, pageData, contentBody, contentLocation, contentType, ractive) {
     return function(event) {
         var defaultReactionData = event.context;
         // TODO: consider whether this should be abstracted away from the widget
@@ -107,10 +111,22 @@ function newDefaultReaction(containerData, pageData, ractive) {
         // TODO: check back on this as the way to propogate data changes back to the summary
         pageData.summaryTotal = pageData.summaryTotal + 1;
 
-        XDMClient.getUser(function(response) {
-            var userInfo = response.data;
-            postPlusOne(reactionData, userInfo, containerData, pageData, ractive);
-        });
+        var success = function(response) {
+            if (response.existing) {
+                // TODO: Decrement the reaction counts if the response was a dup.
+                //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
+                //reactionData.count = reactionData.count - 1;
+                //pageData.summaryTotal = pageData.summaryTotal - 1;
+                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+                ractive.set('response.existing', response.existing);
+            }
+            showPage('.antenna-confirm-page', ractive, true);
+        };
+        var error = function(message) {
+            // TODO handle any errors that occur posting a reaction
+            console.log("error posting new reaction: " + message);
+        };
+        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error);
     }
 }
 
@@ -135,6 +151,7 @@ function plusOne(containerData, pageData, ractive) {
         };
         var error = function(message) {
             // TODO handle any errors that occur posting a reaction
+            console.log("error posting plus one: " + message);
         };
         AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
     };
@@ -143,11 +160,10 @@ function plusOne(containerData, pageData, ractive) {
 function computeLayoutData(reactionsData, colors) {
     // TODO Verify that the reactionsData is coming back from the server sorted. If not, sort it after its fetched.
 
-    if (!reactionsData) {
+    var numReactions = reactionsData.length;
+    if (numReactions == 0) {
         return {}; // TODO clean this up
     }
-
-    var numReactions = reactionsData.length;
     // TODO: Copied code from engage_full.createTagBuckets
     var max = reactionsData[0].count;
     var median = reactionsData[ Math.floor(reactionsData.length/2) ].count;
@@ -260,10 +276,11 @@ function openWindow(reactionsData, ractive) {
                 left: offset.left + 5
             };
         }
+        // TODO: Look at whether we're opening off screen and adjust the coords if needed
         var $rootElement = $(rootElement(ractive));
         $rootElement.stop(true, true).addClass('open').css(coords);
 
-        if (reactionsData) {
+        if (reactionsData.length > 0) {
             showPage('.antenna-reactions-page', ractive, false);
         } else {
             // TODO allow to override and force showing of default
@@ -321,6 +338,7 @@ function setupWindowClose(ractive) {
         });
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
+        Range.clearHighlights();
     }
 }
 

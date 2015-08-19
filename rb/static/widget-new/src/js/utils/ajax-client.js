@@ -4,8 +4,57 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 
-function postNewReaction() {
+function postNewPageReaction() {
+    // speculative...
+}
 
+function postNewTextReaction() {
+    // speculative...
+}
+
+function postNewImageReaction() {
+    // speculative...
+}
+
+function postNewReaction(reactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error) {
+    XDMClient.getUser(function(response) {
+        var userInfo = response.data;
+        // TODO extract the shape of this data and possibly the whole API call
+        // TODO figure out which parts don't get passed for a new reaction
+        // TODO compute field values (e.g. container_kind and content info) for new reactions
+        var data = {
+            tag: {
+                body: reactionData.text
+            },
+            is_default: 'true',
+            hash: containerData.hash,
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token,
+            page_id: pageData.pageId,
+            group_id: pageData.groupId,
+            container_kind: contentType, // One of 'page', 'text', 'media', 'img'
+            content_node_data: {
+                location: contentLocation,
+                body: contentBody,
+                kind: contentType,
+                item_type: '' // TODO: looks unused but TagHandler blows up without it. Current client passes in "page" for page reactions.
+            }
+        };
+        if (reactionData.id) {
+            data.tag.id = reactionData.id;
+        }
+        $.getJSONP(URLs.createReactionUrl(), data, success, error);
+        //var response = { // TODO: just capturing the api format...
+        //        existing: json.existing,
+        //        interaction: {
+        //            id: json.interaction.id,
+        //            interaction_node: {
+        //                body: json.interaction.interaction_node.body,
+        //                id: json.interaction.interaction_node.id
+        //            }
+        //        }
+        //    };
+    });
 }
 
 function postPlusOne(reactionData, containerData, pageData, success, error) {
@@ -71,5 +120,6 @@ function isDefaultReaction(reaction, defaultReactions) {
 }
 
 module.exports = {
-    postPlusOne: postPlusOne
+    postPlusOne: postPlusOne,
+    postNewReaction: postNewReaction
 };
