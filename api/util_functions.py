@@ -265,12 +265,12 @@ def checkLimit(user, group):
 def getSinglePageDataDict(page_id):
     current_page = Page.objects.get(id=page_id)
     urlhash = hashlib.md5( current_page.url ).hexdigest()
-    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question').using('readonly2')
+    iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
     # Retrieve containers
-    containers = Container.objects.filter(id__in=iop.values('container')).using('readonly2')
-    values = iop.order_by('kind').values('kind').using('readonly2')
+    containers = Container.objects.filter(id__in=iop.values('container'))
+    values = iop.order_by('kind').values('kind')
     # Annotate values with count of interactions
-    summary = values.annotate(count=Count('id')).using('readonly2')
+    summary = values.annotate(count=Count('id'))
 
     tags = InteractionNode.objects.filter(
         interaction__kind='tag',
@@ -280,9 +280,9 @@ def getSinglePageDataDict(page_id):
         interaction__container__item_type='question'
     ).using('readonly2')
 
-    ordered_tags = tags.order_by('body').using('readonly2')
-    tagcounts = ordered_tags.annotate(tag_count=Count('interaction')).using('readonly2')
-    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body').using('readonly2')
+    ordered_tags = tags.order_by('body')
+    tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
+    toptags = tagcounts.order_by('-tag_count')[:15].values('id','tag_count','body')
 
     result_dict = dict(
             id=current_page.id,
