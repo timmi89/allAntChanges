@@ -148,8 +148,8 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
-                #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-                 'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+                 # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
                  'LOCATION': '127.0.0.1:11211',
                  'TIMEOUT':86400,
                  'OPTIONS': {

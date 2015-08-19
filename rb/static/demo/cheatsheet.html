@@ -627,6 +627,9 @@ ybotq.push(function() {
     .antenna-broadcast .ant-cards .ant-card:nth-child(7) { left:600%; }
     .antenna-broadcast .ant-cards .ant-card:nth-child(8) { left:700%; }
     .antenna-broadcast .ant-broadcast-header .ant-headline { font-size:1rem; }
+    .antenna-broadcast .ant-broadcast-header .ant-antenna-logo { margin-top:0.5rem; }
+    .antenna-broadcast .ant-explanation { margin-right:0.5rem;     margin-top: -0.5rem; }
+    .antenna-broadcast .ant-explanation a { font-size:0.75rem; }
   }
   </style>
 
@@ -820,17 +823,17 @@ function animateSlides(direction) {
 var antennaBroadcastWaypoint = new Waypoint({
   element: document.getElementById('antenna-broadcast'),
   handler: function(direction) {
+    console.log('fire waypoint');
     antennaBroadcastTimer = setInterval(animateSlides,3500);
     this.destroy();
-  }
+  },
+  offset:'80%'
 });
 
 
-$A('#antenna-broadcast').on('mouseover', function() {
-  console.log('mouseover');
+jQuery('#antenna-broadcast').on('mouseover', function() {
   clearInterval(antennaBroadcastTimer);
 }).on('mouseout', function() {
-  console.log('mouseout');
   antennaBroadcastTimer = setInterval(animateSlides,3500);
 });
 </script>
