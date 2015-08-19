@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from os import uname
 
-if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' : DEBUG = True
+if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
@@ -55,6 +55,11 @@ RB_SOCIAL_ADMINS = [
 TEMP_LIMIT_GROUPADMIN_AUTOAPPROVE = 8
 
 STATIC_ROOT = 'rb/static/'
+
+OTHER_DATACENTER = 'gce.antenna.is'
+#OTHER_DATACENTER = 'linode.antenna.is'
+#OTHER_DATACENTER = 'local.antenna.is:8081'
+CACHE_SYNCBACK = True
 
 if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
@@ -143,16 +148,16 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
-                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-                # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
-                # 'LOCATION': '127.0.0.1:11211',
-                # 'TIMEOUT':86400,
-                # 'OPTIONS': {
-                #     'MAX_POOL_SIZE': 100,
-                #     'BLACKLIST_TIME': 20,
-                #     'SOCKET_TIMEOUT': 5,
-                #     'MAX_ITEM_SIZE': 1000*100,
-                # }
+                #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+                 'BACKEND': 'memcachepool.cache.UMemcacheCache',
+                 'LOCATION': '127.0.0.1:11211',
+                 'TIMEOUT':86400,
+                 'OPTIONS': {
+                     'MAX_POOL_SIZE': 100,
+                     'BLACKLIST_TIME': 20,
+                     'SOCKET_TIMEOUT': 5,
+                     'MAX_ITEM_SIZE': 1000*100,
+                 }
             },
             'redundant': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -168,7 +173,7 @@ if DEBUG:
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
 
 else:
-    ALLOWED_HOSTS = ["www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
+    ALLOWED_HOSTS = ["linode.antenna.is", "gce.antenna.is","www.antenna.is","antenna.is","static.antenna.is","www.readrboard.com","readrboard.com","static.readrboard.com"]
     URL_NO_PROTO = 'www.antenna.is'
     BASE_URL = 'http://www.antenna.is'
     BASE_URL_SECURE = 'https://www.antenna.is'
@@ -221,8 +226,8 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            #'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
             'LOCATION': ['192.168.182.48:11211'],
+            #'LOCATION': ['10.240.9.228:11211'],
             #'LOCATION': ['192.168.182.177:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
@@ -234,8 +239,8 @@ else:
         },
         'redundant': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            #'LOCATION': ['192.168.182.48:11211', '192.168.182.177:11211'],
             'LOCATION': ['192.168.182.177:11211'],
+            #'LOCATION': ['10.240.232.254:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,

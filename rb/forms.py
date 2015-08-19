@@ -350,8 +350,17 @@ class GroupForm(forms.ModelForm):
             get_cache('redundant').set('group_settings_'+ str(self.instance.short_name), cache_data)
         except Exception, e:
             logger.warning(e)
-        
 
+        if settings.CACHE_SYNCBACK:
+            try:
+                refresh_url = settings.OTHER_DATACENTER + '/api/cache/settings/refresh/'+ str(self.instance.id)
+                hcon = httplib.HTTPConnection(refresh_url, timeout=5)
+                hcon.request('GET', url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
         return m
             
     

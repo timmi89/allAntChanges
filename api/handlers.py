@@ -23,11 +23,76 @@ import traceback
 import logging
 logger = logging.getLogger('rb.standard')
 
+from antenna.analytics.tasks import update_page_cache, update_page_container_hash_cache
+
 def isValidIntegerId(value):
     if isinstance(value,int):
         return True
     else:
         return False
+
+
+class CachePageRefreshHandler(AnonymousBaseHandler):
+    def read(self, request, page_id = None, hash = None):
+        #update_page_cache.delay(page.id)
+        if cache.get('LOCKED_page_data' + str(page_id)) is None:
+            cache_data = getSinglePageDataDict(page_id)
+            try:
+                logger.info('CPRH SETTING CACHE DATA page_data' + str(page_id) )
+                cache.set('LOCKED_page_data' + str(page_id),'locked',15)
+                cache.set('page_data' + str(page_id), cache_data )
+                cache.delete('LOCKED_page_data' + str(page_id))
+            except Exception, ex:
+                logger.info(ex)
+            try:
+                get_cache('redundant').set('LOCKED_page_data' + str(page_id),'locked',15)
+                get_cache('redundant').set('page_data' + str(page_id), cache_data )
+                get_cache('redundant').delete('LOCKED_page_data' + str(page_id))
+            except Exception, ex:
+                logger.info('REDUNDANT CACHE EXCEPTION')
+                logger.warn(ex)
+        if hash:
+            try:
+                container = Container.objects.get(hash = hash)
+                hashes = [hash]
+
+                key = 'page_containers' + str(page_id) + ":" + str(hashes)
+
+                if cache.get('LOCKED_'+key) is None:
+                    logger.info('updating page container cache ' + str(hashes) + ' ' +  str(crossPageHashes))
+                    logger.info(key)
+                    cache_data = getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes)
+                    try:
+                        cache.set('LOCKED_'+key,'locked',15)
+                        cache.set(key, cache_data )
+                        cache.delete('LOCKED_'+key)
+                    except Exception, ex:
+                        logger.info(ex)
+                    try:
+                        get_cache('redundant').set('LOCKED_'+key,'locked',15)
+                        get_cache('redundant').set(key, cache_data)
+                        get_cache('redundant').delete('LOCKED_'+key)
+                    except Exception, ex:
+                        logger.info(ex)
+
+            except Exception, ex:
+                logger.warning(traceback.format_exc(50))
+        return 'refresh queued'
+
+class CacheSettingsRefreshHandler(AnonymousBaseHandler):
+    def read(self, request, group_id = None):
+        group = Group.objects.get(id = group_id)
+        site = Site.objects.get(group = group)
+        settings_dict = getSettingsDict(group)
+        try:
+            cache.set('group_settings_'+ str(site.domain), settings_dict)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        try:
+            get_cache('redundant').set('group_settings_'+ str(site.domain), settings_dict)
+        except Exception, e:
+            logger.warning(traceback.format_exc(50))
+        return 'refresh queued'
 
 
 class SocialUserHandler(AnonymousBaseHandler):
