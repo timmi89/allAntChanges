@@ -3,14 +3,15 @@ var noConflict;
 var loadedRangy;
 var callbacks = [];
 
-// Notifies the rangy provider that we're about to load the Rangy library.
+// Capture any global instance of rangy which already exists before we load our own.
 function aboutToLoad() {
     noConflict = window.rangy;
 }
 
-// Notifies the rangy provider that we've loaded the Rangy library.
+// Restore the global instance of rangy (if any) and pass out our version to our callbacks
 function loaded() {
     loadedRangy = rangy;
+    loadedRangy.init();
     window.rangy = noConflict;
     notifyCallbacks();
 }
