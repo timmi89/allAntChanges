@@ -69,30 +69,31 @@ function scanForText($section, pageData, groupSettings) {
     var $textElements = $section.find(groupSettings.textSelector());
     // TODO: only select "leaf" elements
     $textElements.each(function() {
-        var $element = $(this);
+        var $textElement = $(this);
         // TODO position correctly
         // TODO hash and add hash data to indicator
-        var hash = Hash.hashText($element);
-        var element = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
+        var hash = Hash.hashText($textElement);
+        var $indicatorElement = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
-        var defaultReactions = groupSettings.defaultReactions($element);
+        var defaultReactions = groupSettings.defaultReactions($textElement);
         var indicator = IndicatorWidget.create({
-            element: element,
+            element: $indicatorElement,
             containerData: containerData,
-            containerElement: $element,
+            containerElement: $textElement,
             defaultReactions: defaultReactions,
             pageData: pageData,
             groupSettings: groupSettings}
         );
-        $element.append(element); // TODO is this configurable ala insertContent(...)?
+        $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
 
         TextReactions.createReactableText({
             containerData: containerData,
-            containerElement: $element,
+            containerElement: $textElement,
             defaultReactions: defaultReactions,
             pageData: pageData,
-            groupSettings: groupSettings
+            groupSettings: groupSettings,
+            excludeNode: $indicatorElement.get(0)
         });
     });
 }

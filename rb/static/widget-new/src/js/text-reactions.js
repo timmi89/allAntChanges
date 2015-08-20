@@ -7,6 +7,7 @@ var ReactionsWidget = require('./reactions-widget');
 function createReactableText(options) {
     // TODO: impose an upper limit on the length of text that can be reacted to? (applies to the indicator-widget too)
     var $containerElement = options.containerElement;
+    var excludeNode = options.excludeNode;
     var reactionsWidgetOptions = {
         reactionsData: [], // Always open with the default reactions
         containerData: options.containerData,
@@ -18,15 +19,15 @@ function createReactableText(options) {
 
     $containerElement.on('mouseup', function(event) {
         var node = $containerElement.get(0);
-        var point = Range.getSelectionEndPoint(node, event);
+        var point = Range.getSelectionEndPoint(node, event, excludeNode);
         if (point) {
             var coordinates = { top: point.y, left: point.x };
-            PopupWidget.show(coordinates, grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions));
+            PopupWidget.show(coordinates, grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode));
         }
     });
 }
 
-function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions) {
+function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode) {
     return function() {
         Range.grabSelection(node, function(text, location) {
             // TODO: open the reaction widget showing the default reactions
@@ -35,7 +36,7 @@ function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions) {
             var reactionsWidget = ReactionsWidget.create(reactionsWidgetOptions);
             // TODO: don't leak. need to either clean up the reactions widgets that we create or reuse.
             reactionsWidget.open(coordinates);
-        });
+        }, excludeNode);
     }
 }
 

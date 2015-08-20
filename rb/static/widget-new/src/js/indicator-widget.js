@@ -35,6 +35,10 @@ function createIndicatorWidget(options) {
     ractive.on('complete', function() {
         var $rootElement = $(rootElement(ractive));
         $rootElement.on('mouseenter.antenna', function(event) {
+            if (event.buttons !== 0) {
+                // Don't react if the user is dragging or selecting text.
+                return;
+            }
             if (containerData.reactions.length > 0) {
                 openReactionsWindow(reactionWidgetOptions, ractive);
             } else {

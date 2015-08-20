@@ -14,11 +14,11 @@ function getClassApplier() {
 // Returns an adjusted end point for the selection within the given node, as triggered by the given mouse up event.
 // The returned point (x, y) takes into account the location of the mouse up event as well as the direction of the
 // selection (forward/back).
-function getSelectionEndPoint(node, event) {
+function getSelectionEndPoint(node, event, excludeNode) {
     if (rangy) {
         // TODO: Consider using the element created with the 'classifier' rather than the mouse location
         var selection = rangy.getSelection();
-        if (!selection.isCollapsed && selection.rangeCount === 1) {
+        if (isValidSelection(selection, node, excludeNode)) {
             return {
                 x: event.pageX - ( selection.isBackwards() ? -5 : 5),
                 y: event.pageY - 8 // TODO: exact coords
@@ -30,18 +30,25 @@ function getSelectionEndPoint(node, event) {
 
 // Attempts to get a range from the current selection. This expands the
 // selected region to include word boundaries.
-function grabSelection(node, callback) {
+function grabSelection(node, callback, excludeNode) {
     if (rangy) {
         // TODO: make sure the selection is within the given node
         var selection = rangy.getSelection();
-        if (!selection.isCollapsed && selection.rangeCount === 1) {
-            selection.expand('word');
+        if (isValidSelection(selection, node, excludeNode)) {
+            selection.expand('word', { trim: true });
             var location = rangy.serializeSelection(selection, true, node);
             var text = selection.toString();
             highlightSelection(selection); // Highlighting deselects the text, so do this last.
             callback(text, location);
         }
     }
+}
+
+function isValidSelection(selection, node, excludeNode) {
+    return !selection.isCollapsed &&  // Non-empty selection
+        selection.rangeCount === 1 && // Single selection
+        (!excludeNode || !selection.containsNode(excludeNode, true)) && // Selection doesn't contain anything we've said we don't want (e.g. the indicator)
+        node.contains(selection.getRangeAt(0).commonAncestorContainer); // Selection is contained entirely within the node
 }
 
 function grabNode(node, callback) {
