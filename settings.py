@@ -191,7 +191,7 @@ else:
         'PASSWORD': 'r34drsl4v3',
         #'HOST':     '192.168.142.147',
         'HOST':     '10.240.97.167',
-        'PORT':     '3306',
+        'PORT':     '4040',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
