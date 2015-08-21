@@ -41,7 +41,7 @@ function postNewReaction(reactionData, containerData, pageData, contentLocation,
             }
         };
         if (reactionData.id) {
-            data.tag.id = reactionData.id;
+            data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
         $.getJSONP(URLs.createReactionUrl(), data, success, error);
         //var response = { // TODO: just capturing the api format...

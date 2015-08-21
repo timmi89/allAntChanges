@@ -68,8 +68,7 @@ function sizeToFit(node) {
     var $rootElement = $element.closest('.antenna-reactions-widget');
     if ($rootElement.length > 0) {
         $rootElement.css({display: 'block', left: '100%'});
-        var $parent = $element.closest('.antenna-reaction-box');
-        var ratio = $parent.outerWidth() / node.scrollWidth;
+        var ratio = node.clientWidth / node.scrollWidth;
         if (ratio < 1.0) { // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
             var text = node.innerHTML;
             var mid = Math.ceil(text.length / 2); // Look for the closest space to the middle, weighted slightly (Math.ceil) toward a space in the second half.
@@ -78,7 +77,7 @@ function sizeToFit(node) {
             var splitIndex = Math.abs(secondHalfIndex - mid) < Math.abs(mid - firstHalfIndex) ? secondHalfIndex : firstHalfIndex;
             if (splitIndex > 1) {
                 node.innerHTML = text.slice(0, splitIndex) + '<br>' + text.slice(splitIndex);
-                ratio = $parent.outerWidth() / node.scrollWidth;
+                ratio = node.clientWidth / node.scrollWidth;
             }
             if (ratio < 1.0) {
                 $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * ratio) - 1));
