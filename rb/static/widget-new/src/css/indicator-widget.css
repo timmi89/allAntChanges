@@ -31,9 +31,14 @@
 
 .antenna-reaction-total {
     /* TODO: the layout of the text is not right */
+    visibility: hidden;
     font-size: 11px;
     font-weight: 700;
     color: #888888;
     line-height: 16px;
     padding: 0 8px 0 3px;
+}
+
+.antenna-indicator-widget.active .antenna-reaction-total {
+    visibility: visible;
 }
