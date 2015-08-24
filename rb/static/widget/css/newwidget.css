@@ -1696,7 +1696,7 @@ div.ant div.ant_body.ant_tags_list .ant_tag_body{
      -ms-word-break: break-all;
          word-break: break-all;
 
-          Non standard for webkit 
+          /*Non standard for webkit */
          word-break: break-word;
 
     -webkit-hyphens: auto;
@@ -2689,7 +2689,8 @@ div.ant.w111 div.ant_footer .ant_box .ant_custom_tag .ant_custom_tag_submit {
 div#ant_loginPanel {
     z-index: 12101;
     opacity:1;
-    width:400px;
+    width:280px;
+    height: 226px !important;
  /*   left: 50% !important;
     margin-left: -240px !important;
     top: 50% !important;

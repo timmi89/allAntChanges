@@ -7210,7 +7210,8 @@ form textarea.materialize-textarea {
         padding-right: 10px;
         position: relative; }
         .navbar-fixed nav.global ul#user-desktop li.user {
-          padding: 0; }
+          padding: 0;
+          min-width: 50px; }
           .navbar-fixed nav.global ul#user-desktop li.user img {
             width: 25px;
             top: 9px;
