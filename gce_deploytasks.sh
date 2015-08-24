@@ -8,8 +8,8 @@ CACHES="cache-1 cache-2"
 #BASIC='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin google;'
 #FULL='source .profile; ssh-add .ssh/id_rsa_git; cd antenna; git pull origin google; ./manage.py collectstatic;./manage.py migrate rb; ./manage.py migrate chronos; ./manage.py migrate analytics;'
 
-#SUPER='supervisorctl restart antenna; cp /home/broadcaster/antenna/config/antenna_nginx.conf /etc/nginx/conf.d/ ; service nginx restart'
-SUPER='supervisorctl restart antenna; service nginx restart'
+SUPER='supervisorctl restart antenna; cp /home/broadcaster/antenna/config/antenna_nginx.conf /etc/nginx/conf.d/ ; service nginx restart'
+#SUPER='supervisorctl restart antenna; service nginx restart'
 NGINX='service nginx restart'
 DBRESTART='service mysql restart'
 
