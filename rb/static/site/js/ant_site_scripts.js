@@ -1,5 +1,5 @@
 window.ANT_offline = (window.location.href.indexOf('local.antenna.is') != -1 ) ? true:false;
-window.ANT_baseUrl = ( ANT_offline ) ? "http://local.antenna.is:8081":"http://www.antenna.is";
+window.ANT_baseUrl = ( ANT_offline ) ? "http://local.antenna.is:8081":"https://www.antenna.is";
 window.ANT_staticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/";
 window.ANT_widgetCssStaticUrl = ( ANT_offline ) ? "http://local.antenna.is:8081/static/":"http://s3.amazonaws.com/readrboard/";
 
