@@ -41,14 +41,14 @@
     <link rel="stylesheet" href="/static/css/antenna-font/antenna-font.css">
 
 
-	<style type="text/css">
-    	body	{ color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; background:#fff; }
-    	img		{ border:0; }
-    	ul		{ padding:0;margin:0; list-style-type:none;}
-    	li		{ padding:0 0 0 16px;margin:0;background:url(/static/widget/images/checkmark.png) left top no-repeat; }
+    <style type="text/css">
+        body    { color: #666666; font-family: Arial; font-size: 12px; padding: 5px 0 0 0; margin:0 8px; background:#fff; }
+        img     { border:0; }
+        ul      { padding:0;margin:0; list-style-type:none;}
+        li      { padding:0 0 0 16px;margin:0;background:url(/static/widget/images/checkmark.png) left top no-repeat; }
         .login-buttons      {margin-top: 5px;}
         #fb-login-button    {margin-top: 3px;}
-        #login-buttons      {width:345px; margin:7px auto 0;}
+        #login-buttons      {margin:7px auto 0;text-align: center;}
         .rbCreateAccount{
             padding: 3px 0 10px 0;
             text-align: center;
@@ -56,14 +56,37 @@
             font-size:12px;
             font-style:italic;
         }
-        .prviacyBlurb{
+        .privacyBlurb{
             margin-top: 10px;
+        }
+
+        .loginButton {
+            display:block;
+            float:none;
+            margin:0 0 10px 0;
+        }
+
+        .or hr { 
+            border: 0;
+            border-top: 1px solid #ccc;
+        }
+        .or {
+            text-align: center;
+        }
+        .or span {
+            text-transform: uppercase;
+            display: inline-block;
+            top: -16px;
+            margin: 0;
+            position: relative;
+            background-color: #fff;
+            padding: 2px 5px;
         }
 
         .ant-antenna-text  { display:inline-block; height: 20px; overflow: hidden; margin-bottom: -3px; line-height: 1rem; font-size: 4rem;}
         .ant-antenna-text:before  { margin-top: -20px; display: inline-block; }
 
-	</style>
+    </style>
    
     <script type="text/javascript">
         $(function(){
@@ -95,7 +118,7 @@
  -->
    </head>
    <body>
-   	      
+          
         <div id="fb-root"></div>
 
         <script>
@@ -128,26 +151,27 @@
 
 
 
-   	<div id="fb-logged-out">
-	   	<strong id="groupname"></strong> uses <strong style="color:#008be4;"><a href="http://www.antenna.is/" target="_blank">Antenna</a></strong> so you can react to content easily and safely.
-	   	<br><br>
-	   	To keep participating, just log in:
-		<div style="overflow:auto;" id="login-buttons">
-			<div class="loginButton"  style="float:left;padding-right:9px;border-right:1px solid #ccc;">
-				<div id="fb-login-button">
-					<a href="javascript:void(0);" onclick="ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
-				</div>
-			</div>
-			<div class="loginButton" style="float:left;padding-left:6px;">
-				<a style="text-decoration:none;color:#8fb3f2;;" href="javascript:void(0);" onclick="ANTAuth.doAntLogin();"><span class="ant-antenna-logo"></span> Login to <span class="ant-antenna-text"></span></a>
+    <div id="fb-logged-out">
+        <strong id="groupname"></strong> uses <strong style="color:#008be4;"><a href="http://www.antenna.is/" target="_blank">Antenna</a></strong> so you can react to content easily and safely.
+        <br><br>
+        To keep participating, just log in:
+        <div style="overflow:auto;" id="login-buttons">
+            <div class="loginButton"  style="">
+                <div id="fb-login-button">
+                    <a href="javascript:void(0);" onclick="ANTAuth.doFBLogin();"><img src="/static/widget/images/fb-login_to_readrboard.png" /></a>
+                </div>
+            </div>
+            <div class="or"><hr/><span>or</span></div>
+            <div class="loginButton" style="">
+                <a style="text-decoration:none;color:#8fb3f2;;" href="javascript:void(0);" onclick="ANTAuth.doAntLogin();"><span class="ant-antenna-logo"></span> Login to <span class="ant-antenna-text"></span></a>
             </div>
             <!-- 
             <div class="rbCreateAccount" style="">
                 <a class="alternateAction" href="javascript:void(0);" onclick="ANTAuth.openAntCreateNewAccountWindow();" style="">Or create a new account</a>
-			</div> -->
+            </div> -->
 
-		</div>
-        <div class="prviacyBlurb">
+        </div>
+        <div class="privacyBlurb">
             <strong><span style="color:#008be4;">Antenna</span> values your privacy.</strong>  <a href="http://www.antenna.is/faq/" target="_blank">Learn more</a>.
             <!--
             <ul>
@@ -157,17 +181,17 @@
             </ul>
             -->
         </div>
-	</div>
-	<div id="fb-logged-in" style="display:none;">
-		<div><strong>Welcome to Antenna!</strong></div>
-		<a href="javascript:void(0);" onclick="ANTAuth.logout();">Log out of Antenna</a>
-	</div>
-	<div id="might-need-to-click-here" style="display:none;">
-		<div>You might need to <strong><a href="javascript:void(0);" onclick="ANTAuth.notifyParent({}, 'getUserLoginState');">click here</a></strong> once you've logged in.</div>
-	</div>
-	<!-- <p>
-		<a href="javascript:void(0);" onclick="ANTAuth.tempUser();">Create Temp User</a>
-	</p> -->
+    </div>
+    <div id="fb-logged-in" style="display:none;">
+        <div><strong>Welcome to Antenna!</strong></div>
+        <a href="javascript:void(0);" onclick="ANTAuth.logout();">Log out of Antenna</a>
+    </div>
+    <div id="might-need-to-click-here" style="display:none;">
+        <div>You might need to <strong><a href="javascript:void(0);" onclick="ANTAuth.notifyParent({}, 'getUserLoginState');">click here</a></strong> once you've logged in.</div>
+    </div>
+    <!-- <p>
+        <a href="javascript:void(0);" onclick="ANTAuth.tempUser();">Create Temp User</a>
+    </p> -->
 
     <script type="text/javascript">
         //don't depend on Parse
