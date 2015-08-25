@@ -4288,7 +4288,7 @@ function antenna($A){
 
                                 urlsArr.push(url);
                                 if (num_posts == 1) {
-                                	page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                                    page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
                                 }
                                 
                                 thisPage = {
