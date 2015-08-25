@@ -189,9 +189,10 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        #'HOST':     '192.168.142.147',
-        'HOST':     '10.240.97.167',
-        'PORT':     '4040',
+        'HOST':     '192.168.142.147',
+        'PORT':     '3306',
+        #'HOST':     '10.240.97.167',
+        #'PORT':     '4040',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
             "init_command": "SET storage_engine=INNODB",
@@ -202,8 +203,8 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        #'HOST':     '192.168.171.12',
-        'HOST':     '10.240.99.122',
+        'HOST':     '192.168.171.12',
+        #'HOST':     '10.240.99.122',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
@@ -215,8 +216,8 @@ else:
         'NAME':     'readrboard',
         'USER':     'antenna-array',
         'PASSWORD': 'r34drsl4v3',
-        #'HOST':     '192.168.178.62',
-        'HOST':     '10.240.245.89',
+        'HOST':     '192.168.178.62',
+        #'HOST':     '10.240.245.89',
         'PORT':     '3306',
         'CONN_MAX_AGE':  60,
         'OPTIONS': {
@@ -229,8 +230,8 @@ else:
     CACHES = {
         'default': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            #'LOCATION': ['192.168.182.48:11211'],
-            'LOCATION': ['10.240.9.228:11211'],
+            'LOCATION': ['192.168.182.48:11211'],
+            #'LOCATION': ['10.240.9.228:11211'],
             #'LOCATION': ['192.168.182.177:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
@@ -242,8 +243,8 @@ else:
         },
         'redundant': {
             'BACKEND': 'memcachepool.cache.UMemcacheCache',
-            #'LOCATION': ['192.168.182.177:11211'],
-            'LOCATION': ['10.240.232.254:11211'],
+            'LOCATION': ['192.168.182.177:11211'],
+            #'LOCATION': ['10.240.232.254:11211'],
             'TIMEOUT':86400,
             'OPTIONS': {
                 'MAX_POOL_SIZE': 100,
@@ -255,8 +256,8 @@ else:
     }
     
     #BROKER_URL = "amqp://broadcast:51gn4l5@192.168.133.106:5672/antenna_broker"
-    BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
-    #BROKER_URL = "amqp://broadcast:51gn4l5@192.168.183.130:5672/antenna_broker"
+    #BROKER_URL = "amqp://broadcast:51gn4l5@10.240.97.167:5672/antenna_broker"
+    BROKER_URL = "amqp://broadcast:51gn4l5@192.168.183.130:5672/antenna_broker"
       
 
 CELERY_ACCEPT_CONTENT = ['json']
