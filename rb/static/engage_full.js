@@ -162,7 +162,7 @@ function antenna($A){
                 active_sections: "body",
                 anno_whitelist: "body p",
                 active_sections_with_anno_whitelist:"",
-                media_selector: "embed, video, object, iframe",
+                media_selector: "embed, video, iframe",
                 comment_length: 500,
                 /*this is basically not used right now*/
                 // initial_pin_limit: 300,
@@ -171,7 +171,7 @@ function antenna($A){
                 custom_css: "",
                 // call_to_action: ANT.t('main_cta'),
                 //todo: temp inline_indicator defaults to make them show up on all media - remove this later.
-                inline_selector: 'img, embed, video, object, iframe',
+                inline_selector: 'img, embed, video, iframe',
                 paragraph_helper: true,
                 media_url_ignore_query: true,
                 summary_widget_method: 'after',
@@ -2856,7 +2856,8 @@ function antenna($A){
             },
             mobileHelperToggle: function() {
                 // ANT.util.mobileHelperToggle
-                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], iframe[ant-node], img[ant-node]').each( function() {
+                // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node]').each( function() {
 
                     var $this = $(this),
                         hash = $this.data('hash');
@@ -3357,6 +3358,9 @@ function antenna($A){
             activeAB: function() {
                 //ANT.util.activeAB
 
+                // Disabling A/B testing  :)
+                return true;
+
                 var isActive = true;
                 var ant_ab = JSON.parse( localStorage.getItem('ant_ab') );  // ab test candidate.  true = sees Antenna
 
@@ -3831,7 +3835,7 @@ function antenna($A){
                         parentUrl = window.location.href,
                         parentHost = window.location.protocol + "//" + window.location.host,
                         h1_text = ( args && args.response && args.response.message.indexOf('Temporary user interaction') != -1 ) ? "Log In to Continue Reacting":"Log In to Antenna",
-                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="400" height="140" frameborder="0" style="overflow:hidden; width:400px !important;" />' );
+                        $loginIframe = $('<iframe id="ant-xdm-login" src="' + iframeUrl + '?parentUrl=' + parentUrl + '&parentHost=' + parentHost + '&group_id='+ANT.group.id+'&group_name='+ANT.group.name+'" width="280" height="200" frameborder="0" style="overflow:hidden; width:280px !important;height:200px;" />' );
                         
                     if ( args && args.response && args.response.message.indexOf('organic') != -1 ) {
                         h1_text = "Signing in is required for custom reactions";
@@ -4284,7 +4288,7 @@ function antenna($A){
 
                                 urlsArr.push(url);
                                 if (num_posts == 1) {
-                                	page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
+                                    page_image = (ANT.group.image_selector && ANT.group.image_attribute) ? $("html").find(ANT.group.image_selector).first().attr( ANT.group.image_attribute ) : '';
                                 }
                                 
                                 thisPage = {
@@ -4444,7 +4448,8 @@ function antenna($A){
 
                 // init media object on load.
                 // this is new, but we want the experience for images to be faster.
-                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
+                // $(ANT.group.active_sections).find('embed[ant-node], video[ant-node], object[ant-node], iframe[ant-node], img[ant-node],'+ANT.group.anno_whitelist).each( function() {
                     // hash not present and that's the problem.
                     // why does listing article FIRST cause this break?
                     var hash = $(this).attr('ant-hash');
@@ -4481,7 +4486,8 @@ function antenna($A){
                 }else if ( ANT.util.activeAB() )  {
 
                     $(ANT.group.active_sections) // imagemouseover imghover imagehover imgmouseenter
-                        .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
+                        .on( 'mouseenter.ant', 'embed, video, iframe, img', function(){
+                        // .on( 'mouseenter.ant', 'embed, video, object, iframe, img', function(){
                             ANT.actions.containers.media.disengageAll();
 
                             var $this = $(this);
@@ -4492,7 +4498,8 @@ function antenna($A){
                             
                             ANT.actions.mediaNodeInit($this);
                         })
-                        .on( 'mouseleave.ant', 'embed, video, object, iframe, img', function(event){
+                        .on( 'mouseleave.ant', 'embed, video, iframe, img', function(event){
+                        // .on( 'mouseleave.ant', 'embed, video, object, iframe, img', function(event){
                             var $this = $(this),
                                 hash = $this.data('hash');
 
@@ -4970,12 +4977,14 @@ function antenna($A){
                         kind: 'media',
                         $group: null,
                         whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="media"]'; },
-                        filterParam: ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
+                        filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' iframe',
+                        // filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var $this = $(this);
 
-                            var body = (typeof this.src != 'undefined') ? this.src : 
-                                       (typeof this.data != 'undefined') ? this.data : $this.attr('ant-item-content');
+                            var body = ($this.hasAttr('ant-item-content')) ? $this.attr('ant-item-content') :
+                                       (typeof this.src != 'undefined') ? this.src : 
+                                       (typeof this.data != 'undefined') ? this.data : '';
 
                             if (body.indexOf('/') === 0){
                                 body = window.location.origin + body;
@@ -4984,10 +4993,12 @@ function antenna($A){
                                 body = window.location.origin + window.location.pathname + body;
                             }
 
-                            $this.data({
-                                'body':body,
-                                'isCustom': ($this.hasAttr('ant-item-content')) ? true:false
-                            });
+                            // $this.data({
+                            //     'body':body,
+                            //     'isCustom': ($this.hasAttr('ant-item-content')) ? true:false
+                            // });
+                            $this.data('body', body);
+                            $this.data('isCustom', ($this.hasAttr('ant-item-content')) ? true:false);
                         }
                     },
                     {
@@ -10218,7 +10229,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv22"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv23"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );

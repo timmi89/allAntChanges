@@ -7223,6 +7223,8 @@ form textarea.materialize-textarea {
           .navbar-fixed nav.global ul#user-desktop li.user .user-dropdown-button-desktop {
             padding: 0;
             font-size: 0.8rem; }
+          .navbar-fixed nav.global ul#user-desktop li.user section {
+            padding: 0; }
       .navbar-fixed nav.global ul#user-desktop .color-bar {
         position: absolute;
         bottom: 0;
