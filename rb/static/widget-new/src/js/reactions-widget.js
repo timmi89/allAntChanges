@@ -5,7 +5,6 @@ var Range = require('./utils/range');
 var TransitionUtil = require('./utils/transition-util');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
-var XDMClient = require('./utils/xdm-client');
 
 function createReactionsWidget(options) {
     var reactionsData = options.reactionsData;
@@ -18,6 +17,7 @@ function createReactionsWidget(options) {
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var colors = groupSettings.reactionBackgroundColors();
+    //sortReactionData(reactionsData);
     var reactionsLayoutData = computeLayoutData(reactionsData, colors);
     var defaultLayoutData = computeLayoutData(defaultReactions, colors);
     var ractive = Ractive({
@@ -63,6 +63,12 @@ function arrayAccessor(array) {
     }
 }
 
+function sortReactionData(reactions) {
+    reactions.sort(function(reactionA, reactionB) {
+       return reactionB.count - reactionA.count;
+    });
+}
+
 function sizeToFit(node) {
     var $element = $(node);
     var $rootElement = $element.closest('.antenna-reactions-widget');
@@ -103,56 +109,72 @@ function highlightContent(containerData, pageData, ractive, $containerElement) {
 function newDefaultReaction(containerData, pageData, contentBody, contentLocation, contentType, ractive) {
     return function(event) {
         var defaultReactionData = event.context;
-        // TODO: consider whether this should be abstracted away from the widget
-        // TODO: update the ractive instance to populate with the new reactions data (i.e. just this one reaction)
-        // TODO: propagate the data change to the container indicator widget so it can update its count/visibility
-        containerData.reactions.push(defaultReactionData);
-        // TODO: check back on this as the way to propogate data changes back to the summary
-        pageData.summaryTotal = pageData.summaryTotal + 1;
+        showPage('.antenna-progress-page', ractive, false, true);
+        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error);
 
-        var success = function(response) {
+        function success(response) {
             if (response.existing) {
-                // TODO: Decrement the reaction counts if the response was a dup.
-                //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
-                //reactionData.count = reactionData.count - 1;
-                //pageData.summaryTotal = pageData.summaryTotal - 1;
                 // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
                 ractive.set('response.existing', response.existing);
+            } else {
+                 // TODO: the server should give us back a reaction matching the new API format.
+                 //       we're just faking it out for now; this code is temporary
+                var reaction = {
+                    text: response.interaction.interaction_node.body,
+                    id: response.interaction.interaction_node.id,
+                    count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
+                    // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
+                    content: {
+                        location: contentLocation,
+                        kind: contentType,
+                        body: contentBody,
+                        id: response.content_node.id
+                    }
+                };
+                // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
+                //       to PageData to handle this instead.
+                containerData.reactions.push(reaction);
+                sortReactionData(containerData.reactions);
+                containerData.reactionTotal = containerData.reactionTotal + 1;
+                var summaryReaction = {
+                    text: reaction.text,
+                    id: reaction.id,
+                    count: reaction.count
+                };
+                pageData.summaryReactions.push(summaryReaction);
+                pageData.summaryTotal = pageData.summaryTotal + 1;
             }
             showPage('.antenna-confirm-page', ractive, true);
-        };
-        var error = function(message) {
+        }
+
+        function error(message) {
             // TODO handle any errors that occur posting a reaction
             console.log("error posting new reaction: " + message);
-        };
-        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error);
+        }
     }
 }
 
 function plusOne(containerData, pageData, ractive) {
     return function(event) {
-        // Optimistically update our local data store and the UI. Then send the request to the server.
         var reactionData = event.context;
-        reactionData.count = reactionData.count + 1;
-        // TODO: check back on this as the way to propogate data changes back to the summary
-        pageData.summaryTotal = pageData.summaryTotal + 1;
+        showPage('.antenna-progress-page', ractive, false, true);
+        AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
 
-        var success = function(response) {
-            if (response.existing) {
-                // TODO: Decrement the reaction counts if the response was a dup.
-                //       Simply decrementing the count causes the full/half classes to get re-evaluated and screwed up
-                //reactionData.count = reactionData.count - 1;
-                //pageData.summaryTotal = pageData.summaryTotal - 1;
-                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-                ractive.set('response.existing', response.existing);
+        function success(response) {
+            ractive.set('response.existing', response.existing); // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+            if (!response.existing) {
+                // TODO: we should get back a response with data in the "new format" and update the model from the response
+                reactionData.count = reactionData.count + 1;
+                containerData.reactionTotal = containerData.reactionTotal + 1;
+                pageData.summaryTotal = pageData.summaryTotal + 1;
             }
             showPage('.antenna-confirm-page', ractive, true);
-        };
-        var error = function(message) {
+        }
+
+        function error(message) {
             // TODO handle any errors that occur posting a reaction
             console.log("error posting plus one: " + message);
-        };
-        AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
+        }
     };
 }
 
@@ -220,21 +242,27 @@ function rootElement(ractive) {
 
 var pageZ = 1000; // It's safe for this value to go across instances. We just need it to continuously increase (max value is over 2 billion).
 
-function showPage(pageSelector, ractive, animate) {
+function showPage(pageSelector, ractive, animate, overlay) {
     var $root = $(rootElement(ractive));
     var $page = $root.find(pageSelector);
     $page.css('z-index', pageZ);
     pageZ += 1;
 
     $page.toggleClass('antenna-page-animate', animate);
-    if (animate) {
+
+    if (overlay) {
+        // In the overlay case, size the page to match whatever page is currently showing and then make it active (there will be two 'active' pages)
+        var $current = $root.find('.antenna-page-active');
+        $page.height($current.height());
+        $page.addClass('antenna-page-active');
+    } else if (animate) {
         TransitionUtil.toggleClass($page, 'antenna-page-active', true, function() {
             // After the new page slides into position, move the other pages back out of the viewable area
-            $root.find('.antenna-page:not(.antenna-page-active)').removeClass('antenna-page-active');
+            $root.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
         });
     } else {
-        $root.find('.antenna-page').removeClass('antenna-page-active');
         $page.addClass('antenna-page-active');
+        $root.find('.antenna-page').not(pageSelector).removeClass('antenna-page-active');
     }
     sizeBodyToFit(ractive, $page, animate);
 }

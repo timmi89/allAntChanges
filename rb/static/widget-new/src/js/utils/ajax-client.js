@@ -66,9 +66,9 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
         if (!reactionData.content) {
             // This is a summary reaction. See if we have any container data that we can link to it.
             var containerReactions = containerData.reactions;
-            for (var i = 0; i < containerData.reactions.length; i++) {
-                var containerReaction = containerData.reactions[i];
-                if (containerReaction.id == reactionData.id) {
+            for (var i = 0; i < containerReactions.length; i++) {
+                var containerReaction = containerReactions[i];
+                if (containerReaction.id === reactionData.id) {
                     reactionData.parentID = containerReaction.parentID;
                     reactionData.content = containerReaction.content;
                     break;
@@ -88,13 +88,15 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
             group_id: pageData.groupId,
             container_kind: containerData.type, // 'page', 'text', 'media', 'img'
             content_node_data: {
-                id: reactionData.content.id,
-                location: reactionData.content.location,
-                body: '', // TODO: this is needed to create new content reactions
-                kind: reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
+                body: '', // TODO: do we need this for +1s?
+                kind: containerData.type, // TODO: resolve whether to use the short or long form reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
                 item_type: '' // TODO: looks unused but TagHandler blows up without it
             }
         };
+        if (reactionData.content) {
+            data.content_node_data.id = reactionData.content.id;
+            data.content_node_data.location = reactionData.content.location;
+        }
         $.getJSONP(URLs.createReactionUrl(), data, success, error);
         //var response = { // TODO: just capturing the api format...
         //        existing: json.existing,
@@ -119,6 +121,7 @@ function isDefaultReaction(reaction, defaultReactions) {
     return false;
 }
 
+//noinspection JSUnresolvedVariable
 module.exports = {
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction

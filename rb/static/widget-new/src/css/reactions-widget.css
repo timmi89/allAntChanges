@@ -65,6 +65,11 @@
     height: 200px;
 }
 
+.antenna-progress-page {
+    background: rgba(0,0,0,0.25);
+    overflow-y: hidden;
+}
+
 .antenna-reaction {
     display: inline-block;
     cursor: pointer;
