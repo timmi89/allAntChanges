@@ -13,7 +13,7 @@ function getRootElement(callback) {
         ractive = Ractive({
             el: bucket,
             append: true,
-            template: require('../templates/popup-widget.html')
+            template: require('../templates/popup-widget.hbs.html')
         });
         ractive.on('complete', function() {
             var $element = $(ractive.find('.antenna-popup'));

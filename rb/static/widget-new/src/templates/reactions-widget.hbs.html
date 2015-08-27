@@ -5,8 +5,8 @@
     </div>
     <div class="antenna-body">
         <div class="antenna-reactions-page antenna-page">
-            {{ #reactions:index }}
-                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{ reactionsLayoutClass(index, this.count) }}" style="background-color:{{ reactionsBackgroundColor(index) }}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+            {{#reactions:index}}
+                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}" style="background-color:{{reactionsBackgroundColor(index)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
                     <div class="antenna-reaction-box">
                         <div class="antenna-reaction-text" decorator="sizetofit">
                             {{ this.text }}
@@ -16,28 +16,28 @@
                         </div>
                     </div>
                 </div>
-            {{ /reactions }}
+            {{/reactions:index}}
         </div>
         <div class="antenna-default-page antenna-page">
-            {{ #defaultReactions:index }}
-                <div on-click="newreaction" class="antenna-reaction {{ defaultLayoutClass(index) }}" style="background-color:{{ defaultBackgroundColor(index) }}">
+            {{#defaultReactions:index}}
+                <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}" style="background-color:{{ defaultBackgroundColor(index) }}">
                     <div class="antenna-reaction-box">
                         <div class="antenna-reaction-text" decorator="sizetofit">
                             {{ this.text }}
                         </div>
                     </div>
                 </div>
-            {{ /defaultReactions }}
+            {{/defaultReactions:index}}
         </div>
         <div class="antenna-confirm-page antenna-page">
-            {{ #if response.existing }}
+            {{#if response.existing}}
                 Looks like you still feel the same way.
-            {{ else }}
+            {{else}}
                 New reaction received.
-            {{ /if }}
+            {{/if}}
         </div>
         <div class="antenna-progress-page antenna-page">
-            ...
+
         </div>
     </div>
     <div class="antenna-footer">

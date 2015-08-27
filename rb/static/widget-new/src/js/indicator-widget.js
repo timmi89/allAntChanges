@@ -19,7 +19,7 @@ function createIndicatorWidget(options) {
         data: {
             containerData: containerData
         },
-        template: require('../templates/indicator-widget.html')
+        template: require('../templates/indicator-widget.hbs.html')
     });
 
     var reactionWidgetOptions = {

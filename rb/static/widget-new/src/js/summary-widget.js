@@ -7,7 +7,7 @@ function createSummaryWidget(container, containerData, pageData, defaultReaction
         el: container,
         data: pageData,
         magic: true,
-        template: require('../templates/summary-widget.html')
+        template: require('../templates/summary-widget.hbs.html')
     });
     ractive.on('complete', function() {
         $(rootElement(ractive)).on('mouseenter', function(event) {

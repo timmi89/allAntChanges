@@ -33,7 +33,7 @@ function createReactionsWidget(options) {
             defaultBackgroundColor: arrayAccessor(defaultLayoutData.backgroundColors),
             response: {}
         },
-        template: require('../templates/reactions-widget.html'),
+        template: require('../templates/reactions-widget.hbs.html'),
         decorators: {
             sizetofit: sizeToFit
         },
