@@ -6,18 +6,23 @@ var TransitionUtil = require('./utils/transition-util');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
+function openReactionsWidget(options, elementOrCoords) {
+    var reactionsWidget = createReactionsWidget(options);
+    reactionsWidget.open(elementOrCoords);
+}
+
 function createReactionsWidget(options) {
+    var defaultReactions = options.defaultReactions;
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
     var contentLocation = options.location;
     var contentType = options.contentType || "text"; // TODO
     var contentBody = options.body;
-    var defaultReactions = options.defaultReactions;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var colors = groupSettings.reactionBackgroundColors();
-    //sortReactionData(reactionsData);
+    sortReactionData(reactionsData);
     var reactionsLayoutData = computeLayoutData(reactionsData, colors);
     var defaultLayoutData = computeLayoutData(defaultReactions, colors);
     var ractive = Ractive({
@@ -39,7 +44,7 @@ function createReactionsWidget(options) {
         },
         antenna: {} // create our own property bucket on the instance
     });
-    ractive.on('complete', function() {
+    ractive.on('complete', function() { // TODO we should be able to just make these calls synchronously, without the callback
         var $rootElement = $(rootElement(ractive));
         Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     });
@@ -366,10 +371,12 @@ function setupWindowClose(ractive) {
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         Range.clearHighlights();
+        // TODO: complete the switchover from reusable to disposable widget. tear down the ractive when we close (don't leak)
     }
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    create: createReactionsWidget
+    create: createReactionsWidget,
+    open: openReactionsWidget
 };

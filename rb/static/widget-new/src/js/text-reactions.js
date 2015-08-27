@@ -30,12 +30,9 @@ function createReactableText(options) {
 function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode) {
     return function() {
         Range.grabSelection(node, function(text, location) {
-            // TODO: open the reaction widget showing the default reactions
             reactionsWidgetOptions.location = location;
             reactionsWidgetOptions.body = text;
-            var reactionsWidget = ReactionsWidget.create(reactionsWidgetOptions);
-            // TODO: don't leak. need to either clean up the reactions widgets that we create or reuse.
-            reactionsWidget.open(coordinates);
+            ReactionsWidget.open(reactionsWidgetOptions, coordinates);
         }, excludeNode);
     }
 }

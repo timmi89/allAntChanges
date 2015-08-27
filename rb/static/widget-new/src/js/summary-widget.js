@@ -23,18 +23,14 @@ function rootElement(ractive) {
 }
 
 function openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive) {
-    if (!ractive.reactionsWidget) {
-        ractive.reactionsWidget = ReactionsWidget.create({
-            reactionsData: pageData.summaryReactions,
-            containerData: containerData,
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings
-        });
-    }
-    // TODO: Unclear if it's safe to immediately start making calls on the ractive instance after its instantiated or if
-    //       we need to structure everything with callbacks/promises.
-    ractive.reactionsWidget.open(rootElement(ractive));
+    var reactionsWidgetOptions = {
+        reactionsData: pageData.summaryReactions,
+        containerData: containerData,
+        defaultReactions: defaultReactions,
+        pageData: pageData,
+        groupSettings: groupSettings
+    };
+    ReactionsWidget.open(reactionsWidgetOptions, rootElement(ractive));
 }
 
 //noinspection JSUnresolvedVariable

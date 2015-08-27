@@ -5,8 +5,6 @@ var Range = require('./utils/range');
 
 
 function createIndicatorWidget(options) {
-    // TODO: Adjust visibility based on whether there are reactions on the content (honoring the flag about how many to show at once).
-    // TODO: Show intermediate popup thingy when there are no reactions
     var element = options.element;
     var containerData = options.containerData;
     var $containerElement = options.containerElement;
@@ -33,6 +31,7 @@ function createIndicatorWidget(options) {
 
     var hoverTimeout;
     ractive.on('complete', function() {
+        // TODO: we shouldn't really need to wait for this callback. the widget is initialized synchronously in the constructor
         var $rootElement = $(rootElement(ractive));
         $rootElement.on('mouseenter.antenna', function(event) {
             if (event.buttons !== 0) {
@@ -80,12 +79,8 @@ function rootElement(ractive) {
     return ractive.find('.antenna-indicator-widget');
 }
 
-// TODO refactor this duplicated code from summary-widget.js
 function openReactionsWindow(reactionOptions, ractive) {
-    if (!ractive.reactionsWidget) {
-        ractive.reactionsWidget = ReactionsWidget.create(reactionOptions);
-    }
-    ractive.reactionsWidget.open(rootElement(ractive));
+    ReactionsWidget.open(reactionOptions, rootElement(ractive));
 }
 
 //noinspection JSUnresolvedVariable
