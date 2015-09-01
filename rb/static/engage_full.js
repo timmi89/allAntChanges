@@ -10211,6 +10211,9 @@ function $AFunctions($A){
     
     //alias $ here as well to be the same as our $A version of jQuery;
     var $ = $A;
+
+    // temporarily hide .ant so there's no FOUC
+    $('body').append('<style>.ant-summary, .ant_indicator {display:none;}</style>')
     
     //load CSS
     var css = [];
