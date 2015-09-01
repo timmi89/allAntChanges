@@ -1118,8 +1118,11 @@ Need an account? <a href="http://www.wral.com/rs/page/2173159/?s=registration">R
                   .antenna-video-cta { float:right; padding:0.5rem 1rem; color:#fff; background:#288BD1; margin-right:0.5rem; }
                   .antenna-video-cta [ant-counter-for] { margin-right:0.25rem; }
               </style>
-            <div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="http://www.wral.com/video/2/"></div>
-            <div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="write read" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>
+
+            <!-- 
+                <div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="http://www.wral.com/video/2/"></div>
+                <div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="write read" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>
+                -->
             <p>The most amazing video of the day, in 90 seconds or less.<br><em>7:12 a.m. today</em></p>
           </div>
         <div class="utility-panels">
@@ -2276,6 +2279,16 @@ window.antenna_host = 'wral.com';
 </script>
 
 <script src="/static/engage_full.js" defer type="text/javascript"></script>
+
+<script>
+function loadCta() {
+    var html = '<div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="http://www.wral.com/video/2/"></div>';
+        html += '<div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="write read" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>';
+
+    $('.video-player .video-text').prepend( html );
+    window.ANTENNAIS.actions.reInit();
+}
+</script>
 
 </body>
 </html>

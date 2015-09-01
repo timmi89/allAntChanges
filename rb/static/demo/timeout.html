@@ -1,0 +1,1067 @@
+
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en"  class="ie ie8 "><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html lang="en" class=""><!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={xpid:"UwcHUlNaGwAFXFFUAAQ="};window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o?o:e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({QJf3ax:[function(t,e){function n(t){function e(e,n,a){t&&t(e,n,a),a||(a={});for(var c=s(e),f=c.length,u=i(a,o,r),d=0;f>d;d++)c[d].apply(u,n);return u}function a(t,e){f[t]=s(t).concat(e)}function s(t){return f[t]||[]}function c(){return n(e)}var f={};return{on:a,emit:e,create:c,listeners:s,_events:f}}function r(){return{}}var o="nr@context",i=t("gos");e.exports=n()},{gos:"7eSDFh"}],ee:[function(t,e){e.exports=t("QJf3ax")},{}],3:[function(t){function e(t){try{i.console&&console.log(t)}catch(e){}}var n,r=t("ee"),o=t(1),i={};try{n=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(i.console=!0,-1!==n.indexOf("dev")&&(i.dev=!0),-1!==n.indexOf("nr_dev")&&(i.nrDev=!0))}catch(a){}i.nrDev&&r.on("internal-error",function(t){e(t.stack)}),i.dev&&r.on("fn-err",function(t,n,r){e(r.stack)}),i.dev&&(e("NR AGENT IN DEVELOPMENT MODE"),e("flags: "+o(i,function(t){return t}).join(", ")))},{1:23,ee:"QJf3ax"}],4:[function(t){function e(t,e,n,i,s){try{c?c-=1:r("err",[s||new UncaughtException(t,e,n)])}catch(f){try{r("ierr",[f,(new Date).getTime(),!0])}catch(u){}}return"function"==typeof a?a.apply(this,o(arguments)):!1}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function n(t){r("err",[t,(new Date).getTime()])}var r=t("handle"),o=t(6),i=t("ee"),a=window.onerror,s=!1,c=0;t("loader").features.err=!0,t(5),window.onerror=e;try{throw new Error}catch(f){"stack"in f&&(t(1),t(2),"addEventListener"in window&&t(3),window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)&&t(4),s=!0)}i.on("fn-start",function(){s&&(c+=1)}),i.on("fn-err",function(t,e,r){s&&(this.thrown=!0,n(r))}),i.on("fn-end",function(){s&&!this.thrown&&c>0&&(c-=1)}),i.on("internal-error",function(t){r("ierr",[t,(new Date).getTime(),!0])})},{1:10,2:9,3:7,4:11,5:3,6:24,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],5:[function(t){t("loader").features.ins=!0},{loader:"G9z0Bl"}],6:[function(t){function e(){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var n=t("ee"),r=t("handle"),o=t(1),i=t(2);t("loader").features.stn=!0,t(3),n.on("fn-start",function(t){var e=t[0];e instanceof Event&&(this.bstStart=Date.now())}),n.on("fn-end",function(t,e){var n=t[0];n instanceof Event&&r("bst",[n,e,this.bstStart,Date.now()])}),o.on("fn-start",function(t,e,n){this.bstStart=Date.now(),this.bstType=n}),o.on("fn-end",function(t,e){r("bstTimer",[e,this.bstStart,Date.now(),this.bstType])}),i.on("fn-start",function(){this.bstStart=Date.now()}),i.on("fn-end",function(t,e){r("bstTimer",[e,this.bstStart,Date.now(),"requestAnimationFrame"])}),n.on("pushState-start",function(){this.time=Date.now(),this.startPath=location.pathname+location.hash}),n.on("pushState-end",function(){r("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),"addEventListener"in window.performance&&(window.performance.addEventListener("webkitresourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.webkitClearResourceTimings()},!1),window.performance.addEventListener("resourcetimingbufferfull",function(){r("bstResource",[window.performance.getEntriesByType("resource")]),window.performance.clearResourceTimings()},!1)),document.addEventListener("scroll",e,!1),document.addEventListener("keypress",e,!1),document.addEventListener("click",e,!1)}},{1:10,2:9,3:8,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],7:[function(t,e){function n(t){i.inPlace(t,["addEventListener","removeEventListener"],"-",r)}function r(t){return t[1]}var o=(t(1),t("ee").create()),i=t(2)(o),a=t("gos");if(e.exports=o,n(window),"getPrototypeOf"in Object){for(var s=document;s&&!s.hasOwnProperty("addEventListener");)s=Object.getPrototypeOf(s);s&&n(s);for(var c=XMLHttpRequest.prototype;c&&!c.hasOwnProperty("addEventListener");)c=Object.getPrototypeOf(c);c&&n(c)}else XMLHttpRequest.prototype.hasOwnProperty("addEventListener")&&n(XMLHttpRequest.prototype);o.on("addEventListener-start",function(t){if(t[1]){var e=t[1];"function"==typeof e?this.wrapped=t[1]=a(e,"nr@wrapped",function(){return i(e,"fn-",null,e.name||"anonymous")}):"function"==typeof e.handleEvent&&i.inPlace(e,["handleEvent"],"fn-")}}),o.on("removeEventListener-start",function(t){var e=this.wrapped;e&&(t[1]=e)})},{1:24,2:25,ee:"QJf3ax",gos:"7eSDFh"}],8:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window.history,["pushState"],"-")},{1:25,2:24,ee:"QJf3ax"}],9:[function(t,e){var n=(t(2),t("ee").create()),r=t(1)(n);e.exports=n,r.inPlace(window,["requestAnimationFrame","mozRequestAnimationFrame","webkitRequestAnimationFrame","msRequestAnimationFrame"],"raf-"),n.on("raf-start",function(t){t[0]=r(t[0],"fn-")})},{1:25,2:24,ee:"QJf3ax"}],10:[function(t,e){function n(t,e,n){t[0]=o(t[0],"fn-",null,n)}var r=(t(2),t("ee").create()),o=t(1)(r);e.exports=r,o.inPlace(window,["setTimeout","setInterval","setImmediate"],"setTimer-"),r.on("setTimer-start",n)},{1:25,2:24,ee:"QJf3ax"}],11:[function(t,e){function n(){f.inPlace(this,p,"fn-")}function r(t,e){f.inPlace(e,["onreadystatechange"],"fn-")}function o(t,e){return e}function i(t,e){for(var n in t)e[n]=t[n];return e}var a=t("ee").create(),s=t(1),c=t(2),f=c(a),u=c(s),d=window.XMLHttpRequest,p=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"];e.exports=a,window.XMLHttpRequest=function(t){var e=new d(t);try{a.emit("new-xhr",[],e),u.inPlace(e,["addEventListener","removeEventListener"],"-",o),e.addEventListener("readystatechange",n,!1)}catch(r){try{a.emit("internal-error",[r])}catch(i){}}return e},i(d,XMLHttpRequest),XMLHttpRequest.prototype=d.prototype,f.inPlace(XMLHttpRequest.prototype,["open","send"],"-xhr-",o),a.on("send-xhr-start",r),a.on("open-xhr-start",r)},{1:7,2:25,ee:"QJf3ax"}],12:[function(t){function e(t){var e=this.params,r=this.metrics;if(!this.ended){this.ended=!0;for(var i=0;c>i;i++)t.removeEventListener(s[i],this.listener,!1);if(!e.aborted){if(r.duration=(new Date).getTime()-this.startTime,4===t.readyState){e.status=t.status;var a=t.responseType,f="arraybuffer"===a||"blob"===a||"json"===a?t.response:t.responseText,u=n(f);if(u&&(r.rxSize=u),this.sameOrigin){var d=t.getResponseHeader("X-NewRelic-App-Data");d&&(e.cat=d.split(", ").pop())}}else e.status=0;r.cbTime=this.cbTime,o("xhr",[e,r,this.startTime])}}}function n(t){if("string"==typeof t&&t.length)return t.length;if("object"!=typeof t)return void 0;if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if("undefined"!=typeof FormData&&t instanceof FormData)return void 0;try{return JSON.stringify(t).length}catch(e){return void 0}}function r(t,e){var n=i(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}if(window.XMLHttpRequest&&XMLHttpRequest.prototype&&XMLHttpRequest.prototype.addEventListener&&!/CriOS/.test(navigator.userAgent)){t("loader").features.xhr=!0;var o=t("handle"),i=t(2),a=t("ee"),s=["load","error","abort","timeout"],c=s.length,f=t(1);t(4),t(3),a.on("new-xhr",function(){this.totalCbs=0,this.called=0,this.cbTime=0,this.end=e,this.ended=!1,this.xhrGuids={}}),a.on("open-xhr-start",function(t){this.params={method:t[0]},r(this,t[1]),this.metrics={}}),a.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),a.on("send-xhr-start",function(t,e){var r=this.metrics,o=t[0],i=this;if(r&&o){var f=n(o);f&&(r.txSize=f)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(i.params.aborted=!0),("load"!==t.type||i.called===i.totalCbs&&(i.onloadCalled||"function"!=typeof e.onload))&&i.end(e)}catch(n){try{a.emit("internal-error",[n])}catch(r){}}};for(var u=0;c>u;u++)e.addEventListener(s[u],this.listener,!1)}),a.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),a.on("xhr-load-added",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),a.on("xhr-load-removed",function(t,e){var n=""+f(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),a.on("addEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-added",[t[1],t[2]],e)}),a.on("removeEventListener-end",function(t,e){e instanceof XMLHttpRequest&&"load"===t[0]&&a.emit("xhr-load-removed",[t[1],t[2]],e)}),a.on("fn-start",function(t,e,n){e instanceof XMLHttpRequest&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),a.on("fn-end",function(t,e){this.xhrCbStart&&a.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{1:"XL7HBI",2:13,3:11,4:7,ee:"QJf3ax",handle:"D5DuLP",loader:"G9z0Bl"}],13:[function(t,e){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");return!r.port&&o[1]&&(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname),r.sameOrigin=!e.hostname||e.hostname===document.domain&&e.port===n.port&&e.protocol===n.protocol,r}},{}],14:[function(t,e){function n(t){return function(){r(t,[(new Date).getTime()].concat(i(arguments)))}}var r=t("handle"),o=t(1),i=t(2);"undefined"==typeof window.newrelic&&(newrelic=window.NREUM);var a=["setPageViewName","addPageAction","setCustomAttribute","finished","addToTrace","inlineHit","noticeError"];o(a,function(t,e){window.NREUM[e]=n("api-"+e)}),e.exports=window.NREUM},{1:23,2:24,handle:"D5DuLP"}],"7eSDFh":[function(t,e){function n(t,e,n){if(r.call(t,e))return t[e];var o=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:o,writable:!0,enumerable:!1}),o}catch(i){}return t[e]=o,o}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],gos:[function(t,e){e.exports=t("7eSDFh")},{}],handle:[function(t,e){e.exports=t("D5DuLP")},{}],D5DuLP:[function(t,e){function n(t,e,n){return r.listeners(t).length?r.emit(t,e,n):(o[t]||(o[t]=[]),void o[t].push(e))}var r=t("ee").create(),o={};e.exports=n,n.ee=r,r.q=o},{ee:"QJf3ax"}],id:[function(t,e){e.exports=t("XL7HBI")},{}],XL7HBI:[function(t,e){function n(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:i(t,o,function(){return r++})}var r=1,o="nr@id",i=t("gos");e.exports=n},{gos:"7eSDFh"}],G9z0Bl:[function(t,e){function n(){var t=p.info=NREUM.info,e=f.getElementsByTagName("script")[0];if(t&&t.licenseKey&&t.applicationID&&e){s(d,function(e,n){e in t||(t[e]=n)});var n="https"===u.split(":")[0]||t.sslForHttp;p.proto=n?"https://":"http://",a("mark",["onload",i()]);var r=f.createElement("script");r.src=p.proto+t.agent,e.parentNode.insertBefore(r,e)}}function r(){"complete"===f.readyState&&o()}function o(){a("mark",["domContent",i()])}function i(){return(new Date).getTime()}var a=t("handle"),s=t(1),c=(t(2),window),f=c.document,u=(""+location).split("?")[0],d={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-632.min.js"},p=e.exports={offset:i(),origin:u,features:{}};f.addEventListener?(f.addEventListener("DOMContentLoaded",o,!1),c.addEventListener("load",n,!1)):(f.attachEvent("onreadystatechange",r),c.attachEvent("onload",n)),a("mark",["firstbyte",i()])},{1:23,2:14,handle:"D5DuLP"}],loader:[function(t,e){e.exports=t("G9z0Bl")},{}],23:[function(t,e){function n(t,e){var n=[],o="",i=0;for(o in t)r.call(t,o)&&(n[i]=e(o,t[o]),i+=1);return n}var r=Object.prototype.hasOwnProperty;e.exports=n},{}],24:[function(t,e){function n(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(0>o?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=n},{}],25:[function(t,e){function n(t){return!(t&&"function"==typeof t&&t.apply&&!t[i])}var r=t("ee"),o=t(1),i="nr@wrapper",a=Object.prototype.hasOwnProperty;e.exports=function(t){function e(t,e,r,a){function nrWrapper(){var n,i,s,f;try{i=this,n=o(arguments),s=r&&r(n,i)||{}}catch(d){u([d,"",[n,i,a],s])}c(e+"start",[n,i,a],s);try{return f=t.apply(i,n)}catch(p){throw c(e+"err",[n,i,p],s),p}finally{c(e+"end",[n,i,f],s)}}return n(t)?t:(e||(e=""),nrWrapper[i]=!0,f(t,nrWrapper),nrWrapper)}function s(t,r,o,i){o||(o="");var a,s,c,f="-"===o.charAt(0);for(c=0;c<r.length;c++)s=r[c],a=t[s],n(a)||(t[s]=e(a,f?s+o:o,i,s))}function c(e,n,r){try{t.emit(e,n,r)}catch(o){u([o,e,n,r])}}function f(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){u([r])}for(var o in t)a.call(t,o)&&(e[o]=t[o]);return e}function u(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=r),e.inPlace=s,e.flag=i,e}},{1:24,ee:"QJf3ax"}]},{},["G9z0Bl",4,12,6,5]);</script>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                <meta name="language" content="en" />
+        <meta name="locale" content="en-US" />
+        <meta name="site" content="us-portland" />
+        <meta name="category_mapping" content='{"shopping_and_style_(category)":"category_1","health_and_beauty_(category)":"category_1","restaurants_(category)":"category_2","bars_and_pubs_(category)":"category_2","art_(category)":"category_3","theatre_(category)":"category_4","music_(category)":"category_5","nightlife_(category)":"category_5","clubs_(category)":"category_5","things_to_do_(category)":"category_6","attractions_(category)":"category_6","museums_(category)":"category_6","sport_and_fitness_(category)":"category_6","comedy_(category)":"category_7","film_genres":"category_8","cinemas_(category)":"category_8","film_(category)":"category_8","dance_(category)":"category_9","default":"category_10"}' />
+        <meta name="home_url" content="/portland" />
+                <meta name="description" content="" />
+                <link rel="canonical" href="http://www.timeout.com/portland/restaurants/ristretto-roasters" />        <link rel="icon" type="image/png" href="/favicon.ico" />
+                    <meta name="robots" content="NOODP, NOYDIR" />
+                            
+    <meta property="og:image" content="http://tow-fbcover.s3-website-us-east-1.amazonaws.com/50/aHR0cHM6Ly9mYmNkbi1zcGhvdG9zLWgtYS5ha2FtYWloZC5uZXQvaHBob3Rvcy1hay14ZmExL3QzMS4wLTgvcDQ4MHg0ODAvMTEwNDMzMTZfOTI4NTA0MTc3MTgwNjYwXzE0ODc0MjcyNjc3NjIyNDcwODBfby5qcGc=">
+
+    <meta property="og:title" content="Ristretto Roasters">
+
+
+<meta property="og:url" content="http://www.timeout.com/portland/restaurants/ristretto-roasters" >
+<meta property="og:site_name" content="Time Out Portland">
+<meta property="og:description" content="">
+
+            <meta property="og:latitude" content="45.541282">
+            <meta property="og:longitude" content="-122.696872">
+            <meta property="og:street-address" content="555 Northeast Couch St">
+            <meta property="og:postal-code" content="97232">
+            <meta property="og:region" content="Portland">
+    
+<meta property="og:type" content="article">
+
+    <meta property="article:publisher" content="https://www.facebook.com/pages/Time-Out-Portland/401487306670072?fref=ts">
+
+<meta name="twitter:card" content="summary_large_image">
+
+    <meta name="twitter:title" content="Ristretto Roasters">
+
+    <meta name="twitter:description" content="">
+
+
+    <meta property="twitter:image:src" content="http://tow-fbcover.s3-website-us-east-1.amazonaws.com/50/aHR0cHM6Ly9mYmNkbi1zcGhvdG9zLWgtYS5ha2FtYWloZC5uZXQvaHBob3Rvcy1hay14ZmExL3QzMS4wLTgvcDQ4MHg0ODAvMTEwNDMzMTZfOTI4NTA0MTc3MTgwNjYwXzE0ODc0MjcyNjc3NjIyNDcwODBfby5qcGc=">
+                
+        <title>Ristretto Roasters | Restaurants in NW Portland, Portland</title>
+
+        <!--[if (gt IE 9)|!(IE)]><!-->
+        <link href="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/css/timeout.css" rel="stylesheet">
+        <!--<![endif]-->
+
+        <!--[if lte IE 9]>
+        <link href="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/css/timeout_page_1.css" rel="stylesheet">
+        <link href="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/css/timeout_page_2.css" rel="stylesheet">
+        <![endif]-->
+
+        
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+        <!--[if lte IE 9]>
+            <script src="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/js/lib/matchmedia.js"></script>
+        <![endif]-->
+
+        <!--[if IE 9]>
+            <link href="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/css/crossbrowser/ie9.css" rel="stylesheet" />
+        <![endif]-->
+
+        <!--[if IE 8]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <link href="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/css/crossbrowser/ie8.css" rel="stylesheet" />
+        <![endif]-->
+        <meta data-module="adverts" data-params='{"host":"Time_Out_Portland","network_code":"5185","zone":"restaurants","ad_pubs":{"page":"venue","itemid":"venue-403505","audience":"default"},"taggings":{"venue":["coffee-shops"],"sub_cat":["coffee-shops"]}}'/>        
+        
+                                
+        
+                    <meta data-module="omniture"
+                  data-account="timeoutusportland,timeoutworldwide"
+                  data-site-name="Portland"
+                  data-content='{&quot;pageName&quot;:&quot;Portland : Restaurants : Venue : Ristretto Roasters&quot;,&quot;prop3&quot;:&quot;ristretto roasters&quot;,&quot;prop4&quot;:&quot;content-venue-403505&quot;,&quot;prop5&quot;:&quot;venue&quot;,&quot;prop49&quot;:&quot;Portland&quot;,&quot;prop53&quot;:&quot;en&quot;,&quot;prop54&quot;:&quot;Restaurants&quot;,&quot;prop55&quot;:&quot;Coffee shops&quot;,&quot;prop58&quot;:&quot;standard&quot;}'
+                  data-track-manually="0" />
+            
+        
+        
+
+        
+        <meta data-graffiti="/graffiti/v1" data-graffiti-site="us-portland" />
+        <meta
+            data-module='user'
+            data-params='{
+                "gigya_url": "https://cdns.gigya.com/JS/gigya.js?apikey=3_tQKJmyO5u50bQaNljqWymBh6uezUx-yvPK6kDyblgAUXK7V6Y-_aPghiLfHEUmNr&lang=en",
+                "token_url": "/portland/en_US/user/token",
+                "gigya_conf": {
+                    "lang": "en",
+                    "gigyaPlugins" : {
+                        "rememberSessionExpiration" : -2
+                    }
+                },
+                "welcome_url": "/portland/en_US/user/email/welcome"
+            }'
+        />
+    </head>
+    <body class="    
+    venue
+   category_2   en_US nojs" 
+data-locale="en_US"
+data-routing-site="portland"
+ data-country="us">
+        <script>document.body.className = document.body.className.replace('nojs','')</script>
+
+                    <div id="ad-skin-13999528" class="ad  ad-skin" data-ad='{"type":"skin"}'><noscript><a href="http://ad.doubleclick.net/5185/jump/Time_Out_Portland/restaurants;type=ad-skin;page=venue;itemid=venue-403505;audience=default;tile=6;sz=1x1;ord=1462352050;venue=coffee-shops;sub_cat=coffee-shops;?"><img src="http://ad.doubleclick.net/5185/ad/Time_Out_Portland/restaurants;type=ad-skin;page=venue;itemid=venue-403505;audience=default;tile=6;sz=1x1;ord=1462352050;venue=coffee-shops;sub_cat=coffee-shops;?" /></a></noscript></div>        
+        <div id="main-container">
+
+                                
+<section class="sr-only">
+    <a href="#content" aria-hidden="true">Go to the content</a>
+    <a href="#site-footer" aria-hidden="true">Go to the footer</a>
+</section>
+
+<header id="header" class="header " role="banner">
+    <div class="sticky-placeholder">
+        <div class="sticky fixed">
+        
+
+    
+<div class="masthead" id="masthead">
+    <div class="container">
+        <div class="branding">
+            <div class="logos__desktop">
+
+                                <a class="timeout-logo" href="/portland" title="Time Out Portland">Time Out Portland</a>
+
+                <div class="branding__locale">
+                    <a class="branding__site_name" title="Time Out Portland" href="/portland">Portland</a>
+                                    </div>
+            </div>
+
+            <div class="logos__mobile">
+                <a class="timeout-logo" href="/portland" title="Time Out Portland">Time Out Portland</a>
+                            </div>
+        </div>
+
+        <div class="mobile-menu">
+            <div class="nav-top-item nav-utils__item">
+                
+<nav  class="drawer-menu drawer-menu__dir-left js-mobile-menu" data-module="drawer" data-uid="1066722567">
+    <input type="checkbox" id="drawer-menu__toggle_1066722567" class="drawer-menu__toggle"  data-uid="1066722567">
+
+
+    <div class="drawer-menu__content">
+         <label class="drawer-menu__close_button icon_close" for="drawer-menu__toggle_1066722567">
+            <span>Close</span>
+        </label>
+        <div class="drawer-menu__include">
+            
+            <nav id="mobile-nav" class="navmenu" role="navigation">
+    <ul class="nav">
+                                    <li>
+        <a class="mobile-nav_item" href="/portland/things-to-do"     data-track-click='{"pev2":"things to do menu drawer"}'
+ title="Things to Do" target="_self">
+            Things to Do
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/restaurants"     data-track-click='{"pev2":"restaurants menu drawer"}'
+ title="Restaurants" target="_self">
+            Restaurants
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/bars"     data-track-click='{"pev2":"bars menu drawer"}'
+ title="Bars" target="_self">
+            Bars
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/theater"     data-track-click='{"pev2":"theater menu drawer"}'
+ title="Theater" target="_self">
+            Theater
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/live-music"     data-track-click='{"pev2":"music menu drawer"}'
+ title="Music" target="_self">
+            Music
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/nightlife"     data-track-click='{"pev2":"nightlife menu drawer"}'
+ title="Nightlife" target="_self">
+            Nightlife
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/shopping"     data-track-click='{"pev2":"shopping & style menu drawer"}'
+ title="Shopping &amp; Style" target="_self">
+            Shopping &amp; Style
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/hotels"     data-track-click='{"pev2":"hotels menu drawer"}'
+ title="Hotels" target="_self">
+            Hotels
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/movies"     data-track-click='{"pev2":"movies menu drawer"}'
+ title="Movies" target="_self">
+            Movies
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/attractions"     data-track-click='{"pev2":"attractions menu drawer"}'
+ title="Attractions" target="_self">
+            Attractions
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/museums"     data-track-click='{"pev2":"museums menu drawer"}'
+ title="Museums" target="_self">
+            Museums
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/art"     data-track-click='{"pev2":"art menu drawer"}'
+ title="Art" target="_self">
+            Art
+        </a>
+    </li>
+
+                            <li>
+        <a class="mobile-nav_item" href="/portland/comedy"     data-track-click='{"pev2":"comedy menu drawer"}'
+ title="Comedy" target="_self">
+            Comedy
+        </a>
+    </li>
+
+                    <li>
+            <a href="//www.timeout.com/find-your-time-out/" class="mobile-nav_item mobile-nav__item--city-link">Change city</a>
+        </li>
+                                                    <li>
+                    <a class="mobile-nav_item mobile-nav_item--social" href="https://www.facebook.com/pages/Time-Out-Portland/401487306670072?fref=ts" target="_blank">
+                        Facebook
+                        <i class="social-icon icon_facebook"></i>
+                    </a>
+                </li>
+                                        </ul>
+</nav>
+
+        </div>
+    </div>
+
+    <label class="drawer-menu__label mobile-menu__drawer icon_burger" for="drawer-menu__toggle_1066722567" >
+                </label>
+</nav>            </div>
+        </div>
+
+        <div class="nav-utils">
+            <div class="nav-top-item nav-utils__item">
+                <a href="/portland/search" class="search-trigger"     data-track-click='{"pev2":"search header"}'
+> <span><i>Search</i></span></a>
+            </div>
+
+                            <div class="nav-top-item nav-utils__item social-links social-links--header">
+                    <span class="social-links__title">Follow us</span>
+                    <span class="social-links__link-wrapper">
+                                                                                <a class="social-link icon_facebook" href="https://www.facebook.com/pages/Time-Out-Portland/401487306670072?fref=ts" title="Facebook" target="_blank">
+                                    <span>Facebook</span>
+                                </a>
+                                                                        </span>
+                </div>
+            
+            <div class="nav-top-item nav-utils__item city-link">
+                <a href="//www.timeout.com/find-your-time-out/"> <span><i>Change city</i></span></a>
+            </div>
+
+            <div class="nav-top-item nav-utils__item">
+                    
+<nav  class="drawer-menu drawer-menu__dir-right " data-module="drawer" data-uid="436983498">
+    <input type="checkbox" id="drawer-menu__toggle_436983498" class="drawer-menu__toggle"  data-uid="436983498">
+
+
+    <div class="drawer-menu__content">
+         <label class="drawer-menu__close_button icon_close" for="drawer-menu__toggle_436983498">
+            <span>Close</span>
+        </label>
+        <div class="drawer-menu__include">
+            
+            <div
+    class="user__panel"
+    data-module="gigya"
+    data-action="log-register"
+    data-params='{
+        "screens": {
+            "screenSet":   "gigya-screens",
+            "containerID": "gigya-container",
+            "startScreen": "login-screen"
+        }
+    }'>
+
+    <nav class='gigya-screens__nav'>
+        <div class="gigya-screens__nav--logged-in">
+            <a href="/portland/my" class="icon_cta--nav">
+                <span class="icon_cta__icon icon_home_filled"></span>
+                <span class="icon_cta__text">My Time Out</span>
+            </a>
+
+            <a href="/portland/my#/favourites" class="icon_cta--nav">
+                <span class="icon_cta__icon icon_heart_filled"></span>
+                <span class="icon_cta__text">Things I love</span>
+            </a>
+
+            <a  href="/portland/user/myAccount" class="icon_cta--nav icon_cta--light">
+                <span class="icon_cta__text">
+                    My Account
+                </span>
+            </a>
+            <button
+                data-module='gigya'
+                data-action='logOut'
+                id="user-logout"
+                class="icon_cta--nav icon_cta--light">
+                <span class="icon_cta__text">
+                    Sign out
+                </span>
+            </button>
+        </div>
+        <div class="gigya-screens__nav--log-register">
+            <a  href='#'
+                class="gigya-screens__nav_item gigya-active-button"
+                data-module='gigya'
+                data-action='switchscreen'
+                data-params='login-screen'>
+                <span>Sign in</span>
+            </a>
+            <a  href='#'
+                class="gigya-screens__nav_item"
+                data-module='gigya'
+                data-action='switchscreen'
+                data-params='create_account_screen'>
+                <span>Create account</span>
+            </a>
+        </div>
+    </nav>
+
+
+        <div id="gigya-container"></div>
+
+    <div class="gigya-screen-set" id="gigya-screens" data-on-pending-registration-screen="confirm_account_screen" >
+
+                <div class="gigya-screen" id="login-screen">
+
+    <h3>Sign in</h3>
+
+    
+    <div class="gigya-screens_social_login_prompt">
+        <p class='gigya-screens__info'>With your social account:</p>
+
+        
+<div id="gigya-social-login_1741537983" class="gigya-social-login" style="overflow:hidden;height:40px;min-height:40px;">
+    <param name="width" value="250">
+    <param name="height" value="35">
+    <param name="enabledProviders" value="Facebook,Googleplus,Twitter">
+        <param name="showWhatsThis" value="false">
+    <param name="showTermsLink" value="false">
+    <param name="hideGigyaLink" value="true">
+
+</div>
+
+<div class="gigya-error-msg error-msg alert alert-danger" data-bound-to="gigya-social-login_1741537983"></div>
+    </div>
+
+    
+    <p class="gigya-screens__info">Or with your email:</p>
+
+    <form class="gigya-login-form" method="POST" role='form'>
+
+        <div class="gigya-composite-control gigya-composite-control-textbox">
+            <label for="loginID">Email:</label>
+            <input class="gigya-input-text" tabindex="3" name="loginID" type="text" value="">
+            <span class="gigya-error-msg" data-bound-to="loginID"></span>
+        </div>
+
+        <div class="gigya-composite-control gigya-composite-control-password">
+            <label for="password">Password:</label>
+            <input class="gigya-input-password" tabindex="3" name="password" type="password">
+            <span class="gigya-error-msg" data-bound-to="password"></span>
+        </div>
+
+        <label for="remember">Remember me</label>
+        <input type="checkbox" name="remember" id="remember">
+
+        <div class="gigya-error-msg error-msg alert alert-danger" data-bound-to="gigya-login-form"></div>
+        <a href="/portland/user/forgotPassword" class="gigya-forgotten_password">Forgotten your password?</a>
+        <button class="gigya-input-submit" tabindex="3" type="submit">Sign in</button>
+    </form>
+</div>
+                <div class="gigya-screen" id="create_account_screen">
+
+    <h3>You can create a Time Out account in two ways...</h3>
+
+        <div class="gigya-screens_social_login_prompt">
+        <p class="gigya-screens__info">With a few clicks using your favourite social network</p>
+        
+<div id="gigya-social-login_1246771360" class="gigya-social-login" style="overflow:hidden;height:40px;min-height:40px;">
+    <param name="width" value="250">
+    <param name="height" value="35">
+    <param name="enabledProviders" value="Facebook,Googleplus,Twitter">
+        <param name="showWhatsThis" value="false">
+    <param name="showTermsLink" value="false">
+    <param name="hideGigyaLink" value="true">
+
+</div>
+
+<div class="gigya-error-msg error-msg alert alert-danger" data-bound-to="gigya-social-login_1246771360"></div>
+    </div>
+
+    <p class='gigya-screens__info'>Or by entering your details below</p>
+
+    <form
+        id="create_account_form"
+        class="gigya-register-form"
+        method="POST"
+        role='form'>
+
+            <label for="email">Email</label>
+            <input type="email" name="email" required  />
+            <span class="gigya-error-msg" data-bound-to="email"></span>
+
+            <label for="profile.firstName">First Name</label>
+            <input type="text" name="profile.firstName"/>
+            <span class="gigya-error-msg" data-bound-to="profile.firstName"></span>
+
+            <label for="profile.lastName">Last Name</label>
+            <input type="text" name="profile.lastName"/>
+            <span class="gigya-error-msg" data-bound-to="profile.lastName"></span>
+
+            <label for="password"> Create password</label>
+            <input type="password" name="password"/>
+            <span class="gigya-error-msg" data-bound-to="password"></span>
+
+            <label for="passwordRetype">Repeat new password</label>
+            <input type="password" name="passwordRetype"/>
+            <span class="gigya-error-msg" data-bound-to="passwordRetype"></span>
+
+            <input type="hidden" name="data.hasPassword" value="true" />
+            <input class="hidden" type="text" name="data.displayName" />
+
+            
+<fieldset class='gigya-screens__terms'>
+
+    
+    <div class="checkbox">
+        <input type="checkbox" name="data.terms" id="data.terms">
+
+                    <label class='gigya-screens__terms_label' for="data.terms">I accept Time Out's <a href='/portland/terms-conditions' target='_blank'>terms of use</a>, including opt-in to newsletters.</label>
+        
+        <span class="gigya-error-msg error-msg" data-bound-to="data.terms"></span>
+    </div>
+
+    
+
+    
+</fieldset>
+        <span class="gigya-error-msg" data-bound-to="create_account_form"></span>
+        <button type="submit" class="gigya-input-submit">Create account</button>
+    </form>
+</div>
+                <div class="gigya-screen" id="confirm_account_screen">
+
+    <h3 class='gigya-screens__subtitle'>
+        Welcome,
+        <span
+            data-module="gigyascreens"
+                data-action="confirm_account_screen"
+                data-params="profile.firstName"></span>!
+    </h3>
+
+    <div class="gigya-profile-photo"></div>
+
+    <p class='gigya-screens__info'>
+        You have successfully connected your <span class="gigya-login-provider"></span> account to Time Out. You may sign in with this account in future.
+    </p>
+
+    <p class='gigya-screens__info'>
+        Please confirm your account details
+    </p>
+
+    <form id="confirm_account_form" class="gigya-profile-form" method="POST">
+        <div class='form-group'>
+            <label for="email">Email</label>
+            <input type="email" name="email" class='form-control' required />
+            <span class="gigya-error-msg error-msg" data-bound-to="email"></span>
+            <span class="gigya-error-msg error-msg" data-bound-to="loginID"></span>
+        </div>
+        <div class='form-group'>
+            <label for="email">First Name </label>
+            <input type="text" name="profile.firstName" class='form-control'/>
+            <span class="gigya-error-msg error-msg" data-bound-to="profile.firstName"></span>
+        </div>
+        <div class='form-group'>
+            <label class="" for="email">Last Name</label>
+            <input type="text" name="profile.lastName" class='form-control'/>
+            <span class="gigya-error-msg error-msg" data-bound-to="profile.lastName"></span>
+        </div>
+
+            
+<fieldset class='gigya-screens__terms'>
+
+    
+    <div class="checkbox">
+        <input type="checkbox" name="data.terms" id="data.terms">
+
+                    <label class='gigya-screens__terms_label' for="data.terms">I accept Time Out's <a href='/portland/terms-conditions' target='_blank'>terms of use</a>, including opt-in to newsletters.</label>
+        
+        <span class="gigya-error-msg error-msg" data-bound-to="data.terms"></span>
+    </div>
+
+    
+
+    
+</fieldset>
+
+
+        <span class="gigya-error-msg error-msg" data-bound-to="confirm_account_form"></span>
+        <input class="hidden" type="text" name="data.displayName" />
+        <button type="submit" class="gigya-input-submit">Sign up</button>
+    </form>
+</div>
+    </div>
+
+
+    <div
+    class="error-handler"
+    data-module="error-handler"
+    data-params='{
+            "subscribe": {
+                "user.auth.error.generic" : "We couldn&#039;t log you in! Please try again later."
+            }
+        }'>
+    </div>
+</div>
+        </div>
+    </div>
+
+    <label class="drawer-menu__label " for="drawer-menu__toggle_436983498"     data-track-click='{"pev2":"your time out","eVar59":"D=pev2"}'
+>
+                            <span class="user_greeting user_greeting--none" data-module="user_element">
+    <span class="user_greeting__image">
+        <img />
+    </span>
+
+    <span class="user_greeting__label user_greeting__label--anonymous">
+        <i>Sign in</i>
+    </span>
+
+    <span class="user_greeting__label user_greeting__label--logged_in">
+        <i>Hi, <span class="js-first-name"></span></i>
+    </span>
+</span>                </label>
+</nav>            </div>
+        </div>
+    </div>
+</div>      
+<nav id="primary-nav" class="navbar" role="navigation" data-module="navigation">
+    <div class="container">
+        <ul class="nav nav--hidden">
+                                                                <li class="nav-top-item">
+        <a href="/portland/things-to-do"     data-track-click='{"pev2":"things to do header"}'
+ title="Things to Do" target="_self">Things to Do</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/restaurants"     data-track-click='{"pev2":"restaurants header"}'
+ title="Restaurants" target="_self">Restaurants</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/bars"     data-track-click='{"pev2":"bars header"}'
+ title="Bars" target="_self">Bars</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/theater"     data-track-click='{"pev2":"theater header"}'
+ title="Theater" target="_self">Theater</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/live-music"     data-track-click='{"pev2":"music header"}'
+ title="Music" target="_self">Music</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/nightlife"     data-track-click='{"pev2":"nightlife header"}'
+ title="Nightlife" target="_self">Nightlife</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/shopping"     data-track-click='{"pev2":"shopping & style header"}'
+ title="Shopping &amp; Style" target="_self">Shopping &amp; Style</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/hotels"     data-track-click='{"pev2":"hotels header"}'
+ title="Hotels" target="_self">Hotels</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/movies"     data-track-click='{"pev2":"movies header"}'
+ title="Movies" target="_self">Movies</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/attractions"     data-track-click='{"pev2":"attractions header"}'
+ title="Attractions" target="_self">Attractions</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/museums"     data-track-click='{"pev2":"museums header"}'
+ title="Museums" target="_self">Museums</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/art"     data-track-click='{"pev2":"art header"}'
+ title="Art" target="_self">Art</a>
+    </li>
+
+                                        <li class="nav-top-item">
+        <a href="/portland/comedy"     data-track-click='{"pev2":"comedy header"}'
+ title="Comedy" target="_self">Comedy</a>
+    </li>
+
+                                        <li class="nav-top-item more-submenu has-submenu hidden">
+                <a href="#"> More </a>
+                <ul class="submenu"></ul>
+            </li>
+            <li class="nav-top-item search-trigger">
+                <a href="/portland/search"     data-track-click='{"pev2":"search header"}'
+> Search</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+        </div>
+    </div>
+            <div id="ad-header-221924082" class="ad  ad-header" data-ad='{"type":"header"}'><noscript><a href="http://ad.doubleclick.net/5185/jump/Time_Out_Portland/restaurants;type=ad-header;page=venue;itemid=venue-403505;audience=default;tile=1;sz=728x90,900x250,940x250,970x250,970x415,970x90;ord=893172615;venue=coffee-shops;sub_cat=coffee-shops;?"><img src="http://ad.doubleclick.net/5185/ad/Time_Out_Portland/restaurants;type=ad-header;page=venue;itemid=venue-403505;audience=default;tile=1;sz=728x90,900x250,940x250,970x250,970x415,970x90;ord=893172615;venue=coffee-shops;sub_cat=coffee-shops;?" /></a></noscript></div>      <div id="ad-mobile-banner-286581874" class="ad  ad-mobile-banner" data-ad='{"type":"mobilebanner"}'><noscript><a href="http://ad.doubleclick.net/5185/jump/Time_Out_Portland/restaurants;type=ad-mobile-banner;page=venue;itemid=venue-403505;audience=default;tile=4;sz=320,50;ord=1751702261;venue=coffee-shops;sub_cat=coffee-shops;?"><img src="http://ad.doubleclick.net/5185/ad/Time_Out_Portland/restaurants;type=ad-mobile-banner;page=venue;itemid=venue-403505;audience=default;tile=4;sz=320,50;ord=1751702261;venue=coffee-shops;sub_cat=coffee-shops;?" /></a></noscript></div>    </header>            
+            <main id="content" role="main" class="container">
+            
+            <div class="listing_page_title_container">
+    <h1 class="listing_page_title">Ristretto Roasters</h1>
+    </div>    
+            
+<div class="page_meta_controls">
+    <ul class="page_tags">
+                  <li class="page_tag">Restaurants</li>
+                          <li class="page_tag">Coffee shops</li>
+                    </ul>
+
+    
+            <div class="page_meta_controls__cta ">
+                            
+
+<div
+    class="icon_cta icon_cta--comment"
+    data-module="remotes"
+    data-action="lf-reviews">
+
+    <div class="comment_count--callout js-comment_count">
+        <span class="icon_cta__icon_text">0</span>
+    </div>
+
+    <a class="icon_cta__text" href="#lf-reviews">Add review</a>
+</div>
+            
+                                            
+
+
+    
+
+<div class="icon_cta lovr "
+     data-module="lovr"
+     data-params='{&quot;uid&quot;:&quot;Content-Venue-403505&quot;,&quot;count&quot;:0,&quot;name&quot;:&quot;Ristretto Roasters&quot;,&quot;text&quot;:{&quot;success&quot;:&quot;Added to &lt;span class=&#039;notification--highlight&#039;&gt;Things I love&lt;\/span&gt;&quot;,&quot;error&quot;:&quot;Sorry, something went wrong. Please try again later&quot;,&quot;active&quot;:&quot;Loved&quot;}}' >
+
+    <a class="lovr__notification notification"     data-track-click='{"events":["event50"],"pev2":"added to your loved list clicked"}'
+ href="/portland/my#/favourites"></a>
+
+    <span class="lovr__icon icon_cta__icon">
+                    <span class="lovr__count icon_cta__icon_text">0</span>
+            </span>
+
+    <span class="icon_cta__text">Love It</span>
+</div>                    </div>
+    
+            
+<div class="page_sharing_widgets" data-module="social_widget">
+
+        
+        <a class="social_share__button social_share__facebook icon_facebook">
+                <span class="social_share__text">Share</span>
+    </a>
+
+        <a class="social_share__button social_share__twitter icon_twitter" href="//twitter.com/intent/tweet?text=Ristretto%20Roasters%20%7C%20http%3A%2F%2Fwww.timeout.com%2Fportland%2Frestaurants%2Fristretto-roasters" target="_blank">
+        <span class="social_share__text">Tweet</span>
+    </a>
+
+        <a class="social_share__button social_share__google icon_google" href="https://plus.google.com/share?url=http://www.timeout.com/portland/restaurants/ristretto-roasters" data-share="googleplus">
+        <img src="//www.gstatic.com/images/icons/gplus-64.png" alt="Share on Google+"/>
+    </a>
+
+        <span class="social_share__total_shares">
+        <span class="social_share__share_count">0</span>
+        Shares
+    </span>
+
+</div>
+    </div>
+    
+    <section class="main_content" itemscope itemtype="http://schema.org/Product">
+
+        <meta itemprop="name" content="Ristretto Roasters">
+                        <div class="hero">
+
+        
+                                        <figure class="hero__image">
+        <div class="image_wrapper aspect-ratio-720-267">
+            <img src="http://tow-fbcover.s3-website-us-east-1.amazonaws.com/50/aHR0cHM6Ly9mYmNkbi1zcGhvdG9zLWgtYS5ha2FtYWloZC5uZXQvaHBob3Rvcy1hay14ZmExL3QzMS4wLTgvcDQ4MHg0ODAvMTEwNDMzMTZfOTI4NTA0MTc3MTgwNjYwXzE0ODc0MjcyNjc3NjIyNDcwODBfby5qcGc=" alt="Ristretto Roasters" title="Ristretto Roasters" class="" />
+    </div>
+                            </figure>
+
+
+                    
+    
+    
+    </div>
+
+
+        
+        <div class="listing_meta_controls"><div class="listings_flags"><span class="listings_flag icon icon_pin">
+    NW Portland
+</span></div></div>
+            
+        
+    
+    
+    
+    
+    
+    
+    
+    
+<section
+    class="tabs tabs--accordion"
+    data-module="tabs"
+    data-params='{
+        "default_tab_number": 1
+    }'
+    role="region"
+    aria-live="polite">
+
+                <input id="tab__1" class="tab__input js_tab__input" type="radio" name="radio-set" data-tab-input="1" checked="checked" data-tab-type="venue_details"/>
+            <input id="tab__2" class="tab__input js_tab__input" type="radio" name="radio-set" data-tab-input="2"  data-tab-type="user_reviews"/>
+    
+    <div class="tabs__wrapper" role="tablist">
+            <div class="tab__button tab__button--horizontal js-tab__button " data-tab-label="1" role="tab" aria-controls="tab___content_1">
+            <label for="tab__1">
+                                  <h3 class="tab__title">Details</h3>
+
+
+            </label>
+        </div>
+            <div class="tab__button tab__button--horizontal js-tab__button ugc_brand" data-tab-label="2" role="tab" aria-controls="tab___content_2">
+            <label for="tab__2">
+                    <h3 class="tab__title">
+      Users say
+         </h3>
+    
+
+            </label>
+        </div>
+        </div>
+
+                        <div class="tab__button tab__button--vertical js-tab__button " data-tab-label="1" role="tab" aria-controls="tab___content_1">
+            <label for="tab__1">
+                                  <h3 class="tab__title">Details</h3>
+
+
+            </label>
+        </div>
+
+        <div id="tab___content_1" class="tab__panel " data-tab="1" role="tabpanel">
+                    
+<table class="listing_details">
+    <tbody>
+            <tr>
+            <th>Venue name: </th>
+            <td>
+                                    Ristretto Roasters
+                                </td>
+            </tr>
+                        <th>Contact: </th>
+            <td>
+                <div class="lead_buttons clearfix">
+
+                                <a href="http://www.ristrettoroasters.com" target="_blank" class="tight_button tight_button--white"     data-track-click='{"events":["event20"],"pev2":"venue website click"}'
+>
+                    <span class="tight_button__icon icon_share"></span> Visit Website
+                </a>
+                
+                
+                
+                <a href="tel:(503) 288-8667"     data-track-click='{"events":["event30"],"pev2":"venue phone click"}'
+ data-tel="(503) 288-8667" class="tight_button tight_button--red call_button">
+                    <span class="tight_button__icon icon_phone"></span> <span class="lead_buttons__label">Call Venue</span>
+                </a>
+                                </div>
+
+            </td>
+                        <tr>
+                <th>Address: </th>
+                <td>
+                                                            555 Northeast Couch St <br/>
+                                        Portland <br/>
+                    97232 <br/>
+                </td>
+            </tr>
+                            
+                
+        
+                    <tr>
+                <th>Facebook: </th>
+                <td><a href="https://www.facebook.com/167534439944308" target="_blank">https://www.facebook.com/167534439944308</a></td>
+            </tr>
+
+            <!-- <tr>
+                <td></td>
+                <td></td>
+            </tr> -->
+
+                                                                        </tbody>
+</table>
+                        <div class="venue_map__tile map_tile">
+        <div data-module="map" id=GoogleMap_2018843329 data-params='{"lat":45.541282,"lng":-122.696872,"map_id":"GoogleMap_2018843329","google_maps_key":"AIzaSyCFLT_PKii7cJ68YeflK6ds3XhPFslDb_g","title":"Ristretto Roasters"}' data-autoload="false" class="venue_map">
+            <img class="venue_map__image" src="https://maps.googleapis.com/maps/api/staticmap?center=45.541282,-122.696872&zoom=16&size=800x300&sensor=false&markers=45.541282,-122.696872">
+        </div>
+        <span class="icon icon_close close_button"></span>
+    </div>
+    
+        </div>
+                    <div class="tab__button tab__button--vertical js-tab__button " data-tab-label="2" role="tab" aria-controls="tab___content_2">
+            <label for="tab__2">
+                    <h3 class="tab__title">
+      Users say
+         </h3>
+    
+
+            </label>
+        </div>
+
+        <div id="tab___content_2" class="tab__panel " data-tab="2" role="tabpanel">
+            <table style="width:100%;">
+                <tr>
+                    <td width="50%">
+                        <!-- <div ant-item="overall" ant-reactions="Amazing;Overrated;Good thing bad value;Awful">Overall</div> -->
+                        <!-- <div ant-cta-for="overall" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="overall"></span> <span ant-reactions-label-for="overall">Reactions</span></div> -->
+                        <div class="info-author">
+                            <h4 style="margin-right:20px;display:inline-block;color:#f5564c;" ant-item="overall" ant-reactions="Amazing;Overrated;Not bad;Awful;Enjoyable;Blah">Overall</h4>
+                            <div style="display:inline-block;background:#000;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="overall" ant-mode="write read"><span ant-counter-for="overall"></span> Responses</div>
+                        </div>
+                    </td>
+                    <td width="50%">
+                        <div class="info-author">
+                            <h4 style="margin-right:20px;display:inline-block;color:#f5564c;" ant-item="html_poll" ant-reactions="Quietly Creative;Proudly Loud;Elegant;Romantic;Rugrats welcome;Rugrats ONLY;Outdoors">Ambience</h4>
+                            <div style="display:inline-block;background:#000;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="html_poll" ant-mode="write read"><span ant-counter-for="html_poll"></span> Responses</div>
+                        </div>
+                    </td>
+                    <!-- <td width="120"><div ant-item="ambience" ant-reactions="Quietly Creative;Proudly Loud;Elegant;Romantic;Rugrats welcome;Rugrats ONLY;Outdoors">Ambience</div></td> -->
+                    <!-- <td width="220"><div ant-cta-for="ambience" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="ambience"></span> <span ant-reactions-label-for="ambience">Reactions</span></div></td> -->
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <!-- <div ant-item="overall" ant-reactions="Amazing;Overrated;Good thing bad value;Awful">Overall</div> -->
+                        <!-- <div ant-cta-for="overall" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="overall"></span> <span ant-reactions-label-for="overall">Reactions</span></div> -->
+                        <div class="info-author">
+                            <h4 style="margin-right:20px;display:inline-block;color:#f5564c;" ant-item="value" ant-reactions="Fantastic;Low;Mostly worth it;Wait till DVD">Value</h4>
+                            <div style="display:inline-block;background:#000;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="value" ant-mode="write read"><span ant-counter-for="value"></span> Responses</div>
+                        </div>
+                    </td>
+                    <td width="50%">
+                        <div class="info-author">
+                            <h4 style="margin-right:20px;display:inline-block;color:#f5564c;" ant-item="people" ant-reactions="Kind;In a rush;On the go;Moving slow;Everyone;No one">People</h4>
+                            <div style="display:inline-block;background:#000;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="people" ant-mode="write read"><span ant-counter-for="people"></span> Responses</div>
+                        </div>
+                    </td>
+                    <!-- <td width="120"><div ant-item="ambience" ant-reactions="Quietly Creative;Proudly Loud;Elegant;Romantic;Rugrats welcome;Rugrats ONLY;Outdoors">Ambience</div></td> -->
+                    <!-- <td width="220"><div ant-cta-for="ambience" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="ambience"></span> <span ant-reactions-label-for="ambience">Reactions</span></div></td> -->
+                </tr>
+            </table>
+        </div>
+
+        </div>
+    </section>                    
+        
+            
+<div class="page_sharing_widgets" data-module="social_widget">
+
+        
+        <a class="social_share__button social_share__facebook icon_facebook">
+                <span class="social_share__text">Share</span>
+    </a>
+
+        <a class="social_share__button social_share__twitter icon_twitter" href="//twitter.com/intent/tweet?text=Ristretto%20Roasters%20%7C%20Restaurants%20in%20NW%20Portland%2C%20Portland%20%7C%20http%3A%2F%2Fwww.timeout.com%2Fportland%2Frestaurants%2Fristretto-roasters" target="_blank">
+        <span class="social_share__text">Tweet</span>
+    </a>
+
+        <a class="social_share__button social_share__google icon_google" href="https://plus.google.com/share?url=http://www.timeout.com/portland/restaurants/ristretto-roasters" data-share="googleplus">
+        <img src="//www.gstatic.com/images/icons/gplus-64.png" alt="Share on Google+"/>
+    </a>
+
+        <span class="social_share__total_shares">
+        <span class="social_share__share_count">0</span>
+        Shares
+    </span>
+
+</div>
+
+    </section>
+            <aside class="side_content">
+            <div id="ad-mpu-762612821" class="ad  module ad--mpu" data-ad='{"type":"mpu"}'><noscript><a href="http://ad.doubleclick.net/5185/jump/Time_Out_Portland/restaurants;type=ad-mpu;page=venue;itemid=venue-403505;audience=default;tile=2;sz=300x250;ord=976903417;venue=coffee-shops;sub_cat=coffee-shops;?"><img src="http://ad.doubleclick.net/5185/ad/Time_Out_Portland/restaurants;type=ad-mpu;page=venue;itemid=venue-403505;audience=default;tile=2;sz=300x250;ord=976903417;venue=coffee-shops;sub_cat=coffee-shops;?" /></a></noscript></div>                                
+    
+    
+        <div class="promo_list_wrapper">
+                    <h3>Near Ristretto Roasters</h3>
+        
+        <section class="tabs tabs_widget inverted_theme" role="region" aria-live="polite">
+                            <input id="tabs_5361851451" class="tab__input" type="radio" name="radio-set-rhr" data-tab-input="1" checked="checked"/>
+                        
+                                                <ul class="promo_list">
+                                                                                    <li class="promo_list__item">
+                                    <a href="http://www.timeout.com/portland/restaurants/ristretto-roasters-1" title="Ristretto Roasters">
+                                                                                <span class="promo_list__item__title">Ristretto Roasters</span>
+                                    </a>
+                                </li>
+                                                                        </ul>
+                            
+        </section>
+
+    </div>
+            <div id="ad-bottom-mpu-720326285" class="ad  module ad--bottommpu" data-ad='{"type":"bottommpu"}'><noscript><a href="http://ad.doubleclick.net/5185/jump/Time_Out_Portland/restaurants;type=ad-bottom-mpu;page=venue;itemid=venue-403505;audience=default;tile=3;sz=300x250,300x600;ord=1123171600;venue=coffee-shops;sub_cat=coffee-shops;?"><img src="http://ad.doubleclick.net/5185/ad/Time_Out_Portland/restaurants;type=ad-bottom-mpu;page=venue;itemid=venue-403505;audience=default;tile=3;sz=300x250,300x600;ord=1123171600;venue=coffee-shops;sub_cat=coffee-shops;?" /></a></noscript></div>        </aside>
+                </main>
+
+                          
+
+
+<footer class="site-footer">
+    <nav role="navigation" aria-label="Bottom navigation" id="footer-nav" class="site-footer__nav">
+        <div class="container">
+            <a href="javascript:scrollTo(0,0)" class="site-footer__top-link">Top</a>
+            <div class="row">
+                <!-- footer columns as defined in config -->
+                <div class="footer-tab">
+                                                                                        <input type="checkbox" id="footer-tab__toggle_0" class="footer-tab__toggle">
+                                <h4>
+                <label for="footer-tab__toggle_0">
+                    <a  href="http://www.timeout.com/about" title="About us" target="_self">About us</a>
+                </label>
+            </h4>
+                <ul>
+                                    <li><a href="http://www.timeout.com/about/time-out-group/work-for-time-out" title="Work for Time Out" target="_self">Work for Time Out</a></li>
+                                    <li><a href="http://www.timeout.com/newyork/privacy-policy" title="Privacy policy" target="_self">Privacy policy</a></li>
+                                    <li><a href="http://www.timeout.com/newyork/terms-conditions" title="Website terms of use" target="_self">Website terms of use</a></li>
+                    </ul>
+    
+                                                                        </div><div class="footer-tab">
+                                                        <input type="checkbox" id="footer-tab__toggle_1" class="footer-tab__toggle">
+                    <h4>
+                <label for="footer-tab__toggle_1">Time Out products</label>
+            </h4>
+                <ul>
+                                    <li><a href="http://shop.timeout.com/" title="Time Out Shop" target="_self">Time Out Shop</a></li>
+                                    <li><a href="http://shop.timeout.com/" title="Time Out Guides" target="_self">Time Out Guides</a></li>
+                                    <li><a href="http://www.timeout.com/travel" title="Time Out Travel" target="_self">Time Out Travel</a></li>
+                                    <li><a href="http://www.timeout.com/" title="Time Out worldwide" target="_self">Time Out worldwide</a></li>
+                    </ul>
+    
+                                                </div>
+                                    <div class="footer-tab social-links social-links--footer">
+                                                <h4>Follow us</h4>
+                        <span class="social-links__link-wrapper">
+                                                                                                <a class="social-link icon_facebook" href="https://www.facebook.com/pages/Time-Out-Portland/401487306670072?fref=ts" title="Facebook" target="_blank">
+                                        <span>Facebook</span>
+                                    </a>
+                                                                                </span>
+                                                                    </div>
+                            </div>
+        </div>
+    </nav>
+    <div class="site-footer__utilities">
+        <div class="container">
+            <a class="timeout-logo" href="/portland" title="Time Out Portland">Time Out Portland</a>
+
+                                                        
+                            <a class="site-map" href="http://www.timeout.com/portland/sitemap">Site map</a>
+                    </div>
+    </div>
+</footer>            
+        </div>
+
+        <script src="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/js/main.js" data-main="//dist.timeout.com/dist/d1cf5a079457de2948009fb41c0eddb1d16a515d/js/main.js"></script>
+        
+<style>
+/*
+.antenna-summary {
+}
+
+body .l-default-body div.ant.ant-summary {
+  background-color: #fff;
+  box-shadow:none;
+  
+  position: absolute;
+  right: 0;
+  bottom: 0px;
+  margin-bottom: 0;
+}
+
+body .l-default-body div.ant.ant-summary a.ant_reactions_label,
+body .l-default-body div.ant.ant-summary a.ant_reactions_label span,
+body .l-default-body div.ant.ant-summary .ant-antenna-logo {
+  color: #28B2FF;
+}
+
+@media screen and (max-width: 480px) {
+    body .l-default-body div.ant.ant-summary {
+        position: static;
+        margin: 25px 0 0;
+    }
+}
+*/
+</style>
+
+<script>
+window.antenna_host = 'timeout.com';
+window.antenna_extend = {
+        tag_box_bg_colors: '#E1192C;#DE3040;#DC4F5C;#DC6570',
+        tag_box_text_colors:'#fff;#fff;#fff;#fff'
+    };
+</script>
+<script src="/static/engage_full.js" defer type="text/javascript"></script>
+
+<style>
+#antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; left:0; right:0px; position:fixed; background:#fff; transition:bottom 0.5s; margin:0 auto;}
+</style>
+<div id="antenna_test_notice"></div>
+
+</body>
+</html>

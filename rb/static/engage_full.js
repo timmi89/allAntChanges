@@ -4977,7 +4977,7 @@ function antenna($A){
                         kind: 'media',
                         $group: null,
                         whiteList: function() { return ANT.group.media_selector + ',[ant-item-type="media"]'; },
-                        filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' iframe',
+                        filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' iframe, [ant-item-type="media"]',
                         // filterParam: ANT.group.active_sections + ' div,' + ANT.group.active_sections + ' embed, ' + ANT.group.active_sections + ' video, ' + ANT.group.active_sections + ' object, ' + ANT.group.active_sections + ' iframe',
                         setupFunc: function(){
                             var $this = $(this);
@@ -5085,6 +5085,7 @@ function antenna($A){
                 ];
 
                 //go through the groups in order and pick out valid nodes of that type. Default to text if it's valid for that.
+                // [porter] i just absolutely hate this fucking piece of code.  it's inverted from expected logic, so a mindfuck to step through.
                 $.each( nodeGroups, function( idx, group ){
 
                     // take the $node passed in, add it to group via filters
@@ -5097,9 +5098,9 @@ function antenna($A){
 
                     //trick for br_replace option.
                     //todo: prove that this approach works best across all sites and make it nicer.
-                    if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
-                        $group = $group.add( $node.find( '.ant_br_replaced' ) );
-                    }
+                    // if(!!ANT.group.br_replace_scope_selector && (group.kind == "text")){
+                        // $group = $group.add( $node.find( '.ant_br_replaced' ) );
+                    // }
 
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
@@ -5591,14 +5592,12 @@ function antenna($A){
             },
             hashCustomDisplayHashes: function() {
                 // ANT.actions.hashCustomDisplayHashes:
-
                 var pageCustomDisplays = {},
                     pageId = ANT.util.getPageProperty();
                 
                 pageCustomDisplays[ pageId ] = [];
                 
                 if ( $('[ant-item]').length ) {
-
                     // should we find custom-display nodes and add to the hashList here?
                     $.each( $('[ant-item]'), function( idx, node ) {
                         var $node = $(node);
@@ -8963,7 +8962,6 @@ if ( sendData.kind=="page" ) {
                     function update_top_interactions_cache(attrs){
                         //CHANGETHIS?
                         // delete?
-                        // console.log('update_top_interactions_cache');
                         var hash = attrs.hash;
                         var summary = attrs.summary;
                         var interaction_node_type = attrs.interaction_node_type;
@@ -9031,7 +9029,6 @@ if ( sendData.kind=="page" ) {
 
                         //CHANGETHIS?
                         // delete?
-                        // console.log('update_content_nodes_cache');
                         //todo: this is still not 100% right - but updates better than not having it at all.
                         //need to solve for the fact that we don't have the content_node id when we first make it.
 
