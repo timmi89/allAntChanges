@@ -11,6 +11,7 @@ function createReactableText(options) {
     var reactionsWidgetOptions = {
         reactionsData: [], // Always open with the default reactions
         containerData: options.containerData,
+        contentData: { type: 'text' },
         containerElement: $containerElement,
         defaultReactions: options.defaultReactions,
         pageData: options.pageData,
@@ -30,8 +31,8 @@ function createReactableText(options) {
 function grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode) {
     return function() {
         Range.grabSelection(node, function(text, location) {
-            reactionsWidgetOptions.location = location;
-            reactionsWidgetOptions.body = text;
+            reactionsWidgetOptions.contentData.location = location;
+            reactionsWidgetOptions.contentData.body = text;
             ReactionsWidget.open(reactionsWidgetOptions, coordinates);
         }, excludeNode);
     }

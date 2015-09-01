@@ -2,11 +2,9 @@
 
 <span class="antenna antenna-indicator-widget {{#containerData.reactionTotal}}reactions{{/containerData.reactionTotal}}">
     <span class="ant-antenna-logo"></span>
-    {{#if containerData.reactionTotal !== undefined}}
-        {{#if containerData.reactionTotal }}
-            <span class="antenna-reaction-total">
-                {{containerData.reactionTotal}}
-            </span>
-        {{/if}}
+    {{#if containerData.reactionTotal }}
+        <span class="antenna-reaction-total">
+            {{containerData.reactionTotal}}
+        </span>
     {{/if}}
 </span>

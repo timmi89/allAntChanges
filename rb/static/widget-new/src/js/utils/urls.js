@@ -4,7 +4,7 @@ function antennaHome() {
     if (offline) {
         return window.location.protocol + "//local.antenna.is:8081";
     }
-    return window.location.protocol + "//www.antenna.is";
+    return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
 }
 
 function getCreateReactionUrl() {

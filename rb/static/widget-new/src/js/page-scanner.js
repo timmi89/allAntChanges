@@ -1,8 +1,10 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Hash = require('./utils/hash');
 var PageUtils = require('./utils/page-utils');
+var WidgetBucket = require('./utils/widget-bucket');
 
 var IndicatorWidget = require('./indicator-widget');
+var ImageIndicatorWidget = require('./image-indicator-widget');
 var PageData = require('./page-data');
 var SummaryWidget = require('./summary-widget');
 var TextReactions = require('./text-reactions');
@@ -36,15 +38,15 @@ function scanPage($page, groupSettings) {
     // TODO: Consider doing this with raw Javascript before jQuery loads, to further reduce the delay. We wouldn't
     // save a *ton* of time from this, though, so it's definitely a later optimization.
     scanForSummaries($page, pageData, groupSettings);
-    scanForCallsToAction($page, groupSettings);
+    scanForCallsToAction($page, pageData, groupSettings);
 
     var $activeSections = $page.find(groupSettings.activeSections());
     $activeSections.each(function() {
         var $section = $(this);
         // Then scan for everything else
         scanForText($section, pageData, groupSettings);
-        scanForImages($section, groupSettings);
-        scanForMedia($section, groupSettings);
+        scanForImages($section, pageData, groupSettings);
+        scanForMedia($section, pageData, groupSettings);
     });
 }
 
@@ -61,7 +63,7 @@ function scanForSummaries($element, pageData, groupSettings) {
     });
 }
 
-function scanForCallsToAction($section, groupSettings) {
+function scanForCallsToAction($section, pageData, groupSettings) {
     // TODO
 }
 
@@ -98,11 +100,54 @@ function scanForText($section, pageData, groupSettings) {
     });
 }
 
-function scanForImages($section, groupSettings) {
-    // TODO
+function scanForImages($section, pageData, groupSettings) {
+    var $imageElements = $section.find(groupSettings.imageSelector()); // TODO also select for attribute override. i.e.: 'img,[ant-item-type="image"]'
+    $imageElements.each(function() {
+        var $imageElement = $(this);
+        var imageUrl = getImageUrl($imageElement);
+        var hash = Hash.hashImage(imageUrl);
+        var containerData = PageData.getContainerData(pageData, hash);
+        containerData.type = 'image'; // TODO: revisit whether it makes sense to set the type here
+        var defaultReactions = groupSettings.defaultReactions($imageElement);
+        var imageOffset = $imageElement.offset();
+        var coords = {
+            top: imageOffset.top + $imageElement.height(), // TODO pull from settings/element
+            left: imageOffset.left
+        };
+        var dimensions = {
+            height: $imageElement.height(), // TODO: review how we get the image dimensions
+            width: $imageElement.width()
+        };
+        // TODO: don't create indicator on images that are too small
+        ImageIndicatorWidget.create({
+            element: WidgetBucket(),
+            coords: coords,
+            imageUrl: imageUrl,
+            imageDimensions: dimensions,
+            containerData: containerData,
+            containerElement: $imageElement,
+            defaultReactions: defaultReactions,
+            pageData: pageData,
+            groupSettings: groupSettings}
+        );
+    });
 }
 
-function scanForMedia($section, groupSettings) {
+function getImageUrl($element) {
+    var content = $element.attr('ant-element-content'); // TODO allow this override everywhere
+    if (!content) {
+        content = $element.attr('src'); // TODO clean up URL?
+        if (content.indexOf('/') === 0){
+            content = window.location.origin + content;
+        }
+        if (content.indexOf('http') !== 0){
+            content = window.location.origin + window.location.pathname + content;
+        }
+    }
+    return content;
+}
+
+function scanForMedia($section, pageData, groupSettings) {
     // TODO
 }
 

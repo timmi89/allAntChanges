@@ -127,6 +127,7 @@ function createFromJSON(json) {
         pageSelector: data('post_selector'),
         pageHrefSelector: data('post_href_selector'),
         textSelector: data('anno_whitelist'),
+        imageSelector: data('img_selector'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors'))
     }

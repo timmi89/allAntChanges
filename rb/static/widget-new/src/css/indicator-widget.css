@@ -29,7 +29,7 @@
     color: #8fb3f2 !important;
 }
 
-.antenna-reaction-total {
+.antenna-indicator-widget .antenna-reaction-total {
     /* TODO: the layout of the text is not right */
     visibility: hidden;
     font-size: 11px;

@@ -45,21 +45,18 @@ function hashUrl(url) {
     return MD5.hex_md5(url);
 }
 
-function hashImage(element) {
-
+function hashImage(imageUrl) {
+    var hashText = 'rdr-img-' + imageUrl;
+    return MD5.hex_md5(hashText);
 }
 
 function hashMedia(element) {
 
 }
 
-function hashElement(element) {
-    // TODO make real
-    return 'abc';
-}
-
 //noinspection JSUnresolvedVariable
 module.exports = {
     hashText: hashText,
+    hashImage: hashImage,
     hashUrl: hashUrl
 };

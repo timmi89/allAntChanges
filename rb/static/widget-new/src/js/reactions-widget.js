@@ -16,9 +16,7 @@ function createReactionsWidget(options) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
-    var contentLocation = options.location;
-    var contentType = options.contentType || "text"; // TODO
-    var contentBody = options.body;
+    var contentData = options.contentData;
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var colors = groupSettings.reactionBackgroundColors();
@@ -56,7 +54,7 @@ function createReactionsWidget(options) {
         ractive.on('clearhighlights', Range.clearHighlights);
     }
     ractive.on('plusone', plusOne(containerData, pageData, ractive));
-    ractive.on('newreaction', newDefaultReaction(containerData, pageData, contentBody, contentLocation, contentType, ractive));
+    ractive.on('newreaction', newDefaultReaction(containerData, pageData, contentData, ractive));
     return {
         open: openWindow(reactionsData, ractive)
     };
@@ -111,11 +109,11 @@ function highlightContent(containerData, pageData, ractive, $containerElement) {
     }
 }
 
-function newDefaultReaction(containerData, pageData, contentBody, contentLocation, contentType, ractive) {
+function newDefaultReaction(containerData, pageData, contentData, ractive) {
     return function(event) {
         var defaultReactionData = event.context;
         showPage('.antenna-progress-page', ractive, false, true);
-        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error);
+        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, success, error);
 
         function success(response) {
             if (response.existing) {
@@ -130,9 +128,9 @@ function newDefaultReaction(containerData, pageData, contentBody, contentLocatio
                     count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
                     // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
                     content: {
-                        location: contentLocation,
-                        kind: contentType,
-                        body: contentBody,
+                        location: contentData.location,
+                        kind: contentData.type,
+                        body: contentData.body,
                         id: response.content_node.id
                     }
                 };
@@ -304,8 +302,8 @@ function openWindow(reactionsData, ractive) {
             var $relativeElement = $(elementOrCoords);
             var offset = $relativeElement.offset();
             coords = {
-                top: offset.top + 5,
-                left: offset.left + 5
+                top: offset.top,
+                left: offset.left
             };
         }
         // TODO: Look at whether we're opening off screen and adjust the coords if needed

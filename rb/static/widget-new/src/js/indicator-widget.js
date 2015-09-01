@@ -11,8 +11,10 @@ function createIndicatorWidget(options) {
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
+    var coords = options.coords;
     var ractive = Ractive({
         el: element,
+        append: true,
         magic: true,
         data: {
             containerData: containerData
@@ -24,6 +26,7 @@ function createIndicatorWidget(options) {
         reactionsData: containerData.reactions,
         containerData: containerData,
         containerElement: $containerElement,
+        contentData: { type: 'text' },
         defaultReactions: defaultReactions,
         pageData: pageData,
         groupSettings: groupSettings
@@ -33,16 +36,26 @@ function createIndicatorWidget(options) {
     ractive.on('complete', function() {
         // TODO: we shouldn't really need to wait for this callback. the widget is initialized synchronously in the constructor
         var $rootElement = $(rootElement(ractive));
+        if (coords) {
+            $rootElement.css({
+                position: 'absolute',
+                top: coords.top - $rootElement.height(),
+                bottom: coords.bottom,
+                left: coords.left,
+                right: coords.right,
+                'z-index': 1000 // TODO: compute a real value?
+            });
+        }
         $rootElement.on('mouseenter.antenna', function(event) {
             if (event.buttons !== 0) {
                 // Don't react if the user is dragging or selecting text.
                 return;
             }
-            if (containerData.reactions.length > 0) {
-                openReactionsWindow(reactionWidgetOptions, ractive);
-            } else {
-                clearTimeout(hoverTimeout); // only one timeout at a time
-                hoverTimeout = setTimeout(function() {
+            clearTimeout(hoverTimeout); // only one timeout at a time
+            hoverTimeout = setTimeout(function() {
+                if (containerData.reactions.length > 0) {
+                    openReactionsWindow(reactionWidgetOptions, ractive);
+                } else {
                     var $icon = $(rootElement(ractive)).find('.ant-antenna-logo');
                     var offset = $icon.offset();
                     var coordinates = {
@@ -50,8 +63,8 @@ function createIndicatorWidget(options) {
                         left: offset.left + Math.floor($icon.width() / 2)
                     };
                     PopupWidget.show(coordinates, grabNodeAndOpenOnSelection($containerElement.get(0), reactionWidgetOptions, ractive));
-                }, 200);
-            }
+                }
+            }, 200);
         });
         $rootElement.on('mouseleave.antenna', function() {
             clearTimeout(hoverTimeout);

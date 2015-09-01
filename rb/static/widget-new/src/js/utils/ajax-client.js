@@ -4,19 +4,12 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 
-function postNewPageReaction() {
-    // speculative...
-}
 
-function postNewTextReaction() {
-    // speculative...
-}
-
-function postNewImageReaction() {
-    // speculative...
-}
-
-function postNewReaction(reactionData, containerData, pageData, contentLocation, contentBody, contentType, success, error) {
+function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
+    var contentBody = contentData.body;
+    var contentType = contentData.type;
+    var contentLocation = contentData.location;
+    var contentDimensions = contentData.dimensions;
     XDMClient.getUser(function(response) {
         var userInfo = response.data;
         // TODO extract the shape of this data and possibly the whole API call
@@ -34,12 +27,18 @@ function postNewReaction(reactionData, containerData, pageData, contentLocation,
             group_id: pageData.groupId,
             container_kind: contentType, // One of 'page', 'text', 'media', 'img'
             content_node_data: {
-                location: contentLocation,
                 body: contentBody,
                 kind: contentType,
                 item_type: '' // TODO: looks unused but TagHandler blows up without it. Current client passes in "page" for page reactions.
             }
         };
+        if (contentLocation) {
+            data.content_node_data.location = contentLocation;
+        }
+        if (contentDimensions) {
+            data.content_node_data.height = contentDimensions.height;
+            data.content_node_data.width = contentDimensions.width;
+        }
         if (reactionData.id) {
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
@@ -89,7 +88,7 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
             container_kind: containerData.type, // 'page', 'text', 'media', 'img'
             content_node_data: {
                 body: '', // TODO: do we need this for +1s?
-                kind: containerData.type, // TODO: resolve whether to use the short or long form reactionData.content.kind, // 'pag', 'txt', 'med', 'img'
+                kind: contentNodeDataKind(containerData.type),
                 item_type: '' // TODO: looks unused but TagHandler blows up without it
             }
         };
@@ -109,6 +108,14 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
         //        }
         //    };
     });
+}
+
+function contentNodeDataKind(type) {
+    // TODO: resolve whether to use the short or long form for content_node_data.kind. // 'pag', 'txt', 'med', 'img'
+    if (type === 'image') {
+        return 'img';
+    }
+    return type;
 }
 
 function isDefaultReaction(reaction, defaultReactions) {

@@ -28,7 +28,8 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
         containerData: containerData,
         defaultReactions: defaultReactions,
         pageData: pageData,
-        groupSettings: groupSettings
+        groupSettings: groupSettings,
+        contentData: { type: 'page' }
     };
     ReactionsWidget.open(reactionsWidgetOptions, rootElement(ractive));
 }

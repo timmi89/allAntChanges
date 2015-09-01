@@ -1,5 +1,5 @@
 .ant-summary-container {
-    display: table;
+    display: table; /* TODO: Is this necessary in any browsers? */
 }
 
 .ant-summary-widget, .ant-summary-widget a {
