@@ -9,17 +9,14 @@ function createSummaryWidget(container, containerData, pageData, defaultReaction
         magic: true,
         template: require('../templates/summary-widget.hbs.html')
     });
-    ractive.on('complete', function() {
-        $(rootElement(ractive)).on('mouseenter', function(event) {
-           openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive);
-        });
+    $(rootElement(ractive)).on('mouseenter', function(event) {
+       openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive);
     });
 }
 
 function rootElement(ractive) {
     // TODO: gotta be a better way to get this
-    // TODO: our click handler is getting called twice, so it looks like this somehow gets the wrong element if there are two summary widgets together?
-    return ractive.find('div');
+    return ractive.find('.ant-summary-widget');
 }
 
 function openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive) {

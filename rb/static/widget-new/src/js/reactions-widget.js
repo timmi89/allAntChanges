@@ -40,13 +40,8 @@ function openReactionsWidget(options, elementOrCoords) {
         },
         antenna: {} // create our own property bucket on the instance
     });
-    ractive.on('complete', function() { // TODO we should be able to just make these calls synchronously, without the callback
-        var $rootElement = $(rootElement(ractive));
-        Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
-    });
-    ractive.on('change', function() {
-        reactionsLayoutData = computeLayoutData(reactionsData, colors);
-    });
+    var $rootElement = $(rootElement(ractive));
+    Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     if (containerElement) {
         ractive.on('highlight', highlightContent(containerData, pageData, ractive, containerElement));
         ractive.on('clearhighlights', Range.clearHighlights);
