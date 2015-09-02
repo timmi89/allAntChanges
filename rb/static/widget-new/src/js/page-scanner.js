@@ -111,7 +111,7 @@ function scanForImages($section, pageData, groupSettings) {
         var defaultReactions = groupSettings.defaultReactions($imageElement);
         var imageOffset = $imageElement.offset();
         var coords = {
-            top: imageOffset.top + $imageElement.height(), // TODO pull from settings/element
+            bottom: imageOffset.top + $imageElement.height(), // TODO pull from settings/element
             left: imageOffset.left
         };
         var dimensions = {

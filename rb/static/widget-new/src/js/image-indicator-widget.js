@@ -41,11 +41,11 @@ function createIndicatorWidget(options) {
     var activeTimeout;
 
     var $rootElement = $(rootElement(ractive));
-    // TODO: Finish the positioning piece. It's currently treating 'top' more like 'bottom
+    // TODO: Review how we handle image positioning. Currently, 'top' and 'bottom' pin the widget's top and bottom to those coordinates,
+    //       as measured from the top (not the same as CSS positioning which measures bottom from the bottom of the relative parent)
     $rootElement.css({
         position: 'absolute',
-        top: coords.top ? (coords.top - $rootElement.outerHeight()) : undefined,
-        bottom: coords.bottom,
+        top: coords.top ? coords.top : (coords.bottom - $rootElement.outerHeight()),
         left: coords.left,
         right: coords.right
     });
