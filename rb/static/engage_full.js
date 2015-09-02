@@ -9610,7 +9610,7 @@ if ( sendData.kind=="page" ) {
                     }
                     var sendData = {
                         "tag" : tag,
-                        "hash": content_node_info.hash,
+                        "hash": content_node_data.hash,
                         "content_node_data" : content_node_data,
                         "user_id" : ANT.user.user_id,
                         "ant_token" : ANT.user.ant_token,
@@ -9643,6 +9643,7 @@ if ( sendData.kind=="page" ) {
                                     }
                                 } else {
                                     //successfully got a short URL
+
                                     ANT.actions.shareContent({
                                         sns: params.sns,
                                         content_node_info: content_node_info,
