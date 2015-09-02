@@ -9610,7 +9610,7 @@ if ( sendData.kind=="page" ) {
                     }
                     var sendData = {
                         "tag" : tag,
-                        "hash": content_node_info.hash,
+                        "hash": content_node_data.hash,
                         "content_node_data" : content_node_data,
                         "user_id" : ANT.user.user_id,
                         "ant_token" : ANT.user.ant_token,
@@ -9643,6 +9643,7 @@ if ( sendData.kind=="page" ) {
                                     }
                                 } else {
                                     //successfully got a short URL
+
                                     ANT.actions.shareContent({
                                         sns: params.sns,
                                         content_node_info: content_node_info,
@@ -10229,7 +10230,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv23"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv24"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
