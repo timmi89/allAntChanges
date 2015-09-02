@@ -27,10 +27,21 @@
     position: relative;
 }
 
-.antenna-footer {
+.antenna-footer-area {
     height: 50px;
+    position: relative;
+}
+
+.antenna-footer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
     padding: 6px;
+    box-sizing: border-box;
     text-align: center;
+    background-color: #ffffff;
     color: #777777;
     font-family: Helvetica,Arial,sans-serif;
     font-weight: 500;
@@ -128,4 +139,18 @@
 }
 .antenna-reaction.half .antenna-reaction-count {
     font-size: 12px;
+}
+
+.antenna-think {
+    padding: 5px;
+    cursor: pointer;
+}
+.antenna-think:hover {
+    color: #8fb3f2;
+}
+
+.antenna-custom {
+    font-weight: 700;
+    font-size: 13px;
+    color: #666666;
 }

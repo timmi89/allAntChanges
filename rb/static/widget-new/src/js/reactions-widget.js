@@ -16,7 +16,10 @@ function createReactionsWidget(options) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement;
-    var contentData = options.contentData;
+    // contentData contains details about the content being reacted to like text range or image height/width.
+    // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
+    // make a local copy of it to avoid unexpectedly changing data out from under one of the clients
+    var contentData = JSON.parse(JSON.stringify(options.contentData));
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var colors = groupSettings.reactionBackgroundColors();
@@ -38,7 +41,7 @@ function createReactionsWidget(options) {
         },
         template: require('../templates/reactions-widget.hbs.html'),
         decorators: {
-            sizetofit: sizeToFit
+            sizetofit: sizeReactionTextToFit
         },
         antenna: {} // create our own property bucket on the instance
     });
@@ -55,8 +58,11 @@ function createReactionsWidget(options) {
     }
     ractive.on('plusone', plusOne(containerData, pageData, ractive));
     ractive.on('newreaction', newDefaultReaction(containerData, pageData, contentData, ractive));
+    ractive.on('showdefault', function() {
+        showDefaultReactionsPage(containerElement, contentData, ractive, true);
+    });
     return {
-        open: openWindow(reactionsData, ractive)
+        open: openWindow(containerElement, contentData, reactionsData, ractive)
     };
 }
 
@@ -72,11 +78,14 @@ function sortReactionData(reactions) {
     });
 }
 
-function sizeToFit(node) {
+function sizeReactionTextToFit(node) {
     var $element = $(node);
     var $rootElement = $element.closest('.antenna-reactions-widget');
     if ($rootElement.length > 0) {
-        $rootElement.css({display: 'block', left: '100%'});
+        var originalDisplay = $rootElement.css('display');
+        if (originalDisplay === 'none') { // If we're sizing the boxes before the widget is displayed, temporarily display it offscreen.
+            $rootElement.css({display: 'block', left: '100%'});
+        }
         var ratio = node.clientWidth / node.scrollWidth;
         if (ratio < 1.0) { // If the text doesn't fit, first try to wrap it to two lines. Then scale it down if still necessary.
             var text = node.innerHTML;
@@ -92,7 +101,9 @@ function sizeToFit(node) {
                 $element.css('font-size', Math.max(10, Math.floor(parseInt($element.css('font-size')) * ratio) - 1));
             }
         }
-        $rootElement.css({display: '', left: ''});
+        if (originalDisplay === 'none') {
+            $rootElement.css({display: '', left: ''});
+        }
     }
     return { teardown: function() {} };
 }
@@ -147,7 +158,7 @@ function newDefaultReaction(containerData, pageData, contentData, ractive) {
                 pageData.summaryReactions.push(summaryReaction);
                 pageData.summaryTotal = pageData.summaryTotal + 1;
             }
-            showPage('.antenna-confirm-page', ractive, true);
+            showConfirmPage(ractive, true);
         }
 
         function error(message) {
@@ -171,7 +182,7 @@ function plusOne(containerData, pageData, ractive) {
                 containerData.reactionTotal = containerData.reactionTotal + 1;
                 pageData.summaryTotal = pageData.summaryTotal + 1;
             }
-            showPage('.antenna-confirm-page', ractive, true);
+            showConfirmPage(ractive, true);
         }
 
         function error(message) {
@@ -278,21 +289,57 @@ function sizeBodyToFit(ractive, $element, animate) {
     var newHeight = Math.min(300, $element.get(0).scrollHeight);
     if (animate) {
         $body.css({ height: currentHeight });
-        $body.animate({ height: newHeight });
+        $body.animate({ height: newHeight }, 200);
     } else {
         $body.css({ height: newHeight });
     }
     // TODO: we might not need width resizing at all.
     var minWidth = $element.css('min-width');
-    var width = (parseInt(minWidth) > 0) ? minWidth: '';
-    if (animate) {
-        $root.animate({ width: width });
-    } else {
-        $root.css({ width: width });
+    var width = parseInt(minWidth);
+    if (width > 0) {
+        if (animate) {
+            $root.animate({ width: width }, 200);
+        } else {
+            $root.css({ width: width });
+        }
     }
+    //var width = (parseInt(minWidth) > 0) ? minWidth: '';
+    //if (animate) {
+    //    $root.animate({ width: width });
+    //} else {
+    //    $root.css({ width: width });
+    //}
 }
 
-function openWindow(reactionsData, ractive) {
+function showFooter(footerSelector, ractive) {
+    var $root = $(rootElement(ractive));
+    var $footer = $root.find(footerSelector);
+    $footer.css('z-index', pageZ);
+    pageZ += 1;
+}
+
+function showReactionsPage(ractive, animate) {
+    showPage('.antenna-reactions-page', ractive, animate);
+    showFooter('.antenna-reactions-footer', ractive);
+}
+
+function showDefaultReactionsPage(containerElement, contentData, ractive, animate) {
+    if (!contentData.location && !contentData.body) {
+        Range.grabNode(containerElement.get(0), function (text, location) {
+            contentData.location = location;
+            contentData.body = text;
+        });
+    }
+    showPage('.antenna-default-page', ractive, animate);
+    showFooter('.antenna-default-footer', ractive);
+}
+
+function showConfirmPage(ractive, animate) {
+    showPage('.antenna-confirm-page', ractive, animate);
+    showFooter('.antenna-confirm-footer', ractive);
+}
+
+function openWindow(containerElement, contentData, reactionsData, ractive) {
     return function(elementOrCoords) {
         $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
         var coords;
@@ -311,10 +358,10 @@ function openWindow(reactionsData, ractive) {
         $rootElement.stop(true, true).addClass('open').css(coords);
 
         if (reactionsData.length > 0) {
-            showPage('.antenna-reactions-page', ractive, false);
+            showReactionsPage(ractive, false);
         } else {
             // TODO allow to override and force showing of default
-            showPage('.antenna-default-page', ractive, false);
+            showDefaultReactionsPage(containerElement, contentData, ractive, false);
         }
 
         setupWindowClose(ractive);

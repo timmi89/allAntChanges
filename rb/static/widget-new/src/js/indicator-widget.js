@@ -62,7 +62,9 @@ function createIndicatorWidget(options) {
                         top: offset.top + Math.floor($icon.height() / 2), // TODO this number is a little off because the div doesn't tightly wrap the inserted font character
                         left: offset.left + Math.floor($icon.width() / 2)
                     };
-                    PopupWidget.show(coordinates, grabNodeAndOpenOnSelection($containerElement.get(0), reactionWidgetOptions, ractive));
+                    PopupWidget.show(coordinates, function() {
+                        openReactionsWindow(reactionWidgetOptions, ractive);
+                    });
                 }
             }, 200);
         });
@@ -76,16 +78,6 @@ function createIndicatorWidget(options) {
             $rootElement.removeClass('active');
         })
     });
-}
-
-function grabNodeAndOpenOnSelection(node, reactionWidgetOptions, ractive) {
-    return function() {
-        Range.grabNode(node, function(text, location) {
-            reactionWidgetOptions.location = location;
-            reactionWidgetOptions.body = text;
-            openReactionsWindow(reactionWidgetOptions, ractive);
-        });
-    }
 }
 
 function rootElement(ractive) {
