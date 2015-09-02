@@ -45,7 +45,7 @@
             <span on-click="showdefault" class="antenna-think">What do you think?</span>
         </div>
         <div class="antenna-footer antenna-default-footer">
-            <span on-click="addcustom" class="antenna-custom">+ Add your own</span>
+            <input on-focus="customfocus" on-blur="customblur" value="+ Add Your Own"><button on-click="addcustom">ok</button>
         </div>
         <div class="antenna-footer antenna-confirm-footer">
             <span on-click="share" class="antenna-share">Facebook!</span>

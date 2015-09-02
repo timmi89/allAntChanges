@@ -149,8 +149,29 @@
     color: #8fb3f2;
 }
 
-.antenna-custom {
+.antenna-default-footer input {
     font-weight: 700;
     font-size: 13px;
     color: #666666;
+    text-align: center;
+    letter-spacing: -.25px;
+    border: none;
+    padding: 3px;
+    width: 65%;
+    cursor: pointer;
+}
+
+.antenna-default-footer input:focus {
+    cursor: text;
+}
+
+.antenna-default-footer button {
+    display: none;
+    background-color: #8fb3f2;
+    border: 0;
+    text-align: center;
+    padding: 4px 6px;
+    margin-left: 5px;
+    color: #ffffff;
+    font-size: 11px;
 }

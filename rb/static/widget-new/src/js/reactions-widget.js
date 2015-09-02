@@ -51,6 +51,20 @@ function openReactionsWidget(options, elementOrCoords) {
     ractive.on('showdefault', function() {
         showDefaultReactionsPage(containerElement, contentData, ractive, true);
     });
+    ractive.on('customfocus', function(event) {
+        var $footer = $(event.original.target).closest('.antenna-default-footer');
+        $footer.find('input').val('');
+        $footer.find('button').show();
+    });
+    ractive.on('customblur', function(ractiveEvent) {
+        var event = ractiveEvent.original;
+        if ($(event.relatedTarget).closest('.antenna-default-footer button').size() == 0) { // Don't hide the input when we click on the button
+            var $footer = $(event.target).closest('.antenna-default-footer');
+            $footer.find('button').hide();
+            $footer.find('input').val('+ Add Your Own');
+        }
+    });
+    ractive.on('addcustom', newCustomReaction(containerData, pageData, contentData, ractive));
     openWindow(elementOrCoords, containerElement, contentData, reactionsData, ractive);
 }
 
@@ -113,6 +127,55 @@ function newDefaultReaction(containerData, pageData, contentData, ractive) {
         var defaultReactionData = event.context;
         showPage('.antenna-progress-page', ractive, false, true);
         AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, success, error);
+
+        function success(response) {
+            if (response.existing) {
+                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
+                ractive.set('response.existing', response.existing);
+            } else {
+                 // TODO: the server should give us back a reaction matching the new API format.
+                 //       we're just faking it out for now; this code is temporary
+                var reaction = {
+                    text: response.interaction.interaction_node.body,
+                    id: response.interaction.interaction_node.id,
+                    count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
+                    // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
+                    content: {
+                        location: contentData.location,
+                        kind: contentData.type,
+                        body: contentData.body,
+                        id: response.content_node.id
+                    }
+                };
+                // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
+                //       to PageData to handle this instead.
+                containerData.reactions.push(reaction);
+                sortReactionData(containerData.reactions);
+                containerData.reactionTotal = containerData.reactionTotal + 1;
+                var summaryReaction = {
+                    text: reaction.text,
+                    id: reaction.id,
+                    count: reaction.count
+                };
+                pageData.summaryReactions.push(summaryReaction);
+                pageData.summaryTotal = pageData.summaryTotal + 1;
+            }
+            showConfirmPage(ractive, true);
+        }
+
+        function error(message) {
+            // TODO handle any errors that occur posting a reaction
+            console.log("error posting new reaction: " + message);
+        }
+    }
+}
+
+function newCustomReaction(containerData, pageData, contentData, ractive) {
+    return function(event) {
+        var body = $(ractive.find('.antenna-default-footer input')).val();
+        var reactionData = { text: body };
+        showPage('.antenna-progress-page', ractive, false, true);
+        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
 
         function success(response) {
             if (response.existing) {
@@ -373,8 +436,10 @@ function setupWindowClose(ractive) {
             $rootElement.off('mouseout.antenna');
             $rootElement.off('mouseover.antenna');
         })
-        .on('focusout.antenna', function() {
-            closeWindow();
+        .on('focusout.antenna', function(event) {
+            if ($([ event.relatedTarget, event.target ]).closest('.antenna-reactions-widget').size() == 0) { // Don't close the window if focus is going inside the window or we've clicked something in the window
+                closeWindow();
+            }
         });
     $(document).on('click.antenna', function(event) {
         if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
