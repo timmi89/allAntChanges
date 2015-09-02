@@ -7,11 +7,6 @@ var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
 function openReactionsWidget(options, elementOrCoords) {
-    var reactionsWidget = createReactionsWidget(options);
-    reactionsWidget.open(elementOrCoords);
-}
-
-function createReactionsWidget(options) {
     var defaultReactions = options.defaultReactions;
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
@@ -61,9 +56,7 @@ function createReactionsWidget(options) {
     ractive.on('showdefault', function() {
         showDefaultReactionsPage(containerElement, contentData, ractive, true);
     });
-    return {
-        open: openWindow(containerElement, contentData, reactionsData, ractive)
-    };
+    openWindow(elementOrCoords, containerElement, contentData, reactionsData, ractive);
 }
 
 function arrayAccessor(array) {
@@ -339,33 +332,31 @@ function showConfirmPage(ractive, animate) {
     showFooter('.antenna-confirm-footer', ractive);
 }
 
-function openWindow(containerElement, contentData, reactionsData, ractive) {
-    return function(elementOrCoords) {
-        $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
-        var coords;
-        if (elementOrCoords.top && elementOrCoords.left) {
-            coords = elementOrCoords;
-        } else {
-            var $relativeElement = $(elementOrCoords);
-            var offset = $relativeElement.offset();
-            coords = {
-                top: offset.top,
-                left: offset.left
-            };
-        }
-        // TODO: Look at whether we're opening off screen and adjust the coords if needed
-        var $rootElement = $(rootElement(ractive));
-        $rootElement.stop(true, true).addClass('open').css(coords);
+function openWindow(elementOrCoords, containerElement, contentData, reactionsData, ractive) {
+    $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
+    var coords;
+    if (elementOrCoords.top && elementOrCoords.left) {
+        coords = elementOrCoords;
+    } else {
+        var $relativeElement = $(elementOrCoords);
+        var offset = $relativeElement.offset();
+        coords = {
+            top: offset.top,
+            left: offset.left
+        };
+    }
+    // TODO: Look at whether we're opening off screen and adjust the coords if needed
+    var $rootElement = $(rootElement(ractive));
+    $rootElement.stop(true, true).addClass('open').css(coords);
 
-        if (reactionsData.length > 0) {
-            showReactionsPage(ractive, false);
-        } else {
-            // TODO allow to override and force showing of default
-            showDefaultReactionsPage(containerElement, contentData, ractive, false);
-        }
+    if (reactionsData.length > 0) {
+        showReactionsPage(ractive, false);
+    } else {
+        // TODO allow to override and force showing of default
+        showDefaultReactionsPage(containerElement, contentData, ractive, false);
+    }
 
-        setupWindowClose(ractive);
-    };
+    setupWindowClose(ractive);
 }
 
 function setupWindowClose(ractive) {
@@ -416,12 +407,11 @@ function setupWindowClose(ractive) {
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         Range.clearHighlights();
-        // TODO: complete the switchover from reusable to disposable widget. tear down the ractive when we close (don't leak)
+        ractive.teardown();
     }
 }
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    create: createReactionsWidget,
     open: openReactionsWidget
 };
