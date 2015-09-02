@@ -1,10 +1,9 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
-var PopupWidget = require('./popup-widget');
 var ReactionsWidget = require('./reactions-widget');
-var Range = require('./utils/range');
 
 
 function createIndicatorWidget(options) {
+    // TODO: validate that options contains all required properties (applies to all widgets).
     var element = options.element;
     var containerData = options.containerData;
     var $containerElement = options.containerElement;
@@ -42,15 +41,14 @@ function createIndicatorWidget(options) {
     var activeTimeout;
 
     var $rootElement = $(rootElement(ractive));
-    if (coords) {
-        $rootElement.css({
-            position: 'absolute',
-            top: coords.top - $rootElement.outerHeight(),
-            bottom: coords.bottom,
-            left: coords.left,
-            right: coords.right
-        });
-    }
+    // TODO: Finish the positioning piece. It's currently treating 'top' more like 'bottom
+    $rootElement.css({
+        position: 'absolute',
+        top: coords.top ? (coords.top - $rootElement.outerHeight()) : undefined,
+        bottom: coords.bottom,
+        left: coords.left,
+        right: coords.right
+    });
     $rootElement.on('mouseenter.antenna', function(event) {
         if (event.buttons !== 0) {
             // Don't react if the user is dragging or selecting text.

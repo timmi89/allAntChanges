@@ -29,7 +29,6 @@ function getSelectionEndPoint(node, event, excludeNode) {
 // Attempts to get a range from the current selection. This expands the
 // selected region to include word boundaries.
 function grabSelection(node, callback, excludeNode) {
-    // TODO: make sure the selection is within the given node
     var selection = rangy.getSelection();
     if (isValidSelection(selection, node, excludeNode)) {
         selection.expand('word', { trim: true });
@@ -50,6 +49,10 @@ function isValidSelection(selection, node, excludeNode) {
 function grabNode(node, callback) {
     var range = rangy.createRange(document);
     range.selectNodeContents(node);
+    var $excluded = $(node).find('.ant-indicator-container'); // This class is copied in page-scanner
+    if ($excluded.size() > 0) { // Remove the indicator from the end of the selected range.
+        range.setEndBefore($excluded.get(0));
+    }
     var selection = rangy.getSelection();
     selection.setSingleRange(range);
     var location = rangy.serializeSelection(selection, true, node);
