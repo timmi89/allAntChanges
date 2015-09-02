@@ -340,8 +340,11 @@ function openWindow(elementOrCoords, containerElement, contentData, reactionsDat
             left: offset.left
         };
     }
-    // TODO: Look at whether we're opening off screen and adjust the coords if needed
     var $rootElement = $(rootElement(ractive));
+    var horizontalOverflow = coords.left + $rootElement.width() - Math.max(document.documentElement.clientWidth, window.innerWidth || 0); // http://stackoverflow.com/questions/1248081/get-the-browser-viewport-dimensions-with-javascript/8876069#8876069
+    if (horizontalOverflow > 0) {
+        coords.left = coords.left - horizontalOverflow;
+    }
     $rootElement.stop(true, true).addClass('open').css(coords);
 
     if (reactionsData.length > 0) {
