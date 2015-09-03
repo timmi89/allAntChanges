@@ -37,10 +37,12 @@ function grabSelection(node, callback, excludeNode) {
             range.setEndBefore(excludeNode);
             selection.setSingleRange(range);
         }
-        var location = rangy.serializeSelection(selection, true, node);
-        var text = selection.toString();
-        highlightSelection(selection); // Highlighting deselects the text, so do this last.
-        callback(text, location);
+        if (isValidSelection(selection, node, excludeNode)) {
+            var location = rangy.serializeSelection(selection, true, node);
+            var text = selection.toString();
+            highlightSelection(selection); // Highlighting deselects the text, so do this last.
+            callback(text, location);
+        }
     }
 }
 
