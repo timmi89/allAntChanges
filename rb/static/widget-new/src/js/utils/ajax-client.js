@@ -42,7 +42,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
         if (reactionData.id) {
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
-        $.getJSONP(URLs.createReactionUrl(), data, success, error);
+        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(containerData, contentData, pageData, success), error);
         //var response = { // TODO: just capturing the api format...
         //        existing: json.existing,
         //        interaction: {
@@ -96,7 +96,7 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
             data.content_node_data.id = reactionData.content.id;
             data.content_node_data.location = reactionData.content.location;
         }
-        $.getJSONP(URLs.createReactionUrl(), data, success, error);
+        $.getJSONP(URLs.createReactionUrl(), data, plusOneSuccess(reactionData, containerData, pageData, success), error);
         //var response = { // TODO: just capturing the api format...
         //        existing: json.existing,
         //        interaction: {
@@ -126,6 +126,53 @@ function isDefaultReaction(reaction, defaultReactions) {
         }
     }
     return false;
+}
+
+function plusOneSuccess(reactionData, containerData, pageData, callback) {
+    return function(response) {
+        var reactionCreated = !response.existing;
+        if (reactionCreated) {
+            // TODO: we should get back a response with data in the "new format" and update the model from the response
+            reactionData.count = reactionData.count + 1;
+            containerData.reactionTotal = containerData.reactionTotal + 1;
+            pageData.summaryTotal = pageData.summaryTotal + 1;
+        }
+        callback(reactionCreated);
+    }
+}
+
+function newReactionSuccess(containerData, contentData, pageData, callback) {
+    return function(response) {
+        var reactionCreated = !response.existing;
+        if (reactionCreated) {
+            // TODO: the server should give us back a reaction matching the new API format.
+            //       we're just faking it out for now; this code is temporary
+            var reaction = {
+                text: response.interaction.interaction_node.body,
+                id: response.interaction.interaction_node.id,
+                count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
+                // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
+                content: {
+                    location: contentData.location,
+                    kind: contentData.type,
+                    body: contentData.body,
+                    id: response.content_node.id
+                }
+            };
+            // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
+            //       to PageData to handle this instead.
+            containerData.reactions.push(reaction);
+            containerData.reactionTotal = containerData.reactionTotal + 1;
+            var summaryReaction = {
+                text: reaction.text,
+                id: reaction.id,
+                count: reaction.count
+            };
+            pageData.summaryReactions.push(summaryReaction);
+            pageData.summaryTotal = pageData.summaryTotal + 1;
+        }
+        callback(reactionCreated);
+    };
 }
 
 //noinspection JSUnresolvedVariable

@@ -116,41 +116,12 @@ function highlightContent(containerData, pageData, ractive, $containerElement) {
 
 function newDefaultReaction(containerData, pageData, contentData, ractive) {
     return function(event) {
-        var defaultReactionData = event.context;
         showPage('.antenna-progress-page', ractive, false, true);
+        var defaultReactionData = event.context;
         AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, success, error);
 
-        function success(response) {
-            if (response.existing) {
-                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-                ractive.set('response.existing', response.existing);
-            } else {
-                 // TODO: the server should give us back a reaction matching the new API format.
-                 //       we're just faking it out for now; this code is temporary
-                var reaction = {
-                    text: response.interaction.interaction_node.body,
-                    id: response.interaction.interaction_node.id,
-                    count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
-                    // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
-                    content: {
-                        location: contentData.location,
-                        kind: contentData.type,
-                        body: contentData.body,
-                        id: response.content_node.id
-                    }
-                };
-                // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
-                //       to PageData to handle this instead.
-                containerData.reactions.push(reaction);
-                containerData.reactionTotal = containerData.reactionTotal + 1;
-                var summaryReaction = {
-                    text: reaction.text,
-                    id: reaction.id,
-                    count: reaction.count
-                };
-                pageData.summaryReactions.push(summaryReaction);
-                pageData.summaryTotal = pageData.summaryTotal + 1;
-            }
+        function success(isNewReaction) {
+            ractive.set('response.existing', !isNewReaction);
             showConfirmPage(ractive, true);
         }
 
@@ -164,44 +135,14 @@ function newDefaultReaction(containerData, pageData, contentData, ractive) {
 function submitCustomReaction(containerData, pageData, contentData, ractive) {
     return function(event) {
         var body = $(ractive.find('.antenna-default-footer input')).val().trim();
-        if (body === '') {
-            return;
+        if (body !== '') {
+            showPage('.antenna-progress-page', ractive, false, true);
+            var reactionData = { text: body };
+            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
         }
-        var reactionData = { text: body };
-        showPage('.antenna-progress-page', ractive, false, true);
-        AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
 
-        function success(response) {
-            if (response.existing) {
-                // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-                ractive.set('response.existing', response.existing);
-            } else {
-                 // TODO: the server should give us back a reaction matching the new API format.
-                 //       we're just faking it out for now; this code is temporary
-                var reaction = {
-                    text: response.interaction.interaction_node.body,
-                    id: response.interaction.interaction_node.id,
-                    count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
-                    // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
-                    content: {
-                        location: contentData.location,
-                        kind: contentData.type,
-                        body: contentData.body,
-                        id: response.content_node.id
-                    }
-                };
-                // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
-                //       to PageData to handle this instead.
-                containerData.reactions.push(reaction);
-                containerData.reactionTotal = containerData.reactionTotal + 1;
-                var summaryReaction = {
-                    text: reaction.text,
-                    id: reaction.id,
-                    count: reaction.count
-                };
-                pageData.summaryReactions.push(summaryReaction);
-                pageData.summaryTotal = pageData.summaryTotal + 1;
-            }
+        function success(isNewReaction) {
+            ractive.set('response.existing', !isNewReaction);
             showConfirmPage(ractive, true);
         }
 
@@ -218,14 +159,8 @@ function plusOne(containerData, pageData, ractive) {
         showPage('.antenna-progress-page', ractive, false, true);
         AjaxClient.postPlusOne(reactionData, containerData, pageData, success, error);
 
-        function success(response) {
-            ractive.set('response.existing', response.existing); // TODO: We can either access this data through the ractive keypath or by passing the data object around. Pick one.
-            if (!response.existing) {
-                // TODO: we should get back a response with data in the "new format" and update the model from the response
-                reactionData.count = reactionData.count + 1;
-                containerData.reactionTotal = containerData.reactionTotal + 1;
-                pageData.summaryTotal = pageData.summaryTotal + 1;
-            }
+        function success(plusOneCreated) {
+            ractive.set('response.existing', !plusOneCreated);
             showConfirmPage(ractive, true);
         }
 
