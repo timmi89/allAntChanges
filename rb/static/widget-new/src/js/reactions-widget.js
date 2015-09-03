@@ -51,33 +51,25 @@ function openReactionsWidget(options, elementOrCoords) {
     ractive.on('showdefault', function() {
         showDefaultReactionsPage(containerElement, contentData, ractive, true);
     });
-    ractive.on('customfocus', function(event) {
-        var $footer = $(event.original.target).closest('.antenna-default-footer');
-        $footer.find('input').val('');
-        $footer.find('button').show();
-    });
-    ractive.on('customblur', function(ractiveEvent) {
-        var event = ractiveEvent.original;
-        if ($(event.relatedTarget).closest('.antenna-default-footer button').size() == 0) { // Don't hide the input when we click on the button
-            var $footer = $(event.target).closest('.antenna-default-footer');
-            $footer.find('button').hide();
-            $footer.find('input').val('+ Add Your Own');
-        }
-    });
-    ractive.on('addcustom', newCustomReaction(containerData, pageData, contentData, ractive));
+    ractive.on('customfocus', customReactionFocus);
+    ractive.on('customblur', customReactionBlur);
+    ractive.on('addcustom', submitCustomReaction(containerData, pageData, contentData, ractive));
+    ractive.on('key-reactions', keyboardInput(ractive));
+    ractive.on('key-custom', customReactionInput(containerData, pageData, contentData, ractive));
+
     openWindow(elementOrCoords, containerElement, contentData, reactionsData, ractive);
-}
 
-function arrayAccessor(array) {
-    return function(index) {
-        return array[index];
+    function arrayAccessor(array) {
+        return function(index) {
+            return array[index];
+        }
     }
-}
 
-function sortReactionData(reactions) {
-    reactions.sort(function(reactionA, reactionB) {
-       return reactionB.count - reactionA.count;
-    });
+    function sortReactionData(reactions) {
+        reactions.sort(function(reactionA, reactionB) {
+           return reactionB.count - reactionA.count;
+        });
+    }
 }
 
 function sizeReactionTextToFit(node) {
@@ -150,7 +142,6 @@ function newDefaultReaction(containerData, pageData, contentData, ractive) {
                 // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
                 //       to PageData to handle this instead.
                 containerData.reactions.push(reaction);
-                sortReactionData(containerData.reactions);
                 containerData.reactionTotal = containerData.reactionTotal + 1;
                 var summaryReaction = {
                     text: reaction.text,
@@ -170,9 +161,12 @@ function newDefaultReaction(containerData, pageData, contentData, ractive) {
     }
 }
 
-function newCustomReaction(containerData, pageData, contentData, ractive) {
+function submitCustomReaction(containerData, pageData, contentData, ractive) {
     return function(event) {
-        var body = $(ractive.find('.antenna-default-footer input')).val();
+        var body = $(ractive.find('.antenna-default-footer input')).val().trim();
+        if (body === '') {
+            return;
+        }
         var reactionData = { text: body };
         showPage('.antenna-progress-page', ractive, false, true);
         AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, success, error);
@@ -199,7 +193,6 @@ function newCustomReaction(containerData, pageData, contentData, ractive) {
                 // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
                 //       to PageData to handle this instead.
                 containerData.reactions.push(reaction);
-                sortReactionData(containerData.reactions);
                 containerData.reactionTotal = containerData.reactionTotal + 1;
                 var summaryReaction = {
                     text: reaction.text,
@@ -243,9 +236,47 @@ function plusOne(containerData, pageData, ractive) {
     };
 }
 
-function computeLayoutData(reactionsData, colors) {
-    // TODO Verify that the reactionsData is coming back from the server sorted. If not, sort it after its fetched.
+function customReactionFocus(ractiveEvent) {
+    var $footer = $(ractiveEvent.original.target).closest('.antenna-default-footer');
+    $footer.find('input').not('.active').val('').addClass('active');
+    $footer.find('button').show();
+}
 
+function customReactionBlur(ractiveEvent) {
+    var event = ractiveEvent.original;
+    if ($(event.relatedTarget).closest('.antenna-default-footer button').size() == 0) { // Don't hide the input when we click on the button
+        var $footer = $(event.target).closest('.antenna-default-footer');
+        var input = $footer.find('input');
+        if (input.val() === '') {
+            $footer.find('button').hide();
+            $footer.find('input').val('+ Add Your Own').removeClass('active');
+        }
+    }
+}
+
+function customReactionInput(containerData, pageData, contentData, ractive) {
+    return function(ractiveEvent) {
+        var event = ractiveEvent.original;
+        var key = (event.which !== undefined) ? event.which : event.keyCode;
+        if (key == 13) { // Enter
+            submitCustomReaction(containerData, pageData, contentData, ractive)();
+        } else if (key == 27) { // Escape
+            $(event.target).val('');
+            $(rootElement(ractive)).focus();
+        }
+        event.stopPropagation();
+    }
+}
+
+function keyboardInput(ractive) {
+    return function(ractiveEvent) {
+        if (isShowingDefaultReactionsPage(ractive)) {
+            $(rootElement(ractive)).find('.antenna-default-footer input').focus();
+        }
+    };
+}
+
+function computeLayoutData(reactionsData, colors) {
     var numReactions = reactionsData.length;
     if (numReactions == 0) {
         return {}; // TODO clean this up
@@ -354,12 +385,6 @@ function sizeBodyToFit(ractive, $element, animate) {
             $root.css({ width: width });
         }
     }
-    //var width = (parseInt(minWidth) > 0) ? minWidth: '';
-    //if (animate) {
-    //    $root.animate({ width: width });
-    //} else {
-    //    $root.css({ width: width });
-    //}
 }
 
 function showFooter(footerSelector, ractive) {
@@ -383,6 +408,10 @@ function showDefaultReactionsPage(containerElement, contentData, ractive, animat
     }
     showPage('.antenna-default-page', ractive, animate);
     showFooter('.antenna-default-footer', ractive);
+}
+
+function isShowingDefaultReactionsPage(ractive) {
+    return $(rootElement(ractive)).find('.antenna-default-page.antenna-page-active').size() > 0;
 }
 
 function showConfirmPage(ractive, animate) {

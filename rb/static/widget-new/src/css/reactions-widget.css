@@ -163,6 +163,11 @@
 
 .antenna-default-footer input:focus {
     cursor: text;
+    outline: none;
+}
+
+.antenna-default-footer input.active {
+    border: 2px solid #8fb3f2;
 }
 
 .antenna-default-footer button {
@@ -170,7 +175,7 @@
     background-color: #8fb3f2;
     border: 0;
     text-align: center;
-    padding: 4px 6px;
+    padding: 6px 8px;
     margin-left: 5px;
     color: #ffffff;
     font-size: 11px;

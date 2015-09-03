@@ -1,4 +1,4 @@
-<div class="antenna antenna-reactions-widget" tabindex="0">
+<div on-keydown="key-reactions" class="antenna antenna-reactions-widget" tabindex="0">
     <div class="antenna-header">
         <span class="ant-antenna-logo"></span>
         Reactions
@@ -45,7 +45,8 @@
             <span on-click="showdefault" class="antenna-think">What do you think?</span>
         </div>
         <div class="antenna-footer antenna-default-footer">
-            <input on-focus="customfocus" on-blur="customblur" value="+ Add Your Own"><button on-click="addcustom">ok</button>
+            <input on-focus="customfocus" on-keydown="key-custom" on-blur="customblur" value="+ Add Your Own" maxlength="25">
+            <button on-click="addcustom">ok</button>
         </div>
         <div class="antenna-footer antenna-confirm-footer">
             <span on-click="share" class="antenna-share">Facebook!</span>
