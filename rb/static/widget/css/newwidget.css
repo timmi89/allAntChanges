@@ -2741,17 +2741,19 @@ div.ant_br_replaced > div.ant_indicator_for_text.ant_helper{
   left: 50%;
   margin: 0 0 0 -37.5%;
   color:#008BE4;
-  box-shadow: 0px 0px 10px #999;
+  box-shadow: 0 0 40px #666;
   font-size:11px;
   text-align: center;
   z-index:11000;
+  border: 6px solid #595B5D;
+  border-radius: 6px;
 }
 
 #ant_sandbox.isTouchBrowser .ant_mobile_message.ant_top {
-  top:0;
+  top:15%;
 }
 #ant_sandbox.isTouchBrowser .ant_mobile_message.ant_bottom {
-  bottom:0;
+  bottom:15%;
 }
 
 #ant_sandbox.isTouchBrowser .ant_mobile_message a {
