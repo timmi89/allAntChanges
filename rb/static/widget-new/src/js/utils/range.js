@@ -32,6 +32,11 @@ function grabSelection(node, callback, excludeNode) {
     var selection = rangy.getSelection();
     if (isValidSelection(selection, node, excludeNode)) {
         selection.expand('word', { trim: true });
+        if (selection.containsNode(excludeNode)) {
+            var range = selection.getRangeAt(0);
+            range.setEndBefore(excludeNode);
+            selection.setSingleRange(range);
+        }
         var location = rangy.serializeSelection(selection, true, node);
         var text = selection.toString();
         highlightSelection(selection); // Highlighting deselects the text, so do this last.
