@@ -113,6 +113,7 @@
           padding-right:10px; position:relative;
           &.user {
             padding:0;
+            min-width:50px;
 
             img { width:25px; top:9px; position: relative;}
             h4 { font-size: 0.75rem; display: inline-block; color: #9a9a9a; position: relative; }
