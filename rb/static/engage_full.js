@@ -4569,7 +4569,7 @@ function antenna($A){
                                     ANT.util.setFunctionTimer( function() {
                                     // setTimeout(function(){
                                         $('#ant_indicator_' + hash).addClass('ant_visible');
-                                    },300, hash);
+                                    },200, hash);
                                 }
                             // }
                             ANT.actions.content_nodes.init(hash, function(){});
@@ -4587,7 +4587,7 @@ function antenna($A){
                             ANT.util.setFunctionTimer( function() {
                             // setTimeout(function(){
                                 $('#ant_indicator_' + hash).addClass('ant_visible');
-                            },300, hash);
+                            }, 200, hash);
 
                             // $('#ant_indicator_' + hash).show();
                             // ANT.actions.indicators.utils.borderHilites.engage(hash);
@@ -8205,7 +8205,7 @@ if ( sendData.kind=="page" ) {
                                                 var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                             }
                                             $(this).addClass('ant_live_hover');
-                                        } , 500);
+                                        } , 200);
                                     })//chain
                                     .on('mouseleave.ant', function() {
                                         ANT.util.clearFunctionTimer();

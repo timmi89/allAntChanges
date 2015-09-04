@@ -528,11 +528,12 @@ Here are just a few of the faces from what became Michelle's <a href="http://www
     letter-spacing: -0.01em;
     font-family: "Avenir Next", "Segoe UI", "Roboto", "Trebuchet MS", sans-serif;
 }
+.what .antenna-custom-cta { background:#FC6100;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block; }
 </style>
 <div class="what">
     <h4>What do you think?</h4>
     <p ant-item="html_poll" ant-reactions="Of course!;Not really;This was news to me;Makes me wonder...">Does this change the way you think about red hair?</p>
-    <div style="background:#FC6100;color:#fff;padding:0.5rem;margin-top:1rem;display:inline-block;" ant-cta-for="html_poll" ant-mode="write read"><span ant-counter-for="html_poll"></span> Responses</div>
+    <div class="antenna-custom-cta" ant-cta-for="html_poll" ant-mode="write read"><span ant-counter-for="html_poll"></span> Responses</div>
 </div>
 
 
@@ -892,7 +893,11 @@ window.antenna_extend = {
 
 <script>
 document.addEventListener("antenna.reaction", function(){
+  console.log('reaction occurred');
   var lastEvent = antenna.getLastEvent();
+  console.log(lastEvent);
+
+  // do other things here
   if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
     console.log('reaction....');
     jQuery('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
@@ -902,7 +907,7 @@ document.addEventListener("antenna.reaction", function(){
 
 var reactionViewCount = 0;
 document.addEventListener("antenna.reactionview", function(){
-  console.log('reactionview');
+  console.log('reactionview occurred');
   var lastEvent = antenna.getLastEvent();
   console.log(lastEvent);
   if (lastEvent.event == 'antenna.reactionview' ) {
