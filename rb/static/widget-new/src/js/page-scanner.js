@@ -72,15 +72,12 @@ function scanForText($section, pageData, groupSettings) {
     // TODO: only select "leaf" elements
     $textElements.each(function() {
         var $textElement = $(this);
-        // TODO position correctly
-        // TODO hash and add hash data to indicator
         var hash = Hash.hashText($textElement);
-        var $indicatorElement = $('<div class="ant-indicator-container" style="display:inline-block;"></div>'); // TODO
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($textElement);
-        var indicator = IndicatorWidget.create({
-            element: $indicatorElement,
+        var $indicatorElement = IndicatorWidget.create({
+            element: $('<div>'), // render the template into a dummy node. The create function will return the node that is created from the template.
             containerData: containerData,
             containerElement: $textElement,
             defaultReactions: defaultReactions,

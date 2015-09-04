@@ -1,5 +1,6 @@
 
 .antenna-indicator-widget {
+    display: inline-block;
     margin-left: 5px;
     cursor: pointer;
     opacity: 0;

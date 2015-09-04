@@ -75,6 +75,7 @@ function createIndicatorWidget(options) {
     $containerElement.on('mouseleave.antenna', function() {
         $rootElement.removeClass('active');
     });
+    return $rootElement;
 }
 
 function rootElement(ractive) {

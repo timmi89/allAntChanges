@@ -56,7 +56,7 @@ function isValidSelection(selection, node, excludeNode) {
 function grabNode(node, callback) {
     var range = rangy.createRange(document);
     range.selectNodeContents(node);
-    var $excluded = $(node).find('.ant-indicator-container'); // This class is copied in page-scanner
+    var $excluded = $(node).find('.antenna-indicator-widget');
     if ($excluded.size() > 0) { // Remove the indicator from the end of the selected range.
         range.setEndBefore($excluded.get(0));
     }
