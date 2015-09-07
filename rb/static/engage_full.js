@@ -4964,13 +4964,129 @@ function antenna($A){
                 //safe throw the errror.
                 ANT.safeThrow(errorMsg);
             },
-            hashNodes: function( $node, nomedia ) {
+            hashNodes: function( $passedInNode, nomedia ) {
                 //ANT.actions.hashNodes:
 
+                var $nodes;
+
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" || (!ANT.util.activeAB()) ) { return; }
+                if ( typeof $passedInNode==="undefined" || (!ANT.util.activeAB()) ) { return; }
+
+                if ($passedInNode.find(ANT.group.active_sections_with_anno_whitelist).length) {
+                    $nodes = $passedInNode.find(ANT.group.active_sections_with_anno_whitelist);
+                } else {
+                    $nodes = $passedInNode;
+                }
+
+                var $allNodes = $();
+
+                $.each( $nodes, function(idx, node) {
+                    var $node = $(node);
+
+
+                    /*
+
+                    TODO
+                    do we need to check that the nodes are INSIDE a valid section, 
+                    or is that handled by whatever passes the $nodes in???
+
+
+                    */
+
+                    if ( !$node.closest('.no-ant') && !$node.hasClass('no-ant') && !$node.hasClass('ant') && !$node.hasAttr('ant-hashed') ) {
+                        var body = '',
+                            kind = '',
+                            HTMLkind = '';
+
+                        HTMLkind = $node.get(0).nodeName.toLowerCase();
+
+                        // determine the kind
+                        if ( $node.hasAttr('ant-item-type') ) {
+                            // if specified, use that: ant-item-type="media"
+                            if ($node.attr('ant-item-type') == 'image') {
+                                kind = 'img';  // since we set "image" in HTML attributes, but code uses "img"
+                            } else {
+                                kind = $node.attr('ant-item-type');
+                            }
+                        } else {
+                            if (HTMLkind == 'img') {
+                                kind = 'img';
+                            }
+                            if (HTMLkind == 'iframe' || HTMLkind == 'video' || HTMLkind == 'embed') {
+                                kind = 'media';
+                            }
+                            if ($node.text()) {
+                                kind = 'text';
+                            }
+                        }
+                        
+                        // get ready to determine the content body
+                        // TODO needed?????
+                        // if ( $node.hasAttr('ant-item-content') ) {
+                            // if has item content, use that before making adjustments
+                            // body = $node.attr('ant-item-content');
+                        // }
+
+                        // determine the content body
+                        if (kind=='media') {
+                        // if media, and relative, prepend the body and such
+                            var body = ($node.hasAttr('ant-item-content')) ? $node.attr('ant-item-content') :
+                                       (typeof this.src != 'undefined') ? this.src : 
+                                       (typeof this.data != 'undefined') ? this.data : '';
+
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+                        }
+                        if (kind=='img') {
+                        // if image...
+                            var body = ( $node.hasAttr('src') ) ? $node.attr('src') : $node.attr('ant-item-content');
+
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+                        }
+
+                        if (kind=='text') {
+                        // if text
+                            // just grab the text, but need to ensure this text != parent text, ensure validity.  maybe?
+                            // var $node = $(node),
+                                // node_text = $node.text();
+                                // TODO need this?
+                                // node_parent_text = $node.parent().text();
+
+                                body = ANT.util.getCleanText($node);
+                        }
+
+                        // if custom
+                            // body = $node.attr('ant-item-content') or $node.text()
+
+                        // if text, compare against anno_whitelist?
+
+
+
+
+                        $node.data('body', body);
+                        $node.data('kind', kind);
+                        $node.data('isCustom', ($node.hasAttr('ant-item-content')) ? true:false);
+
+                        $allNodes = $allNodes.add($node);   
+                    }
+
+                });
+
+
+
+
 
                 //todo: consider how to do this whitelist, initialset stuff right
+            /*
                 var $allNodes = $(),
                 nodeGroups = [
                     {
@@ -5105,14 +5221,14 @@ function antenna($A){
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
                     
-                    // hack to fix text nodes taking over our media
-                    if(group.kind == "text"){
-                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
+>>>                    // hack to fix text nodes taking over our media
+>>>                    if(group.kind == "text"){
+>>>                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
-                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
-                    group.$nodes = $group;
+>>>                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
+>>>                    group.$nodes = $group;
 
                     //setup the group as needed
                     $group.each( function(){
@@ -5120,16 +5236,17 @@ function antenna($A){
                         $(this).data('kind', group.kind);
                     });
 
-                    $allNodes = $allNodes.add($group);
+>>>                    $allNodes = $allNodes.add($group);
 
                     //flag exceptions for inline_indicators
-                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
+>>>                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
 
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
                     });
 
                 });
+            */
 
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
