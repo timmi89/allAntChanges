@@ -115,18 +115,20 @@ function scanForImages($section, pageData, groupSettings) {
             height: $imageElement.height(), // TODO: review how we get the image dimensions
             width: $imageElement.width()
         };
-        // TODO: don't create indicator on images that are too small
-        ImageIndicatorWidget.create({
-            element: WidgetBucket(),
-            coords: coords,
-            imageUrl: imageUrl,
-            imageDimensions: dimensions,
-            containerData: containerData,
-            containerElement: $imageElement,
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings}
-        );
+        if (dimensions.height >= 100 && dimensions.width >= 100) { // Don't create indicator on images that are too small
+            ImageIndicatorWidget.create({
+                    element: WidgetBucket(),
+                    coords: coords,
+                    imageUrl: imageUrl,
+                    imageDimensions: dimensions,
+                    containerData: containerData,
+                    containerElement: $imageElement,
+                    defaultReactions: defaultReactions,
+                    pageData: pageData,
+                    groupSettings: groupSettings
+                }
+            );
+        }
     });
 }
 
