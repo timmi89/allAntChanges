@@ -4973,6 +4973,8 @@ function antenna($A){
 
                 if ($passedInNode.find(ANT.group.active_sections_with_anno_whitelist).length) {
                     $nodes = $passedInNode.find(ANT.group.active_sections_with_anno_whitelist);
+                } else if ($passedInNode.find(ANT.group.anno_whitelist).length) {
+                    $nodes = $passedInNode.find(ANT.group.anno_whitelist);
                 } else {
                     $nodes = $passedInNode;
                 }
