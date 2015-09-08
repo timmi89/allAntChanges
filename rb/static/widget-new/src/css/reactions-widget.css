@@ -2,7 +2,7 @@
     display: none;
     position: absolute;
     width: 222px;
-    overflow-x: hidden;
+    overflow: hidden;
     background-color: white;
     z-index: 999; /* TODO */
     box-shadow: 0 0 3px rgba(000,000,000,.3);
@@ -55,6 +55,7 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    background-color: #ffffff;
 }
 
 .antenna-page-animate {
@@ -67,13 +68,6 @@
 
 .antenna-reactions-page, .antenna-default-page {
     color: white;
-}
-
-.antenna-confirm-page {
-    background-color: #dddddd;
-    color: black;
-    min-width: 300px; /* TODO: This is just here to test how the widget handles resizing */
-    height: 200px;
 }
 
 .antenna-progress-page {
@@ -149,6 +143,54 @@
     color: #8fb3f2;
 }
 
+.antenna-comment-reaction {
+    padding: 22px 0;
+    background-color: #eeeeee;
+    color: #666666;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #cccccc;
+    text-align: center;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.antenna-comment-page textarea {
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
+    height: 50px;
+    padding: 5px;
+    border: 1px solid #cccccc;
+    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+}
+
+.antenna-comment-area {
+    margin: 12px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.antenna-comment-footer {
+    padding: 2px 0 10px 0;
+}
+
+.antenna-comment-footer span {
+    font-style: italic;
+    font-size: 10px;
+    color: #cccccc;
+}
+
+.antenna-comment-footer button {
+    float: right;
+    background-color: #8fb3f2;
+    border: 0;
+    padding: 5px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 11px;
+}
+
 .antenna-default-footer input {
     font-weight: 700;
     font-size: 13px;
@@ -179,4 +221,9 @@
     margin-left: 5px;
     color: #ffffff;
     font-size: 11px;
+}
+
+.antenna-confirm-footer {
+    font-size: 12px;
+    color: #666666;
 }

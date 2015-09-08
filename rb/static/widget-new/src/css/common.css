@@ -15,6 +15,16 @@
     font-size: 12px;
 }
 
+.ant-social-facebook {
+    font-size: 24px;
+    color: #3b5998;
+}
+
+.ant-social-twitter {
+    font-size: 24px;
+    color: #55acee;
+}
+
 .antenna-highlight {
     background-color: #FCF5A7;
     color: #666;

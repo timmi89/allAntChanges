@@ -29,12 +29,15 @@
                 </div>
             {{/defaultReactions:index}}
         </div>
-        <div class="antenna-confirm-page antenna-page">
-            {{#if response.existing}}
-                Looks like you still feel the same way.
-            {{else}}
-                New reaction received.
-            {{/if}}
+        <div class="antenna-comment-page antenna-page">
+            <div class="antenna-comment-reaction">"Reaction Here"</div>
+            <div class="antenna-comment-area">
+                <textarea placeholder="Add comments or #hashtags" maxlength="500"></textarea>
+                <div class="antenna-comment-footer">
+                    <span>500 characters left</span>
+                    <button>Comment</button>
+                </div>
+            </div>
         </div>
         <div class="antenna-progress-page antenna-page">
 
@@ -49,7 +52,7 @@
             <button on-click="addcustom">ok</button>
         </div>
         <div class="antenna-footer antenna-confirm-footer">
-            <span on-click="share" class="antenna-share">Facebook!</span>
+            <span on-click="share" class="antenna-share">Share your reaction: <span class="ant-social-facebook"></span><span class="ant-social-twitter"></span></span>
         </div>
     </div>
 </div>

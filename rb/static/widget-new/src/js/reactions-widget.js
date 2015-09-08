@@ -350,7 +350,7 @@ function isShowingDefaultReactionsPage(ractive) {
 }
 
 function showConfirmPage(ractive, animate) {
-    showPage('.antenna-confirm-page', ractive, animate);
+    showPage('.antenna-comment-page', ractive, animate);
     showFooter('.antenna-confirm-footer', ractive);
 }
 
