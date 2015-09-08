@@ -4966,7 +4966,6 @@ function antenna($A){
             },
             hashNodes: function( $passedInNode, nomedia ) {
                 //ANT.actions.hashNodes:
-
                 var $nodes;
 
                 // [porter]: needs a node or nodes
@@ -4983,7 +4982,6 @@ function antenna($A){
                 $.each( $nodes, function(idx, node) {
                     var $node = $(node);
 
-
                     /*
 
                     TODO
@@ -4993,7 +4991,7 @@ function antenna($A){
 
                     */
 
-                    if ( !$node.closest('.no-ant') && !$node.hasClass('no-ant') && !$node.hasClass('ant') && !$node.hasAttr('ant-hashed') ) {
+                    if ( !$node.closest('.no-ant').length && !$node.hasClass('no-ant') && !$node.hasClass('ant') && !$node.hasAttr('ant-hashed') ) {
                         var body = '',
                             kind = '',
                             HTMLkind = '';
@@ -5019,7 +5017,7 @@ function antenna($A){
                                 kind = 'text';
                             }
                         }
-                        
+
                         // get ready to determine the content body
                         // TODO needed?????
                         // if ( $node.hasAttr('ant-item-content') ) {
@@ -5071,12 +5069,13 @@ function antenna($A){
 
 
 
+                        if (kind && body) {
+                            $node.data('body', body);
+                            $node.data('kind', kind);
+                            $node.data('isCustom', ($node.hasAttr('ant-item-content')) ? true:false);
 
-                        $node.data('body', body);
-                        $node.data('kind', kind);
-                        $node.data('isCustom', ($node.hasAttr('ant-item-content')) ? true:false);
-
-                        $allNodes = $allNodes.add($node);   
+                            $allNodes = $allNodes.add($node);   
+                        }
                     }
 
                 });
@@ -5251,14 +5250,14 @@ function antenna($A){
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) { 
-                    return false;
-                }
+                // if( !$allNodes.data('body') ) { 
+                //     return false;
+                // }
                 //else
                 var hashList = {};
 
                 //run init outside the loop for optimization to avoid many reflows
-                var indicatorInitQueue = [];
+                // var indicatorInitQueue = [];
 
                 $allNodes.each(function(){
                     var $this = $(this),
@@ -5271,9 +5270,10 @@ function antenna($A){
                         oldHash,
                         hashText;
 
-                    if ( $this.closest('.no-ant').length ) {
-                        return;
-                    }
+                    // redundant, from above, so removing:
+                    // if ( $this.closest('.no-ant').length ) {
+                    //     return;
+                    // }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
 
@@ -5427,7 +5427,7 @@ function antenna($A){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.attr( 'ant-hash', hash ).attr('ant-node', 'true');
+                    $this.attr( 'ant-hash', hash ).attr('ant-node', 'true').attr( 'ant-hashed', true );
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
                     if ( HTMLkind != 'body' && !isTouchBrowser ) {
@@ -5478,10 +5478,10 @@ function antenna($A){
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
                 // ANT.actions.sendHashes:
+console.log(hashesByPageId);
 
                 var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
-                    
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
                         //im guessing this will never happen - test for a while and elliminate.
@@ -10347,7 +10347,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv24"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv25"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
