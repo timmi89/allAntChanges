@@ -1,58 +1,12 @@
-<div on-keydown="key-reactions" class="antenna antenna-reactions-widget" tabindex="0">
+<div class="antenna antenna-reactions-widget" tabindex="0">
     <div class="antenna-header">
         <span class="ant-antenna-logo"></span>
         Reactions
     </div>
-    <div class="antenna-body">
-        <div class="antenna-reactions-page antenna-page">
-            {{#reactions:index}}
-                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}" style="background-color:{{reactionsBackgroundColor(index)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
-                    <div class="antenna-reaction-box">
-                        <div class="antenna-reaction-text" decorator="sizetofit">
-                            {{ this.text }}
-                        </div>
-                        <div class="antenna-reaction-count">
-                            {{ this.count }}
-                        </div>
-                    </div>
-                </div>
-            {{/reactions:index}}
-        </div>
-        <div class="antenna-default-page antenna-page">
-            {{#defaultReactions:index}}
-                <div on-click="newreaction" class="antenna-reaction {{defaultLayoutClass(index)}}" style="background-color:{{ defaultBackgroundColor(index) }}">
-                    <div class="antenna-reaction-box">
-                        <div class="antenna-reaction-text" decorator="sizetofit">
-                            {{ this.text }}
-                        </div>
-                    </div>
-                </div>
-            {{/defaultReactions:index}}
-        </div>
-        <div class="antenna-comment-page antenna-page">
-            <div class="antenna-comment-reaction">"Reaction Here"</div>
-            <div class="antenna-comment-area">
-                <textarea placeholder="Add comments or #hashtags" maxlength="500"></textarea>
-                <div class="antenna-comment-footer">
-                    <span>500 characters left</span>
-                    <button>Comment</button>
-                </div>
-            </div>
-        </div>
+    <div class="antenna-page-container">
+        <!-- other pages are programmatically inserted here -->
         <div class="antenna-progress-page antenna-page">
-
-        </div>
-    </div>
-    <div class="antenna-footer-area">
-        <div class="antenna-footer antenna-reactions-footer">
-            <span on-click="showdefault" class="antenna-think">What do you think?</span>
-        </div>
-        <div class="antenna-footer antenna-default-footer">
-            <input on-focus="customfocus" on-keydown="key-custom" on-blur="customblur" value="+ Add Your Own" maxlength="25">
-            <button on-click="addcustom">ok</button>
-        </div>
-        <div class="antenna-footer antenna-confirm-footer">
-            <span on-click="share" class="antenna-share">Share your reaction: <span class="ant-social-facebook"></span><span class="ant-social-twitter"></span></span>
+            <div class="antenna-body"></div>
         </div>
     </div>
 </div>

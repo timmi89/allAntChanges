@@ -1,0 +1,19 @@
+<div class="antenna-page antenna-reactions-page">
+    <div class="antenna-body">
+        {{#reactions:index}}
+            <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}" style="background-color:{{reactionsBackgroundColor(index)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                <div class="antenna-reaction-box">
+                    <div class="antenna-reaction-text" decorator="sizetofit">
+                        {{ this.text }}
+                    </div>
+                    <div class="antenna-reaction-count">
+                        {{ this.count }}
+                    </div>
+                </div>
+            </div>
+        {{/reactions:index}}
+    </div>
+    <div class="antenna-footer antenna-reactions-footer">
+        <span on-click="showdefault" class="antenna-think">What do you think?</span>
+    </div>
+</div>

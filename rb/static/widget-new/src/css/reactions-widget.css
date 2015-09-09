@@ -22,21 +22,18 @@
     cursor: move;
 }
 
-.antenna-body {
+.antenna-page-container {
     /* body height is set in Javascript */
     position: relative;
+    width: 100%;
 }
 
-.antenna-footer-area {
-    height: 50px;
-    position: relative;
+.antenna-body {
+    overflow-y: auto;
 }
 
 .antenna-footer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
+    height: 50px;
     width: 100%;
     padding: 6px;
     box-sizing: border-box;
@@ -54,7 +51,7 @@
     left: 100%;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     background-color: #ffffff;
 }
 
@@ -64,10 +61,6 @@
 
 .antenna-page-active {
     left: 0;
-}
-
-.antenna-reactions-page, .antenna-default-page {
-    color: white;
 }
 
 .antenna-progress-page {
@@ -81,6 +74,7 @@
     height: 75px;
     vertical-align: top; /* See http://stackoverflow.com/questions/19366401/css-inline-block-elements-not-lining-up-properly */
     box-sizing: border-box;
+    color: #ffffff;
 }
 
 .antenna-reaction.half {
@@ -141,89 +135,4 @@
 }
 .antenna-think:hover {
     color: #8fb3f2;
-}
-
-.antenna-comment-reaction {
-    padding: 22px 0;
-    background-color: #eeeeee;
-    color: #666666;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #cccccc;
-    text-align: center;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.antenna-comment-page textarea {
-    resize: none;
-    width: 100%;
-    box-sizing: border-box;
-    height: 50px;
-    padding: 5px;
-    border: 1px solid #cccccc;
-    font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
-    font-size: 11px;
-    line-height: 16px;
-}
-
-.antenna-comment-area {
-    margin: 12px;
-    border-bottom: 1px solid #dddddd;
-}
-
-.antenna-comment-footer {
-    padding: 2px 0 10px 0;
-}
-
-.antenna-comment-footer span {
-    font-style: italic;
-    font-size: 10px;
-    color: #cccccc;
-}
-
-.antenna-comment-footer button {
-    float: right;
-    background-color: #8fb3f2;
-    border: 0;
-    padding: 5px;
-    text-align: center;
-    color: #ffffff;
-    font-size: 11px;
-}
-
-.antenna-default-footer input {
-    font-weight: 700;
-    font-size: 13px;
-    color: #666666;
-    text-align: center;
-    letter-spacing: -.25px;
-    border: none;
-    padding: 3px;
-    width: 65%;
-    cursor: pointer;
-}
-
-.antenna-default-footer input:focus {
-    cursor: text;
-    outline: none;
-}
-
-.antenna-default-footer input.active {
-    border: 2px solid #8fb3f2;
-}
-
-.antenna-default-footer button {
-    display: none;
-    background-color: #8fb3f2;
-    border: 0;
-    text-align: center;
-    padding: 6px 8px;
-    margin-left: 5px;
-    color: #ffffff;
-    font-size: 11px;
-}
-
-.antenna-confirm-footer {
-    font-size: 12px;
-    color: #666666;
 }
