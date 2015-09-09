@@ -140,5 +140,8 @@ class OAuth2EventsUtility(object):
                 "maxResults": maxResults, 
                 "query": query 
                 }
+    def request_body_result_rows(self, request_body):
+        result = self.service.jobs().query(projectId=int(self.PROJECT_NUMBER),body=request_body).execute()
+        return result['rows']
 
     
