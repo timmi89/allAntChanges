@@ -87,7 +87,7 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
             group_id: pageData.groupId,
             container_kind: containerData.type, // 'page', 'text', 'media', 'img'
             content_node_data: {
-                body: '', // TODO: do we need this for +1s?
+                body: '', // TODO: do we need this for +1s? looks like only the id field is used, if one is set
                 kind: contentNodeDataKind(containerData.type),
                 item_type: '' // TODO: looks unused but TagHandler blows up without it
             }
@@ -95,6 +95,9 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
         if (reactionData.content) {
             data.content_node_data.id = reactionData.content.id;
             data.content_node_data.location = reactionData.content.location;
+        }
+        if (reactionData.parentID) {
+            data.tag.parent_id = reactionData.parentID;
         }
         $.getJSONP(URLs.createReactionUrl(), data, plusOneSuccess(reactionData, containerData, pageData, success), error);
         //var response = { // TODO: just capturing the api format...
