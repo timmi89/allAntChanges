@@ -45,7 +45,7 @@ function createIndicatorWidget(options) {
     }
     var hoverTimeout;
     $rootElement.on('mouseenter.antenna', function(event) {
-        if (event.buttons !== 0) {
+        if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF
             // Don't react if the user is dragging or selecting text.
             return;
         }
