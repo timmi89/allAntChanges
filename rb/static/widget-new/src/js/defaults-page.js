@@ -45,7 +45,7 @@ function createPage(options) {
         var event = ractiveEvent.original;
         var key = (event.which !== undefined) ? event.which : event.keyCode;
         if (key == 13) { // Enter
-            submitCustomReaction(containerData, pageData, contentData, showConfirmation, ractive)();
+            submitCustomReaction();
         } else if (key == 27) { // Escape
             $(event.target).val('');
             $(rootElement(ractive)).focus();
@@ -64,7 +64,7 @@ function createPage(options) {
         }
     }
 
-    function submitCustomReaction(ractiveEvent) {
+    function submitCustomReaction() {
         var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
         if (body !== '') {
             var reactionData = { text: body };

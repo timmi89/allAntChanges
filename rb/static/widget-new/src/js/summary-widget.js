@@ -26,7 +26,7 @@ function openReactionsWindow(containerData, pageData, defaultReactions, groupSet
         defaultReactions: defaultReactions,
         pageData: pageData,
         groupSettings: groupSettings,
-        contentData: { type: 'page' }
+        contentData: { type: 'page', body: '' }
     };
     ReactionsWidget.open(reactionsWidgetOptions, rootElement(ractive));
 }

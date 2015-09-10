@@ -10,7 +10,7 @@ function createPage(options) {
     var containerData = options.containerData;
     var pageData = options.pageData;
     var contentData = options.contentData;
-    var containerElement = options.containerElement;
+    var containerElement = options.containerElement; // optional
     //var showProgress = options.showProgress;
     var showConfirmation = options.showConfirmation;
     var showDefaults = options.showDefaults;
@@ -75,7 +75,6 @@ function highlightContent(containerData, pageData, $containerElement) {
 function plusOne(containerData, pageData, showConfirmation) {
     return function(event) {
         var reactionData = event.context;
-        //showProgress();
         showConfirmation(reactionData);
         AjaxClient.postPlusOne(reactionData, containerData, pageData, function(){}/*TODO*/, error);
 
