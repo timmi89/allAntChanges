@@ -60,6 +60,7 @@ function openReactionsWidget(options, elementOrCoords) {
         }
 
         setupWindowClose(pages, ractive);
+        preventExtraScroll($rootElement);
     }
 
     function showReactionsPage(animate) {
@@ -231,11 +232,50 @@ function setupWindowClose(pages, ractive) {
         $rootElement.off('.antenna'); // Unbind all of the handlers in our namespace
         $(document).off('click.antenna');
         Range.clearHighlights();
-        ractive.teardown();
         for (var i = 0; i < pages.length; i++) {
             pages[i].teardown();
         }
+        ractive.teardown();
     }
+}
+
+// Prevent scrolling of the document after we scroll to the top/bottom of the reactions window
+// Code copied from: http://stackoverflow.com/questions/5802467/prevent-scrolling-of-parent-element
+// TODO: does this work on mobile?
+function preventExtraScroll($rootElement) {
+    $rootElement.on('DOMMouseScroll.antenna mousewheel.antenna', '.antenna-body', function(ev) {
+        var $this = $(this),
+            scrollTop = this.scrollTop,
+            scrollHeight = this.scrollHeight,
+            height = $this.height(),
+            delta = (ev.type == 'DOMMouseScroll' ?
+                ev.originalEvent.detail * -40 :
+                ev.originalEvent.wheelDelta),
+            up = delta > 0;
+
+        if (scrollHeight <= height) {
+            // This is an addition to the StackOverflow code, to make sure the page scrolls as usual if the window
+            // content doesn't scroll.
+            return;
+        }
+
+        var prevent = function() {
+            ev.stopPropagation();
+            ev.preventDefault();
+            ev.returnValue = false;
+            return false;
+        };
+
+        if (!up && -delta > scrollHeight - height - scrollTop) {
+            // Scrolling down, but this will take us past the bottom.
+            $this.scrollTop(scrollHeight);
+            return prevent();
+        } else if (up && delta > scrollTop) {
+            // Scrolling up, but this will take us past the top.
+            $this.scrollTop(0);
+            return prevent();
+        }
+    });
 }
 
 //noinspection JSUnresolvedVariable
