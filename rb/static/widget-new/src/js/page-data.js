@@ -98,9 +98,30 @@ function setContainers(pageData, containers) {
     }
 }
 
+function registerReaction(reaction, containerData, pageData) {
+    var existingReactions = containerData.reactions;
+    for (var i = 0; i < existingReactions.length; i++) {
+        if (existingReactions[i].id === reaction.id) {
+            // This reaction has already been added to this container. Don't add it again.
+            return existingReactions[i];
+        }
+    }
+    containerData.reactions.push(reaction);
+    containerData.reactionTotal = containerData.reactionTotal + 1;
+    var summaryReaction = {
+        text: reaction.text,
+        id: reaction.id,
+        count: reaction.count
+    };
+    pageData.summaryReactions.push(summaryReaction);
+    pageData.summaryTotal = pageData.summaryTotal + 1;
+    return reaction;
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     getPageData: getPageData,
     updateAllPageData: updateAllPageData,
-    getContainerData: getContainerData
+    getContainerData: getContainerData,
+    registerReaction: registerReaction
 };

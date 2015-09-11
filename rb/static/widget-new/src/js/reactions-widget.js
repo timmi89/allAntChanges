@@ -103,7 +103,7 @@ function openReactionsWidget(options, elementOrCoords) {
 
     function showConfirmPage(reaction) {
         // TODO: update header text "Thanks for your reaction!"
-        var page = ConfirmationPage.create(reaction, pageContainer(ractive));
+        var page = ConfirmationPage.create(reaction, containerData, pageData, pageContainer(ractive));
         pages.push(page);
 
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page

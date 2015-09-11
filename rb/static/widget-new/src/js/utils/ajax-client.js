@@ -4,6 +4,8 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 
+var PageData = require('../page-data'); // TODO: backwards dependency
+
 
 function postNewReaction(reactionData, containerData, pageData, contentData, success, error) {
     var contentBody = contentData.body;
@@ -42,7 +44,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
         if (reactionData.id) {
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
-        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(containerData, contentData, pageData, success), error);
+        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(containerData, pageData, success), error);
         //var response = { // TODO: just capturing the api format...
         //        existing: json.existing,
         //        interaction: {
@@ -113,6 +115,55 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
     });
 }
 
+function postComment(comment, reactionData, containerData, pageData, success, error) {
+    // TODO: refactor the post functions to eliminate all the copied code
+    XDMClient.getUser(function(response) {
+        var userInfo = response.data;
+        // TODO extract the shape of this data and possibly the whole API call
+        // TODO figure out which parts don't get passed for a new reaction
+        // TODO compute field values (e.g. container_kind and content info) for new reactions
+        if (!reactionData.content) {
+            // This is a summary reaction. See if we have any container data that we can link to it.
+            var containerReactions = containerData.reactions;
+            for (var i = 0; i < containerReactions.length; i++) {
+                var containerReaction = containerReactions[i];
+                if (containerReaction.id === reactionData.id) {
+                    reactionData.parentID = containerReaction.parentID;
+                    reactionData.content = containerReaction.content;
+                    break;
+                }
+            }
+        }
+        var data = {
+            comment: comment,
+            tag: {
+                body: reactionData.text,
+                id: reactionData.id
+            },
+            is_default: 'true', // TODO check if the reaction id/body matches a default
+            hash: containerData.hash,
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token,
+            page_id: pageData.pageId,
+            group_id: pageData.groupId,
+            container_kind: containerData.type, // 'page', 'text', 'media', 'img'
+            content_node_data: {
+                body: '', // TODO: do we need this for +1s? looks like only the id field is used, if one is set
+                kind: contentNodeDataKind(containerData.type),
+                item_type: '' // TODO: looks unused but TagHandler blows up without it
+            }
+        };
+        if (reactionData.content) {
+            data.content_node_data.id = reactionData.content.id;
+            data.content_node_data.location = reactionData.content.location;
+        }
+        if (reactionData.parentID) {
+            data.tag.parent_id = reactionData.parentID;
+        }
+        $.getJSONP(URLs.createCommentUrl(), data, commentSuccess(containerData, pageData, success), error);
+    });
+}
+
 function contentNodeDataKind(type) {
     // TODO: resolve whether to use the short or long form for content_node_data.kind. // 'pag', 'txt', 'med', 'img'
     if (type === 'image') {
@@ -131,6 +182,29 @@ function isDefaultReaction(reaction, defaultReactions) {
     return false;
 }
 
+function commentSuccess(containerData, pageData, callback) {
+    return function(response) {
+        // TODO: in the case that someone reacts and then immediately comments, we have a race condition where the
+        //       comment response could come back before the reaction. we need to:
+        //       1. Make sure the server only creates a single reaction in this case (not a HUGE deal if it makes two)
+        //       2. Resolve the two responses that both theoretically come back with the same reaction data at the same
+        //          time. Make sure we don't end up with two copies of the same data in the model.
+        var reactionCreated = !response.existing;
+        if (reactionCreated) {
+            var reaction = reactionFromResponse(response);
+            reaction = PageData.registerReaction(reaction, containerData, pageData);
+            var comments = reaction.comments;
+            if (!comments) {
+                comments = reaction.comments = { count: 0, commentsUrl: commentsUrl(reaction, containerData) };
+            }
+            comments.count = comments.count + 1;
+        } else {
+            // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
+        }
+        callback(reactionCreated);
+    }
+}
+
 function plusOneSuccess(reactionData, containerData, pageData, callback) {
     return function(response) {
         var reactionCreated = !response.existing;
@@ -144,42 +218,49 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
     }
 }
 
-function newReactionSuccess(containerData, contentData, pageData, callback) {
+function newReactionSuccess(containerData, pageData, callback) {
     return function(response) {
         var reactionCreated = !response.existing;
         if (reactionCreated) {
-            // TODO: the server should give us back a reaction matching the new API format.
-            //       we're just faking it out for now; this code is temporary
-            var reaction = {
-                text: response.interaction.interaction_node.body,
-                id: response.interaction.interaction_node.id,
-                count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
-                // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
-                content: {
-                    location: contentData.location,
-                    kind: contentData.type,
-                    body: contentData.body,
-                    id: response.content_node.id
-                }
-            };
-            // TODO: check back on this as the way to propogate data changes into the model. Consider adding something
-            //       to PageData to handle this instead.
-            containerData.reactions.push(reaction);
-            containerData.reactionTotal = containerData.reactionTotal + 1;
-            var summaryReaction = {
-                text: reaction.text,
-                id: reaction.id,
-                count: reaction.count
-            };
-            pageData.summaryReactions.push(summaryReaction);
-            pageData.summaryTotal = pageData.summaryTotal + 1;
+            var reaction = reactionFromResponse(response);
+            reaction = PageData.registerReaction(reaction, containerData, pageData);
+        } else {
+            // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
         }
         callback(reactionCreated);
     };
 }
 
+function reactionFromResponse(response) {
+    // TODO: the server should give us back a reaction matching the new API format.
+    //       we're just faking it out for now; this code is temporary
+    var reaction = {
+        text: response.interaction.interaction_node.body,
+        id: response.interaction.interaction_node.id,
+        count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
+        // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
+    };
+    if (response.content_node) {
+        reaction.content = {
+            id: response.content_node.id,
+            kind: response.content_node.kind,
+            body: response.content_node.body
+        };
+        if (response.content_node.location) {
+            reaction.content.location = response.content_node.location;
+        }
+    }
+    return reaction;
+}
+
+function commentsUrl(reaction, containerData) {
+    // TODO: need to send the URL back from the server. this path math is temporary
+    return '/api/comments/' + containerData.id + '/' + reaction.id;
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     postPlusOne: postPlusOne,
-    postNewReaction: postNewReaction
+    postNewReaction: postNewReaction,
+    postComment: postComment
 };
