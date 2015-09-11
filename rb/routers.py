@@ -44,5 +44,34 @@ class MasterSlaveRouter(object):
         return None
 
     def allow_syncdb(self, db, model):
-        "Explicitly put all models on all databases."
         return False
+
+class CassandraRouter(object):
+    """A router that sets up a simple master/slave configuration"""
+
+    def db_for_read(self, model, **hints):
+        print model.CASSANDRA_MODEL
+        if model.CASSANDRA_MODEL:
+            return 'cassandra'
+        return None
+
+    def db_for_write(self, model, **hints):
+        print model.CASSANDRA_MODEL
+        if model.CASSANDRA_MODEL:
+            return 'cassandra'
+        return None
+
+    def allow_relation(self, obj1, obj2, **hints):
+        "Allow any relation between two objects in the db pool"
+        print model.CASSANDRA_MODEL
+        db_list = ('cassandra')
+        if obj1._state.db in db_list and obj2._state.db in db_list:
+            return True
+        return None
+
+    def allow_syncdb(self, db, model):
+        print model.CASSANDRA_MODEL
+        if model.CASSANDRA_MODEL:
+            return True
+        return None
+

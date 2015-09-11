@@ -19,22 +19,23 @@ class BQQueryBuilder(object):
     builder.set_group(group2).build_query().run_query()
     group2_rows = builder.get_result_rows()
     """
-    event_util = None
-    group = None
-    query = None
-    start_date = None
-    end_date = None
-    max_results = 250
-    select_columns = []
-    group_by = ''
-    order_by = ''
-    where_clause = None  #this should be a clause object
     
-    rows = None
     def __init__(self):
         self.event_util = OAuth2EventsUtility(kwargs={'projectNumber':settings.EVENTS_PROJECT_NUMBER, 
                                       'keyFile':settings.EVENTS_KEY_FILE,
                                       'serviceEmail' : settings.EVENTS_SERVICE_ACCOUNT_EMAIL})
+        
+        self.group = None
+        self.query = None
+        self.start_date = None
+        self.end_date = None
+        self.max_results = 250
+        self.select_columns = []
+        self.group_by = ''
+        self.order_by = ''
+        self.where_clause = None  #this should be a clause object
+        self.limit = None
+        self.rows = None
    
 
     def set_group(self, group):
@@ -59,14 +60,14 @@ class BQQueryBuilder(object):
         """Should throw runtime if minimum parameters have not been set"""
         if self.query is None or len(self.select_columns) == 0:
             raise Exception('Query Not Built')
-        request_body = self.event_util().get_request_body(self.query, self.max_results)
-        self.rows = self.event_util().request_body_result_rows(request_body)
+        request_body = self.event_util.get_request_body(self.query, self.max_results)
+        self.rows = self.event_util.request_body_result_rows(request_body)
         return self
     
     def run_custom_query(self, custom_query):
         """ push in raw string of query and pray to the digital gods """
-        request_body = self.event_util().get_request_body(custom_query, self.max_results)
-        self.rows = self.event_util().request_body_result_rows(request_body)
+        request_body = self.event_util.get_request_body(custom_query, self.max_results)
+        self.rows = self.event_util.request_body_result_rows(request_body)
         return self
     
     def set_clause(self, clause):
@@ -77,8 +78,19 @@ class BQQueryBuilder(object):
         self.select_columns.append(column_name)
         return self
     
-    def select_columns(self, column_names):
+    def sel_columns(self, column_names):
         self.select_columns.extend(column_names)
+        return self
+    
+    def set_group_by(self, group_by):
+        self.group_by = group_by
+        return self
+    def set_order_by(self, order_by):
+        self.order_by = order_by
+        return self
+    
+    def set_limit(self, limit):
+        self.limit = limit
         return self
     
     def build_query(self):
@@ -87,6 +99,13 @@ class BQQueryBuilder(object):
         select_str = 'select ' + ','.join(self.select_columns) + ' from '
         table_names = self.event_util.query_table_names_by_dates(self.group, self.start_date, self.end_date)
         self.query = select_str + table_names + ' where ' + self.where_clause.__str__()
+        if self.group_by:
+            self.query = self.query + ' ' + self.group_by
+        if self.order_by:
+            self.query = self.query + ' ' + self.order_by
+        if self.limit:
+            self.query = self.query + ' limit ' + str(self.limit)
+        print 'QUERY:', self.query
         return self
     
     def get_result_rows(self):
@@ -106,6 +125,11 @@ class BQCrit(object):
         
     def __str__(self):
         if self.column and self.operand and self.value:
+            #TODO:  This needs to be addressed better
+            if self.value == 'T': 
+                return self.column + ' ' + self.operand + ' true'
+            elif  self.value == 'F':
+                return self.column + ' ' + self.operand + ' false'
             return self.column + ' ' + self.operand + ' "'  + self.value + '"'
         else:
             #this is probably a runtime, actually

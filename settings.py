@@ -1,7 +1,7 @@
 # Django settings for antenna project.
 from __future__ import absolute_import
 from os import uname
-
+from cassandra import ConsistencyLevel
 if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'blackhat.abastionofsanity' : DEBUG = True
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
@@ -102,7 +102,31 @@ if DEBUG:
             'OPTIONS': {
                 "init_command": "SET storage_engine=INNODB",
             }
+        },
+        'cassandra': {
+            'ENGINE': 'django_cassandra_engine',
+            'NAME': 'event_reports',
+            'USER': 'root', #TODO
+            'PASSWORD': '', #TODO
+            'TEST_NAME': 'test_event_reports',
+            'HOST': '127.0.0.1',
+            'OPTIONS': {
+                'replication': {
+                    'strategy_class': 'SimpleStrategy',
+                    'replication_factor': 1
+                },
+                'connection': {
+                    'consistency': ConsistencyLevel.ONE,
+                    'retry_connect': True
+                    # + All connection options for cassandra.cluster.Cluster()
+                },
+                'session': {
+                    'default_timeout': 10,
+                    'default_fetch_size': 10000
+                    # + All options for cassandra.cluster.Session()
+                }
         }
+    }
     }
     # To use sqlite instead of mysql, uncomment this block and comment the one above.
     # DATABASES = {
@@ -180,7 +204,7 @@ else:
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATIC_URL = '//s3.amazonaws.com/readrboard/'
-    DATABASE_ROUTERS = ['rb.routers.MasterSlaveRouter']    
+    DATABASE_ROUTERS = ['rb.routers.CassandraRouter', 'rb.routers.MasterSlaveRouter']    
     
         
     DATABASES = {
@@ -368,6 +392,7 @@ else:
 SEEDERS=[119507,119500,119495,119494,119493,119492,11940,119487,119485,119483]
 
 INSTALLED_APPS = [
+    'django_cassandra_engine',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -378,6 +403,7 @@ INSTALLED_APPS = [
     'rb',
     'chronos',
     'analytics',
+    'forecast.cassandra',
     # 'piston',
     'south',
     'storages',
