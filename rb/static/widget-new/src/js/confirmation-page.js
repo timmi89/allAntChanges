@@ -12,6 +12,7 @@ function createPage(reaction, containerData, pageData, element) {
         },
         template: require('../templates/confirmation-page.hbs.html')
     });
+    $(ractive.find('.antenna-comment-area textarea')).focus();
     ractive.on('addcomment', addComment(reaction, containerData, pageData, ractive));
     return {
         selector: pageSelector,
@@ -28,6 +29,9 @@ function addComment(reaction, containerData, pageData, ractive) {
         var comment = $textarea.val().trim(); // TODO: additional validation? input sanitizing?
         if (comment.length > 0) {
             AjaxClient.postComment(comment, reaction, containerData, pageData, function(){/*TODO*/}, error);
+            // TODO: add a callback to the window to resize it? Or better to keep the size (height) stable?
+            $(ractive.find('.antenna-comment-area')).hide();
+            $(ractive.find('.antenna-comment-received')).fadeIn();
         }
 
         function error(message) {

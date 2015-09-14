@@ -28,6 +28,16 @@
     border-bottom: 1px solid #dddddd;
 }
 
+.antenna-comment-received {
+    width: 100%;
+    display: none;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #666666;
+    padding: 10px 0;
+    text-align: center;
+}
+
 .antenna-comment-footer {
     padding: 2px 0 10px 0;
 }
