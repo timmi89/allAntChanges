@@ -9,6 +9,15 @@
                     <div class="antenna-reaction-count">
                         {{ this.count }}
                     </div>
+                    <div class="antenna-plusone">
+                        +1
+                    </div>
+                    <div class="antenna-reaction-comments {{#if this.comments.count > 1}}hascomments{{/if}}">
+                        <span class="ant-comment"></span>
+                        {{#if this.comments.count > 1}}
+                            {{this.comments.count}}
+                        {{/if}}
+                    </div>
                 </div>
             </div>
         {{/reactions:index}}

@@ -1,0 +1,47 @@
+
+.antenna-reaction-count {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    opacity: 0.85;
+    font-weight: 100;
+    font-size: 14px;
+}
+.antenna-reaction.half .antenna-reaction-count {
+    font-size: 12px;
+}
+
+.antenna-reaction-comments {
+    display: none;
+    border-left: 1px solid rgba(255,255,255,0.5);
+    padding-left: 10px;
+    margin-left: 5px;
+    white-space: nowrap;
+    opacity: 0.75;
+    font-size: 10px;
+    line-height: 1em;
+}
+
+.antenna-reaction-box:hover .antenna-reaction-comments, .antenna-reaction-comments.hascomments {
+    display: inline-block;
+}
+
+.antenna-reaction-comments .ant-comment {
+    font-size: 11px;
+}
+
+.antenna-plusone {
+    display: none;
+    white-space: nowrap;
+    opacity: 0.85;
+    font-weight: 100;
+    font-size: 14px;
+    line-height: 1em;
+}
+
+.antenna-reaction-box:hover .antenna-plusone {
+    display: inline-block;
+}
+.antenna-reaction-box:hover .antenna-reaction-count {
+    display: none;
+}

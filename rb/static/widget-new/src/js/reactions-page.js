@@ -28,7 +28,7 @@ function createPage(options) {
             reactionsBackgroundColor: arrayAccessor(reactionsLayoutData.backgroundColors)
         },
         decorators: {
-            sizetofit: ReactionsWidgetLayoutUtils.sizeToFit
+            sizetofit: sizeToFit
         }
     });
 
@@ -54,6 +54,16 @@ function createPage(options) {
            return reactionB.count - reactionA.count;
         });
     }
+}
+
+function sizeToFit(node) {
+    var $element = $(node).closest('.antenna-reaction-box');
+    var $reactionCount = $element.find('.antenna-reaction-count');
+    var $plusOne = $element.find('.antenna-plusone');
+    var minWidth = Math.max($reactionCount.width(), $plusOne.width());
+    $reactionCount.css({ 'min-width': minWidth });
+    $plusOne.css({ 'min-width': minWidth });
+    return ReactionsWidgetLayoutUtils.sizeToFit(node);
 }
 
 function rootElement(ractive) {

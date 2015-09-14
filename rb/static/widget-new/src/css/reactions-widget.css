@@ -99,7 +99,8 @@
     box-sizing: border-box;
     opacity: 0.9;
     letter-spacing: .5px;
-    line-height: 1.4em;
+    line-height: 1em;
+    overflow-x: hidden;
 }
 
 .antenna-reaction:hover > .antenna-reaction-box {
@@ -108,25 +109,16 @@
 
 .antenna-reaction-text {
     margin: 0;
+    margin-bottom: 6px;
     padding: 0;
     white-space: nowrap;
-    overflow: hidden;
-    font-weight: 700;
-    font-size: 19px;
+    font-weight: bold;
+    font-size: 24px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .antenna-reaction.half  .antenna-reaction-text {
-    font-size: 18px;
-}
-
-.antenna-reaction-count {
-    margin: 0;
-    padding: 0;
-    opacity: 0.85;
-    font-weight: 100;
-    font-size: 14px;
-}
-.antenna-reaction.half .antenna-reaction-count {
-    font-size: 12px;
+    font-size: 15px;
 }
 
 .antenna-think {
