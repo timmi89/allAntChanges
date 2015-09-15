@@ -1,10 +1,12 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AjaxClient = require('./utils/ajax-client');
 var Moveable = require('./utils/moveable');
 var Range = require('./utils/range');
 var TransitionUtil = require('./utils/transition-util');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
+var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var ReactionsPage = require('./reactions-page');
@@ -73,6 +75,7 @@ function openReactionsWidget(options, elementOrCoords) {
             contentData: contentData,
             showConfirmation: function(reaction) { showConfirmPage(reaction) },
             showDefaults: function() { showDefaultReactionsPage(true) },
+            showComments: function(reaction) { showComments(reaction) },
             element: pageContainer(ractive)
         };
         var page = ReactionsPage.create(options);
@@ -112,10 +115,29 @@ function openReactionsWidget(options, elementOrCoords) {
         }, 1);
     }
 
+    function showCommentsPage(reaction, comments) {
+        var page = CommentsPage.create(reaction, comments, pageContainer(ractive), closeWindow);
+        pages.push(page);
+
+        // TODO: revisit
+        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+            showPage(page.selector, $rootElement, true);
+        }, 1);
+    }
+
     function showProgressPage() {
-        // TODO: we proactively show confirmation on interactions, but we'll still need to show progress for data that
-        //       we fetch lazily like all comments related to a reaction
         showPage('.antenna-progress-page', $rootElement, false, true);
+    }
+
+    function showComments(reaction) {
+        showProgressPage(); // TODO: provide some way for the user to give up / cancel
+        AjaxClient.getComments(reaction, function(comments) {
+            showCommentsPage(reaction, comments);
+        });
+    }
+
+    function closeWindow() {
+        ractive.fire('closeWindow');
     }
 
 }
@@ -157,12 +179,11 @@ function showPage(pageSelector, $rootElement, animate, overlay) {
 function sizeBodyToFit($rootElement, $page, animate) {
     var $pageContainer = $rootElement.find('.antenna-page-container');
     var $body = $page.find('.antenna-body');
-    var $footer = $rootElement.find('.antenna-footer');
-    var footerHeight = $footer.size() > 0 ? $footer.outerHeight() : 0;
     var currentHeight = $pageContainer.css('height');
     $pageContainer.css({ height: '' }); // Clear any previously computed height so we get a fresh computation of the child heights
     var newBodyHeight = Math.min(300, $body.get(0).scrollHeight);
     $body.css({ height: newBodyHeight }); // TODO: double-check that we can't just set a max-height of 300px on the body.
+    var footerHeight = $page.find('.antenna-footer').outerHeight(); // returns 'null' if there's no footer. added to an integer, 'null' acts like 0
     var newPageHeight = newBodyHeight + footerHeight;
     if (animate) {
         $pageContainer.css({ height: currentHeight });
@@ -208,6 +229,7 @@ function setupWindowClose(pages, ractive) {
             closeWindow();
         }
     });
+    ractive.on('closeWindow', closeWindow);
 
     var closeTimer;
 

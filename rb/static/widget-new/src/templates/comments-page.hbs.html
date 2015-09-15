@@ -1,0 +1,27 @@
+<div class="antenna-page antenna-comments-page">
+    <div class="antenna-body">
+        <div on-click="closewindow" class="antenna-comments-close">Close X</div>
+        <div class="antenna-comments-header">({{comments.length}}) Comments:</div>
+        {{#comments:index}}
+            <div class="antenna-comment-entry">
+                <table>
+                    <tr>
+                        <td class="antenna-comment-cell">
+                            <img src="{{this.user.imageURL}}"/>
+                        </td>
+                        <td class="antenna-comment-author">
+                            {{this.user.name}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                        <td class="antenna-comment-text">
+                            {{this.text}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        {{/comments:index}}
+    </div>
+</div>

@@ -15,9 +15,14 @@ function getCreateCommentUrl() {
     return '/api/comment/create';
 }
 
+function getFetchCommentUrl() {
+    return '/api/comment/replies';
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     antennaHome: antennaHome,
     createReactionUrl: getCreateReactionUrl,
-    createCommentUrl: getCreateCommentUrl
+    createCommentUrl: getCreateCommentUrl,
+    fetchCommentUrl: getFetchCommentUrl
 };

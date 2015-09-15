@@ -15,11 +15,15 @@
 
 .antenna-header {
     height: 28px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f0f0f0;
     background-color: white;
     color: #8fb3f2;
     text-align: left;
-    padding: 3px 5px;
+    padding: 5px 0 0 6px;
     cursor: move;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .antenna-page-container {
@@ -68,6 +72,10 @@
     overflow-y: hidden;
 }
 
+.antenna-progress-page .antenna-body {
+    height: 300px;
+}
+
 .antenna-reaction {
     display: inline-block;
     cursor: pointer;
@@ -114,8 +122,6 @@
     white-space: nowrap;
     font-weight: bold;
     font-size: 24px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 .antenna-reaction.half  .antenna-reaction-text {
     font-size: 15px;

@@ -14,6 +14,7 @@ function createPage(options) {
     //var showProgress = options.showProgress;
     var showConfirmation = options.showConfirmation;
     var showDefaults = options.showDefaults;
+    var showComments = options.showComments;
     var element = options.element;
     var colors = options.colors;
     sortReactionData(reactionsData);
@@ -38,6 +39,7 @@ function createPage(options) {
     }
     ractive.on('plusone', plusOne(containerData, pageData, showConfirmation));
     ractive.on('showdefault', showDefaults);
+    ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context); return false; }); // TODO clean up
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }

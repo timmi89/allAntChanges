@@ -17,11 +17,11 @@ function loaded() {
                 // TODO: Revisit whether it's really cool to key this on the textStatus or if we should be looking at
                 //       the status code in the XHR
                 // Note: The server comes back with 200 responses with a nested status of "fail"...
-                if (textStatus === 'success' && response.status !== 'fail') {
+                if (textStatus === 'success' && response.status !== 'fail' && (!response.data || response.data.status !== 'fail')) {
                     success(response.data);
                 } else {
                     // For JSONP requests, jQuery doesn't call it's error callback. It calls success instead.
-                    error(response.message);
+                    error(response.message || response.data.message);
                 }
             }
         };

@@ -250,12 +250,7 @@ class InteractionHandler(AnonymousBaseHandler):
 
         # do view action
         if action == 'view':
-            interaction_id = data['int_id']
-            try:
-                interactions = Interaction.objects.filter(parent=interaction_id)
-            except Interaction.DoesNotExist:
-                raise JSONException(u"Interaction did not exist!")
-            return interactions
+            return self.view(data)
         
         else:
             # check to see if user's token is valid
@@ -288,12 +283,40 @@ class InteractionHandler(AnonymousBaseHandler):
                     raise JSONException(u"Interaction did not exist!")
 
                 return deleteInteraction(interaction, user)
+
+    def view(self, data):
+        interaction_id = data['int_id']
+        try:
+            interactions = Interaction.objects.filter(parent=interaction_id)
+
+        except Interaction.DoesNotExist:
+            raise JSONException(u"Interaction did not exist!")
+        return interactions
                 
 class VoteHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         pass
 
 class CommentHandler(InteractionHandler):
+
+    def view(self, data):
+        reaction_id = data['reaction_id']
+        try:
+            comments = Interaction.objects.filter(parent=reaction_id,kind='com')
+
+        except Interaction.DoesNotExist:
+            raise JSONException(u"Interaction did not exist!")
+
+        json_comments = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, contentID=comment.content.id, user=comment.user, text=comment.interaction_node.body) for comment in comments]
+        # comments = sorted(comments, key=lambda x: x['created'], reverse=True)
+        for comment in json_comments:
+            try:
+                comment['social_user'] = comment['user'].social_user
+            except SocialUser.DoesNotExist:
+                pass
+        return json_comments
+
+
     def create(self, request, data, user, page, group):
         comment = data['comment']
 

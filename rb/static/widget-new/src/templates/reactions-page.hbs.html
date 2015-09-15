@@ -12,12 +12,16 @@
                     <div class="antenna-plusone">
                         +1
                     </div>
-                    <div class="antenna-reaction-comments {{#if this.comments.count > 1}}hascomments{{/if}}">
-                        <span class="ant-comment"></span>
-                        {{#if this.comments.count > 1}}
+                    {{#if this.comments.count > 1}}
+                        <div on-click="showcomments" class="antenna-reaction-comments hascomments">
+                            <span class="ant-comment"></span>
                             {{this.comments.count}}
-                        {{/if}}
-                    </div>
+                        </div>
+                    {{else}}
+                        <div class="antenna-reaction-comments">
+                            <span class="ant-comment"></span>
+                        </div>
+                    {{/if}}
                 </div>
             </div>
         {{/reactions:index}}

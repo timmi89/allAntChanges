@@ -3,6 +3,7 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
+var isOffline = require('./offline');
 
 var PageData = require('../page-data'); // TODO: backwards dependency
 
@@ -160,7 +161,7 @@ function postComment(comment, reactionData, containerData, pageData, success, er
         if (reactionData.parentID) {
             data.tag.parent_id = reactionData.parentID;
         }
-        $.getJSONP(URLs.createCommentUrl(), data, commentSuccess(containerData, pageData, success), error);
+        $.getJSONP(URLs.createCommentUrl(), data, commentSuccess(reactionData, containerData, pageData, success), error);
     });
 }
 
@@ -182,7 +183,7 @@ function isDefaultReaction(reaction, defaultReactions) {
     return false;
 }
 
-function commentSuccess(containerData, pageData, callback) {
+function commentSuccess(reactionData, containerData, pageData, callback) {
     return function(response) {
         // TODO: in the case that someone reacts and then immediately comments, we have a race condition where the
         //       comment response could come back before the reaction. we need to:
@@ -191,11 +192,9 @@ function commentSuccess(containerData, pageData, callback) {
         //          time. Make sure we don't end up with two copies of the same data in the model.
         var reactionCreated = !response.existing;
         if (reactionCreated) {
-            var reaction = reactionFromResponse(response);
-            reaction = PageData.registerReaction(reaction, containerData, pageData);
-            var comments = reaction.comments;
+            var comments = reactionData.comments;
             if (!comments) {
-                comments = reaction.comments = { count: 0, commentsUrl: commentsUrl(reaction, containerData) };
+                comments = reactionData.comments = { count: 0, commentsUrl: commentsUrl(reactionData, containerData) };
             }
             comments.count = comments.count + 1;
         } else {
@@ -253,6 +252,45 @@ function reactionFromResponse(response) {
     return reaction;
 }
 
+function getComments(reaction, callback) {
+    XDMClient.getUser(function(response) {
+        var userInfo = response.data;
+        var data = {
+            reaction_id: reaction.parentID,
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token
+        };
+        $.getJSONP(URLs.fetchCommentUrl(), data, function(response) {
+            callback(commentsFromResponse(response));
+        }, function(message) {
+            // TODO: error handling
+            console.log('An error occurred fetching comments: ' + message);
+        });
+    });
+}
+
+function commentsFromResponse(jsonComments) {
+    var comments = [];
+    for (var i = 0; i < jsonComments.length; i++) {
+        var jsonComment = jsonComments[i];
+        var comment = {
+            text: jsonComment.text,
+            id: jsonComment.id, // TODO: we probably only need this for +1'ing comments
+            contentID: jsonComment.contentID, // TODO: Do we really need this?
+            user: {
+                name: jsonComment.first_name ? (jsonComment.first_name + ' ' + jsonComment.last_name) : 'Anonymous'
+            }
+        };
+        if (jsonComment.social_user && jsonComment.social_user.img_url) {
+            comment.user.imageURL = jsonComment.social_user.img_url;
+        } else {
+            comment.user.imageURL = isOffline ? '/static/widget/images/anonymousplode.png' : 'http://s3.amazonaws.com/readrboard/widget/images/anonymousplode.png';
+        }
+        comments.push(comment);
+    }
+    return comments;
+}
+
 function commentsUrl(reaction, containerData) {
     // TODO: need to send the URL back from the server. this path math is temporary
     return '/api/comments/' + containerData.id + '/' + reaction.id;
@@ -262,5 +300,6 @@ function commentsUrl(reaction, containerData) {
 module.exports = {
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
-    postComment: postComment
+    postComment: postComment,
+    getComments: getComments
 };
