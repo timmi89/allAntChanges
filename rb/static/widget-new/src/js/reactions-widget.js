@@ -11,7 +11,10 @@ var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var ReactionsPage = require('./reactions-page');
 
+var openInstances = [];
+
 function openReactionsWidget(options, elementOrCoords) {
+    closeAllWindows();
     var defaultReactions = options.defaultReactions;
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
@@ -29,6 +32,7 @@ function openReactionsWidget(options, elementOrCoords) {
         data: {},
         template: require('../templates/reactions-widget.hbs.html')
     });
+    openInstances.push(ractive);
     var $rootElement = $(rootElement(ractive));
     Moveable.makeMoveable($rootElement, $rootElement.find('.antenna-header'));
     var pages = [];
@@ -36,7 +40,6 @@ function openReactionsWidget(options, elementOrCoords) {
     openWindow();
 
     function openWindow() {
-        $('.antenna-reactions-widget').trigger('focusout'); // Prompt any other open windows to close.
         var coords;
         if (elementOrCoords.top && elementOrCoords.left) {
             coords = elementOrCoords;
@@ -63,6 +66,7 @@ function openReactionsWidget(options, elementOrCoords) {
 
         setupWindowClose(pages, ractive);
         preventExtraScroll($rootElement);
+        openInstances.push(ractive);
     }
 
     function showReactionsPage(animate) {
@@ -226,15 +230,10 @@ function setupWindowClose(pages, ractive) {
             keepWindowOpen();
             $rootElement.off('mouseout.antenna');
             $rootElement.off('mouseover.antenna');
-        })
-        .on('focusout.antenna', function(event) {
-            if ($([ event.relatedTarget, event.target ]).closest('.antenna-reactions-widget').size() == 0) { // Don't close the window if focus is going inside the window or we've clicked something in the window
-                closeWindow();
-            }
         });
     $(document).on('click.antenna', function(event) {
         if ($(event.target).closest('.antenna-reactions-widget').length === 0) {
-            closeWindow();
+            closeAllWindows();
         }
     });
     ractive.on('closeWindow', closeWindow);
@@ -267,6 +266,13 @@ function setupWindowClose(pages, ractive) {
         }
         ractive.teardown();
     }
+}
+
+function closeAllWindows() {
+    for (var i = 0; i < openInstances.length; i++) {
+        openInstances[i].fire('closeWindow');
+    }
+    openInstances = [];
 }
 
 // Prevent scrolling of the document after we scroll to the top/bottom of the reactions window

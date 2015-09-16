@@ -45,7 +45,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
         if (reactionData.id) {
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
-        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(containerData, pageData, success), error);
+        $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(contentLocation, containerData, pageData, success), error);
         //var response = { // TODO: just capturing the api format...
         //        existing: json.existing,
         //        interaction: {
@@ -217,11 +217,11 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
     }
 }
 
-function newReactionSuccess(containerData, pageData, callback) {
+function newReactionSuccess(contentLocation, containerData, pageData, callback) {
     return function(response) {
         var reactionCreated = !response.existing;
         if (reactionCreated) {
-            var reaction = reactionFromResponse(response);
+            var reaction = reactionFromResponse(response, contentLocation);
             reaction = PageData.registerReaction(reaction, containerData, pageData);
         } else {
             // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
@@ -230,7 +230,7 @@ function newReactionSuccess(containerData, pageData, callback) {
     };
 }
 
-function reactionFromResponse(response) {
+function reactionFromResponse(response, contentLocation) {
     // TODO: the server should give us back a reaction matching the new API format.
     //       we're just faking it out for now; this code is temporary
     var reaction = {
@@ -247,6 +247,10 @@ function reactionFromResponse(response) {
         };
         if (response.content_node.location) {
             reaction.content.location = response.content_node.location;
+        } else if (contentLocation) {
+            // TODO: ensure that the API always returns a location and remove the "contentLocation" that's being passed around.
+            // For now, just patch the response with the data we know we sent over.
+            reaction.content.location = contentLocation;
         }
     }
     return reaction;

@@ -76,8 +76,13 @@ function grabNode(node, callback) {
 function highlightLocation(node, location) {
     // TODO error handling in case the range is not valid?
     if (rangy.canDeserializeRange(location, node, document)) {
-        var range = rangy.deserializeRange(location, node, document);
-        highlightRange(range);
+        try {
+            var range = rangy.deserializeRange(location, node, document);
+            highlightRange(range);
+        } catch (error) {
+            // TODO: Consider logging some kind of event server-side?
+            // TODO: Consider highlighting the whole node? Or is it better to just highlight nothing?
+        }
     }
 }
 
