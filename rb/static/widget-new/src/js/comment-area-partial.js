@@ -3,6 +3,7 @@ var AjaxClient = require('./utils/ajax-client');
 
 function setupCommentArea(reaction, containerData, pageData, ractive) {
     $(ractive.find('.antenna-comment-input')).focus(); // TODO: decide whether we really want to start with focus in the textarea
+    ractive.on('inputchanged', updateInputCounter(ractive));
     ractive.on('addcomment', addComment(reaction, containerData, pageData, ractive));
 }
 
@@ -23,6 +24,15 @@ function addComment(reaction, containerData, pageData, ractive) {
             console.log('Error posting comment: ' + message);
         }
     }
+}
+
+function updateInputCounter(ractive) {
+    return function(ractiveEvent) {
+        var $textarea = $(ractiveEvent.original.target);
+        var max = parseInt($textarea.attr('maxlength'));
+        var length = $textarea.val().length;
+        $(ractive.find('.antenna-comment-count')).html(Math.max(0, max - length));
+    };
 }
 
 //noinspection JSUnresolvedVariable
