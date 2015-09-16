@@ -50,7 +50,9 @@
   <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
   <!-- <link rel="stylesheet" media="screen" href="//upworthy.com/assets/application-b9395759088ba288db5eb507a06fec28.css" /> -->
   <!-- <link rel="stylesheet" media="screen" href="//upworthy.com/assets/application-948f558f988d8b0242b64a7793621d20.css" /> -->
-  <link rel="stylesheet" media="screen" href="//upworthy.com/assets/application-309df392d2f090f273f01332ce85e329.css" />
+  <!-- <link rel="stylesheet" media="screen" href="//upworthy.com/assets/application-309df392d2f090f273f01332ce85e329.css" /> -->
+    <link rel="stylesheet" media="screen" href="//upworthy.com/assets/application-0392c863ad3fb90d6eb342dee9701ad9.css" />
+
   
   <script>
 //<![CDATA[
@@ -176,7 +178,8 @@ window.pageType="nugget";
 </head>
 <body class="nugget ">
 <style>
-#antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:300px; bottom:-300px; left:0; right:0px; position:fixed; background:#fff; transition:bottom 0.5s; margin:0 auto;}
+#antenna_test_notice { z-index:13000; box-shadow:0px 0px 10px #ccc; padding:20px 20px 0px; font-size:18px; width:600px; bottom:-300px; left:0; right:0px; position:fixed; background:#fff; transition:bottom 0.5s; margin:0 auto;}
+#antenna_test_overlay { z-index:12500; position: fixed; top:0;bottom:0;right:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6); }
 </style>
 <div id="antenna_test_notice"></div>
 
@@ -893,34 +896,36 @@ window.antenna_extend = {
 
 
 <script>
-document.addEventListener("antenna.reaction", function(){
-  console.log('reaction occurred');
-  var lastEvent = antenna.getLastEvent();
-  console.log(lastEvent);
+// document.addEventListener("antenna.reaction", function(){
+//   console.log('reaction occurred');
+//   var lastEvent = antenna.getLastEvent();
+//   console.log(lastEvent);
 
-  // do other things here
-  if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
-    console.log('reaction....');
-    jQuery('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
-    .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
-  }
-},false); 
+//   // do other things here
+//   if (lastEvent.event == 'antenna.reaction' && lastEvent.value) {
+//     console.log('reaction....');
+//     jQuery('#antenna_test_notice').html('<section id="footer-email-signup" class="loaded" data-reactid=".l"><div data-reactid=".l.0"><div data-reactid=".l.0.$=10"><h2 data-reactid=".l.0.$=10.0">Want more stuff like this?</h2><p data-reactid=".l.0.$=10.1"><span data-reactid=".l.0.$=10.1.0">We\'re on a mission to spread meaningful content far and wide. Try our daily email, </span><strong data-reactid=".l.0.$=10.1.1">The Upworthiest</strong><span data-reactid=".l.0.$=10.1.2">, and see for yourself!</span></p><form method="post" action="/hollers/static" class="email-form" data-reactid=".l.0.$=10.2"><input id="email" class="email form-control" placeholder="Email" title="Email Address" name="email" type="email" required="" data-reactid=".l.0.$=10.2.0"><input type="submit" class="btn btn-primary-alt" value="I\'m in!" data-reactid=".l.0.$=10.2.1"><p class="privacy" data-reactid=".l.0.$=10.2.2"><span data-reactid=".l.0.$=10.2.2.0">By submitting above you agree to the Upworthy </span><a href="/privacy" data-reactid=".l.0.$=10.2.2.1">privacy policy</a><span data-reactid=".l.0.$=10.2.2.2">.</span></p></form></div></div></section>').css('bottom','30%')//chain
+//     .after('<div id="antenna_test_overlay"></div>')
+//     // jQuery('#antenna_test_notice').html('<h1>Capture visitor actions!</h1><p>Know that someone just reacted <strong>'+lastEvent.value+'</strong><span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+//     .on('click', function() { jQuery(this).css('bottom', '-600px'); $('#antenna_test_overlay').fadeOut(500); }); 
+//   }
+// },false); 
 
-var reactionViewCount = 0;
-document.addEventListener("antenna.reactionview", function(){
-  console.log('reactionview occurred');
-  var lastEvent = antenna.getLastEvent();
-  console.log(lastEvent);
-  if (lastEvent.event == 'antenna.reactionview' ) {
-    reactionViewCount++;
+// var reactionViewCount = 0;
+// document.addEventListener("antenna.reactionview", function(){
+//   console.log('reactionview occurred');
+//   var lastEvent = antenna.getLastEvent();
+//   console.log(lastEvent);
+//   if (lastEvent.event == 'antenna.reactionview' ) {
+//     reactionViewCount++;
     
-    if (reactionViewCount == 3) {
-        jQuery('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
-        .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
-        reactionViewCount = 0;
-    }
-  }
-},false); 
+//     if (reactionViewCount == 3) {
+//         jQuery('#antenna_test_notice').html('<h1>This visitor has viewed 3 reactions!</h1><p>Know that someone just <strong>viewed reactions</strong> on this content!<span style="display:block;font-size:12px;color:#8fb3f2;">Click to close</span></p>').css('bottom','30px')//chain
+//         .on('click', function() { jQuery(this).css('bottom', '-300px'); }); 
+//         reactionViewCount = 0;
+//     }
+//   }
+// },false); 
 </script>
 
 </body>

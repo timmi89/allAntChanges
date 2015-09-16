@@ -4893,10 +4893,11 @@ function antenna($A){
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
                 if (ANT.util.activeAB()) {
-                    $('[ant-reactions][ant-item]').each( function () {
+                    $('[ant-item]').each( function () {
+                    // $('[ant-reactions][ant-item]').each( function () {
                         var $this = $(this),
                             itemName = $this.attr('ant-item'),
-                            reactions = $this.attr('ant-reactions');
+                            reactions = ( $this.hasAttr('ant-reactions') ) ? $this.attr('ant-reactions') : '';
 
                         if ( reactions && typeof window.antenna_extend_per_container[itemName] == 'undefined' ) {
                             var itemDefinition = {};
@@ -4971,7 +4972,9 @@ function antenna($A){
                 // [porter]: needs a node or nodes
                 if ( typeof $passedInNode==="undefined" || (!ANT.util.activeAB()) ) { return; }
 
-                if ($passedInNode.find(ANT.group.active_sections_with_anno_whitelist).length) {
+                if ( $passedInNode.hasAttr('ant-item') ) {
+                    $nodes = $passedInNode;
+                } else if ($passedInNode.find(ANT.group.active_sections_with_anno_whitelist).length) {
                     $nodes = $passedInNode.find(ANT.group.active_sections_with_anno_whitelist);
                 } else if ($passedInNode.find(ANT.group.anno_whitelist).length) {
                     $nodes = $passedInNode.find(ANT.group.anno_whitelist);
@@ -5044,6 +5047,7 @@ function antenna($A){
                         if (kind=='img') {
                         // if image...
                             var body = ( $node.hasAttr('src') ) ? $node.attr('src') : $node.attr('ant-item-content');
+                            if (!body) return;
 
                             if (body.indexOf('/') === 0){
                                 body = window.location.origin + body;
@@ -5068,8 +5072,6 @@ function antenna($A){
                             // body = $node.attr('ant-item-content') or $node.text()
 
                         // if text, compare against anno_whitelist?
-
-
 
                         if (kind && body) {
                             $node.data('body', body);
@@ -5480,7 +5482,6 @@ function antenna($A){
             },
             sendHashes: function( hashesByPageId, onSuccessCallback ) {
                 // ANT.actions.sendHashes:
-console.log(hashesByPageId);
 
                 var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
