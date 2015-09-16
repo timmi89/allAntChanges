@@ -50,20 +50,50 @@ def get_popular_reactions(group, start_date, end_date):
     b.sel_columns(['ev', 'count(ev) as counts'])  #THIS NEEDS MORE COLUMNS TO BE MORE USEFUL
     b.set_clause(ET_RE).set_group_by('group by ev').set_order_by('order by counts desc').set_limit(25).build_query().run_query()
     return b.get_result_rows()
+   
+def rough_score_joined(group, start_date, end_date): 
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    b.sel_columns(['pid as pvpid', 'count(et) as pvcounts']).set_clause(WIDGET_LOAD).set_group_by('group by pvpid').set_order_by('order by pvcounts desc').build_query()
+    pv_query = b.get_query_str()
+    
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    #b.sel_columns(['pid as rvpid', 'count(et) as rvcounts']).set_clause(REACT_VIEW).set_group_by('group by rvpid').set_order_by('order by rvcounts desc').build_query()
+    b.sel_columns(['pid as rvpid', 'count(et) as rvcounts']).set_clause(REACT_VIEW).set_group_by('group by rvpid').build_query()
+    rv_query = b.get_query_str()
+    
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    #b.sel_columns(['pid as rspid', 'count(et) as rscounts']).set_clause(ET_RE).set_group_by('group by rspid').set_order_by('order by rscounts desc').build_query()
+    b.sel_columns(['pid as rspid', 'count(et) as rscounts']).set_clause(ET_RE).set_group_by('group by rspid').build_query()
+    rs_query = b.get_query_str()
+    
+    first_join = QueryJoiner(['pvpid','pvcounts','rvcounts'], pv_query, 'pvs', 'left join each', rv_query, 'rvs', 'pvs.pvpid = rvs.rvpid')
+    second_join = QueryJoiner(['pvpid','pvcounts','rvcounts', 'rscounts', '((rscounts * 10 + rvcounts) / pvcounts) as score'], first_join.__str__(), 'agg1', 'left join each', rs_query, 'rs', 'agg1.pvpid = rs.rspid')
+    
+    b = BQQueryBuilder()
+    b.set_max_results(10000).set_custom_query(second_join.__str__() + ' order by score desc').build_query()
+    print b.get_query_str()
+    b.run_query()
+    return b.get_result_rows() #{u'f': [{u'v': u'793727'}, {u'v': u'8'}, {u'v': None}, {u'v': None}]}
+    
+    
+    
     
 def rough_score(group, start_date, end_date):
     b = BQQueryBuilder()
-    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(3000)
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['pid', 'count(et) as counts']).set_clause(WIDGET_LOAD).set_group_by('group by pid').set_order_by('order by counts desc').build_query().run_query()
     page_views_rows =  b.get_result_rows()
     
     b = BQQueryBuilder()
-    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(3000)
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['pid', 'count(et) as counts']).set_clause(REACT_VIEW).set_group_by('group by pid').set_order_by('order by counts desc').build_query().run_query()
     react_views_rows =  b.get_result_rows()
     
     b = BQQueryBuilder()
-    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(3000)
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     b.sel_columns(['pid', 'count(et) as counts']).set_clause(ET_RE).set_group_by('group by pid').set_order_by('order by counts desc').build_query().run_query()
     reactions_rows =  b.get_result_rows()
     

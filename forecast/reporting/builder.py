@@ -27,6 +27,7 @@ class BQQueryBuilder(object):
         
         self.group = None
         self.query = None
+        self.custom_query = None
         self.start_date = None
         self.end_date = None
         self.max_results = 250
@@ -58,16 +59,14 @@ class BQQueryBuilder(object):
     
     def run_query(self):
         """Should throw runtime if minimum parameters have not been set"""
-        if self.query is None or len(self.select_columns) == 0:
+        if not self.custom_query and (self.query is None or len(self.select_columns) == 0):
             raise Exception('Query Not Built')
         request_body = self.event_util.get_request_body(self.query, self.max_results)
         self.rows = self.event_util.request_body_result_rows(request_body)
         return self
     
-    def run_custom_query(self, custom_query):
-        """ push in raw string of query and pray to the digital gods """
-        request_body = self.event_util.get_request_body(custom_query, self.max_results)
-        self.rows = self.event_util.request_body_result_rows(request_body)
+    def set_custom_query(self, custom_query):
+        self.custom_query = custom_query
         return self
     
     def set_clause(self, clause):
@@ -94,19 +93,25 @@ class BQQueryBuilder(object):
         return self
     
     def build_query(self):
-        if len(self.select_columns) == 0:
-            raise Exception('Query Not Buildable')
-        select_str = 'select ' + ','.join(self.select_columns) + ' from '
-        table_names = self.event_util.query_table_names_by_dates(self.group, self.start_date, self.end_date)
-        self.query = select_str + table_names + ' where ' + self.where_clause.__str__()
-        if self.group_by:
-            self.query = self.query + ' ' + self.group_by
-        if self.order_by:
-            self.query = self.query + ' ' + self.order_by
-        if self.limit:
-            self.query = self.query + ' limit ' + str(self.limit)
-        print 'QUERY:', self.query
+        if self.custom_query:
+            self.query = self.custom_query
+            return self
+        else:
+            if len(self.select_columns) == 0:
+                raise Exception('Query Not Buildable')
+            select_str = 'select ' + ','.join(self.select_columns) + ' from '
+            table_names = self.event_util.query_table_names_by_dates(self.group, self.start_date, self.end_date)
+            self.query = select_str + table_names + ' where ' + self.where_clause.__str__()
+            if self.group_by:
+                self.query = self.query + ' ' + self.group_by
+            if self.order_by:
+                self.query = self.query + ' ' + self.order_by
+            if self.limit:
+                self.query = self.query + ' limit ' + str(self.limit)
         return self
+    
+    def get_query_str(self):
+        return self.query
     
     def get_result_rows(self):
         return self.rows
@@ -114,9 +119,6 @@ class BQQueryBuilder(object):
     
 
 class BQCrit(object):
-    column = None
-    operand = None
-    value = None
     
     def __init__(self, column, operand, value):
         self.column = column
@@ -137,9 +139,6 @@ class BQCrit(object):
     
 
 class BQClause(object):
-    left = None
-    operand = None
-    right = None
     def __init__(self, left, operand = None, right = None):
         self.left = left
         self.operand = operand
@@ -150,8 +149,23 @@ class BQClause(object):
             return '(' + self.left.__str__() + ' ' + self.operand + ' ' + self.right.__str__() + ')'
         else:
             return self.left.__str__()
+    
+class QueryJoiner(object): 
+    def __init__(self, select_columns, left, left_alias, operand, right, right_alias, on_clause):
+        self.select_columns = select_columns
+        self.left = left
+        self.left_alias = left_alias
+        self.operand = operand
+        self.right = right
+        self.right_alias = right_alias
+        self.on_clause = on_clause
         
-        
+    def __str__(self):
+        query = 'select' + ' ' + ','.join(self.select_columns) + ' from ('
+        query +=  self.left.__str__() + ') as ' +  self.left_alias + ' '
+        query += self.operand + ' (' + self.right.__str__() + ') as ' + self.right_alias + ' on ' + self.on_clause
+        return  query
+           
 """
 i.e.
 et1 = BQCrit('et','=','re')

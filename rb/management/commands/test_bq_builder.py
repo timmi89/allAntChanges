@@ -1,6 +1,7 @@
 __author__ = 'michael'
 from django.core.management.base import BaseCommand, CommandError
 from antenna.rb.models import *
+from antenna.forecast.cassandra.models import *
 from antenna.forecast.reporting import prefab_queries
 
 import logging, datetime, traceback
