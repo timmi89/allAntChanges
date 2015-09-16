@@ -56,3 +56,7 @@
     width: 22px;
     border: 1px solid #d0dee6;
 }
+
+.antenna-comments-page .antenna-comment-area {
+    padding: 0 7px;
+}

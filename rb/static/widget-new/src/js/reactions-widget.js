@@ -116,7 +116,15 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showCommentsPage(reaction, comments) {
-        var page = CommentsPage.create(reaction, comments, pageContainer(ractive), closeWindow);
+        var options = {
+            reaction: reaction,
+            comments: comments,
+            element: pageContainer(ractive),
+            closeWindow: closeWindow,
+            containerData: containerData,
+            pageData: pageData
+        };
+        var page = CommentsPage.create(options);
         pages.push(page);
 
         // TODO: revisit

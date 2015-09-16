@@ -49,6 +49,7 @@ function createIndicatorWidget(options) {
             // Don't react if the user is dragging or selecting text.
             return;
         }
+        // TODO: Don't react if the data isn't loaded yet (i.e. we don't know whether to show the popup or reaction widget)
         clearTimeout(hoverTimeout); // only one timeout at a time
         hoverTimeout = setTimeout(function() {
             if (containerData.reactions.length > 0) {
