@@ -53,7 +53,10 @@ function createPage(options) {
 
     function sortReactionData(reactions) {
         reactions.sort(function(reactionA, reactionB) {
-            // TODO: The sort needs to be more stable for reactions with the same count. We should either sort by name or by creation time (which we'd have to add to the api)
+            if (reactionA.count === reactionB.count) {
+                // when the count is the same, sort by creation time (our IDs increase chronologically)
+                return reactionA.id - reactionB.id;
+            }
             return reactionB.count - reactionA.count;
         });
     }
