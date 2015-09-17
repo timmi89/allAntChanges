@@ -15,7 +15,7 @@ function createPage(reactionText, reactionProvider, containerData, pageData, ele
             commentArea: require('../templates/comment-area-partial.hbs.html')
         }
     });
-    CommentAreaPartial.setup(reactionProvider, containerData, pageData, ractive);
+    CommentAreaPartial.setup(reactionProvider, containerData, pageData, null, ractive);
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }

@@ -3,6 +3,7 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
+var User = require('./user');
 var isOffline = require('./offline');
 
 var PageData = require('../page-data'); // TODO: backwards dependency
@@ -238,15 +239,8 @@ function commentsFromResponse(jsonComments) {
             text: jsonComment.text,
             id: jsonComment.id, // TODO: we probably only need this for +1'ing comments
             contentID: jsonComment.contentID, // TODO: Do we really need this?
-            user: {
-                name: jsonComment.first_name ? (jsonComment.first_name + ' ' + jsonComment.last_name) : 'Anonymous'
-            }
+            user: User.fromCommentJSON(jsonComment.user, jsonComment.social_user)
         };
-        if (jsonComment.social_user && jsonComment.social_user.img_url) {
-            comment.user.imageURL = jsonComment.social_user.img_url;
-        } else {
-            comment.user.imageURL = isOffline ? '/static/widget/images/anonymousplode.png' : 'http://s3.amazonaws.com/readrboard/widget/images/anonymousplode.png';
-        }
         comments.push(comment);
     }
     return comments;

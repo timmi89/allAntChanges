@@ -19,7 +19,7 @@ function getUser(callback) {
 
     function validCacheEntry(response) {
         var userInfo = response.data;
-        return userInfo && userInfo.ant_token && userInfo.user_id; // TODO && userInfo.user_type?
+        return userInfo && userInfo.ant_token && userInfo.user_id; // TODO && userInfo.user_type && social_user, etc.?
     }
 }
 

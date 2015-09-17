@@ -3,7 +3,7 @@
         <div on-click="closewindow" class="antenna-comments-close">Close X</div>
         <div class="antenna-comments-header">({{comments.length}}) Comments:</div>
         {{#comments:index}}
-            <div class="antenna-comment-entry">
+            <div class="antenna-comment-entry {{#if this.new}}antenna-comment-new{{/if}}">
                 <table>
                     <tr>
                         <td class="antenna-comment-cell">

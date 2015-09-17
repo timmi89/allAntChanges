@@ -13,6 +13,7 @@ function createPage(options) {
     var ractive = Ractive({
         el: element,
         append: true,
+        magic: true,
         data: {
             reaction: reaction,
             comments: comments
@@ -27,14 +28,17 @@ function createPage(options) {
             callback(reaction);
         }
     };
-    // TODO: consider updating the page with the new comment. In order to not have to wait for the server round trip to come back,
-    //       we'd want to show the comment in a simpler form (no user name + image). Probably just echo it back in the "thanks" area.
-    CommentAreaPartial.setup(reactionProvider, containerData, pageData, ractive);
+    CommentAreaPartial.setup(reactionProvider, containerData, pageData, commentAdded, ractive);
     ractive.on('closewindow', closeWindow);
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
     };
+
+    function commentAdded(comment, user) {
+        comments.unshift({ text: comment, user: user, new: true });
+        $(ractive.find('.antenna-body')).animate({scrollTop: 0});
+    }
 }
 
 module.exports = {

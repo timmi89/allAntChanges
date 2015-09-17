@@ -44,6 +44,12 @@
     border-bottom: 1px solid #dddddd;
 }
 
+.antenna-comment-entry.antenna-comment-new {
+    padding: 8px 21px;
+    margin: 0;
+    background-color: #FCF5A7;
+}
+
 .antenna-comments-page table {
     table-layout: fixed; /* Column sizes are based solely on the first row */
     width: 100%;

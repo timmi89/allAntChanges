@@ -22,8 +22,13 @@
     line-height: 1em;
 }
 
-.antenna-reaction-box:hover .antenna-reaction-comments, .antenna-reaction-comments.hascomments {
+.antenna-reaction-box:hover .antenna-reaction-comments {
     display: inline-block;
+}
+
+.antenna-reaction-comments.hascomments {
+    display: inline-block;
+    cursor: zoom-in;
 }
 
 .antenna-reaction-comments .ant-comment {
@@ -36,7 +41,6 @@
     opacity: 0.85;
     font-weight: 100;
     font-size: 14px;
-    line-height: 1em;
 }
 
 .antenna-reaction-box:hover .antenna-plusone {
