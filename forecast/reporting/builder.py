@@ -1,12 +1,12 @@
 import settings
 from antenna.rb.models import * 
 from antenna.analytics.utils import OAuth2EventsUtility
-
+from antenna.forecast.reporting import prefab_queries
 import datetime, json, random
+        
 
 class BQQueryBuilder(object):
     """
-    DOES NOT SUPPORT JOINS!!!
     ALL Methods other than get_result_rows should return self to allow chaining...
     Usage Example:
     group1 = Group.objects.get(id=1)
@@ -165,24 +165,5 @@ class QueryJoiner(object):
         query +=  self.left.__str__() + ') as ' +  self.left_alias + ' '
         query += self.operand + ' (' + self.right.__str__() + ') as ' + self.right_alias + ' on ' + self.on_clause
         return  query
-           
-"""
-i.e.
-et1 = BQCrit('et','=','re')
-et2 = BQCrit('et','=','rs')
-ev1 = BQCrit('ev','LIKE', 'rd%')
-ev2 = BQCrit('ev','=', 'show')
-et3 = BQCrit('et','=','sb')
-ev3 = BQCrit('ev','=', 'vw')
-cl1 = BQClause(et2, 'AND', ev1)
-cl2 = BQClause(et3, 'AND', ev3)
-cl3 = BQClause(et1, 'OR', cl1)
-cla = BQClause(cl3, 'OR', cl2)
-str(cla)
-'((et = "re" OR (et = "rs" AND ev LIKE "rd%")) OR (et = "sb" AND ev = "vw"))'
-
-"""        
-        
-    
-    
+ 
     

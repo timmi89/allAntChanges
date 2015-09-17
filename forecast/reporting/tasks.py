@@ -1,25 +1,31 @@
-__author__ = 'michael'
-from django.core.management.base import BaseCommand, CommandError
-from antenna.rb.models import *
-from antenna.forecast.cassandra.models import *
+import settings
+from celery.task.schedules import crontab
+from celery.decorators import periodic_task, task
+import datetime, json, random
+from django.forms.models import model_to_dict
+from celery.utils.log import get_task_logger
+from django.db.models import Count
+from django.core.cache import cache, get_cache
+import traceback
+from antenna.rb.models import * 
+from antenna.forecast.reporting.report_builder import *
 from antenna.forecast.reporting import prefab_queries
 
-import logging, datetime, traceback
-logger = logging.getLogger('rb.standard')
+logger = get_task_logger(__name__)
 
 
-class Command(BaseCommand):
-
-    def handle(self, *args, **options):
+@periodic_task(name='reporting.group.page.scores', ignore_result=True, 
+               run_every=(crontab(hour="*/6", minute="30", day_of_week="*")))
+def group_page_scores():
+    
+    start_date = datetime.datetime.now() - datetime.timedelta(days=30)
+    end_date = datetime.datetime.now()
+    
+    groups = Group.objects.filter(approved=True, activated=True) 
+        
+    for group in groups:
         try:
-            group_id = int(args[0])
-            print group_id
-            start_date = datetime.datetime.now() - datetime.timedelta(days=30)
-            end_date = datetime.datetime.now()
-            group  = Group.objects.get(id=group_id)
-            
-            start_q = datetime.datetime.now()
-            
+            #MOBILE
             big_list = []
             mobile_joined_rows = prefab_queries.rough_score_joined(group, start_date, end_date, True)
             gpm_views = {}
@@ -32,7 +38,7 @@ class Command(BaseCommand):
                 page_views = float(row['f'][1]['v'])
                 reaction_views = float(row['f'][2]['v']) if row['f'][2]['v'] else 0
                 reactions = float(row['f'][3]['v']) if row['f'][3]['v'] else 0
-                score = (reactions * 10 + reaction_views) / page_views
+                score = float(row['f'][4]['v']) if row['f'][4]['v'] else 0
                 gpm_scores[page_id] = score
                 gpm_views[page_id] = page_views
                 gpm_rviews[page_id] = reaction_views
@@ -41,8 +47,9 @@ class Command(BaseCommand):
             GroupPageScores.objects.create(group_id = group.id,created_at = datetime.datetime.now(), mobile = True,
                                            scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
             
+            group_event_report.delay(group, True, start_date=start_date, end_date=end_date)
             
-            
+            #DESKTOP
             big_list = []
             joined_rows = prefab_queries.rough_score_joined(group, start_date, end_date, False)
             gpm_views = {}
@@ -55,7 +62,7 @@ class Command(BaseCommand):
                 page_views = float(row['f'][1]['v'])
                 reaction_views = float(row['f'][2]['v']) if row['f'][2]['v'] else 0
                 reactions = float(row['f'][3]['v']) if row['f'][3]['v'] else 0
-                score = (reactions * 10 + reaction_views) / page_views
+                score = float(row['f'][4]['v']) if row['f'][4]['v'] else 0
                 gpm_scores[page_id] = score
                 gpm_views[page_id] = page_views
                 gpm_rviews[page_id] = reaction_views
@@ -63,26 +70,23 @@ class Command(BaseCommand):
             
             GroupPageScores.objects.create(group_id = group.id,created_at = datetime.datetime.now(), mobile = False,
                                            scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
-            
-            
-            
-            q_start = datetime.datetime.now()
-            
-            group_page_scores = GroupPageScores.objects.filter(group_id = group.id, mobile = True, 
-                                                               created_at__gte = q_start - datetime.timedelta(days=1), created_at__lte = q_start)
-            for gps in group_page_scores:
-                print 'MOBILE: ', len(gps.page_views.keys())
-            
-            group_page_scores = GroupPageScores.objects.filter(group_id = group.id, mobile = False, 
-                                                               created_at__gte = q_start - datetime.timedelta(days=1), created_at__lte = q_start)
-            for gps in group_page_scores:
-                print 'DESKTOP: ', len(gps.page_views.keys())
-            
-                #page_score = PageScore.objects.create(group_id = group.id, page_id = int(row['f'][0]['v']), created_at = datetime.datetime.now())
-                
-                #page_score.save()    
-            print datetime.datetime.now() - start_q
+            group_event_report.delay(group, True, start_date=start_date, end_date=end_date)
             
             
         except Exception, ex:
-            traceback.print_exc(100)
+            logger.warn('Nothing easy in this world')
+            logger.warn(traceback.format_exc(50))
+
+
+@task(name='reporting.group.page.scores')
+def group_event_report(group, mobile, start_date = None, end_date = None):
+    gerb = GroupEventsReportBuilder(group, mobile, start_date, end_date) 
+    gerb.build()
+    
+
+
+
+
+
+
+

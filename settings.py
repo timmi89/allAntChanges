@@ -6,11 +6,7 @@ if uname()[1] == "hat" or uname()[1] == 'hat.antenna.is' or uname()[1] == 'black
 elif uname()[0] == "Linux": DEBUG = False
 else: DEBUG = True
 # DEBUG=True
-if uname()[1].startswith('antenna.array') : ANTENNA_ARRAY = True
-else: ANTENNA_ARRAY = False
-#if not DEBUG:
-#    ANTENNA_ARRAY == uname()[1].startswith('antenna.array')
-    
+
 # Server e-mail account
 if DEBUG:
     SERVER_EMAIL = "devserver@antenna.is"
@@ -59,7 +55,7 @@ STATIC_ROOT = 'rb/static/'
 OTHER_DATACENTER = 'gce.antenna.is'
 #OTHER_DATACENTER = 'linode.antenna.is'
 #OTHER_DATACENTER = 'local.antenna.is:8081'
-CACHE_SYNCBACK = True
+CACHE_SYNCBACK = False
 
 if DEBUG:
     URL_NO_PROTO = 'local.antenna.is:8081'
@@ -188,10 +184,6 @@ if DEBUG:
             },
             'query_cache': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-                # 'BACKEND': 'johnny.backends.memcached.MemcachedCache',
-                # 'LOCATION': ['127.0.0.1:11211'],
-                # 'TIMEOUT':86400,
-                # 'JOHNNY_CACHE':True,
             }
         }
     BROKER_URL = "amqp://broadcast:51gn4l5@localhost:5672/antenna_broker"
@@ -361,10 +353,8 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
-if not ANTENNA_ARRAY:
-    ROOT_URLCONF = 'antenna.urls'
-else:
-    ROOT_URLCONF = 'antenna.urls'
+
+ROOT_URLCONF = 'antenna.urls'
 
 TEMPLATE_DIRS = (
     "antenna/rb/templates"
@@ -473,16 +463,16 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'django.utils.log.NullHandler',
         },
         'console':{
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.StreamHandler',
             'formatter': 'simple'
         },
         'rb_standard':{
-            'level':'DEBUG',
+            'level':'INFO',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': 'logs/rb_standard.log',
             'maxBytes': 1024*1024*10, # 10 MB

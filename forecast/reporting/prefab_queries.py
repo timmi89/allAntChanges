@@ -1,7 +1,10 @@
 from antenna.forecast.reporting.builder import *
 from antenna.rb.models import *
 from antenna.forecast.cassandra.models import *
- 
+import logging
+logger = logging.getLogger('rb.standard')
+
+
 MOBILE      = BQCrit('it','=','T') #Boolean special casing for string quoting in builder.  For now these are reserved values for BQCrit
 DESKTOP     = BQCrit('it','=','F')
 ET_RE       = BQCrit('et','=','re') # event type reaction
@@ -44,29 +47,39 @@ def get_mobile_engagement(group, start_date, end_date):
     b.set_clause(BQClause(ENGAGED,'AND',MOBILE)).build_query().run_query()
     return b.get_result_rows()
     
-def get_popular_reactions(group, start_date, end_date):  
+def get_popular_reactions(group, start_date, end_date, mobile):  
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_columns(['ev', 'count(ev) as counts'])  #THIS NEEDS MORE COLUMNS TO BE MORE USEFUL
     b.set_clause(ET_RE).set_group_by('group by ev').set_order_by('order by counts desc').set_limit(25).build_query().run_query()
     return b.get_result_rows()
    
-def rough_score_joined(group, start_date, end_date): 
+def rough_score_joined(group, start_date, end_date, mobile):
+    
+    if mobile:
+        PV_QUERY = BQClause(WIDGET_LOAD, 'AND', MOBILE)
+        RV_QUERY = BQClause(REACT_VIEW, 'AND', MOBILE)
+        RS_QUERY = BQClause(ET_RE, 'AND', MOBILE)
+    else:
+        PV_QUERY = BQClause(WIDGET_LOAD, 'AND', DESKTOP)
+        RV_QUERY = BQClause(REACT_VIEW, 'AND', DESKTOP)
+        RS_QUERY = BQClause(ET_RE, 'AND', DESKTOP)
+    
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
-    b.sel_columns(['pid as pvpid', 'count(et) as pvcounts']).set_clause(WIDGET_LOAD).set_group_by('group by pvpid').set_order_by('order by pvcounts desc').build_query()
+    b.sel_columns(['pid as pvpid', 'count(et) as pvcounts']).set_clause(PV_QUERY).set_group_by('group by pvpid').set_order_by('order by pvcounts desc').build_query()
     pv_query = b.get_query_str()
     
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     #b.sel_columns(['pid as rvpid', 'count(et) as rvcounts']).set_clause(REACT_VIEW).set_group_by('group by rvpid').set_order_by('order by rvcounts desc').build_query()
-    b.sel_columns(['pid as rvpid', 'count(et) as rvcounts']).set_clause(REACT_VIEW).set_group_by('group by rvpid').build_query()
+    b.sel_columns(['pid as rvpid', 'count(et) as rvcounts']).set_clause(RV_QUERY).set_group_by('group by rvpid').build_query()
     rv_query = b.get_query_str()
     
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
     #b.sel_columns(['pid as rspid', 'count(et) as rscounts']).set_clause(ET_RE).set_group_by('group by rspid').set_order_by('order by rscounts desc').build_query()
-    b.sel_columns(['pid as rspid', 'count(et) as rscounts']).set_clause(ET_RE).set_group_by('group by rspid').build_query()
+    b.sel_columns(['pid as rspid', 'count(et) as rscounts']).set_clause(RS_QUERY).set_group_by('group by rspid').build_query()
     rs_query = b.get_query_str()
     
     first_join = QueryJoiner(['pvpid','pvcounts','rvcounts'], pv_query, 'pvs', 'left join each', rv_query, 'rvs', 'pvs.pvpid = rvs.rvpid')
@@ -75,9 +88,13 @@ def rough_score_joined(group, start_date, end_date):
     b = BQQueryBuilder()
     b.set_max_results(10000).set_custom_query(second_join.__str__() + ' order by score desc').build_query()
     print b.get_query_str()
-    b.run_query()
-    return b.get_result_rows() #{u'f': [{u'v': u'793727'}, {u'v': u'8'}, {u'v': None}, {u'v': None}]}
     
+    try:
+        b.run_query()
+        return b.get_result_rows() #{u'f': [{u'v': u'793727'}, {u'v': u'8'}, {u'v': None}, {u'v': None}]}
+    except KeyError, ke:
+        logger.warn('NO ROWS RETURNED... Probably not on mobile.')
+        return []
     
     
     
