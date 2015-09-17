@@ -77,7 +77,7 @@ function openReactionsWidget(options, elementOrCoords) {
             containerElement: containerElement,
             colors: colors,
             contentData: contentData,
-            showConfirmation: function(reaction) { showConfirmPage(reaction) },
+            showConfirmation: function(reactionData, reactionProvider) { showConfirmPage(reactionData, reactionProvider) },
             showDefaults: function() { showDefaultReactionsPage(true) },
             showComments: function(reaction) { showComments(reaction) },
             element: pageContainer(ractive)
@@ -100,7 +100,7 @@ function openReactionsWidget(options, elementOrCoords) {
             containerData: containerData,
             colors: colors,
             contentData: contentData,
-            showConfirmation: function(reaction) { showConfirmPage(reaction) },
+            showConfirmation: function(reactionData, reactionProvider) { showConfirmPage(reactionData, reactionProvider) },
             element: pageContainer(ractive)
         };
         var page = DefaultsPage.create(options);
@@ -108,9 +108,9 @@ function openReactionsWidget(options, elementOrCoords) {
         showPage(page.selector, $rootElement, animate);
     }
 
-    function showConfirmPage(reaction) {
+    function showConfirmPage(reactionData, reactionProvider) {
         // TODO: update header text "Thanks for your reaction!"
-        var page = ConfirmationPage.create(reaction, containerData, pageData, pageContainer(ractive));
+        var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, pageContainer(ractive));
         pages.push(page);
 
         // TODO: revisit why we need to use the timeout trick for the confirm page, but not for the defaults page

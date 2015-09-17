@@ -22,9 +22,14 @@ function createPage(options) {
             commentArea: require('../templates/comment-area-partial.hbs.html')
         }
     });
+    var reactionProvider = { // this reaction provider is a no-brainer because we already have a valid reaction (one with an ID)
+        get: function(callback) {
+            callback(reaction);
+        }
+    };
     // TODO: consider updating the page with the new comment. In order to not have to wait for the server round trip to come back,
     //       we'd want to show the comment in a simpler form (no user name + image). Probably just echo it back in the "thanks" area.
-    CommentAreaPartial.setup(reaction, containerData, pageData, ractive);
+    CommentAreaPartial.setup(reactionProvider, containerData, pageData, ractive);
     ractive.on('closewindow', closeWindow);
     return {
         selector: pageSelector,

@@ -15,6 +15,14 @@
     margin: 12px;
 }
 
+.antenna-comment-waiting {
+    width: 100%;
+    display: none;
+    color: #666666;
+    padding: 10px 0;
+    text-align: center;
+}
+
 .antenna-comment-received {
     width: 100%;
     display: none;

@@ -45,7 +45,9 @@ function createPage(options) {
         var event = ractiveEvent.original;
         var key = (event.which !== undefined) ? event.which : event.keyCode;
         if (key == 13) { // Enter
-            submitCustomReaction();
+            setTimeout(function() { // let the processing of the keyboard event finish before we show the page (otherwise, the confirmation page also receives the keystroke)
+                submitCustomReaction();
+            }, 0);
         } else if (key == 27) { // Escape
             $(event.target).val('');
             $(rootElement(ractive)).focus();
@@ -55,8 +57,9 @@ function createPage(options) {
 
     function newDefaultReaction(ractiveEvent) {
         var defaultReactionData = ractiveEvent.context;
-        showConfirmation(defaultReactionData);
-        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, function(){}/*TODO*/, error);
+        var reactionProvider = createReactionProvider();
+        showConfirmation(defaultReactionData, reactionProvider);
+        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, reactionProvider.reactionLoaded, error);
 
         function error(message) {
             // TODO handle any errors that occur posting a reaction
@@ -68,8 +71,9 @@ function createPage(options) {
         var body = $(ractive.find('.antenna-defaults-footer input')).val().trim();
         if (body !== '') {
             var reactionData = { text: body };
-            showConfirmation(reactionData);
-            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, function(){}/*TODO*/, error);
+            var reactionProvider = createReactionProvider();
+            showConfirmation(reactionData, reactionProvider);
+            AjaxClient.postNewReaction(reactionData, containerData, pageData, contentData, reactionProvider.reactionLoaded, error);
         }
 
         function error(message) {
@@ -110,6 +114,36 @@ function customReactionBlur(ractiveEvent) {
             $footer.find('button').hide();
             $footer.find('input').val('+ Add Your Own').removeClass('active');
         }
+    }
+}
+
+function createReactionProvider() {
+
+    var loadedReaction;
+    var callbacks = [];
+
+    function onReaction(callback) {
+        callbacks.push(callback);
+        notifyIfReady();
+    }
+
+    function reactionLoaded(reaction) {
+        loadedReaction = reaction;
+        notifyIfReady();
+    }
+
+    function notifyIfReady() {
+        if (loadedReaction) {
+            for (var i = 0; i < callbacks.length; i++) {
+                callbacks[i](loadedReaction);
+            }
+            callbacks = [];
+        }
+    }
+
+    return {
+        get: onReaction, // TODO terminology
+        reactionLoaded: reactionLoaded
     }
 }
 

@@ -97,7 +97,8 @@ function createFromJSON(json) {
         if (reactionStrings) {
             for (var i = 0; i < reactionStrings.length; i++) {
                 reactions.push({
-                    text: reactionStrings[i]
+                    text: reactionStrings[i],
+                    isDefault: true
                 })
             }
         } else {
@@ -107,7 +108,8 @@ function createFromJSON(json) {
                     var value = values[j];
                     reactions.push({
                         text: value.body,
-                        id: value.id
+                        id: value.id,
+                        isDefault: true
                     });
                 }
             }

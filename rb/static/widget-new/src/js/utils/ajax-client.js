@@ -22,7 +22,7 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
             tag: {
                 body: reactionData.text
             },
-            is_default: 'true',
+            is_default: reactionData.isDefault !== undefined && reactionData.isDefault, // false unless specified
             hash: containerData.hash,
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
@@ -46,16 +46,6 @@ function postNewReaction(reactionData, containerData, pageData, contentData, suc
             data.tag.id = reactionData.id; // TODO the current client sends "-101" if there's no id. is this necessary?
         }
         $.getJSONP(URLs.createReactionUrl(), data, newReactionSuccess(contentLocation, containerData, pageData, success), error);
-        //var response = { // TODO: just capturing the api format...
-        //        existing: json.existing,
-        //        interaction: {
-        //            id: json.interaction.id,
-        //            interaction_node: {
-        //                body: json.interaction.interaction_node.body,
-        //                id: json.interaction.interaction_node.id
-        //            }
-        //        }
-        //    };
     });
 }
 
@@ -82,7 +72,6 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
                 body: reactionData.text,
                 id: reactionData.id
             },
-            is_default: 'true', // TODO check if the reaction id/body matches a default
             hash: containerData.hash,
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
@@ -99,20 +88,11 @@ function postPlusOne(reactionData, containerData, pageData, success, error) {
             data.content_node_data.id = reactionData.content.id;
             data.content_node_data.location = reactionData.content.location;
         }
+        // TODO: should we bail if there's no parent ID? It's not really a +1 without one.
         if (reactionData.parentID) {
             data.tag.parent_id = reactionData.parentID;
         }
         $.getJSONP(URLs.createReactionUrl(), data, plusOneSuccess(reactionData, containerData, pageData, success), error);
-        //var response = { // TODO: just capturing the api format...
-        //        existing: json.existing,
-        //        interaction: {
-        //            id: json.interaction.id,
-        //            interaction_node: {
-        //                body: json.interaction.interaction_node.body,
-        //                id: json.interaction.interaction_node.id
-        //            }
-        //        }
-        //    };
     });
 }
 
@@ -135,32 +115,21 @@ function postComment(comment, reactionData, containerData, pageData, success, er
                 }
             }
         }
+        if (!reactionData.parentID) {
+            // TODO: Ensure that we always have a parent ID. Comments should always be made on a reaction.
+            console.log('Error attempting to post comment. No parent reaction specified.');
+            return;
+        }
         var data = {
             comment: comment,
             tag: {
-                body: reactionData.text,
-                id: reactionData.id
+                parent_id: reactionData.parentID
             },
-            is_default: 'true', // TODO check if the reaction id/body matches a default
-            hash: containerData.hash,
             user_id: userInfo.user_id,
             ant_token: userInfo.ant_token,
             page_id: pageData.pageId,
-            group_id: pageData.groupId,
-            container_kind: containerData.type, // 'page', 'text', 'media', 'img'
-            content_node_data: {
-                body: '', // TODO: do we need this for +1s? looks like only the id field is used, if one is set
-                kind: contentNodeDataKind(containerData.type),
-                item_type: '' // TODO: looks unused but TagHandler blows up without it
-            }
+            group_id: pageData.groupId
         };
-        if (reactionData.content) {
-            data.content_node_data.id = reactionData.content.id;
-            data.content_node_data.location = reactionData.content.location;
-        }
-        if (reactionData.parentID) {
-            data.tag.parent_id = reactionData.parentID;
-        }
         $.getJSONP(URLs.createCommentUrl(), data, commentSuccess(reactionData, containerData, pageData, success), error);
     });
 }
@@ -171,16 +140,6 @@ function contentNodeDataKind(type) {
         return 'img';
     }
     return type;
-}
-
-function isDefaultReaction(reaction, defaultReactions) {
-    // TODO consider tagging the reaction data on read/load rather than on write
-    for (var i = 0; i < defaultReactions.length; i++) {
-        if (reaction.id && defaultReactions[i].id && reaction.id === defaultReactions[i].id) {
-            return true;
-        }
-    }
-    return false;
 }
 
 function commentSuccess(reactionData, containerData, pageData, callback) {
@@ -206,6 +165,7 @@ function commentSuccess(reactionData, containerData, pageData, callback) {
 
 function plusOneSuccess(reactionData, containerData, pageData, callback) {
     return function(response) {
+        // TODO: Do we care about response.existing anymore (we used to show different feedback in the UI, but no longer...)
         var reactionCreated = !response.existing;
         if (reactionCreated) {
             // TODO: we should get back a response with data in the "new format" and update the model from the response
@@ -213,20 +173,17 @@ function plusOneSuccess(reactionData, containerData, pageData, callback) {
             containerData.reactionTotal = containerData.reactionTotal + 1;
             pageData.summaryTotal = pageData.summaryTotal + 1;
         }
+        // TODO: What should we pass in the callback? Maybe just pass back the reaction? Or build one from the response?
         callback(reactionCreated);
     }
 }
 
 function newReactionSuccess(contentLocation, containerData, pageData, callback) {
     return function(response) {
-        var reactionCreated = !response.existing;
-        if (reactionCreated) {
-            var reaction = reactionFromResponse(response, contentLocation);
-            reaction = PageData.registerReaction(reaction, containerData, pageData);
-        } else {
-            // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
-        }
-        callback(reactionCreated);
+        // TODO: Can response.existing ever come back true for a 'new' reaction? Should we behave any differently if it does?
+        var reaction = reactionFromResponse(response, contentLocation);
+        reaction = PageData.registerReaction(reaction, containerData, pageData);
+        callback(reaction);
     };
 }
 
@@ -236,7 +193,7 @@ function reactionFromResponse(response, contentLocation) {
     var reaction = {
         text: response.interaction.interaction_node.body,
         id: response.interaction.interaction_node.id,
-        count: 1, // TODO: could we get back a different count if someone else made the same "new" reaction before us?
+        count: 1 // TODO: could we get back a different count if someone else made the same "new" reaction before us?
         // parentId: ??? TODO: could we get a parentId back if someone else made the same "new" reaction before us?
     };
     if (response.content_node) {
