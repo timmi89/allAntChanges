@@ -63,7 +63,7 @@
 <meta name="msapplication-square150x150logo" content="/favicons/mstile-150x150.png" />
 <meta name="msapplication-wide310x150logo" content="/favicons/mstile-310x150.png" />
 <meta name="msapplication-square310x310logo" content="/favicons/mstile-310x310.png" />
-<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=5;cycle=1 />
+<meta name="msapplication-notification" content="frequency=30;polling-uri=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=1;polling-uri2=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=2;polling-uri3=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=3;polling-uri4=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=4;polling-uri5=http://notifications.buildmypinnedsite.com/?feed=http://www.wral.com/rss/48&amp;id=5;cycle=1" />
 
     <link rel="search" href="https://www.wral.com/content/opensearch.xml" type="application/opensearchdescription+xml" title="WRAL.com" />
 <!--[if lt IE 9]>
@@ -2281,12 +2281,35 @@ window.antenna_host = 'wral.com';
 <script src="/static/engage_full.js" defer type="text/javascript"></script>
 
 <script>
-function loadCta() {
-    var html = '<div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="http://www.wral.com/video/2/"></div>';
-        html += '<div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="write read" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>';
 
-    $('.video-player .video-text').prepend( html );
-    window.ANTENNAIS.actions.reInit();
+
+
+console = console || {};
+console.log = function(){};
+
+
+$(document).on('ready', function() {
+    loadAntennaCta( $('meta[property="og:url"]').attr('content') );
+}).on('ajaxComplete', function(response){
+    if (response.delegateTarget && response.delegateTarget.URL) {
+        if ( response.delegateTarget.URL.indexOf('/video/') > 0 ) {
+            loadAntennaCta(response.delegateTarget.URL);
+        }
+    }
+});
+
+function loadAntennaCta(contentUrl) {
+    var $existingCta = $('[ant-item="wral-video-main"]');
+    var html = '<div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="'+contentUrl+'"></div>';
+        html += '<div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>';
+    
+    if ( !$existingCta.length ) {
+        // $existingCta.replaceWith( html1 );
+        // $('.antenna-video-cta').replaceWith( html2 );
+    // } else {
+        $('.video-text').prepend( html );
+    }
+    window.ANTENNAIS.actions.reset();
 }
 </script>
 

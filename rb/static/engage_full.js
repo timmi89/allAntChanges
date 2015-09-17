@@ -728,7 +728,7 @@ function antenna($A){
                           // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                           API.reinitialise();
                       } else {
-                          $aWindow.jScrollPane({ showArrows:true });
+                          $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                       }
                   }
                 );
@@ -771,7 +771,7 @@ function antenna($A){
                         // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
-                        $aWindow.jScrollPane({ showArrows:true });
+                        $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                     }
 
                 });
@@ -1070,7 +1070,7 @@ function antenna($A){
 
                         if( !$this.hasClass('jspScrollable') ){
                             // IE.  for some reason, THIS fires the scrollend event.  WTF:
-                            $(this).jScrollPane({ showArrows:true });
+                            $(this).jScrollPane({ showArrows:true,contentWidth: '0px' });
                         }else{
                             var API = $(this).data('jsp');
                             API.reinitialise();
@@ -4892,7 +4892,7 @@ function antenna($A){
             },
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
-                if (ANT.util.activeAB()) {
+                // if (ANT.util.activeAB()) {
                     $('[ant-item]').each( function () {
                     // $('[ant-reactions][ant-item]').each( function () {
                         var $this = $(this),
@@ -4909,7 +4909,7 @@ function antenna($A){
                             window.antenna_extend_per_container[itemName] = itemDefinition;
                         }
                     });
-                }
+                // }
 
                 $ANT.dequeue('initAjax');
             },
@@ -4924,6 +4924,7 @@ function antenna($A){
                 $('[ant-page-container]').removeAttr('ant-page-container');
                 $('.ant-summary').remove();
                 ANT.actions.initPageData();
+                ANT.actions.resetCustomDisplayHashes();
                 ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
@@ -5863,12 +5864,11 @@ function antenna($A){
                     if ($grid.length) {
                         ANT.actions.content_nodes.init(hash, function() {
                             ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
-                            $grid.jScrollPane({ showArrows:true });
+                            $grid.jScrollPane({ showArrows:true,contentWidth: '0px' });
                         });
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
-
                     // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
@@ -5916,7 +5916,7 @@ function antenna($A){
 
                                     // can the header stuff be optional?
                                     $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
-                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true,contentWidth: '0px' }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
                                 }
@@ -9272,12 +9272,15 @@ if ( sendData.kind=="page" ) {
 
                 sortInteractions: function(hash) {
                     // ANT.actions.summaries.sortInteractions
-
                     function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
                     var summary = ANT.summaries[hash];
                     summary.interaction_order = [];
                     summary.counts.highest_tag_count = 0;
+
+                    if ($.isEmptyObject( summary.content_nodes ) && !$.isEmptyObject( ANT.content_nodes[hash]) ) {
+                        ANT.actions.content_nodes.init( hash );
+                    }
 
                     var isText = summary.kind == "text" || summary.kind == "txt";
                     //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
