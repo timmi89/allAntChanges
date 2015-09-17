@@ -13,13 +13,21 @@ function createIndicatorWidget(options) {
     var defaultReactions = options.defaultReactions;
     var coords = options.coords;
     var ractive = Ractive({
-        el: element,
+        el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
         append: true,
         magic: true,
         data: {
-            containerData: containerData
+            containerData: containerData,
+            widgetClass: function(reactionsTotal) {
+                if (reactionsTotal == -1) {
+                    return 'notloaded';
+                } else if (reactionsTotal > 0) {
+                    return 'hasreactions';
+                }
+                return '';
+            }
         },
-        template: require('../templates/indicator-widget.hbs.html')
+        template: require('../templates/text-indicator-widget.hbs.html')
     });
 
     var reactionWidgetOptions = {
@@ -80,7 +88,7 @@ function createIndicatorWidget(options) {
 }
 
 function rootElement(ractive) {
-    return ractive.find('.antenna-indicator-widget');
+    return ractive.find('.antenna-text-indicator-widget');
 }
 
 function openReactionsWindow(reactionOptions, ractive) {

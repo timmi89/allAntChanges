@@ -1,17 +1,18 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
 
-function createSummaryWidget(container, containerData, pageData, defaultReactions, groupSettings) {
-    //// TODO replace element
+function createSummaryWidget(containerData, pageData, defaultReactions, groupSettings) {
     var ractive = Ractive({
-        el: container,
+        el: $('<div>'), // the real root node is in the template. it's extracted after the template is rendered into this dummy element
         data: pageData,
         magic: true,
         template: require('../templates/summary-widget.hbs.html')
     });
-    $(rootElement(ractive)).on('mouseenter', function(event) {
+    var $rootElement = $(rootElement(ractive));
+    $rootElement.on('mouseenter', function(event) {
        openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive);
     });
+    return $rootElement;
 }
 
 function rootElement(ractive) {

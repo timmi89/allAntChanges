@@ -13,7 +13,7 @@ function getPageData(hash) {
         pageData = {
             pageHash: hash,
             summaryReactions: {},
-            summaryTotal: 0, // TODO consider folding this into summaryReactions
+            summaryTotal: -1, // -1 indicates that the data isn't loaded yet
             containers: {}
         };
         pages[hash] = pageData;
@@ -75,7 +75,7 @@ function getContainerData(pageData, containerHash) {
     if (!containerData) {
         containerData = {
             hash: containerHash,
-            reactionTotal: 0,
+            reactionTotal: -1, // -1 indicates that the data isn't loaded yet
             reactions: []
         };
         pageData.containers[containerHash] = containerData;

@@ -1,5 +1,5 @@
 
-.antenna-indicator-widget {
+.antenna-text-indicator-widget {
     display: inline-block;
     margin-left: 5px;
     cursor: pointer;
@@ -7,30 +7,34 @@
     transition: opacity 300ms ease;
 }
 
-.antenna-indicator-widget.reactions {
+.antenna-text-indicator-widget.notloaded {
+    visibility: hidden;
+}
+
+.antenna-text-indicator-widget.hasreactions {
     opacity: 0.33;
 }
 
-.antenna-indicator-widget .ant-antenna-logo {
+.antenna-text-indicator-widget .ant-antenna-logo {
     color: #666666 !important;
     transition: color 300ms ease;
 }
 
-.antenna-indicator-widget.active .ant-antenna-logo {
+.antenna-text-indicator-widget.active .ant-antenna-logo {
     color: #8fb3f2 !important;
 }
 
-.antenna-indicator-widget.active {
+.antenna-text-indicator-widget.active {
     color: #8fb3f2 !important;
     opacity: 0.66;
 }
 
-.antenna-indicator-widget.reactions.active {
+.antenna-text-indicator-widget.hasreactions.active {
     opacity: 0.75;
     color: #8fb3f2 !important;
 }
 
-.antenna-indicator-widget .antenna-reaction-total {
+.antenna-text-indicator-widget .antenna-reaction-total {
     /* TODO: the layout of the text is not right */
     visibility: hidden;
     font-size: 11px;
@@ -40,6 +44,6 @@
     padding: 0 8px 0 3px;
 }
 
-.antenna-indicator-widget.active .antenna-reaction-total {
-    visibility: visible;
+.antenna-text-indicator-widget.active .antenna-reaction-total {
+    visibility: inherit; /* only show if the parent element is showing */
 }

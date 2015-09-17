@@ -3,7 +3,7 @@ var Hash = require('./utils/hash');
 var PageUtils = require('./utils/page-utils');
 var WidgetBucket = require('./utils/widget-bucket');
 
-var IndicatorWidget = require('./indicator-widget');
+var TextIndicatorWidget = require('./text-indicator-widget');
 var ImageIndicatorWidget = require('./image-indicator-widget');
 var PageData = require('./page-data');
 var SummaryWidget = require('./summary-widget');
@@ -54,12 +54,11 @@ function scanForSummaries($element, pageData, groupSettings) {
     var $summaries = $element.find(groupSettings.summarySelector());
     $summaries.each(function() {
         var $summary = $(this);
-        var container = $('<div class="ant-summary-container"></div>');
         var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
         containerData.type = 'page'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($summary); // TODO: do we support customizing the default reactions at this level?
-        SummaryWidget.create(container, containerData, pageData, defaultReactions, groupSettings);
-        insertContent($summary, container, groupSettings.summaryMethod());
+        var $summaryElement = SummaryWidget.create(containerData, pageData, defaultReactions, groupSettings);
+        insertContent($summary, $summaryElement, groupSettings.summaryMethod());
     });
 }
 
@@ -76,8 +75,7 @@ function scanForText($section, pageData, groupSettings) {
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($textElement);
-        var $indicatorElement = IndicatorWidget.create({
-            element: $('<div>'), // render the template into a dummy node. The create function will return the node that is created from the template.
+        var $indicatorElement = TextIndicatorWidget.create({
             containerData: containerData,
             containerElement: $textElement,
             defaultReactions: defaultReactions,
@@ -86,6 +84,8 @@ function scanForText($section, pageData, groupSettings) {
         );
         $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
 
+        // TODO: Do we need to wait until the reaction data is loaded before making this active?
+        //       What happens if someone reacts before the data is loaded?
         TextReactions.createReactableText({
             containerData: containerData,
             containerElement: $textElement,

@@ -7,7 +7,11 @@
     text-shadow: 0 0 6px rgba(0,0,0,.5);
     opacity: 0.6;
     white-space: nowrap;
-    z-index: 998; /* TODO: better value? */
+    z-index: 998; /* TODO: compute programatically (e.g. image z-index + 1) */
+}
+
+.antenna-image-indicator-widget.notloaded {
+    visibility: hidden;
 }
 
 .antenna-image-indicator-widget .ant-antenna-logo {
@@ -21,7 +25,7 @@
     max-width: 150px;
 }
 
-.antenna-image-indicator-widget.reactions.active {
+.antenna-image-indicator-widget.hasreactions.active {
     max-width: 25px;
 }
 
@@ -33,7 +37,7 @@
 }
 
 .antenna-image-indicator-widget.active .antenna-reaction-total {
-    visibility: visible;
+    visibility: inherit; /* only show if the parent element is showing */
 }
 
 .antenna-image-indicator-widget .antenna-reaction-prompt {
@@ -47,5 +51,5 @@
 
 .antenna-image-indicator-widget.active .antenna-reaction-prompt {
     max-width: 300px;
-    visibility: visible;
+    visibility: inherit; /* only show if the parent element is showing */
 }

@@ -44,7 +44,9 @@ function loadPageData(groupSettings) {
     function success(json) {
         // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
         //       and send them to the server. (use computePageTitle())
-        PageData.updateAllPageData(json, groupSettings);
+        setTimeout(function() {
+            PageData.updateAllPageData(json, groupSettings);
+        }, 2000);
     }
 
     function error(message) {
