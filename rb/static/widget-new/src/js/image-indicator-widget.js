@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
+var ResizeHandler = require('./utils/resize-handler');
 
 
 function createIndicatorWidget(options) {
@@ -49,14 +50,6 @@ function createIndicatorWidget(options) {
     var activeTimeout;
 
     var $rootElement = $(rootElement(ractive));
-    // TODO: Review how we handle image positioning. Currently, 'top' and 'bottom' pin the widget's top and bottom to those coordinates,
-    //       as measured from the top (not the same as CSS positioning which measures bottom from the bottom of the relative parent)
-    $rootElement.css({
-        position: 'absolute',
-        top: coords.top ? coords.top : (coords.bottom - $rootElement.outerHeight()),
-        left: coords.left,
-        right: coords.right
-    });
     $rootElement.on('mouseenter.antenna', function(event) {
         if (event.buttons > 0 || (event.buttons == undefined && event.which > 0)) { // On Safari, event.buttons is undefined but event.which gives a good value. event.which is bad on FF
             // Don't react if the user is dragging or selecting text.
@@ -84,6 +77,31 @@ function createIndicatorWidget(options) {
     $containerElement.on('mouseleave.antenna', function() {
         $rootElement.removeClass('active');
     });
+    setupPositioning($containerElement, ractive);
+}
+
+function setupPositioning($imageElement, ractive) {
+    var $rootElement = $(rootElement(ractive));
+    positionIndicator($imageElement, $rootElement);
+
+    var reposition = function() {
+        positionIndicator($imageElement, $rootElement);
+    };
+    ResizeHandler.onResize(reposition);
+    ractive.on('teardown', function() {
+        ResizeHandler.offResize(reposition);
+    });
+
+    function positionIndicator() {
+        // TODO: let this be configured
+        // TODO: Review how we handle image positioning. Currently, 'top' and 'bottom' pin the widget's top and bottom to those coordinates,
+        //       as measured from the top (not the same as CSS positioning which measures bottom from the bottom of the relative parent)
+        var imageOffset = $imageElement.offset();
+        $rootElement.css({
+            top: imageOffset.top + $imageElement.height() - $rootElement.outerHeight(),
+            left: imageOffset.left
+        });
+    }
 }
 
 function rootElement(ractive) {
