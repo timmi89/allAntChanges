@@ -7,10 +7,11 @@ var ReactionsWidget = require('./reactions-widget');
 function createReactableText(options) {
     // TODO: impose an upper limit on the length of text that can be reacted to? (applies to the indicator-widget too)
     var $containerElement = options.containerElement;
+    var containerData = options.containerData;
     var excludeNode = options.excludeNode;
     var reactionsWidgetOptions = {
         reactionsData: [], // Always open with the default reactions
-        containerData: options.containerData,
+        containerData: containerData,
         contentData: { type: 'text' },
         containerElement: $containerElement,
         defaultReactions: options.defaultReactions,
@@ -19,11 +20,13 @@ function createReactableText(options) {
     };
 
     $containerElement.on('mouseup', function(event) {
-        var node = $containerElement.get(0);
-        var point = Range.getSelectionEndPoint(node, event, excludeNode);
-        if (point) {
-            var coordinates = { top: point.y, left: point.x };
-            PopupWidget.show(coordinates, grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode));
+        if (containerData.reactionTotal > -1) { // -1 means we don't have data yet
+            var node = $containerElement.get(0);
+            var point = Range.getSelectionEndPoint(node, event, excludeNode);
+            if (point) {
+                var coordinates = {top: point.y, left: point.x};
+                PopupWidget.show(coordinates, grabSelectionAndOpen(node, coordinates, reactionsWidgetOptions, excludeNode));
+            }
         }
     });
 }
