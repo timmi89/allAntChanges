@@ -3,8 +3,10 @@
     &.masthead {
       // background-image: url('../images/mall.jpg');
       background-image: url('../images/store-owner.jpg');
-      background-size: 73%;
-      background-position: 0% 23%;
+      // background-size: 73%;
+      // background-position: 0% 23%;
+      background-size: auto 100%;
+      background-position: 50%;
 
       h1 {
         font-size:5rem;

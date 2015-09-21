@@ -2,8 +2,10 @@
   section {
     &.masthead {
         background-image: url('../images/open_mic.jpg');
-        background-size: 75%;
-        background-position: 0% 50%;
+        // background-size: 75%;
+        // background-position: 0% 50%;
+        background-size: auto 100%;
+        background-position: 50%;
 
         h1 {
           font-size:5rem;
