@@ -1,8 +1,11 @@
 import settings
+from django.utils import timezone 
 from antenna.rb.models import * 
 from antenna.forecast.cassandra.models import *
 from antenna.forecast.reporting import prefab_queries
 import datetime, traceback
+import logging
+logger = logging.getLogger('rb.standard')
 
 class GroupEventsReportBuilder(object):
     def __init__(self, group, mobile, start_date, end_date, depth = 50):
@@ -14,14 +17,18 @@ class GroupEventsReportBuilder(object):
         
     def build(self):
         #get  GroupPageScores for dates
-        logger.warn('BUILDING REPORT FROM GPS')
+        logger.warn('BUILDING REPORT FROM GPS ' +str( self.mobile ) + ' ' + str(self.start_date) + ' ' + str(self.end_date))
         group_page_scores = GroupPageScores.objects.filter(group_id = self.group.id, mobile = self.mobile, 
-                                                               created_at__gte = self.start_date, created_at__lte = self.end_date)
+                                                           report_start__gte = self.start_date - datetime.timedelta(hours=12), report_start__lte = self.start_date + datetime.timedelta(hours=12),
+                                                           report_end__gte = self.end_date  - datetime.timedelta(hours=12), report_end__lte = self.end_date + datetime.timedelta(hours=12))
         group_page_scores.order_by('-created_at')  #maybe unnecessary?
-        
+        for g in group_page_scores:
+            print g.created_at
+            
         gps = group_page_scores[0]
-        
-        sorted_pages_by_scores = gps.scores.items().sort(key = lambda entry : entry[1])
+        print len( gps.scores.items())
+        sorted_pages_by_scores = gps.scores.items()
+        sorted_pages_by_scores.sort(key = lambda entry : entry[1])
         #sort pages by page scores, cut to depth
         if len(sorted_pages_by_scores) > self.depth:
             top_x = sorted_pages_by_scores[0:self.depth]
@@ -32,7 +39,7 @@ class GroupEventsReportBuilder(object):
         pop_reactions = {}
         count_map = {}
         sorted_page_ids = []
-        logger.warn('TOPX: ' + str(depth))
+        logger.warn('TOPX: ' + str(self.depth))
         for (page_id, score) in top_x:
             try:
                 page = Page.objects.get(id = page_id)
@@ -52,7 +59,7 @@ class GroupEventsReportBuilder(object):
         #top level metrics
         uniques = -1
         engagement = -1
-        if mobile:
+        if self.mobile:
             uniques = prefab_queries.get_mobile_lts(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
             engagement = prefab_queries.get_mobile_engagement(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
         else:
@@ -63,10 +70,10 @@ class GroupEventsReportBuilder(object):
         count_map['engagement'] = engagement
         logger.info('Saving report')
         report = LegacyGroupEventsReport.objects.create(group_id = self.group.id, 
-                                                        created_at = datetime.datetime.now(),
+                                                        created_at = timezone.now(),
                                                         report_start = self.start_date,
                                                         report_end = self.end_date,
-                                                        mobile = mobile, 
+                                                        mobile = self.mobile, 
                                                         count_map = count_map, 
                                                         sorted_pages = sorted_page_ids,
                                                         pop_content = pop_content,

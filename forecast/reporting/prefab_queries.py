@@ -27,25 +27,25 @@ def get_mobile_lts(group, start_date, end_date):
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_col('count(distinct(lts))')
     b.set_clause(MOBILE).build_query().run_query()
-    return b.get_result_rows()
+    return b.get_result_rows()[0]
 def get_desktop_lts(group, start_date, end_date):
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_col('count(distinct(lts))')
     b.set_clause(DESKTOP).build_query().run_query()
-    return b.get_result_rows()
+    return b.get_result_rows()[0]
 def get_desktop_engagement(group, start_date, end_date):
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_col('count(distinct(lts))')
     b.set_clause(BQClause(ENGAGED,'AND',DESKTOP)).build_query().run_query()
-    return b.get_result_rows()
+    return b.get_result_rows()[0]
 def get_mobile_engagement(group, start_date, end_date):
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_col('count(distinct(lts))')
     b.set_clause(BQClause(ENGAGED,'AND',MOBILE)).build_query().run_query()
-    return b.get_result_rows()
+    return b.get_result_rows()[0]
     
 def get_popular_reactions(group, start_date, end_date, mobile):  
     b = BQQueryBuilder()
@@ -141,9 +141,7 @@ def rough_score(group, start_date, end_date):
     for (k,v) in big_dict.items():
         if not v['rview'] or not v['react']:
             #print 'Pageviews with missed numerators:', k, v['views']
-            missed_pageviews +=1
-    print len(page_views_rows), len(react_views_rows), len(reactions_rows)  
-    print missed_pageviews, missed_rviews, missed_reactions         
+            missed_pageviews +=1         
     return (reactions_rows, react_views_rows, page_views_rows) 
     
     

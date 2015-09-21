@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.utils import timezone
 from datetime import datetime
 from django.db.models import Count, Sum
 from django.forms.models import model_to_dict
@@ -24,13 +25,13 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         if year and month and day:
             report_date = datetime.datetime(year = year, month = month, day = day, hour = 23, minute = 59)
         else:
-            report_date = datetime.datetime.now()
+            report_date = timezone.now()
             
-        latest_report = LegacyGroupEventsReport.objects.filter(group_id = group.id, 
+        latest_reports = LegacyGroupEventsReport.objects.filter(group_id = group.id, 
                                                                 created_at__gte = report_date - datetime.timedelta(days=7), 
-                                                                created_at__lte = report_date)[0]
+                                                                created_at__lte = report_date)
                                                                 
-        context['latest_report'] = serializers.serialize('json', latest_report)
+        context['latest_report'] = latest_reports[len(latest_reports) -1 ]
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(

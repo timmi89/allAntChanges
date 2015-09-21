@@ -8,6 +8,8 @@ from cassandra.cqlengine.usertype import UserType
 class GroupPageScores(Model):
     CASSANDRA_MODEL = True
     group_id        = columns.Integer(partition_key=True, required=True)
+    report_start    = columns.DateTime(primary_key=True,index=True, required=True)
+    report_end      = columns.DateTime(primary_key=True,index=True, required=True)
     created_at      = columns.DateTime(primary_key=True,index=True, required=True)
     mobile          = columns.Boolean(index = True, default=False)
     scores          = columns.Map(columns.Integer(), columns.Integer()) #page_id to score

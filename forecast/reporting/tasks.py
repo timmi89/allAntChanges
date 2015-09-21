@@ -3,23 +3,24 @@ from celery.task.schedules import crontab
 from celery.decorators import periodic_task, task
 import datetime, json, random
 from django.forms.models import model_to_dict
-from celery.utils.log import get_task_logger
+from django.utils import timezone
+#from celery.utils.log import get_task_logger
 from django.db.models import Count
 from django.core.cache import cache, get_cache
-import traceback
+import traceback, logging
 from antenna.rb.models import * 
 from antenna.forecast.reporting.report_builder import *
 from antenna.forecast.reporting import prefab_queries
 
-logger = get_task_logger(__name__)
+logger = logging.getLogger('rb.standard')
 
 
 @periodic_task(name='reporting.group.page.scores', ignore_result=True, 
                run_every=(crontab(hour="*/6", minute="30", day_of_week="*")))
 def all_group_page_scores():
     
-    start_date = datetime.datetime.now() - datetime.timedelta(days=30)
-    end_date = datetime.datetime.now()
+    start_date = timezone.now() - datetime.timedelta(days=30)
+    end_date = timezone.now()
     
     groups = Group.objects.filter(approved=True, activated=True) 
         
@@ -53,20 +54,21 @@ def group_page_scores(group, start_date, end_date):
                 gpm_rviews[page_id] = reaction_views
                 gpm_reacts[page_id] = reactions
             
-            GroupPageScores.objects.create(group_id = group.id,created_at = datetime.datetime.now(), mobile = True,
+            GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = True, report_start = start_date, report_end = end_date,
                                            scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
             
             group_event_report(group, True, start_date=start_date, end_date=end_date)
     except Exception, ex:
+        logger.warn('HERE I AM')
         logger.warn(ex)
         logger.warn(traceback.format_exc(50))
         
     try:    
         #DESKTOP
-        logger.info('Starting Desktop GERB for ' + str(group))
+        logger.warn('Starting Desktop GERB for ' + str(group))
         big_list = []
         joined_rows = prefab_queries.rough_score_joined(group, start_date, end_date, False)
-        logger.info('JOined queries')
+        logger.warn('JOined queries ' + str(len(joined_rows)))
         gpm_views = {}
         gpm_rviews = {}
         gpm_reacts = {}
@@ -83,13 +85,13 @@ def group_page_scores(group, start_date, end_date):
             gpm_rviews[page_id] = reaction_views
             gpm_reacts[page_id] = reactions
         
-        logger.info('Creating Group PageScores for : ' + str(group) )
-        GroupPageScores.objects.create(group_id = group.id,created_at = datetime.datetime.now(), mobile = False,
+        logger.warn('Creating Group PageScores for : ' + str(group) + ' at ' + str(timezone.now()))
+        GroupPageScores.objects.create(group_id = group.id,created_at = timezone.now(), mobile = False, report_start = start_date, report_end = end_date,
                                        scores = gpm_scores, reactions = gpm_reacts, reaction_views = gpm_rviews, page_views = gpm_views) 
-        logger.info('calling group_event_report')
-        group_event_report(group, True, start_date=start_date, end_date=end_date)
+        logger.warn('calling group_event_report')
+        group_event_report(group, False, start_date=start_date, end_date=end_date)
     except Exception, ex:
-        logger.warn(ex)
+        logger.warn('THIS SPACE NOT BLANK IS BAD')
         logger.warn(traceback.format_exc(50))
     
     
