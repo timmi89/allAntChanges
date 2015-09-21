@@ -486,20 +486,24 @@ body .single-column .half-column-block img {
 }
 </style>
 <script>
-  window.antenna_extend = {
-    // separate_cta:'img',
-    default_reactions:[ 'So good', 'Thoughtful', 'Great Idea', 'Not for me' ],
-    summary_widget_selector: '.antenna-additions h1',
-    summary_widget_method: 'after',
-    active_sections: '.news-content-wrapper',
-    anno_whitelist: 'p,img',
-    tag_box_bg_colors: '#E1473C;#E0584E;#E06C64'
-    // no_ant: '.masthead, h1'
-  };
+    window.antenna_extend = {
+        // separate_cta:'img',
+        default_reactions:[ 'So good', 'Thoughtful', 'Great Idea', 'Not for me' ],
+        summary_widget_selector: '.antenna-additions h1',
+        summary_widget_method: 'after',
+        active_sections: '.news-content-wrapper',
+        anno_whitelist: 'p,img',
+        tag_box_bg_colors: '#E1473C;#E0584E;#E06C64'
+        // no_ant: '.masthead, h1'
+    };
+    (function() {
+        var offline = window.location.host === 'local.antenna.is:8081';
+        var scriptSrc = offline ? 'http://localhost:8081/static/engage.js' : 'http://www.antenna.is/static/engage.js';
+        var scriptTag = document.createElement('script');
+        scriptTag.setAttribute('src', scriptSrc);
+        scriptTag.setAttribute('type','text/javascript');
+        document.getElementsByTagName('body')[0].appendChild(scriptTag);
+    })();
 </script>
-<script src="http://www.antenna.is/static/engage.js"></script> 
-<!-- 
-<script src="/static/engage_full.js"></script>
--->
 </body>
 </html>
