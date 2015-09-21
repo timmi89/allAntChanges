@@ -1,7 +1,6 @@
 import settings
 from antenna.rb.models import * 
 from antenna.analytics.utils import OAuth2EventsUtility
-from antenna.forecast.reporting import prefab_queries
 import datetime, json, random
         
 

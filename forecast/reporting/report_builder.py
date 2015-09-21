@@ -14,6 +14,7 @@ class GroupEventsReportBuilder(object):
         
     def build(self):
         #get  GroupPageScores for dates
+        logger.warn('BUILDING REPORT FROM GPS')
         group_page_scores = GroupPageScores.objects.filter(group_id = self.group.id, mobile = self.mobile, 
                                                                created_at__gte = self.start_date, created_at__lte = self.end_date)
         group_page_scores.order_by('-created_at')  #maybe unnecessary?
@@ -22,8 +23,8 @@ class GroupEventsReportBuilder(object):
         
         sorted_pages_by_scores = gps.scores.items().sort(key = lambda entry : entry[1])
         #sort pages by page scores, cut to depth
-        if len(sorted_pages_by_scores) > depth:
-            top_x = sorted_pages_by_scores[0:depth]
+        if len(sorted_pages_by_scores) > self.depth:
+            top_x = sorted_pages_by_scores[0:self.depth]
         else:
             top_x = sorted_pages_by_scores
             
@@ -31,6 +32,7 @@ class GroupEventsReportBuilder(object):
         pop_reactions = {}
         count_map = {}
         sorted_page_ids = []
+        logger.warn('TOPX: ' + str(depth))
         for (page_id, score) in top_x:
             try:
                 page = Page.objects.get(id = page_id)
@@ -59,7 +61,7 @@ class GroupEventsReportBuilder(object):
             
         count_map['uniques'] = uniques
         count_map['engagement'] = engagement
-        
+        logger.info('Saving report')
         report = LegacyGroupEventsReport.objects.create(group_id = self.group.id, 
                                                         created_at = datetime.datetime.now(),
                                                         report_start = self.start_date,

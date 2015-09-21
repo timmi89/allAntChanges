@@ -23,11 +23,11 @@ urlpatterns = patterns('',
     url(r'^/pages/active/$', Active, kwargs={"subject":"page"}),
     url(r'^/pages/recent/$', Recent),
     url(r'^/pages/tagged/$', Tagged),
-    
     # e.g. /analytics/inhouse/#start=1/03/13#end=11/04/13
     url(r'^/inhouse/$', 'analytics.views.analytics_inhouse'),
     url(r'^/inhouse/test/$', InhouseAnalytics),
     url(r'^/global/$', 'analytics.views.global_snapshot'),
     url(r'^/snapshot/v1/(?P<group_id>\d+)/$', 'analytics.views.group_report'),
     url(r'^/recirc/v1/(?P<group_id>\d+)/$', RecircHandler),
+    
 )
