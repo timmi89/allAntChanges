@@ -59,7 +59,7 @@ function createPage(options) {
         var defaultReactionData = ractiveEvent.context;
         var reactionProvider = createReactionProvider();
         showConfirmation(defaultReactionData, reactionProvider);
-        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, reactionProvider.reactionLoaded, error);
+        AjaxClient.postNewReaction(defaultReactionData, containerData, pageData, contentData, reactionProvider.reactionLoaded, error);
 
         function error(message) {
             // TODO handle any errors that occur posting a reaction

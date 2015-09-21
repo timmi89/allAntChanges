@@ -1,5 +1,5 @@
-
-var baseUrl = 'http://localhost:8081'; // TODO compute this
+var URLs = require('./utils/urls');
+var baseUrl = URLs.antennaHome();
 
 function loadCss() {
     var head = document.getElementsByTagName('head')[0];

@@ -210,12 +210,17 @@ def getPage(host, page_request):
         if (page.image is None or len(page.image) < 1) and image is not None and len(image) > 0:
             page.image = image
             page.save()
-        return page   
+        return page
     except Page.DoesNotExist:
+        defaults = {'site': site}
+        if (title and image):
+            defaults['title'] = title
+            defaults['image'] = image
+
         page = Page.objects.get_or_create(
             url = url,
             canonical_url = canonical,
-            defaults = {'site': site, 'title':title, 'image':image}
+            defaults = defaults
         )
         return page[0]
     

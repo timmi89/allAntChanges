@@ -85,14 +85,25 @@ function getContainerData(pageData, containerHash) {
 
 // Merge the given container data into the pageData.containers data. This is necessary because the skeleton of the pageData.containers map
 // is set up and bound to the UI before all the data is fetched from the server and we don't want to break the data binding.
-function setContainers(pageData, containers) {
-    for (var hash in containers) {
-        if (containers.hasOwnProperty(hash)) {
+function setContainers(pageData, jsonContainers) {
+    for (var hash in jsonContainers) {
+        if (jsonContainers.hasOwnProperty(hash)) {
             var containerData = getContainerData(pageData, hash);
-            var fetchedContainerData = containers[hash];
+            var fetchedContainerData = jsonContainers[hash];
             containerData.id = fetchedContainerData.id;
             for (var i = 0; i < fetchedContainerData.reactions.length; i++) {
                 containerData.reactions.push(fetchedContainerData.reactions[i]);
+            }
+        }
+    }
+    // After processing the data we got back from the server, update any remaining containers (those with no reactions)
+    // to indicate that the data is loaded by setting their totals to 0.
+    var allContainers = pageData.containers;
+    for (var hash in allContainers) {
+        if (allContainers.hasOwnProperty(hash)) {
+            var container = allContainers[hash];
+            if (container.reactionTotal === -1) {
+                container.reactionTotal = 0;
             }
         }
     }

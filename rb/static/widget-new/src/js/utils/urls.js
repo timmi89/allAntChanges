@@ -1,4 +1,4 @@
-var offline = require('./offline.js');
+var offline = require('./offline');
 
 function antennaHome() {
     if (offline) {

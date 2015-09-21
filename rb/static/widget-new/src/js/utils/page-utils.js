@@ -1,57 +1,24 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
-// TODO copied from engage_full. Review.
-function computePageUrl(groupSettings) {
-    var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // TODO should pass this in instead of recomputing
-    return removeSubdomainFromPageUrl(page_url, groupSettings);
-}
-
-// TODO copied from engage_full. Review.
 function computeTopLevelCanonicalUrl(groupSettings) {
-    var page_url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // TODO should pass this in instead of recomputing
-    var canonical_url = ( $('link[rel="canonical"]').length > 0 ) ?
-                $('link[rel="canonical"]').attr('href') : page_url;
-
-    // ant:url overrides
-    if ( $('[property="antenna:url"]').length > 0 ) {
-        canonical_url = $('[property="antenna:url"]').attr('content');
-    }
-
-    canonical_url = $.trim( canonical_url.toLowerCase() );
-
-    if (canonical_url == computePageUrl(groupSettings) ) { // TODO should pass this in instead of recomputing
-        canonical_url = "same";
-    }
-
-    // fastco fix (since they sometimes rewrite their canonical to simply be their TLD.)
-    // in the case where canonical claims TLD but we're actually on an article... set canonical to be the page_url
-    var tld = $.trim(window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
-    if ( canonical_url == tld ) {
-        if (page_url != tld) {
-            canonical_url = page_url;
+    var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
+    var $canonicalLink = $('link[rel="canonical"]');
+    if ($canonicalLink.length > 0) {
+        var overrideUrl = $canonicalLink.attr('href').trim().toLowerCase();
+        var domain = (window.location.protocol+'//'+window.location.hostname+'/').toLowerCase();
+        if (overrideUrl !== domain) { // fastco fix (since they sometimes rewrite their canonical to simply be their domain.)
+            canonicalUrl = overrideUrl;
         }
     }
-
-    return removeSubdomainFromPageUrl($.trim(canonical_url), groupSettings);
-}
-
-function computePageElementCanonicalUrl($pageElement, groupSettings) {
-    // TODO Review against engage_full. There, the nested pages and top-level page have a totally different flow. Does this
-    // unification work? The idea is that the nested pages would have an href selector that specifies the URL to use, so we
-    // just use it. But compute the url for the top-level case explicitly.
-    if ($pageElement.find(groupSettings.pageHrefSelector()).length > 0) {
-        return 'same';
-    } else {
-        return computeTopLevelCanonicalUrl(groupSettings);
-    }
+    return removeSubdomainFromPageUrl(canonicalUrl, groupSettings);
 }
 
 function computePageElementUrl($pageElement, groupSettings) {
     var url = $pageElement.find(groupSettings.pageHrefSelector()).attr('href');
-    if (!url) {
-        url = $.trim( window.location.href.split('#')[0] ).toLowerCase(); // top-level page url
+    if (url) {
+        return removeSubdomainFromPageUrl(url, groupSettings);
     }
-    return removeSubdomainFromPageUrl(url, groupSettings);
+    return computeTopLevelCanonicalUrl(groupSettings);
 }
 
 // TODO copied from engage_full. Review.
@@ -77,6 +44,5 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    computePageUrl: computePageElementUrl,
-    computeCanonicalUrl: computePageElementCanonicalUrl
+    computePageUrl: computePageElementUrl
 };

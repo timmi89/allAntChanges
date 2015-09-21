@@ -59,6 +59,10 @@
     background-color: #ffffff;
 }
 
+.antenna-page:focus {
+    outline: none;
+}
+
 .antenna-page-animate {
     transition: left 200ms;
 }

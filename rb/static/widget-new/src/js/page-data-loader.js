@@ -30,7 +30,7 @@ function computePagesParam(groupSettings) {
         var $pageElement = $(this);
         pages.push({
             group_id: groupId,
-            url: PageUtils.computeCanonicalUrl($pageElement, groupSettings)
+            url: PageUtils.computePageUrl($pageElement, groupSettings)
         });
     });
 
@@ -44,13 +44,12 @@ function loadPageData(groupSettings) {
     function success(json) {
         // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
         //       and send them to the server. (use computePageTitle())
-        setTimeout(function() {
-            PageData.updateAllPageData(json, groupSettings);
-        }, 2000);
+        PageData.updateAllPageData(json, groupSettings);
     }
 
     function error(message) {
         // TODO handle errors that happen when loading page data
+        console.log('An error occurred loading page data: ' + message);
     }
 }
 
