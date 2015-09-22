@@ -1,6 +1,6 @@
 
 
-<span class="antenna antenna-text-indicator-widget {{widgetClass(containerData.reactionTotal)}}">
+<span class="antenna antenna-text-indicator-widget  {{^containerData.loaded}}notloaded{{/containerData.loaded}} {{#if containerData.reactionTotal > 0}}hasreactions{{/if}}">
     <span class="ant-antenna-logo"></span>
     {{#if containerData.reactionTotal }}
         <span class="antenna-reaction-total">

@@ -20,7 +20,7 @@ function createReactableText(options) {
     };
 
     $containerElement.on('mouseup', function(event) {
-        if (containerData.reactionTotal > -1) { // -1 means we don't have data yet
+        if (containerData.loaded) {
             var node = $containerElement.get(0);
             var point = Range.getSelectionEndPoint(node, event, excludeNode);
             if (point) {

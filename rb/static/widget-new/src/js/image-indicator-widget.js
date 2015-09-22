@@ -19,15 +19,7 @@ function createIndicatorWidget(options) {
         append: true,
         magic: true,
         data: {
-            containerData: containerData,
-            widgetClass: function(reactionsTotal) {
-                if (reactionsTotal == -1) {
-                    return 'notloaded';
-                } else if (reactionsTotal > 0) {
-                    return 'hasreactions';
-                }
-                return '';
-            }
+            containerData: containerData
         },
         template: require('../templates/image-indicator-widget.hbs.html')
     });

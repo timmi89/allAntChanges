@@ -13,7 +13,8 @@ function getPageData(hash) {
         pageData = {
             pageHash: hash,
             summaryReactions: {},
-            summaryTotal: -1, // -1 indicates that the data isn't loaded yet
+            summaryTotal: 0,
+            summaryLoaded: false,
             containers: {}
         };
         pages[hash] = pageData;
@@ -43,6 +44,7 @@ function updatePageData(json, groupSettings) {
         total = total + summaryReactions[i].count;
     }
     pageData.summaryTotal = total;
+    pageData.summaryLoaded = true;
 
     // We add up the container reaction totals client-side
     var total = 0;
@@ -75,8 +77,9 @@ function getContainerData(pageData, containerHash) {
     if (!containerData) {
         containerData = {
             hash: containerHash,
-            reactionTotal: -1, // -1 indicates that the data isn't loaded yet
-            reactions: []
+            reactionTotal: 0,
+            reactions: [],
+            loaded: false
         };
         pageData.containers[containerHash] = containerData;
     }
@@ -96,15 +99,11 @@ function setContainers(pageData, jsonContainers) {
             }
         }
     }
-    // After processing the data we got back from the server, update any remaining containers (those with no reactions)
-    // to indicate that the data is loaded by setting their totals to 0.
     var allContainers = pageData.containers;
     for (var hash in allContainers) {
         if (allContainers.hasOwnProperty(hash)) {
             var container = allContainers[hash];
-            if (container.reactionTotal === -1) {
-                container.reactionTotal = 0;
-            }
+            container.loaded = true;
         }
     }
 }
