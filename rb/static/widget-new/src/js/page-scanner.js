@@ -13,7 +13,8 @@ var TextReactions = require('./text-reactions');
 // Scan for all pages at the current browser location. This could just be the current page or it could be a collection
 // of pages (aka 'posts').
 function scanAllPages(groupSettings) {
-    var $pages = $(groupSettings.pageSelector());
+    $(groupSettings.exclusionSelector()).addClass('no-ant'); // Add the no-ant class to everything that is flagged for exclusion
+    var $pages = $(groupSettings.pageSelector()); // TODO: no-ant?
     if ($pages.length == 0) {
         // If we don't detect any page markers, treat the whole document as the single page
         $pages = $('body'); // TODO Is this the right behavior?
@@ -40,7 +41,7 @@ function scanPage($page, groupSettings) {
     scanForSummaries($page, pageData, groupSettings);
     scanForCallsToAction($page, pageData, groupSettings);
 
-    var $activeSections = $page.find(groupSettings.activeSections());
+    var $activeSections = find($page, groupSettings.activeSections());
     $activeSections.each(function() {
         var $section = $(this);
         // Then scan for everything else
@@ -51,7 +52,7 @@ function scanPage($page, groupSettings) {
 }
 
 function scanForSummaries($element, pageData, groupSettings) {
-    var $summaries = $element.find(groupSettings.summarySelector());
+    var $summaries = find($element, groupSettings.summarySelector());
     $summaries.each(function() {
         var $summary = $(this);
         var containerData = PageData.getContainerData(pageData, 'page'); // Magic hash for page reactions
@@ -67,7 +68,7 @@ function scanForCallsToAction($section, pageData, groupSettings) {
 }
 
 function scanForText($section, pageData, groupSettings) {
-    var $textElements = $section.find(groupSettings.textSelector());
+    var $textElements = find($section, groupSettings.textSelector());
     // TODO: only select "leaf" elements
     $textElements.each(function() {
         var $textElement = $(this);
@@ -100,6 +101,12 @@ function scanForText($section, pageData, groupSettings) {
     });
 }
 
+function find($element, selector) {
+    return $element.find(selector).filter(function() {
+        return $(this).closest('.no-ant').length == 0;
+    });
+}
+
 // Returns whether the given element contains any other elements that match our selection criteria.
 function containsMatchingElement($element, groupSettings) {
     // TODO: test this thoroughly
@@ -108,7 +115,7 @@ function containsMatchingElement($element, groupSettings) {
 }
 
 function scanForImages($section, pageData, groupSettings) {
-    var $imageElements = $section.find(groupSettings.imageSelector()); // TODO also select for attribute override. i.e.: 'img,[ant-item-type="image"]'
+    var $imageElements = find($section, groupSettings.imageSelector()); // TODO also select for attribute override. i.e.: 'img,[ant-item-type="image"]'
     $imageElements.each(function() {
         var $imageElement = $(this);
         var imageUrl = getImageUrl($imageElement);

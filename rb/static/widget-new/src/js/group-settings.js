@@ -131,7 +131,8 @@ function createFromJSON(json) {
         textSelector: data('anno_whitelist'),
         imageSelector: data('img_selector'),
         defaultReactions: defaultReactions,
-        reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors'))
+        reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
+        exclusionSelector: data('no_ant')
     }
 }
 
