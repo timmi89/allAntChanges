@@ -9,6 +9,10 @@
     font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
 }
 
+.antenna-reactions-widget:focus {
+    outline: none;
+}
+
 .antenna-reactions-widget.open {
     display: block;
 }

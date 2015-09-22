@@ -26,10 +26,6 @@
     max-width: 150px;
 }
 
-.antenna-image-indicator-widget.hasreactions.active {
-    max-width: 25px;
-}
-
 .antenna-image-indicator-widget .antenna-reaction-total {
     /* TODO: the layout of the text is not right */
     visibility: hidden;
@@ -46,6 +42,7 @@
     font-size: 11px;
     visibility: hidden;
     max-width: 0;
+    white-space: pre; /* don't wrap */
     transition: max-width 200ms;
     overflow: hidden;
 }

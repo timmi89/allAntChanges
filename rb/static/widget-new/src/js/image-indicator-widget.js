@@ -53,7 +53,7 @@ function createIndicatorWidget(options) {
             clearTimeout(hoverTimeout);
             hoverTimeout = setTimeout(function() {
                 openReactionsWindow(reactionWidgetOptions, ractive);
-            }, 200);
+            }, 50);
         }
     });
     $rootElement.on('mouseleave.antenna', function() {
@@ -67,7 +67,9 @@ function createIndicatorWidget(options) {
             }, 500);
     });
     $containerElement.on('mouseleave.antenna', function() {
-        $rootElement.removeClass('active');
+        setTimeout(function() {
+            $rootElement.removeClass('active');
+        }, 100); // We get a mouseleave event when the user hovers the indicator. Pause long enough that the reaction window can open if they hover.
     });
     setupPositioning($containerElement, ractive);
 }
