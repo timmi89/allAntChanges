@@ -1,3 +1,4 @@
+var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var rangy; require('./rangy-provider').onLoad(function(loadedRangy) { rangy = loadedRangy; });
 
 var highlightClass = 'antenna-highlight';
