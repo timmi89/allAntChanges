@@ -71,30 +71,40 @@ function scanForText($section, pageData, groupSettings) {
     // TODO: only select "leaf" elements
     $textElements.each(function() {
         var $textElement = $(this);
-        var hash = Hash.hashText($textElement);
-        var containerData = PageData.getContainerData(pageData, hash);
-        containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
-        var defaultReactions = groupSettings.defaultReactions($textElement);
-        var $indicatorElement = TextIndicatorWidget.create({
-            containerData: containerData,
-            containerElement: $textElement,
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings}
-        );
-        $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
+        if (!containsMatchingElement($textElement, groupSettings)) { // Don't allow nested containers
+            var hash = Hash.hashText($textElement);
+            var containerData = PageData.getContainerData(pageData, hash);
+            containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
+            var defaultReactions = groupSettings.defaultReactions($textElement);
+            var $indicatorElement = TextIndicatorWidget.create({
+                    containerData: containerData,
+                    containerElement: $textElement,
+                    defaultReactions: defaultReactions,
+                    pageData: pageData,
+                    groupSettings: groupSettings
+                }
+            );
+            $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
 
-        // TODO: Do we need to wait until the reaction data is loaded before making this active?
-        //       What happens if someone reacts before the data is loaded?
-        TextReactions.createReactableText({
-            containerData: containerData,
-            containerElement: $textElement,
-            defaultReactions: defaultReactions,
-            pageData: pageData,
-            groupSettings: groupSettings,
-            excludeNode: $indicatorElement.get(0)
-        });
+            // TODO: Do we need to wait until the reaction data is loaded before making this active?
+            //       What happens if someone reacts before the data is loaded?
+            TextReactions.createReactableText({
+                containerData: containerData,
+                containerElement: $textElement,
+                defaultReactions: defaultReactions,
+                pageData: pageData,
+                groupSettings: groupSettings,
+                excludeNode: $indicatorElement.get(0)
+            });
+        }
     });
+}
+
+// Returns whether the given element contains any other elements that match our selection criteria.
+function containsMatchingElement($element, groupSettings) {
+    // TODO: test this thoroughly
+    var compositeSelector = [ groupSettings.textSelector(), groupSettings.imageSelector()].join(',');
+    return $element.find(compositeSelector).length > 0;
 }
 
 function scanForImages($section, pageData, groupSettings) {
