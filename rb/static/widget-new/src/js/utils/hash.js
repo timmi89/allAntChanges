@@ -3,6 +3,7 @@ var MD5 = require('./md5');
 
 // TODO: This is just copy/pasted from engage_full
 // TODO: The code is looking for .ant_indicator to see if it's already been hashed. Review.
+// TODO: Can we implement a simpler version of this for non-legacy code using $element.text()?
 function getCleanText($domNode) {
     // ANT.util.getCleanText
     // common function for cleaning the text node text.  right now, it's removing spaces, tabs, newlines, and then double spaces

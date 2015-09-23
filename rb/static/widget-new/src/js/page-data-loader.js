@@ -27,6 +27,7 @@ function computePagesParam(groupSettings) {
         $pageElements = $('body');
     }
     $pageElements.each(function() {
+        // TODO: only ask for the pages that are "above the fold" then install a scroll listener which fetches more pages as needed
         var $pageElement = $(this);
         pages.push({
             group_id: groupId,
