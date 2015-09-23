@@ -43,7 +43,7 @@ var defaults = {
 
 function createFromJSON(json) {
 
-    function data(key) {
+    function data(key, ifAbsent) {
         return function() {
             var value = window.antenna_extend[key];
             if (value == undefined) {
@@ -51,6 +51,9 @@ function createFromJSON(json) {
                 if (value === undefined || value === '') { // TODO: Should the server be sending back '' here or nothing at all? (It precludes the server from really saying 'nothing')
                     value = defaults[key];
                 }
+            }
+            if (value == undefined) {
+                return ifAbsent;
             }
             return value;
         };
@@ -118,6 +121,7 @@ function createFromJSON(json) {
     }
 
     return {
+        legacyBehavior: data('legacy_behavior', true), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
         groupId: data('id'),
         activeSections: data('active_sections'),
         url: {

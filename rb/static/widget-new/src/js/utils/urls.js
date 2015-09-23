@@ -19,10 +19,41 @@ function getFetchCommentUrl() {
     return '/api/comment/replies';
 }
 
+function computeImageUrl($element, groupSettings) {
+    if (groupSettings.legacyBehavior()) {
+        return legacyComputeImageUrl($element);
+    }
+    var content = $element.attr('ant-item-content') || $element.attr('src');
+    if (content && content.indexOf('//') !== 0 && content.indexOf('http') !== 0) { // protocol-relative or absolute url, e.g. //domain.com/foo/bar.png or http://domain.com/foo/bar/png
+        if (content.indexOf('/') === 0) { // domain-relative url, e.g. /foo/bar.png => domain.com/foo/bar.png
+            content = window.location.origin + content;
+        } else { // path-relative url, e.g. bar.png => domain.com/baz/bar.png
+            content = window.location.origin + window.location.pathname + content;
+        }
+    }
+    return content;
+}
+
+// Legacy implementation which maintains the old behavior of engage_full
+// This code is wrong for URLs that start with "//". It also gives precedence to the src att instead of ant-item-content
+function legacyComputeImageUrl($element) {
+    var content = $element.attr('src') || $element.attr('ant-item-content');
+    if (content) {
+        if (content.indexOf('/') === 0) {
+            content = window.location.origin + content;
+        }
+        if (content.indexOf('http') !== 0) {
+            content = window.location.origin + window.location.pathname + content;
+        }
+    }
+    return content;
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
     antennaHome: antennaHome,
     createReactionUrl: getCreateReactionUrl,
     createCommentUrl: getCreateCommentUrl,
-    fetchCommentUrl: getFetchCommentUrl
+    fetchCommentUrl: getFetchCommentUrl,
+    computeImageUrl: computeImageUrl
 };

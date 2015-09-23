@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Hash = require('./utils/hash');
 var PageUtils = require('./utils/page-utils');
+var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
 var TextIndicatorWidget = require('./text-indicator-widget');
@@ -115,10 +116,11 @@ function containsMatchingElement($element, groupSettings) {
 }
 
 function scanForImages($section, pageData, groupSettings) {
-    var $imageElements = find($section, groupSettings.imageSelector()); // TODO also select for attribute override. i.e.: 'img,[ant-item-type="image"]'
+    var compositeSelector = groupSettings.imageSelector() + ',[ant-item-type="image"]';
+    var $imageElements = find($section, compositeSelector);
     $imageElements.each(function() {
         var $imageElement = $(this);
-        var imageUrl = getImageUrl($imageElement);
+        var imageUrl = URLs.computeImageUrl($imageElement, groupSettings);
         var hash = Hash.hashImage(imageUrl);
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'image'; // TODO: revisit whether it makes sense to set the type here
@@ -147,20 +149,6 @@ function scanForImages($section, pageData, groupSettings) {
             );
         }
     });
-}
-
-function getImageUrl($element) {
-    var content = $element.attr('ant-element-content'); // TODO allow this override everywhere
-    if (!content) {
-        content = $element.attr('src'); // TODO clean up URL?
-        if (content.indexOf('/') === 0){
-            content = window.location.origin + content;
-        }
-        if (content.indexOf('http') !== 0){
-            content = window.location.origin + window.location.pathname + content;
-        }
-    }
-    return content;
 }
 
 function scanForMedia($section, pageData, groupSettings) {
