@@ -828,11 +828,17 @@ def settings_wordpress(request, **kwargs):
 
     
 @requires_admin
-def admin_approve(request, request_id=None, **kwargs):
+def admin_approve(request, short_name=None, request_id=None, **kwargs):
     context = {}
     cookie_user = kwargs['cookie_user']
     context['cookie_user'] = cookie_user
     context['hasSubheader'] = True
+
+    # Get the Group and related group admins
+    group = Group.objects.get(
+        short_name=short_name
+    )
+    context['group'] = group
     
     groups = cookie_user.social_user.admin_groups()
     
