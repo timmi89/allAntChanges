@@ -21,7 +21,7 @@
 <div class="notice info">
 To have someone request Admin access to {{group.name}}, have them create a Antenna account and then send them to <a href="/group/{{group.short_name}}/admin_request/" target="_blank">www.antenna.is/group/{{group.short_name}}/admin_request/</a>.
 </div>
-<div class="container">
+
 <section role="panels">
   <section role="wide panels">
 {% regroup requests by group as groups %}
@@ -37,7 +37,6 @@ To have someone request Admin access to {{group.name}}, have them create a Anten
     {% endfor %}
   </section>
 </section>
-</div>
 
 </section>
 </div>
