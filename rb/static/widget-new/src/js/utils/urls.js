@@ -7,16 +7,26 @@ function antennaHome() {
     return "https://www.antenna.is"; // TODO: www? how about antenna.is or api.antenna.is?
 }
 
+// TODO: our server is redirecting any URLs without a trailing slash. is this necessary?
+
+function getGroupSettingsUrl() {
+    return '/api/settings/';
+}
+
+function getPageDataUrl() {
+    return '/api/pagenewer/';
+}
+
 function getCreateReactionUrl() {
-    return '/api/tag/create';
+    return '/api/tag/create/';
 }
 
 function getCreateCommentUrl() {
-    return '/api/comment/create';
+    return '/api/comment/create/';
 }
 
 function getFetchCommentUrl() {
-    return '/api/comment/replies';
+    return '/api/comment/replies/';
 }
 
 function computeImageUrl($element, groupSettings) {
@@ -52,6 +62,8 @@ function legacyComputeImageUrl($element) {
 //noinspection JSUnresolvedVariable
 module.exports = {
     antennaHome: antennaHome,
+    groupSettingsUrl: getGroupSettingsUrl,
+    pageDataUrl: getPageDataUrl,
     createReactionUrl: getCreateReactionUrl,
     createCommentUrl: getCreateCommentUrl,
     fetchCommentUrl: getFetchCommentUrl,

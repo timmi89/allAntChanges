@@ -47,12 +47,15 @@ def getTagCommentData(comment):
 
     return comment_data
 
-def getTagSummary(tag, tags):
-    tags = filter(lambda x: x.interaction_node==tag, tags)
+# TODO: This needs to be rewritten. Right now, it's called in an outer loop that goes through each tag and then internally
+#       it goes through each tag. We should replace this with a function that builds up a dictionary in one pass.
+#       Also, we shouldn't put bogus values into the dictionary (i.e. entries with no parent_id)
+def getTagSummary(node, tags):
+    tags = filter(lambda x: x.interaction_node==node, tags)
     
     data = {}
     data['count'] = len(tags)
-    data['body'] = tag.body
+    data['body'] = node.body
     for inter in tags:
         if not inter.parent:
             data['parent_id'] = inter.id
@@ -283,7 +286,7 @@ def getSinglePageDataDict(page_id):
         interaction__approved=True
     ).exclude(
         interaction__container__item_type='question'
-    ).using('readonly2')
+    )
 
     ordered_tags = tags.order_by('body')
     tagcounts = ordered_tags.annotate(tag_count=Count('interaction'))
@@ -297,7 +300,112 @@ def getSinglePageDataDict(page_id):
             containers=containers
         )
     return result_dict
-    
+
+def getSinglePageDataNewer(page_id):
+    page = Page.objects.get(id=page_id)
+    interactions = Interaction.objects.filter(page=page, approved=True).exclude(container__item_type='question')
+    interaction_dict = {}
+    container_ids = []
+    content_ids = []
+    node_ids = []
+    summary_dict = {}
+    # First, make a pass over the interactions to group them by container, content, and kind (reactions/comments).
+    # As we go, collect the ids of all the content and interaction_nodes that we need. here's what the map looks like:
+    # interaction_dict = {
+    #   container_id: {
+    #       content_id: {
+    #           'reactions': {
+    #               node_id: { 'count': count, interaction_id: id }
+    #           },
+    #           'comments': { parent_interaction_id: count }
+    #       }
+    #   }
+    #
+    for interaction in interactions:
+        container_id = interaction.container_id
+        container_ids.append(container_id) # TODO: use a set for this collection
+        container_interactions = interaction_dict.setdefault(container_id, {})
+        content_id = interaction.content_id
+        content_ids.append(content_id) # TODO: use a set for this collection
+        content_interactions = container_interactions.setdefault(content_id, {})
+        kind = interaction.kind
+        if kind == 'tag':
+            content_reactions = content_interactions.setdefault('reactions', {})
+            node_id = interaction.interaction_node_id
+            node_ids.append(node_id) # TODO: use a set for this collection
+            content_reaction = content_reactions.setdefault(node_id, { 'count': 0 })
+            content_reaction['count'] += 1
+            if not interaction.parent_id: # this is a 'root' interaction
+                content_reaction['interaction_id'] = interaction.id
+            summary_dict.setdefault(node_id, 0)
+            summary_dict[node_id] += 1
+        elif kind == 'com':
+            comments = content_interactions.setdefault('comments', {})
+            parent_id = interaction.parent_id
+            if parent_id: # guard against corrupt data (comments should always have a parent_id).
+                comments.setdefault(parent_id, 0)
+                comments[parent_id] += 1
+
+    # Next, fetch all of the containers, content, and interaction_nodes that we need
+    containers = Container.objects.filter(id__in=container_ids)
+    content_dict = {}
+    for content in Content.objects.filter(id__in=content_ids).values('id','body','kind','location'):
+        content_dict[content['id']] = content
+    node_dict = {}
+    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
+        node_dict[node['id']] = node
+
+    # Finally, transform the data into the output format
+    containers_data = {}
+    for container in containers:
+        container_id = container.id
+        reactions_data = []
+        container_interactions = interaction_dict[container_id]
+        for content_id, content_interactions in container_interactions.iteritems():
+            content = content_dict[content_id]
+            content_reactions = content_interactions.get('reactions', [])
+            content_comments = content_interactions.get('comments', {})
+            for node_id, content_reaction in content_reactions.iteritems():
+                interaction_id = content_reaction.get('interaction_id')
+                if interaction_id: # This can be None due to corrupt data in the DB
+                    interaction_node = node_dict[node_id]
+                    reaction_data = {
+                        'text': interaction_node['body'],
+                        'id': node_id,
+                        'parentID': interaction_id, # TODO clean up the interaction/interaction_node property names in the API
+                        'count': content_reaction['count'],
+                        'comments': { 'count': content_comments.get(interaction_id) }, # TODO: clean up the API so this is just a single field
+                        'content': {
+                            'id': content_id,
+                            'location': content['location'],
+                            'kind': content['kind']
+                        }
+                    }
+                    reactions_data.append(reaction_data)
+        container_data = {
+            'id': container_id,
+            'hash': container.hash,
+            'reactions': reactions_data
+        }
+        containers_data[container.hash] = container_data
+
+    summary_data = []
+    for node_id, count in summary_dict.iteritems():
+        summary_reaction = {
+            'id': node_id,
+            'count': count,
+            'text': node_dict[node_id]['body']
+        }
+        summary_data.append(summary_reaction)
+    sorted(summary_data, key=lambda x: x['count'], reverse=True)
+
+    page_data = {
+        'pageHash': hashlib.md5(page.url).hexdigest(),
+        'id': page_id,
+        'containers': containers_data,
+        'summaryReactions': summary_data[:15]
+    }
+    return page_data
     
     
 def getKnownUnknownContainerSummaries(page_id, hashes, crossPageHashes):

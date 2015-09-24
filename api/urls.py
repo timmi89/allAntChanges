@@ -7,6 +7,7 @@ from api.auth_handlers import *
 Settings = Resource(handler=SettingsHandler)
 PageData = Resource(handler=PageDataHandler)
 PageDataNew = Resource(handler=PageDataHandlerNew)
+PageDataNewer = Resource(handler=PageDataHandlerNewer)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
 Tag = Resource(handler=TagHandler)
@@ -41,6 +42,7 @@ GlobalActivity = Resource(handler=GlobalActivityHandler)
 BlockedTag = Resource(handler=BlockedTagHandler)
 BlockedPromoTag = Resource(handler=BlockedPromoTagHandler)
 CachePageRefresh = Resource(handler=CachePageRefreshHandler)
+CachePageRefreshNewer = Resource(handler=CachePageRefreshHandlerNewer)
 CacheSettingsRefresh = Resource(handler=CacheSettingsRefreshHandler)
 
 urlpatterns = patterns('',
@@ -71,9 +73,11 @@ urlpatterns = patterns('',
     #Utility
     url(r'^cache/page/refresh/(?P<page_id>\d+)', CachePageRefresh),
     url(r'^cache/page/refresh/(?P<page_id>\d+)/(?P<hash>\d+)', CachePageRefresh),
+    url(r'^cache/page/newer/refresh/(?P<page_id>\d+)', CachePageRefreshNewer),
     url(r'^cache/settings/refresh/(?P<group_id>\d+)', CacheSettingsRefresh),
 
     # Widget
+    url(r'^pagenewer/', PageDataNewer),
     url(r'^pagenew/', PageDataNew),
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),

@@ -154,7 +154,7 @@ function commentSuccess(reactionData, containerData, pageData, callback) {
         if (reactionCreated) {
             var comments = reactionData.comments;
             if (!comments) {
-                comments = reactionData.comments = { count: 0, commentsUrl: commentsUrl(reactionData, containerData) };
+                comments = reactionData.comments = { count: 0 };
             }
             comments.count = comments.count + 1;
         } else {
@@ -244,11 +244,6 @@ function commentsFromResponse(jsonComments) {
         comments.push(comment);
     }
     return comments;
-}
-
-function commentsUrl(reaction, containerData) {
-    // TODO: need to send the URL back from the server. this path math is temporary
-    return '/api/comments/' + containerData.id + '/' + reaction.id;
 }
 
 //noinspection JSUnresolvedVariable

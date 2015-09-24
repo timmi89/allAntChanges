@@ -32,6 +32,28 @@ def isValidIntegerId(value):
         return False
 
 
+class CachePageRefreshHandlerNewer(AnonymousBaseHandler):
+    def read(self, request, page_id = None):
+        #update_page_cache.delay(page.id)
+        if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
+            cache_data = getSinglePageDataNewer(page_id)
+            try:
+                logger.info('CPRH SETTING CACHE DATA page_data_newer_' + str(page_id) )
+                cache.set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+                cache.set('page_data_newer_' + str(page_id), cache_data )
+                cache.delete('LOCKED_page_data_newer_' + str(page_id))
+            except Exception, ex:
+                logger.info(ex)
+            try:
+                get_cache('redundant').set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+                get_cache('redundant').set('page_data_newer_' + str(page_id), cache_data )
+                get_cache('redundant').delete('LOCKED_page_data_newer_' + str(page_id))
+            except Exception, ex:
+                logger.info('REDUNDANT CACHE EXCEPTION')
+                logger.warn(ex)
+        return 'page_newer refresh queued'
+
+
 class CachePageRefreshHandler(AnonymousBaseHandler):
     def read(self, request, page_id = None, hash = None):
         #update_page_cache.delay(page.id)
@@ -302,7 +324,7 @@ class CommentHandler(InteractionHandler):
     def view(self, data):
         reaction_id = data['reaction_id']
         try:
-            comments = Interaction.objects.filter(parent=reaction_id,kind='com')
+            comments = Interaction.objects.filter(parent=reaction_id,kind='com').select_related("user__social_user")
 
         except Interaction.DoesNotExist:
             raise JSONException(u"Interaction did not exist!")
@@ -711,6 +733,43 @@ class PageDataHandler(AnonymousBaseHandler):
         return pages_data
 
 
+class PageDataHandlerNewer(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data, pageid=None):
+        requested_pages = data['pages']
+        host = getHost(request)
+
+        pages = []
+        for requested_page in requested_pages:
+            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
+            requested_page['canonical_url'] = 'same'
+            # /MODIFICATION
+            pages.append(getPage(host, requested_page))
+
+        pages_data = []
+
+        for current_page in pages:
+            cached_result = check_and_get_locked_cache('page_data_newer_' + str(current_page.id))
+            if cached_result is not None:
+                #logger.info('returning page_data_newer cached result')
+                pages_data.append(cached_result)
+            else:
+                logger.info('missed page_data_newer cache')
+                result_dict = getSinglePageDataNewer(current_page.id)
+                pages_data.append(result_dict)
+                try:
+                    cache.set('page_data_newer_' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+                try:
+                    get_cache('redundant').set('page_data_newer_' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+
+        return pages_data
+
+
 class PageDataHandlerNew(AnonymousBaseHandler):
     @status_response
     @json_data
@@ -747,20 +806,7 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                     data = { 'cross_page': False } # TODO remove all handling of cross_page and move that to a separate API call?
 
                     # Copied from ContentSummaryHandler.read:
-                    known = {}
-                    try:
-                        container_id = int(container.id) #TODO review type conversion # MODIFICATION. Was: container_id = data['container_id']
-
-                    except KeyError:
-                        errorStr = "container_id was expected but was not sent with data: " + str(data)
-                        logger.info(errorStr)
-
-                        raise JSONException(u"container_id was expected but was not sent")
-
-                    page_id = int(page_id) #TODO review type conversion # MODIFICATION. Was: page_id = data['page_id']
-
-                    if not isValidIntegerId(page_id) or not isValidIntegerId(container_id):
-                        raise JSONException(u"Bad page id or container_id in content summary call")
+                    container_id = container.id
 
                     if data['cross_page'] == True:
                         page = Page.objects.get(id=page_id)
@@ -786,13 +832,13 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                     for content_id in content_summaries:
                         content_data = content_summaries[content_id]
                         kind = content_data['kind']
-                        if (kind == 'txt'):
+                        if kind == 'txt':
                             content_kind = 'text'
-                        elif (kind == 'pag'):
+                        elif kind == 'pag':
                             content_kind = 'page'
-                        elif (kind == 'img'):
+                        elif kind == 'img':
                             content_kind = 'img'
-                        elif (kind == 'med'):
+                        elif kind == 'med':
                             content_kind = 'media'
                         top_interactions = content_data['top_interactions']
                         comment_dict = {}
@@ -804,21 +850,21 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                         top_tags = top_interactions['tags']
                         for tag_id in top_tags:
                             tag = top_tags[tag_id]
-                            reactions.append({
-                                'id': tag_id,
-                                'text': tag['body'],
-                                'count': tag['count'],
-                                'parentID': tag['parent_id'],
-                                'content': {
-                                    'id': content_id,
-                                    'location': content_data['location'], # TODO data format?
-                                    'kind': content_kind
-                                },
-                                'comments': {
-                                    'count': comment_dict.get(tag_id, 0),
-                                    'url': '/api/comments/%d/%d/%d' % (page_id, container_id, content_id) #TODO real url
-                                }
-                            })
+                            if tag.get('parent_id'): # TODO: we have corrupted data in the database, with interactions pointing to parents that have different content.
+                                reactions.append({
+                                    'id': tag_id,
+                                    'text': tag['body'],
+                                    'count': tag['count'],
+                                    'parentID': tag['parent_id'],
+                                    'content': {
+                                        'id': content_id,
+                                        'location': content_data['location'], # TODO data format?
+                                        'kind': content_kind
+                                    },
+                                    'comments': {
+                                        'count': comment_dict.get(tag_id, 0)
+                                    }
+                                })
 
                     new_container = {
                         'id': container_id,

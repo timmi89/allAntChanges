@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var PageUtils = require('./utils/page-utils');
+var URLs = require('./utils/urls');
 var PageData = require('./page-data');
 
 
@@ -40,7 +41,9 @@ function computePagesParam(groupSettings) {
 
 function loadPageData(groupSettings) {
     var pagesParam = computePagesParam(groupSettings);
-    $.getJSONP('/api/pagenew', { pages: pagesParam }, success, error);
+    // TODO: delete the commented line below, which is for testing purposes
+    //pagesParam = [{"group_id":2834, "url":"http://www.cheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall"}]
+    $.getJSONP(URLs.pageDataUrl(), { pages: pagesParam }, success, error);
 
     function success(json) {
         // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
