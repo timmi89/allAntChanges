@@ -2251,45 +2251,53 @@ require (['http://wwwcache.wral.com/presentation/v3/scripts/main.min.js?v=201508
 </script><!-- Account: CBC New Media Group    Site: WRAL.com -->
 
 
-<script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript"></script>
-
-
-
 <style>
 .antenna-video-cta { float:right; padding:0.5rem 1rem; color:#fff; background:#288BD1; margin-right:0.5rem; }
 .antenna-video-cta [ant-counter-for] { margin-right:0.25rem; }
 </style>
 
-<script src="/static/engage_full.js" async type="text/javascript"></script>
-
 <script>
 window.antenna_host = 'wral.com';
 
-jQuery(document).on('ready', function() {
-    loadAntennaCta( jQuery('meta[property="og:url"]').attr('content') );
-}).on('ajaxComplete', function(response){
-    if (response.delegateTarget && response.delegateTarget.URL) {
-        if ( response.delegateTarget.URL.indexOf('/video/') > 0 ) {
-            loadAntennaCta(response.delegateTarget.URL);
-        }
+var antennaJqueryTimer = 0;
+function initAntennaVideo() {
+    if (typeof jQuery != 'undefined') {
+        clearInterval(antennaJqueryTimer);
+
+        jQuery(document).on('ajaxComplete', function(response){
+            if (response.delegateTarget && response.delegateTarget.URL) {
+                if ( response.delegateTarget.URL.indexOf('/video/') > 0 ) {
+                    loadAntennaCta(response.delegateTarget.URL);
+                }
+            }
+        });
+
+        loadAntennaCta( jQuery('[property="og:url"]').attr('content') );
+
+    } else if (antennaJqueryTimer === 0) {
+        antennaJqueryTimer = setInterval(function () { 
+            initAntennaVideo();
+        }, 500);
     }
-});
+}
 
 function loadAntennaCta(contentUrl) {
-    var $existingCta = $('[ant-item="wral-video-main"]');
+    var $existingCta = jQuery('[ant-item="wral-video-main"]');
     var html = '<div ant-item="wral-video-main" ant-reactions="Fascinating;Not so sure;Funny;Tell me more" ant-item-type="media" ant-item-content="'+contentUrl+'"></div>';
         html += '<div class="antenna-video-cta" ant-cta-for="wral-video-main" ant-mode="read write" ant-offset-x="0" ant-offset-y="0"><span ant-counter-for="wral-video-main"></span> <span ant-reactions-label-for="wral-video-main">Reactions</span></div>';
     
     if ( !$existingCta.length ) {
-        $('.video-text').prepend( html );
+        jQuery('.video-text').prepend( html );
     }
     if (typeof window.ANTENNAIS != 'undefined') {
         window.ANTENNAIS.actions.reset();
     }
 }
 
-loadAntennaCta();
+window.onload = initAntennaVideo();
 </script>
+
+<script src="//antenna.is/static/engage.js" async type="text/javascript"></script>
 
 </body>
 </html>

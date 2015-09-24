@@ -1662,8 +1662,8 @@ function antenna($A){
                                 $summary_widget = $('.ant-summary-'+page.id),
                                 $summary_widget_icon = $summary_widget.find('.ant_logo'),
                                 coords = {
-                                    top: $summary_widget_icon.offset().top - 2,
-                                    left: $summary_widget_icon.offset().left - 2
+                                    top: $summary_widget_icon.offset().top - 11,
+                                    left: $summary_widget_icon.offset().left - 9
                                 };
 
                             // don't redraw summary aWindow if already showing
@@ -8497,7 +8497,7 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('.ant_header').replaceWith($header);
                                 writeTagBoxes(default_reactions);
                                 var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
-                                $aWindow.removeClass('ant_rewritable');
+                                // $aWindow.removeClass('ant_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
@@ -8542,7 +8542,7 @@ if ( sendData.kind=="page" ) {
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
-                                $aWindow.removeClass('ant_rewritable');
+                                // $aWindow.removeClass('ant_rewritable');
                         }
 
 
@@ -10827,9 +10827,9 @@ function $AFunctions($A){
                         '</a>'
                     );
 
-                    $summary_widget.find('.ant-logo').click( function() {
+                    // $summary_widget.find('.ant-logo').click( function() {
                         // ANT.events.track('click_ant_icon_summ');
-                    });
+                    // });
 
                     $summary_widget.find('.ant-logo').tooltip({});
 
