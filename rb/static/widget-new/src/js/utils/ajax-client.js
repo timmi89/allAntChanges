@@ -152,11 +152,10 @@ function commentSuccess(reactionData, containerData, pageData, callback) {
         //          time. Make sure we don't end up with two copies of the same data in the model.
         var reactionCreated = !response.existing;
         if (reactionCreated) {
-            var comments = reactionData.comments;
-            if (!comments) {
-                comments = reactionData.comments = { count: 0 };
+            if (!reactionData.commentCount) {
+                reactionData.commentCount = 0;
             }
-            comments.count = comments.count + 1;
+            reactionData.commentCount += 1;
         } else {
             // TODO: do we ever get a response to a new reaction telling us that it's already existing? If so, could the count need to be updated?
         }

@@ -374,7 +374,7 @@ def getSinglePageDataNewer(page_id):
                         'id': node_id,
                         'parentID': interaction_id, # TODO clean up the interaction/interaction_node property names in the API
                         'count': content_reaction['count'],
-                        'comments': { 'count': content_comments.get(interaction_id) }, # TODO: clean up the API so this is just a single field
+                        'commentCount': content_comments.get(interaction_id),
                         'content': {
                             'id': content_id,
                             'location': content['location'],

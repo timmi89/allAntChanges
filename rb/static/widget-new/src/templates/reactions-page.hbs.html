@@ -12,10 +12,10 @@
                     <div class="antenna-plusone">
                         +1
                     </div>
-                    {{#if this.comments.count > 0}}
+                    {{#if this.commentCount}}
                         <div on-click="showcomments" class="antenna-reaction-comments hascomments">
                             <span class="ant-comment"></span>
-                            {{this.comments.count}}
+                            {{this.commentCount}}
                         </div>
                     {{else}}
                         <div class="antenna-reaction-comments">

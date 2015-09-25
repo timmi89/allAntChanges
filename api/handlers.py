@@ -861,9 +861,7 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                                         'location': content_data['location'], # TODO data format?
                                         'kind': content_kind
                                     },
-                                    'comments': {
-                                        'count': comment_dict.get(tag_id, 0)
-                                    }
+                                    'commentCount': comment_dict.get(tag_id, 0)
                                 })
 
                     new_container = {
