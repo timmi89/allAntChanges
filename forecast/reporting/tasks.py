@@ -16,10 +16,10 @@ logger = logging.getLogger('rb.standard')
 
 
 @periodic_task(name='reporting.group.page.scores', ignore_result=True, 
-               run_every=(crontab(hour="*/6", minute="30", day_of_week="*")))
+               run_every=(crontab(hour="23", minute="30", day_of_week="*")))
 def all_group_page_scores():
     
-    start_date = timezone.now() - datetime.timedelta(days=30)
+    start_date = timezone.now() - datetime.timedelta(days=1)
     end_date = timezone.now()
     
     groups = Group.objects.filter(approved=True, activated=True) 

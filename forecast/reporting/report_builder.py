@@ -19,8 +19,10 @@ class GroupEventsReportBuilder(object):
         #get  GroupPageScores for dates
         logger.warn('BUILDING REPORT FROM GPS ' +str( self.mobile ) + ' ' + str(self.start_date) + ' ' + str(self.end_date))
         group_page_scores = GroupPageScores.objects.filter(group_id = self.group.id, mobile = self.mobile, 
-                                                           report_start__gte = self.start_date - datetime.timedelta(hours=12), report_start__lte = self.start_date + datetime.timedelta(hours=12),
-                                                           report_end__gte = self.end_date  - datetime.timedelta(hours=12), report_end__lte = self.end_date + datetime.timedelta(hours=12))
+                                                           report_start__gte = self.start_date - datetime.timedelta(hours=12), 
+                                                           report_start__lte = self.start_date + datetime.timedelta(hours=12),
+                                                           report_end__gte = self.end_date  - datetime.timedelta(hours=12), 
+                                                           report_end__lte = self.end_date + datetime.timedelta(hours=12))
         group_page_scores.order_by('-created_at')  #maybe unnecessary?
         for g in group_page_scores:
             print g.created_at

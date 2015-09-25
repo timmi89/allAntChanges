@@ -1,5 +1,5 @@
 
-
+{% for latest_report in mlrs %}
 {{ latest_report.group_id }}
 <br>
 {{ latest_report.created_at }}
@@ -20,3 +20,31 @@
 <br>
 {{ latest_report.pop_reactions }}
 <br>
+{% endfor %}
+
+
+{% for latest_report in dlrs %}
+{{ latest_report.group_id }}
+<br>
+{{ latest_report.created_at }}
+<br>
+{{ latest_report.created_at }}
+<br>
+{{ latest_report.report_start }}
+<br>
+{{ latest_report.report_end }}
+<br>
+{{ latest_report.mobile }}
+<br>
+{{ latest_report.sorted_pages }}
+<br>
+{{ latest_report.count_map }}
+<br>
+{{ latest_report.pop_content }}
+<br>
+{{ latest_report.pop_reactions }}
+<br>
+{% endfor %}
+
+{{ mlrs }}
+{{ dlrs }}
