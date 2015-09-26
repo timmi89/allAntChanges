@@ -11,7 +11,8 @@ module.exports = function(grunt) {
         widget_css_dest: rootDir + '/rb/static/widget-new/debug/antenna.css',
 
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
-        rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy-compiled.js'
+        rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy-compiled.js',
+        rangy_min: rootDir + '/rb/static/widget-new/lib/rangy-compiled.min.js'
     };
 
   // Project configuration.
@@ -69,6 +70,10 @@ module.exports = function(grunt) {
                 },
                 src: ['<%= paths.widget_js_debug %>'],
                 dest: '<%= paths.widget_js_prod %>'
+            },
+            rangy: {
+                src: ['<%= paths.rangy_dest %>'],
+                dest: '<%= paths.rangy_min %>'
             }
         },
         watch: {
@@ -96,6 +101,6 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin:widget_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'watch:widget_css'  ]);
-    grunt.registerTask('rangy', [ 'concat:rangy' ]); // This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
+    grunt.registerTask('rangy', [ 'concat:rangy', 'uglify:rangy' ]); // This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
 
 };
