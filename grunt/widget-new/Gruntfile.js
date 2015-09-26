@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         widget_css_dest: rootDir + '/rb/static/widget-new/debug/antenna.css',
 
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
-        rangy_dest: rootDir + 'rb/static/widget-new/lib/rangy-combined.js'
+        rangy_dest: rootDir + '/rb/static/widget-new/lib/rangy-compiled.js'
     };
 
   // Project configuration.
