@@ -18,7 +18,7 @@ function scanAllPages(groupSettings) {
     var $pages = $(groupSettings.pageSelector()); // TODO: no-ant?
     if ($pages.length == 0) {
         // If we don't detect any page markers, treat the whole document as the single page
-        $pages = $('body'); // TODO Is this the right behavior?
+        $pages = $('body'); // TODO: Is this the right behavior? (Keep in sync with the same assumption that's built into page-data-loader.)
     }
     $pages.each(function() {
         var $page = $(this);

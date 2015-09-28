@@ -4,13 +4,27 @@ var URLs = require('./utils/urls');
 var PageData = require('./page-data');
 
 
-function computePageTitle() {
-    // TODO: How are page titles computed with multiple pages? The code below computes the title for a top-level page.
-    var title = $('meta[property="og:title"]').attr('content');
-    if (!title) {
-        title = $('title').text() || '';
+// TODO: move these functions to page-utils
+function computeTopLevelPageTitle() {
+    // TODO: Why is this hard-coded, when the equivalent for the image is configurable? (Unify them.)
+    var title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+    return title.trim();
+}
+
+function computePageTitle($page, groupSettings) {
+    var pageTitle = $page.find(groupSettings.pageLinkSelector()).text().trim();
+    if (pageTitle === '') {
+        pageTitle = computeTopLevelPageTitle();
     }
-    return $.trim(title);
+    return pageTitle;
+}
+
+function computeTopLevelPageImage(groupSettings) {
+    // TODO: This is currently just reproducing what engage_full does. But do we really need to look inside the 'html'
+    //       element like this? Can we just use a selector like the one for the page title (meta[property="og:image"])?
+    //       Can/should we look inside the head element instead of the whole html document?
+    var image = $('html').find(groupSettings.pageImageSelector()).attr(groupSettings.pageImageAttribute()) || '';
+    return image.trim();
 }
 
 
@@ -32,9 +46,13 @@ function computePagesParam(groupSettings) {
         var $pageElement = $(this);
         pages.push({
             group_id: groupId,
-            url: PageUtils.computePageUrl($pageElement, groupSettings)
+            url: PageUtils.computePageUrl($pageElement, groupSettings),
+            title: computePageTitle($pageElement, groupSettings)
         });
     });
+    if (pages.length == 1) {
+        pages[0].image = computeTopLevelPageImage(groupSettings);
+    }
 
     return pages;
 }

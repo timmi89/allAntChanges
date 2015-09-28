@@ -5,7 +5,7 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 // TODO: Review. These are just copied from engage_full.
 var defaults = {
     premium: false,
-    img_selector: "img",
+    img_selector: "img", // TODO: this is some bogus obsolete property. we shouldn't use it.
     img_container_selectors:"#primary-photo",
     active_sections: "body",
     anno_whitelist: "body p",
@@ -31,6 +31,8 @@ var defaults = {
     tag_box_font_family: 'HelveticaNeue,Helvetica,Arial,sans-serif',
     tags_bg_css: '',
     ignore_subdomain: false,
+    image_selector: 'meta[property="og:image"]', // TODO: review what this should be (not from engage_full)
+    image_attribute: 'content', // TODO: review what this should be (not from engage_full)
     //the scope in which to find parents of <br> tags.
     //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
     //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
@@ -131,9 +133,11 @@ function createFromJSON(json) {
         summarySelector: data('summary_widget_selector'),
         summaryMethod: data('summary_widget_method'),
         pageSelector: data('post_selector'),
-        pageHrefSelector: data('post_href_selector'),
+        pageLinkSelector: data('post_href_selector'),
+        pageImageSelector: data('image_selector'),
+        pageImageAttribute: data('image_attribute'),
         textSelector: data('anno_whitelist'),
-        imageSelector: data('img_selector'),
+        imageSelector: data('img_selector'),// TODO: this is wrong
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
         exclusionSelector: data('no_ant')

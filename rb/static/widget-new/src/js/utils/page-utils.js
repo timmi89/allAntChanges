@@ -14,7 +14,7 @@ function computeTopLevelCanonicalUrl(groupSettings) {
 }
 
 function computePageElementUrl($pageElement, groupSettings) {
-    var url = $pageElement.find(groupSettings.pageHrefSelector()).attr('href');
+    var url = $pageElement.find(groupSettings.pageLinkSelector()).attr('href');
     if (url) {
         return removeSubdomainFromPageUrl(url, groupSettings);
     }
