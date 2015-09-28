@@ -790,12 +790,12 @@ class PageDataHandlerNew(AnonymousBaseHandler):
 
         for current_page in pages:
             page_id = current_page.id
-            # TODO: update the cache!
-            cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
-            if cached_page_data is not None:
-                logger.info('returning page_data_new cached result')
-                new_pages_data.append(cached_page_data)
-            else:
+            # half-imlemented caching, disabled for master
+            # cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
+            # if cached_page_data is not None:
+            #     logger.info('returning page_data_new cached result')
+            #     new_pages_data.append(cached_page_data)
+            if True:
                 logger.info('missed page_data_new cache')
                 page_data = getSinglePageDataDict(page_id)
 
@@ -885,14 +885,15 @@ class PageDataHandlerNew(AnonymousBaseHandler):
                 new_page['containers'] = new_containers
                 new_pages_data.append(new_page)
 
-                try:
-                    cache.set('page_data_new' + str(page_id), new_page)
-                except Exception, e:
-                    logger.warning(traceback.format_exc(50))
-                try:
-                    get_cache('redundant').set('page_data_new' + str(page_id), new_page)
-                except Exception, e:
-                    logger.warning(traceback.format_exc(50))
+                # disabled for master: half-finished caching (it's missing the cache update on write)
+                # try:
+                #     cache.set('page_data_new' + str(page_id), new_page)
+                # except Exception, e:
+                #     logger.warning(traceback.format_exc(50))
+                # try:
+                #     get_cache('redundant').set('page_data_new' + str(page_id), new_page)
+                # except Exception, e:
+                #     logger.warning(traceback.format_exc(50))
 
         return new_pages_data
 

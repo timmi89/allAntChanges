@@ -47,9 +47,8 @@ def getTagCommentData(comment):
 
     return comment_data
 
-# TODO: This needs to be rewritten. Right now, it's called in an outer loop that goes through each tag and then internally
-#       it goes through each tag. We should replace this with a function that builds up a dictionary in one pass.
-#       Also, we shouldn't put bogus values into the dictionary (i.e. entries with no parent_id)
+# TODO: This needs to be rewritten or removed. Right now, it's called in an outer loop that goes through each tag and then internally
+#       it goes through each tag.
 def getTagSummary(node, tags):
     tags = filter(lambda x: x.interaction_node==node, tags)
     
@@ -215,15 +214,15 @@ def getPage(host, page_request):
             page.save()
         return page
     except Page.DoesNotExist:
-        defaults = {'site': site}
-        if (title and image):
-            defaults['title'] = title
-            defaults['image'] = image
-
+        # rewrite branch - make the page title and image optional
+        # defaults = {'site': site}
+        # if (title and image):
+        #     defaults['title'] = title
+        #     defaults['image'] = image
         page = Page.objects.get_or_create(
             url = url,
             canonical_url = canonical,
-            defaults = defaults
+            defaults = {'site': site, 'title':title, 'image':image}
         )
         return page[0]
     

@@ -44,6 +44,7 @@ def deleteInteraction(interaction, user):
                 logger.info("CACHEUPDATE ON DELETE")
                 update_page_cache.delay(interaction.page.id)
                 update_page_container_hash_cache.delay(interaction.page.id, [interaction.container.hash], [])
+                update_page_newer_cache.delay(interaction.page.id)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
     
@@ -225,9 +226,9 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     )
     try:
         logger.info("CACHEUPDATE on CREATE " + str(page.id) + " " + str(container.hash))
-        update_page_newer_cache.delay(page.id)
         update_page_cache.delay(page.id)
         update_page_container_hash_cache.delay(page.id, [container.hash], [])
+        update_page_newer_cache.delay(page.id)
         
         #notification = AsynchPageNotification()
         #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})
