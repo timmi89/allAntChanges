@@ -1756,17 +1756,15 @@ function antenna($A){
 
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
-                                        console.log('ipad coords');
                                         var $container = $('[ant-hash="'+hash+'"]'),
                                             containerWidth = $container.width(),
                                             containerOffsetLeft = $container.offset().left,
                                             aWindowWidthOffset = -111;  // aWindows are 222px wide, so pull left
 
                                         var coords = {
-                                            top: $container.offset().bottom+5,
+                                            top: $container.offset().bottom+10,
                                             left: (containerWidth/2) + containerOffsetLeft + aWindowWidthOffset
                                         };
-                                        console.log(coords);
                                     }
                                 } else {
                                     if (typeof settings.coords != 'undefined' && settings.coords.force) {
@@ -2789,10 +2787,12 @@ function antenna($A){
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
+            timerStart:0,
+            timerEnd:0,
             clearFunctionTimer: function(timerName) {
                 // ANT.util.clearFunctionTimer
                 if (!timerName) { timerName = 'ant_functionTimer'};
-                clearInterval($.data(this, timerName));
+                clearTimeout($.data(this, timerName));
             },
             setFunctionTimer: function(callback, time, timerName) {
                 // ANT.util.setFunctionTimer
@@ -7779,10 +7779,16 @@ if ( sendData.kind=="page" ) {
                                         }
                                     });
                                 } else {
+                                    $container.on('touchstart.ant',function(e) {
+                                        ANT.util.timerStart = new Date().getTime();
+                                    });
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        ANT.util.timerEnd = new Date().getTime();
+                                        var touchTime = ANT.util.timerEnd - ANT.util.timerStart;
+
                                         // e.stopPropagation();
                                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                                        if ( ANT.util.isTouchDragging(e) ) { return; }
+                                        if ( ANT.util.isTouchDragging(e) || touchTime > 500 ) { return; }
                                         if (ANT.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.ant_window').length ) {
                                                 var $this_container = $('[ant-hash="'+hash+'"]');
