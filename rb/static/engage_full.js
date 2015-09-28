@@ -1756,11 +1756,17 @@ function antenna($A){
 
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
-                                        var $container = $('[ant-hash="'+hash+'"]');
+                                        console.log('ipad coords');
+                                        var $container = $('[ant-hash="'+hash+'"]'),
+                                            containerWidth = $container.width(),
+                                            containerOffsetLeft = $container.offset().left,
+                                            aWindowWidthOffset = -111;  // aWindows are 222px wide, so pull left
+
                                         var coords = {
                                             top: $container.offset().bottom+5,
-                                            left: $container.offset().left
+                                            left: (containerWidth/2) + containerOffsetLeft + aWindowWidthOffset
                                         };
+                                        console.log(coords);
                                     }
                                 } else {
                                     if (typeof settings.coords != 'undefined' && settings.coords.force) {
