@@ -88,3 +88,14 @@ def createToken(django_id, auth_token):
         ).hexdigest()[::2]
         return token
     return None
+
+
+def createTokenFromUser(django_user, auth_token):
+
+    token = sha_constructor(
+        unicode(django_user.username) +
+        unicode(auth_token)
+    ).hexdigest()[::2]
+    return token
+
+    

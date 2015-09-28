@@ -1,17 +1,29 @@
-{% extends "base.html" %}
-{% block title %}{{ group.name }} Administrative Access{%endblock%}
-{% block bodyClass %}wide{% endblock %}
-{% block mainContent %}
-<div class="grid-whole settings">
+{% extends "base/wide.html" %}
+{% load custom_filters %}
+
+{% block page_title %}{{ form.instance.name }} -- Administrative Access{%endblock%}
+
+{% block bodyClass %}admin{% endblock %}
+
+{% block subheaderContent %}
+<section role="subheader">
+    {% with "admin_requests" as activeAdminTab %} 
+    {% include "admin/nav_tabs.html" %}
+    {% endwith %}
+</section>
+{% endblock %}
+
+{% block page_content %}
+<div class="container row settings">
   <section role="panels" class="content">
 
-
 <h1>{{ group.name }} Administrative Access</h1>
-<div class="container">
+
 <section role="panels">
 	<section role="wide panels">
   {% if requested %}
     <h2>Administrative access for {{ group.name }} has been requested!</h2>
+    <p>You request is now available for existing Group Administrators to approve or deny.</p>
   {% else %}
     <form action="/group/{{ group.short_name }}/admin_request/" method="post">
       {% csrf_token %}
@@ -20,8 +32,8 @@
   {% endif %}
  </section>
 </section>
-</div>
 
 </section>
 </div>
-{% endblock mainContent %}
+
+{% endblock %}

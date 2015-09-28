@@ -22,7 +22,7 @@ class TempUserHandler(BaseHandler):
             username=generateUsername(), 
             email='tempuser@antenna.is'
         )
-        ant_token = createToken(user.id, 'R3dRB0aRdR0X')
+        ant_token = createTokenFromUser(user, 'R3dRB0aRdR0X')
         return dict(
             user_id=user.id,
             ant_token=ant_token

@@ -642,15 +642,15 @@ div.ant div.ant_body div.ant_commentsWrap{
 }
 div.ant div.jspScrollable   { outline:none!important; }
 
-div.ant div.ant_body div.jspHorizontalBar  { display:none; }
+div.ant div.ant_window div.jspHorizontalBar  { display:none; }
 
 
-div.ant div.ant_body div.jspVerticalBar    {
+div.ant div.ant_window div.jspVerticalBar    {
     z-index:10001;
     right:1px;
     opacity: .5;
 }
-div.ant div.ant_body div.jspDrag    {
+div.ant div.ant_window div.jspDrag    {
     cursor: default;
     background:#717171;
 }

@@ -48,7 +48,7 @@ ANT_offline = !!(
 // ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 // ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//localhost:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
-ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":"https://www.antenna.is",
+ANT_baseUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081":"http://www.antenna.is",
 ANT_staticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/",
 ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.antenna.is:8081/static/":window.location.protocol + "//s3.amazonaws.com/readrboard/";
 
@@ -728,7 +728,7 @@ function antenna($A){
                           // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                           API.reinitialise();
                       } else {
-                          $aWindow.jScrollPane({ showArrows:true });
+                          $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                       }
                   }
                 );
@@ -771,7 +771,7 @@ function antenna($A){
                         // why can't i make this use the WIDTH that is already set?  it keeps resizing the jscrollpane to will the space
                         API.reinitialise();
                     } else {
-                        $aWindow.jScrollPane({ showArrows:true });
+                        $aWindow.jScrollPane({ showArrows:true,contentWidth: '0px' });
                     }
 
                 });
@@ -1070,7 +1070,7 @@ function antenna($A){
 
                         if( !$this.hasClass('jspScrollable') ){
                             // IE.  for some reason, THIS fires the scrollend event.  WTF:
-                            $(this).jScrollPane({ showArrows:true });
+                            $(this).jScrollPane({ showArrows:true,contentWidth: '0px' });
                         }else{
                             var API = $(this).data('jsp');
                             API.reinitialise();
@@ -1662,8 +1662,8 @@ function antenna($A){
                                 $summary_widget = $('.ant-summary-'+page.id),
                                 $summary_widget_icon = $summary_widget.find('.ant_logo'),
                                 coords = {
-                                    top: $summary_widget_icon.offset().top - 2,
-                                    left: $summary_widget_icon.offset().left - 2
+                                    top: $summary_widget_icon.offset().top - 11,
+                                    left: $summary_widget_icon.offset().left - 9
                                 };
 
                             // don't redraw summary aWindow if already showing
@@ -1756,10 +1756,14 @@ function antenna($A){
 
                                     // override the coordinates.  the selection-based stuff fails on iPhone after you scroll down.
                                     if (isTouchBrowser) {
-                                        var $container = $('[ant-hash="'+hash+'"]');
+                                        var $container = $('[ant-hash="'+hash+'"]'),
+                                            containerWidth = $container.width(),
+                                            containerOffsetLeft = $container.offset().left,
+                                            aWindowWidthOffset = -111;  // aWindows are 222px wide, so pull left
+
                                         var coords = {
-                                            top: $container.offset().bottom+5,
-                                            left: $container.offset().left
+                                            top: $container.offset().bottom+10,
+                                            left: (containerWidth/2) + containerOffsetLeft + aWindowWidthOffset
                                         };
                                     }
                                 } else {
@@ -2783,10 +2787,12 @@ function antenna($A){
             },
             windowBlur: function() { /*ANT.util.clearWindowInterval();*/ return; },
             windowFocus: function() { return; },
+            timerStart:0,
+            timerEnd:0,
             clearFunctionTimer: function(timerName) {
                 // ANT.util.clearFunctionTimer
                 if (!timerName) { timerName = 'ant_functionTimer'};
-                clearInterval($.data(this, timerName));
+                clearTimeout($.data(this, timerName));
             },
             setFunctionTimer: function(callback, time, timerName) {
                 // ANT.util.setFunctionTimer
@@ -4569,7 +4575,7 @@ function antenna($A){
                                     ANT.util.setFunctionTimer( function() {
                                     // setTimeout(function(){
                                         $('#ant_indicator_' + hash).addClass('ant_visible');
-                                    },300, hash);
+                                    },200, hash);
                                 }
                             // }
                             ANT.actions.content_nodes.init(hash, function(){});
@@ -4587,7 +4593,7 @@ function antenna($A){
                             ANT.util.setFunctionTimer( function() {
                             // setTimeout(function(){
                                 $('#ant_indicator_' + hash).addClass('ant_visible');
-                            },300, hash);
+                            }, 200, hash);
 
                             // $('#ant_indicator_' + hash).show();
                             // ANT.actions.indicators.utils.borderHilites.engage(hash);
@@ -4892,11 +4898,12 @@ function antenna($A){
             },
             initHTMLAttributes: function() {
                 // grab ant-items that have a set of ant-reactions and add to window.antenna_extend_per_container
-                if (ANT.util.activeAB()) {
-                    $('[ant-reactions][ant-item]').each( function () {
+                // if (ANT.util.activeAB()) {
+                    $('[ant-item]').each( function () {
+                    // $('[ant-reactions][ant-item]').each( function () {
                         var $this = $(this),
                             itemName = $this.attr('ant-item'),
-                            reactions = $this.attr('ant-reactions');
+                            reactions = ( $this.hasAttr('ant-reactions') ) ? $this.attr('ant-reactions') : '';
 
                         if ( reactions && typeof window.antenna_extend_per_container[itemName] == 'undefined' ) {
                             var itemDefinition = {};
@@ -4908,7 +4915,7 @@ function antenna($A){
                             window.antenna_extend_per_container[itemName] = itemDefinition;
                         }
                     });
-                }
+                // }
 
                 $ANT.dequeue('initAjax');
             },
@@ -4923,6 +4930,7 @@ function antenna($A){
                 $('[ant-page-container]').removeAttr('ant-page-container');
                 $('.ant-summary').remove();
                 ANT.actions.initPageData();
+                ANT.actions.resetCustomDisplayHashes();
                 ANT.actions.hashCustomDisplayHashes();
             },
             UIClearState: function(e){
@@ -4964,13 +4972,131 @@ function antenna($A){
                 //safe throw the errror.
                 ANT.safeThrow(errorMsg);
             },
-            hashNodes: function( $node, nomedia ) {
+            hashNodes: function( $passedInNode, nomedia ) {
                 //ANT.actions.hashNodes:
+                var $nodes;
 
                 // [porter]: needs a node or nodes
-                if ( typeof $node==="undefined" || (!ANT.util.activeAB()) ) { return; }
+                if ( typeof $passedInNode==="undefined" || (!ANT.util.activeAB()) ) { return; }
+
+                if ( $passedInNode.hasAttr('ant-item') ) {
+                    $nodes = $passedInNode;
+                } else if ($passedInNode.find(ANT.group.active_sections_with_anno_whitelist).length) {
+                    $nodes = $passedInNode.find(ANT.group.active_sections_with_anno_whitelist);
+                } else if ($passedInNode.find(ANT.group.anno_whitelist).length) {
+                    $nodes = $passedInNode.find(ANT.group.anno_whitelist);
+                } else {
+                    $nodes = $passedInNode;
+                }
+
+                var $allNodes = $();
+
+                $.each( $nodes, function(idx, node) {
+                    var $node = $(node);
+
+                    /*
+
+                    TODO
+                    do we need to check that the nodes are INSIDE a valid section, 
+                    or is that handled by whatever passes the $nodes in???
+
+
+                    */
+
+                    if ( !$node.closest('.no-ant').length && !$node.hasClass('no-ant') && !$node.hasClass('ant') && !$node.hasAttr('ant-hashed') ) {
+                        var body = '',
+                            kind = '',
+                            HTMLkind = '';
+
+                        HTMLkind = $node.get(0).nodeName.toLowerCase();
+
+                        // determine the kind
+                        if ( $node.hasAttr('ant-item-type') ) {
+                            // if specified, use that: ant-item-type="media"
+                            if ($node.attr('ant-item-type') == 'image') {
+                                kind = 'img';  // since we set "image" in HTML attributes, but code uses "img"
+                            } else {
+                                kind = $node.attr('ant-item-type');
+                            }
+                        } else {
+                            if (HTMLkind == 'img') {
+                                kind = 'img';
+                            }
+                            if (HTMLkind == 'iframe' || HTMLkind == 'video' || HTMLkind == 'embed') {
+                                kind = 'media';
+                            }
+                            if ($node.text()) {
+                                kind = 'text';
+                            }
+                        }
+
+                        // get ready to determine the content body
+                        // TODO needed?????
+                        // if ( $node.hasAttr('ant-item-content') ) {
+                            // if has item content, use that before making adjustments
+                            // body = $node.attr('ant-item-content');
+                        // }
+
+                        // determine the content body
+                        if (kind=='media') {
+                        // if media, and relative, prepend the body and such
+                            var body = ($node.hasAttr('ant-item-content')) ? $node.attr('ant-item-content') :
+                                       (typeof this.src != 'undefined') ? this.src : 
+                                       (typeof this.data != 'undefined') ? this.data : '';
+
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+                        }
+                        if (kind=='img') {
+                        // if image...
+                            var body = ( $node.hasAttr('src') ) ? $node.attr('src') : $node.attr('ant-item-content');
+                            if (!body) return;
+
+                            if (body.indexOf('/') === 0){
+                                body = window.location.origin + body;
+                            }
+                            if (body.indexOf('http') !== 0){
+                                body = window.location.origin + window.location.pathname + body;
+                            }
+                        }
+
+                        if (kind=='text') {
+                        // if text
+                            // just grab the text, but need to ensure this text != parent text, ensure validity.  maybe?
+                            // var $node = $(node),
+                                // node_text = $node.text();
+                                // TODO need this?
+                                // node_parent_text = $node.parent().text();
+
+                                body = ANT.util.getCleanText($node);
+                        }
+
+                        // if custom
+                            // body = $node.attr('ant-item-content') or $node.text()
+
+                        // if text, compare against anno_whitelist?
+
+                        if (kind && body) {
+                            $node.data('body', body);
+                            $node.data('kind', kind);
+                            $node.data('isCustom', ($node.hasAttr('ant-item-content')) ? true:false);
+
+                            $allNodes = $allNodes.add($node);   
+                        }
+                    }
+
+                });
+
+
+
+
 
                 //todo: consider how to do this whitelist, initialset stuff right
+            /*
                 var $allNodes = $(),
                 nodeGroups = [
                     {
@@ -5105,14 +5231,14 @@ function antenna($A){
                     //take out prev categorized nodes (text is last, so we default to that)
                     $group = $group.not($allNodes);
                     
-                    // hack to fix text nodes taking over our media
-                    if(group.kind == "text"){
-                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
+>>>                    // hack to fix text nodes taking over our media
+>>>                    if(group.kind == "text"){
+>>>                        $group = $group.not(ANT.group.media_selector + ", " +ANT.group.img_selector);
                     }
 
                     //filter out blacklisted stuff and already hashed stuff
-                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
-                    group.$nodes = $group;
+>>>                    $group = $group.not('[ant-hashed], .no-ant, #ant_sandbox');
+>>>                    group.$nodes = $group;
 
                     //setup the group as needed
                     $group.each( function(){
@@ -5120,28 +5246,29 @@ function antenna($A){
                         $(this).data('kind', group.kind);
                     });
 
-                    $allNodes = $allNodes.add($group);
+>>>                    $allNodes = $allNodes.add($group);
 
                     //flag exceptions for inline_indicators
-                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
+>>>                    var $inlineMediaSet = $allNodes.filter(ANT.group.inline_selector);
 
                     $inlineMediaSet.each(function(){
                         $(this).data('inlineIndicator', true);
                     });
 
                 });
+            */
 
                 // TODO when would this do anything?
                 // (eric) wow - I really can't figure out why this is here - I guess it's checking to see if everything is blank, but that's weird.
                             // I guess we can take it out if you didn't want it here either.
-                if( !$allNodes.data('body') ) { 
-                    return false;
-                }
+                // if( !$allNodes.data('body') ) { 
+                //     return false;
+                // }
                 //else
                 var hashList = {};
 
                 //run init outside the loop for optimization to avoid many reflows
-                var indicatorInitQueue = [];
+                // var indicatorInitQueue = [];
 
                 $allNodes.each(function(){
                     var $this = $(this),
@@ -5154,9 +5281,10 @@ function antenna($A){
                         oldHash,
                         hashText;
 
-                    if ( $this.closest('.no-ant').length ) {
-                        return;
-                    }
+                    // redundant, from above, so removing:
+                    // if ( $this.closest('.no-ant').length ) {
+                    //     return;
+                    // }
                     
                     if ( (kind == "img" || kind == "media") && body ) {
 
@@ -5310,7 +5438,7 @@ function antenna($A){
 
                     //don't do this here - do it on success of callback from server
                     // [ porter ]  DO do it here, need it for sendHashes, which needs to know what page it is on, and this is used to find out.
-                    $this.attr( 'ant-hash', hash ).attr('ant-node', 'true');
+                    $this.attr( 'ant-hash', hash ).attr('ant-node', 'true').attr( 'ant-hashed', true );
 
                     // if ( HTMLkind != 'body' && !isTouchBrowser) {
                     if ( HTMLkind != 'body' && !isTouchBrowser ) {
@@ -5364,7 +5492,6 @@ function antenna($A){
 
                 var hashList = [];
                 $.each(hashesByPageId, function(pageId, hashList){
-                    
                     //might not need to protect against this anymore.
                     if(!pageId || typeof hashList != "object" ){
                         //im guessing this will never happen - test for a while and elliminate.
@@ -5743,12 +5870,11 @@ function antenna($A){
                     if ($grid.length) {
                         ANT.actions.content_nodes.init(hash, function() {
                             ANT.actions.indicators.utils.makeTagsListForInline( $grid, false );
-                            $grid.jScrollPane({ showArrows:true });
+                            $grid.jScrollPane({ showArrows:true,contentWidth: '0px' });
                         });
                     }
                 },
                 initCustomDisplayHashes: function(hashesToInit){
-
                     // go ahead and initialize the content nodes for custom display elements
                     // we might want to do this different with an HTML attribute, or something.  
                     // basically, this has to be done if the REACTION-VIEW (formerly: tag grid) is open on load.
@@ -5796,7 +5922,7 @@ function antenna($A){
 
                                     // can the header stuff be optional?
                                     $reactionView.addClass('w'+reactionViewWidth).html('<div class="ant ant_window ant_inline w'+reactionViewWidth+' ant_no_clear" style="position:relative !important;"><div class="ant ant_header"><div class="ant_loader"></div><div class="ant_indicator_stats"><span class="ant-antenna-logo"></span><span class="ant_count"></span></div><h1>'+ANT.t('reactions')+'</h1></div><div class="ant ant_body_wrap ant_grid ant_clearfix"></div></div>');
-                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true }); } );
+                                    ANT.actions.content_nodes.init(hash, function() { ANT.actions.indicators.utils.makeTagsListForInline( $reactionView, false ); $reactionView.jScrollPane({ showArrows:true,contentWidth: '0px' }); } );
                                 } else {
                                     ANT.actions.content_nodes.init(hash);
                                 }
@@ -7653,10 +7779,16 @@ if ( sendData.kind=="page" ) {
                                         }
                                     });
                                 } else {
+                                    $container.on('touchstart.ant',function(e) {
+                                        ANT.util.timerStart = new Date().getTime();
+                                    });
                                     $container.off('touchend.ant').on('touchend.ant', function(e){
+                                        ANT.util.timerEnd = new Date().getTime();
+                                        var touchTime = ANT.util.timerEnd - ANT.util.timerStart;
+
                                         // e.stopPropagation();
                                         // if (ANT.util.bubblingEvents['dragging'] == true ) { return; }
-                                        if ( ANT.util.isTouchDragging(e) ) { return; }
+                                        if ( ANT.util.isTouchDragging(e) || touchTime > 500 ) { return; }
                                         if (ANT.util.bubblingEvents['touchend'] == false) {
                                             if ( !$('.ant_window').length ) {
                                                 var $this_container = $('[ant-hash="'+hash+'"]');
@@ -8205,7 +8337,7 @@ if ( sendData.kind=="page" ) {
                                                 var $aWindow = ANT.aWindow.make( "readMode", {hash:hash} );    
                                             }
                                             $(this).addClass('ant_live_hover');
-                                        } , 500);
+                                        } , 200);
                                     })//chain
                                     .on('mouseleave.ant', function() {
                                         ANT.util.clearFunctionTimer();
@@ -8377,7 +8509,7 @@ if ( sendData.kind=="page" ) {
                                 $aWindow.find('.ant_header').replaceWith($header);
                                 writeTagBoxes(default_reactions);
                                 var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
-                                $aWindow.removeClass('ant_rewritable');
+                                // $aWindow.removeClass('ant_rewritable');
 
                             }
                         } else if ( isWriteMode ) {
@@ -8422,7 +8554,7 @@ if ( sendData.kind=="page" ) {
                         if ( typeof page == "undefined" && isWriteMode ) {
                             // the custom_tag is used for simulating the creation of a custom tagBox, to get the right width
                             var $custom_tagBox = ANT.aWindow.writeCustomTag( $tagsListContainer, $aWindow );
-                                $aWindow.removeClass('ant_rewritable');
+                                // $aWindow.removeClass('ant_rewritable');
                         }
 
 
@@ -9152,12 +9284,15 @@ if ( sendData.kind=="page" ) {
 
                 sortInteractions: function(hash) {
                     // ANT.actions.summaries.sortInteractions
-
                     function SortByTagCount(a,b) { return b.tag_count - a.tag_count; }
 
                     var summary = ANT.summaries[hash];
                     summary.interaction_order = [];
                     summary.counts.highest_tag_count = 0;
+
+                    if ($.isEmptyObject( summary.content_nodes ) && !$.isEmptyObject( ANT.content_nodes[hash]) ) {
+                        ANT.actions.content_nodes.init( hash );
+                    }
 
                     var isText = summary.kind == "text" || summary.kind == "txt";
                     //eric: This seems to be unncessary and bug-causing for non-text nodes.  adding a conditional for text
@@ -10230,7 +10365,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv24"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv26"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10704,9 +10839,9 @@ function $AFunctions($A){
                         '</a>'
                     );
 
-                    $summary_widget.find('.ant-logo').click( function() {
+                    // $summary_widget.find('.ant-logo').click( function() {
                         // ANT.events.track('click_ant_icon_summ');
-                    });
+                    // });
 
                     $summary_widget.find('.ant-logo').tooltip({});
 
