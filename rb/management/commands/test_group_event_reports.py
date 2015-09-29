@@ -14,12 +14,13 @@ class Command(BaseCommand):
         try:
             group_id = int(args[0])
             print group_id
-            start_date = timezone.now() - datetime.timedelta(days=120)
-            end_date = timezone.now() - datetime.timedelta(days=90)
-            group  = Group.objects.get(id=group_id)
-            
-            start_q = timezone.now()
-            group_page_scores(group, start_date, end_date)
+            for x in range(0,30):
+                start_date = timezone.now() - datetime.timedelta(days=1 + x)
+                end_date = timezone.now() - datetime.timedelta(days=x)
+                group  = Group.objects.get(id=group_id)
+                
+                #start_q = timezone.now()
+                group_page_scores(group, start_date, end_date)
             
             
             

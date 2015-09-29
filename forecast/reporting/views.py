@@ -10,7 +10,7 @@ from django.template import RequestContext
 
 
 from antenna.authentication.decorators import requires_admin, requires_admin_super
-from antenna.forecast.reporting import report_builder
+from antenna.forecast.reporting import report_builder, utils
 from antenna.forecast.cassandra.models import *
 from antenna.rb.models import *
 
@@ -25,7 +25,7 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         if year and month and day:
             report_date = datetime.datetime(year = year, month = month, day = day, hour = 23, minute = 59)
         else:
-            report_date = timezone.now() - datetime.timedelta(days=90)
+            report_date = timezone.now()# - datetime.timedelta(days=120)
             
         mobile_latest_reports = LegacyGroupEventsReport.objects.filter(group_id = group.id, mobile = True, 
                                                                 report_start__gte = report_date - datetime.timedelta(days=31), 
@@ -39,11 +39,12 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
                                                                 report_end__lte = report_date)
                                                                 
         #context['latest_reports'] = mobile_latest_reports
-        context['mlrs'] = mobile_latest_reports
-        context['dlrs'] = desktop_latest_reports
-        print len(mobile_latest_reports)
+        #context['mlrs'] = mobile_latest_reports
+        #context['dlrs'] = desktop_latest_reports
         print len(desktop_latest_reports)
-        print report_date
+        context['mobile'] = utils.aggregate_reports(mobile_latest_reports, 20)
+        context['desktop'] = utils.aggregate_reports(desktop_latest_reports, 20)
+        print 'JSON:', utils.aggregate_reports(desktop_latest_reports, 20)
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(

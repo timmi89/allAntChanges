@@ -28,17 +28,20 @@ class GroupEventsReportBuilder(object):
             print g.created_at
             
         gps = group_page_scores[0]
-        print len( gps.scores.items())
         sorted_pages_by_scores = gps.scores.items()
         sorted_pages_by_scores.sort(key = lambda entry : entry[1])
         #sort pages by page scores, cut to depth
+        sorted_pages_by_scores.reverse()
         if len(sorted_pages_by_scores) > self.depth:
             top_x = sorted_pages_by_scores[0:self.depth]
         else:
             top_x = sorted_pages_by_scores
             
         pop_content = {}
+        pop_content_type = {}
+        content_page = {}
         pop_reactions = {}
+        reaction_page = {}
         count_map = {}
         sorted_page_ids = []
         logger.warn('TOPX: ' + str(self.depth))
@@ -49,12 +52,17 @@ class GroupEventsReportBuilder(object):
                 
                 count_map[str(page_id) + '_score'] = score
                 count_map[str(page_id) + '_pageviews'] = gps.page_views[page_id]
-                count_map[str(page_id) + '_reactions'] = gps.reaction_views[page_id]
+                count_map[str(page_id) + '_reaction_views'] = gps.reaction_views[page_id]
+                count_map[str(page_id) + '_reactions'] = gps.reactions[page_id]
                 
                 pop_page_interactions = page.tags().filter(created__gte = self.start_date, created__lte = self.end_date)
+                print page, len(pop_page_interactions), score
                 for ppi in pop_page_interactions:
                     pop_content[ppi.content.id]    = ppi.content.body
+                    pop_content_type[ppi.content.id] = ppi.content.kind
+                    content_page[ppi.content.id]   = ppi.page.id
                     pop_reactions[ppi.id]          = ppi.interaction_node.body
+                    reaction_page[ppi.id]   = ppi.page.id
             except Exception, ex:
                 logger.warn('ERROR generating GERB data for page: ' + str(page_id))
                 logger.warn(traceback.format_exc(50))
@@ -79,6 +87,9 @@ class GroupEventsReportBuilder(object):
                                                         count_map = count_map, 
                                                         sorted_pages = sorted_page_ids,
                                                         pop_content = pop_content,
+                                                        pop_content_type = pop_content_type,
+                                                        content_page = content_page,
+                                                        reaction_page = reaction_page,
                                                         pop_reactions = pop_reactions)
         report.save()
         

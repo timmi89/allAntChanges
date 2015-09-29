@@ -21,7 +21,7 @@ def all_group_page_scores():
     
     start_date = timezone.now() - datetime.timedelta(days=1)
     end_date = timezone.now()
-    
+    start_date, end_date = adjust_start_end_dates(start_date, end_date)
     groups = Group.objects.filter(approved=True, activated=True) 
         
     for group in groups:
@@ -31,6 +31,11 @@ def all_group_page_scores():
             logger.warn('Nothing easy in this world')
             logger.warn(traceback.format_exc(50))
 
+
+def adjust_start_end_dates(start_date, end_date):
+    sd = start_date.replace(hour=0,minute=0,second=0, microsecond = 0)
+    ed = end_date.replace(hour=0,minute=0,second=0, microsecond = 0)
+    return sd,ed
 
 def group_page_scores(group, start_date, end_date):
     #MOBILE
