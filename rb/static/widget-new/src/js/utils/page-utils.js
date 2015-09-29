@@ -1,5 +1,28 @@
 var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 
+function computeTopLevelPageTitle() {
+    // TODO: Why is this hard-coded, when the equivalent for the image is configurable? (Unify them.)
+    var title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+    return title.trim();
+}
+
+function computePageTitle($page, groupSettings) {
+    var pageTitle = $page.find(groupSettings.pageLinkSelector()).text().trim();
+    if (pageTitle === '') {
+        pageTitle = computeTopLevelPageTitle();
+    }
+    return pageTitle;
+}
+
+function computeTopLevelPageImage(groupSettings) {
+    // TODO: This is currently just reproducing what engage_full does. But do we really need to look inside the 'html'
+    //       element like this? Can we just use a selector like the one for the page title (meta[property="og:image"])?
+    //       Can/should we look inside the head element instead of the whole html document?
+    //       Unify the strategies used by this function and computeTopLevelPageTitle()
+    var image = $('html').find(groupSettings.pageImageSelector()).attr(groupSettings.pageImageAttribute()) || '';
+    return image.trim();
+}
+
 function computeTopLevelCanonicalUrl(groupSettings) {
     var canonicalUrl = window.location.href.split('#')[0].toLowerCase();
     var $canonicalLink = $('link[rel="canonical"]');
@@ -44,5 +67,7 @@ function removeSubdomainFromPageUrl(url, groupSettings) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    computePageUrl: computePageElementUrl
+    computePageUrl: computePageElementUrl,
+    computePageTitle: computePageTitle,
+    computeTopLevelPageImage: computeTopLevelPageImage
 };

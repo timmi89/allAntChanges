@@ -1,6 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var ReactionsWidget = require('./reactions-widget');
-var ResizeHandler = require('./utils/resize-handler');
+var ThrottledEvents = require('./utils/throttled-events');
 
 
 function createIndicatorWidget(options) {
@@ -82,9 +82,9 @@ function setupPositioning($imageElement, ractive) {
     var reposition = function() {
         positionIndicator($imageElement, $rootElement);
     };
-    ResizeHandler.onResize(reposition);
+    ThrottledEvents.on('resize', reposition);
     ractive.on('teardown', function() {
-        ResizeHandler.offResize(reposition);
+        ThrottledEvents.off('resize', reposition);
     });
 
     function positionIndicator() {

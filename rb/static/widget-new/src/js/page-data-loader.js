@@ -1,33 +1,8 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var PageUtils = require('./utils/page-utils');
-var ResizeHandler = require('./utils/resize-handler');
-var ScrollHandler = require('./utils/scroll-handler');
+var ThrottledEvents = require('./utils/throttled-events');
 var URLs = require('./utils/urls');
 var PageData = require('./page-data');
-
-
-// TODO: move these functions to page-utils
-function computeTopLevelPageTitle() {
-    // TODO: Why is this hard-coded, when the equivalent for the image is configurable? (Unify them.)
-    var title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
-    return title.trim();
-}
-
-function computePageTitle($page, groupSettings) {
-    var pageTitle = $page.find(groupSettings.pageLinkSelector()).text().trim();
-    if (pageTitle === '') {
-        pageTitle = computeTopLevelPageTitle();
-    }
-    return pageTitle;
-}
-
-function computeTopLevelPageImage(groupSettings) {
-    // TODO: This is currently just reproducing what engage_full does. But do we really need to look inside the 'html'
-    //       element like this? Can we just use a selector like the one for the page title (meta[property="og:image"])?
-    //       Can/should we look inside the head element instead of the whole html document?
-    var image = $('html').find(groupSettings.pageImageSelector()).attr(groupSettings.pageImageAttribute()) || '';
-    return image.trim();
-}
 
 
 // Compute the pages that we need to fetch. This is either:
@@ -41,11 +16,11 @@ function computePagesParam($pageElementArray, groupSettings) {
         pages.push({
             group_id: groupId,
             url: PageUtils.computePageUrl($pageElement, groupSettings),
-            title: computePageTitle($pageElement, groupSettings)
+            title: PageUtils.computePageTitle($pageElement, groupSettings)
         });
     }
     if (pages.length == 1) {
-        pages[0].image = computeTopLevelPageImage(groupSettings);
+        pages[0].image = PageUtils.computeTopLevelPageImage(groupSettings);
     }
 
     return { pages: pages };
@@ -55,8 +30,6 @@ function loadPageData(pageDataParam, groupSettings) {
     $.getJSONP(URLs.pageDataUrl(), pageDataParam, success, error);
 
     function success(json) {
-        // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
-        //       and send them to the server. (use computePageTitle())
         //setTimeout(function() { PageData.updateAllPageData(json, groupSettings); }, 3000);
         PageData.updateAllPageData(json, groupSettings);
     }
@@ -98,12 +71,12 @@ function loadWhenVisible($pageElement, groupSettings) {
         if (isInView($pageElement)) {
             var pageDataParam = computePagesParam([$pageElement], groupSettings);
             loadPageData(pageDataParam, groupSettings);
-            ScrollHandler.offScroll(checkVisibility);
-            ResizeHandler.offResize(checkVisibility);
+            ThrottledEvents.off('scroll', checkVisibility);
+            ThrottledEvents.off('resize', checkVisibility);
         }
     };
-    ScrollHandler.onScroll(checkVisibility);
-    ResizeHandler.onResize(checkVisibility);
+    ThrottledEvents.on('scroll', checkVisibility);
+    ThrottledEvents.on('resize', checkVisibility);
 }
 
 //noinspection JSUnresolvedVariable
