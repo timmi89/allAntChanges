@@ -1,5 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var PageUtils = require('./utils/page-utils');
+var ResizeHandler = require('./utils/resize-handler');
+var ScrollHandler = require('./utils/scroll-handler');
 var URLs = require('./utils/urls');
 var PageData = require('./page-data');
 
@@ -31,37 +33,26 @@ function computeTopLevelPageImage(groupSettings) {
 // Compute the pages that we need to fetch. This is either:
 // 1. Any nested pages we find using the page selector OR
 // 2. The current window location
-function computePagesParam(groupSettings) {
-    var pages = [];
-
+function computePagesParam($pageElementArray, groupSettings) {
     var groupId = groupSettings.groupId();
-    var $pageElements = $(groupSettings.pageSelector());
-    // TODO: Compare this execution flow to what happens in engage_full.js. Here we treat the body element as a page so
-    // the flow is the same for both cases. Is there a reason engage_full.js branches here instead and treats these so differently?
-    if ($pageElements.length == 0) {
-        $pageElements = $('body');
-    }
-    $pageElements.each(function() {
-        // TODO: only ask for the pages that are "above the fold" then install a scroll listener which fetches more pages as needed
-        var $pageElement = $(this);
+    var pages = [];
+    for (var i = 0; i < $pageElementArray.length; i++) {
+        var $pageElement = $pageElementArray[i];
         pages.push({
             group_id: groupId,
             url: PageUtils.computePageUrl($pageElement, groupSettings),
             title: computePageTitle($pageElement, groupSettings)
         });
-    });
+    }
     if (pages.length == 1) {
         pages[0].image = computeTopLevelPageImage(groupSettings);
     }
 
-    return pages;
+    return { pages: pages };
 }
 
-function loadPageData(groupSettings) {
-    var pagesParam = computePagesParam(groupSettings);
-    // TODO: delete the commented line below, which is for testing purposes
-    //pagesParam = [{"group_id":2834, "url":"http://www.cheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall"}]
-    $.getJSONP(URLs.pageDataUrl(), { pages: pagesParam }, success, error);
+function loadPageData(pageDataParam, groupSettings) {
+    $.getJSONP(URLs.pageDataUrl(), pageDataParam, success, error);
 
     function success(json) {
         // TODO: if the page data indicates that the server doesn't know about the page yet, compute the page title and image
@@ -76,7 +67,46 @@ function loadPageData(groupSettings) {
     }
 }
 
+function startLoadingPageData(groupSettings) {
+    var $pageElements = $(groupSettings.pageSelector());
+    if ($pageElements.length == 0) {
+        $pageElements = $('body');
+    }
+    var pagesToLoad = [];
+    $pageElements.each(function() {
+        var $pageElement = $(this);
+        if (isInView($pageElement)) {
+            pagesToLoad.push($pageElement);
+        } else {
+            loadWhenVisible($pageElement, groupSettings);
+        }
+    });
+
+    var pageDataParam = computePagesParam(pagesToLoad, groupSettings);
+    // TODO: delete the commented line below, which is for testing purposes
+    //pageDataParam = {pages: [{"group_id":2834, "url":"http://www.cheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall"}]}
+    loadPageData(pageDataParam, groupSettings);
+}
+
+function isInView($element) {
+    var triggerDistance = 300;
+    return $element.offset().top <  $(document).scrollTop() + $(window).height() + triggerDistance;
+}
+
+function loadWhenVisible($pageElement, groupSettings) {
+    var checkVisibility = function() {
+        if (isInView($pageElement)) {
+            var pageDataParam = computePagesParam([$pageElement], groupSettings);
+            loadPageData(pageDataParam, groupSettings);
+            ScrollHandler.offScroll(checkVisibility);
+            ResizeHandler.offResize(checkVisibility);
+        }
+    };
+    ScrollHandler.onScroll(checkVisibility);
+    ResizeHandler.onResize(checkVisibility);
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
-    load: loadPageData
+    load: startLoadingPageData
 };

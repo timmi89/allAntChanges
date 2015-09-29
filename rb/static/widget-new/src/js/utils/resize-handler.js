@@ -6,13 +6,13 @@ function onResize(callback) {
     if (aruid == 0) {
         setupResizeListener();
     }
-    callback.aruid = aruid++; // store an "antenna-y unique identifier" on the handler so we can find it later
-    callbacks[aruid] = callback;
+    callback.aruid = aruid; // store an "antenna resize-ally unique identifier" on the handler so we can find it later
+    callbacks[aruid++] = callback;
 }
 
 function offResize(callback) {
     var aruid = callback.aruid;
-    if (aruid) {
+    if (aruid !== undefined) {
         delete callbacks[aruid];
     }
 }
