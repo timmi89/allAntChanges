@@ -302,11 +302,11 @@ def getSinglePageDataDict(page_id):
 
 def getSinglePageDataNewer(page_id):
     page = Page.objects.get(id=page_id)
-    interactions = Interaction.objects.filter(page=page, approved=True).exclude(container__item_type='question')
+    interactions = Interaction.objects.filter(page=page, approved=True)
     interaction_dict = {}
-    container_ids = []
-    content_ids = []
-    node_ids = []
+    container_ids = set()
+    content_ids = set()
+    node_ids = set()
     summary_dict = {}
     # First, make a pass over the interactions to group them by container, content, and kind (reactions/comments).
     # As we go, collect the ids of all the content and interaction_nodes that we need. here's what the map looks like:
@@ -322,16 +322,16 @@ def getSinglePageDataNewer(page_id):
     #
     for interaction in interactions:
         container_id = interaction.container_id
-        container_ids.append(container_id) # TODO: use a set for this collection
+        container_ids.add(container_id)
         container_interactions = interaction_dict.setdefault(container_id, {})
         content_id = interaction.content_id
-        content_ids.append(content_id) # TODO: use a set for this collection
+        content_ids.add(content_id)
         content_interactions = container_interactions.setdefault(content_id, {})
         kind = interaction.kind
         if kind == 'tag':
             content_reactions = content_interactions.setdefault('reactions', {})
             node_id = interaction.interaction_node_id
-            node_ids.append(node_id) # TODO: use a set for this collection
+            node_ids.add(node_id)
             content_reaction = content_reactions.setdefault(node_id, { 'count': 0 })
             content_reaction['count'] += 1
             if not interaction.parent_id: # this is a 'root' interaction
@@ -348,11 +348,11 @@ def getSinglePageDataNewer(page_id):
     # Next, fetch all of the containers, content, and interaction_nodes that we need
     containers = Container.objects.filter(id__in=container_ids)
     content_dict = {}
-    for content in Content.objects.filter(id__in=content_ids).values('id','body','kind','location'):
-        content_dict[content['id']] = content
+    for content in Content.objects.filter(id__in=content_ids):
+        content_dict[content.id] = content
     node_dict = {}
-    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
-        node_dict[node['id']] = node
+    for node in InteractionNode.objects.filter(id__in=node_ids):
+        node_dict[node.id] = node
 
     # Finally, transform the data into the output format
     containers_data = {}
@@ -360,27 +360,29 @@ def getSinglePageDataNewer(page_id):
         container_id = container.id
         reactions_data = []
         container_interactions = interaction_dict[container_id]
-        for content_id, content_interactions in container_interactions.iteritems():
-            content = content_dict[content_id]
-            content_reactions = content_interactions.get('reactions', [])
-            content_comments = content_interactions.get('comments', {})
-            for node_id, content_reaction in content_reactions.iteritems():
-                interaction_id = content_reaction.get('interaction_id')
-                if interaction_id: # This can be None due to corrupt data in the DB
-                    interaction_node = node_dict[node_id]
-                    reaction_data = {
-                        'text': interaction_node['body'],
-                        'id': node_id,
-                        'parentID': interaction_id, # TODO clean up the interaction/interaction_node property names in the API
-                        'count': content_reaction['count'],
-                        'commentCount': content_comments.get(interaction_id),
-                        'content': {
-                            'id': content_id,
-                            'location': content['location'],
-                            'kind': content['kind']
-                        }
-                    }
-                    reactions_data.append(reaction_data)
+        for content_id, content_interactions in container_interactions.items():
+            content = content_dict.get(content_id)
+            if content:
+                content_reactions = content_interactions.get('reactions', [])
+                content_comments = content_interactions.get('comments', {})
+                for node_id, content_reaction in content_reactions.items():
+                    interaction_id = content_reaction.get('interaction_id')
+                    if interaction_id: # This can be None due to corrupt data in the DB
+                        interaction_node = node_dict.get(node_id)
+                        if interaction_node:
+                            reaction_data = {
+                                'text': interaction_node.body,
+                                'id': node_id,
+                                'parentID': interaction_id, # TODO clean up the interaction/interaction_node property names in the API
+                                'count': content_reaction['count'],
+                                'commentCount': content_comments.get(interaction_id),
+                                'content': {
+                                    'id': content_id,
+                                    'location': content.location,
+                                    'kind': content.kind
+                                }
+                            }
+                            reactions_data.append(reaction_data)
         container_data = {
             'id': container_id,
             'hash': container.hash,
@@ -389,11 +391,11 @@ def getSinglePageDataNewer(page_id):
         containers_data[container.hash] = container_data
 
     summary_data = []
-    for node_id, count in summary_dict.iteritems():
+    for node_id, count in summary_dict.items():
         summary_reaction = {
             'id': node_id,
             'count': count,
-            'text': node_dict[node_id]['body']
+            'text': node_dict[node_id].body
         }
         summary_data.append(summary_reaction)
     sorted(summary_data, key=lambda x: x['count'], reverse=True)
