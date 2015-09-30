@@ -57,7 +57,7 @@ function startLoadingPageData(groupSettings) {
 
     var pageDataParam = computePagesParam(pagesToLoad, groupSettings);
     // TODO: delete the commented line below, which is for testing purposes
-    //pageDataParam = {pages: [{"group_id":2834, "url":"http://www.cheatsheet.com/entertainment/14-tv-shows-likely-to-get-the-axe-after-this-season.html/?a=viewall"}]}
+    //pageDataParam = {pages: [{"group_id":1184, "url":"http://www.dukechronicle.com/articles/2014/02/14/portrait-porn-star","canonical_url":"same","title":"Portrait of a porn star","image":""}]};
     loadPageData(pageDataParam, groupSettings);
 }
 

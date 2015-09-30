@@ -302,7 +302,7 @@ def getSinglePageDataDict(page_id):
 
 def getSinglePageDataNewer(page_id):
     page = Page.objects.get(id=page_id)
-    interactions = Interaction.objects.filter(page=page, approved=True)
+    interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','content_id','kind','interaction_node_id','parent_id')
     interaction_dict = {}
     container_ids = set()
     content_ids = set()
@@ -321,43 +321,43 @@ def getSinglePageDataNewer(page_id):
     #   }
     #
     for interaction in interactions:
-        container_id = interaction.container_id
+        container_id = interaction['container_id']
         container_ids.add(container_id)
         container_interactions = interaction_dict.setdefault(container_id, {})
-        content_id = interaction.content_id
+        content_id = interaction['content_id']
         content_ids.add(content_id)
         content_interactions = container_interactions.setdefault(content_id, {})
-        kind = interaction.kind
+        kind = interaction['kind']
         if kind == 'tag':
             content_reactions = content_interactions.setdefault('reactions', {})
-            node_id = interaction.interaction_node_id
+            node_id = interaction['interaction_node_id']
             node_ids.add(node_id)
             content_reaction = content_reactions.setdefault(node_id, { 'count': 0 })
             content_reaction['count'] += 1
-            if not interaction.parent_id: # this is a 'root' interaction
-                content_reaction['interaction_id'] = interaction.id
+            if not interaction['parent_id']: # this is a 'root' interaction
+                content_reaction['interaction_id'] = interaction['id']
             summary_dict.setdefault(node_id, 0)
             summary_dict[node_id] += 1
         elif kind == 'com':
             comments = content_interactions.setdefault('comments', {})
-            parent_id = interaction.parent_id
+            parent_id = interaction['parent_id']
             if parent_id: # guard against corrupt data (comments should always have a parent_id).
                 comments.setdefault(parent_id, 0)
                 comments[parent_id] += 1
 
     # Next, fetch all of the containers, content, and interaction_nodes that we need
-    containers = Container.objects.filter(id__in=container_ids)
+    containers = Container.objects.filter(id__in=container_ids).values('id','hash')
     content_dict = {}
-    for content in Content.objects.filter(id__in=content_ids):
-        content_dict[content.id] = content
+    for content in Content.objects.filter(id__in=content_ids).values('id','kind','location'):
+        content_dict[content['id']] = content
     node_dict = {}
-    for node in InteractionNode.objects.filter(id__in=node_ids):
-        node_dict[node.id] = node
+    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
+        node_dict[node['id']] = node
 
     # Finally, transform the data into the output format
     containers_data = {}
     for container in containers:
-        container_id = container.id
+        container_id = container['id']
         reactions_data = []
         container_interactions = interaction_dict[container_id]
         for content_id, content_interactions in container_interactions.items():
@@ -371,34 +371,36 @@ def getSinglePageDataNewer(page_id):
                         interaction_node = node_dict.get(node_id)
                         if interaction_node:
                             reaction_data = {
-                                'text': interaction_node.body,
+                                'text': interaction_node['body'],
                                 'id': node_id,
                                 'parentID': interaction_id, # TODO clean up the interaction/interaction_node property names in the API
                                 'count': content_reaction['count'],
                                 'commentCount': content_comments.get(interaction_id),
                                 'content': {
                                     'id': content_id,
-                                    'location': content.location,
-                                    'kind': content.kind
+                                    'location': content['location'],
+                                    'kind': content['kind']
                                 }
                             }
                             reactions_data.append(reaction_data)
         container_data = {
             'id': container_id,
-            'hash': container.hash,
+            'hash': container['hash'],
             'reactions': reactions_data
         }
-        containers_data[container.hash] = container_data
+        containers_data[container['hash']] = container_data
 
     summary_data = []
     for node_id, count in summary_dict.items():
-        summary_reaction = {
-            'id': node_id,
-            'count': count,
-            'text': node_dict[node_id].body
-        }
-        summary_data.append(summary_reaction)
-    sorted(summary_data, key=lambda x: x['count'], reverse=True)
+        node = node_dict.get(node_id)
+        if node:
+            summary_reaction = {
+                'id': node_id,
+                'count': count,
+                'text': node['body']
+            }
+            summary_data.append(summary_reaction)
+    summary_data = sorted(summary_data, key=lambda x: x['count'], reverse=True)
 
     page_data = {
         'pageHash': hashlib.md5(page.url).hexdigest(),
