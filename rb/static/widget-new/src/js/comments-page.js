@@ -1,4 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var CommentAreaPartial = require('./comment-area-partial');
 
 var pageSelector = '.antenna-comments-page';

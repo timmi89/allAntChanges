@@ -32,6 +32,7 @@ function onLoad(callback) {
     }
 }
 
+//noinspection JSUnresolvedVariable
 module.exports = {
     aboutToLoad: aboutToLoad,
     loaded: loaded,

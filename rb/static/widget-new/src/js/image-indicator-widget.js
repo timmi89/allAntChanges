@@ -1,4 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
 var ThrottledEvents = require('./utils/throttled-events');
 

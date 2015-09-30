@@ -1,3 +1,4 @@
+var RactiveProvider = require('./utils/ractive-provider');
 var RangyProvider = require('./utils/rangy-provider');
 var JQueryProvider = require('./utils/jquery-provider');
 var isOffline = require('./utils/offline');
@@ -7,14 +8,14 @@ var baseUrl = URLs.antennaHome();
 
 var scripts = [
     {src: '//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js', callback: JQueryProvider.loaded},
-    {src: '//cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.runtime.min.js'},
+    {src: '//cdnjs.cloudflare.com/ajax/libs/ractive/0.7.3/ractive.runtime.min.js', callback: RactiveProvider.loaded, aboutToLoad: RactiveProvider.aboutToLoad},
     {src: baseUrl + '/static/widget-new/lib/rangy-compiled.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad} // TODO minify and host this somewhere
 ];
 if (isOffline) {
     // Use the offline versions of the libraries for development.
     scripts = [
         {src: baseUrl + '/static/js/cdn/jquery/2.1.4/jquery.js', callback: JQueryProvider.loaded},
-        {src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.runtime.js'},
+        {src: baseUrl + '/static/js/cdn/ractive/0.7.3/ractive.runtime.js', callback: RactiveProvider.loaded, aboutToLoad: RactiveProvider.aboutToLoad},
         {src: baseUrl + '/static/widget-new/lib/rangy-compiled.js', callback: RangyProvider.loaded, aboutToLoad: RangyProvider.aboutToLoad}
     ];
 }

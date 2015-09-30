@@ -19,7 +19,9 @@ function addComment(reactionProvider, containerData, pageData, callback, ractive
                 }, error);
                 $(ractive.find('.antenna-comment-waiting')).stop().hide();
                 $(ractive.find('.antenna-comment-received')).fadeIn();
-                callback(comment, User.optimisticUser());
+                if (callback) {
+                    callback(comment, User.optimisticUser());
+                }
 
                 function error(message) {
                     // TODO real error handling

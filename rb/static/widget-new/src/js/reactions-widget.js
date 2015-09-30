@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AjaxClient = require('./utils/ajax-client');
 var Moveable = require('./utils/moveable');
+var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
 var TransitionUtil = require('./utils/transition-util');
 var URLs = require('./utils/urls');

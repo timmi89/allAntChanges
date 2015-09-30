@@ -1,5 +1,6 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var AjaxClient = require('./utils/ajax-client');
+var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils');
 
 var pageSelector = '.antenna-defaults-page';
