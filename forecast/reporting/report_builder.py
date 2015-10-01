@@ -69,6 +69,10 @@ class GroupEventsReportBuilder(object):
         #top level metrics
         uniques = -1
         engagement = -1
+        total_page_views = -1
+        total_reaction_views = -1
+        total_reactions = -1
+        
         if self.mobile:
             uniques = prefab_queries.get_mobile_lts(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
             engagement = prefab_queries.get_mobile_engagement(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
@@ -76,8 +80,14 @@ class GroupEventsReportBuilder(object):
             uniques = prefab_queries.get_desktop_lts(self.group, self.start_date, self.end_date)['f'][0]['v'][0] 
             engagement = prefab_queries.get_desktop_engagement(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
             
+        total_page_views, total_reaction_views, total_reactions = prefab_queries.aggregate_counts(self.group, self.start_date, self.end_date, self.mobile)
+            
         count_map['uniques'] = uniques
         count_map['engagement'] = engagement
+        count_map['total_page_views'] = total_page_views
+        count_map['total_reaction_views'] = total_reaction_views
+        count_map['total_reactions'] = total_reactions
+        
         logger.info('Saving report')
         report = LegacyGroupEventsReport.objects.create(group_id = self.group.id, 
                                                         created_at = timezone.now(),

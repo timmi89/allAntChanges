@@ -68,7 +68,44 @@ def get_popular_reactions(group, start_date, end_date, mobile):
     b.sel_columns(['ev', 'count(ev) as counts'])  #THIS NEEDS MORE COLUMNS TO BE MORE USEFUL
     b.set_clause(BQClause(ET_RE, 'AND', DATE_CLAUSE)).set_group_by('group by ev').set_order_by('order by counts desc').set_limit(25).build_query().run_query()
     return b.get_result_rows()
-   
+
+
+def aggregate_counts(group, start_date, end_date, mobile):
+    START_CLAUSE = BQClause('createdAt', '>=', '"'+start_date.strftime('%Y-%m-%d') + ' 00:00:00"')
+    END_CLAUSE = BQClause('createdAt', '<=', '"'+end_date.strftime('%Y-%m-%d') + ' 00:00:00"')
+    DATE_CLAUSE = BQClause(START_CLAUSE, 'AND', END_CLAUSE)
+    #daily['top_views_count']        += int(gr.count_map[str(page_id)+'_pageviews'])
+    #daily['top_reactions_count']    += int(gr.count_map[str(page_id)+'_reactions'])
+    #daily['top_reaction_views_count']    += int(gr.count_map[str(page_id)+'_reaction_views'])
+    if mobile:
+        PV_QUERY = BQClause(BQClause(WIDGET_LOAD, 'AND', MOBILE), 'AND', DATE_CLAUSE)
+        RV_QUERY = BQClause(BQClause(REACT_VIEW, 'AND', MOBILE), 'AND', DATE_CLAUSE)
+        RS_QUERY = BQClause(BQClause(ET_RE, 'AND', MOBILE), 'AND', DATE_CLAUSE)
+    else:
+        PV_QUERY = BQClause(BQClause(WIDGET_LOAD, 'AND', DESKTOP), 'AND', DATE_CLAUSE)
+        RV_QUERY = BQClause(BQClause(REACT_VIEW, 'AND', DESKTOP), 'AND', DATE_CLAUSE)
+        RS_QUERY = BQClause(BQClause(ET_RE, 'AND', DESKTOP), 'AND', DATE_CLAUSE)
+    
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    b.sel_columns(['count(pid) as pvcounts']).set_clause(PV_QUERY).build_query()
+    b.run_query()
+    #print b.get_result_rows()
+    page_views = int(b.get_result_rows()[0]['f'][0]['v'][0])
+
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    b.sel_columns(['count(et) as rvcounts']).set_clause(RV_QUERY).build_query()
+    b.run_query()
+    reaction_views = int(b.get_result_rows()[0]['f'][0]['v'][0])
+    
+    b = BQQueryBuilder()
+    b.set_group(group).set_start_date(start_date).set_end_date(end_date).set_max_results(10000)
+    b.sel_columns(['count(et) as rscounts']).set_clause(RS_QUERY).build_query()
+    b.run_query()
+    reactions = int(b.get_result_rows()[0]['f'][0]['v'][0])
+    return page_views, reaction_views, reactions
+    
 def rough_score_joined(group, start_date, end_date, mobile):
     START_CLAUSE = BQClause('createdAt', '>=', '"'+start_date.strftime('%Y-%m-%d') + ' 00:00:00"')
     END_CLAUSE = BQClause('createdAt', '<=', '"'+end_date.strftime('%Y-%m-%d') + ' 00:00:00"')

@@ -41,10 +41,10 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         #context['latest_reports'] = mobile_latest_reports
         #context['mlrs'] = mobile_latest_reports
         #context['dlrs'] = desktop_latest_reports
-        print len(desktop_latest_reports)
+        #print len(desktop_latest_reports)
         context['mobile'] = utils.aggregate_reports(mobile_latest_reports, 20)
         context['desktop'] = utils.aggregate_reports(desktop_latest_reports, 20)
-        print 'JSON:', utils.aggregate_reports(desktop_latest_reports, 20)
+        #print 'JSON:', utils.aggregate_reports(desktop_latest_reports, 20)
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(

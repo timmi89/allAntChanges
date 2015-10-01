@@ -46,9 +46,9 @@ def aggregate_reports(group_reports, depth):
                 agg_dict['pages'][page_id]['reaction_views']    += int(gr.count_map[str(page_id)+'_reaction_views'])
                 agg_dict['pages'][page_id]['reactions']         += int(gr.count_map[str(page_id)+'_reactions'])
                 #TODO these will need to be separate queries.
-                daily['top_views_count']        += int(gr.count_map[str(page_id)+'_pageviews'])
-                daily['top_reactions_count']    += int(gr.count_map[str(page_id)+'_reactions'])
-                daily['top_reaction_views_count']    += int(gr.count_map[str(page_id)+'_reaction_views'])
+                daily['total_pageviews']        = int(gr.count_map['total_page_views'])
+                daily['total_reactions']        = int(gr.count_map['total_reactions'])
+                daily['total_reaction_views']   = int(gr.count_map['total_reaction_views'])
                 
             for (cid,pid) in gr.content_page.items():
                 if agg_dict['content'].has_key(cid):
