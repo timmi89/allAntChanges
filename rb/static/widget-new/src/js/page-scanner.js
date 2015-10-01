@@ -68,12 +68,12 @@ function scanForCallsToAction($section, pageData, groupSettings) {
     // TODO
 }
 
-function scanForText($section, pageData, groupSettings) {
-    var $textElements = find($section, groupSettings.textSelector());
+function scanForText($element, pageData, groupSettings) {
+    var $textElements = find($element, groupSettings.textSelector());
     // TODO: only select "leaf" elements
     $textElements.each(function() {
         var $textElement = $(this);
-        if (!containsMatchingElement($textElement, groupSettings)) { // Don't allow nested containers
+        if (shouldHashText($textElement, groupSettings)) {
             var hash = Hash.hashText($textElement);
             var containerData = PageData.getContainerData(pageData, hash);
             containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
@@ -108,11 +108,9 @@ function find($element, selector) {
     });
 }
 
-// Returns whether the given element contains any other elements that match our selection criteria.
-function containsMatchingElement($element, groupSettings) {
-    // TODO: test this thoroughly
-    var compositeSelector = [ groupSettings.textSelector(), groupSettings.imageSelector()].join(',');
-    return $element.find(compositeSelector).length > 0;
+function shouldHashText($textElement, groupSettings) {
+    // Don't create an indicator for text elements that contain other text nodes. Or that are empty of text.
+    return $textElement.find(groupSettings.textSelector()).length == 0 && $textElement.text().trim().length > 0;
 }
 
 function scanForImages($section, pageData, groupSettings) {

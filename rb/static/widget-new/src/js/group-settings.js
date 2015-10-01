@@ -137,7 +137,8 @@ function createFromJSON(json) {
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
         textSelector: data('anno_whitelist'),
-        imageSelector: data('img_selector'),// TODO: this is wrong
+        imageSelector: data('img_selector'),// TODO: this is wrong. currently, anno_whitelist contains all tags including 'img'
+        ctaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
         exclusionSelector: data('no_ant')
