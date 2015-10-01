@@ -1,0 +1,53 @@
+
+.antenna-image-indicator-widget {
+    position: absolute;
+    display: table-cell;
+    padding: 3px 5px;
+    cursor: pointer;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(0,0,0,.5);
+    opacity: 0.6;
+    white-space: nowrap;
+    z-index: 998; /* TODO: compute programatically (e.g. image z-index + 1) */
+}
+
+.antenna-image-indicator-widget.notloaded {
+    visibility: hidden;
+}
+
+.antenna-image-indicator-widget .ant-antenna-logo {
+    color: #ffffff !important;
+}
+
+.antenna-image-indicator-widget.active { /* todo qualify active class */
+    text-shadow: none;
+    background-color: rgba(0,0,0,.2);
+    opacity: 1.0;
+    max-width: 150px;
+}
+
+.antenna-image-indicator-widget .antenna-reaction-total {
+    /* TODO: the layout of the text is not right */
+    visibility: hidden;
+    font-size: 11px;
+    line-height: 16px;
+}
+
+.antenna-image-indicator-widget.active .antenna-reaction-total {
+    visibility: inherit; /* only show if the parent element is showing */
+}
+
+.antenna-image-indicator-widget .antenna-reaction-prompt {
+    display: inline-block;
+    font-size: 11px;
+    visibility: hidden;
+    max-width: 0;
+    white-space: pre; /* don't wrap */
+    transition: max-width 200ms;
+    overflow: hidden;
+}
+
+.antenna-image-indicator-widget.active .antenna-reaction-prompt {
+    max-width: 300px;
+    visibility: inherit; /* only show if the parent element is showing */
+}
