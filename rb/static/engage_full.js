@@ -8246,19 +8246,19 @@ if ( sendData.kind=="page" ) {
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
-                        if ( $indicator.hasClass('ant_dont_show') ) {
+                        if ( $indicator.hasClass('ant_dont_show') || $indicator.hasClass('ant_no_reactions') ) {
                             $indicator.css('opacity', 0);
                         }
 
                         // $indicator.data('containerHover', false);
                         // var hoverTimeout = $indicator.data('hoverTimeout');
                         // clearTimeout(hoverTimeout);
-                        if(isTouchBrowser){
+                        // if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
-                        }else{
+                        // }else{
                             // ANT.util.cssSuperImportant( $indicator, { opacity:0 });
                             // ANT.util.cssSuperImportant( $indicator, { display:"none" });
-                        }
+                        // }
                     }
                 },
                 utils:{
