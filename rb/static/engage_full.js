@@ -8178,7 +8178,7 @@ if ( sendData.kind=="page" ) {
                             }
                             if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
-                            ANT.actions.indicators.show(hash);
+                            // ANT.actions.indicators.show(hash);
                             
                         } else {
                             $indicator.addClass('ant_no_reactions');
@@ -9340,7 +9340,6 @@ if ( sendData.kind=="page" ) {
                     function SortByCount(a,b) { return b.interactions - a.interactions; }
 
                     ANT.text_container_popularity = [];
-
                     $.each( ANT.summaries, function( hash, container ){
                         if ( container.kind == "text" && container.counts.interactions > 0 ) {
                             ANT.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
@@ -9353,7 +9352,7 @@ if ( sendData.kind=="page" ) {
                 displayPopularIndicators: function () {
                     // ANT.actions.summaries.displayPopularIndicators
                     // is this used??
-                    for ( var i=1; i < ANT.group.initial_pin_limit; i++) {
+                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
                         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
                     }
                 },
