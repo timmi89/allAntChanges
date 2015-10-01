@@ -2129,12 +2129,15 @@ div.ant_indicator_for_text{
     vertical-align: top;
     line-height: inherit !important;
 }
+
+div.ant_indicator_for_text.ant_dont_show,
 div.ant_indicator_for_text.ant_no_reactions{opacity:0;}
+
 body.ant_touch_browser div.ant_indicator_for_text {
   /*display:block;*/
   max-width: 120px;
   /*padding:4px 0;*/
-  opacity:0.5;
+  /*opacity:0.5;*/
 }
 div.ant_indicator_for_text * {
     display:inline;

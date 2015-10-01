@@ -165,7 +165,7 @@ function antenna($A){
                 media_selector: "embed, video, iframe",
                 comment_length: 500,
                 /*this is basically not used right now*/
-                // initial_pin_limit: 300,
+                initial_pin_limit: 3,
                 no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
@@ -2073,6 +2073,11 @@ function antenna($A){
                 //     //todo: examine resize
                 //     // ANT.aWindow.updateSizes( $this );
                 // });
+
+                if ( ANT.actions.indicators.showOnlyInitial === true && settings.mode.indexOf('read') != -1) {
+                    ANT.actions.indicators.showOnlyInitial = false;
+                    ANT.actions.summaries.showLessPopularIndicators();
+                }
 
                 return $new_aWindow;
             },
@@ -4181,21 +4186,21 @@ function antenna($A){
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
-                    ANT.group.useDefaultSummaryBar = (
-                        ANT.engageScriptParams.bookmarklet &&
-                        !$('.ant-page-summary').length &&
-                        // !$(ANT.group.post_selector).length &&
-                        !$(ANT.group.summary_widget_selector).length &&
-                        ANT.group.summary_widget_selector != 'none'
-                    ) ? true:false;
+                // if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
+                //     ANT.group.useDefaultSummaryBar = (
+                //         ANT.engageScriptParams.bookmarklet &&
+                //         !$('.ant-page-summary').length &&
+                //         // !$(ANT.group.post_selector).length &&
+                //         !$(ANT.group.summary_widget_selector).length &&
+                //         ANT.group.summary_widget_selector != 'none'
+                //     ) ? true:false;
 
-                    if (ANT.group.useDefaultSummaryBar===true){
-                        //add a class defaultSummaryBar to show that this is our added ant-page-summary
-                        //and not a publisher added one.
-                        $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
-                    }
-                }
+                //     if (ANT.group.useDefaultSummaryBar===true){
+                //         //add a class defaultSummaryBar to show that this is our added ant-page-summary
+                //         //and not a publisher added one.
+                //         $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
+                //     }
+                // }
                 
                 // ANT.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
@@ -5445,7 +5450,7 @@ function antenna($A){
                         // // todo: touchHover
                         
                         $this.on('mouseenter.ant', function() {
-                            ANT.actions.indicators.init(hash);
+                            // ANT.actions.indicators.init(hash);
                             var $this = $(this);
                             ANT.util.setFunctionTimer( function() {
                             // setTimeout(function(){
@@ -6162,7 +6167,6 @@ function antenna($A){
 
                     // create the container sort to see which containers have the most activity
                     ANT.actions.summaries.sortPopularTextContainers();
-                    // ANT.actions.summaries.displayPopularIndicators();
 
                     $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
@@ -6180,6 +6184,7 @@ function antenna($A){
                     });
 
                     ANT.actions.indicators.show(hashesToShow);
+                    ANT.actions.summaries.displayPopularIndicators();
                 },
                 send: function(hashList, onSuccessCallback){
                     //ANT.actions.containers.send:
@@ -7447,6 +7452,11 @@ if ( sendData.kind=="page" ) {
                                 // update the aWindow to reflect success
                                 ANT.actions.viewReactionSuccess( args );
 
+                                if ( ANT.actions.indicators.showOnlyInitial === true ) {
+                                    ANT.actions.indicators.showOnlyInitial = false;
+                                    ANT.actions.summaries.showLessPopularIndicators();
+                                }
+
                             }
 
                             function _makePageReactSuccess(args){
@@ -7624,33 +7634,22 @@ if ( sendData.kind=="page" ) {
                 //end ANT.actions.interactions
             },
             indicators: {
+                showOnlyInitial:true,
                 show: function(hashes){
-
                     //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
-                    //todo: this works for now, but use a differnet signal later
-                    if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    // var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
+                    if ( ANT.actions.indicators.showOnlyInitial === true ) {
+                        if ( $('.ant_indicator_for_text:not(.ant_dont_show)').length < ANT.group.initial_pin_limit ) {
+                            if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
+                        }
+                    } else {
+                        //todo: this works for now, but use a different signal later
+                        if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
+                    }
 
-                    // if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
-                    //     $indicators.not('.ant_dont_show').css({
-                    //         'opacity':'0',
-                    //         'visibility':'visible'
-                    //     });
-                    //     // if(boolDontFade){
-                    //         $indicators.not('.ant_dont_show').css({
-                    //             'opacity':textIndicatorOpacity
-                    //         });
-                    //         return;
-                    //     // } else {
-                    //         // $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                    //     // }
-                    // }
-
-                    //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
                     //ANT.actions.indicators.hide:
@@ -7755,6 +7754,8 @@ if ( sendData.kind=="page" ) {
                                     });
                                 }
 
+                                // if it's an element that just contains an image, don't hash the "text" element.
+                                // <p><img src="..."/></p>
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
                                     ANT.actions.stripAntNode($container);
                                     return;
@@ -8237,7 +8238,6 @@ if ( sendData.kind=="page" ) {
                     },
                     out: function($indicator){
                         //ANT.actions.indicators.helpers.out:
-                        
                         //temp hack
                         //don't fade it out if the aWindow is showing
                             // var hash = $indicator.data('hash');
@@ -8246,10 +8246,11 @@ if ( sendData.kind=="page" ) {
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
+                        $indicator.css('opacity', 0);
 
                         $indicator.data('containerHover', false);
-                        var hoverTimeout = $indicator.data('hoverTimeout');
-                        clearTimeout(hoverTimeout);
+                        // var hoverTimeout = $indicator.data('hoverTimeout');
+                        // clearTimeout(hoverTimeout);
                         if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
                         }else{
@@ -9347,30 +9348,29 @@ if ( sendData.kind=="page" ) {
                     ANT.text_container_popularity.sort( SortByCount );
 
                 },
-                // displayPopularIndicators: function () {
-                //     // ANT.actions.summaries.displayPopularIndicators
-                //     // is this used??
+                displayPopularIndicators: function () {
+                    // ANT.actions.summaries.displayPopularIndicators
+                    // is this used??
+                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                    }
+                },
+                showLessPopularIndicators: function() {
+                    // ANT.actions.summaries.showLessPopularIndicators
+                    // is this used??
+                    var hashesToShow = [];
 
-                //     for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
-                //         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                //     }
-                // },
-                // showLessPopularIndicators: function() {
-                //     // ANT.actions.summaries.showLessPopularIndicators
-                //     // is this used??
-                //     var hashesToShow = [];
+                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                        if ( ANT.text_container_popularity[i] ) {
+                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                hashesToShow.push( ANT.text_container_popularity[i].hash );
+                            }
+                        }
+                    }
 
-                //     for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                //         if ( ANT.text_container_popularity[i] ) {
-                //             if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                //                 $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                //                 hashesToShow.push( ANT.text_container_popularity[i].hash );
-                //             }
-                //         }
-                //     }
-
-                //     ANT.actions.indicators.show(hashesToShow);
-                // }
+                    ANT.actions.indicators.show(hashesToShow);
+                }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
@@ -9957,6 +9957,7 @@ if ( sendData.kind=="page" ) {
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //ANT.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
+
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
                 if ( $mouse_target.hasAttr('ant-item') && $('[ant-cta-for="'+$mouse_target.attr('ant-item')+'"]').length ) { 
                     return; 
@@ -10365,7 +10366,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv26"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv27"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
