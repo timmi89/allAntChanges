@@ -8206,10 +8206,10 @@ if ( sendData.kind=="page" ) {
 
                         // ANT.events.track('paragraph_helper_show');
 
-                        var alreadyHovered = $indicator.data('containerHover');
-                        if( alreadyHovered ){
-                            return;
-                        }
+                        // var alreadyHovered = $indicator.data('containerHover');
+                        // if( alreadyHovered ){
+                            // return;
+                        // }
 
                         // fade in.
                         // removing for now. UI feedback was "I didn't see that" from a small sample.
@@ -8246,9 +8246,11 @@ if ( sendData.kind=="page" ) {
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
-                        $indicator.css('opacity', 0);
+                        if ( $indicator.hasClass('ant_dont_show') ) {
+                            $indicator.css('opacity', 0);
+                        }
 
-                        $indicator.data('containerHover', false);
+                        // $indicator.data('containerHover', false);
                         // var hoverTimeout = $indicator.data('hoverTimeout');
                         // clearTimeout(hoverTimeout);
                         if(isTouchBrowser){
