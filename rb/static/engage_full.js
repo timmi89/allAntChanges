@@ -9353,7 +9353,7 @@ if ( sendData.kind=="page" ) {
                 displayPopularIndicators: function () {
                     // ANT.actions.summaries.displayPopularIndicators
                     // is this used??
-                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                    for ( var i=1; i < ANT.group.initial_pin_limit; i++) {
                         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
                     }
                 },
