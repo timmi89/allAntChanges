@@ -4,6 +4,7 @@ var PageUtils = require('./utils/page-utils');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
+var CallToActionIndicator = require('./call-to-action-indicator');
 var TextIndicatorWidget = require('./text-indicator-widget');
 var ImageIndicatorWidget = require('./image-indicator-widget');
 var PageData = require('./page-data');
@@ -65,8 +66,66 @@ function scanForSummaries($element, pageData, groupSettings) {
 }
 
 function scanForCallsToAction($section, pageData, groupSettings) {
-    // TODO
+    // Generate any automatic CTAs (which inserts DOM elements) and then scan.
+    generateCallsToAction($section, pageData, groupSettings);
+
+    var ctaTargets = {}; // The elements that the call to actions act on (e.g. the image or video)
+    find($section, '[ant-item]').each(function() {
+        var $ctaTarget = $(this);
+        var antItemId = $ctaTarget.attr('ant-item').trim();
+        ctaTargets[antItemId] = $ctaTarget;
+    });
+
+    var ctaLabels = {}; // The optional elements that report the number of reactions to the cta
+    find($section, '[ant-reactions-label-for]').each(function() {
+        var $ctaLabel = $(this);
+        var antItemId = $ctaLabel.attr('ant-reactions-label-for').trim();
+        ctaLabels[antItemId] = $ctaLabel;
+    });
+
+    var $ctaElements = find($section, '[ant-cta-for]'); // The call to action elements which prompt the user to react
+    $ctaElements.each(function() {
+        var $ctaElement = $(this);
+        var antItemId = $ctaElement.attr('ant-cta-for');
+        var $targetElement = ctaTargets[antItemId];
+        if ($targetElement) {
+            var hash = computeHash($targetElement);
+            var contentData = computeContentData($targetElement);
+            if (hash && contentData) {
+                var containerData = PageData.getContainerData(pageData, hash);
+                containerData.type = computeElementType($targetElement); // TODO: revisit whether it makes sense to set the type here
+                CallToActionIndicator.create({
+                    containerData: containerData,
+                    containerElement: $targetElement,
+                    contentData: contentData,
+                    ctaElement: $ctaElement,
+                    ctaLabel: ctaLabels[antItemId],
+                    defaultReactions: groupSettings.defaultReactions($targetElement),
+                    pageData: pageData,
+                    groupSettings: groupSettings
+                });
+            }
+        }
+    })
 }
+
+function generateCallsToAction($section, pageData, groupSettings) {
+    // TODO
+    var $ctaTargets = $section.find(groupSettings.generatedCtaSelector());
+    $ctaTargets.each(function() {
+        var $ctaTarget = $(this);
+        var antItemId = generateAntItemAttribute();
+        $ctaTarget.attr('ant-item', antItemId);
+        var $cta = $('<div>What do you think?</div>').attr('ant-cta-for', antItemId); // TODO: use a template for this
+        $ctaTarget.after($cta);
+    });
+}
+
+var generateAntItemAttribute = function(index) {
+    return function() {
+        return 'antenna_auto_cta_' + index++;
+    }
+}(0);
 
 function scanForText($element, pageData, groupSettings) {
     var $textElements = find($element, groupSettings.textSelector());
@@ -75,42 +134,44 @@ function scanForText($element, pageData, groupSettings) {
         var $textElement = $(this);
         if (shouldHashText($textElement, groupSettings)) {
             var hash = Hash.hashText($textElement);
-            var containerData = PageData.getContainerData(pageData, hash);
-            containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
-            var defaultReactions = groupSettings.defaultReactions($textElement);
-            var $indicatorElement = TextIndicatorWidget.create({
+            if (hash) {
+                var containerData = PageData.getContainerData(pageData, hash);
+                containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
+                var defaultReactions = groupSettings.defaultReactions($textElement);
+                var $indicatorElement = TextIndicatorWidget.create({
+                        containerData: containerData,
+                        containerElement: $textElement,
+                        defaultReactions: defaultReactions,
+                        pageData: pageData,
+                        groupSettings: groupSettings
+                    }
+                );
+                $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
+
+                // TODO: Do we need to wait until the reaction data is loaded before making this active?
+                //       What happens if someone reacts before the data is loaded?
+                TextReactions.createReactableText({
                     containerData: containerData,
                     containerElement: $textElement,
                     defaultReactions: defaultReactions,
                     pageData: pageData,
-                    groupSettings: groupSettings
-                }
-            );
-            $textElement.append($indicatorElement); // TODO is this configurable ala insertContent(...)?
-
-            // TODO: Do we need to wait until the reaction data is loaded before making this active?
-            //       What happens if someone reacts before the data is loaded?
-            TextReactions.createReactableText({
-                containerData: containerData,
-                containerElement: $textElement,
-                defaultReactions: defaultReactions,
-                pageData: pageData,
-                groupSettings: groupSettings,
-                excludeNode: $indicatorElement.get(0)
-            });
+                    groupSettings: groupSettings,
+                    excludeNode: $indicatorElement.get(0)
+                });
+            }
         }
     });
 }
 
-function find($element, selector) {
-    return $element.find(selector).filter(function() {
-        return $(this).closest('.no-ant').length == 0;
-    });
+function shouldHashText($textElement, groupSettings) {
+    // Don't create an indicator for text elements that contain other text nodes.
+    return $textElement.find(groupSettings.textSelector()).length == 0 &&
+        !isCta($textElement, groupSettings); // TODO: also consider whether we should hash text elements that *contain* a CTA.
 }
 
-function shouldHashText($textElement, groupSettings) {
-    // Don't create an indicator for text elements that contain other text nodes. Or that are empty of text.
-    return $textElement.find(groupSettings.textSelector()).length == 0 && $textElement.text().trim().length > 0;
+function isCta($element, groupSettings) {
+    var compositeSelector = groupSettings.generatedCtaSelector() + ',[ant-item]';
+    return $element.is(compositeSelector);
 }
 
 function scanForImages($section, pageData, groupSettings) {
@@ -123,34 +184,34 @@ function scanForImages($section, pageData, groupSettings) {
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'image'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($imageElement);
-        var imageOffset = $imageElement.offset();
-        var coords = {
-            bottom: imageOffset.top + $imageElement.height(), // TODO pull from settings/element
-            left: imageOffset.left
-        };
-        var dimensions = {
-            height: $imageElement.height(), // TODO: review how we get the image dimensions
-            width: $imageElement.width()
-        };
-        if (dimensions.height >= 100 && dimensions.width >= 100) { // Don't create indicator on images that are too small
-            ImageIndicatorWidget.create({
-                    element: WidgetBucket(),
-                    coords: coords,
-                    imageUrl: imageUrl,
-                    imageDimensions: dimensions,
-                    containerData: containerData,
-                    containerElement: $imageElement,
-                    defaultReactions: defaultReactions,
-                    pageData: pageData,
-                    groupSettings: groupSettings
-                }
-            );
+        var contentData = computeContentData($element, groupSettings);
+        if (contentData && contentData.dimensions) {
+            if (contentData.dimensions.height >= 100 && contentData.dimensions.width >= 100) { // Don't create indicator on images that are too small
+                ImageIndicatorWidget.create({
+                        element: WidgetBucket(),
+                        imageUrl: imageUrl,
+                        imageDimensions: dimensions,
+                        containerData: containerData,
+                        contentData: contentData,
+                        containerElement: $imageElement,
+                        defaultReactions: defaultReactions,
+                        pageData: pageData,
+                        groupSettings: groupSettings
+                    }
+                );
+            }
         }
     });
 }
 
 function scanForMedia($section, pageData, groupSettings) {
     // TODO
+}
+
+function find($element, selector) {
+    return $element.find(selector).filter(function() {
+        return $(this).closest('.no-ant').length == 0;
+    });
 }
 
 function insertContent($parent, content, method) {
@@ -167,6 +228,61 @@ function insertContent($parent, content, method) {
         case 'after':
             $parent.after(content);
             break;
+    }
+}
+
+function computeHash($element, groupSettings) {
+    // TODO: refactor existing the text/image scan methods to use this function
+    switch (computeElementType($element)) {
+        case 'image':
+            var imageUrl = URLs.computeImageUrl($element, groupSettings);
+            return Hash.hashImage(imageUrl);
+        case 'media':
+            // todo
+            break;
+        case 'text':
+            return Hash.hashText($element);
+    }
+}
+
+function computeContentData($element, groupSettings) {
+    var contentData;
+    switch (computeElementType($element)) {
+        case 'image':
+            var imageUrl = URLs.computeImageUrl($element, groupSettings);
+            var dimensions = {
+                height: $element.height(), // TODO: review how we get the image dimensions
+                width: $element.width()
+            };
+            contentData = {
+                type: 'img',
+                body: imageUrl,
+                dimensions: dimensions
+            };
+        case 'media':
+            // TODO
+            break;
+        case 'text':
+            contentData = { type: 'text' };
+    }
+    return contentData;
+}
+
+function computeElementType($element) {
+    var itemType = $element.attr('ant-item-type');
+    if (itemType && itemType.trim().length > 0) {
+        return itemType.trim();
+    }
+    var tagName = $element.prop('tagName');
+    switch (tagName) {
+        case 'img':
+            return 'image';
+        case 'video':
+        case 'iframe':
+        case 'embed':
+            return 'media';
+        default:
+            return 'text';
     }
 }
 

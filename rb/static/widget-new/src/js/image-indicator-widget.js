@@ -12,9 +12,7 @@ function createIndicatorWidget(options) {
     var pageData = options.pageData;
     var groupSettings = options.groupSettings;
     var defaultReactions = options.defaultReactions;
-    var coords = options.coords;
-    var imageUrl = options.imageUrl;
-    var imageDimensions = options.imageDimensions;
+    var contentData = options.contentData;
     var ractive = Ractive({
         el: element,
         append: true,
@@ -29,11 +27,7 @@ function createIndicatorWidget(options) {
         reactionsData: containerData.reactions,
         containerData: containerData,
         containerElement: $containerElement,
-        contentData: {
-            type: 'img',
-            body: imageUrl,
-            dimensions: imageDimensions
-        },
+        contentData: contentData,
         defaultReactions: defaultReactions,
         pageData: pageData,
         groupSettings: groupSettings

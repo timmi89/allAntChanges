@@ -6,7 +6,6 @@ var Range = require('./utils/range');
 
 
 function createIndicatorWidget(options) {
-    var element = options.element;
     var containerData = options.containerData;
     var $containerElement = options.containerElement;
     var pageData = options.pageData;

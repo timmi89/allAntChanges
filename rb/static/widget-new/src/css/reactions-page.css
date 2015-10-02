@@ -49,3 +49,7 @@
 .antenna-reaction-box:hover .antenna-reaction-count {
     display: none;
 }
+
+.antenna-no-reactions {
+    font-weight: bold;
+}
