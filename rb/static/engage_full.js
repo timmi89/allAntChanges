@@ -10367,7 +10367,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv27"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv28"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
