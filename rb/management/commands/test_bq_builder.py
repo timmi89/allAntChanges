@@ -17,7 +17,7 @@ class Command(BaseCommand):
             group  = Group.objects.get(id=group_id)
             print group
             start_date = datetime.datetime.now() - datetime.timedelta(days=30)
-            end_date = datetime.datetime.now()
+            end_date = datetime.datetime.now() - datetime.timedelta(days=29)
             """
             print datetime.datetime.now()
             mob_lts_rows = prefab_queries.get_mobile_lts(group, start_date, end_date)
@@ -37,23 +37,10 @@ class Command(BaseCommand):
                 print r
             print datetime.datetime.now()
             """
-            #pops = prefab_queries.get_popular_reactions(group, start_date, end_date)
-            #for p in pops:
-            #    print p
+            pops = prefab_queries.get_popular_reactions(group, start_date, end_date, False)
+            for p in pops:
+                print p
             
-            print datetime.datetime.now()
-            counter = 0
-            (reactions_rows, react_views_rows, page_views_rows) = prefab_queries.rough_score(group, start_date, end_date)
-            for row in reactions_rows:
-                counter += 1
-                #print 'page',row['f'][0]['v'],'reactions',row['f'][1]['v']
-            for row in react_views_rows:
-                counter += 1
-                #print 'page:',row['f'][0]['v'],'reaction views',row['f'][1]['v']
-            for row in page_views_rows:
-                counter += 1
-                #print 'page:',row['f'][0]['v'],'views:',row['f'][1]['v']    
-            print datetime.datetime.now()
-            print counter
+            
         except Exception, ex:
             traceback.print_exc(100)

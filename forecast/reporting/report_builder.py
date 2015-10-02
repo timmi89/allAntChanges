@@ -58,11 +58,11 @@ class GroupEventsReportBuilder(object):
                 pop_page_interactions = page.tags().filter(created__gte = self.start_date, created__lte = self.end_date)
                 print page, len(pop_page_interactions), score
                 for ppi in pop_page_interactions:
-                    pop_content[ppi.content.id]    = ppi.content.body
-                    pop_content_type[ppi.content.id] = ppi.content.kind
-                    content_page[ppi.content.id]   = ppi.page.id
-                    pop_reactions[ppi.id]          = ppi.interaction_node.body
-                    reaction_page[ppi.id]   = ppi.page.id
+                    pop_content[ppi.content.id]         = ppi.content.body
+                    pop_content_type[ppi.content.id]    = ppi.content.kind
+                    content_page[ppi.content.id]        = ppi.page.id
+                    pop_reactions[ppi.id]               = ppi.interaction_node.body
+                    reaction_page[ppi.id]               = ppi.page.id
             except Exception, ex:
                 logger.warn('ERROR generating GERB data for page: ' + str(page_id))
                 logger.warn(traceback.format_exc(50))
@@ -81,7 +81,11 @@ class GroupEventsReportBuilder(object):
             engagement = prefab_queries.get_desktop_engagement(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
             
         total_page_views, total_reaction_views, total_reactions = prefab_queries.aggregate_counts(self.group, self.start_date, self.end_date, self.mobile)
-            
+        tag_cloud = {}
+        tag_cloud_rows = prefab_queries.get_popular_reactions(self.group, self.start_date, self.end_date, self.mobile)
+        for tcr in tag_cloud_rows:
+            tag_cloud[tcr['f'][0]['v']] = tcr['f'][1]['v']
+         
         count_map['uniques'] = uniques
         count_map['engagement'] = engagement
         count_map['total_page_views'] = total_page_views
@@ -100,7 +104,8 @@ class GroupEventsReportBuilder(object):
                                                         pop_content_type = pop_content_type,
                                                         content_page = content_page,
                                                         reaction_page = reaction_page,
-                                                        pop_reactions = pop_reactions)
+                                                        pop_reactions = pop_reactions,
+                                                        tag_cloud = tag_cloud)
         report.save()
         
         

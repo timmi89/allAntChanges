@@ -18,10 +18,14 @@ def aggregate_reports(group_reports, depth):
         agg_dict= {}
         agg_dict['dailies']     = []
         agg_dict['content']     = {}
-        agg_dict['reactions']   = {}
+        #agg_dict['reactions']   = {}
         agg_dict['pages']       = {}
         agg_dict['sorted_content'] = []
         agg_dict['sorted_reactions'] = []
+        agg_dict['tag_cloud'] = {}
+        agg_dict['sorted_tag_cloud'] = []
+        
+        
         for gr in group_reports:
             daily = {}
             daily['created_at'] = gr.created_at
@@ -45,7 +49,7 @@ def aggregate_reports(group_reports, depth):
                 agg_dict['pages'][page_id]['views']             += int(gr.count_map[str(page_id)+'_pageviews'])
                 agg_dict['pages'][page_id]['reaction_views']    += int(gr.count_map[str(page_id)+'_reaction_views'])
                 agg_dict['pages'][page_id]['reactions']         += int(gr.count_map[str(page_id)+'_reactions'])
-                #TODO these will need to be separate queries.
+                
                 daily['total_pageviews']        = int(gr.count_map['total_page_views'])
                 daily['total_reactions']        = int(gr.count_map['total_reactions'])
                 daily['total_reaction_views']   = int(gr.count_map['total_reaction_views'])
@@ -58,44 +62,68 @@ def aggregate_reports(group_reports, depth):
                     agg_dict['content'][cid]['score']   = agg_dict['pages'][pid]['score']
                     agg_dict['content'][cid]['type']    = gr.pop_content_type[cid]
                     agg_dict['content'][cid]['body']    = gr.pop_content[cid]
-                    #TODO:  do db lookup after list is trimmed
-                    try:
-                        agg_dict['content'][cid]['interaction_id']    = Interaction.objects.filter(content__id = cid)[0].id
-                    except Interaction.DoesNotExist, idne:
-                        logger.warn('No Interaction for Content in Utils Reporting')
-                          
+                                              
+            """
             for (rid,pid) in gr.reaction_page.items():
                 if agg_dict['reactions'].has_key(rid):
-                    agg_dict['reactions'][rid]['score'] += agg_dict['pages'][pid]
+                    agg_dict['reactions'][rid]['score'] += agg_dict['pages'][pid]['score']
                 else:
                     agg_dict['reactions'][rid] = {}
-                    agg_dict['reactions'][rid]['score'] = agg_dict['pages'][pid]
-                    #TODO:  do db lookup after list is trimmed
-                    try:
-                        interaction = Interaction.objects.get(id=rid)
-                        agg_dict['reactions'][rid]['body'] = interaction.interaction_node.body
-                    except Interaction.DoesNotExist, idne:
-                        logger.warn(idne)
-                    
+                    agg_dict['reactions'][rid]['score'] = agg_dict['pages'][pid]['score']        
+            """        
             daily['uniques'] = gr.count_map['uniques']
             daily['engagement'] = gr.count_map['engagement']
             agg_dict['dailies'].append(daily)
+            
+            
+            #TAG_CLOUD aggregation
+            for pop_tag in gr.tag_cloud.keys():
+                if not agg_dict['tag_cloud'].has_key(pop_tag):
+                    agg_dict['tag_cloud'][pop_tag] = 0
+                agg_dict['tag_cloud'][pop_tag] += gr.tag_cloud[pop_tag]
         
         agg_dict['sorted_content'].extend(agg_dict['content'].items())
-        agg_dict['sorted_reactions'].extend(agg_dict['reactions'].items())
+        #agg_dict['sorted_reactions'].extend(agg_dict['reactions'].items())
+        agg_dict['sorted_tag_cloud'].extend(agg_dict['tag_cloud'].items())
+        
         if len(agg_dict['sorted_content']):
             agg_dict['sorted_content'].sort(key = lambda entry : entry[1]['score'])
             agg_dict['sorted_content'].reverse()
+        """
         if len(agg_dict['sorted_reactions']):
             agg_dict['sorted_reactions'].sort(key = lambda entry : entry[1]['score'])
             agg_dict['sorted_reactions'].reverse()
-        
+        """
+        if len(agg_dict['tag_cloud']):
+            agg_dict['sorted_tag_cloud'].sort(key = lambda entry : entry[1])
+            agg_dict['sorted_tag_cloud'].reverse()
+            agg_dict['sorted_tag_cloud'] = agg_dict['sorted_tag_cloud'][0:30]
+            
         agg_dict.pop('content')
-        agg_dict.pop('reactions')
+        #agg_dict.pop('reactions')
+        agg_dict.pop('tag_cloud')
         agg_dict['sorted_content'] = agg_dict['sorted_content'][0:20]
-        agg_dict['sorted_reactions'] = agg_dict['sorted_reactions'][0:20]
-        #TODO:  do db lookups HERE on trimmed lists
+        for sc in agg_dict['sorted_content']:
+            try:
+                sc[1]['interaction_id']    = Interaction.objects.filter(content__id = sc[0])[0].id
+            except Interaction.DoesNotExist, idne:
+                logger.warn('No Interaction for Content in Utils Reporting')
         
+        
+        #agg_dict['sorted_reactions'] = agg_dict['sorted_reactions'][0:20]
+        #TODO:  do db lookups HERE on trimmed lists
+        """
+        for sr in agg_dict['sorted_reactions']:
+            try:
+                interaction = Interaction.objects.get(id=rid)
+                sr[1]['body'] = interaction.interaction_node.body
+            except Interaction.DoesNotExist, idne:
+                logger.warn(idne)    
+        """
         return json.dumps(agg_dict, cls=DatetimeEncoder)
     else:
         return {}
+    
+    
+    
+    

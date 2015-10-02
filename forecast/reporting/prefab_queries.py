@@ -66,9 +66,8 @@ def get_popular_reactions(group, start_date, end_date, mobile):
     b = BQQueryBuilder()
     b.set_group(group).set_start_date(start_date).set_end_date(end_date)
     b.sel_columns(['ev', 'count(ev) as counts'])  #THIS NEEDS MORE COLUMNS TO BE MORE USEFUL
-    b.set_clause(BQClause(ET_RE, 'AND', DATE_CLAUSE)).set_group_by('group by ev').set_order_by('order by counts desc').set_limit(25).build_query().run_query()
+    b.set_clause(BQClause(ET_RE, 'AND', DATE_CLAUSE)).set_group_by('group by ev').set_order_by('order by counts desc').build_query().run_query()
     return b.get_result_rows()
-
 
 def aggregate_counts(group, start_date, end_date, mobile):
     START_CLAUSE = BQClause('createdAt', '>=', '"'+start_date.strftime('%Y-%m-%d') + ' 00:00:00"')

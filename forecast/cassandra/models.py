@@ -26,6 +26,7 @@ class LegacyGroupEventsReport(Model):
     created_at      = columns.DateTime(primary_key = True, index=True, required=True)
     mobile          = columns.Boolean(index = True, default=False)
     text_map        = columns.Map(columns.Text(), columns.Text())
+    tag_cloud       = columns.Map(columns.Text(), columns.Integer())
     count_map       = columns.Map(columns.Text(), columns.Double())
     sorted_pages    = columns.List(columns.Integer())  #sorted page ids by score
     pop_topics      = columns.Set(columns.Text())
