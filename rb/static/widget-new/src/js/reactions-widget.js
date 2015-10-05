@@ -24,7 +24,7 @@ function openReactionsWidget(options, elementOrCoords) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement; // optional
-    var startPage = options.startPage; // optional
+    var startPage = options.startPage || pageAuto; // optional
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
     // make a local copy of it to avoid unexpectedly changing data out from under one of the clients
