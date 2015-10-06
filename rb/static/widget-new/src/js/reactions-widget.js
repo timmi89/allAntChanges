@@ -12,6 +12,10 @@ var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
 var ReactionsPage = require('./reactions-page');
 
+var pageReactions = 'reactions';
+var pageDefaults = 'defaults';
+var pageAuto = 'auto';
+
 var openInstances = [];
 
 function openReactionsWidget(options, elementOrCoords) {
@@ -20,6 +24,7 @@ function openReactionsWidget(options, elementOrCoords) {
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var containerElement = options.containerElement; // optional
+    var startPage = options.startPage || pageAuto; // optional
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
     // make a local copy of it to avoid unexpectedly changing data out from under one of the clients
@@ -58,10 +63,9 @@ function openReactionsWidget(options, elementOrCoords) {
         }
         $rootElement.stop(true, true).addClass('open').css(coords);
 
-        if (reactionsData.length > 0) {
+        if (startPage === pageReactions || (startPage === pageAuto && reactionsData.length > 0)) {
             showReactionsPage(false);
-        } else {
-            // TODO allow to override and force showing of default
+        } else { // startPage === pageDefaults || there are no reactions
             showDefaultReactionsPage(false);
         }
 
@@ -317,5 +321,8 @@ function preventExtraScroll($rootElement) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    open: openReactionsWidget
+    open: openReactionsWidget,
+    PAGE_REACTIONS: pageReactions,
+    PAGE_DEFAULTS: pageDefaults,
+    PAGE_AUTO: pageAuto
 };

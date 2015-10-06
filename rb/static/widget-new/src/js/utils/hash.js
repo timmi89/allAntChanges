@@ -38,8 +38,11 @@ function hashText(element) {
     // TODO: Handle the case where multiple instances of the same text appear on the page. Need to add an increment to
     // the hashText. (This check has to be scoped to a post)
     var text = getCleanText(element);
-    var hashText = "rdr-text-"+text;
-    return MD5.hex_md5(hashText);
+    if (text) {
+        var hashText = "rdr-text-" + text;
+        return MD5.hex_md5(hashText);
+    }
+    return undefined;
 }
 
 function hashUrl(url) {

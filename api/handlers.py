@@ -116,6 +116,15 @@ class CacheSettingsRefreshHandler(AnonymousBaseHandler):
             logger.warning(traceback.format_exc(50))
         return 'refresh queued'
 
+class UptimeHandler(AnonymousBaseHandler):
+    def read(self, request):
+        #DB LOOKUP
+        group = Group.objects.get(id = 2673)
+        #CACHE check
+        cache.set('uptime_check', datetime.now().isoformat())
+        last_check = cache.get('uptime_check')
+
+        return last_check
 
 class SocialUserHandler(AnonymousBaseHandler):
     model = SocialUser
