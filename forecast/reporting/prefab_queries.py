@@ -137,7 +137,8 @@ def rough_score_joined(group, start_date, end_date, mobile):
     rs_query = b.get_query_str()
     
     first_join = QueryJoiner(['pvpid','pvcounts','rvcounts'], pv_query, 'pvs', 'left join each', rv_query, 'rvs', 'pvs.pvpid = rvs.rvpid')
-    second_join = QueryJoiner(['pvpid','pvcounts','rvcounts', 'rscounts', '((rscounts * 10 + rvcounts) / pvcounts) as score'], first_join.__str__(), 'agg1', 'left join each', rs_query, 'rs', 'agg1.pvpid = rs.rspid')
+    second_join = QueryJoiner(['pvpid','pvcounts','rvcounts', 'rscounts', '((rscounts * 10 + rvcounts) / pvcounts) as score'], 
+                              first_join.__str__(), 'agg1', 'left join each', rs_query, 'rs', 'agg1.pvpid = rs.rspid where agg1.pvcounts > 10')
     
     b = BQQueryBuilder()
     b.set_max_results(10000).set_custom_query(second_join.__str__() + ' order by score desc').build_query()
