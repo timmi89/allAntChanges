@@ -44,6 +44,8 @@ BlockedPromoTag = Resource(handler=BlockedPromoTagHandler)
 CachePageRefresh = Resource(handler=CachePageRefreshHandler)
 CachePageRefreshNewer = Resource(handler=CachePageRefreshHandlerNewer)
 CacheSettingsRefresh = Resource(handler=CacheSettingsRefreshHandler)
+Uptime = Resource(handler=UptimeHandler)
+
 
 urlpatterns = patterns('',
     url(r'^settings/$', Settings),
@@ -75,6 +77,7 @@ urlpatterns = patterns('',
     url(r'^cache/page/refresh/(?P<page_id>\d+)/(?P<hash>\d+)', CachePageRefresh),
     url(r'^cache/page/newer/refresh/(?P<page_id>\d+)', CachePageRefreshNewer),
     url(r'^cache/settings/refresh/(?P<group_id>\d+)', CacheSettingsRefresh),
+    url(r'^uptime_check/', Uptime),
 
     # Widget
     url(r'^pagenewer/', PageDataNewer),
