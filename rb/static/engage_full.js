@@ -5866,7 +5866,7 @@ function antenna($A){
                     }
 
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
-                    ANT.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash, true);
 
                     var $container = $('[ant-hash="'+hash+'"]'),
                         customDisplayName = $container.attr('ant-item'),
@@ -7678,13 +7678,14 @@ if ( sendData.kind=="page" ) {
                     }
                     return $indicators;
                 },
-                init: function(hash){
+                init: function(hash, showIndicator){
                     //ANT.actions.indicators.init:
                     //note: this should generally be called via ANT.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
                     var summary = ANT.summaries[hash];
+                    var showIndicator = (showIndicator) ? showIndicator:false;
                     if (typeof summary != "undefined" && summary.$container.hasAttr('ant-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
@@ -7743,7 +7744,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
                             //run setup specific to this type
-                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash, showIndicator );
 
 
                             //todo: combine this with the kindSpecificSetup above right?
@@ -8284,7 +8285,7 @@ if ( sendData.kind=="page" ) {
                     },
                     //ANT.actions.indicators.utils:
                     kindSpecificSetup: {
-                        img: function( hash ){
+                        img: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
@@ -8393,19 +8394,25 @@ if ( sendData.kind=="page" ) {
                             }
 
                         },
-                        media: function( hash ){
+                        media: function( hash, showIndicator ){
                             //for now just treat it like an img
                             this.img( hash );
                         },
-                        text: function( hash ){
+                        text: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
                                 $actionbar = $('ant_actionbar_'+hash);
 
-                            $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            // $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
                             // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
+
+                            if (showIndicator === false) {
+                                $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            } else {
+                                $indicator.addClass('ant_indicator_for_text');
+                            }
 
                             var startOfTrailingWhiteSpace = ANT.actions.indicators.utils.checkTrailingWhiteSpace($container);
 
