@@ -182,7 +182,8 @@ function antenna($A){
                 img_indicator_show_side: 'left',
                 // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
                 // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                tag_box_bg_colors: '#18414c;#376076;78,122,146;215,179,69;#e6885c;#e46156',
+                // tag_box_bg_colors: '#376076;215,179,69;#e6885c;#e46156',
                 // tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
                 // tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
                 tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
@@ -5866,7 +5867,7 @@ function antenna($A){
                     }
 
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
-                    ANT.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash, true);
 
                     var $container = $('[ant-hash="'+hash+'"]'),
                         customDisplayName = $container.attr('ant-item'),
@@ -7310,7 +7311,7 @@ if ( sendData.kind=="page" ) {
 
                                     _doPageUpdates(args);
                                     
-                                }else{
+                                // }else{
 
                                 //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
@@ -7678,13 +7679,14 @@ if ( sendData.kind=="page" ) {
                     }
                     return $indicators;
                 },
-                init: function(hash){
+                init: function(hash, showIndicator){
                     //ANT.actions.indicators.init:
                     //note: this should generally be called via ANT.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
                     var summary = ANT.summaries[hash];
+                    var showIndicator = (showIndicator) ? showIndicator:false;
                     if (typeof summary != "undefined" && summary.$container.hasAttr('ant-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
@@ -7743,7 +7745,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
                             //run setup specific to this type
-                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash, showIndicator );
 
 
                             //todo: combine this with the kindSpecificSetup above right?
@@ -8284,7 +8286,7 @@ if ( sendData.kind=="page" ) {
                     },
                     //ANT.actions.indicators.utils:
                     kindSpecificSetup: {
-                        img: function( hash ){
+                        img: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
@@ -8393,18 +8395,22 @@ if ( sendData.kind=="page" ) {
                             }
 
                         },
-                        media: function( hash ){
+                        media: function( hash, showIndicator ){
                             //for now just treat it like an img
                             this.img( hash );
                         },
-                        text: function( hash ){
+                        text: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
                                 $actionbar = $('ant_actionbar_'+hash);
 
-                            $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            if (showIndicator === false) {
+                                $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            } else {
+                                $indicator.addClass('ant_indicator_for_text');
+                            }
                             // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
 
                             var startOfTrailingWhiteSpace = ANT.actions.indicators.utils.checkTrailingWhiteSpace($container);
@@ -9433,9 +9439,9 @@ if ( sendData.kind=="page" ) {
                     ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
                     
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
-                    if(!isCrossPageContainer){
+                    // if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                    }
+                    // }
 
                 } );
                 
