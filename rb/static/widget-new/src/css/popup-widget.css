@@ -1,0 +1,61 @@
+
+.antenna-popup {
+    position: absolute;
+    display: none;
+    opacity: 0.0;
+    transform: scale(0.5) translate3d(-50%, 100%, 0);
+    transition: transform 200ms ease, opacity 200ms ease;
+    white-space: nowrap;
+    cursor: pointer;
+    z-index: 1000; /* TODO: z-index value? */
+}
+
+.antenna-popup.show {
+    opacity: 1.0;
+    transform: scale(1.0) translate3d(0, 0, 0);
+}
+
+.antenna-popup-body {
+    display: inline-block;
+    background: #464646;
+    padding:8px 8px 6px 8px;
+    border-radius:8px;
+    font:normal 12px Helvetica, Arial, sans-serif;
+    transition: width 200ms;
+}
+
+.antenna-popup:after {
+    display: block;
+    content: "";
+    position: absolute;
+    left: 12px;
+    bottom: -10px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid #464646;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+
+.antenna-popup-body .ant-antenna-logo {
+    font-size:18px;
+    vertical-align: middle;
+    transition: color 500ms;
+    color: #8fb3f2;
+}
+.antenna-popup-body:hover .ant-antenna-logo {
+    color:#FFFFFF;
+}
+
+.antenna-popup-text {
+    display: none;
+    color:#CCCCCC;
+    white-space: nowrap;
+    margin-left: 8px;
+    text-decoration: underline;
+}
+
+/*.antenna-popup-body:hover .antenna-popup-text {*/
+    /*display: inline-block;*/
+/*}*/

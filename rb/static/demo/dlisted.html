@@ -1036,11 +1036,17 @@ _taboola.push({home:'auto'});
 <script>
 window.antenna_extend = {
   default_reactions:['what','yes','ok'],
-  active_sections:'article'
+  active_sections:'article',
+  post_selector:'article',
+  post_href_selector:'h1 a',
+  summary_widget_selector: '.clearfix:eq(0)'
   // img_selector:'HEYA'
 };
 </script>
-<script src="http://local.antenna.is:8081/static/engage_full.js" defer type="text/javascript"></script>
+<!--<script src="http://localhost:8081/static/widget-new/debug/antenna.js" defer type="text/javascript"></script>-->
+<script src="/static/engage_full.js" defer type="text/javascript"></script>
+
+
 </body>
 </html>
 

@@ -1,0 +1,68 @@
+
+.antenna-comments-close {
+    background-color: #bbbbbb;
+    color: #ffffff;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px 12px 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+.antenna-comments-close:hover {
+    background-color: #999999;
+}
+
+.antenna-comments-header {
+    color: #666666;
+    padding: 8px 14px;
+    margin: 10px 0;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.antenna-comment-author {
+    vertical-align: middle;
+    background-color: #eeeeee;
+    color: #666666;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    padding: 0 5px;
+}
+
+.antenna-comment-text {
+    color: #666666;
+    font-family: Georgia;
+    font-size: 14px;
+    font-style: italic; /* TODO: this rule is defined in the CSS currently, but the cascade is wrong so it gets overridden by .ant. Do we want it? */
+    padding: 7px 5px;
+}
+
+.antenna-comment-entry {
+    padding: 8px 14px;
+    margin: 0 7px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.antenna-comment-entry.antenna-comment-new {
+    padding: 8px 21px;
+    margin: 0;
+    background-color: #FCF5A7;
+}
+
+.antenna-comments-page table {
+    table-layout: fixed; /* Column sizes are based solely on the first row */
+    width: 100%;
+}
+
+.antenna-comment-cell {
+    width: 24px;
+}
+.antenna-comment-cell img {
+    width: 22px;
+    border: 1px solid #d0dee6;
+}
+
+.antenna-comments-page .antenna-comment-area {
+    padding: 0 7px;
+}

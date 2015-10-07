@@ -165,7 +165,7 @@ function antenna($A){
                 media_selector: "embed, video, iframe",
                 comment_length: 500,
                 /*this is basically not used right now*/
-                // initial_pin_limit: 300,
+                initial_pin_limit: 3,
                 no_ant: "",
                 img_blacklist: "",
                 custom_css: "",
@@ -182,7 +182,8 @@ function antenna($A){
                 img_indicator_show_side: 'left',
                 // tag_box_bg_colors: '90,168,214;200,226,38;111,197,242;229,246,98;28, 173, 223',
                 // tag_box_bg_colors: '#2a3c4a;#2e5270;#4faa76;#35a4c0',
-                tag_box_bg_colors: '#18414c;#376076;215, 179, 69;#e6885c;#e46156',
+                tag_box_bg_colors: '#18414c;#376076;78,122,146;215,179,69;#e6885c;#e46156',
+                // tag_box_bg_colors: '#376076;215,179,69;#e6885c;#e46156',
                 // tag_box_bg_colors: '#000;#bbb;#222;#ccc;#333;#ddd',
                 // tag_box_text_colors: '#fffffe;#000;#fffffe;#222;#fffffe;#333',
                 tag_box_text_colors: '#fff;#fff;#fff;#fff;#fff',
@@ -2073,6 +2074,11 @@ function antenna($A){
                 //     //todo: examine resize
                 //     // ANT.aWindow.updateSizes( $this );
                 // });
+
+                if ( ANT.actions.indicators.showOnlyInitial === true && settings.mode.indexOf('read') != -1) {
+                    ANT.actions.indicators.showOnlyInitial = false;
+                    ANT.actions.summaries.showLessPopularIndicators();
+                }
 
                 return $new_aWindow;
             },
@@ -4181,21 +4187,21 @@ function antenna($A){
                 var queryStr = ANT.util.getQueryStrFromUrl(ANT.engageScriptSrc);
                 ANT.engageScriptParams = ANT.util.getQueryParams(queryStr);
           
-                if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
-                    ANT.group.useDefaultSummaryBar = (
-                        ANT.engageScriptParams.bookmarklet &&
-                        !$('.ant-page-summary').length &&
-                        // !$(ANT.group.post_selector).length &&
-                        !$(ANT.group.summary_widget_selector).length &&
-                        ANT.group.summary_widget_selector != 'none'
-                    ) ? true:false;
+                // if (typeof ANT.group.useDefaultSummaryBar == 'undefined') {
+                //     ANT.group.useDefaultSummaryBar = (
+                //         ANT.engageScriptParams.bookmarklet &&
+                //         !$('.ant-page-summary').length &&
+                //         // !$(ANT.group.post_selector).length &&
+                //         !$(ANT.group.summary_widget_selector).length &&
+                //         ANT.group.summary_widget_selector != 'none'
+                //     ) ? true:false;
 
-                    if (ANT.group.useDefaultSummaryBar===true){
-                        //add a class defaultSummaryBar to show that this is our added ant-page-summary
-                        //and not a publisher added one.
-                        $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
-                    }
-                }
+                //     if (ANT.group.useDefaultSummaryBar===true){
+                //         //add a class defaultSummaryBar to show that this is our added ant-page-summary
+                //         //and not a publisher added one.
+                //         $('<div id="ant-page-summary" class="ant no-ant ant-page-summary defaultSummaryBar" style="top:-999px !important"/>').appendTo('body');
+                //     }
+                // }
                 
                 // ANT.session.educateUser(); //this function has changed now
                //? do we want to model this here to be symetrical with user and group data?
@@ -5445,7 +5451,7 @@ function antenna($A){
                         // // todo: touchHover
                         
                         $this.on('mouseenter.ant', function() {
-                            ANT.actions.indicators.init(hash);
+                            // ANT.actions.indicators.init(hash);
                             var $this = $(this);
                             ANT.util.setFunctionTimer( function() {
                             // setTimeout(function(){
@@ -5861,7 +5867,7 @@ function antenna($A){
                     }
 
                     //changing this to copy out and just call only parts of the initCrossPageHashes call below
-                    ANT.actions.indicators.init(hash);
+                    ANT.actions.indicators.init(hash, true);
 
                     var $container = $('[ant-hash="'+hash+'"]'),
                         customDisplayName = $container.attr('ant-item'),
@@ -6162,7 +6168,6 @@ function antenna($A){
 
                     // create the container sort to see which containers have the most activity
                     ANT.actions.summaries.sortPopularTextContainers();
-                    // ANT.actions.summaries.displayPopularIndicators();
 
                     $.each( ANT.known_hashes, function(returnedHash, obj) {
                         // band-aid.  bandaid.
@@ -6180,6 +6185,7 @@ function antenna($A){
                     });
 
                     ANT.actions.indicators.show(hashesToShow);
+                    ANT.actions.summaries.displayPopularIndicators();
                 },
                 send: function(hashList, onSuccessCallback){
                     //ANT.actions.containers.send:
@@ -7305,7 +7311,7 @@ if ( sendData.kind=="page" ) {
 
                                     _doPageUpdates(args);
                                     
-                                }else{
+                                // }else{
 
                                 //     var $ant_reactionMessage = $('<div class="ant_reactionMessage"></div>');
                                 //     var $feedbackMsg = $(
@@ -7446,6 +7452,11 @@ if ( sendData.kind=="page" ) {
 
                                 // update the aWindow to reflect success
                                 ANT.actions.viewReactionSuccess( args );
+
+                                if ( ANT.actions.indicators.showOnlyInitial === true ) {
+                                    ANT.actions.indicators.showOnlyInitial = false;
+                                    ANT.actions.summaries.showLessPopularIndicators();
+                                }
 
                             }
 
@@ -7624,33 +7635,22 @@ if ( sendData.kind=="page" ) {
                 //end ANT.actions.interactions
             },
             indicators: {
+                showOnlyInitial:true,
                 show: function(hashes){
-
                     //ANT.actions.indicators.show:
                     //todo: boolDontFade is a quick fix to not fade in indicators
                     //hashes should be an array or a single hash string
                     var $indicators = this.fetch(hashes);
-                    //todo: this works for now, but use a differnet signal later
-                    if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
 
-                    // var textIndicatorOpacity = ( !$.browser.msie ) ? ANT.C.indicatorOpacity : '1' ;
+                    if ( ANT.actions.indicators.showOnlyInitial === true ) {
+                        if ( $('.ant_indicator_for_text:not(.ant_dont_show)').length < ANT.group.initial_pin_limit ) {
+                            if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
+                        }
+                    } else {
+                        //todo: this works for now, but use a different signal later
+                        if ( $indicators.length == 1 ) $indicators.removeClass('ant_dont_show');
+                    }
 
-                    // if ( !$.browser.msie || ( $.browser.msie && parseInt( $.browser.version, 10 ) > 8 ) ) {
-                    //     $indicators.not('.ant_dont_show').css({
-                    //         'opacity':'0',
-                    //         'visibility':'visible'
-                    //     });
-                    //     // if(boolDontFade){
-                    //         $indicators.not('.ant_dont_show').css({
-                    //             'opacity':textIndicatorOpacity
-                    //         });
-                    //         return;
-                    //     // } else {
-                    //         // $indicators.filter('div.ant_indicator_for_text').not('.ant_dont_show').stop().fadeTo(800, textIndicatorOpacity);
-                    //     // }
-                    // }
-
-                    //use stop to ensure animations are smooth: http://api.jquery.com/fadeTo/#dsq-header-avatar-56650596
                 },
                 hide: function(hashes){
                     //ANT.actions.indicators.hide:
@@ -7679,13 +7679,14 @@ if ( sendData.kind=="page" ) {
                     }
                     return $indicators;
                 },
-                init: function(hash){
+                init: function(hash, showIndicator){
                     //ANT.actions.indicators.init:
                     //note: this should generally be called via ANT.actions.containers.setup
                     
                     //note: I believe this is being double called for text right now, but it's not hurting anything... fix later though.
                     var scope = this;
                     var summary = ANT.summaries[hash];
+                    var showIndicator = (showIndicator) ? showIndicator:false;
                     if (typeof summary != "undefined" && summary.$container.hasAttr('ant-node')) {
                         var kind = summary.kind,
                             $container = summary.$container,
@@ -7744,7 +7745,7 @@ if ( sendData.kind=="page" ) {
                                 return;
                             }
                             //run setup specific to this type
-                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash );
+                            ANT.actions.indicators.utils.kindSpecificSetup[kind]( hash, showIndicator );
 
 
                             //todo: combine this with the kindSpecificSetup above right?
@@ -7755,6 +7756,8 @@ if ( sendData.kind=="page" ) {
                                     });
                                 }
 
+                                // if it's an element that just contains an image, don't hash the "text" element.
+                                // <p><img src="..."/></p>
                                 if ( $container.find('img').length && !_getTextNodesIn($container).length ) {
                                     ANT.actions.stripAntNode($container);
                                     return;
@@ -8177,7 +8180,7 @@ if ( sendData.kind=="page" ) {
                             }
                             if ($details_header_count) $details_header_count.html( ANT.commonUtil.prettyNumber( summary.counts.tags ) + " " + ANT.t('plural_reaction') );
 
-                            ANT.actions.indicators.show(hash);
+                            // ANT.actions.indicators.show(hash);
                             
                         } else {
                             $indicator.addClass('ant_no_reactions');
@@ -8205,10 +8208,10 @@ if ( sendData.kind=="page" ) {
 
                         // ANT.events.track('paragraph_helper_show');
 
-                        var alreadyHovered = $indicator.data('containerHover');
-                        if( alreadyHovered ){
-                            return;
-                        }
+                        // var alreadyHovered = $indicator.data('containerHover');
+                        // if( alreadyHovered ){
+                            // return;
+                        // }
 
                         // fade in.
                         // removing for now. UI feedback was "I didn't see that" from a small sample.
@@ -8237,7 +8240,6 @@ if ( sendData.kind=="page" ) {
                     },
                     out: function($indicator){
                         //ANT.actions.indicators.helpers.out:
-                        
                         //temp hack
                         //don't fade it out if the aWindow is showing
                             // var hash = $indicator.data('hash');
@@ -8246,16 +8248,19 @@ if ( sendData.kind=="page" ) {
                             // if( $aWindow && $aWindow.is(':visible') ){
                             //     // return;
                             // }
+                        if ( $indicator.hasClass('ant_dont_show') || $indicator.hasClass('ant_no_reactions') ) {
+                            $indicator.css('opacity', 0);
+                        }
 
-                        $indicator.data('containerHover', false);
-                        var hoverTimeout = $indicator.data('hoverTimeout');
-                        clearTimeout(hoverTimeout);
-                        if(isTouchBrowser){
+                        // $indicator.data('containerHover', false);
+                        // var hoverTimeout = $indicator.data('hoverTimeout');
+                        // clearTimeout(hoverTimeout);
+                        // if(isTouchBrowser){
                             // $indicator.css({ display:"none" });
-                        }else{
+                        // }else{
                             // ANT.util.cssSuperImportant( $indicator, { opacity:0 });
                             // ANT.util.cssSuperImportant( $indicator, { display:"none" });
-                        }
+                        // }
                     }
                 },
                 utils:{
@@ -8281,7 +8286,7 @@ if ( sendData.kind=="page" ) {
                     },
                     //ANT.actions.indicators.utils:
                     kindSpecificSetup: {
-                        img: function( hash ){
+                        img: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
@@ -8390,18 +8395,22 @@ if ( sendData.kind=="page" ) {
                             }
 
                         },
-                        media: function( hash ){
+                        media: function( hash, showIndicator ){
                             //for now just treat it like an img
                             this.img( hash );
                         },
-                        text: function( hash ){
+                        text: function( hash, showIndicator ){
                             var summary = ANT.summaries[hash],
                                 $container = summary.$container,
                                 $indicator = summary.$indicator,
                                 $indicator_body = summary.$indicator_body,
                                 $actionbar = $('ant_actionbar_'+hash);
 
-                            $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            if (showIndicator === false) {
+                                $indicator.addClass('ant_indicator_for_text').addClass('ant_dont_show');
+                            } else {
+                                $indicator.addClass('ant_indicator_for_text');
+                            }
                             // $indicator.addClass('ant_indicator_for_text');  //.addClass('ant_dont_show');
 
                             var startOfTrailingWhiteSpace = ANT.actions.indicators.utils.checkTrailingWhiteSpace($container);
@@ -9337,7 +9346,6 @@ if ( sendData.kind=="page" ) {
                     function SortByCount(a,b) { return b.interactions - a.interactions; }
 
                     ANT.text_container_popularity = [];
-
                     $.each( ANT.summaries, function( hash, container ){
                         if ( container.kind == "text" && container.counts.interactions > 0 ) {
                             ANT.text_container_popularity.push( { hash:hash, interactions:container.counts.interactions } );
@@ -9347,30 +9355,29 @@ if ( sendData.kind=="page" ) {
                     ANT.text_container_popularity.sort( SortByCount );
 
                 },
-                // displayPopularIndicators: function () {
-                //     // ANT.actions.summaries.displayPopularIndicators
-                //     // is this used??
+                displayPopularIndicators: function () {
+                    // ANT.actions.summaries.displayPopularIndicators
+                    // is this used??
+                    for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
+                        if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                    }
+                },
+                showLessPopularIndicators: function() {
+                    // ANT.actions.summaries.showLessPopularIndicators
+                    // is this used??
+                    var hashesToShow = [];
 
-                //     for ( var i=0; i < ANT.group.initial_pin_limit; i++) {
-                //         if ( ANT.text_container_popularity[i] ) $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                //     }
-                // },
-                // showLessPopularIndicators: function() {
-                //     // ANT.actions.summaries.showLessPopularIndicators
-                //     // is this used??
-                //     var hashesToShow = [];
+                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                        if ( ANT.text_container_popularity[i] ) {
+                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                hashesToShow.push( ANT.text_container_popularity[i].hash );
+                            }
+                        }
+                    }
 
-                //     for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                //         if ( ANT.text_container_popularity[i] ) {
-                //             if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                //                 $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                //                 hashesToShow.push( ANT.text_container_popularity[i].hash );
-                //             }
-                //         }
-                //     }
-
-                //     ANT.actions.indicators.show(hashesToShow);
-                // }
+                    ANT.actions.indicators.show(hashesToShow);
+                }
             },
             insertContainerIcon: function( hash ) {},
             viewReactionSuccess: function(args) {
@@ -9432,9 +9439,9 @@ if ( sendData.kind=="page" ) {
                     ANT.aWindow.panelUpdate($aWindow, className, $tagsListContainer);
                     
                     var isCrossPageContainer = $('[ant-hash="'+hash+'"]').length > 0;
-                    if(!isCrossPageContainer){
+                    // if(!isCrossPageContainer){
                         //dont do this for crossPageContainers - it was messing shit up.
-                    }
+                    // }
 
                 } );
                 
@@ -9957,6 +9964,7 @@ if ( sendData.kind=="page" ) {
             startSelect: function($mouse_target, mouseEvent, callback) {
                 //ANT.actions.startSelect:
                 // make a jQuery object of the node the user clicked on (at point of mouse up)
+
                 // if this is a node with its own, separate call-to-action, don't do a custom new selection.
                 if ( $mouse_target.hasAttr('ant-item') && $('[ant-cta-for="'+$mouse_target.attr('ant-item')+'"]').length ) { 
                     return; 
@@ -10365,7 +10373,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv26"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv28"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
