@@ -7,6 +7,7 @@ var ReactionsWidgetLayoutUtils = require('./utils/reactions-widget-layout-utils'
 var pageSelector = '.antenna-reactions-page';
 
 function createPage(options) {
+    var isSummary = options.isSummary;
     var reactionsData = options.reactionsData;
     var containerData = options.containerData;
     var pageData = options.pageData;
@@ -16,6 +17,7 @@ function createPage(options) {
     var showConfirmation = options.showConfirmation;
     var showDefaults = options.showDefaults;
     var showComments = options.showComments;
+    var showLocations = options.showLocations;
     var element = options.element;
     var colors = options.colors;
     sortReactionData(reactionsData);
@@ -27,7 +29,8 @@ function createPage(options) {
         data: {
             reactions: reactionsData,
             reactionsLayoutClass: arrayAccessor(reactionsLayoutData.layoutClasses),
-            reactionsBackgroundColor: arrayAccessor(reactionsLayoutData.backgroundColors)
+            reactionsBackgroundColor: arrayAccessor(reactionsLayoutData.backgroundColors),
+            isSummary: isSummary
         },
         decorators: {
             sizetofit: sizeToFit
@@ -41,6 +44,7 @@ function createPage(options) {
     ractive.on('plusone', plusOne(containerData, pageData, showConfirmation));
     ractive.on('showdefault', showDefaults);
     ractive.on('showcomments', function(ractiveEvent) { showComments(ractiveEvent.context); return false; }); // TODO clean up
+    ractive.on('showlocations', function(ractiveEvent) { showLocations(ractiveEvent.context); return false; }); // TODO clean up
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
@@ -107,7 +111,7 @@ function plusOne(containerData, pageData, showConfirmation) {
     };
 }
 
-
+//noinspection JSUnresolvedVariable
 module.exports = {
     create: createPage
 };

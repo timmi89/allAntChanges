@@ -10,6 +10,7 @@ var WidgetBucket = require('./utils/widget-bucket');
 var CommentsPage = require('./comments-page');
 var ConfirmationPage = require('./confirmation-page');
 var DefaultsPage = require('./defaults-page');
+var LocationsPage = require('./locations-page');
 var ReactionsPage = require('./reactions-page');
 
 var pageReactions = 'reactions';
@@ -25,6 +26,7 @@ function openReactionsWidget(options, elementOrCoords) {
     var containerData = options.containerData;
     var containerElement = options.containerElement; // optional
     var startPage = options.startPage || pageAuto; // optional
+    var isSummary = options.isSummary === undefined ? false : options.isSummary; // optional
     // contentData contains details about the content being reacted to like text range or image height/width.
     // we potentially modify this data (e.g. in the default reaction case we select the text ourselves) so we
     // make a local copy of it to avoid unexpectedly changing data out from under one of the clients
@@ -76,15 +78,17 @@ function openReactionsWidget(options, elementOrCoords) {
 
     function showReactionsPage(animate) {
         var options = {
+            isSummary: isSummary,
             reactionsData: reactionsData,
             pageData: pageData,
             containerData: containerData,
             containerElement: containerElement,
             colors: colors,
             contentData: contentData,
-            showConfirmation: function(reactionData, reactionProvider) { showConfirmPage(reactionData, reactionProvider) },
+            showConfirmation: showConfirmation,
             showDefaults: function() { showDefaultReactionsPage(true) },
-            showComments: function(reaction) { showComments(reaction) },
+            showComments: showComments,
+            showLocations: showLocations,
             element: pageContainer(ractive)
         };
         var page = ReactionsPage.create(options);
@@ -105,7 +109,7 @@ function openReactionsWidget(options, elementOrCoords) {
             containerData: containerData,
             colors: colors,
             contentData: contentData,
-            showConfirmation: function(reactionData, reactionProvider) { showConfirmPage(reactionData, reactionProvider) },
+            showConfirmation: showConfirmation,
             element: pageContainer(ractive)
         };
         var page = DefaultsPage.create(options);
@@ -113,7 +117,7 @@ function openReactionsWidget(options, elementOrCoords) {
         showPage(page.selector, $rootElement, animate);
     }
 
-    function showConfirmPage(reactionData, reactionProvider) {
+    function showConfirmation(reactionData, reactionProvider) {
         // TODO: update header text "Thanks for your reaction!"
         var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, pageContainer(ractive));
         pages.push(page);
@@ -124,37 +128,55 @@ function openReactionsWidget(options, elementOrCoords) {
         }, 1);
     }
 
-    function showCommentsPage(reaction, comments) {
-        var options = {
-            reaction: reaction,
-            comments: comments,
-            element: pageContainer(ractive),
-            closeWindow: closeWindow,
-            containerData: containerData,
-            pageData: pageData
-        };
-        var page = CommentsPage.create(options);
-        pages.push(page);
-
-        // TODO: revisit
-        setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
-            showPage(page.selector, $rootElement, true);
-        }, 1);
-    }
-
     function showProgressPage() {
         showPage('.antenna-progress-page', $rootElement, false, true);
     }
 
     function showComments(reaction) {
-        showProgressPage(); // TODO: provide some way for the user to give up / cancel
+        showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
         AjaxClient.getComments(reaction, function(comments) {
-            showCommentsPage(reaction, comments);
+            var options = {
+                reaction: reaction,
+                comments: comments,
+                element: pageContainer(ractive),
+                closeWindow: closeWindow,
+                containerData: containerData,
+                pageData: pageData
+            };
+            var page = CommentsPage.create(options);
+            pages.push(page);
+
+            // TODO: revisit
+            setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+                showPage(page.selector, $rootElement, true);
+            }, 1);
+        });
+    }
+
+    function showLocations(reaction) {
+        showProgressPage(); // TODO: provide some way for the user to give up / cancel. Also, handle errors fetching comments.
+        AjaxClient.getReactionLocationData(reaction, pageData, function(reactionLocationData) {
+            var options = { // TODO: clean up the number of these "options" objects that we create.
+                element: pageContainer(ractive),
+                reactionLocationData: reactionLocationData,
+                closeWindow: closeWindow
+            };
+            var page = LocationsPage.create(options);
+            pages.push(page);
+            setWindowTitle(reaction.text);
+            // TODO: revisit
+            setTimeout(function() { // In order for the positioning animation to work, we need to let the browser render the appended DOM element
+                showPage(page.selector, $rootElement, true);
+            }, 1);
         });
     }
 
     function closeWindow() {
         ractive.fire('closeWindow');
+    }
+
+    function setWindowTitle(title) {
+        $(ractive.find('.antenna-reactions-title')).html(title);
     }
 
 }

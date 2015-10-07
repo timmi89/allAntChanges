@@ -10,6 +10,7 @@ PageDataNew = Resource(handler=PageDataHandlerNew)
 PageDataNewer = Resource(handler=PageDataHandlerNewer)
 Containers = Resource(handler=ContainerSummaryHandler)
 CreateContainers = Resource(handler=CreateContainerHandler)
+ContentBodies = Resource(handler=ContentBodiesHandler)
 Tag = Resource(handler=TagHandler)
 MeToo = Resource(handler=MeTooHandler)
 TagRemove = Resource(handler=TagRemoveHandler)
@@ -84,6 +85,7 @@ urlpatterns = patterns('',
     url(r'^pagenew/', PageDataNew),
     url(r'^page/', PageData),
     url(r'^containers/create/', CreateContainers),
+    url(r'^content/bodies/', ContentBodies),
     url(r'^summary/containers/', Containers),
     url(r'^summary/container/content', Content),
     url(r'^metoo', MeToo),

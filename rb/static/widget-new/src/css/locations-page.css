@@ -1,0 +1,46 @@
+
+.antenna-locations-page {
+    color: #666666;
+}
+
+.antenna-locations-close {
+    background-color: #bbbbbb;
+    color: #ffffff;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 5px 12px 2px;
+    text-transform: uppercase;
+}
+.antenna-locations-close:hover {
+    background-color: #999999;
+}
+
+.antenna-locations-count-cell {
+    width: 40px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    padding: 7px;
+}
+
+.antenna-content-count {
+    font-size: 14px;
+}
+
+.antenna-locations-page-body {
+    vertical-align: middle;
+    font-family: Georgia,serif;
+    font-weight: bold;
+    padding: 5px 7px 5px 0;
+}
+
+.antenna-locations-text-body {
+    font-family: Georgia,serif;
+    font-style: italic;
+    padding: 5px 7px 5px 0;
+}
+
+.antenna-locations-image-body {
+    padding: 2px 7px 2px 0;
+}

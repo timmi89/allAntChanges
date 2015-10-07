@@ -13,15 +13,21 @@
                         <div class="antenna-plusone">
                             +1
                         </div>
-                        {{#if this.commentCount}}
-                            <div on-click="showcomments" class="antenna-reaction-comments hascomments">
-                                <span class="ant-comment"></span>
-                                {{this.commentCount}}
+                        {{#if isSummary}}
+                            <div on-click="showlocations" class="antenna-reaction-location">
+                                <span class="ant-search"></span>
                             </div>
                         {{else}}
-                            <div class="antenna-reaction-comments">
-                                <span class="ant-comment"></span>
-                            </div>
+                            {{#if this.commentCount}}
+                                <div on-click="showcomments" class="antenna-reaction-comments hascomments">
+                                    <span class="ant-comment"></span>
+                                    {{this.commentCount}}
+                                </div>
+                            {{else}}
+                                <div class="antenna-reaction-comments">
+                                    <span class="ant-comment"></span>
+                                </div>
+                            {{/if}}
                         {{/if}}
                     </div>
                 </div>
