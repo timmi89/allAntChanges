@@ -24,22 +24,6 @@ function createPage(options) {
     }
 }
 
-function computePageReactionsLabel(reactionLocationData) {
-    for (var contentID in reactionLocationData) {
-        if (reactionLocationData.hasOwnProperty(contentID)) {
-            var contentLocationData = reactionLocationData[contentID];
-            if (contentLocationData.kind === 'pag') {
-                var count = contentLocationData.count;
-                if (count === 1) {
-                    return '<strong>1 reaction</strong> to this <strong>page</strong>';
-                } else {
-                    return '<strong>' + count + ' reactions</strong> to this <strong>page</strong>';
-                }
-            }
-        }
-    }
-}
-
 function pageReactionCount(reactionLocationData) {
     for (var contentID in reactionLocationData) {
         if (reactionLocationData.hasOwnProperty(contentID)) {
@@ -53,9 +37,9 @@ function pageReactionCount(reactionLocationData) {
 
 function computeContentCountLabel(count) {
     if (count === 1) {
-        return '<div class="antenna-content-count">1</div><div>reaction</div>';
+        return '<div class="antenna-content-count number">1</div><div class="antenna-content-count">reaction</div>';
     } else {
-        return '<div class="antenna-content-count">' + count + '</div><div>reactions</div>';
+        return '<div class="antenna-content-count number">' + count + '</div><div class="antenna-content-count">reactions</div>';
     }
 }
 
