@@ -14,6 +14,10 @@
     background-color: #999999;
 }
 
+.antenna-locations-content-row:hover {
+    background-color: #dae7f5;
+}
+
 .antenna-locations-count-cell {
     width: 40px;
     vertical-align: middle;
