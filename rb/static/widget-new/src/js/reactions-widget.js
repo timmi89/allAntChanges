@@ -118,7 +118,7 @@ function openReactionsWidget(options, elementOrCoords) {
     }
 
     function showConfirmation(reactionData, reactionProvider) {
-        // TODO: update header text "Thanks for your reaction!"
+        setWindowTitle('Thanks for your reaction!');
         var page = ConfirmationPage.create(reactionData.text, reactionProvider, containerData, pageData, pageContainer(ractive));
         pages.push(page);
 
