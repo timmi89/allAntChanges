@@ -14,8 +14,15 @@
     background-color: #999999;
 }
 
+.antenna-locations-table {
+    width: 100%;
+}
+
 .antenna-locations-content-row:hover {
     background-color: #dae7f5;
+}
+.antenna-locations-content-row.antenna-locate {
+    cursor: pointer;
 }
 
 .antenna-locations-count-cell {

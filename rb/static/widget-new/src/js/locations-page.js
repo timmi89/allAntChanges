@@ -1,5 +1,8 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
+var Range = require('./utils/range');
+
+var ElementMap = require('./element-map');
 
 var pageSelector = '.antenna-locations-page';
 
@@ -13,14 +16,40 @@ function createPage(options) {
         data: {
             locationData: reactionLocationData,
             pageReactionCount: pageReactionCount(reactionLocationData),
-            contentCountLabel: computeContentCountLabel
+            contentCountLabel: computeContentCountLabel,
+            canLocate: function(containerHash) {
+                // TODO: is there a better way to handle reactions to hashes that are no longer on the page?
+                //       should we provide some kind of indication when we fail to locate a hash or just leave it as is?
+                return ElementMap.get(containerHash) !== undefined;
+            }
         },
         template: require('../templates/locations-page.hbs.html')
     });
     ractive.on('closewindow', closeWindow);
+    ractive.on('reveal', revealContent);
     return {
         selector: pageSelector,
         teardown: function() { ractive.teardown(); }
+    };
+
+
+    function revealContent(event) {
+        var locationData = event.context;
+        var element = ElementMap.get(locationData.containerHash);
+        if (element) {
+            closeWindow();
+            setTimeout(function() { // Let the processing of this click event finish before we add another click handler so the new handler isn't immediately triggered
+                var targetScrollTop = $(element).offset().top - 20; // TODO: review the exact location
+                $('body').animate({scrollTop: targetScrollTop});
+                if (locationData.kind === 'txt') { // TODO: something better than a string compare. fix this along with the same issue in page-data
+                    Range.highlight(element.get(0), locationData.location);
+                    $(document).on('click.antenna', function() {
+                        Range.clearHighlights();
+                        $(document).off('click.antenna');
+                    });
+                }
+            }, 0);
+        }
     }
 }
 
@@ -28,7 +57,7 @@ function pageReactionCount(reactionLocationData) {
     for (var contentID in reactionLocationData) {
         if (reactionLocationData.hasOwnProperty(contentID)) {
             var contentLocationData = reactionLocationData[contentID];
-            if (contentLocationData.kind === 'pag') {
+            if (contentLocationData.kind === 'pag') { // TODO: something better than a string compare. fix this along with the same issue in page-data
                 return contentLocationData.count;
             }
         }

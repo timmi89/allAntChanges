@@ -163,9 +163,9 @@ function computeLocationData(pageData) {
                 if (!contentLocationData) {
                     contentLocationData = {
                         count: 0,
-                        kind: content.kind, // TODO: We should normalize this value to a set of constants
+                        kind: content.kind, // TODO: We should normalize this value to a set of constants. fix this in locations-page where the value is read as well
                         location: content.location,
-                        containerID: containerData.id
+                        containerHash: containerData.hash
                     };
                     reactionLocationData[content_id] = contentLocationData;
                 }

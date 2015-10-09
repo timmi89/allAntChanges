@@ -4,12 +4,13 @@ var PageUtils = require('./utils/page-utils');
 var URLs = require('./utils/urls');
 var WidgetBucket = require('./utils/widget-bucket');
 
-var CallToActionIndicator = require('./call-to-action-indicator');
 var AutoCallToAction = require('./auto-call-to-action');
-var TextIndicatorWidget = require('./text-indicator-widget');
+var CallToActionIndicator = require('./call-to-action-indicator');
+var ElementMap = require('./element-map');
 var ImageIndicatorWidget = require('./image-indicator-widget');
 var PageData = require('./page-data');
 var SummaryWidget = require('./summary-widget');
+var TextIndicatorWidget = require('./text-indicator-widget');
 var TextReactions = require('./text-reactions');
 
 
@@ -136,7 +137,7 @@ function scanForText($element, pageData, groupSettings) {
     $textElements.each(function() {
         var $textElement = $(this);
         if (shouldHashText($textElement, groupSettings)) {
-            var hash = Hash.hashText($textElement);
+            var hash = computeHash($textElement, groupSettings);
             if (hash) {
                 var containerData = PageData.getContainerData(pageData, hash);
                 containerData.type = 'text'; // TODO: revisit whether it makes sense to set the type here
@@ -183,7 +184,7 @@ function scanForImages($section, pageData, groupSettings) {
     $imageElements.each(function() {
         var $imageElement = $(this);
         var imageUrl = URLs.computeImageUrl($imageElement, groupSettings);
-        var hash = Hash.hashImage(imageUrl);
+        var hash = computeHash($imageElement, groupSettings);
         var containerData = PageData.getContainerData(pageData, hash);
         containerData.type = 'image'; // TODO: revisit whether it makes sense to set the type here
         var defaultReactions = groupSettings.defaultReactions($imageElement);
@@ -234,17 +235,22 @@ function insertContent($parent, content, method) {
 }
 
 function computeHash($element, groupSettings) {
-    // TODO: refactor existing the text/image scan methods to use this function
+    // TODO: make sure we generate unique hashes using an ordered index in case of collisions
+    var hash;
     switch (computeElementType($element)) {
         case 'image':
             var imageUrl = URLs.computeImageUrl($element, groupSettings);
-            return Hash.hashImage(imageUrl);
+            hash = Hash.hashImage(imageUrl);
+            break;
         case 'media':
             // todo
             break;
         case 'text':
-            return Hash.hashText($element);
+            hash = Hash.hashText($element);
+            break;
     }
+    ElementMap.set(hash, $element); // Record the relationship between the hash and dom element.
+    return hash;
 }
 
 function computeContentData($element, groupSettings) {
