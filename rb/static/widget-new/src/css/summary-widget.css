@@ -13,6 +13,6 @@
     visibility: hidden;
 }
 
-.ant-summary-widget, .ant-summary-widget a {
+.ant-summary-widget, .ant-summary-widget .ant-antenna-logo {
     color: #8fb3f2;
 }

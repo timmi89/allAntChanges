@@ -706,6 +706,20 @@ class ContentSummaryHandler(AnonymousBaseHandler):
 
         return content_summaries
 
+
+class ContentBodiesHandler(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data):
+        content_ids = data['content_ids']
+        # TODO: refactor this out to a function in util_functions
+        # TODO: think about caching... though it would be hard if the client is sending us the list of content ids
+        content_bodies = {}
+        for content in Content.objects.filter(id__in=content_ids).values('id','body'):
+            content_bodies[content['id']] = content['body']
+        return content_bodies
+
+
 class PageDataHandler(AnonymousBaseHandler):
     @status_response
     @json_data

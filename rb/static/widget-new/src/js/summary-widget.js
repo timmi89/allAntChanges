@@ -23,6 +23,7 @@ function rootElement(ractive) {
 
 function openReactionsWindow(containerData, pageData, defaultReactions, groupSettings, ractive) {
     var reactionsWidgetOptions = {
+        isSummary: true,
         reactionsData: pageData.summaryReactions,
         containerData: containerData,
         defaultReactions: defaultReactions,

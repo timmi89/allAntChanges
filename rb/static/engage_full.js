@@ -59,7 +59,8 @@ ANT_widgetCssStaticUrl = ( ANT_offline ) ? window.location.protocol + "//local.a
 // );
 
 // works?
-var isTouchBrowser = ("ontouchstart" in window || navigator.msMaxTouchPoints);
+var isTouchBrowser = ( ("ontouchstart" in window || navigator.msMaxTouchPoints) && ((window.matchMedia("only screen and (max-width: 768px)")).matches) );
+var isMobile = ( isTouchBrowser && ((window.matchMedia("only screen and (max-width: 480px)")).matches) );
 
 // DEBUG
 // var isTouchBrowser = true;
@@ -193,6 +194,8 @@ function antenna($A){
                 //the scope in which to find parents of <br> tags.  
                 //Those parents will be converted to a <rt> block, so there won't be nested <p> blocks.
                 //then it will split the parent's html on <br> tags and wrap the sections in <p> tags.
+
+                summary_widget_expanded_mobile: false,
                 
                 //example:
                 // br_replace_scope_selector: ".ant_br_replace" //e.g. "#mainsection" or "p"
@@ -9092,14 +9095,14 @@ if ( sendData.kind=="page" ) {
                     //don't forget to do this.  Tags won't get built correctly if not updated.
                     ANT.actions.summaries.sortInteractions(hash);
                     
-                    if( hash == "pageSummary" ){
+                    // if( hash == "pageSummary" ){
                         //waaaiatt a minute... this isn't a hash.  Page level,...Ugly...todo: make not ugly
-                        makeSummaryWidget(ANT.page);
-                    }else{
+                        // makeSummaryWidget(ANT.page);
+                    // }else{
                         //only init if it's a text node, don't do it for media.
                         // var shouldReInit = (summary.kind == 'text');
                         // ANT.actions.indicators.update( hash, shouldReInit );
-                    }
+                    // }
                                 
                     function update_top_interactions_cache(attrs){
                         //CHANGETHIS?
@@ -10374,7 +10377,7 @@ function $AFunctions($A){
         css.push( ANT_staticUrl+"widget/css/ie"+parseInt( $A.browser.version, 10) +".css" );
     }
 
-    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv28"
+    var widgetCSS = ( ANT_offline ) ? ANT_widgetCssStaticUrl+"widget/css/newwidget.css" : ANT_widgetCssStaticUrl+"widget/css/newwidget.min.css?rv29"
     css.push( widgetCSS );
     // css.push( ANT_scriptPaths.jqueryUI_CSS );
     css.push( ANT_staticUrl+"widget/css/jquery.jscrollpane.css" );
@@ -10813,6 +10816,12 @@ function $AFunctions($A){
             //helper function for ajax above
             function _makeSummaryWidget(settings){
 
+
+            // DEBUG
+            // ANT.group.summary_widget_expanded_mobile = true;
+
+
+
                 if (ANT.status.page === true && ANT.group.summary_widget_selector!='none') {
                     var page = settings;
                     
@@ -10840,6 +10849,14 @@ function $AFunctions($A){
 
                     var placement = ($summary_widget_parent.hasClass('defaultSummaryBar')) ? "top":"top";
                     $summary_widget.find('img.ant_tooltip_this').tooltip({placement:placement});
+
+                    // if (ANT.group.summary_widget_expanded_mobile === true) {
+                    //     $summary_widget.append(
+                    //         '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
+                    //         '<a href="javascript:void(0);" class="ant-top-tag">Hilarious (12)</a> <a href="javascript:void(0);" class="ant-top-tag">What the what (10)</a> <a href="javascript:void(0);" class="ant-top-tag">Hilarious (12)</a> <a href="javascript:void(0);" class="ant-top-tag">What the what (10)</a>' +
+                    //         '</div></div>'
+                    //     );
+                    // }
 
                     $summary_widget.append(
                         '<a href="'+ANT_baseUrl+'" target="_blank" class="ant_logo">'+
@@ -10913,6 +10930,38 @@ function $AFunctions($A){
                     $summary_widget.append(
                         '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                     );
+
+                    var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
+                    var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
+                    var bgColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
+                    var textColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
+
+                    var topReactions = [],
+                        i = 0;
+                    while ( topReactions.length < 2 && i < 15 ) {
+                        for (var j=0; j < page.toptags.length; j++ ) {
+                            var currentTop = page.toptags[j];
+
+                            if ( currentTop ) {
+                                for (var k=0; k < ANT.group.default_reactions.length; k++ ) {
+                                    var currentDefault = ANT.group.default_reactions[k];
+
+                                    if ( currentTop.id === currentDefault.id ) {
+                                        topReactions.push( currentTop );
+                                    }
+                                }
+                            }
+                        }
+                        i++;
+                    }
+
+                    if (isMobile && ANT.group.summary_widget_expanded_mobile === true && topReactions.length >= 1) {
+                        $summary_widget.append(
+                            '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
+                            '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[0].tag_count+')</span></div> <div style="background-color:rgb('+bgColorRGB2+');color:rgb('+textColorRGB2+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB2+');">('+topReactions[1].tag_count+')</span></div>' +
+                            '</div></div>'
+                        );
+                    }
                 }
                 
             }

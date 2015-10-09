@@ -1,4 +1,3 @@
-
 var noConflict;
 var loadedRactive;
 var callbacks = [];
@@ -12,7 +11,20 @@ function aboutToLoad() {
 function loaded() {
     loadedRactive = Ractive;
     window.Ractive = noConflict;
+    loadedRactive.decorators.cssreset = cssResetDecorator; // Make our css reset decorator available to all instances
     notifyCallbacks();
+}
+
+function cssResetDecorator(node) {
+    tagChildren(node, 'antenna-reset');
+    return { teardown: function() {} };
+}
+
+function tagChildren(element, clazz) {
+    for (var i = 0; i < element.children.length; i++) {
+        tagChildren(element.children[i], clazz);
+    }
+    $(element).addClass(clazz);
 }
 
 function notifyCallbacks() {
