@@ -123,6 +123,13 @@
                     <option {% if group.summary_widget_method == "after" %}selected="selected"{% endif %} value="after">:after</option>
                 </select>
             </div>
+            <div class="formRow">
+                {{ form.summary_widget_expanded_mobile}}{{ form.summary_widget_expanded_mobile.errors }}
+                <label for="id_summary_widget_expanded_mobile">
+                    <span class="labelTitle">Expanded Summary Widget on Mobile?</span>
+                    <span>On mobile, show the top 2 default reactions on a page, if there are any. Custom reactions will not be shown here.</span>
+                </label>
+            </div>
             <div class="formRow wordpressKeepDefaults">
                 <label for="id_post_selector">
                     <span class="labelTitle">Post Selector (jQuery selector)</span>

@@ -52,7 +52,7 @@ class RBGroupAdmin(admin.ModelAdmin):
             'fields': ('share', 'rate' , 'comment', 'search', 'bookmark', 'twitter')
         }),
         ('Selectors', {
-            'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector', 'summary_widget_method', 'br_replace_scope_selector')
+            'fields': ('post_selector', 'post_href_selector', 'summary_widget_selector', 'summary_widget_method', 'summary_widget_expanded_mobile')
         }),
         ('JQuery', {
             'fields': ('inline_selector', 'inline_func', 'author_selector', 'author_attribute', 'topics_selector', 'topics_attribute', 'section_selector', 'section_attribute')

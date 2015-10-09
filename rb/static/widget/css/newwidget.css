@@ -597,7 +597,7 @@ div.ant div.ant_footer.ant_cta span {
 div.ant div.ant_footer.ant_cta .ant_cta_msg{
   position: relative;
   font-size: 10px;
-  font-weight:500;
+  font-weight:900;
   left: -3px;
   color:#777;
   padding:3px 1px;
@@ -1108,7 +1108,9 @@ div.ant.ant-summary a.ant_logo {
   display: inline-block;
   margin-right:5px;
   text-decoration: none;
-  vertical-align: bottom;
+  position: relative;
+  top: 2px;
+  /*vertical-align: bottom;*/
 }
 
 /*blunt attack for now*/
@@ -1208,7 +1210,7 @@ div.ant.ant-summary a.ant_reactions_label {
   display:inline-block;
   font-style:normal;
   color:#8fb3f2;
-  font-size:14px;
+  font-size:12px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
   padding:10px 10px 0 0;
@@ -1219,7 +1221,7 @@ div.ant.ant-summary a.ant_reactions_label {
 }
 div.ant.ant-summary a.ant_reactions_label span {
   color:#8fb3f2;
-  font-size:14px;
+  font-size:12px;
   font-family:'Helvetica',Arial,sans-serif;
   letter-spacing:0px;
   font-weight: normal;
@@ -1233,6 +1235,8 @@ div.ant.ant-summary div.ant-sum-reactions a.ant_reactions_label:hover{
   text-decoration:none;
   background:none;
 }
+
+/*
 div.ant.ant-summary div.ant-top-tags {
     padding:8px 5px 0px 8px;
     float:left;
@@ -1246,6 +1250,8 @@ div.ant.ant-summary div.ant-top-tags span em {
     font-style:normal;
     color:#aaa;
 }
+*/
+
 div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle { 
   display:inline-block;
   font-style:normal;
@@ -1314,6 +1320,28 @@ div.ant.ant-summary:hover div.ant-sum-reactions a.ant_reactToArticle img.ant_arr
 }
 div.ant.ant-summary div.ant-sum-reactions a.ant_reactToArticle:hover img.ant_arrow {
     background:url("../images/summary_box_arrow.png") no-repeat scroll 0 -19px transparent;
+}
+
+div.ant.ant-summary div.ant-top-tags {
+  display:inline-block;
+  margin: 0;
+  max-width:220px;
+  overflow-y:hidden;
+  overflow-x:scroll;
+  margin-bottom: -7px;
+}
+div.ant.ant-summary div.ant-top-tags-wrapper {
+  white-space: nowrap;
+}
+
+div.ant.ant-summary div.ant-top-tags div.ant-top-tag {
+  display:inline-block;
+  padding:4px 6px;
+  margin-right:1px;
+  font-weight: 900;
+}
+div.ant.ant-summary div.ant-top-tags div.ant-top-tag span {
+  font-weight:100;
 }
 
 div.ant .ant_body.ant_page_reactions_summary h1, div.ant .ant_body.ant_page_reactions_summary h2 {
