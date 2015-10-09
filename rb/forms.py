@@ -391,6 +391,7 @@ class GroupForm(forms.ModelForm):
             'post_href_selector',
             'summary_widget_selector',
             'summary_widget_method',
+            'summary_widget_expanded_mobile',
             'br_replace_scope_selector',
             'call_to_action',
             'paragraph_helper',
