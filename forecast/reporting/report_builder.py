@@ -79,7 +79,7 @@ class GroupEventsReportBuilder(object):
         else:
             uniques = prefab_queries.get_desktop_lts(self.group, self.start_date, self.end_date)['f'][0]['v'][0] 
             engagement = prefab_queries.get_desktop_engagement(self.group, self.start_date, self.end_date)['f'][0]['v'][0]
-            
+        #STUFF ABOVE HERE NEEDS BIG REFACTOR
         total_page_views, total_reaction_views, total_reactions = prefab_queries.aggregate_counts(self.group, self.start_date, self.end_date, self.mobile)
         tag_cloud = {}
         tag_cloud_rows = prefab_queries.get_popular_reactions(self.group, self.start_date, self.end_date, self.mobile)
