@@ -9371,11 +9371,13 @@ if ( sendData.kind=="page" ) {
                     // is this used??
                     var hashesToShow = [];
 
-                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                        if ( ANT.text_container_popularity[i] ) {
-                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                                hashesToShow.push( ANT.text_container_popularity[i].hash );
+                    if (typeof ANT.text_container_popularity != 'undefined') {
+                        for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                            if ( ANT.text_container_popularity[i] ) {
+                                if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                    $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                    hashesToShow.push( ANT.text_container_popularity[i].hash );
+                                }
                             }
                         }
                     }
@@ -10935,9 +10937,10 @@ function $AFunctions($A){
                     var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
                     var bgColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
                     var textColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
-
+// if(page&&page.toptags) console.log(page.toptags.length);
                     var topReactions = [],
-                        i = 0;
+                        // topReactionsLimit = (page&&page.toptags&&page.toptags.length===1) ? 1:2,
+                        i = 0;  // to prevent an eternal loop if topReactions never gets built
                     while ( topReactions.length < 2 && i < 15 ) {
                         for (var j=0; j < page.toptags.length; j++ ) {
                             var currentTop = page.toptags[j];
@@ -10954,7 +10957,7 @@ function $AFunctions($A){
                         }
                         i++;
                     }
-
+// console.log(topReactions);
                     if (isMobile && ANT.group.summary_widget_expanded_mobile === true && topReactions.length >= 1) {
                         $summary_widget.append(
                             '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
