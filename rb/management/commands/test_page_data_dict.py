@@ -9,6 +9,7 @@ logger = logging.getLogger('rb.standard')
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
+        print 'OLD WAY!!!'
         n = datetime.datetime.now()
         spdd = util_functions.getSinglePageDataDict(int(args[0]))
         conts = []
@@ -25,6 +26,21 @@ class Command(BaseCommand):
         t = datetime.datetime.now()
         td = t - n
         print td.total_seconds()
+        
+        print 'NEWER WAYS!'
+        n = datetime.datetime.now()
+        spdd = util_functions.getSinglePageDataNewer(int(args[0]))
+        #conts = []
+        #for container in spdd['containers']:
+        #    conts.append(container.hash)
+        #print conts
+        t = datetime.datetime.now()
+        td = t - n
+        print td.total_seconds()
+        
+        
+        
+        
         
         
         
