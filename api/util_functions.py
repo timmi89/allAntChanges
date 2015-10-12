@@ -300,6 +300,68 @@ def getSinglePageDataDict(page_id):
         )
     return result_dict
 
+
+def getSinglePageDataDictNew(page_id):
+    page = Page.objects.get(id=page_id)
+    interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','kind','interaction_node_id')
+    container_ids = set()
+    node_ids = set()
+    top_tag_dict = {}
+    summary_dict = { 'tag' : 0, 'com': 0 }
+    # Collect the ids of all the container and interaction_nodes that we need and add up the summary totals as we go.
+    for interaction in interactions:
+        container_id = interaction['container_id']
+        container_ids.add(container_id)
+        kind = interaction['kind']
+        if kind == 'tag':
+            node_id = interaction['interaction_node_id']
+            node_ids.add(node_id)
+            top_tag_dict.setdefault(node_id, 0)
+            top_tag_dict[node_id] += 1
+            summary_dict['tag'] += 1
+        elif kind == 'com':
+            summary_dict['com'] += 1
+
+    # Next, fetch all of the containers and interaction_nodes that we need
+    containers = Container.objects.filter(id__in=container_ids).values('id','hash')
+    node_dict = {}
+    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
+        node_dict[node['id']] = node
+
+    # Finally, transform the data into the output format
+    containers_data = []
+    for container in containers:
+        container_data = {
+            'id': container['id'],
+            'hash': container['hash']
+        }
+        containers_data.append(container_data)
+
+    top_tags = []
+    for node_id, count in top_tag_dict.items():
+        node = node_dict.get(node_id)
+        if node:
+            top_tag = {
+                'id': node_id,
+                'tag_count': count,
+                'body': node['body']
+            }
+            top_tags.append(top_tag)
+    top_tags = sorted(top_tags, key=lambda x: x['tag_count'], reverse=True)
+
+    page_data = {
+        'urlhash': hashlib.md5(page.url).hexdigest(),
+        'id': page_id,
+        'containers': containers_data,
+        'toptags': top_tags[:15],
+        'summary': [
+            { 'kind' : 'tag', 'count': summary_dict['tag'] },
+            { 'kind' : 'com', 'count': summary_dict['com'] }
+        ]
+    }
+    return page_data
+
+
 def getSinglePageDataNewer(page_id):
     page = Page.objects.get(id=page_id)
     interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','content_id','kind','interaction_node_id','parent_id')
