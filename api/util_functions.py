@@ -350,15 +350,18 @@ def getSinglePageDataDictNew(page_id):
             top_tags.append(top_tag)
     top_tags = sorted(top_tags, key=itemgetter('tag_count', 'body'), reverse=True)
 
+    summary_data = []
+    if summary_dict['tag'] > 0:
+        summary_data.append({ 'kind' : 'tag', 'count': summary_dict['tag'] })
+    if summary_dict['com'] > 0:
+        summary_data.append({ 'kind' : 'com', 'count': summary_dict['com'] })
+
     page_data = {
         'urlhash': hashlib.md5(page.url).hexdigest(),
         'id': page_id,
         'containers': containers_data,
         'toptags': top_tags[:15],
-        'summary': [
-            { 'kind' : 'tag', 'count': summary_dict['tag'] },
-            { 'kind' : 'com', 'count': summary_dict['com'] }
-        ]
+        'summary': summary_data
     }
     return page_data
 
