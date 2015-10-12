@@ -18,6 +18,7 @@ from urlparse import urlsplit, urlunsplit
 import traceback
 import logging
 import hashlib
+from operator import itemgetter
 logger = logging.getLogger('rb.standard')
 
 
@@ -347,7 +348,7 @@ def getSinglePageDataDictNew(page_id):
                 'body': node['body']
             }
             top_tags.append(top_tag)
-    top_tags = sorted(top_tags, key=lambda x: x['tag_count'], reverse=True)
+    top_tags = sorted(top_tags, key=itemgetter('tag_count', 'body'), reverse=True)
 
     page_data = {
         'urlhash': hashlib.md5(page.url).hexdigest(),
