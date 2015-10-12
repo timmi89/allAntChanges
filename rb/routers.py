@@ -30,7 +30,7 @@ class MasterSlaveRouter(object):
 
     def db_for_read(self, model, **hints):
         "Point all read operations to a random slave"
-        return random.choice(['default', 'readonly1', 'readonly2'])
+        return random.choice(['default', 'readonly1', 'readonly1', 'readonly1', 'readonly1'])
 
     def db_for_write(self, model, **hints):
         "Point all write operations to the master"
@@ -38,7 +38,7 @@ class MasterSlaveRouter(object):
 
     def allow_relation(self, obj1, obj2, **hints):
         "Allow any relation between two objects in the db pool"
-        db_list = ('default','readonly1', 'readonly2')
+        db_list = ('default','readonly1')
         if obj1._state.db in db_list and obj2._state.db in db_list:
             return True
         return None
