@@ -148,7 +148,8 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
-                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
                  # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
                  'LOCATION': '127.0.0.1:11211',
                  'TIMEOUT':86400,
@@ -160,7 +161,8 @@ if DEBUG:
                  }
             },
             'redundant': {
-                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
             },
             'query_cache': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

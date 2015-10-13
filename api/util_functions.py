@@ -18,6 +18,7 @@ from urlparse import urlsplit, urlunsplit
 import traceback
 import logging
 import hashlib
+from operator import itemgetter
 logger = logging.getLogger('rb.standard')
 
 
@@ -347,17 +348,20 @@ def getSinglePageDataDictNew(page_id):
                 'body': node['body']
             }
             top_tags.append(top_tag)
-    top_tags = sorted(top_tags, key=lambda x: x['tag_count'], reverse=True)
+    top_tags = sorted(top_tags, key=itemgetter('tag_count', 'body'), reverse=True)
+
+    summary_data = []
+    if summary_dict['tag'] > 0:
+        summary_data.append({ 'kind' : 'tag', 'count': summary_dict['tag'] })
+    if summary_dict['com'] > 0:
+        summary_data.append({ 'kind' : 'com', 'count': summary_dict['com'] })
 
     page_data = {
         'urlhash': hashlib.md5(page.url).hexdigest(),
         'id': page_id,
         'containers': containers_data,
         'toptags': top_tags[:15],
-        'summary': [
-            { 'kind' : 'tag', 'count': summary_dict['tag'] },
-            { 'kind' : 'com', 'count': summary_dict['com'] }
-        ]
+        'summary': summary_data
     }
     return page_data
 
@@ -425,7 +429,7 @@ def getSinglePageDataNewer(page_id):
         for content_id, content_interactions in container_interactions.items():
             content = content_dict.get(content_id)
             if content:
-                content_reactions = content_interactions.get('reactions', [])
+                content_reactions = content_interactions.get('reactions', {})
                 content_comments = content_interactions.get('comments', {})
                 for node_id, content_reaction in content_reactions.items():
                     interaction_id = content_reaction.get('interaction_id')

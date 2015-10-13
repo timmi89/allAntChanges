@@ -9371,11 +9371,13 @@ if ( sendData.kind=="page" ) {
                     // is this used??
                     var hashesToShow = [];
 
-                    for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
-                        if ( ANT.text_container_popularity[i] ) {
-                            if ( ANT.text_container_popularity[i].interactions > 0 ) {
-                                $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
-                                hashesToShow.push( ANT.text_container_popularity[i].hash );
+                    if (typeof ANT.text_container_popularity != 'undefined') {
+                        for ( var i=ANT.group.initial_pin_limit; i<ANT.text_container_popularity.length; i++) {
+                            if ( ANT.text_container_popularity[i] ) {
+                                if ( ANT.text_container_popularity[i].interactions > 0 ) {
+                                    $('#ant_indicator_' + ANT.text_container_popularity[i].hash).removeClass('ant_dont_show');
+                                    hashesToShow.push( ANT.text_container_popularity[i].hash );
+                                }
                             }
                         }
                     }
@@ -10931,34 +10933,33 @@ function $AFunctions($A){
                         '<a class="ant_reactions_label">'+total_reactions_label+'</a>'
                     );
 
-                    var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
-                    var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
-                    var bgColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
-                    var textColorRGB2 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
+                    var bgColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[0] ) : ANT.group.tag_box_bg_colors[0];
+                    var textColorRGB0 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[0] ) : ANT.group.tag_box_text_colors[0];
+                    var bgColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_bg_colors[1] ) : ANT.group.tag_box_bg_colors[1];
+                    var textColorRGB1 = ( ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) ) ? ANT.util.hexToRgb( ANT.group.tag_box_text_colors[1] ) : ANT.group.tag_box_text_colors[1];
 
                     var topReactions = [],
-                        i = 0;
-                    while ( topReactions.length < 2 && i < 15 ) {
-                        for (var j=0; j < page.toptags.length; j++ ) {
-                            var currentTop = page.toptags[j];
+                        topReactionsLimit = (page&&page.toptags&&page.toptags.length===1) ? 1:2;
 
-                            if ( currentTop ) {
+                        for (var j=0; j < page.toptags.length; j++ ) {
+                            var currentTopReaction = page.toptags[j];
+
+                            if ( currentTopReaction ) {
                                 for (var k=0; k < ANT.group.default_reactions.length; k++ ) {
                                     var currentDefault = ANT.group.default_reactions[k];
 
-                                    if ( currentTop.id === currentDefault.id ) {
-                                        topReactions.push( currentTop );
+                                    if ( currentTopReaction.id === currentDefault.id && topReactions.length < topReactionsLimit ) {
+                                        topReactions.push( currentTopReaction );
                                     }
                                 }
                             }
                         }
-                        i++;
-                    }
 
                     if (isMobile && ANT.group.summary_widget_expanded_mobile === true && topReactions.length >= 1) {
                         $summary_widget.append(
                             '<div class="ant-top-tags"><div class="ant-top-tags-wrapper">' +
-                            '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[0].tag_count+')</span></div> <div style="background-color:rgb('+bgColorRGB2+');color:rgb('+textColorRGB2+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB2+');">('+topReactions[1].tag_count+')</span></div>' +
+                            ( topReactions[0] ? '<div style="background-color:rgb('+bgColorRGB0+');color:rgb('+textColorRGB0+');" class="ant-top-tag">'+topReactions[0].body+' <span style="color:rgb('+textColorRGB0+');">('+topReactions[0].tag_count+')</span></div>' : '' ) +
+                            ( topReactions[1] ? '<div style="background-color:rgb('+bgColorRGB1+');color:rgb('+textColorRGB1+');" class="ant-top-tag">'+topReactions[1].body+' <span style="color:rgb('+textColorRGB1+');">('+topReactions[1].tag_count+')</span></div>' : '' ) +
                             '</div></div>'
                         );
                     }
