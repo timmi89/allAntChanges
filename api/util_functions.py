@@ -429,7 +429,7 @@ def getSinglePageDataNewer(page_id):
         for content_id, content_interactions in container_interactions.items():
             content = content_dict.get(content_id)
             if content:
-                content_reactions = content_interactions.get('reactions', [])
+                content_reactions = content_interactions.get('reactions', {})
                 content_comments = content_interactions.get('comments', {})
                 for node_id, content_reaction in content_reactions.items():
                     interaction_id = content_reaction.get('interaction_id')
