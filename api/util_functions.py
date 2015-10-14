@@ -270,7 +270,7 @@ def checkLimit(user, group):
 
 
 
-def getSinglePageDataDict(page_id):
+def getSinglePageDataDictOldAndBusted(page_id):
     current_page = Page.objects.get(id=page_id)
     urlhash = hashlib.md5( current_page.url ).hexdigest()
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
@@ -302,7 +302,7 @@ def getSinglePageDataDict(page_id):
     return result_dict
 
 
-def getSinglePageDataDictNew(page_id):
+def getSinglePageDataDict(page_id):
     page = Page.objects.get(id=page_id)
     interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','kind','interaction_node_id')
     container_ids = set()
