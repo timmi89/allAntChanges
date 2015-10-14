@@ -68,6 +68,10 @@ function createIndicatorWidget(options) {
         }, 100); // We get a mouseleave event when the user hovers the indicator. Pause long enough that the reaction window can open if they hover.
     });
     setupPositioning($containerElement, ractive);
+
+    return {
+        teardown: function() { ractive.teardown(); }
+    };
 }
 
 function setupPositioning($imageElement, ractive) {

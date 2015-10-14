@@ -2,13 +2,14 @@ var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; })
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var Range = require('./utils/range');
 
-var ElementMap = require('./element-map');
+var HashedElements = require('./hashed-elements');
 
 var pageSelector = '.antenna-locations-page';
 
 function createPage(options) {
     var element = options.element;
     var reactionLocationData = options.reactionLocationData;
+    var pageData = options.pageData;
     var closeWindow = options.closeWindow;
     var ractive = Ractive({
         el: element,
@@ -20,7 +21,7 @@ function createPage(options) {
             canLocate: function(containerHash) {
                 // TODO: is there a better way to handle reactions to hashes that are no longer on the page?
                 //       should we provide some kind of indication when we fail to locate a hash or just leave it as is?
-                return ElementMap.get(containerHash) !== undefined;
+                return HashedElements.get(containerHash, pageData.pageHash) !== undefined;
             }
         },
         template: require('../templates/locations-page.hbs.html')
@@ -35,7 +36,7 @@ function createPage(options) {
 
     function revealContent(event) {
         var locationData = event.context;
-        var element = ElementMap.get(locationData.containerHash);
+        var element = HashedElements.get(locationData.containerHash, pageData.pageHash);
         if (element) {
             closeWindow();
             setTimeout(function() { // Let the processing of this click event finish before we add another click handler so the new handler isn't immediately triggered

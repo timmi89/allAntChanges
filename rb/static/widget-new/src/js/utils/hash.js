@@ -42,7 +42,6 @@ function hashText(element) {
         var hashText = "rdr-text-" + text;
         return MD5.hex_md5(hashText);
     }
-    return undefined;
 }
 
 function hashUrl(url) {
@@ -50,8 +49,10 @@ function hashUrl(url) {
 }
 
 function hashImage(imageUrl) {
-    var hashText = 'rdr-img-' + imageUrl;
-    return MD5.hex_md5(hashText);
+    if (imageUrl && imageUrl.length > 0) {
+        var hashText = 'rdr-img-' + imageUrl;
+        return MD5.hex_md5(hashText);
+    }
 }
 
 function hashMedia(element) {

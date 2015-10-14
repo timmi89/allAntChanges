@@ -10,7 +10,7 @@ var clickHandler;
 function getRootElement() {
     // TODO revisit this, it's kind of goofy and it might have a timing problem
     if (!ractive) {
-        var bucket = WidgetBucket();
+        var bucket = WidgetBucket.get();
         ractive = Ractive({
             el: bucket,
             append: true,

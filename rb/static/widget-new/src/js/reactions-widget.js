@@ -35,7 +35,7 @@ function openReactionsWidget(options, elementOrCoords) {
     var groupSettings = options.groupSettings;
     var colors = groupSettings.reactionBackgroundColors();
     var ractive = Ractive({
-        el: WidgetBucket(),
+        el: WidgetBucket.get(),
         append: true,
         data: {},
         template: require('../templates/reactions-widget.hbs.html')
@@ -159,6 +159,7 @@ function openReactionsWidget(options, elementOrCoords) {
             var options = { // TODO: clean up the number of these "options" objects that we create.
                 element: pageContainer(ractive),
                 reactionLocationData: reactionLocationData,
+                pageData: pageData,
                 closeWindow: closeWindow
             };
             var page = LocationsPage.create(options);

@@ -45,6 +45,10 @@ function startLoadingPageData(groupSettings) {
     if ($pageElements.length == 0) {
         $pageElements = $('body');
     }
+    queuePageDataLoad($pageElements, groupSettings);
+}
+
+function queuePageDataLoad($pageElements, groupSettings) {
     var pagesToLoad = [];
     $pageElements.each(function() {
         var $pageElement = $(this);
@@ -79,7 +83,12 @@ function loadWhenVisible($pageElement, groupSettings) {
     ThrottledEvents.on('resize', checkVisibility);
 }
 
+function pagesAdded($pageElements, groupSettings) {
+    queuePageDataLoad($pageElements, groupSettings);
+}
+
 //noinspection JSUnresolvedVariable
 module.exports = {
-    load: startLoadingPageData
+    load: startLoadingPageData,
+    pagesAdded: pagesAdded
 };

@@ -79,7 +79,7 @@ function getContainerData(pageData, containerHash) {
             hash: containerHash,
             reactionTotal: 0,
             reactions: [],
-            loaded: false
+            loaded: pageData.summaryLoaded // TODO: should this just be a live function that delegates to summaryLoaded?
         };
         pageData.containers[containerHash] = containerData;
     }
