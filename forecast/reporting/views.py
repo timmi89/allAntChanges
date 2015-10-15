@@ -46,9 +46,18 @@ def group_event_report(request, short_name, year = None, month = None, day = Non
         desktop = utils.aggregate_reports(desktop_latest_reports, 20)
         #print 'JSON:', utils.aggregate_reports(desktop_latest_reports, 20)
         merged = utils.merge_desktop_mobile(desktop, mobile, 20)
+
+        # daily_activity = {};
+
+        # for day in desktop['dailies']:
+            # print day['report_start'].strftime("%m/%d/%Y")
         
         
-        context['merged'] = json.dumps(merged, cls=utils.DatetimeEncoder)
+        context['aggregate_data'] = json.dumps(merged, cls=utils.DatetimeEncoder)
+        context['dailies'] = merged['dailies']
+        print context['dailies']
+        context['totals'] = merged['totals']
+
     except Group.DoesNotExist, gdne:
         context['error'] = 'No group'
     return render_to_response(

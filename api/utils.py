@@ -3,7 +3,7 @@ from antenna.rb.models import *
 from antenna.rb.profanity_filter import ProfanitiesFilter
 from antenna.chronos.jobs import AsynchNewGroupNodeNotification, AsynchPageNotification
 from antenna.antenna_celery import app as celery_app
-from antenna.analytics.tasks import update_page_cache, update_page_container_hash_cache
+from antenna.analytics.tasks import update_page_newer_cache, update_page_cache, update_page_container_hash_cache
 from django.db.models import Q
 from django.core.cache import cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -44,6 +44,7 @@ def deleteInteraction(interaction, user):
                 logger.info("CACHEUPDATE ON DELETE")
                 update_page_cache.delay(interaction.page.id)
                 update_page_container_hash_cache.delay(interaction.page.id, [interaction.container.hash], [])
+                update_page_newer_cache.delay(interaction.page.id)
             except Exception, e:
                 logger.warning(traceback.format_exc(50))   
     
@@ -140,7 +141,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
     #temporaryish hack to deal with cdn subdomain prefixes for media!!!
     #On the front end, we are stripping parts of the url out of for images and media
     #so, to keep the content url consistent, just grab it from an existing interaction if it exists.
-    if content.kind == "img" or content.kind == "media":
+    if content.kind == "img" or content.kind == "med":
         try:
             existing_interaction_w_content = Interaction.objects.filter(
                 container=container
@@ -227,6 +228,7 @@ def createInteraction(page, container, content, user, kind, interaction_node, gr
         logger.info("CACHEUPDATE on CREATE " + str(page.id) + " " + str(container.hash))
         update_page_cache.delay(page.id)
         update_page_container_hash_cache.delay(page.id, [container.hash], [])
+        update_page_newer_cache.delay(page.id)
         
         #notification = AsynchPageNotification()
         #t = Thread(target=notification, kwargs={"interaction_id":new_interaction.id})

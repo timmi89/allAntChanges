@@ -32,6 +32,28 @@ def isValidIntegerId(value):
         return False
 
 
+class CachePageRefreshHandlerNewer(AnonymousBaseHandler):
+    def read(self, request, page_id = None):
+        #update_page_cache.delay(page.id)
+        if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
+            cache_data = getSinglePageDataNewer(page_id)
+            try:
+                logger.info('CPRH SETTING CACHE DATA page_data_newer_' + str(page_id) )
+                cache.set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+                cache.set('page_data_newer_' + str(page_id), cache_data )
+                cache.delete('LOCKED_page_data_newer_' + str(page_id))
+            except Exception, ex:
+                logger.info(ex)
+            try:
+                get_cache('redundant').set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+                get_cache('redundant').set('page_data_newer_' + str(page_id), cache_data )
+                get_cache('redundant').delete('LOCKED_page_data_newer_' + str(page_id))
+            except Exception, ex:
+                logger.info('REDUNDANT CACHE EXCEPTION')
+                logger.warn(ex)
+        return 'page_newer refresh queued'
+
+
 class CachePageRefreshHandler(AnonymousBaseHandler):
     def read(self, request, page_id = None, hash = None):
         #update_page_cache.delay(page.id)
@@ -250,12 +272,7 @@ class InteractionHandler(AnonymousBaseHandler):
 
         # do view action
         if action == 'view':
-            interaction_id = data['int_id']
-            try:
-                interactions = Interaction.objects.filter(parent=interaction_id)
-            except Interaction.DoesNotExist:
-                raise JSONException(u"Interaction did not exist!")
-            return interactions
+            return self.view(data)
         
         else:
             # check to see if user's token is valid
@@ -288,12 +305,40 @@ class InteractionHandler(AnonymousBaseHandler):
                     raise JSONException(u"Interaction did not exist!")
 
                 return deleteInteraction(interaction, user)
+
+    def view(self, data):
+        interaction_id = data['int_id']
+        try:
+            interactions = Interaction.objects.filter(parent=interaction_id)
+
+        except Interaction.DoesNotExist:
+            raise JSONException(u"Interaction did not exist!")
+        return interactions
                 
 class VoteHandler(InteractionHandler):
     def create(self, request, data, user, page, group):
         pass
 
 class CommentHandler(InteractionHandler):
+
+    def view(self, data):
+        reaction_id = data['reaction_id']
+        try:
+            comments = Interaction.objects.filter(parent=reaction_id,kind='com').select_related("user__social_user")
+
+        except Interaction.DoesNotExist:
+            raise JSONException(u"Interaction did not exist!")
+
+        json_comments = [dict(id=comment.id, tag_id=comment.parent.interaction_node.id, contentID=comment.content.id, user=comment.user, text=comment.interaction_node.body) for comment in comments]
+        # comments = sorted(comments, key=lambda x: x['created'], reverse=True)
+        for comment in json_comments:
+            try:
+                comment['social_user'] = comment['user'].social_user
+            except SocialUser.DoesNotExist:
+                pass
+        return json_comments
+
+
     def create(self, request, data, user, page, group):
         comment = data['comment']
 
@@ -686,6 +731,173 @@ class PageDataHandler(AnonymousBaseHandler):
               
         
         return pages_data
+
+
+class PageDataHandlerNewer(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data, pageid=None):
+        requested_pages = data['pages']
+        host = getHost(request)
+
+        pages = []
+        for requested_page in requested_pages:
+            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
+            requested_page['canonical_url'] = 'same'
+            # /MODIFICATION
+            pages.append(getPage(host, requested_page))
+
+        pages_data = []
+
+        for current_page in pages:
+            cached_result = check_and_get_locked_cache('page_data_newer_' + str(current_page.id))
+            if cached_result is not None:
+                #logger.info('returning page_data_newer cached result')
+                pages_data.append(cached_result)
+            else:
+                logger.info('missed page_data_newer cache')
+                result_dict = getSinglePageDataNewer(current_page.id)
+                pages_data.append(result_dict)
+                try:
+                    cache.set('page_data_newer_' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+                try:
+                    get_cache('redundant').set('page_data_newer_' + str(current_page.id), result_dict)
+                except Exception, e:
+                    logger.warning(traceback.format_exc(50))
+
+        return pages_data
+
+
+class PageDataHandlerNew(AnonymousBaseHandler):
+    @status_response
+    @json_data
+    def read(self, request, data, pageid=None):
+
+        # Copied from PageDataHandler.read:
+        requested_pages = data['pages']
+        host = getHost(request)
+
+        pages = []
+        for requested_page in requested_pages:
+            # MODIFICATION: Massage the data for API change. the "url" parameter is now always the canonical url
+            requested_page['canonical_url'] = 'same'
+            # /MODIFICATION
+            pages.append(getPage(host, requested_page))
+
+        new_pages_data = []
+
+        for current_page in pages:
+            page_id = current_page.id
+            # half-imlemented caching, disabled for master
+            # cached_page_data = check_and_get_locked_cache('page_data_new' + str(page_id))
+            # if cached_page_data is not None:
+            #     logger.info('returning page_data_new cached result')
+            #     new_pages_data.append(cached_page_data)
+            if True:
+                logger.info('missed page_data_new cache')
+                page_data = getSinglePageDataDict(page_id)
+
+                # MODIFICATION go fetch the detailed content reaction info and merge it with the page_data
+                new_containers = {}
+                container_set = page_data['containers']
+                for container in container_set:
+                    data = { 'cross_page': False } # TODO remove all handling of cross_page and move that to a separate API call?
+
+                    # Copied from ContentSummaryHandler.read:
+                    container_id = container.id
+
+                    if data['cross_page'] == True:
+                        page = Page.objects.get(id=page_id)
+                        interactions = list(Interaction.objects.filter(
+                                container=container_id,
+                                page__site__group = page.site.group,
+                                approved=True
+                                ))
+                    else:
+                        interactions = list(Interaction.objects.filter(
+                                container=container_id,
+                                page=page_id,
+                                approved=True
+                                ))
+                    content_ids = (interaction.content_id for interaction in interactions)
+                    content = list(Content.objects.filter(id__in=content_ids).values_list('id','body','kind','location'))
+
+                    isCrossPage = (data['cross_page'] == True)
+                    content_summaries = getContentSummaries(interactions, content, isCrossPage=isCrossPage)
+
+                    # MODIFICATION:
+                    reactions = []
+                    for content_id in content_summaries:
+                        content_data = content_summaries[content_id]
+                        kind = content_data['kind']
+                        if kind == 'txt':
+                            content_kind = 'text'
+                        elif kind == 'pag':
+                            content_kind = 'page'
+                        elif kind == 'img':
+                            content_kind = 'img'
+                        elif kind == 'med':
+                            content_kind = 'media'
+                        top_interactions = content_data['top_interactions']
+                        comment_dict = {}
+                        comments = top_interactions['coms']
+                        for comment in comments:
+                            tag_id = comment['tag_id']
+                            count = comment_dict.get(tag_id, 0)
+                            comment_dict[tag_id] = count + 1
+                        top_tags = top_interactions['tags']
+                        for tag_id in top_tags:
+                            tag = top_tags[tag_id]
+                            if tag.get('parent_id'): # TODO: we have corrupted data in the database, with interactions pointing to parents that have different content.
+                                reactions.append({
+                                    'id': tag_id,
+                                    'text': tag['body'],
+                                    'count': tag['count'],
+                                    'parentID': tag['parent_id'],
+                                    'content': {
+                                        'id': content_id,
+                                        'location': content_data['location'], # TODO data format?
+                                        'kind': content_kind
+                                    },
+                                    'commentCount': comment_dict.get(tag_id, 0)
+                                })
+
+                    new_container = {
+                        'id': container_id,
+                        'hash': container.hash,
+                        'reactions': reactions
+                    }
+                    new_containers[container.hash] = new_container
+
+                new_page = {}
+                new_page['pageHash'] = page_data['urlhash']
+                new_page['id'] = page_id
+                summaryReactions = []
+                for toptag in page_data['toptags']:
+                    reaction = {}
+                    reaction['count'] = toptag['tag_count']
+                    reaction['text'] = toptag['body']
+                    reaction['id'] = toptag['id']
+                    summaryReactions.append(reaction)
+                new_page['summaryReactions'] = summaryReactions
+                new_page['containers'] = new_containers
+                new_pages_data.append(new_page)
+
+                # disabled for master: half-finished caching (it's missing the cache update on write)
+                # try:
+                #     cache.set('page_data_new' + str(page_id), new_page)
+                # except Exception, e:
+                #     logger.warning(traceback.format_exc(50))
+                # try:
+                #     get_cache('redundant').set('page_data_new' + str(page_id), new_page)
+                # except Exception, e:
+                #     logger.warning(traceback.format_exc(50))
+
+        return new_pages_data
+
+
 
 class SettingsHandler(AnonymousBaseHandler):
     model = Group

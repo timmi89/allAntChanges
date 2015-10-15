@@ -1,0 +1,38 @@
+
+.antenna {
+    display: block; /* This rule goes with the code in our CSS loader which sets display:none before our CSS loads. */
+    font: 400 12px Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#antenna-widget-bucket {
+    /* This gives us base 0,0 coords that the rest of our elements can position from. */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.ant-antenna-logo {
+    font-size: 12px;
+}
+
+.ant-social-facebook {
+    font-size: 24px;
+    color: #3b5998;
+}
+
+.ant-social-twitter {
+    font-size: 24px;
+    color: #55acee;
+}
+
+.antenna-highlight {
+    background-color: #FCF5A7;
+    color: #666;
+    text-decoration: none;
+    -webkit-user-select:none;
+    -k-user-select:none;
+    -moz-user-select:none;
+    user-select:none;
+}

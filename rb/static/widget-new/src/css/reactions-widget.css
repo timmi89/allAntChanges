@@ -1,0 +1,145 @@
+.antenna-reactions-widget {
+    display: none;
+    position: absolute;
+    width: 222px;
+    overflow: hidden;
+    background-color: white;
+    z-index: 999; /* TODO */
+    box-shadow: 0 0 3px rgba(000,000,000,.3);
+    font-family: HelveticaNeue,Helvetica,Arial,sans-serif;
+}
+
+.antenna-reactions-widget:focus {
+    outline: none;
+}
+
+.antenna-reactions-widget.open {
+    display: block;
+}
+
+.antenna-header {
+    height: 28px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: white;
+    color: #8fb3f2;
+    text-align: left;
+    padding: 5px 0 0 6px;
+    cursor: move;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.antenna-page-container {
+    /* body height is set in Javascript */
+    position: relative;
+    width: 100%;
+}
+
+.antenna-body {
+    overflow-y: auto;
+}
+
+.antenna-footer {
+    height: 50px;
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #ffffff;
+    color: #777777;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+}
+
+.antenna-page {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    /*overflow-y: auto;*/
+    background-color: #ffffff;
+}
+
+.antenna-page:focus {
+    outline: none;
+}
+
+.antenna-page-animate {
+    transition: left 200ms;
+}
+
+.antenna-page-active {
+    left: 0;
+}
+
+.antenna-progress-page {
+    background: rgba(0,0,0,0.25);
+    overflow-y: hidden;
+}
+
+.antenna-progress-page .antenna-body {
+    height: 300px;
+}
+
+.antenna-reaction {
+    display: inline-block;
+    cursor: pointer;
+    height: 75px;
+    vertical-align: top; /* See http://stackoverflow.com/questions/19366401/css-inline-block-elements-not-lining-up-properly */
+    box-sizing: border-box;
+    color: #ffffff;
+}
+
+.antenna-reaction.half {
+    width: 50%;
+}
+.antenna-reaction.half:only-child {
+    width: 100%;
+}
+.antenna-reaction.half:nth-child(2n+0) {
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.antenna-reaction.full {
+    width: 100%;
+}
+
+.antenna-reaction-box {
+    margin: 0;
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    opacity: 0.9;
+    letter-spacing: .5px;
+    line-height: 1em;
+    overflow-x: hidden;
+}
+
+.antenna-reaction:hover > .antenna-reaction-box {
+    background: linear-gradient(rgba(30,30,30,.15),rgba(255,255,255,.2));
+}
+
+.antenna-reaction-text {
+    margin: 0;
+    margin-bottom: 14px;
+    padding: 0;
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 24px;
+}
+.antenna-reaction.half  .antenna-reaction-text {
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.antenna-think {
+    padding: 5px;
+    cursor: pointer;
+}
+.antenna-think:hover {
+    color: #8fb3f2;
+}

@@ -17,6 +17,36 @@ import httplib
 logger = get_task_logger(__name__)
 
 
+@task(name='page.newer.cache.update')
+def update_page_newer_cache(page_id):
+    if cache.get('LOCKED_page_data_newer_' + str(page_id)) is None:
+        cache_data = getSinglePageDataNewer(page_id)
+        try:
+            cache.set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+            cache.set('page_data_newer_' + str(page_id), cache_data )
+            cache.delete('LOCKED_page_data_newer_' + str(page_id))
+        except Exception, ex:
+            logger.info(ex)
+        try:
+            get_cache('redundant').set('LOCKED_page_data_newer_' + str(page_id),'locked',15)
+            get_cache('redundant').set('page_data_newer_' + str(page_id), cache_data )
+            get_cache('redundant').delete('LOCKED_page_data_newer_' + str(page_id))
+        except Exception, ex:
+            logger.info('REDUNDANT CACHE EXCEPTION')
+            logger.warn(ex)
+        if settings.CACHE_SYNCBACK:
+            refresh_url = '/api/cache/page/newer/refresh/'+ str(page_id)
+
+            try:
+                hcon = httplib.HTTPConnection(settings.OTHER_DATACENTER, timeout=5)
+                hcon.request('GET', refresh_url)
+                resp = hcon.getresponse()
+                lines = resp.read()
+                hcon.close()
+            except Exception, e:
+                logger.info("Other datacenter refresh: " + str(e))
+
+
 @task(name='page.cache.update')
 def update_page_cache(page_id):
     if cache.get('LOCKED_page_data' + str(page_id)) is None:
