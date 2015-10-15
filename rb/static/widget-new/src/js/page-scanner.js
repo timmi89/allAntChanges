@@ -237,7 +237,7 @@ function scanForMedia($element, pageData, groupSettings) {
 
 function find($element, selector, addBack) {
     var result = $element.find(selector);
-    if (addBack) {
+    if (addBack && selector) { // with an undefined selector, addBack will match and always return the input element (unlike find() which returns an empty match)
         result = result.addBack(selector);
     }
     return result.filter(function() {
