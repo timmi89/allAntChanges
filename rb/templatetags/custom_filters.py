@@ -74,6 +74,7 @@ def keyvalue(dict, key):
         return ''
 
 
+# via http://stackoverflow.com/questions/2024660/django-sort-dict-in-template
 @register.filter(name='sort')
 def listsort(value):
     if isinstance(value, dict):
