@@ -3,6 +3,8 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 import collections
 import math
+from django.utils.datastructures import SortedDict
+
 import logging
 logger = logging.getLogger('rb.standard')
 
@@ -70,3 +72,18 @@ def keyvalue(dict, key):
         return dict[key]
     except KeyError:
         return ''
+
+
+@register.filter(name='sort')
+def listsort(value):
+    if isinstance(value, dict):
+        new_dict = SortedDict()
+        key_list = sorted(value.keys())
+        for key in key_list:
+            new_dict[key] = value[key]
+        return new_dict
+    elif isinstance(value, list):
+        return sorted(value)
+    else:
+        return value
+    listsort.is_safe = True

@@ -13,11 +13,92 @@ class DatetimeEncoder(json.JSONEncoder):
         # Let the base class default method raise the TypeError
         return json.JSONEncoder.default(self, obj)
 
+def init_day(dailies, formatted_date):
+    if not formatted_date in dailies:
+        dailies[formatted_date] = {}
+        dailies[formatted_date]['reactions'] = {
+            'desktop':0,
+            'mobile':0
+        }
+        dailies[formatted_date]['reaction_views'] = {
+            'desktop':0,
+            'mobile':0
+        }
+
+    return dailies
 
 def merge_desktop_mobile(desktop, mobile, depth):
     merged = {}
-    merged['mobile_dailies'] = mobile.get('dailes',[])
-    merged['desktop_dailies'] = desktop.get('dailies',[])
+    # merged['mobile_dailies'] = mobile.get('dailes',[])
+    # merged['desktop_dailies'] = desktop.get('dailies',[])
+
+    mobile_dailies = mobile.get('dailes',[])
+    desktop_dailies = desktop.get('dailies',[])
+    dailies = {}
+    totals = {
+        'reactions': {
+            'desktop':0,
+            'mobile':0,
+            'total':0
+        },
+        'reaction_views': {
+            'desktop':0,
+            'mobile':0,
+            'total':0
+        }
+    }
+
+    for day in desktop_dailies:
+        formatted_date = day['report_start'].strftime("%m/%d/%Y")
+        dailies = init_day(dailies, formatted_date)
+
+        if 'total_reactions' in day:
+            dailies[formatted_date]['reactions']['desktop'] += day['total_reactions']
+            totals['reactions']['desktop'] += day['total_reactions']
+            totals['reactions']['total'] += day['total_reactions']
+        
+        if 'total_reaction_views' in day:
+            dailies[formatted_date]['reaction_views']['desktop'] += day['total_reaction_views']
+            totals['reaction_views']['desktop'] += day['total_reaction_views']
+            totals['reaction_views']['total'] += day['total_reaction_views']
+
+    for day in mobile_dailies:
+        formatted_date = day['report_start'].strftime("%m/%d/%Y")
+        dailies = init_day(dailies, formatted_date)
+
+        if 'total_reactions' in day:
+            dailies[formatted_date]['reactions']['mobile'] += day['total_reactions']
+            totals['reactions']['mobile'] += day['total_reactions']
+            totals['reactions']['total'] += day['total_reactions']
+        
+        if 'total_reaction_views' in day:
+            dailies[formatted_date]['reaction_views']['mobile'] += day['total_reaction_views']
+            totals['reaction_views']['mobile'] += day['total_reaction_views']
+            totals['reaction_views']['total'] += day['total_reaction_views']
+
+
+        # {
+        #     "total_reactions": 1,
+        #     "uniques": 5.0,
+        #     "engagement": 5.0,
+        #     "created_at": "2015-10-12T19:05:48Z",
+        #     "report_start": "2015-10-05T19:05:21Z",
+        #     "top_reaction_views_count": 0,
+        #     "total_pageviews": 4,
+        #     "top_reactions_count": 0,
+        #     "total_reaction_views": 8,
+        #     "top_views_count": 0,
+        #     "report_end": "2015-10-06T19:05:21Z"
+        # },
+
+        
+    merged['dailies'] = dailies
+
+    # for key in sorted(dailies):
+        # print "%s: %s" % (key, dailies[key])
+
+    merged['totals'] = totals
+
     merged['sorted_content'] = []
     sc_holding = {}
     merged['sorted_tag_cloud'] = []
@@ -25,32 +106,32 @@ def merge_desktop_mobile(desktop, mobile, depth):
     merged['sorted_pages'] = []
     sp_holding = {}
     
-    if desktop.has_key('sorted_content'):
+    if 'sorted_content' in desktop:
         for sc in desktop['sorted_content']:
             sc_holding[sc[0]] = sc[1]
-    if mobile.has_key('sorted_content'):
+    if 'sorted_content' in mobile:
         for sc in mobile['sorted_content']:
-            if sc_holding.has_key(sc[0]):
+            if sc[0] in sc_holding:
                 sc_holding[sc[0]]['score'] += sc[1]['score']
             else:
                 sc_holding[sc[0]] = sc[1] 
     
-    if desktop.has_key('sorted_tag_cloud'):
+    if 'sorted_tag_cloud' in desktop:
         for tc in desktop['sorted_tag_cloud']:
             tc_holding[tc[0]]  = tc[1]
-    if mobile.has_key('sorted_tag_cloud'):
+    if 'sorted_tag_cloud' in mobile:
         for tc in mobile['sorted_tag_cloud']:
-            if tc_holding.has_key(tc[0]):
+            if tc[0] in tc_holding:
                 tc_holding[tc[0]]['score'] += tc[1]['score']
             else:
                 tc_holding[tc[0]]  = tc[1]
     
-    if desktop.has_key('sorted_pages'):
+    if 'sorted_pages' in desktop:
         for sp in desktop['sorted_pages']:
             sp_holding[sp[0]] = sp[1]
-    if mobile.has_key('sorted_pages'):
+    if 'sorted_pages' in mobile:
         for sp in mobile['sorted_pages']:
-            if sp_holding.has_key(sp[0]):
+            if sp[0] in sp_holding:
                 sp_holding[sp[0]]['score'] += sp[1]['score']    
             else:
                 sp_holding[sp[0]] = sp[1]
@@ -99,7 +180,7 @@ def aggregate_reports(group_reports, depth):
             daily['top_reactions_count'] = 0
             daily['top_reaction_views_count'] = 0 
             for page_id in gr.sorted_pages:
-                if not agg_dict['pages'].has_key(page_id):
+                if not 'page_id' in agg_dict['pages']:
                     agg_dict['pages'][page_id] = {}
                     agg_dict['pages'][page_id]['score'] = 0
                     page = Page.objects.get(id=page_id)
@@ -119,7 +200,7 @@ def aggregate_reports(group_reports, depth):
                 daily['total_reaction_views']   = int(gr.count_map['total_reaction_views'])
                 
             for (cid,pid) in gr.content_page.items():
-                if agg_dict['content'].has_key(cid):
+                if 'cid' in agg_dict['content']:
                     agg_dict['content'][cid]['score'] += agg_dict['pages'][pid]['score']
                 else:
                     agg_dict['content'][cid] = {}
@@ -132,7 +213,7 @@ def aggregate_reports(group_reports, depth):
             agg_dict['dailies'].append(daily)
             #TAG_CLOUD aggregation
             for pop_tag in gr.tag_cloud.keys():
-                if not agg_dict['tag_cloud'].has_key(pop_tag):
+                if not 'pop_tag' in agg_dict['tag_cloud']:
                     agg_dict['tag_cloud'][pop_tag] = 0
                 agg_dict['tag_cloud'][pop_tag] += gr.tag_cloud[pop_tag]
         
