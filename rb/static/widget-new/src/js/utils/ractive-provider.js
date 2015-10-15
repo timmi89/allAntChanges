@@ -1,3 +1,5 @@
+var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+
 var noConflict;
 var loadedRactive;
 var callbacks = [];

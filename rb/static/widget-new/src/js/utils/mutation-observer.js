@@ -57,7 +57,6 @@ function addOneTimeAttributeListener(node, attributes, callback) {
 
 //noinspection JSUnresolvedVariable
 module.exports = {
-    install: installObserver,
     addAdditionListener: addAdditionListener,
     addOneTimeAttributeListener: addOneTimeAttributeListener
 };
