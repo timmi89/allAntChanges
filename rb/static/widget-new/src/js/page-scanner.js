@@ -1,4 +1,5 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
+var AppMode = require('./utils/app-mode');
 var Hash = require('./utils/hash');
 var MutationObserver = require('./utils/mutation-observer');
 var PageUtils = require('./utils/page-utils');
@@ -279,6 +280,9 @@ function computeHash($element, pageData, groupSettings) {
     }
     if (hash) {
         HashedElements.set(hash, pageData.pageHash, $element); // Record the relationship between the hash and dom element.
+        if (AppMode.debug) {
+            $element.attr('ant-hash', hash);
+        }
     }
     return hash;
 }

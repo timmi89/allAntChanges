@@ -1,0 +1,32 @@
+[
+  {
+    "id" : "1",
+    "pageHash" : "4af99c8d0d7b8f093dfd93b75b0c2f8f",
+    "summaryReactions":[
+      {
+        "text":"Like",
+        "id":"node1",
+        "count":"3"
+      }
+    ],
+    "containers":{
+      "f9f7c2185c1d7927151b4a87a44d89a3":{
+        "hash":"f9f7c2185c1d7927151b4a87a44d89a3",
+        "id":"containerId1",
+        "reactions":[
+          {
+            "text":"Like",
+            "id":"nod11",
+            "count":"3",
+            "parentID":"interaction1",
+            "content":{
+              "location":":0:1",
+              "id":"content1",
+              "kind":"text"
+            }
+          }
+        ]
+      }
+    }
+  }
+]
