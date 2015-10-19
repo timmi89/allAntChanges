@@ -111,7 +111,9 @@ def group_event_report(group, mobile, start_date = None, end_date = None):
 
 
 
-
-
+@periodic_task(name='reporting.weekly.email.report', ignore_result=True, 
+               run_every=(crontab(hour="5", minute="30", day_of_week="1")))
+def weekly_email_report():
+    pass
 
 
