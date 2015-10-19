@@ -88,8 +88,8 @@ def update_page_container_hash_cache(page_id, hashes, crossPageHashes):
         spdd = cache.get('page_data'+str(page_id))
         new_hashes = []
         for container in spdd['containers']:
-            if container.hash != 'page':
-                new_hashes.append(container.hash)
+            if container['hash'] != 'page':
+                new_hashes.append(container['hash'])
         if len(new_hashes) != 1: #no infinite recursion, please
             update_page_container_hash_cache(page_id, new_hashes, crossPageHashes)
     else:

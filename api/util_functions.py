@@ -18,6 +18,7 @@ from urlparse import urlsplit, urlunsplit
 import traceback
 import logging
 import hashlib
+from operator import itemgetter
 logger = logging.getLogger('rb.standard')
 
 
@@ -269,7 +270,7 @@ def checkLimit(user, group):
 
 
 
-def getSinglePageDataDict(page_id):
+def getSinglePageDataDictOldAndBusted(page_id):
     current_page = Page.objects.get(id=page_id)
     urlhash = hashlib.md5( current_page.url ).hexdigest()
     iop = Interaction.objects.filter(page=current_page, approved=True).exclude(container__item_type='question')
@@ -299,6 +300,71 @@ def getSinglePageDataDict(page_id):
             containers=containers
         )
     return result_dict
+
+
+def getSinglePageDataDict(page_id):
+    page = Page.objects.get(id=page_id)
+    interactions = Interaction.objects.filter(page=page, approved=True).values('id','container_id','kind','interaction_node_id')
+    container_ids = set()
+    node_ids = set()
+    top_tag_dict = {}
+    summary_dict = { 'tag' : 0, 'com': 0 }
+    # Collect the ids of all the container and interaction_nodes that we need and add up the summary totals as we go.
+    for interaction in interactions:
+        container_id = interaction['container_id']
+        container_ids.add(container_id)
+        kind = interaction['kind']
+        if kind == 'tag':
+            node_id = interaction['interaction_node_id']
+            node_ids.add(node_id)
+            top_tag_dict.setdefault(node_id, 0)
+            top_tag_dict[node_id] += 1
+            summary_dict['tag'] += 1
+        elif kind == 'com':
+            summary_dict['com'] += 1
+
+    # Next, fetch all of the containers and interaction_nodes that we need
+    containers = Container.objects.filter(id__in=container_ids).values('id','hash')
+    node_dict = {}
+    for node in InteractionNode.objects.filter(id__in=node_ids).values('id','body'):
+        node_dict[node['id']] = node
+
+    # Finally, transform the data into the output format
+    containers_data = []
+    for container in containers:
+        container_data = {
+            'id': container['id'],
+            'hash': container['hash']
+        }
+        containers_data.append(container_data)
+
+    top_tags = []
+    for node_id, count in top_tag_dict.items():
+        node = node_dict.get(node_id)
+        if node:
+            top_tag = {
+                'id': node_id,
+                'tag_count': count,
+                'body': node['body']
+            }
+            top_tags.append(top_tag)
+    top_tags = sorted(top_tags, key=itemgetter('tag_count', 'body'), reverse=True)
+
+    summary_data = []
+    if summary_dict['tag'] > 0:
+        summary_data.append({ 'kind' : 'tag', 'count': summary_dict['tag'] })
+    if summary_dict['com'] > 0:
+        summary_data.append({ 'kind' : 'com', 'count': summary_dict['com'] })
+
+    page_data = {
+        'urlhash': hashlib.md5(page.url).hexdigest(),
+        'id': page_id,
+        'containers': containers_data,
+        'toptags': top_tags[:15],
+        'summary': summary_data
+    }
+    return page_data
+
 
 def getSinglePageDataNewer(page_id):
     page = Page.objects.get(id=page_id)
@@ -363,7 +429,7 @@ def getSinglePageDataNewer(page_id):
         for content_id, content_interactions in container_interactions.items():
             content = content_dict.get(content_id)
             if content:
-                content_reactions = content_interactions.get('reactions', [])
+                content_reactions = content_interactions.get('reactions', {})
                 content_comments = content_interactions.get('comments', {})
                 for node_id, content_reaction in content_reactions.items():
                     interaction_id = content_reaction.get('interaction_id')

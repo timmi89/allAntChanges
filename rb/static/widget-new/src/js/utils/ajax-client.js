@@ -4,7 +4,6 @@ var $; require('./jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var XDMClient = require('./xdm-client');
 var URLs = require('./urls');
 var User = require('./user');
-var isOffline = require('./offline');
 
 var PageData = require('../page-data'); // TODO: backwards dependency
 
@@ -230,6 +229,26 @@ function getComments(reaction, callback) {
     });
 }
 
+function getReactionLocationData(reaction, pageData, callback) {
+    var reactionLocationData = PageData.getReactionLocationData(reaction, pageData);
+    var contentIDs = Object.getOwnPropertyNames(reactionLocationData);
+    XDMClient.getUser(function(response) {
+        var userInfo = response.data;
+        var data = {
+            user_id: userInfo.user_id,
+            ant_token: userInfo.ant_token,
+            content_ids: contentIDs
+        };
+        $.getJSONP(URLs.fetchContentBodiesUrl(), data, function(response) {
+            PageData.updateReactionLocationData(reactionLocationData, response);
+            callback(reactionLocationData);
+        }, function(message) {
+            // TODO: error handling
+            console.log('An error occurred fetching content bodies: ' + message);
+        })
+    });
+}
+
 function commentsFromResponse(jsonComments) {
     var comments = [];
     for (var i = 0; i < jsonComments.length; i++) {
@@ -250,5 +269,6 @@ module.exports = {
     postPlusOne: postPlusOne,
     postNewReaction: postNewReaction,
     postComment: postComment,
-    getComments: getComments
+    getComments: getComments,
+    getReactionLocationData: getReactionLocationData
 };

@@ -1,0 +1,19 @@
+
+.antenna-auto-cta {
+    text-align: right;
+}
+
+.antenna-auto-cta-inner {
+    display: inline-block;
+    padding: 4px;
+    background: rgba(255,255,255,.7);
+}
+
+.antenna-auto-cta .ant-antenna-logo {
+    color: #8fb3f2;
+}
+
+.antenna-auto-cta-label {
+    font-size: 12px;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+}

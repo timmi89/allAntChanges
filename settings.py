@@ -168,6 +168,7 @@ if DEBUG:
     # }
     CACHES = {
             'default': {
+                # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
                  # 'BACKEND': 'memcachepool.cache.UMemcacheCache',
                  'LOCATION': '127.0.0.1:11211',
@@ -180,6 +181,7 @@ if DEBUG:
                  }
             },
             'redundant': {
+                # 'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
             },
             'query_cache': {

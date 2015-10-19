@@ -1,32 +1,44 @@
-<div class="antenna-page antenna-reactions-page">
+<div class="antenna-page antenna-reactions-page" decorator="cssreset">
     <div class="antenna-body">
-        {{#reactions:index}}
-            <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}" style="background-color:{{reactionsBackgroundColor(index)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
-                <div class="antenna-reaction-box">
-                    <div class="antenna-reaction-text" decorator="sizetofit">
-                        {{ this.text }}
-                    </div>
-                    <div class="antenna-reaction-count">
-                        {{ this.count }}
-                    </div>
-                    <div class="antenna-plusone">
-                        +1
-                    </div>
-                    {{#if this.commentCount}}
-                        <div on-click="showcomments" class="antenna-reaction-comments hascomments">
-                            <span class="ant-comment"></span>
-                            {{this.commentCount}}
+        {{#if reactions}}
+            {{#reactions:index}}
+                <div on-click="plusone" on-mouseenter="highlight" on-mouseleave="clearhighlights" class="antenna-reaction {{reactionsLayoutClass(index, this.count)}}" style="background-color:{{reactionsBackgroundColor(index)}}"> <!-- Passing in this.count makes sure ractive reevaluates the function each time the data changes -->
+                    <div class="antenna-reaction-box">
+                        <div class="antenna-reaction-text" decorator="sizetofit">
+                            {{ this.text }}
                         </div>
-                    {{else}}
-                        <div class="antenna-reaction-comments">
-                            <span class="ant-comment"></span>
+                        <div class="antenna-reaction-count">
+                            {{ this.count }}
                         </div>
-                    {{/if}}
+                        <div class="antenna-plusone">
+                            +1
+                        </div>
+                        {{#if isSummary}}
+                            <div on-click="showlocations" class="antenna-reaction-location">
+                                <span class="ant-search"></span>
+                            </div>
+                        {{else}}
+                            {{#if this.commentCount}}
+                                <div on-click="showcomments" class="antenna-reaction-comments hascomments">
+                                    <span class="ant-comment"></span>
+                                    {{this.commentCount}}
+                                </div>
+                            {{else}}
+                                <div class="antenna-reaction-comments">
+                                    <span class="ant-comment"></span>
+                                </div>
+                            {{/if}}
+                        {{/if}}
+                    </div>
                 </div>
-            </div>
-        {{/reactions:index}}
+            {{/reactions:index}}
+        {{/if}}
     </div>
     <div class="antenna-footer antenna-reactions-footer">
-        <span on-click="showdefault" class="antenna-think">What do you think?</span>
+        {{#if reactions}}
+            <span on-click="showdefault" class="antenna-think">What do you think?</span>
+        {{else}}
+            <span class="antenna-no-reactions">No reactions yet!</span>
+        {{/if}}
     </div>
 </div>

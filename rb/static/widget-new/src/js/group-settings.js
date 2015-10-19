@@ -123,7 +123,7 @@ function createFromJSON(json) {
     }
 
     return {
-        legacyBehavior: data('legacy_behavior', true), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
+        legacyBehavior: data('legacy_behavior', false), // TODO: make this real in the sense that it comes back from the server and probably move the flag to the page data. Unlikely that we need to maintain legacy behavior for new pages?
         groupId: data('id'),
         activeSections: data('active_sections'),
         url: {
@@ -137,7 +137,8 @@ function createFromJSON(json) {
         pageImageSelector: data('image_selector'),
         pageImageAttribute: data('image_attribute'),
         textSelector: data('anno_whitelist'),
-        imageSelector: data('img_selector'),// TODO: this is wrong
+        imageSelector: data('img_selector'),// TODO: this is wrong. currently, anno_whitelist contains all tags including 'img'
+        generatedCtaSelector: data('separate_cta'),
         defaultReactions: defaultReactions,
         reactionBackgroundColors: backgroundColor(data('tag_box_bg_colors')),
         exclusionSelector: data('no_ant')

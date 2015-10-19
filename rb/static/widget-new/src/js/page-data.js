@@ -79,7 +79,7 @@ function getContainerData(pageData, containerHash) {
             hash: containerHash,
             reactionTotal: 0,
             reactions: [],
-            loaded: false
+            loaded: pageData.summaryLoaded // TODO: should this just be a live function that delegates to summaryLoaded?
         };
         pageData.containers[containerHash] = containerData;
     }
@@ -104,6 +104,85 @@ function setContainers(pageData, jsonContainers) {
         if (allContainers.hasOwnProperty(hash)) {
             var container = allContainers[hash];
             container.loaded = true;
+        }
+    }
+}
+
+// Returns the locations where the given reaction occurs on the page. The return format is:
+// {
+//   <content_id> : {
+//     count: <number>,
+//     id: <content_id>,
+//     containerID: <container_id>
+//     kind: <content kind>,
+//     location: <location>,
+//     [body: <body>] filled in later via updateLocationData
+//   }
+// }
+function getReactionLocationData(reaction, pageData) {
+    if (!pageData.locationData) { // Populate this tree lazily, since it's not frequently used.
+        pageData.locationData = computeLocationData(pageData);
+    }
+    return pageData.locationData[reaction.id];
+}
+
+// Returns a view on the given tree structure that's optimized for rendering the location of reactions (as from the
+// summary widget). For each reaction, we can quickly get to the pieces of content that have that reaction as well as
+// the count of those reactions for each piece of content.
+//
+// The structure looks like this:
+// {
+//   <reaction_id> : {   (this is the interaction_node_id)
+//     <content_id> : {
+//       count : <number>,
+//       containerID: <container_id>,
+//       kind: <content kind>,
+//       location: <location>
+//       [body: <body>] filled in later via updateLocationData
+//     }
+//   }
+// }
+function computeLocationData(pageData) {
+    var locationData = {};
+    var containers = pageData.containers;
+    for (var hash in containers) {
+        if (containers.hasOwnProperty(hash)) {
+            var containerData = containers[hash];
+            var reactions = containerData.reactions;
+            for (var i = 0; i < reactions.length; i++) {
+                var reaction = reactions[i];
+                var reaction_id = reaction.id;
+                var content = reaction.content;
+                var content_id = content.id;
+                var reactionLocationData = locationData[reaction_id];
+                if (!reactionLocationData) {
+                    reactionLocationData = {};
+                    locationData[reaction_id] = reactionLocationData;
+                }
+                var contentLocationData = reactionLocationData[content_id]; // TODO: It's not really possible to get a hit here, is it? We should never see two instances of the same reaction for the same content? (There'd would just be one instance with a count > 1.)
+                if (!contentLocationData) {
+                    contentLocationData = {
+                        count: 0,
+                        kind: content.kind, // TODO: We should normalize this value to a set of constants. fix this in locations-page where the value is read as well
+                        location: content.location,
+                        containerHash: containerData.hash
+                    };
+                    reactionLocationData[content_id] = contentLocationData;
+                }
+                contentLocationData.count += reaction.count;
+            }
+        }
+    }
+    return locationData;
+}
+
+function updateReactionLocationData(reactionLocationData, contentBodies) {
+    for (var contentID in contentBodies) {
+        if (contentBodies.hasOwnProperty(contentID)) {
+            var contentLocationData = reactionLocationData[contentID];
+            if (contentLocationData) {
+                contentLocationData.body = contentBodies[contentID];
+            }
         }
     }
 }
@@ -133,5 +212,7 @@ module.exports = {
     getPageData: getPageData,
     updateAllPageData: updateAllPageData,
     getContainerData: getContainerData,
+    getReactionLocationData: getReactionLocationData,
+    updateReactionLocationData: updateReactionLocationData,
     registerReaction: registerReaction
 };

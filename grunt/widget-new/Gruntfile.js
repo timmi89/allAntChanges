@@ -7,7 +7,12 @@ module.exports = function(grunt) {
         widget_src: [ rootDir + '/rb/static/widget-new/src/js/*.js', rootDir + '/rb/static/widget-new/src/templates/*.html' ],
         widget_js_debug: rootDir + '/rb/static/widget-new/debug/antenna.js',
         widget_js_prod: rootDir + '/rb/static/widget-new/antenna.min.js',
+        // our widget_css_src files are minified into widget_css_temp
+        // reset.css and widget_css_temp are then combined, so the reset comes before any other styles
         widget_css_src: rootDir + '/rb/static/widget-new/src/css/*.css',
+        widget_css_src_temp: rootDir + '/rb/static/widget-new/debug/temp.css',
+        widget_css_reset: rootDir + '/rb/static/widget-new/src/css/reset.css',
+        widget_css_reset_temp: rootDir + '/rb/static/widget-new/debug/reset_temp.css',
         widget_css_dest: rootDir + '/rb/static/widget-new/debug/antenna.css',
 
         rangy_src: [ rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/rangy-core.js', rootDir + '/rb/static/js/cdn/rangy/1.3.0/uncompressed/*.js' ],
@@ -28,8 +33,12 @@ module.exports = function(grunt) {
                 roundingPrecision: -1
             },
             widget_css: {
-                src: '<%= paths.widget_css_src %>',
-                dest: '<%= paths.widget_css_dest %>'
+                src: ['<%= paths.widget_css_src %>','!<%= paths.widget_css_reset %>'],
+                dest: '<%= paths.widget_css_src_temp %>',
+            },
+            reset_css: {
+                src: ['<%= paths.widget_css_reset %>'],
+                dest: '<%= paths.widget_css_reset_temp %>',
             }
         },
         browserify: {
@@ -60,6 +69,10 @@ module.exports = function(grunt) {
             rangy: {
                 src: ['<%= paths.rangy_src %>'],
                 dest: '<%= paths.rangy_dest %>'
+            },
+            widget_css: {
+                src: ['<%= paths.widget_css_reset_temp %>', '<%= paths.widget_css_src_temp %>'],
+                dest: '<%= paths.widget_css_dest %>'
             }
         },
         uglify: {
@@ -84,8 +97,8 @@ module.exports = function(grunt) {
                 options: {
                     atBegin: true
                 },
-                files: [ '<%= paths.widget_css_src %>'],
-                tasks: [ 'cssmin:widget_css' ]
+                files: [ '<%= paths.widget_css_src %>', '<%= paths.widget_css_reset %>'],
+                tasks: [ 'cssmin', 'concat:widget_css' ]
             }
             // our watch on the widget src is handled by 'watchify', included in browserify.
             // (see the 'watch' option in the browserify config.)
@@ -99,7 +112,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-browserify');
 
-    grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin:widget_css' ]);
+    grunt.registerTask('default', [ 'browserify:widget_js', 'uglify:widget_js', 'cssmin', 'concat:widget_css' ]);
     grunt.registerTask('monitor', [ 'browserify:watchify_widget_js', 'watch:widget_css'  ]);
     grunt.registerTask('rangy', [ 'concat:rangy', 'uglify:rangy' ]); // This task assembles our custom rangy "build". Run it when upgrading rangy or adding/removing rangy modules.
 

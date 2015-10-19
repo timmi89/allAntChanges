@@ -67,7 +67,9 @@ function grabNode(node, callback) {
     var text = selection.toString();
     if (text.trim().length > 0) {
         highlightSelection(selection); // Highlighting deselects the text, so do this last.
-        callback(text, location);
+        if (callback) {
+            callback(text, location);
+        }
     }
     selection.removeAllRanges(); // Don't actually leave the element selected.
     selection.refresh();
