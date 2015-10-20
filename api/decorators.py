@@ -17,22 +17,22 @@ def status_response(func):
             res['status'] =  'fail'
             res['message'] = error.msg
             logger.debug( error.msg )
-            logger.debug( traceback.format_exc())
+            logger.info( traceback.format_exc())
         except KeyError as error:
             res['status'] = 'fail'
             res['message'] = error.message
-            logger.debug(traceback.format_exc())
+            logger.info(traceback.format_exc())
         except ObjectDoesNotExist as error:
             res['status'] = 'fail'
             res['message'] = error
-            logger.debug(traceback.format_exc())
+            logger.info(traceback.format_exc())
         # except DoesNotExist as error:
         #     res['status'] = 'fail'
         #     res['message'] = error
         except Exception as error:
             res['status'] =  'fail'
             res['message'] = error
-            logger.debug(traceback.format_exc())
+            logger.info(traceback.format_exc())
             #res['stack'] = traceback.format_exc()
         else:
             res['data'] = dataout
