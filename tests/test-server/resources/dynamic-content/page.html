@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <script src="/static/js/cdn/jquery/2.1.4/jquery.min.js"></script>
+        <style>
+            img {
+                max-width: 500px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1" class="summary">Simple page.</div>
+        <img id="img1" src="headphones.jpg" style="width:200px;">
+        <p id="p1">This is a block of text. Does it have a reaction? You better believe it does!</p>
+
+
+        <div><button id="add-image">Add Image</button></div>
+        <div><button id="add-image-nested">Add Image Nested</button></div>
+        <div><button id="add-image-noant">Add Image Inside .no-ant</button></div>
+        <div><button id="add-summary">Add Summary</button></div>
+        <div class="ant-exclude"><button id="add-inside-excluded">Add Inside Excluded</button></div>
+        <div><button id="add-nested-exclude">Add Nested Exclude</button></div>
+        <div><button id="add-excluded">Add Excluded</button></div>
+        <div><button id="add-delayed-src-image">Add Delayed Src Image</button></div>
+        <script>
+            $(document).on('ready', function() {
+                $('#add-image').on('click', function() {
+                   $('#add-image').after('<img src="headphones.jpg" alt="image">');
+                });
+                $('#add-image-nested').on('click', function() {
+                   $('#add-image-nested').after('<div><img src="headphones.jpg" alt="image"></div>');
+                });
+                $('#add-image-noant').on('click', function() {
+                   $('#add-image-noant').after('<div class="no-ant"><img src="headphones.jpg" alt="image"></div>');
+                });
+                $('#add-summary').on('click', function() {
+                   $('#add-summary').after('<div><div class="summary"></div></div>');
+                });
+                $('#add-inside-excluded').on('click', function() {
+                   $('#add-inside-excluded').after('<div><img src="headphones.jpg" alt="image"></div>');
+                });
+                $('#add-nested-exclude').on('click', function() {
+                   $('#add-nested-exclude').after('<div class="ant-exclude"><img src="headphones.jpg" alt="image"></div>');
+                });
+                $('#add-excluded').on('click', function() {
+                   $('#add-excluded').after('<img class="ant-exclude" src="headphones.jpg" alt="image">');
+                });
+                $('#add-delayed-src-image').on('click', function() {
+                    $('#add-delayed-src-image').after('<img id="delayed-image" alt="image">');
+                    setTimeout(function() {
+                         $('#delayed-image').attr('src', 'headphones.jpg');
+                    }, 1000);
+                });
+            });
+        </script>
+
+        <script>
+            (function() {
+                window.antenna_host = 'dynamic-content';
+                window.antenna_extend = {
+                };
+            })();
+        </script>
+        <script src="http://localhost:3000/static/widget-new/debug/antenna.js?debug" defer type="text/javascript"></script>
+    </body>
+</html>

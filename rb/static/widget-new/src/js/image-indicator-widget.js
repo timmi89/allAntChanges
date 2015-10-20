@@ -1,6 +1,7 @@
 var $; require('./utils/jquery-provider').onLoad(function(jQuery) { $=jQuery; });
 var Ractive; require('./utils/ractive-provider').onLoad(function(loadedRactive) { Ractive = loadedRactive;});
 var ReactionsWidget = require('./reactions-widget');
+var MutationObserver = require('./utils/mutation-observer');
 var ThrottledEvents = require('./utils/throttled-events');
 
 
@@ -84,6 +85,17 @@ function setupPositioning($imageElement, ractive) {
     ThrottledEvents.on('resize', reposition);
     ractive.on('teardown', function() {
         ThrottledEvents.off('resize', reposition);
+    });
+
+    MutationObserver.addAdditionListener(function($elements) {
+        // Reposition the image if elements are added to the DOM which might adjust the image's position.
+        for (var i = 0; i < $elements.length; i++) {
+            var $element = $elements[i];
+            if ($element.height() > 0 && $element.offset().top <= $imageElement.offset().top) {
+                reposition();
+                return;
+            }
+        }
     });
 
     function positionIndicator() {
