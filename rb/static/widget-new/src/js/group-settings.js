@@ -8,7 +8,8 @@ var defaults = {
     img_selector: "img", // TODO: this is some bogus obsolete property. we shouldn't use it.
     img_container_selectors:"#primary-photo",
     active_sections: "body",
-    anno_whitelist: "body p",
+    //anno_whitelist: "body p",
+    anno_whitelist: "p", // TODO: The current default is "body p", which makes no sense when we're searching only within the active sections
     active_sections_with_anno_whitelist:"",
     media_selector: "embed, video, object, iframe",
     comment_length: 500,
@@ -50,7 +51,9 @@ function createFromJSON(json) {
             var value = window.antenna_extend[key];
             if (value == undefined) {
                 value = json[key];
-                if (value === undefined || value === '') { // TODO: Should the server be sending back '' here or nothing at all? (It precludes the server from really saying 'nothing')
+                // TODO: our server apparently sends back null as a value for some attributes.
+                // TODO: consider checking for null wherever we're checking for undefined
+                if (value === undefined || value === '' || value === null) { // TODO: Should the server be sending back '' here or nothing at all? (It precludes the server from really saying 'nothing')
                     value = defaults[key];
                 }
             }

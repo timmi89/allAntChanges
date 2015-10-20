@@ -24,12 +24,12 @@ function addAdditionListener(callback) {
     });
 }
 
-// Filter the set of nodes to eliminate anything tagged no-ant or inside our own DOM elements (otherwise, we generate a ton of chatter)
+// Filter the set of nodes to eliminate anything inside our own DOM elements (otherwise, we generate a ton of chatter)
 function filteredElements(nodeList) {
     var filtered = [];
     for (var i = 0; i < nodeList.length; i++) {
         var $element = $(nodeList[i]);
-        if ($element.closest('.no-ant, .antenna, ' + WidgetBucket.selector()).length === 0) {
+        if ($element.closest('.antenna, ' + WidgetBucket.selector()).length === 0) {
             filtered.push($element);
         }
     }

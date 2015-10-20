@@ -14,6 +14,7 @@ function loadSettings(callback) {
 
     function error(message) {
         // TODO handle errors that happen when loading config data
+        console.log('An error occurred loading group settings: ' + message);
     }
 }
 

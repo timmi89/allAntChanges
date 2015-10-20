@@ -1,4 +1,4 @@
-var isOffline = require('./offline');
+var AppMode = require('./app-mode');
 
 // TODO: Figure out how many different formats of user data we have and either unify them or provide clear
 //       API here to translate each variation into something standard for the client.
@@ -36,7 +36,7 @@ function optimisticUser() {
 }
 
 function anonymousImageURL() {
-    return isOffline ? '/static/widget/images/anonymousplode.png' : 'http://s3.amazonaws.com/readrboard/widget/images/anonymousplode.png';
+    return AppMode.offline ? '/static/widget/images/anonymousplode.png' : 'http://s3.amazonaws.com/readrboard/widget/images/anonymousplode.png';
 }
 
 module.exports = {
