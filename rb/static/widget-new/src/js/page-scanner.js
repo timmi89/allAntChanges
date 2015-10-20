@@ -40,6 +40,9 @@ function scanAllPages(groupSettings) {
 function scanPage($page, groupSettings) {
     var url = PageUtils.computePageUrl($page, groupSettings);
     var urlHash = Hash.hashUrl(url);
+    if (AppMode.debug) {
+        $page.attr('ant-hash', urlHash);
+    }
     var pageData = PageData.getPageData(urlHash);
     var $activeSections = find($page, groupSettings.activeSections(), true);
 
@@ -332,41 +335,43 @@ function elementsAdded(groupSettings) {
     return function ($elements) {
         for (var i = 0; i < $elements.length; i++) {
             var $element = $elements[i];
-            $element.find(groupSettings.exclusionSelector()).addClass('no-ant'); // Add the no-ant class to everything that is flagged for exclusion
-            // First, see if any entire pages were added
-            var $pages = find($element, groupSettings.pageSelector(), true);
-            if ($pages.length > 0) {
-                PageDataLoader.pagesAdded($pages, groupSettings); // TODO: consider if there's a better way to architect this
-                $pages.each(function() {
-                    scanPage($(this), groupSettings);
-                });
-            } else {
-                // If not an entire page/pages, see if content was added to an existing page
-                var $page = $element.closest(groupSettings.pageSelector());
-                if ($page.length === 0) {
-                    $page = $('body'); // TODO: is this right? keep in sync with scanAllPages
-                }
-                var url = PageUtils.computePageUrl($page, groupSettings);
-                var urlHash = Hash.hashUrl(url);
-                var pageData = PageData.getPageData(urlHash);
-                // First, check for any new summary widgets...
-                scanForSummaries($element, pageData, groupSettings);
-                // Next, see if any entire active sections were added
-                var $activeSections = find($element, groupSettings.activeSections());
-                if ($activeSections.length > 0) {
-                    $activeSections.each(function() {
-                        createAutoCallsToAction($(this), pageData, groupSettings);
-                    });
-                    $activeSections.each(function() {
-                        var $section = $(this);
-                        scanActiveElement($section, pageData, groupSettings);
+            $element.find(groupSettings.exclusionSelector()).addBack(groupSettings.exclusionSelector()).addClass('no-ant'); // Add the no-ant class to everything that is flagged for exclusion
+            if ($element.closest('.no-ant').length === 0) { // Ignore anything tagged no-ant
+                // First, see if any entire pages were added
+                var $pages = find($element, groupSettings.pageSelector(), true);
+                if ($pages.length > 0) {
+                    PageDataLoader.pagesAdded($pages, groupSettings); // TODO: consider if there's a better way to architect this
+                    $pages.each(function () {
+                        scanPage($(this), groupSettings);
                     });
                 } else {
-                    // Finally, scan inside the element for content (as long as we're inside an active section)
-                    var $activeSection = $element.closest(groupSettings.activeSections());
-                    if ($activeSection.length > 0) {
-                        createAutoCallsToAction($element, pageData, groupSettings);
-                        scanActiveElement($element, pageData, groupSettings);
+                    // If not an entire page/pages, see if content was added to an existing page
+                    var $page = $element.closest(groupSettings.pageSelector());
+                    if ($page.length === 0) {
+                        $page = $('body'); // TODO: is this right? keep in sync with scanAllPages
+                    }
+                    var url = PageUtils.computePageUrl($page, groupSettings);
+                    var urlHash = Hash.hashUrl(url);
+                    var pageData = PageData.getPageData(urlHash);
+                    // First, check for any new summary widgets...
+                    scanForSummaries($element, pageData, groupSettings);
+                    // Next, see if any entire active sections were added
+                    var $activeSections = find($element, groupSettings.activeSections());
+                    if ($activeSections.length > 0) {
+                        $activeSections.each(function () {
+                            createAutoCallsToAction($(this), pageData, groupSettings);
+                        });
+                        $activeSections.each(function () {
+                            var $section = $(this);
+                            scanActiveElement($section, pageData, groupSettings);
+                        });
+                    } else {
+                        // Finally, scan inside the element for content (as long as we're inside an active section)
+                        var $activeSection = $element.closest(groupSettings.activeSections());
+                        if ($activeSection.length > 0) {
+                            createAutoCallsToAction($element, pageData, groupSettings);
+                            scanActiveElement($element, pageData, groupSettings);
+                        }
                     }
                 }
             }

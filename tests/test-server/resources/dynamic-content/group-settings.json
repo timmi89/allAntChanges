@@ -1,0 +1,5 @@
+{
+  "id":"dynamic-content",
+  "summary_widget_selector": ".summary",
+  "no_ant":".ant-exclude"
+}
